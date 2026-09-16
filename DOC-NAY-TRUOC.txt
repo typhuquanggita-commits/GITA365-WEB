@@ -1,0 +1,13 @@
+THƯ MỤC BẢN THU CHUYỆN — GITA 365
+
+Thả tệp audio vào đây, đặt tên đúng bằng MÃ CHUYỆN:
+
+    HS-001.m4a   PH-047.m4a   CTV-100.m4a   CO-012.m4a   TV-055.m4a   AD-090.m4a
+
+Sai tên thì hệ thống không tìm ra, và màn hình sẽ báo là chưa có bản thu.
+
+TRƯỚC KHI THẢ TỆP, phải điền xong hồ sơ giọng trong kho-goc/data.giong-doc.js:
+ba ô ten · hopDong · den. Thiếu một ô thì hệ thống không phát, kể cả khi tệp
+đã nằm ở đây. Đó là chủ ý: không gắn tên ai lên một bản thu mà người đó chưa ký.
+
+Chuẩn kỹ thuật gửi phòng thu nằm ở màn hình "Đọc hoặc nghe · giọng đọc".

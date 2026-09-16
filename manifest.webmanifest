@@ -1,0 +1,28 @@
+{
+  "name": "GITA 365 · Hệ Sinh Thái Gia Đình Thịnh Vượng",
+  "short_name": "GITA 365",
+  "description": "Bản đồ một gia đình thịnh vượng: 5 khoang, 9 vai, 5 tầng, 1.000 kịch bản chuyên môn. Sau 365 ngày, nhà mình vận hành được mà không cần ai canh.",
+  "lang": "vi",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#070510",
+  "theme_color": "#070510",
+  "categories": ["education", "lifestyle", "productivity"],
+  "icons": [
+    { "src": "assets/icons/icon-192.png",     "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-512.png",     "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Bắt đầu ở đây", "short_name": "Bắt đầu", "url": "./index.html#bat-dau",
+      "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Bản đồ gia đình thịnh vượng", "short_name": "Bản đồ", "url": "./index.html#ban-do",
+      "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Nhiệm vụ hôm nay", "short_name": "Hôm nay", "url": "./index.html#nhiem-vu",
+      "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

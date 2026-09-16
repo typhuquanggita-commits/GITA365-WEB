@@ -1,0 +1,15 @@
+{
+  "chuY": "BỘ KHOÁ MẬT — nạp vào máy chủ cấp phép, không bao giờ đưa lên kho mã.",
+  "taoLuc": "2026-09-16T01:50:08.450Z",
+  "thuatToan": "AES-256-GCM",
+  "khoa": {
+    "nen": "SW4SbB1qwbDHRL+Nbr78Wq+2lc7D71Sm/ajkVQMi+i4=",
+    "nghe": "kEhxV/JC7zqT/l6yw02o/f9iKouY05NZ5kcFZ7dQplo=",
+    "nghe-cao": "BVn26kqn/ksve4zu0XtWyrYbU81ri7I5u3ZMPC0LCXs=",
+    "tang1": "cl55CgUmW37OgXnUyE6l/Sz+BFwmXTWG5LLVa47mJZI=",
+    "tang2": "RT6TuWW9t2FcDmKUW0HaJB+NTHDCWsuT2JJGlLzPq8U=",
+    "tang3": "xsSwXRiIEXYv5w7arU5E9/qztjZ/HrKfnoG3Ln9D8sM=",
+    "tang4": "YdY6MmwZXscij1WhKd/pQhg8+jyo5CLFyhHjk+EQY0w=",
+    "tang5": "bKmgxEyxmHhMSB/8iEY1gnwakastHs5/NeAmHmzLSy8="
+  }
+}
