@@ -1,0 +1,6 @@
+# GITA 365 — chặn đường dẫn không bao giờ được phục vụ ra ngoài
+/kho/khoa.json   /404.html   404
+/kho-goc/*       /404.html   404
+/giay-phep/*     /404.html   404
+/tools/*         /404.html   404
+/server/*        /404.html   404

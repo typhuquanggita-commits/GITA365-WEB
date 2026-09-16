@@ -1,0 +1,27 @@
+# GITA 365 — tiêu đề bảo mật cho Cloudflare Pages
+# Cloudflare Pages đọc tệp này ở gốc và áp cho mọi phản hồi.
+# Netlify dùng đúng định dạng này. Máy chủ khác thì chuyển sang cấu hình tương ứng.
+
+/*
+  # Không cho trang bị nhúng vào khung của người khác — chống nhấp lừa
+  X-Frame-Options: DENY
+  Content-Security-Policy: frame-ancestors 'none'
+  # Trình duyệt không được tự đoán kiểu tệp
+  X-Content-Type-Options: nosniff
+  # Không rò địa chỉ trang khi người dùng bấm ra ngoài
+  Referrer-Policy: strict-origin-when-cross-origin
+  # Chỉ xin micro — đúng một quyền ứng dụng thật sự dùng
+  Permissions-Policy: microphone=(self), camera=(), geolocation=(), payment=(), usb=(), interest-cohort=()
+  # Ép HTTPS trong hai năm, kể cả tên miền phụ
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  # Không cho máy quét và trình thu thập dữ liệu AI đưa vào chỉ mục
+  X-Robots-Tag: noindex, nofollow, noarchive, noimageindex
+
+# Kho đã mã hoá: không bao giờ được lưu ở proxy trung gian nào
+/kho/*
+  Cache-Control: private, no-store
+  X-Robots-Tag: noindex, nofollow
+
+# Bộ khoá không bao giờ được phát hành — chặn cả khi lỡ tay đưa vào thư mục
+/kho/khoa.json
+  X-Robots-Tag: noindex, nofollow

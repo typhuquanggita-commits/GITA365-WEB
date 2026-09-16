@@ -1,0 +1,75 @@
+appId: vn.gita365.app
+publish:
+  provider: github
+  owner: typhuquanggita-commits
+  repo: Quang-GITA
+  releaseType: release
+productName: GITA 365
+copyright: © Học viện GITA — truongnhatquang.com
+directories:
+  output: dist
+  buildResources: build
+
+files:
+  - main.js
+  - preload.js
+  - package.json
+  - app/**/*
+  - build/icon.png
+
+asar: true
+compression: maximum
+artifactName: GITA365-${version}-${os}-${arch}.${ext}
+
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+    - target: portable
+      arch: [x64]
+  icon: build/icon.png
+  legalTrademarks: GITA 365
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: GITA 365
+  installerLanguages: [vi_VN, en_US]
+  deleteAppDataOnUninstall: false
+
+portable:
+  artifactName: GITA365-${version}-ban-chay-ngay.exe
+
+mac:
+  target:
+    - target: dmg
+      arch: [x64, arm64]
+    - target: zip
+      arch: [x64, arm64]
+  icon: build/icon.png
+  category: public.app-category.education
+  darkModeSupport: true
+  hardenedRuntime: true
+  gatekeeperAssess: false
+
+dmg:
+  title: GITA 365 ${version}
+  window: { width: 540, height: 380 }
+
+linux:
+  target:
+    - target: AppImage
+      arch: [x64]
+    - target: deb
+      arch: [x64]
+  icon: build/icon.png
+  category: Education
+  synopsis: Hệ Sinh Thái Gia Đình Thịnh Vượng
+  desktop:
+    entry:
+      Name: GITA 365
+      Comment: Bản đồ một gia đình thịnh vượng
+      Keywords: gia đình;giáo dục;coaching;GITA;
