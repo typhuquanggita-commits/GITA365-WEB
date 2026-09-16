@@ -1,0 +1,45 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./gita-app.js)",
+      "Read(./GITA365.html)",
+      "Read(./ban-xem-thu.html)",
+      "Read(./GITA365-v*-gioi-thieu.html)",
+      "Read(./desktop/app/**)",
+      "Read(./desktop/dist/**)",
+      "Read(./desktop/node_modules/**)",
+      "Read(./kho/*.enc)"
+    ],
+    "allow": [
+      "Bash(node tools/gop-src.js)",
+      "Bash(node tools/ma-hoa-kho.js)",
+      "Bash(node tools/soi-doi-kho.js)",
+      "Bash(node tools/dung-noi-ket.js)",
+      "Bash(node --check:*)",
+      "Bash(python3 tools/dong-goi.py)",
+      "Bash(xvfb-run -a node tools/kiem-tra.js:*)",
+      "Bash(xvfb-run -a node tools/ra-soat-day-du.js)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(ls:*)",
+      "Bash(wc:*)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/khoi-dong.sh",
+            "timeout": 60
+          }
+        ]
+      }
+    ]
+  }
+}

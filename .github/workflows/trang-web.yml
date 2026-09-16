@@ -1,0 +1,150 @@
+# ═══════════════════════════════════════════════════════════════
+# GITA 365 — ĐƯA BẢN WEB LÊN GITHUB PAGES
+#
+# Chỉ đẩy đúng phần ứng dụng cần để chạy. Công cụ, mã máy chủ,
+# tài liệu nội bộ và mọi thứ mang khoá đều KHÔNG lên trang web.
+#
+# Trang chạy ở https://gita.edu.vn sau khi trỏ DNS — xem
+# docs/TEN_MIEN.md để biết đúng bốn bản ghi cần thêm.
+# ═══════════════════════════════════════════════════════════════
+name: Đưa bản web lên GitHub Pages
+
+on:
+  push:
+    branches: ['claude/**', 'main']
+    paths:
+      - 'index.html'
+      - 'gita-app.js'
+      - 'cau-hinh.js'
+      - 'manifest.webmanifest'
+      - 'sw.js'
+      - 'robots.txt'
+      - 'src/**'
+      - 'assets/**'
+      - 'kho/**'
+      - '.github/workflows/trang-web.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Một lần dựng một lúc; lần mới huỷ lần đang chạy dở
+concurrency:
+  group: trang-web
+  cancel-in-progress: true
+
+jobs:
+  dung:
+    name: Gom phần chạy được
+    runs-on: ubuntu-latest
+    steps:
+      - name: Lấy mã nguồn
+        uses: actions/checkout@v4
+
+      # Nếu GitHub Pages chưa được bật cho kho này thì bước đưa lên sẽ hỏng
+      # với lỗi 404 khó hiểu. Bước này thử bật hộ; bật được thì lần sau chạy
+      # thẳng, không bật được thì báo đúng một câu và nói rõ phải bấm ở đâu.
+      - name: Bật GitHub Pages nếu chưa bật
+        id: batPages
+        continue-on-error: true
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Nói rõ nếu chưa bật được
+        if: steps.batPages.outcome != 'success'
+        run: |
+          echo "::error::GitHub Pages chưa bật cho kho này và workflow không tự bật được."
+          echo "Vào https://github.com/${{ github.repository }}/settings/pages"
+          echo "  Build and deployment → Source → chọn 'GitHub Actions' → Save."
+          echo "Bật xong thì chạy lại workflow này; không phải sửa mã gì cả."
+          exit 1
+
+      - name: Gom đúng phần ứng dụng cần
+        env:
+          # Đi qua biến môi trường chứ không nội suy thẳng vào thân lệnh:
+          # giá trị biến của kho là chuỗi người đặt, nội suy thẳng thì nó
+          # trở thành mã lệnh chạy trong luồng.
+          TEN_MIEN: ${{ vars.TEN_MIEN }}
+        run: |
+          set -e
+          mkdir -p trang
+          # Chỉ những thứ trình duyệt thật sự cần.
+          # gita-app.js là bản gộp của src/ — index.html nạp thẳng nó
+          # (dòng <script src="gita-app.js">), thiếu nó là trang trắng.
+          cp index.html gita-app.js cau-hinh.js manifest.webmanifest sw.js robots.txt trang/
+          cp -r src assets kho trang/
+          # Tên miền riêng — CHỈ ghi khi DNS đã trỏ xong.
+          #
+          # Có tệp CNAME là GitHub Pages phục vụ ở tên miền ấy và chuyển
+          # hướng đường github.io về đó. Nếu DNS chưa trỏ thì cả hai đường
+          # đều không mở được: bật Pages xong vẫn trắng trang, mà lỗi không
+          # nói vì sao. Nên tên miền được khai bằng biến TEN_MIEN của kho —
+          # chưa khai thì trang chạy ngay ở đường github.io.
+          #
+          # Khai ở: Settings → Secrets and variables → Actions → Variables
+          #         → New repository variable → TEN_MIEN = gita.edu.vn
+          if [ -n "$TEN_MIEN" ]; then
+            printf '%s\n' "$TEN_MIEN" > trang/CNAME
+            echo "Tên miền riêng: $TEN_MIEN"
+          else
+            echo "Chưa khai TEN_MIEN — trang chạy ở đường github.io mặc định."
+          fi
+          # GitHub Pages bỏ qua thư mục bắt đầu bằng dấu gạch dưới nếu không có tệp này
+          touch trang/.nojekyll
+          # Trang 404 dùng chung, để mọi đường dẫn lạ không lộ cấu trúc thư mục
+          cat > trang/404.html <<'HTML'
+          <!doctype html><html lang="vi"><head><meta charset="utf-8">
+          <meta name="viewport" content="width=device-width,initial-scale=1">
+          <meta name="robots" content="noindex,nofollow"><title>Không có trang này</title>
+          <style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#070510;
+          color:#F2F0FA;font:15px/1.6 system-ui,-apple-system,'Segoe UI',sans-serif;text-align:center;padding:24px}
+          a{color:#F5B942}</style></head><body><div>
+          <p style="font-size:44px;margin:0 0 8px;color:#F5B942">404</p>
+          <p style="margin:0 0 6px"><b>Không có trang này.</b></p>
+          <p style="opacity:.7;margin:0 0 18px">Có thể đường dẫn đã đổi, hoặc phần này cần đăng nhập.</p>
+          <a href="/">Về trang chính GITA 365</a></div></body></html>
+          HTML
+
+      - name: Soát không để lọt tài sản ra trang web
+        run: |
+          set -e
+          ro=0
+          for x in kho-goc tools server docs giay-phep desktop .github; do
+            if [ -e "trang/$x" ]; then echo "✗ $x lọt lên trang web"; ro=1; fi
+          done
+          for f in "trang/kho/khoa.json" "trang/kho/khoa.txt"; do
+            if [ -e "$f" ]; then echo "✗ $f lọt lên trang web"; ro=1; fi
+          done
+          # Tệp .enc phải thật sự không đọc được
+          for f in trang/kho/*.enc; do
+            if head -c 400 "$f" | tail -c 372 | grep -qE '"(ma|ten|tang)"'; then
+              echo "✗ $f đọc được bằng mắt — chưa mã hoá đúng"; ro=1
+            fi
+          done
+          # Cấu hình không được trỏ về máy nội bộ
+          if grep -qE "127\.0\.0\.1|localhost" trang/cau-hinh.js; then
+            echo "✗ cau-hinh.js trỏ về máy nội bộ"; ro=1
+          fi
+          [ "$ro" = "0" ] || { echo "DỪNG — có tài sản sắp lọt ra ngoài."; exit 1; }
+          echo "✓ Không có tài sản nào lọt ra trang web"
+          echo "  $(find trang -type f | wc -l) tệp · $(du -sh trang | cut -f1)"
+
+      - name: Đóng gói cho Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: trang
+
+  phat-hanh:
+    name: Đưa trang lên mạng
+    needs: dung
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.len.outputs.page_url }}
+    steps:
+      - name: Đưa lên GitHub Pages
+        id: len
+        uses: actions/deploy-pages@v4

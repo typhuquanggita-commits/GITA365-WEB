@@ -1,0 +1,27 @@
+{
+  "name": "gita365",
+  "productName": "GITA 365",
+  "version": "9.99.123",
+  "description": "GITA 365 — Hệ Sinh Thái Gia Đình Thịnh Vượng. Bản đồ một gia đình thịnh vượng: 5 khoang, 9 vai, 5 tầng, 1.000 kịch bản chuyên môn.",
+  "author": {
+    "name": "Học viện GITA",
+    "email": "hotro@gita365.vn"
+  },
+  "homepage": "https://truongnhatquang.com",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "chuan-bi": "node chuan-bi.js",
+    "start": "npm run chuan-bi && electron .",
+    "dist": "npm run chuan-bi && electron-builder",
+    "dist:win": "npm run chuan-bi && electron-builder --win",
+    "dist:mac": "npm run chuan-bi && electron-builder --mac",
+    "dist:linux": "npm run chuan-bi && electron-builder --linux",
+    "dist:all": "npm run chuan-bi && electron-builder -mwl"
+  },
+  "devDependencies": {
+    "electron": "^33.4.11",
+    "electron-builder": "^25.1.8"
+  }
+}
