@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070510">
+<!-- Lớp bảo vệ đi theo trang, không phụ thuộc máy chủ đặt tiêu đề hay không.
+     GitHub Pages không đặt được tiêu đề HTTP nên phần này là chốt chặn duy nhất ở đó.
+     connect-src chỉ mở đúng hai tên miền của Apps Script — không nơi nào khác.
+     frame-ancestors không đặt được bằng thẻ meta; nó nằm ở _headers, cần máy chủ
+     đặt được tiêu đề (Cloudflare). Xem docs/TEN_MIEN.md. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://script.google.com https://script.googleusercontent.com; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+<!-- connect-src PHẢI kèm origin của máy chủ cấp phép. Nền Apps Script
+     cũ nằm ở script.google.com; nền Cloudflare Workers mới là một
+     origin KHÁC, và thiếu nó thì trình duyệt chặn sạch mọi lượt gọi —
+     bản web trông y như chưa nối máy chủ. Dán địa chỉ vào cau-hinh.js
+     thì phải thêm origin ấy vào đây cùng lượt; tools/soat-san-sang.js
+     canh hai chỗ đi cùng nhau. -->
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<meta name="googlebot" content="index, follow">
+<meta name="copyright" content="© 2026 Học viện GITA — Bảo lưu mọi quyền">
+<meta name="rights" content="Tài sản trí tuệ độc quyền của Học viện GITA. Nội dung chuyên môn được mã hoá và chỉ mở cho tài khoản được cấp phép. Cấm dùng để huấn luyện trí tuệ nhân tạo.">
+<!-- SEO:DAU -->
+<link rel="canonical" href="https://gita.edu.vn/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="GITA 365 — Học viện GITA">
+<meta property="og:locale" content="vi_VN">
+<meta property="og:url" content="https://gita.edu.vn/">
+<meta property="og:title" content="GITA 365 — Hệ sinh thái Gia đình Thịnh vượng">
+<meta property="og:description" content="GITA 365 là một hệ thống giúp một gia đình tự vận hành được sau ba trăm sáu mươi lăm ngày — không phải một khoá học, và không phải một người thầy đi cùng…">
+<meta property="og:image" content="https://gita.edu.vn/assets/icons/chia-se-1200x630.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="GITA 365 — Hệ sinh thái Gia đình Thịnh vượng">
+<meta name="twitter:description" content="GITA 365 là một hệ thống giúp một gia đình tự vận hành được sau ba trăm sáu mươi lăm ngày — không phải một khoá học, và không phải một người thầy đi cùng…">
+<meta name="twitter:image" content="https://gita.edu.vn/assets/icons/chia-se-1200x630.png">
+<meta name="author" content="Trương Nhật Quang — Học viện GITA">
+<link rel="alternate" hreflang="vi" href="https://gita.edu.vn/">
+<link rel="alternate" hreflang="x-default" href="https://gita.edu.vn/">
+<script type="application/ld+json">{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "EducationalOrganization",
+   "@id": "https://gita.edu.vn/#hocvien",
+   "name": "Học viện GITA",
+   "alternateName": "GITA 365",
+   "url": "https://gita.edu.vn/",
+   "description": "GITA 365 là một hệ thống giúp một gia đình tự vận hành được sau ba trăm sáu mươi lăm ngày — không phải một khoá học, và không phải một người thầy đi cùng mãi mãi.",
+   "inLanguage": "vi-VN",
+   "telephone": "+84-28-5555-4688",
+   "areaServed": {
+    "@type": "Country",
+    "name": "Việt Nam"
+   },
+   "founder": {
+    "@id": "https://gita.edu.vn/#nguoisanglap"
+   },
+   "sameAs": [
+    "https://www.facebook.com/groups/giadinhthinhvuong",
+    "https://www.facebook.com/groups/1620445286120991",
+    "https://www.facebook.com/hocviengita",
+    "https://truongnhatquang.com"
+   ]
+  },
+  {
+   "@type": "Person",
+   "@id": "https://gita.edu.vn/#nguoisanglap",
+   "name": "Trương Nhật Quang",
+   "jobTitle": "Người sáng lập Học viện GITA",
+   "url": "https://truongnhatquang.com",
+   "worksFor": {
+    "@id": "https://gita.edu.vn/#hocvien"
+   },
+   "knowsAbout": [
+    "Giáo dục gia đình",
+    "Huấn luyện phụ huynh",
+    "Thói quen học tập",
+    "Phát triển năng lực học sinh"
+   ]
+  },
+  {
+   "@type": "WebSite",
+   "@id": "https://gita.edu.vn/#trang",
+   "url": "https://gita.edu.vn/",
+   "name": "GITA 365 — Hệ sinh thái Gia đình Thịnh vượng",
+   "inLanguage": "vi-VN",
+   "publisher": {
+    "@id": "https://gita.edu.vn/#hocvien"
+   }
+  },
+  {
+   "@type": "FAQPage",
+   "@id": "https://gita.edu.vn/#hoidap",
+   "mainEntity": [
+    {
+     "@type": "Question",
+     "name": "Nhà tôi bận lắm, có theo nổi không?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Mức tối thiểu của GITA365 là mười phút mỗi tối, và mức đó đặt sao cho hôm mệt nhất vẫn làm được. Người bận không thiếu thời gian; họ có thời gian ở dạng vụn. Coach sẽ xếp lại việc theo dạng vụn ấy."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Con tôi không hợp tác thì sao?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Chặng đầu không nhắm vào con. Nhắm vào người lớn trước — vì trong một nhà, người lớn đổi trước, con đổi sau, và luôn chậm hơn một nhịp. Rất nhiều nhà thấy con đổi ở tuần thứ năm mà chưa từng ép con điều gì."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Bao lâu thì thấy kết quả?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Số lần phải nhắc thường giảm rõ ở tuần ba tới tuần năm. Điểm số thì muộn hơn, thường ở tuần chín tới mười hai. Ai hứa với anh chị kết quả trong hai tuần thì người đó đang bán hàng."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Vợ chồng tôi không cùng quan điểm, có làm được không?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Được, và rất nhiều nhà bắt đầu như vậy. Cách làm là một người làm và ghi bảng để trên bàn ăn, không thuyết phục bằng lời. Phần lớn người còn lại nhập cuộc trong khoảng tuần thứ năm."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Dữ liệu nhà tôi có an toàn không?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Hồ sơ mỗi nhà khoá theo tài khoản. Coach của nhà nào chỉ đọc được nhà đó. Nội dung chuyên môn được mã hoá và chỉ mở theo tầng được cấp phép. Không bán, không chia sẻ, không dùng để huấn luyện trí tuệ nhân tạo bên ngoài."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Nếu giữa chừng nhà tôi dừng thì sao?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Dừng thì báo, và Học viện giữ nguyên hồ sơ. Rất nhiều nhà quay lại sau vài tháng, và quay lại thì không phải bắt đầu từ số không. Không ai bị trách vì đã dừng."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Coach có thể làm việc riêng với nhà tôi ngoài hệ thống không?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Không, và đây là điều Học viện xử nặng nhất: đưa số riêng hoặc làm việc ngoài hệ thống thì Coach bị hạ 50% KPI trong ba tháng. Lý do không phải là kiểm soát — mà là nếu người đó nghỉ, nhà mình phải có người tiếp được ngay."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Tôi không rành công nghệ thì dùng được không?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Toàn bộ hệ thống được dựng theo một yêu cầu: người không rành công nghệ nhất cũng phải dùng được. Mọi màn hình tự nói cần làm gì, mọi việc chỉ cần bấm, và chỗ nào chưa mở thì có nút mở ngay tại đó."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Đăng ký rồi có phải trả tiền ngay không?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Không. Bước 2 chỉ là lập tài khoản và mã gia đình. Bài test ở bước 3 cũng chưa thu. Tiền chỉ được bàn sau bước 5, khi đã biết nhà mình cần chặng nào."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Con tôi không chịu làm bài test thì sao?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Thì dừng ở bước 3 và bên em làm việc với bố mẹ trước. Bên em không ép cháu làm bài, vì bài làm trong trạng thái bị ép cho ra số liệu sai."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Làm test xong có được xem kết quả luôn không?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Có, nhưng bên em không gửi file rồi thôi. Phải có một buổi đọc cùng nhau, vì một bảng điểm đọc một mình rất dễ hiểu sai."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Bảy ngày xong thì bắt buộc phải đi tiếp không?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Không. Hết bảy ngày anh chị dừng lúc nào cũng được, và bản đồ nền của cháu vẫn là của nhà mình, mang đi đâu cũng dùng được."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Bố mẹ có phải làm bài test không?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Có. Phụ huynh có bài riêng, và trong nhiều nhà thì bài của bố mẹ nói được nhiều hơn bài của con."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Bao lâu thì đi hết sáu bước?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Nhanh nhất là mười ngày: một buổi giới thiệu, một buổi test, một buổi đọc hồ sơ và định hướng, rồi bảy ngày làm. Nhà nào bận thì ba tuần."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Nếu bên em kết luận con tôi cần chuyên môn khác thì sao?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Thì em nói ngay ở bước 4 hoặc bước 5, và em giới thiệu sang chỗ đúng. Bên em không giữ nhà mình lại cho một việc bên em không làm được."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Dữ liệu của nhà tôi ai xem được?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Anh chị, cháu, và người đồng hành được phân công cho nhà mình. Không ai khác. Và nhà mình không xuất được ra ngoài — đó là để bảo vệ chính nhà mình."
+     }
+    }
+   ]
+  }
+ ]
+}</script>
+<!-- /SEO:DAU -->
+<title>GITA 365 · Hệ Sinh Thái Gia Đình Thịnh Vượng</title>
+<meta name="description" content="GITA 365 — bản đồ một gia đình thịnh vượng. Năm khoang, chín vai, năm tầng, 1.000 kịch bản. Sau 365 ngày, nhà mình vận hành được mà không cần ai canh.">
+<link rel="stylesheet" href="assets/fonts.css">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GITA 365">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%23F5B942'/%3E%3Ctext x='50' y='68' font-family='sans-serif' font-size='46' font-weight='900' text-anchor='middle' fill='%231A1006'%3EG%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+
+<div id="aura"><b></b><b></b><b></b><b></b><i></i></div>
+<div id="grid"></div>
+
+<div id="app">
+<!-- SEO:THAN -->
+<div class="seo-shell">
+<h1>GITA 365 — Hệ sinh thái Gia đình Thịnh vượng</h1>
+<p><strong>GITA 365 là một hệ thống giúp một gia đình tự vận hành được sau ba trăm sáu mươi lăm ngày — không phải một khoá học, và không phải một người thầy đi cùng mãi mãi.</strong></p>
+<p>Phần lớn cha mẹ Việt Nam không thiếu tình thương và cũng không thiếu cố gắng. Cái thiếu là một bản đồ: làm gì trước, làm gì sau, và làm sao biết mình đang đi đúng.</p>
+
+<ul><li>Nhà thì có một việc, còn lời khuyên thì có một trăm — và một trăm lời khuyên tốt đặt cạnh nhau thì thành ra không lời nào làm được.</li>
+<li>Mọi chương trình đều đo bằng cảm giác: thấy con ngoan hơn, thấy nhà vui hơn. Cảm giác lên xuống theo tuần, nên ba tháng sau không ai biết mình đã đi được bao xa.</li>
+<li>Người dẫn giỏi thì nhà đổi; người dẫn nghỉ việc thì nhà trôi về chỗ cũ. Cái đổi được nằm trong đầu một người, không nằm trong hệ thống.</li></ul>
+<p><em>GITA365 dựng để chữa đúng ba chỗ đó: một bản đồ có thứ tự, mọi thứ đo được bằng số, và cách làm nằm trong hệ thống chứ không nằm trong trí nhớ của một người.</em></p>
+
+<section id="gita-hua">
+<h2>Bốn lời hứa của GITA 365</h2>
+<ul><li><strong>Có một bản đồ, không có một đống lời khuyên</strong> — Năm khoang, chín vai, mười hai chặng. Mỗi chặng nói rõ: làm gì, ai làm, bao lâu, và xong thì trông như thế nào.</li>
+<li><strong>Mọi thứ đo được, không đo bằng cảm giác</strong> — Số lần phải nhắc con, giờ ngồi vào bàn, số bữa cả nhà cùng bàn. Con số thì không nói dối, và ba tháng sau mở ra là biết mình đã đi được bao xa.</li>
+<li><strong>Người đồng hành thật, không phải một ứng dụng để đó</strong> — Tư vấn mở cửa, Coach đi cùng từng chặng, Giáo viên dạy đúng thứ đang cần. Mọi việc để lại dấu trên hệ thống, nên người này nghỉ thì người sau tiếp được ngay.</li>
+<li><strong>Đích là nhà mình tự chạy, không phải nhà mình phụ thuộc</strong> — Ngày Học viện thôi nhắc mà nhà vẫn giữ được nếp — đó mới là ngày xong. Một hệ thống giữ khách mãi mãi là một hệ thống đã thất bại ở phần quan trọng nhất.</li></ul>
+</section>
+
+<section id="gita-khong-hua">
+<h2>Sáu điều GITA 365 KHÔNG làm</h2>
+<p>Phần này để đây có chủ ý. Ai hứa với anh chị mọi thứ thì đang bán một thứ khác.</p>
+<ul><li>Không chữa bệnh. Có dấu hiệu về sức khoẻ tâm thần hoặc thể chất thì Học viện chuyển tuyến sang chuyên khoa y tế, và chuyển ngay chứ không giữ lại thử thêm.</li>
+<li>Không hứa điểm số. Học viện cam kết quy trình, người đồng hành và bảng đo hằng tuần — không cam kết con lên mấy điểm.</li>
+<li>Không làm hộ. Việc của nhà thì nhà làm; Học viện giữ chuẩn và soi đường. Chữ do người khác viết thì không ai giữ được.</li>
+<li>Không nhanh. Bảy ngày để nhìn cho đúng, hai mươi mốt ngày để hiểu cơ chế, chín mươi ngày để dựng hệ thống. Ai cần kết quả trong hai tuần thì đây không phải chỗ.</li>
+<li>Không hợp với mọi nhà. Nhà đang trong biến cố lớn, hoặc chưa có một người lớn đủ ổn định để giữ nhịp, thì Tư vấn sẽ nói thẳng là chưa hợp và hẹn lại.</li>
+<li>Không bán dữ liệu. Hồ sơ của một nhà là của nhà đó. Không chia sẻ, không bán, không dùng để huấn luyện trí tuệ nhân tạo bên ngoài — điều khoản này nằm trong mọi hợp đồng.</li></ul>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section id="chin-vai">
+<h2>Các vai trong một gia đình vận hành được</h2>
+<ul><li><strong>Chuyên gia tư vấn</strong> — Người mở cửa. Buổi đầu chỉ nghe, và nói thẳng nếu thấy chưa hợp.</li>
+<li><strong>Coach</strong> — Người đi cùng từng chặng. Không làm hộ, nhưng không để nhà đi một mình.</li>
+<li><strong>Giáo viên</strong> — Dạy đúng thứ học viên đang cần để đi tiếp, không dạy hết những gì mình biết.</li>
+<li><strong>Chuyên gia đánh giá</strong> — Trả lại sự thật bằng dữ liệu. Không chiều lòng ai, kể cả Học viện.</li>
+<li><strong>Mentor</strong> — Chạy phần nền dưới cả năm khoang — phần không ai thấy nhưng thiếu thì mọi thứ đứng.</li>
+<li><strong>Trợ lý ảo</strong> — Trả lời trong đúng phạm vi tầng, và chuyển đúng câu hỏi khó tới đúng người.</li></ul>
+</section>
+
+<section id="bon-chang-dau">
+<h2>Bốn chặng đầu tiên của một nhà mới vào</h2>
+<p>Ba mươi ngày đầu quyết định nhà mình có đi tiếp hay không.</p>
+<h3>Nhìn cho đúng <small>(7 ngày)</small></h3>
+<p><strong>Làm gì:</strong> Đo thật trạng của nhà mình bằng số, không bằng cảm giác. Ghi ba dòng mỗi tối.</p>
+<p><strong>Xong khi:</strong> Có bảng số đầu tiên, và cả nhà cùng nhìn vào một bảng.</p>
+<h3>Hiểu cơ chế <small>(21 ngày)</small></h3>
+<p><strong>Làm gì:</strong> Gọi tên được mô thức lặp của nhà mình. Vì sao tối thứ Tư luôn căng, vì sao con luôn tuột ở chỗ ấy.</p>
+<p><strong>Xong khi:</strong> Nói được một câu có số về chỗ nhà mình hay hỏng, bằng lời của chính mình.</p>
+<h3>Dựng hệ thống <small>(90 ngày)</small></h3>
+<p><strong>Làm gì:</strong> Đặt nếp: giờ ngủ, bữa tối, khung học, cách nói khi nóng. Mỗi nếp có mức tối thiểu cho ngày mệt.</p>
+<p><strong>Xong khi:</strong> Nếp còn giữ được trong tuần có biến cố — đó mới là nếp thật.</p>
+<h3>Trao lại <small>(365 ngày)</small></h3>
+<p><strong>Làm gì:</strong> Chuyển dần việc giữ nhịp từ Coach sang chính người trong nhà. Học viện lùi lại từng bước.</p>
+<p><strong>Xong khi:</strong> Học viện thôi nhắc mà nhà vẫn chạy. Và nhà đủ sức chỉ đường cho một nhà khác.</p>
+</section>
+
+<section id="bat-dau">
+<h2>Bắt đầu như thế nào</h2>
+<ol><li><strong>Đọc bản đồ trước</strong> — Xem nhà mình nằm ở đâu trên năm khoang. Mười phút, và không cần chuẩn bị gì.</li>
+<li><strong>Viết ô đầu tiên của bản đồ cá nhân</strong> — Ô số một: vì sao nhà mình bắt đầu. Chỉ một câu, và câu đó giữ mình lại ở tuần thứ ba.</li>
+<li><strong>Ghi ba dòng đầu tiên vào sổ</strong> — Giờ vào bàn, giờ rời bàn, số lần phải nhắc. Ba mươi ngày sau đọc lại là thấy mô thức.</li>
+<li><strong>Hỏi trợ lý một câu</strong> — Bất cứ câu gì. Không ai chấm điểm câu hỏi, và câu khó sẽ được chuyển tới đúng người.</li></ol>
+</section>
+
+<section id="cach-dong-hanh">
+<h2>Học viện đồng hành tới đâu — và dừng ở đâu</h2>
+<p>Không nhà nào bỏ cuộc vì hết muốn. Nhà bỏ cuộc vì quá tải, vì không thấy mình đi được tới đâu, hoặc vì lỡ một nhịp rồi ngại quay lại. Cả ba đều nhìn thấy trước được bằng số — nên hệ thống được dựng để bắt tín hiệu sớm và giảm tải, chứ không phải để thúc.</p>
+<ul><li>ĐO</li>
+<li>XẾP BĂNG</li>
+<li>CHẠM ĐÚNG NHỊP</li>
+<li>CỔNG NGHIỆM THU</li>
+<li>TRAO LẠI</li></ul>
+
+<p><strong>Điều Học viện không làm:</strong> Không ràng buộc bằng phí phạt khi dừng giữa chừng. · Không dùng cảm giác có lỗi để giữ nhà lại — không nói &quot;cố thêm chút nữa vì con&quot;. · Không gọi liên tiếp khi nhà đã nói muốn dừng. Một cuộc gọi, hỏi thẳng, rồi để nhà quyết. · Không giữ chân bằng khuyến mãi. Nhà ở lại vì thấy đường đi, không vì thấy rẻ. · Không đổi mục tiêu giữa chặng cho dễ đạt, rồi gọi đó là kết quả.</p>
+<p><strong>Khi nào gia đình rời đi được:</strong></p>
+<ul><li>Tuần 2–3</li>
+<li>Tuần 5–6</li>
+<li>Tháng 3–4</li>
+<li>Trước cổng 90 ngày</li>
+<li>Khi Coach đổi người</li></ul>
+
+<p><em>Đồng hành 100% nghĩa là hệ thống không buông tay trước — không phải là nhà nào cũng đi hết. Nhà nào dừng thì hồ sơ giữ nguyên, và quay lại lúc nào cũng tiếp được từ chỗ đã dừng.</em></p>
+</section>
+
+
+
+<section id="cong-dong">
+<h2>Cộng đồng Gia đình Thịnh vượng</h2>
+<p>Chưa cần là khách hàng vẫn vào được.</p>
+<h3><a href="https://www.facebook.com/groups/giadinhthinhvuong" rel="noopener noreferrer">Nhóm Gia Đình Thịnh Vượng</a></h3>
+<p>Cửa trước của hệ sinh thái. Chỗ một gia đình nghe cách nghĩ của Học viện trước khi quyết bước vào.</p>
+<p><strong>Dành cho:</strong> Bài viết về nếp nhà, cách nói chuyện với con, mô thức đọc được ở mức phổ thông · Câu hỏi của phụ huynh và câu trả lời công khai · Lịch buổi chia sẻ, sự kiện, lửa trại · Chuyện của gia đình đã đi — CHỈ khi chính gia đình ấy đồng ý và tự kể</p>
+<h3><a href="https://www.facebook.com/groups/1620445286120991" rel="noopener noreferrer">Nhóm Đại sứ GITA 365</a></h3>
+<p>Chỗ đội ngũ giới thiệu học nghề giới thiệu, không phải chỗ bán.</p>
+<p><strong>Dành cho:</strong> Cách kể chuyện Học viện cho đúng · Bản chỉ dẫn referral · Ghi nhận theo mốc, không theo doanh số</p>
+<h3><a href="https://www.facebook.com/hocviengita" rel="noopener noreferrer">Trang Học viện GITA</a></h3>
+<p>Bộ mặt công khai. Nói Học viện là gì và KHÔNG là gì.</p>
+<p><strong>Dành cho:</strong> Giới thiệu, tuyển dụng, thông báo · Nội dung đã duyệt của kho công khai</p>
+</section>
+
+
+<section id="doc-tiep">
+<h2>Đọc sâu từng phần</h2>
+<p>Mỗi phần dưới đây có một trang riêng, viết đủ để dùng được ngay.</p>
+<ul>
+<li><a href="/mo-thuc-huan-luyen-gita.html"><strong>Mô thức huấn luyện GITA</strong></a> — Bốn trụ dẫn dắt toàn bộ chương trình. Đây là phần trả lời câu hỏi &quot;GITA dạy theo cách nào&quot;.</li>
+<li><a href="/nam-tang-dong-hanh.html"><strong>Năm tầng đồng hành</strong></a> — Mỗi tầng có việc riêng, mốc hoàn thành riêng, và cái mất nếu bỏ qua.</li>
+<li><a href="/hanh-trinh-12-chang.html"><strong>Hành trình 12 chặng</strong></a> — Chặng nào cũng có việc làm được, mốc biết mình đã qua, và dấu hiệu biết mình chưa qua.</li>
+<li><a href="/duong-vao.html"><strong>Đường vào sáu bước</strong></a> — Sáu bước, mỗi bước ghi rõ mất bao lâu và xong khi nào.</li>
+<li><a href="/cau-hoi-thuong-gap.html"><strong>Câu hỏi thường gặp</strong></a> — Trả lời thẳng, kể cả những câu Học viện không có lợi khi trả lời thật.</li>
+</ul>
+</section>
+<section id="ai-dung-sau">
+<h2>Ai đứng sau GITA 365</h2>
+<p><strong>Học viện GITA</strong> — Trương Nhật Quang sáng lập và trực tiếp biên soạn mô thức huấn luyện GITA.</p>
+<ul>
+<li>Hotline: <a href="tel:+842855554688">08.5555.4688</a></li>
+<li>Website: <a href="https://truongnhatquang.com" rel="noopener">truongnhatquang.com</a></li>
+<li>Ứng dụng: <a href="https://gita.edu.vn/">gita.edu.vn</a></li>
+</ul>
+</section>
+</div>
+
+<!-- /SEO:THAN --></div>
+
+<div id="modal" role="dialog" aria-modal="true" aria-label="Hộp thoại"><div class="bd"></div><div class="bx"></div></div>
+
+<div id="cmd"><div class="bd"></div><div class="bx">
+  <input id="cmdIn" placeholder="Tìm màn hình, kịch bản, mô thức…" autocomplete="off">
+  <div class="res" id="cmdRes"></div>
+</div></div>
+
+<div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<noscript>
+  <div style="padding:40px;text-align:center;color:#F2F0FA">
+    <h1>GITA 365</h1>
+    <p>Ứng dụng cần bật JavaScript để hiển thị bản đồ gia đình thịnh vượng.</p>
+  </div>
+</noscript>
+
+<script src="gita-app.js"></script>
+<script src="cau-hinh.js"></script>
+<script>
+G.boot();
+if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function (e) {
+      console.warn('[GITA] service worker:', e);
+    });
+  });
+}
+</script>
+
+</body>
+</html>

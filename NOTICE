@@ -1,0 +1,19 @@
+GITA 365 — THÔNG BÁO BẢN QUYỀN
+
+Kho mã này chứa phần mềm và tài sản trí tuệ độc quyền của Học viện GITA.
+Xem LICENSE để biết đầy đủ điều khoản.
+
+NỘI DUNG CHUYÊN MÔN KHÔNG NẰM TRONG KHO MÃ NÀY.
+1.000 kịch bản, 220 phác đồ, 42 mô thức huấn luyện, mô hình Gia đình vận
+hành 365 và bộ ngôn từ dẫn dắt được lưu dưới dạng đã mã hoá AES-256-GCM.
+Khoá giải mã do máy chủ cấp phép cấp sau khi đăng nhập, theo đúng vai và
+tầng của từng tài khoản, có thời hạn.
+
+Không có khoá thì các tệp trong kho/ chỉ là dữ liệu ngẫu nhiên.
+
+CẤM DÙNG ĐỂ HUẤN LUYỆN TRÍ TUỆ NHÂN TẠO.
+Không được dùng bất kỳ phần nào của kho mã hay kho tri thức này để huấn
+luyện, tinh chỉnh, nhúng vector, lập chỉ mục hay làm dữ liệu đầu vào cho
+bất kỳ mô hình hoặc sản phẩm nào.
+
+Liên hệ cấp phép: Học viện GITA · 08.5555.4688 · truongnhatquang.com

@@ -1,0 +1,65 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ── Tài sản GITA 365 — không bao giờ đưa lên kho mã ──
+kho-goc/
+kho/khoa.json
+GITA365_v7*_*.html
+GITA365-v*-gioi-thieu.html
+# Bản xem thử dựng từ bản giới thiệu — tệp dựng ra, không phải mã nguồn.
+# Dựng lại bằng: python3 tools/ban-xem-thu.py
+ban-xem-thu.html
+
+# Giấy phép cấp cho từng máy — mang khoá thật
+giay-phep/
+
+# Bản sao lưu do tools/sao-luu.js dựng — mang TOÀN BỘ khoá mật và toàn
+# bộ kho-goc chưa mã hoá. Chặn HAI LỚP: sao-luu.js đã từ chối ghi vào
+# trong thư mục kho, và dòng này chặn nốt trường hợp tệp lọt vào đây
+# bằng đường khác — chép tay, giải nén nhầm chỗ, một công cụ thứ ba.
+# Cùng lý do bốn tệp máy sinh bị chặn hai lớp ở .claude/settings.json:
+# lớp nhắc-nhở thì phụ thuộc trí nhớ, còn lớp chặn thì không.
+*.gita
+*.bien-nhan.txt
+
+# Phiếu quyết do tools/phieu-quyet.js dựng. Nó chép NGUYÊN VĂN nội dung
+# của 30 sổ chờ nằm trong gói NGHỀ — cùng lý do với kho-goc/ và bản đọc
+# bộ 13 tờ A0: nội dung nghề của Học viện thì không để lọt vào một kho
+# mã ai cũng nhân bản được. Chặn hai lớp: phieu-quyet.js cũng từ chối
+# ghi vào một đường mà git đang theo dõi.
+PHIEU-QUYET.md
+*-phieu-quyet.md
+
+# Bản đọc bộ 13 tờ A0 — cùng lý do với kho-goc/: đây là nội dung của
+# Học viện dưới dạng chữ thường, 48 KB, đọc được bằng mắt. Kho nội dung
+# thì đã mã hoá rồi mới đẩy; bản đọc trung gian mà để lọt vào kho mã là
+# mở đúng cái cửa đã khoá ở chỗ khác.
+# Dựng lại: python3 tools/doc-ban-ve.py <đường-dẫn PDF>
+tools/ban-ve.json
+
+# Ảnh chụp màn làm việc — chúng mang tên nhà và cả hàng đợi công việc
+# nội bộ. Cùng lý do với kho-goc/: nội dung của Học viện thì không để
+# dạng đọc được bằng mắt trong kho mã. Chụp lại: xem docs/CACH_LAM.md
+man-*.png
