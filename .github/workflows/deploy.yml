@@ -1,0 +1,52 @@
+# ═══════════════════════════════════════════════════════════════
+# GITA 365 — Tự giải nén web-app.zip rồi xuất bản lên GitHub Pages
+# Chủ hệ chỉ cần tải lên MỘT tệp web-app.zip. Quy trình này tự lo phần
+# còn lại: giải nén giữ đúng thư mục assets/ kho/ src/, rồi đăng.
+# Không thể mất tệp vì tải lên chỉ một tệp duy nhất.
+# ═══════════════════════════════════════════════════════════════
+name: Xuat ban Web App GITA365
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ 'web-app.zip' ]
+  workflow_dispatch:   # cho phép bấm chạy tay ở tab Actions
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Lay ma nguon
+        uses: actions/checkout@v4
+
+      - name: Giai nen web-app.zip
+        run: |
+          mkdir -p _site
+          unzip -o web-app.zip -d _site
+          # .nojekyll de GitHub Pages phuc vu ca tep bat dau bang dau _
+          touch _site/.nojekyll
+          echo "=== Cay tep se xuat ban ==="
+          ls -la _site
+          echo "assets: $(find _site/assets -type f 2>/dev/null | wc -l) tep"
+          echo "kho:    $(find _site/kho -type f 2>/dev/null | wc -l) tep"
+
+      - name: Dong goi cho Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Xuat ban
+        id: deployment
+        uses: actions/deploy-pages@v4
