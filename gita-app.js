@@ -1,10 +1,10 @@
 /* ═══════════════════════════════════════════════════════════════
-   GITA 365 — BẢN GỘP CỦA 130 TỆP MÃ NGUỒN
+   GITA 365 — BẢN GỘP CỦA 131 TỆP MÃ NGUỒN
 
    TỆP NÀY DỰNG RA, KHÔNG PHẢI MÃ NGUỒN. Đừng sửa ở đây — sửa trong
    src/ rồi chạy: node tools/gop-src.js
 
-   Gộp để cắt số lượt hỏi mạng từ 161 xuống 1. Trên 3G yếu, mỗi
+   Gộp để cắt số lượt hỏi mạng từ 162 xuống 1. Trên 3G yếu, mỗi
    lượt hỏi là một lần chờ độ trễ.
 
    31 tệp dựng màn của NGHỀ đã ra gita-nghe.js — chỉ tải khi
@@ -45,7 +45,7 @@ window.G = G;
    trong khi nội dung đổi là một cách nói dối không cố ý. */
 G.META = {
   name: 'GITA 365',
-  version: '9.99.174',
+  version: '9.99.183',
   tagline: 'Hệ Sinh Thái Gia Đình Thịnh Vượng',
   hotline: '08.5555.4688',
   site: 'truongnhatquang.com',
@@ -97,6 +97,11 @@ G.PERM = {
      đo lường và giám sát hiệu quả hoạt động. Việc động vào tiền (duyệt
      chi, bảng lương, tạo đơn thu) vẫn dừng ở R03. */
   fin_view:4, fin_payout:3, fin_payroll:3, fin_create_order:3,
+  /* CRM — mặc định chỉ R01 Super Admin · R02 Admin hệ thống · R03 Giám đốc.
+     Super Admin cấp thêm/thu hồi cho bộ phận khác qua ngăn "Cấp quyền"
+     (lớp cấp quyền tính lúc đọc ở máy chủ). Không gắn capMo:'nghe' — CRM là
+     màn quản trị, dữ liệu ở máy chủ, không nằm trong gói nội dung nghề. */
+  crm_view:3,
   pro_approve:4, pro_report:4, pro_override:4, pro_assign:5, pro_coach:8, pro_assess:10,
   pro_view_all:4, pro_consult:11,
   /* Dòng T5-PRO dừng ở Senior Coach. Sổ tay nâng cao ghi người đọc:
@@ -194,6 +199,7 @@ G.PERM_TEN = {
   sua_noi_dung:'Sửa nội dung hiển thị',
   dh_toan_he:'Điều hành toàn hệ và nhật ký',
   nghe_chung:'Kho nghề và công cụ dẫn dắt',
+  crm_view:'Xem CRM quan hệ khách hàng',
   xuat_pdf:'Xuất bản in PDF',            xuat_sheet:'Đẩy Google Sheet về Drive'
 };
 
@@ -911,7 +917,7 @@ G.NAV = [
     {v:'nguoi-dan-dat',t:'Hành trình người dẫn dắt',   h:'Lớn lên bằng chính nghề mình làm',   ic:'flame', perm:'pro_consult', capMo:'nghe'},
     {v:'doi-ngu',     t:'Đội ngũ dẫn dắt',             h:'Ai đang giữ lửa cho những nhà nào',  ic:'users', perm:'pro_consult', capMo:'nghe'},
     {v:'dieu-hanh',   t:'Trung tâm điều hành',         h:'Toàn cảnh sức khoẻ hệ sinh thái',    ic:'shield', perm:'dh_toan_he', capMo:'dieuhanh'},
-    {v:'crm',         t:'CRM · quan hệ khách hàng',    h:'Phễu · hẹn tiếp · doanh thu · một chỗ đọc trọn một nhà', ic:'users', star:1, perm:'nghe_chung', capMo:'nghe'},
+    {v:'crm',         t:'CRM · quan hệ khách hàng',    h:'Phễu · hẹn tiếp · doanh thu · một chỗ đọc trọn một nhà', ic:'users', star:1, perm:'crm_view', capMo:'chung'},
     {v:'van-ban',     t:'Bộ văn bản chuẩn',            h:'22 mẫu · giao việc, bàn giao, quyết định',ic:'book', perm:'pro_consult', capMo:'nghe'},
     {v:'tai-chinh-qt',t:'Hệ quản trị tài chính',       h:'6 nguyên tắc · 5 sổ · 6 chốt kiểm soát',ic:'chart', perm:'fin_view', capMo:'taichinh'},
     {v:'quy-trinh-tc',t:'Quy trình tài chính',         h:'Thanh toán · hoàn trả · lương thưởng',ic:'target', perm:'fin_view', capMo:'taichinh'},
@@ -953,6 +959,11 @@ G.NAV = [
    essence:'Nơi cấp quyền, mở và khoá tài khoản. Mọi thao tác ở đây đều vào nhật ký kèm tên người làm.',
    items:[
     {v:'noi-may-chu', t:'Nối máy chủ',                 h:'Dán địa chỉ · gọi thử · sáu bước dựng', ic:'orbit', perm:'qt_trang', capMo:'chung', star:1},
+    /* Khoá khuôn mặt — an ninh tài khoản CỦA MỖI NGƯỜI, nên KHÔNG khoá ở
+       qt_trang: ai đăng nhập cũng tự bật/gỡ khuôn mặt cho tài khoản mình.
+       Không perm, không gói — hiện với mọi vai. Khuôn mặt ở lại thiết bị;
+       máy chủ chỉ giữ khoá công khai (Điều 13). */
+    {v:'khoa-mat', t:'Khoá khuôn mặt',                 h:'Bật đăng nhập bằng Face ID / Windows Hello · khuôn mặt không rời máy', ic:'lock', capMo:'chung'},
     /* Màn phòng tài chính khoá ở fin_view (R01–R04 đọc; R01–R03 làm).
        Nó KHÔNG khoá ở qt_trang như các màn khác của nhóm này: người
        của phòng tài chính không phải người quản trị trang, và bắt họ
@@ -1214,6 +1225,7 @@ G.UI = {
     loginHint:'Chưa biết mật khẩu? Mở danh sách để xem đủ mười lăm tài khoản kèm mật khẩu, và bấm Vào là đăng nhập ngay.',
     seePw:'Xem tài khoản và mật khẩu',
     login:'Đăng nhập', pw:'mật khẩu',
+    loginFace:'Đăng nhập bằng khuôn mặt',
     auditorsNote:'Bốn chuyên gia phản biện cũng có tài khoản riêng — xem trong danh sách.',
     tabLaban:'LA BÀN', tabGiatri:'GIÁ TRỊ', tabVanhoa:'VĂN HOÁ', tabNhip:'NHỊP', tabCongdong:'CỘNG ĐỒNG',
     vision:'TẦM NHÌN', mission:'SỨ MỆNH', compassAct:'KIM CHỈ NAM HÀNH ĐỘNG',
@@ -1249,6 +1261,7 @@ G.UI = {
     loginHint:'Don\u2019t know the password? Open the list to see all fifteen accounts with their passwords, and hit Enter to sign in.',
     seePw:'See accounts and passwords',
     login:'Sign in', pw:'password',
+    loginFace:'Sign in with face',
     auditorsNote:'The four adversarial reviewers have their own accounts — see the list.',
     tabLaban:'COMPASS', tabGiatri:'VALUES', tabVanhoa:'CULTURE', tabNhip:'RHYTHM', tabCongdong:'COMMUNITY',
     vision:'VISION', mission:'MISSION', compassAct:'GUIDING PRINCIPLES',
@@ -1331,6 +1344,7 @@ G.ITEM_EN = {
   'doi-ngu':['The guiding team','Who keeps the fire for which families'],
   'dieu-hanh':['Control room','Whole-ecosystem health'],
   'crm':['CRM · customer relationships','Pipeline · follow-ups · revenue · one place per family'],
+  'khoa-mat':['Face key','Sign in with Face ID / Windows Hello · your face never leaves the device'],
   'nguoi-dung':['People & permissions','Accounts, roles, access levels'],
   'kiem-duyet':['Vault moderation','Professional standard before publishing'],
   'tang-truong':['Finance & growth','Cash that can carry the mission'],
@@ -2002,8 +2016,16 @@ U.P = {
   out:'M15 4h4v16h-4M11 8l-4 4 4 4M7 12h10'
 };
 U.ic = function(n,cls){
-  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" ' +
-         'stroke-linecap="round" stroke-linejoin="round" class="' + (cls||'') + '" aria-hidden="true">' +
+  /* width/height ATTRIBUTES (không chỉ CSS) là SÀN CỨNG chống phình.
+     Trên WebKit trong webview (Safari, các app nhúng), một <svg> chỉ có
+     cỡ bằng CSS `em` có thể BỎ QUA cỡ ấy và nở ra kín khung — biểu tượng
+     to bằng cả màn hình, đúng lỗi ảnh chụp trên iPhone. Thuộc tính 24×24
+     ghim cỡ nội tại; CSS (`.w-4{...!important}`, `svg{1.15em}`, `.btn svg`)
+     vẫn thắng ở nơi có mặt, nên hình khi CSS chạy KHÔNG đổi — chỉ khi CSS
+     cỡ-em không áp được trên svg thì cái sàn 24px cứu, thay vì phình. */
+  return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+         'stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" ' +
+         'class="' + (cls||'') + '" aria-hidden="true">' +
          '<path d="' + (U.P[n] || U.P.spark) + '"/></svg>';
 };
 
@@ -2986,11 +3008,20 @@ G.doiMatKhau = function(){
   if(r !== true){ bao(r); return; }
   if(moi === cu){ bao('Mật khẩu mới phải khác mật khẩu cũ.'); return; }
   bao('Đang đổi…');
-  goi({ fn:'doiMatKhau', u:G.S.acc && G.S.acc.u, token:G.PHIEN_TOKEN||'', cu:cu, moi:moi })
+  /* Qua goiMayChu (không ném khi !ok) để bắt được CANMAT — tài khoản đã
+     bật khoá mặt thì đổi mật khẩu đòi quét mặt tươi. stCanMat tự quét rồi
+     thử lại. Chống chiếm tài khoản: kẻ trộm mật khẩu cũ không đổi được. */
+  if(!G.goiMayChu){ bao('Chưa nối máy chủ. Bản mẫu không đổi được mật khẩu.'); return; }
+  var chay = function(){ return G.goiMayChu('doiMatKhau', { cu:cu, moi:moi }); };
+  (G.stCanMat ? G.stCanMat(chay) : chay())
     .then(function(d){
-      G.U.closeModal();
-      G.U.toast(d.thongBao || 'Đã đổi mật khẩu. Đăng nhập lại.','ok');
-      setTimeout(function(){ if(G.dangXuat) G.dangXuat(); }, 1500);
+      if(d && d.ok){
+        G.U.closeModal();
+        G.U.toast('Đã đổi mật khẩu. Đăng nhập lại.','ok');
+        setTimeout(function(){ if(G.dangXuat) G.dangXuat(); }, 1500);
+      } else {
+        bao((d && d.error) || 'Không đổi được mật khẩu.');
+      }
     })
     .catch(function(e){ bao(e.message); });
 };
@@ -3058,6 +3089,249 @@ G.datLaiMatKhau = function(){
     })
     .catch(function(e){ bao(e.message); });
 };
+
+})();
+
+/* ═════════ src/dang-nhap-mat.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — ĐĂNG NHẬP BẰNG KHUÔN MẶT (phía máy khách)  (9.99.182)
+
+   Chạy nghi thức WebAuthn trong trình duyệt: máy quét MẶT THẬT trên
+   thiết bị (Face ID · Windows Hello · vân tay Android), và chỉ một CHỮ
+   KÝ đi lên máy chủ — khuôn mặt KHÔNG rời máy (Điều 13). Máy chủ
+   (may-chu/sinh-trac.js) giữ đúng một khoá công khai, không mẫu mặt nào.
+
+   Đây là tính năng CHẠY TRÊN MÁY CHỦ (Workers) — giống CRM, bảng giá:
+   chưa nối máy chủ thì nút nói "cần nối máy chủ", không dựng giả. Nút
+   chỉ hiện khi trình duyệt CÓ bộ xác thực nền tảng (isUVPAA), vì trên
+   máy không có Face ID/Hello thì mời cũng vô ích.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.VIEWS = G.VIEWS || {};
+
+(function () {
+  var U = G.U, h = U.h, ic = U.ic;
+
+  /* ── base64url ↔ bytes (ArrayBuffer) ── */
+  function b2u(buf) {
+    var b = new Uint8Array(buf), s = '';
+    for (var i = 0; i < b.length; i++) s += String.fromCharCode(b[i]);
+    return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  function u2b(str) {
+    var s = String(str || '').replace(/-/g, '+').replace(/_/g, '/');
+    s += '==='.slice((s.length + 3) % 4);
+    var bin = atob(s), out = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out.buffer;
+  }
+
+  /* Trình duyệt có WebAuthn không, và có bộ xác thực NỀN TẢNG (Face ID/
+     Hello) không — chỉ mời khi có, để không dựng một nút bấm vào là hỏng. */
+  G.stCoWebAuthn = function () {
+    return typeof window !== 'undefined' && !!window.PublicKeyCredential &&
+      !!(navigator.credentials && navigator.credentials.create);
+  };
+  G.stCoNenTang = function () {
+    if (!G.stCoWebAuthn() || !window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable)
+      return Promise.resolve(false);
+    return window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
+      .then(function (x) { return !!x; }).catch(function () { return false; });
+  };
+
+  function loiNguoiDoc(e) {
+    var n = (e && e.name) || '';
+    if (n === 'NotAllowedError') return 'Đã huỷ hoặc hết giờ — chưa quét được khuôn mặt.';
+    if (n === 'InvalidStateError') return 'Thiết bị này đã đăng ký khuôn mặt cho tài khoản rồi.';
+    if (n === 'SecurityError') return 'Trang phải chạy trên HTTPS thì khuôn mặt mới bật được.';
+    if (n === 'NotSupportedError') return 'Thiết bị này chưa hỗ trợ đăng nhập khuôn mặt.';
+    return (e && e.message) || 'Không quét được khuôn mặt.';
+  }
+
+  /* ══ ĐĂNG KÝ khoá mặt (đang đăng nhập) ══ */
+  G.stDangKyKhoaMat = function (ten) {
+    if (!G.stCoWebAuthn()) { U.toast('Thiết bị này chưa hỗ trợ khuôn mặt.', 'err'); return; }
+    if (!G.goiMayChu) { U.toast('Cần nối máy chủ trước.', 'err'); return; }
+    U.toast('Đang chuẩn bị — làm theo lời nhắc quét khuôn mặt…', 'ok');
+    G.goiMayChu('dangKyKhoaMatBatDau', { origin: location.origin, ten: ten || '' })
+      .then(function (o) {
+        if (!o || !o.ok) throw new Error((o && o.error) || 'Máy chủ từ chối.');
+        var pk = o.publicKey;
+        pk.challenge = u2b(pk.challenge);
+        pk.user.id = u2b(pk.user.id);
+        (pk.excludeCredentials || []).forEach(function (c) { c.id = u2b(c.id); });
+        return navigator.credentials.create({ publicKey: pk }).then(function (cred) {
+          var r = cred.response;
+          return G.goiMayChu('dangKyKhoaMatXong', {
+            choId: o.choId, ten: ten || '', id: b2u(cred.rawId),
+            response: { clientDataJSON: b2u(r.clientDataJSON), attestationObject: b2u(r.attestationObject) }
+          });
+        });
+      })
+      .then(function (x) {
+        if (x && x.ok) { U.toast('Đã bật đăng nhập bằng khuôn mặt.', 'ok'); G.stDs = null; G.stTaiDs(); }
+        else U.toast((x && x.error) || 'Không bật được.', 'err');
+      })
+      .catch(function (e) { U.toast(loiNguoiDoc(e), 'err'); });
+  };
+
+  /* ══ ĐĂNG NHẬP bằng khoá mặt (chưa đăng nhập) ══ */
+  G.stDangNhapMat = function (u) {
+    u = String(u || '').trim();
+    if (!u) { U.toast('Nhập email trước, rồi bấm khuôn mặt.', 'err'); return; }
+    if (!G.stCoWebAuthn()) { U.toast('Thiết bị này chưa hỗ trợ khuôn mặt.', 'err'); return; }
+    if (!G.goiMayChu) { U.toast('Cần nối máy chủ trước.', 'err'); return; }
+    U.toast('Nhìn vào máy để quét khuôn mặt…', 'ok');
+    G.goiMayChu('dangNhapMatBatDau', { uMat: u, origin: location.origin })
+      .then(function (o) {
+        if (!o || !o.ok) throw new Error((o && o.error) || 'Máy chủ từ chối.');
+        var pk = o.publicKey;
+        pk.challenge = u2b(pk.challenge);
+        (pk.allowCredentials || []).forEach(function (c) { c.id = u2b(c.id); });
+        if (!(pk.allowCredentials || []).length)
+          throw new Error('Tài khoản này chưa bật khuôn mặt trên thiết bị nào. Đăng nhập bằng mật khẩu, rồi bật ở "Khoá khuôn mặt".');
+        return navigator.credentials.get({ publicKey: pk }).then(function (cred) {
+          var r = cred.response;
+          return G.goiMayChu('dangNhapMatXong', {
+            choId: o.choId, id: b2u(cred.rawId),
+            response: {
+              clientDataJSON: b2u(r.clientDataJSON), authenticatorData: b2u(r.authenticatorData),
+              signature: b2u(r.signature),
+              userHandle: r.userHandle ? b2u(r.userHandle) : null
+            }
+          });
+        });
+      })
+      .then(function (x) {
+        if (x && x.ok && x.token) {
+          U.toast('Xin chào — đăng nhập bằng khuôn mặt thành công.', 'ok');
+          G.vaoBangPhienMayChu(x);
+        } else U.toast((x && x.error) || 'Không đăng nhập được bằng khuôn mặt.', 'err');
+      })
+      .catch(function (e) { U.toast(loiNguoiDoc(e), 'err'); });
+  };
+
+  /* ══ XÁC THỰC LẠI BẰNG MẶT (step-up) — trả Promise<true/false> ══
+     Dùng cho việc quan trọng: đổi mật khẩu, gỡ khoá mặt. Quét mặt tươi
+     ngay tại chỗ; kẻ chiếm phiên không có khuôn mặt thật thì không qua. */
+  G.stXacThucLai = function () {
+    if (!G.stCoWebAuthn() || !G.goiMayChu) return Promise.resolve(false);
+    return G.goiMayChu('xacThucLaiMatBatDau', { origin: location.origin }).then(function (o) {
+      if (!o || !o.ok) { U.toast((o && o.error) || 'Chưa bật khoá mặt.', 'err'); return false; }
+      var pk = o.publicKey;
+      pk.challenge = u2b(pk.challenge);
+      (pk.allowCredentials || []).forEach(function (c) { c.id = u2b(c.id); });
+      U.toast('Quét khuôn mặt để xác nhận…', 'ok');
+      return navigator.credentials.get({ publicKey: pk }).then(function (cred) {
+        var r = cred.response;
+        return G.goiMayChu('xacThucLaiMat', {
+          choId: o.choId, id: b2u(cred.rawId),
+          response: {
+            clientDataJSON: b2u(r.clientDataJSON), authenticatorData: b2u(r.authenticatorData),
+            signature: b2u(r.signature), userHandle: r.userHandle ? b2u(r.userHandle) : null
+          }
+        }).then(function (x) {
+          if (x && x.ok) return true;
+          U.toast((x && x.error) || 'Xác thực khuôn mặt thất bại.', 'err'); return false;
+        });
+      });
+    }).catch(function (e) { U.toast(loiNguoiDoc(e), 'err'); return false; });
+  };
+  /* Chạy một việc CẦN xác thực mặt: nếu máy chủ trả CANMAT thì quét mặt
+     rồi thử lại đúng một lần. `chay` là hàm trả Promise của kết quả. */
+  G.stCanMat = function (chay) {
+    return chay().then(function (x) {
+      if (x && x.code === 'CANMAT')
+        return G.stXacThucLai().then(function (ok) { return ok ? chay() : x; });
+      return x;
+    });
+  };
+
+  /* ══ MÀN QUẢN LÝ KHOÁ MẶT ══ */
+  G.stDs = G.stDs || null;
+  G.stNK = G.stNK || null;
+  G.stTaiDs = function () { G.goiMayChu && G.goiMayChu('dsKhoaMat', {}).then(function (x) { G.stDs = x; if (G.render) G.render(); }); };
+  G.stXoa = function (id) {
+    if (!G.goiMayChu) return;
+    /* Gỡ khoá mặt là gỡ lớp bảo vệ → máy chủ đòi xác thực mặt tươi
+       (CANMAT). stCanMat tự quét mặt rồi thử lại. */
+    G.stCanMat(function () { return G.goiMayChu('xoaKhoaMat', { id: id }); }).then(function (x) {
+      if (x && x.ok) { U.toast('Đã gỡ khoá mặt.', 'ok'); G.stDs = null; G.stTaiDs(); }
+      else if (x && x.code !== 'CANMAT') U.toast((x && x.error) || 'Không gỡ được.', 'err');
+    });
+  };
+  G.stTaiNK = function () { G.goiMayChu && G.goiMayChu('nhatKyAnToan', {}).then(function (x) { G.stNK = x; if (G.render) G.render(); }); };
+  G.stThemHoi = function () {
+    var ten = window.prompt('Đặt tên cho thiết bị này (vd: iPhone của mẹ):', 'Thiết bị của tôi');
+    if (ten === null) return;
+    G.stDangKyKhoaMat(ten || 'Thiết bị');
+  };
+
+  /* Nhật ký an toàn — chống lừa đảo bằng cách để người dùng TỰ SOI. */
+  function veNhatKy() {
+    var o = U.sec('Nhật ký an toàn của tài khoản',
+      'Thấy một lượt đăng nhập bạn KHÔNG làm → đổi mật khẩu ngay và gỡ khoá mặt lạ.');
+    var nk = G.stNK;
+    if (!nk) return o + '<p class="note"><button class="btn" onclick="G.stTaiNK()">Tải nhật ký</button></p>';
+    if (!nk.ok) return o + '<p class="note">' + h((nk && nk.error) || 'Cần nối máy chủ.') + '</p>';
+    var TEN = { DANG_NHAP: 'Đăng nhập', DOI_MAT_KHAU: 'Đổi mật khẩu', BUOCMAT: 'Xác thực khuôn mặt',
+      KHOAMAT_DANGKY: 'Bật khoá mặt', KHOAMAT_XOA: 'Gỡ khoá mặt', DAT_LAI_MK: 'Đặt lại mật khẩu (quên)' };
+    var dong = nk.dong || [];
+    if (!dong.length) return o + '<p class="note">Chưa có hoạt động nào trong sổ.</p>';
+    return o + U.tbl(['Lúc', 'Việc', 'Chi tiết'],
+      dong.map(function (r) {
+        return [h((r.luc || '').slice(0, 19).replace('T', ' ')),
+          h(TEN[r.viec] || r.viec), h(r.chiTiet || '')];
+      }));
+  }
+
+  G.VIEWS['khoa-mat'] = function () {
+    var o = '<div class="hd"><h2>' + ic('lock') + ' An toàn tài khoản · khuôn mặt</h2>' +
+      '<p class="sub">Bật đăng nhập bằng khuôn mặt thật (Face ID · Windows Hello · vân tay). ' +
+      'Khuôn mặt được quét và Ở LẠI trên thiết bị — máy chủ chỉ giữ một khoá xác minh, ' +
+      'KHÔNG giữ ảnh hay mẫu mặt của ai. Mất thiết bị thì gỡ khoá của nó ở đây.</p></div>';
+
+    /* Chống hack · lừa đảo — nói cho người dùng biết vì sao khoá mặt an toàn. */
+    o += '<div class="card mb" style="border-color:var(--gita-vien-1);background:var(--gita-mo-1)">' +
+      '<div class="row mb" style="gap:8px"><span style="color:var(--gold-ink)">' + ic('shield', 'w-4 h-4') +
+      '</span><b class="sm">Vì sao khuôn mặt chống được hack và lừa đảo</b></div>' +
+      '<ul class="tiny" style="line-height:1.8;margin:0;padding-left:18px">' +
+      '<li><b>Không có mã để bị lừa lấy.</b> Không như mã OTP qua tin nhắn, khuôn mặt không có gì để kẻ gian lừa bạn đọc cho.</li>' +
+      '<li><b>Khoá theo đúng trang GITA.</b> Một trang giả mạo KHÔNG dùng được khuôn mặt của bạn — trình duyệt chỉ cho nó chạy ở đúng địa chỉ thật.</li>' +
+      '<li><b>Ảnh không mở được.</b> Face ID quét mặt thật có chiều sâu; giơ một tấm ảnh không qua được.</li>' +
+      '<li><b>Chặn chiếm tài khoản.</b> Bật khoá mặt thì kẻ trộm mật khẩu vẫn KHÔNG đổi được mật khẩu hay gỡ khoá — phải có khuôn mặt thật của bạn.</li>' +
+      '</ul></div>';
+
+    if (!G.stCoWebAuthn())
+      return o + U.empty('Thiết bị này chưa hỗ trợ',
+        'Trình duyệt hoặc thiết bị chưa có bộ xác thực khuôn mặt/vân tay. Dùng máy có Face ID, ' +
+        'Windows Hello, hoặc vân tay Android, và mở trang bằng HTTPS.') + veNhatKy();
+
+    o += '<div class="row mb"><button class="btn pri" onclick="G.stThemHoi()">' +
+      ic('lock', 'w-4 h-4') + ' Bật khuôn mặt trên thiết bị này</button></div>';
+
+    var so = G.stDs;
+    if (!so) o += '<p class="note"><button class="btn" onclick="G.stTaiDs()">Tải danh sách thiết bị</button></p>';
+    else if (!so.ok)
+      o += U.empty('Cần nối máy chủ',
+        'Đăng nhập khuôn mặt chạy trên máy chủ GITA (Workers). Nối máy chủ rồi mới bật được — ' +
+        h((so && so.error) || ''));
+    else {
+      o += U.sec('Thiết bị đã bật khuôn mặt', h(so.vi || ''));
+      var ds = so.khoa || [];
+      if (!ds.length) o += '<p class="note">Chưa có thiết bị nào. Bấm nút trên để bật.</p>';
+      else o += U.tbl(['Thiết bị', 'Bật lúc', 'Dùng gần nhất', ''],
+        ds.map(function (k) {
+          return [h(k.ten || '—'), h((k.taoLuc || '').slice(0, 10)),
+            h((k.dungLuc || '').slice(0, 10) || '—'),
+            '<button class="btn" onclick="G.stXoa(\'' + String(k.id).replace(/'/g, "\\'") + '\')">Gỡ</button>'];
+        }));
+    }
+    return o + veNhatKy();
+  };
+})();
 
 })();
 
@@ -46494,16 +46768,29 @@ G.VIEWS = G.VIEWS || {};
 /* ═════════ src/crm.js ═════════ */
 (function(){
 /* ═══════════════════════════════════════════════════════════════
-   GITA 365 — MÀN CRM NHÂN SỰ  (9.99.172)
+   GITA 365 — MÀN CRM QUẢN TRỊ  (9.99.180)
 
-   Buồng lái quản lý quan hệ khách hàng cho nhân sự công ty. Màn chỉ
-   HIỆN; mọi cổng quyền chặn ở máy chủ (may-chu/crm.js) — một vai chưa
-   được cấp quyền CRM thì crmDanhSach từ chối, dù màn có nút gì.
+   Buồng lái quản lý quan hệ khách hàng cho nhân sự. Màn chỉ HIỆN; mọi
+   cổng quyền chặn ở máy chủ. Quyền XEM mặc định: R01 Super Admin ·
+   R02 Admin hệ thống · R03 Giám đốc (perm crm_view). Super Admin cấp
+   thêm/thu hồi cho bộ phận khác ở ngăn "Cấp quyền".
 
-   Bốn ngăn: Buồng lái (phễu · quá hạn · doanh thu) · Danh sách khách
-   (lọc theo chặng, mở chi tiết, cập nhật) · Cấp quyền (chỉ R01–R02) ·
-   Luật. Dữ liệu chặng và mức quyền do MÁY CHỦ trả về — màn không giữ
-   một danh sách thứ hai.
+   THIẾT KẾ LẠI 9.99.178: bảng điều khiển khoa học — thẻ chỉ số có sắc
+   khí, phễu chặng vẽ thanh theo tỉ lệ, đèn tô màu rõ, bảng sạch. Màu
+   truyền qua style nội tuyến; nền/viền lấy token ở style.css.
+
+   MỘT NGUỒN CHẶNG: danh sách chặng lấy TỪ MÁY CHỦ (giaiDoanCoThe) —
+   view không chép, không giữ danh sách chặng thứ hai. Phễu tô màu theo
+   VỊ TRÍ trong danh sách máy chủ trả về, không theo tên chặng.
+
+   BACKEND: các cửa CRM hiện có ở Cloudflare Workers (may-chu/crm.js);
+   Apps Script chưa có. Chưa nối được thì mỗi ngăn nói rõ "cần nối máy
+   chủ CRM" — không dựng dữ liệu giả.
+
+   QUY MÔ (9.99.179): 100 Sale · 100.000 khách. Tìm · lọc chặng · phân
+   trang đều do MÁY CHỦ làm (crmDanhSach nhận q · chang · trang) — màn
+   KHÔNG lọc tại chỗ, không kéo cả trăm nghìn nhà về. G.crmTim giữ ý
+   muốn người dùng; trang/số trang đọc từ đáp ứng, không giữ bản thứ hai.
    ═══════════════════════════════════════════════════════════════ */
 'use strict';
 var G = window.G || {}; window.G = G;
@@ -46513,27 +46800,41 @@ G.VIEWS = G.VIEWS || {};
   var U = G.U, h = U.h, ic = U.ic;
 
   var NGAN = [
-    {ma: 'bang',   ten: 'Buồng lái',      ic: 'chart'},
-    {ma: 'ds',     ten: 'Danh sách khách', ic: 'users'},
-    {ma: 'troly',  ten: 'Trợ lý AI',      ic: 'spark'},
-    {ma: 'kpi',    ten: 'Hệ KPI',         ic: 'pulse'},
-    {ma: 'quyen',  ten: 'Cấp quyền',      ic: 'lock'},
-    {ma: 'quantri', ten: 'Quản trị',      ic: 'shield'},
-    {ma: 'luat',   ten: 'Luật',           ic: 'shield'}
+    {ma: 'bang',    ten: 'Buồng lái',       ic: 'chart'},
+    {ma: 'viec',    ten: 'Việc nên làm',    ic: 'target'},
+    {ma: 'ds',      ten: 'Danh sách khách', ic: 'users'},
+    {ma: 'troly',   ten: 'Trợ lý AI',       ic: 'spark'},
+    {ma: 'kpi',     ten: 'Hệ KPI',          ic: 'pulse'},
+    {ma: 'quyen',   ten: 'Cấp quyền',       ic: 'lock'},
+    {ma: 'quantri', ten: 'Quản trị',        ic: 'shield'},
+    {ma: 'luat',    ten: 'Luật',            ic: 'book'}
   ];
-  var DEN = {XANH: 'Xanh', VANG: 'Vàng', DO: 'Đỏ', XAM: 'Xám'};
+
+  /* Đèn: tên + màu rõ. Ba mã bị cấm không dùng ở đây; đây là màu an toàn. */
+  var DEN = {
+    XANH: {ten: 'Xanh', mau: '#0B7350'},
+    VANG: {ten: 'Vàng', mau: '#B45309'},
+    DO:   {ten: 'Đỏ',   mau: '#D11F2A'},
+    XAM:  {ten: 'Xám',  mau: '#64708A'}
+  };
+  /* Bảng màu phễu theo VỊ TRÍ (không theo tên chặng — một nguồn chặng ở máy chủ). */
+  var SAC_PHEU = ['#185AB4', '#0B6675', '#5140B4', '#0B7350', '#128A5E', '#B45309', '#64708A', '#7A5AA6'];
 
   G.crmNgan = G.crmNgan || 'bang';
-  G.crmBang = G.crmBang || null;   // bảng điều khiển
-  G.crmDs = G.crmDs || null;       // danh sách khách
-  G.crmQ = G.crmQ || null;         // sổ quyền
-  G.crmCt = G.crmCt || null;       // chi tiết một khách
-  G.crmLocChang = G.crmLocChang || '';
-  G.crmAi = G.crmAi || null;       // roster trợ lý AI
-  G.crmKeHoach = G.crmKeHoach || null; // kế hoạch điều phối gần nhất
-  G.crmKpi = G.crmKpi || null;     // bảng KPI
-  G.crmKpiTl = G.crmKpiTl || null; // KPI theo trợ lý
-  G.crmQt = G.crmQt || null;       // panel quản trị
+  G.crmBang = G.crmBang || null;
+  G.crmViec = G.crmViec || null;
+  G.crmDs = G.crmDs || null;
+  G.crmQ = G.crmQ || null;
+  G.crmCt = G.crmCt || null;
+  /* Tìm/lọc/trang do MÁY CHỦ làm — 100k khách không kéo hết về màn.
+     Ba ô này chỉ giữ Ý MUỐN của người dùng để gửi lên; kết quả (trang
+     mấy, còn mấy trang) đọc từ đáp ứng, không giữ bản thứ hai. */
+  G.crmTim = G.crmTim || {q: '', chang: '', trang: 1};
+  G.crmAi = G.crmAi || null;
+  G.crmKeHoach = G.crmKeHoach || null;
+  G.crmKpi = G.crmKpi || null;
+  G.crmKpiTl = G.crmKpiTl || null;
+  G.crmQt = G.crmQt || null;
 
   function veLai() {
     if (!G.S || G.S.view !== 'crm') return;
@@ -46541,7 +46842,7 @@ G.VIEWS = G.VIEWS || {};
     G.render && G.render();
   }
   function goi(cua, tham, nhan) {
-    if (!G.goiMayChu) return;
+    if (!G.goiMayChu) { nhan({ok: false, error: 'Chưa nối máy chủ.'}); return; }
     G.goiMayChu(cua, tham || {}).then(nhan)
       .catch(function (e) { nhan({ok: false, error: e && e.message}); });
   }
@@ -46553,31 +46854,89 @@ G.VIEWS = G.VIEWS || {};
     var d = (coThe || []).filter(function (x) { return x.ma === ma; })[0];
     return d ? d.ten : (ma || '—');
   }
+  function jsstr(s) { return String(s || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'"); }
+  function dinhTien(n) {
+    n = Number(n) || 0;
+    return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+
+  /* Chưa nối máy chủ CRM / chưa đủ quyền — nói rõ, không dựng số giả. */
+  function canNoi(so) {
+    if (so && so.error && /quyền|permission|cấp/i.test(String(so.error)))
+      return U.empty('Chưa đủ quyền', h(so.error));
+    return U.empty('Cần nối máy chủ CRM',
+      'Ngăn này cần các cửa CRM ở máy chủ. Máy chủ Apps Script hiện chưa có backend CRM — ' +
+      'nối vào rồi thì phễu, danh sách và số liệu hiện thẳng ở đây, không dựng số giả.');
+  }
+
+  /* ── THÀNH PHẦN THỊ GIÁC ── */
+  function denBadge(band) {
+    var d = DEN[band] || {ten: band || '—', mau: '#64708A'};
+    return '<span class="crm-den" style="background:' + d.mau + '">' + h(d.ten) + '</span>';
+  }
+  function kpi(nhan, giaTri, mau, phu) {
+    return '<div class="crm-kpi" style="border-top-color:' + mau + '">' +
+      '<span class="crm-kpi-nhan">' + h(nhan) + '</span>' +
+      '<b class="crm-kpi-so">' + h(String(giaTri)) + '</b>' +
+      (phu ? '<span class="crm-kpi-phu">' + h(phu) + '</span>' : '') +
+      '</div>';
+  }
+  function pheu(hang) {
+    var max = 1;
+    hang.forEach(function (c) { if (c.n > max) max = c.n; });
+    var o = '<div class="crm-pheu">';
+    hang.forEach(function (c, i) {
+      var mau = SAC_PHEU[i % SAC_PHEU.length];
+      var pct = Math.max(4, Math.round(c.n / max * 100));
+      o += '<div class="crm-pheu-hang">' +
+        '<span class="crm-pheu-ten">' + h(c.ten) + '</span>' +
+        '<span class="crm-pheu-thanh"><i style="width:' + pct + '%;background:' + mau + '"></i></span>' +
+        '<b class="crm-pheu-so">' + h(String(c.n)) + '</b>' +
+        '</div>';
+    });
+    o += '</div>';
+    return o;
+  }
 
   G.crmMoNgan = function (ma) { G.crmNgan = ma; G.crmCt = null; veLai(); };
-
   G.crmTaiBang = function () { goi('crmBangDieuKhien', {}, function (x) { G.crmBang = x; veLai(); }); };
-  G.crmTaiDs = function () { goi('crmDanhSach', {}, function (x) { G.crmDs = x; veLai(); }); };
+  G.crmTaiViec = function () { goi('crmUuTien', {}, function (x) { G.crmViec = x; veLai(); }); };
+  G.crmTaiDs = function () {
+    var t = G.crmTim;
+    goi('crmDanhSach', {q: t.q, chang: t.chang, trang: t.trang}, function (x) {
+      G.crmDs = x;
+      /* Máy chủ kẹp trang về khoảng hợp lệ — đọc lại con số thật, không tự đoán. */
+      if (x && x.ok && x.trang) G.crmTim.trang = x.trang;
+      veLai();
+    });
+  };
+  G.crmTimDs = function () {
+    G.crmTim.q = val('crm_q');
+    G.crmTim.chang = val('crm_loc');
+    G.crmTim.trang = 1;      /* đổi tìm/lọc là về trang 1 */
+    G.crmDs = null; G.crmTaiDs();
+  };
+  G.crmTrang = function (delta) {
+    var so = G.crmDs; if (!so || !so.ok) return;
+    var t = Math.max(1, Math.min(so.soTrang || 1, (G.crmTim.trang || 1) + delta));
+    if (t === G.crmTim.trang) return;
+    G.crmTim.trang = t; G.crmDs = null; G.crmTaiDs();
+  };
   G.crmTaiQuyen = function () { goi('dsQuyenCRM', {}, function (x) { G.crmQ = x; veLai(); }); };
   G.crmTaiAi = function () { goi('crmTroLy', {}, function (x) { G.crmAi = x; veLai(); }); };
+  G.crmTaiKpi = function () {
+    goi('crmKpiCham', {}, function (x) { G.crmKpi = x; veLai(); });
+    goi('crmKpiTroLy', {}, function (x) { G.crmKpiTl = x; veLai(); });
+  };
+  G.crmTaiQuanTri = function () { goi('crmQuanTri', {}, function (x) { G.crmQt = x; veLai(); }); };
+  G.crmMoKhach = function (maKH) { goi('crmChiTiet', {maKH: maKH}, function (x) { G.crmCt = x; veLai(); }); };
+  G.crmDongChiTiet = function () { G.crmCt = null; veLai(); };
   G.crmChay = function (ma) {
     goi('crmDieuPhoiAI', {tro: ma}, function (x) {
       if (x && x.ok) { G.crmKeHoach = x.keHoach; veLai(); }
       else U.toast((x && x.error) || 'Không lập được kế hoạch.', 'err');
     });
   };
-  G.crmTaiKpi = function () {
-    goi('crmKpiCham', {}, function (x) { G.crmKpi = x; veLai(); });
-    goi('crmKpiTroLy', {}, function (x) { G.crmKpiTl = x; veLai(); });
-  };
-  G.crmTaiQuanTri = function () { goi('crmQuanTri', {}, function (x) { G.crmQt = x; veLai(); }); };
-  G.crmLoc = function () { G.crmLocChang = val('crm_loc'); veLai(); };
-
-  G.crmMoKhach = function (maKH) {
-    goi('crmChiTiet', {maKH: maKH}, function (x) { G.crmCt = x; veLai(); });
-  };
-  G.crmDongChiTiet = function () { G.crmCt = null; veLai(); };
-
   G.crmLuu = function (maKH) {
     if (!G.goiMayChu) return;
     var tham = {maKH: maKH, giaiDoan: val('crm_gd'), henTiep: val('crm_hen'), ghiChu: val('crm_ghichu')};
@@ -46588,7 +46947,6 @@ G.VIEWS = G.VIEWS || {};
       else U.toast((x && x.error) || 'Không lưu được.', 'err');
     });
   };
-
   G.crmCap = function () {
     if (!G.goiMayChu) return;
     var tham = {username: val('crm_u'), muc: val('crm_muc'), lyDo: val('crm_lydo')};
@@ -46609,76 +46967,135 @@ G.VIEWS = G.VIEWS || {};
   function veBang() {
     var so = G.crmBang;
     if (!so) return '<p class="note"><button class="btn" onclick="G.crmTaiBang()">Tải buồng lái</button></p>';
-    if (!so.ok) return U.empty('Chưa vào được CRM', h(so.error || ''));
+    if (!so.ok) return canNoi(so);
 
-    var o = U.sec('Buồng lái CRM' + (so.toanBo ? ' — toàn hệ' : ' — phần bạn phụ trách'),
-      h(so.vi || ''));
+    var o = U.sec('Buồng lái CRM' + (so.toanBo ? ' — toàn hệ' : ' — phần bạn phụ trách'), h(so.vi || ''));
 
-    o += '<div class="row" style="flex-wrap:wrap;gap:12px">' +
-      the('Tổng khách', so.tongKhach) +
-      the('Hẹn quá hạn', so.soQuaHan) +
-      (so.toanBo ? the('Chưa có người phụ trách', so.chuaPhuTrach) : '') +
-      the('Phiếu thu đã duyệt', so.soPhieu) +
-      the('Doanh thu (đ)', dinhTien(so.doanhThu)) +
+    o += '<div class="crm-kpis">' +
+      kpi('Tổng khách', so.tongKhach, '#185AB4') +
+      kpi('Hẹn quá hạn', so.soQuaHan, '#D11F2A', 'chạm ngay') +
+      (so.toanBo ? kpi('Chưa có người phụ trách', so.chuaPhuTrach, '#B45309') : '') +
+      kpi('Phiếu thu đã duyệt', so.soPhieu, '#0B7350') +
+      kpi('Doanh thu', dinhTien(so.doanhThu) + 'đ', '#5140B4') +
       '</div>';
 
-    o += U.sec('Phễu theo chặng', 'Mọi chặng có mặt kể cả đếm 0 — một chặng vắng đọc ra là "không có bước ấy".');
-    o += U.tbl(['Chặng', 'Số nhà'],
-      (so.theoChang || []).map(function (c) { return [h(c.ten), String(c.n)]; })
-        .concat([['<em>Chưa xếp chặng</em>', String(so.chuaXep)]]));
+    o += U.sec('Phễu theo chặng', 'Mỗi chặng một sắc; thanh dài theo số nhà. Chặng vắng đọc ra là "không có bước ấy".');
+    var tc = (so.theoChang || []).slice();
+    if (so.chuaXep) tc = tc.concat([{ten: 'Chưa xếp chặng', n: so.chuaXep}]);
+    o += pheu(tc);
 
-    o += U.sec('Phân bố đèn', '');
-    o += U.tbl(['Đèn', 'Số nhà'],
-      (so.theoBand || []).map(function (b) { return [h(DEN[b.band] || b.band), String(b.n)]; }));
+    o += U.sec('Phân bố đèn sức khoẻ', 'Xanh khoẻ · Vàng cần để mắt · Đỏ gọi người thật · Xám chưa rõ.');
+    o += '<div class="crm-dens">' + (so.theoBand || []).map(function (b) {
+      var d = DEN[b.band] || {ten: b.band, mau: '#64708A'};
+      return '<div class="crm-den-o" style="border-left-color:' + d.mau + '">' +
+        denBadge(b.band) + '<b>' + h(String(b.n)) + '</b><span>nhà</span></div>';
+    }).join('') + '</div>';
 
     if ((so.quaHan || []).length) {
       o += U.sec('Hẹn tiếp đã quá hạn — chạm ngay', '');
       o += U.tbl(['Mã khách', 'Hẹn', 'Chặng', 'Phụ trách', ''],
         so.quaHan.map(function (q) {
-          return [h(q.maKH), h(q.henTiep), h(q.giaiDoan || '—'), h(q.phuTrach || '—'),
+          return [h(q.maKH), '<span style="color:#D11F2A;font-weight:600">' + h(q.henTiep) + '</span>',
+            h(tenChang(q.giaiDoan, so.theoChang)), h(q.phuTrach || '—'),
             '<button class="btn" onclick="G.crmMoKhach(\'' + jsstr(q.maKH) + '\')">Mở</button>'];
         }));
     }
     return o;
   }
-  function the(ten, so) {
-    return '<div class="bc-so"><b>' + h(String(so)) + '</b><span>' + h(ten) + '</span></div>';
+
+  /* ── NGĂN · VIỆC NÊN LÀM (tầng thông minh) ── */
+  function hangViec(ds) {
+    return U.tbl(['Nhà', 'Đèn', 'Việc nên làm', 'Cửa', ''],
+      ds.map(function (v) {
+        var nha = h(v.hoTen || '—') + ' <span class="note">(' + h(v.maKH) + ')</span>';
+        if (v.loai === 'quahan' && v.soNgay) nha += ' · <b style="color:#D11F2A">quá ' + h(String(v.soNgay)) + ' ngày</b>';
+        var viec = '<b>' + h(v.viec) + '</b><br><span class="note">' + h(v.vi || '') + '</span>';
+        return [nha, denBadge(v.band), viec, '<code>' + h(v.cua) + '</code>',
+          '<button class="btn" onclick="G.crmMoKhach(\'' + jsstr(v.maKH) + '\')">Mở nhà</button>'];
+      }));
   }
-  function dinhTien(n) {
-    n = Number(n) || 0;
-    return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  function veUuTien() {
+    var so = G.crmViec;
+    var o = U.sec('Việc nên làm hôm nay' + (so && so.toanBo ? ' — toàn hệ' : ' — phần bạn phụ trách'),
+      'Máy đọc dữ liệu lúc đọc, xếp việc GẤP lên trước, mỗi việc trỏ một cửa thật. ' +
+      'Máy đề xuất — người quyết; bấm "Mở nhà" rồi làm qua cửa ấy.');
+    if (!so) return o + '<p class="note"><button class="btn" onclick="G.crmTaiViec()">Tải việc nên làm</button></p>';
+    if (!so.ok) return o + canNoi(so);
+
+    var d = so.dem || {};
+    o += '<div class="crm-kpis">' +
+      kpi('Việc GẤP', d.tongGap, '#D11F2A', 'đèn đỏ + hẹn quá hạn') +
+      kpi('Đèn đỏ — gọi ngay', d.do, '#D11F2A', 'gọi người thật 24 giờ') +
+      kpi('Hẹn quá hạn', d.quaHan, '#B45309') +
+      kpi('Việc thường', d.tongThuong, '#185AB4') +
+      '</div>';
+
+    if ((so.gap || []).length) {
+      o += U.sec('GẤP — làm trước', 'Đèn đỏ phải GỌI người thật (luật buộc, không nhắn); hẹn quá hạn để trôi là mất nhịp.');
+      o += hangViec(so.gap);
+    } else {
+      o += U.sec('GẤP — làm trước', '');
+      o += '<p class="note">Không có việc gấp nào. Nhịp đang được giữ tốt.</p>';
+    }
+
+    if ((so.thuong || []).length) {
+      o += U.sec('Việc thường', 'Giữ nhịp đèn vàng, xếp chặng, gán người phụ trách — làm sau việc gấp.');
+      o += hangViec(so.thuong);
+    }
+    return o;
   }
-  function jsstr(s) { return String(s || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'"); }
 
   /* ── NGĂN 2 · DANH SÁCH KHÁCH ── */
   function veDs() {
     if (G.crmCt) return veChiTiet();
     var so = G.crmDs;
     if (!so) return '<p class="note"><button class="btn" onclick="G.crmTaiDs()">Tải danh sách khách</button></p>';
-    if (!so.ok) return U.empty('Chưa vào được CRM', h(so.error || ''));
+    if (!so.ok) return canNoi(so);
 
     var coThe = so.giaiDoanCoThe || [];
-    var o = U.sec('Danh sách khách' + (so.toanBo ? ' — toàn hệ' : ' — phần bạn phụ trách'),
-      h(so.vi || ''));
+    var o = U.sec('Danh sách khách' + (so.toanBo ? ' — toàn hệ' : ' — phần bạn phụ trách'), h(so.vi || ''));
 
+    /* Tìm + lọc + trang do MÁY CHỦ làm — nhập rồi bấm Tìm mới gọi lên,
+       không lọc tại màn (100k nhà không kéo hết về). Enter cũng tìm. */
     o += '<div class="row" style="gap:8px;align-items:end;flex-wrap:wrap">' +
-      '<label>Lọc theo chặng<br><select id="crm_loc" onchange="G.crmLoc()">' +
+      '<label>Tìm (mã · tên · điện thoại)<br><input id="crm_q" value="' + h(G.crmTim.q) +
+        '" placeholder="gõ rồi Enter" onkeydown="if(event.key===\'Enter\')G.crmTimDs()"></label>' +
+      '<label>Lọc theo chặng<br><select id="crm_loc" onchange="G.crmTimDs()">' +
       '<option value="">Tất cả</option>' +
       coThe.map(function (g) {
-        return '<option value="' + h(g.ma) + '"' + (G.crmLocChang === g.ma ? ' selected' : '') +
+        return '<option value="' + h(g.ma) + '"' + (G.crmTim.chang === g.ma ? ' selected' : '') +
           '>' + h(g.ten) + '</option>';
-      }).join('') + '</select></label></div>';
+      }).join('') + '</select></label>' +
+      '<button class="btn btn-chinh" onclick="G.crmTimDs()">Tìm</button></div>';
 
     var ds = so.khach || [];
-    if (G.crmLocChang) ds = ds.filter(function (k) { return k.giaiDoan === G.crmLocChang; });
+    var tong = so.tongTatCa || 0;
+    var tuSo = tong ? ((so.trang - 1) * so.moiTrang + 1) : 0;
+    var denSo = (so.trang - 1) * so.moiTrang + ds.length;
+    o += '<p class="note">' + (tong
+      ? 'Có <b>' + h(String(tong)) + '</b> nhà khớp · đang xem ' + h(String(tuSo)) + '–' +
+        h(String(denSo)) + ' (trang ' + h(String(so.trang)) + '/' + h(String(so.soTrang)) + ')'
+      : 'Không có nhà nào khớp' + (G.crmTim.q || G.crmTim.chang ? ' bộ tìm/lọc.' : '.')) + '</p>';
 
-    if (!ds.length) { o += '<p class="note">Không có nhà nào khớp bộ lọc.</p>'; return o; }
+    if (!ds.length) return o;
+
     o += U.tbl(['Mã', 'Phụ huynh', 'Tầng', 'Đèn', 'Chặng', 'Hẹn tiếp', 'Phụ trách', ''],
       ds.map(function (k) {
-        return [h(k.maKH), h(k.hoTen || '—'), String(k.tang), h(DEN[k.band] || k.band || '—'),
+        return [h(k.maKH), h(k.hoTen || '—'), '<b>' + h(String(k.tang)) + '</b>', denBadge(k.band),
           h(tenChang(k.giaiDoan, coThe)), h(k.henTiep || '—'), h(k.phuTrach || '—'),
           '<button class="btn" onclick="G.crmMoKhach(\'' + jsstr(k.maKH) + '\')">Mở</button>'];
       }));
+
+    /* Nút chuyển trang — chỉ hiện khi có nhiều hơn một trang. */
+    if ((so.soTrang || 1) > 1) {
+      o += '<div class="row" style="gap:8px;align-items:center;justify-content:center;margin-top:12px">' +
+        '<button class="btn"' + (so.trang <= 1 ? ' disabled' : '') +
+          ' onclick="G.crmTrang(-1)">← Trang trước</button>' +
+        '<span class="note">Trang ' + h(String(so.trang)) + '/' + h(String(so.soTrang)) + '</span>' +
+        '<button class="btn"' + (so.trang >= so.soTrang ? ' disabled' : '') +
+          ' onclick="G.crmTrang(1)">Trang sau →</button>' +
+        '</div>';
+    }
     return o;
   }
 
@@ -46700,7 +47117,7 @@ G.VIEWS = G.VIEWS || {};
       ['Phụ huynh', h(k.hoTen || '—')],
       ['Điện thoại', h(k.dienThoai || '—')],
       ['Email', h(k.email || '—')],
-      ['Đèn', h(DEN[k.band] || k.band || '—')],
+      ['Đèn', denBadge(k.band)],
       ['Coach', h(k.coach || '—')],
       ['Tư vấn', h(k.tuVan || '—')],
       ['Trạng thái học', h(k.trangThai || '—')],
@@ -46732,7 +47149,7 @@ G.VIEWS = G.VIEWS || {};
     if ((so.soCham || []).length)
       o += U.tbl(['Ngày', 'Kiểu', 'Đèn', 'Nội dung', 'Người chạm'],
         so.soCham.map(function (s) {
-          return [h(s.ngay), h(s.kieu), h(DEN[s.denLuc] || s.denLuc || '—'), h(s.noiDung), h(s.boiAi)];
+          return [h(s.ngay), h(s.kieu), denBadge(s.denLuc), h(s.noiDung), h(s.boiAi)];
         }));
     else o += '<p class="note">Chưa có lượt chạm nào trong sổ.</p>';
     return o;
@@ -46745,7 +47162,7 @@ G.VIEWS = G.VIEWS || {};
       'Mỗi trợ lý TRỎ vào một cửa CÓ THẬT và đi qua cổng của cửa ấy — AI giúp vận hành, ' +
       'cổng không đổi. Điều phối chỉ lập KẾ HOẠCH rồi dừng, không tự ra tay.');
     if (!so) return o + '<p class="note"><button class="btn" onclick="G.crmTaiAi()">Tải trợ lý</button></p>';
-    if (!so.ok) return o + U.empty('Chưa vào được', h(so.error || ''));
+    if (!so.ok) return o + canNoi(so);
 
     o += U.tbl(['Mã', 'Trợ lý', 'Việc', 'Cửa thật', 'Cổng đang áp', ''],
       (so.troLy || []).map(function (t) {
@@ -46782,7 +47199,7 @@ G.VIEWS = G.VIEWS || {};
       'Tám KPI máy đo tính LÚC ĐỌC từ sổ thật; ba KPI người khai để riêng, không con số giả. ' +
       'KHÔNG ngưỡng — đặt chỉ tiêu là mời chạy cho đủ số. Ngưỡng là Vùng Đỏ chờ chủ hệ.');
     if (!so) return o + '<p class="note"><button class="btn" onclick="G.crmTaiKpi()">Tải KPI</button></p>';
-    if (!so.ok) return o + U.empty('Không xem được KPI', h(so.error || ''));
+    if (!so.ok) return o + canNoi(so);
 
     o += U.tbl(['Mã', 'KPI', 'Ai đo', 'Giá trị', 'Chiều', 'Nguồn'],
       (so.bang || []).map(function (k) {
@@ -46810,19 +47227,19 @@ G.VIEWS = G.VIEWS || {};
   function veQuanTri() {
     var so = G.crmQt;
     var o = U.sec('Quản trị CRM — Super Admin',
-      'Kiểm soát cấp quyền ở ngăn "Cấp quyền"; vận hành ở đây. Mọi thao tác CRM đã vào nhật ký ' +
-      'kèm tên người làm — panel này gom lại, không dựng sổ vết thứ hai.');
+      'Cấp quyền ở ngăn "Cấp quyền"; vận hành ở đây. Mọi thao tác CRM đã vào nhật ký kèm tên ' +
+      'người làm — panel này gom lại, không dựng sổ vết thứ hai.');
     if (!so) return o + '<p class="note"><button class="btn" onclick="G.crmTaiQuanTri()">Tải quản trị</button></p>';
-    if (!so.ok) return o + U.empty('Không mở được', h(so.error || ''));
+    if (!so.ok) return o + canNoi(so);
 
     var t = so.tomTat || {};
-    o += '<div class="row" style="flex-wrap:wrap;gap:12px">' +
-      the('Quyền đang có', t.quyenDangCo) +
-      the('Lượt cấp quyền', t.capQuyen) +
-      the('Lượt thu hồi', t.thuHoiQuyen) +
-      the('Lượt đọc hồ sơ', t.luotDoc) +
-      the('Lượt cập nhật', t.luotCapNhat) +
-      the('Điều phối AI', t.dieuPhoiAI) +
+    o += '<div class="crm-kpis">' +
+      kpi('Quyền đang có', t.quyenDangCo, '#185AB4') +
+      kpi('Lượt cấp quyền', t.capQuyen, '#0B7350') +
+      kpi('Lượt thu hồi', t.thuHoiQuyen, '#B45309') +
+      kpi('Lượt đọc hồ sơ', t.luotDoc, '#5140B4') +
+      kpi('Lượt cập nhật', t.luotCapNhat, '#0B6675') +
+      kpi('Điều phối AI', t.dieuPhoiAI, '#128A5E') +
       '</div>';
 
     o += U.sec('Nhật ký thao tác CRM gần nhất', '');
@@ -46839,12 +47256,11 @@ G.VIEWS = G.VIEWS || {};
   /* ── NGĂN 3 · CẤP QUYỀN ── */
   function veQuyen() {
     var so = G.crmQ;
-    var o = U.sec('Cấp quyền CRM — chỉ Super Admin và Admin hệ thống',
-      'Ba mức: xem (đọc khách của mình) · sửa (cập nhật khách của mình) · quản lý (mọi khách, ' +
-      'gán người phụ trách). R01–R02 quản lý đương nhiên, không cần dòng nào. Không ai tự cấp cho mình.');
-
+    var o = U.sec('Cấp quyền CRM — Super Admin cấp cho bộ phận khác',
+      'Mặc định ba vai đầu XEM được: Super Admin · Admin hệ thống · Giám đốc. Muốn mở cho bộ phận ' +
+      'khác (coach, tư vấn…) thì cấp ở đây. Ba mức: xem · sửa · quản lý. Không ai tự cấp cho mình.');
     if (!so) return o + '<p class="note"><button class="btn" onclick="G.crmTaiQuyen()">Tải sổ quyền</button></p>';
-    if (!so.ok) return o + U.empty('Không xem được sổ quyền', h(so.error || ''));
+    if (!so.ok) return o + canNoi(so);
 
     o += '<div class="row" style="flex-direction:column;gap:10px;max-width:520px">';
     o += '<label>Tên đăng nhập (hoặc email)<br><input id="crm_u" placeholder="vd: coach.an"></label>';
@@ -46856,7 +47272,7 @@ G.VIEWS = G.VIEWS || {};
     o += '<div><button class="btn btn-chinh" onclick="G.crmCap()">Cấp quyền</button></div>';
     o += '</div>';
 
-    o += U.sec('Đang có quyền', h(so.vi || ''));
+    o += U.sec('Đang có quyền (ngoài ba vai mặc định)', h(so.vi || ''));
     var dc = so.dangCoQuyen || [];
     if (dc.length)
       o += U.tbl(['Người', 'Mức', 'Vì sao', 'Cấp bởi', 'Hết hạn', ''],
@@ -46864,20 +47280,29 @@ G.VIEWS = G.VIEWS || {};
           return [h(q.username), h(q.tenMuc), h(q.lyDo), h(q.boiAi), h(q.hetHan || '—'),
             '<button class="btn" onclick="G.crmThu(\'' + jsstr(q.username) + '\')">Thu hồi</button>'];
         }));
-    else o += '<p class="note">Chưa cấp thêm cho ai (ngoài R01–R02 quản lý đương nhiên).</p>';
+    else o += '<p class="note">Chưa cấp thêm cho ai ngoài ba vai mặc định (Super Admin · Admin hệ thống · Giám đốc).</p>';
     return o;
   }
 
   /* ── NGĂN 4 · LUẬT ── */
   function veLuat() {
-    var o = U.sec('Bốn luật của CRM', '');
+    var o = U.sec('Ai xem được CRM', '');
+    o += U.tbl(['Vai', 'Mặc định', 'Quyền'], [
+      ['Super Admin (R01)', '<b style="color:#0B7350">Có</b>', 'Xem · sửa · quản lý · cấp/thu quyền'],
+      ['Admin hệ thống (R02)', '<b style="color:#0B7350">Có</b>', 'Quản lý'],
+      ['Giám đốc (R03)', '<b style="color:#0B7350">Có</b>', 'Quản lý'],
+      ['Bộ phận khác', '<span style="color:#B45309">Khi được cấp</span>', 'Super Admin cấp ở ngăn "Cấp quyền"'],
+      ['Khách (R13–R15)', '<b style="color:#D11F2A">Không</b>', 'Không xem được CRM']
+    ]);
+
+    o += U.sec('Bốn luật của CRM', '');
     o += U.tbl(['Luật', 'Nội dung'], [
       ['TRỎ, không chép',
         'Dữ liệu khách sống ở hoSoKhach · users · soCham · phieuThu. CRM chỉ thêm lớp phủ ' +
         '(ai phụ trách · chặng · hẹn tiếp) và gom về một chỗ — không bảng khách thứ hai.'],
       ['Quyền tính lúc đọc',
-        'Cấp bằng một dòng ghi được, đọc dòng mới nhất còn hiệu lực — không cột "đang có quyền". ' +
-        'Super Admin cấp, chỉ R01–R02 cấp được, không ai tự cấp cho mình.'],
+        'Ba vai đầu xem đương nhiên; cấp thêm bằng một dòng ghi được, đọc dòng mới nhất còn hiệu lực ' +
+        '— không cột "đang có quyền". Chỉ Super Admin cấp, không ai tự cấp cho mình.'],
       ['Lọc ở câu truy vấn',
         'Người mức xem/sửa chỉ thấy khách MÌNH phụ trách/coach/tư vấn — lọc ở máy chủ, không ở màn. ' +
         'Lọc trên màn không phải bảo vệ dữ liệu.'],
@@ -46891,8 +47316,8 @@ G.VIEWS = G.VIEWS || {};
   G.VIEWS['crm'] = function () {
     var o = '<div class="hd"><h2>' + ic('users') + ' CRM · quản lý quan hệ khách hàng</h2>' +
       '<p class="sub">Buồng lái của nhân sự: phễu theo chặng, hẹn tiếp không để trôi, doanh thu ' +
-      'theo phần mình phụ trách, và một chỗ đọc trọn một nhà. Super Admin cấp quyền xem · sửa · ' +
-      'quản lý; mọi cổng chặn ở máy chủ.</p></div>';
+      'theo phần mình phụ trách, và một chỗ đọc trọn một nhà. Mặc định: Super Admin · Admin hệ thống · ' +
+      'Giám đốc; Super Admin cấp thêm cho bộ phận khác.</p></div>';
 
     o += '<div class="tabs">' + NGAN.map(function (n) {
       return '<button class="tab' + (G.crmNgan === n.ma ? ' on' : '') + '" onclick="G.crmMoNgan(\'' +
@@ -46900,6 +47325,7 @@ G.VIEWS = G.VIEWS || {};
     }).join('') + '</div>';
 
     if (G.crmNgan === 'bang') { o += veBang(); if (!G.crmBang) setTimeout(G.crmTaiBang, 0); }
+    else if (G.crmNgan === 'viec') { o += veUuTien(); if (!G.crmViec) setTimeout(G.crmTaiViec, 0); }
     else if (G.crmNgan === 'ds') { o += veDs(); if (!G.crmDs && !G.crmCt) setTimeout(G.crmTaiDs, 0); }
     else if (G.crmNgan === 'troly') { o += veTroLy(); if (!G.crmAi) setTimeout(G.crmTaiAi, 0); }
     else if (G.crmNgan === 'kpi') { o += veKpi(); if (!G.crmKpi) setTimeout(G.crmTaiKpi, 0); }
@@ -50191,12 +50617,20 @@ function gate(){
        '<input id="inP" type="password" placeholder="'+h(G.L('pw'))+'" autocomplete="current-password" '+
        'style="width:100%;background:var(--phu-2);border:1px solid var(--line);border-radius:13px;padding:11px 15px;font-size:14.5px;outline:none">'+
        '<button class="btn pri blk mt" data-act="do-login">'+ic('arrow')+h(G.L('login'))+'</button>'+
+       /* Đăng nhập bằng KHUÔN MẶT — ẩn sẵn, chỉ hiện khi thiết bị có Face
+          ID/Windows Hello/vân tay (isUVPAA). Nhập email rồi bấm. */
+       '<button class="btn ghost blk mt" id="btnMat" data-act="dang-nhap-mat" style="display:none">'+
+         ic('lock')+h(G.L('loginFace'))+'</button>'+
        '<button class="btn ghost blk mt" data-act="mo-dang-ky">'+ic('plus')+h(G.L('signUp'))+'</button>'+
        '<button class="btn ghost blk mt" data-act="xem-truoc" style="font-size:12.5px">'+h(G.L('heroBtn3'))+'</button>'+
        '<button class="btn ghost blk mt" data-act="quen-mk" style="font-size:12.5px">'+h(G.L('forgot'))+'</button>'+
        '<p class="tiny muted mt center">'+h(G.L('auditorsNote'))+'</p>'+
      '</div></div></div></div>';
   document.getElementById('app').innerHTML = o;
+  /* Hiện nút khuôn mặt chỉ khi thiết bị thật sự có bộ xác thực nền tảng. */
+  if (G.stCoNenTang) G.stCoNenTang().then(function (co) {
+    var b = document.getElementById('btnMat'); if (b && co) b.style.display = '';
+  });
 }
 
 G.accountsModal = function(){
@@ -50258,6 +50692,25 @@ function doLogin(u, p){
   if(p !== undefined && p !== null && String(p).length && a.p !== p){
     U.toast('Mật khẩu chưa đúng.','err'); return;
   }
+  vaoPhien(a);
+}
+G.doLogin = doLogin;
+
+/* Vào phiên từ một payload MÁY CHỦ (đăng nhập bằng khuôn mặt, và sau này
+   cả mật khẩu thật). Dựng một object tài khoản từ payload rồi đi qua đúng
+   vaoPhien — MỘT nguồn cho phần dựng phiên, không chép lại. Token phiên
+   lưu vào G.PHIEN_TOKEN để mọi cửa goiMayChu sau đó mang theo. */
+function vaoBangPhienMayChu(payload){
+  if(!payload || !payload.token){ U.toast('Máy chủ không trả về phiên.','err'); return; }
+  G.PHIEN_TOKEN = payload.token;
+  var a = { u: payload.u, role: payload.role, ten: payload.hoTen || payload.u,
+            maKhachHang: payload.maKhachHang || '', tuMayChu: true };
+  vaoPhien(a);
+}
+G.vaoBangPhienMayChu = vaoBangPhienMayChu;
+
+/* Phần dựng phiên dùng chung cho đăng nhập mẫu VÀ đăng nhập máy chủ. */
+function vaoPhien(a){
   /* Đổi người là dọn sổ việc. Sổ việc mang bằng chứng đóng việc — tên
      nhà, chuyện của nhà, chỗ đang vướng — nên nó không được ở lại máy
      khi người khác đăng nhập. Cùng luật với donKho() bên kho khoá. */
@@ -50288,7 +50741,6 @@ function doLogin(u, p){
     if(G.kiemBanMoi) G.kiemBanMoi();
   });
 }
-G.doLogin = doLogin;
 
 function manCho(loi){
   document.getElementById('app').innerHTML =
@@ -51206,6 +51658,7 @@ on('[data-act]', function(el){
   if(a==='kich-hoat') return G.kichHoat();
   if(a==='dong-modal') return U.closeModal();
   if(a==='do-login') doLogin(document.getElementById('inU').value, document.getElementById('inP').value);
+  else if(a==='dang-nhap-mat'){ var _im=document.getElementById('inU'); G.stDangNhapMat(_im?_im.value:''); }
   else if(a==='show-accounts') G.accountsModal();
   else if(a==='scroll-login'){ var c=document.getElementById('loginCard'); if(c) c.scrollIntoView({behavior:'smooth',block:'center'}); }
   else if(a==='logout'){ G.raNgoai(); }
