@@ -20,6 +20,25 @@
   # kiếm — chặn thẳng mục tiêu SEO. Trình thu thập AI đã bị chặn ở
   # robots.txt (20 bot); noindex chỉ giữ ở /kho/* (nội dung riêng) dưới.
 
+# ── VỎ ỨNG DỤNG: LUÔN HỎI LẠI MÁY CHỦ (9.99.226) ──
+# Không đặt no-cache ở đây thì Cloudflare/trình duyệt giữ bản cũ, và đẩy
+# bản mới lên xong mở ra vẫn thấy bản cũ — đúng lỗi "không thấy thay đổi".
+# no-cache = vẫn lưu nhưng PHẢI hỏi lại (304 nếu chưa đổi, rất nhẹ), nên
+# bản vá lên tới người dùng ngay lần mở kế. sw.js quan trọng nhất: nó là
+# đường service worker tự cập nhật.
+/sw.js
+  Cache-Control: no-cache
+/
+  Cache-Control: no-cache
+/index.html
+  Cache-Control: no-cache
+/gita-app.js
+  Cache-Control: no-cache
+/gita-nghe.js
+  Cache-Control: no-cache
+/cau-hinh.js
+  Cache-Control: no-cache
+
 # Kho đã mã hoá: không bao giờ được lưu ở proxy trung gian nào
 /kho/*
   Cache-Control: private, no-store

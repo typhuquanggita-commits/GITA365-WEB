@@ -1,0 +1,25 @@
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — BẢN GỘP CỦA 140 TỆP MÃ NGUỒN
+
+   TỆP NÀY DỰNG RA, KHÔNG PHẢI MÃ NGUỒN. Đừng sửa ở đây — sửa trong
+   src/ rồi chạy: node tools/gop-src.js
+
+   Gộp để cắt số lượt hỏi mạng từ 176 xuống 1. Trên 3G yếu, mỗi
+   lượt hỏi là một lần chờ độ trễ.
+
+   36 tệp dựng màn của NGHỀ đã ra gita-nghe.js — chỉ tải khi
+   giấy phép có gói nghề. Máy của gia đình nhẹ đi 743 KB.
+   lượt hỏi là một lần chờ độ trễ; cộng lại là hàng chục giây màn hình
+   trắng với người dùng điện thoại.
+
+   Mỗi tệp nằm trong một hàm riêng, vì có 30 tên trùng nhau ở phạm vi
+   ngoài cùng giữa các tệp. Nối thẳng là chúng giẫm lên nhau trong im
+   lặng. Thứ tự nạp: tools/danh-sach-src.json
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ═════════ sinh lúc gộp: màn nằm ở gita-nghe.js ═════════ */
+(function(){var G=window.G||{};window.G=G;
+G.MA_NGHE_TEP="gita-nghe.js";
+G.MAN_NGHE=["tang-quyen","vong-doi-tk","hang-tai-lieu","dau-mat","dong-chay","ma-tran","referral","chan-dung-kh","do-luong-kh","hang-vip","cay-tien","nhan-su-tt","phuong-phap","hoso-vip","chuyen-doi","ai-cham","van-tay","chieu-sau","ma-tran-bang","ban-do-chien-luoc","the-diem-can-bang","tuyen","tu-van-hanh","quy-trinh-toan-he","kiem-theo-vai","soat-day-du","cai-tien","luat-lam-viec","nam-dau","dao-tao-dh","so-tay-van-hanh","tang34","tang5-pro","ban-ve","ban-coach","ban-tu-van","hoat-dong","dien-thu","chuan-ngon-ngu","pheu-chot","diem-cham-1000","hanh-lang","ra-soat-loi","ra-soat-phap-ly","bang-chung","ho-so-hop-dong","ky-ket","so-tay-admin","tin-noi-bo","tu-dong","cay-tien-vip","chuoi-wow","dong-hanh-cap","goi-nghe","assessment"];
+})();
+

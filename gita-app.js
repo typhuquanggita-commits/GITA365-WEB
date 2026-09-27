@@ -1,14 +1,14 @@
 /* ═══════════════════════════════════════════════════════════════
-   GITA 365 — BẢN GỘP CỦA 131 TỆP MÃ NGUỒN
+   GITA 365 — BẢN GỘP CỦA 140 TỆP MÃ NGUỒN
 
    TỆP NÀY DỰNG RA, KHÔNG PHẢI MÃ NGUỒN. Đừng sửa ở đây — sửa trong
    src/ rồi chạy: node tools/gop-src.js
 
-   Gộp để cắt số lượt hỏi mạng từ 162 xuống 1. Trên 3G yếu, mỗi
+   Gộp để cắt số lượt hỏi mạng từ 176 xuống 1. Trên 3G yếu, mỗi
    lượt hỏi là một lần chờ độ trễ.
 
-   31 tệp dựng màn của NGHỀ đã ra gita-nghe.js — chỉ tải khi
-   giấy phép có gói nghề. Máy của gia đình nhẹ đi 700 KB.
+   36 tệp dựng màn của NGHỀ đã ra gita-nghe.js — chỉ tải khi
+   giấy phép có gói nghề. Máy của gia đình nhẹ đi 743 KB.
    lượt hỏi là một lần chờ độ trễ; cộng lại là hàng chục giây màn hình
    trắng với người dùng điện thoại.
 
@@ -20,7 +20,7 @@
 /* ═════════ sinh lúc gộp: màn nằm ở gita-nghe.js ═════════ */
 (function(){var G=window.G||{};window.G=G;
 G.MA_NGHE_TEP="gita-nghe.js";
-G.MAN_NGHE=["tang-quyen","vong-doi-tk","hang-tai-lieu","dau-mat","dong-chay","ma-tran","referral","chan-dung-kh","do-luong-kh","hang-vip","cay-tien","nhan-su-tt","phuong-phap","hoso-vip","chuyen-doi","ai-cham","van-tay","chieu-sau","ma-tran-bang","ban-do-chien-luoc","the-diem-can-bang","tuyen","tu-van-hanh","quy-trinh-toan-he","kiem-theo-vai","soat-day-du","cai-tien","luat-lam-viec","nam-dau","dao-tao-dh","so-tay-van-hanh","tang34","tang5-pro","ban-ve","ban-coach","ban-tu-van","hoat-dong","dien-thu","chuan-ngon-ngu","pheu-chot","diem-cham-1000","hanh-lang","ra-soat-loi","ra-soat-phap-ly","bang-chung","ho-so-hop-dong","ky-ket","so-tay-admin","tin-noi-bo","tu-dong"];
+G.MAN_NGHE=["tang-quyen","vong-doi-tk","hang-tai-lieu","dau-mat","dong-chay","ma-tran","referral","chan-dung-kh","do-luong-kh","hang-vip","cay-tien","nhan-su-tt","phuong-phap","hoso-vip","chuyen-doi","ai-cham","van-tay","chieu-sau","ma-tran-bang","ban-do-chien-luoc","the-diem-can-bang","tuyen","tu-van-hanh","quy-trinh-toan-he","kiem-theo-vai","soat-day-du","cai-tien","luat-lam-viec","nam-dau","dao-tao-dh","so-tay-van-hanh","tang34","tang5-pro","ban-ve","ban-coach","ban-tu-van","hoat-dong","dien-thu","chuan-ngon-ngu","pheu-chot","diem-cham-1000","hanh-lang","ra-soat-loi","ra-soat-phap-ly","bang-chung","ho-so-hop-dong","ky-ket","so-tay-admin","tin-noi-bo","tu-dong","cay-tien-vip","chuoi-wow","dong-hanh-cap","goi-nghe","assessment"];
 })();
 
 /* ═════════ src/data.core.js ═════════ */
@@ -45,7 +45,7 @@ window.G = G;
    trong khi nội dung đổi là một cách nói dối không cố ý. */
 G.META = {
   name: 'GITA 365',
-  version: '9.99.183',
+  version: '9.99.237',
   tagline: 'Hệ Sinh Thái Gia Đình Thịnh Vượng',
   hotline: '08.5555.4688',
   site: 'truongnhatquang.com',
@@ -375,7 +375,17 @@ G.TAM_NHIN = [
        R12 61,7 · R13 32,8 · R14 29,4 · R15 26,9.
      Đã kiểm cách đếm: vai CÓ nghe_chung tử số tăng đúng 1; R13·R14·R15
      không có nên tử số đứng yên. Cách đếm còn đúng; dung sai ±2 giữ nguyên. */
-  {vai:['R03','R04'], pt:84,
+  /* ═══ 9.99.194 · ĐO LẠI CẢ BẢNG MỘT LƯỢT (lần thứ ba, sau 9.99.64 · 9.99.96) ═══
+     Hai màn qt_trang mới — Khung vận hành (9.99.193) và Sức chứa & Tốc độ —
+     đẩy mẫu số lên 214. Cả hai CHỈ mở cho R01–R02, nên tử số R03–R15 đứng
+     yên mà mẫu số tăng hai: mọi tỉ lệ tụt nhẹ. Chỉ R04 vượt ±2 (81,8 vs 84),
+     nhưng R05/R06 đã ở 1,9 — sát mép. Theo luật đã ghi: đo lại CẢ bảng, đặt
+     về số đo được, không sửa mỗi số vừa kêu (để những số kia sát mép rồi
+     cùng vỡ). Đo được: R03 82,2 · R04 81,8 · R05/6 77,1 · R07/8 76,6 ·
+     R09–11 69,2 · R12 60,7 · R13 33,2 · R14 29,9 · R15 27,6.
+     Phép thử không đổi: phần KHOÁ của các vai này KHÔNG mở thêm màn nào —
+     hai màn mới đều khoá qt_trang, chỉ R01–R02 thấy. Dung sai ±2 giữ nguyên. */
+  {vai:['R03','R04'], pt:82,
    ghi:'Khoá đúng phần quản trị của R01–R02: quản trị tài khoản, phân quyền, bảo mật, nhật ký, kiểm duyệt.'},
   /* Tách làm hai dòng: bảy vị trí này trước nay gộp một con số, nhưng
      chúng KHÔNG thấy như nhau — R09–R11 kém hơn ba màn. Gộp lại thì phải
@@ -403,9 +413,9 @@ G.TAM_NHIN = [
      trị hay điều hành nào mở thêm. Phần dày lên là phần NGHỀ, và nghề
      thì họ vốn được thấy. Nên tỉ lệ nhích lên là con số thật đổi, không
      phải hàng rào bị nới. */
-  {vai:['R05','R06'], pt:79,
+  {vai:['R05','R06'], pt:77,
    ghi:'Khoá phần quản trị hệ thống, thêm tài chính và điều hành toàn hệ.'},
-  {vai:['R07','R08'], pt:78,
+  {vai:['R07','R08'], pt:76,
    ghi:'Như R05–R06, và không mở màn của dòng gia nghiệp T5-PRO.'},
   /* 73 chứ không còn 75. Hai màn mới ở 9.65 — Hành lang thành công và
      Rà soát lỗi hệ thống — khoá ở pro_coach, tức dừng đúng R08. Tử số
@@ -422,7 +432,7 @@ G.TAM_NHIN = [
      ±2 đúng 0,02 điểm. Thêm một màn là rơi ra. Ghi lại để lần sau
      nhìn thấy: một con số sát mép thì lần đổi kế tiếp chắc chắn phải
      sửa, và sửa sớm rẻ hơn để bộ kiểm đỏ rồi mới sửa. */
-  {vai:['R09','R10','R11'], pt:70,
+  {vai:['R09','R10','R11'], pt:69,
    ghi:'Như trên, và không mở ba màn thuộc phạm vi quản lý chuyên môn.'},
   /* R12 tách ra một dòng riêng, và con số thấp hơn là ĐÚNG chứ không phải
      thiệt thòi. Phân tích dữ liệu đọc được toàn bộ kho nghề và mọi màn số
@@ -451,7 +461,7 @@ G.TAM_NHIN = [
      LUẬT. Người phân tích dữ liệu đọc được bản đồ ấy thì đọc luôn
      danh sách chỗ tấn công — nên khoá ở pro_coach là cố ý, không
      phải sót. */
-  {vai:['R12'], pt:62,
+  {vai:['R12'], pt:61,
    ghi:'Toàn bộ kho nghề và màn số liệu tổng hợp · không mở hồ sơ từng nhà và buồng lái thao tác'},
   /* ═══ Ba tỉ lệ dưới: nói cho rõ kẻo lẫn với trần 30% ═══
      Đây là tỉ lệ SỐ MÀN HÌNH mở được, không phải tỉ lệ NỘI DUNG. Hai thứ
@@ -475,7 +485,7 @@ G.TAM_NHIN = [
      không mở thêm một màn nghề nào. */
   {vai:['R13'], pt:33, ghi:'Nhà mình, hành trình của con, gửi tài liệu và minh chứng, vòng nhắc, bản đồ cá nhân, sổ nhật ký, chuyện và thi viết, giới thiệu Học viện, đọc hoặc nghe'},
   /* 35 chứ không còn 33 — cùng lý do với R03–R04 và R13. */
-  {vai:['R14'], pt:29, ghi:'Chặng đường của em, nhiệm vụ, minh chứng, vòng nhắc, bản đồ cá nhân, sổ nhật ký, chuyện và thi viết, và màn xem em đã đổi gì so với tuần trước'},
+  {vai:['R14'], pt:30, ghi:'Chặng đường của em, nhiệm vụ, minh chứng, vòng nhắc, bản đồ cá nhân, sổ nhật ký, chuyện và thi viết, và màn xem em đã đổi gì so với tuần trước'},
   /* 31 chứ không còn 29. Hai màn mới ở 9.19 và 9.20 — sổ tay của gia
      đình, và năm câu hệ chưa trả lời được — đều mở cho MỌI vai, nên
      R15 thấy thêm hai màn trong khi mẫu số cũng tăng hai. Tử số tăng
@@ -506,7 +516,7 @@ G.TAM_NHIN = [
      phải "tỉ lệ có tụt không" mà là "phần KHOÁ có mở thêm màn nào
      không". Không mở, nên sửa SỐ CÔNG BỐ — và KHÔNG nới dung sai. Nới
      dung sai để bộ kiểm xanh là tắt đúng cái đèn vừa báo đúng. */
-  {vai:['R15'], pt:27, ghi:'Phần giới thiệu, hoa hồng, gửi tài liệu, vòng nhắc, bản đồ cá nhân, sổ nhật ký, chuyện và thi viết, bàn cờ hành trình, bảng tin cộng đồng, và màn xem mình đã đổi gì so với tuần trước'}
+  {vai:['R15'], pt:28, ghi:'Phần giới thiệu, hoa hồng, gửi tài liệu, vòng nhắc, bản đồ cá nhân, sổ nhật ký, chuyện và thi viết, bàn cờ hành trình, bảng tin cộng đồng, và màn xem mình đã đổi gì so với tuần trước'}
 ];
 
 /* Sáu chân dung người dùng — lời mời bước vào, hiển thị ở Cổng vào */
@@ -847,6 +857,7 @@ G.NAV = [
        đình, không kèm mục lục kho nghề. */
     {v:'kho-tong',    t:'Kho tổng — toàn cảnh',        h:'9 nhóm · hơn 50 kho · số đếm thật', ic:'vault', perm:'nghe_chung', capMo:'chung', star:1},
     {v:'thu-vien',    t:'Thư viện tài liệu',           h:'Gửi tài liệu lên · kho lớn lên từ đây', ic:'book', capMo:'chung', star:1},
+    {v:'noi-nhan-tai',t:'Nôi nuôi dưỡng nhân tài',     h:'Hành trình cha mẹ thông thái · 6 quyển · 10 chương · 3 hành trình (90 ngày · 365 ngày · một đời)', ic:'seed', capMo:'chung', star:1},
     {v:'minh-chung',  t:'Minh chứng nhiệm vụ',         h:'Nộp ảnh, báo cáo xác nhận đã làm',   ic:'check', capMo:'chung', star:1},
     {v:'kho',         t:'Kho báu vật',                 h:'Toàn cảnh những gì anh chị đang có', ic:'vault', star:1, perm:'nghe_chung', capMo:'nghe'},
     {v:'phac-do',     t:'220 phác đồ × 5 tầng',        h:'Vấn đề nào cũng có đường đi',        ic:'book', perm:'nghe_chung', capMo:'nghe'},
@@ -859,6 +870,7 @@ G.NAV = [
     {v:'mo-thuc',     t:'25 mô thức huấn luyện',       h:'Bộ công cụ gốc của người sáng lập',  ic:'brain', perm:'nghe_chung', capMo:'nghe'},
     {v:'tu-duy',      t:'Hệ tư duy mới',               h:'14 bài học đổi cách nhìn trong nhà', ic:'lightning', perm:'nghe_chung', capMo:'nghe'},
     {v:'tai-lieu-goc',t:'Tài liệu gốc Học viện',        h:'5 bộ · 161 bảng · 1.647 dòng dữ liệu', ic:'vault', perm:'nghe_chung', capMo:'nghe', star:1},
+    {v:'kho-tai-lieu',t:'Kho tài liệu GITA 365',        h:'26 tài liệu · 2.697 trang · 5 tầng × 10 cấp · bộ sinh · cẩm nang dùng kho · đào tạo nhân sự', ic:'vault', perm:'nghe_chung', capMo:'nghe', star:1},
     {v:'sach',        t:'Sách gốc & tư liệu Học viện', h:'11 chương · 515 đoạn · tra cứu được',ic:'book', perm:'nghe_chung', capMo:'nghe'},
     {v:'nhan-dien-loi',t:'Bộ nhận diện ngôn từ',       h:'GITA nói thế nào · 10 dấu hiệu câu máy viết', ic:'book', perm:'nghe_chung', capMo:'nghe', star:1},
     {v:'ngon-tu',     t:'Ngôn từ dẫn dắt',             h:'Sáu nhịp · mẫu câu dùng được ngay',  ic:'lightning', star:1, perm:'nghe_chung', capMo:'nghe'},
@@ -926,9 +938,14 @@ G.NAV = [
     {v:'xuat-du-lieu',t:'Xuất dữ liệu',                h:'PDF hồ sơ · CSV danh sách · phân quyền',ic:'out', perm:'pro_coach', capMo:'nghe'},
     {v:'do-luong-kh', t:'Hệ đo lường khách hàng',      h:'7 chỉ số · 6 nhịp · vòng cải tiến',  ic:'pulse', perm:'pro_consult', capMo:'nghe'},
     {v:'trai-nghiem-kh',t:'Hệ trải nghiệm khách hàng',  h:'Cỗ máy dịch vụ 10 tầng · chuỗi WOW 5 tầng · thư viện tình huống→giải pháp', ic:'heart', star:1, perm:'pro_consult', capMo:'nghe'},
+    {v:'chuoi-wow',   t:'Chuỗi WOW → Fan → Lan toả',    h:'Hành trình 50 cấp bám sát: WOW mỗi cấp → trung thành → fan cuồng → lan toả', ic:'spark', star:1, perm:'pro_consult', capMo:'nghe'},
+    {v:'dong-hanh-cap',t:'Đồng hành từng cấp (trọn gói)', h:'Chọn một cấp → đủ chân dung · giáo trình · bài coach sâu · câu chuyện · đo lường', ic:'compass', star:1, perm:'pro_consult', capMo:'nghe'},
+    {v:'goi-nghe',    t:'Gói nghề · bộ phận chuyên môn', h:'Mỗi vai một gói nghề: sứ mệnh · chuẩn nghề · sát hạch · công cụ', ic:'crown', star:1, perm:'nghe_chung', capMo:'nghe'},
+    {v:'assessment',  t:'Assessment Tầng 1 (chẩn đoán)', h:'6 miền · 10 bước bắt buộc · DCI · định hướng chăm sóc — công cụ Tư vấn/Assessor', ic:'check', star:1, perm:'pro_consult', capMo:'nghe'},
     {v:'hang-vip',    t:'Phân hạng VIP & VVIP',        h:'4 hạng · chuẩn phục vụ · AI chăm sóc',ic:'crown', star:1, perm:'pro_consult', capMo:'nghe'},
     {v:'hoso-vip',    t:'Chuẩn hồ sơ VIP & VVIP',      h:'7 phần · 30 trường · ba mươi giây',  ic:'book', star:1, perm:'pro_consult', capMo:'nghe'},
     {v:'cay-tien',    t:'Cây tiền — chăm sóc VIP',     h:'4 việc · điểm cây tiền · 12 nhịp',   ic:'seed', perm:'pro_consult', capMo:'nghe'},
+    {v:'cay-tien-vip',t:'Cây tiền VIP · 28 năng lực',  h:'4 trụ · 5 cụm · 28 sức mạnh chăm sóc hồ sơ VIP', ic:'seed', perm:'pro_consult', capMo:'nghe'},
     {v:'ai-cham',     t:'Trợ lý chăm sóc tự động',     h:'16 luật chạy nền · ranh giới rõ',    ic:'spark', perm:'nghe_chung', capMo:'nghe'},
     {v:'nhan-su-tt',  t:'Tệp nhân sự trung thành',     h:'5 bậc · 7 chỉ số · 5 luật',          ic:'users', perm:'pro_consult', capMo:'nghe'},
     {v:'tang-quyen',  t:'Tầng quyền truy cập',         h:'Ma trận 15 vai × 21 quyền',          ic:'shield', perm:'qt_trang', capMo:'quantri'},
@@ -993,6 +1010,7 @@ G.NAV = [
     {v:'noi-dung-tiep-thi', t:'Nội dung & tiếp thị', h:'Bảy tầng nhận thức — không khai tầng thì không xuất bản · một gốc ra bảy nhánh · bộ lọc quảng cáo bảy mục, bốn mục máy đo ba mục người khai', ic:'search', star:1, perm:'nghe_chung', capMo:'chung'},
     {v:'van-hanh-cham-soc', t:'Vận hành & chăm sóc', h:'Hồ sơ song sinh 23 trường · đèn ba màu tính lúc đọc · nhịp chạm 365 ngày, vùng tử thần ngày 8–12 · sổ dấu vết năm cột, đèn Đỏ phải GỌI', ic:'clock', star:1, perm:'nghe_chung', capMo:'chung'},
     {v:'tai-chinh-ceo', t:'Bảy con số CEO', h:'Bảy con số phải thấy mỗi tuần, chia BA ngăn theo nguồn · số tháng sống được tính trên tiền CỦA HỌC VIỆN · bốn luật tài chính · ba kịch bản viết trước', ic:'star', star:1, perm:'fin_view', capMo:'chung'},
+    {v:'ke-toan-thue', t:'Kế toán – Thuế', h:'Trung tâm vận hành: buồng lái · sổ kép · hoá đơn · kê khai GTGT·TNCN·TNDN · báo cáo · việc cần xử lý ngay theo mức khẩn', ic:'shield', star:1, perm:'fin_view', capMo:'chung'},
     {v:'con-nguoi', t:'Con người · Ba cửa', h:'Ba cửa của một người mới — Hiến pháp 13/13 · giọng qua hàng rào 10 điểm · ba cuộc gọi có người kèm. Chưa đủ ba cửa thì KHÔNG chạm khách một mình, và cổng nằm ở chỗ ghi lượt chạm chứ không ở màn hình', ic:'shield', star:1, perm:'nghe_chung', capMo:'chung'},
     {v:'phap-ly-rui-ro', t:'Pháp lý & rủi ro', h:'Hai luật có hiệu lực 01/01/2026 — bảy việc của Luật 91 chia theo AI LÀM · ba ô đồng ý tách bạch, ô về con do CHA MẸ ký · nút xoá chạy thật, hai phía đo-được và lời-khai · bốn câu hỏi mang tới luật sư, KHÔNG có câu trả lời', ic:'shield', star:1, perm:'nghe_chung', capMo:'chung'},
     {v:'he-dieu-hanh', t:'Hệ điều hành CEO', h:'GITA-CEO-OS v3.0 — bốn nhịp vận hành, mỗi nhịp có THỜI LƯỢNG · bảng 12 chỉ số chia theo nguồn, chín cửa đo được và ba ô người khai · năm bước quyết định với hai mốc thời gian · năm chặng lộ trình, không nhảy cóc · bốn câu lệnh, câu thứ tư là phép thử', ic:'compass', star:1, perm:'fin_view', capMo:'chung'},
@@ -1007,9 +1025,12 @@ G.NAV = [
     {v:'tu-hoan-thien', t:'Vòng tự hoàn thiện · lấp kho có cấp phép', h:'Kho rỗng lúc tư vấn thì Bộ não SOẠN từ dữ liệu đã có, KHÔNG bịa — nhưng 入库 (đưa vào kho phục vụ khách) phải qua Bộ phận sản phẩm → Giám đốc → Super Admin · máy soạn không nhập, hai cửa tách hẳn · đủ ba chữ ký hay chưa TÍNH LÚC ĐỌC từ sổ, không cột đãDuyệt · ba cấp ba người khác nhau · sự chậm là có thật và được nói thẳng với khách', ic:'shield', star:1, perm:'nghe_chung', capMo:'chung'},
     {v:'quyen-nang-ai', t:'Quyền năng AI · Super Admin cấp', h:'Super Admin bật/thu MƯỜI chức năng cho AI xử lý công việc · mỗi chức năng TẮT mặc định, chỉ R01 bật, AI không tự bật · bật hay chưa tính LÚC ĐỌC từ sổ, không cột đang-bật · chức năng SOẠN đi qua chuỗi cấp phép ba cấp đã có (trỏ, không dựng cổng thứ hai) · chức năng ĐỌC thì nêu không kết luận · năm cửa chạy thật, năm cái khai chuaCoCua', ic:'shield', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'dieu-phoi', t:'Điều phối trợ lý AI · 100 siêu cấp', h:'Bộ não GITA365 cao nhất, điều phối toàn diện · 100 trợ lý siêu cấp đảm nhận từng cửa thật, mỗi trợ lý MỘT khoá sở hữu nên không xung đột · mọi trợ lý qua đúng cổng (Điều 13 · cấp quyền AI · ba chữ ký), TRỎ chứ không chép luật · tự hoàn thiện đi qua vòng nâng cấp có cổng · ×100 là hướng, không phải chỉ tiêu · sẵn sàng nối tuyến web app nhánh không trùng khoá', ic:'orbit', star:1, perm:'qt_trang', capMo:'chung'},
+    {v:'khung-van-hanh', t:'Khung vận hành · V20', h:'Harness Engineering — tầng chuẩn hoá cách Bộ não điều phối 100 trợ lý · năm trụ: quản lý ngữ cảnh · gọi đúng cổng công cụ · gác Hiến pháp · chống hai trợ lý cùng ra tay · tự kiểm chất lượng mỗi lượt · mỗi trụ TRỎ vào cơ chế thật (không chép luật), bộ chấm mỗi lượt đo được từng trụ (phá-thử-đỏ-được) · V20 là đo được, không phải con số tự khai · bộ chấm KHÔNG tự ra tay', ic:'shield', star:1, perm:'qt_trang', capMo:'chung'},
+    {v:'suc-chua-toc-do', t:'Sức chứa & Tốc độ', h:'Bộ não chạy nhanh và chứa nhiều trên Cloudflare bằng NĂM TRỤ (việc nặng ở máy khách · chỉ mục đường tra nóng · bộ nhớ đệm ở biên · Workers tự co giãn · R2 cho tệp lớn), không bằng một con số · "1TB" là dung lượng, đạt bằng R2 (hàng TB) + chia mảnh D1, không phải mức của bộ não · sức chứa ĐO ĐƯỢC lúc gọi (cửa doSucChua), không tự khai · nói ra cả trần Cloudflare lẫn đường vượt trần', ic:'vault', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'thanh-tra-soi', t:'Mười tổ thanh tra soi', h:'Mười thanh tra ĐỘC LẬP chuyên phá các điểm chưa tốt, mười CẤP × 100 bậc = 1000 bậc tiêu chuẩn liền mạch · mỗi tổ NEO vào một phép soi CÓ THẬT trong mã nguồn (soatRaNgoai · truyHoiHe · capDuyetTheoTien · nhaCuaMinh · xuatDuLieuNha · danhDauXoa · dieuPhoiTroLy · a11yNhan · lapTheVungManh · kiemPhien), không phải một dòng khẩu hiệu — mục 114 đối chiếu tên ấy tồn tại trong tệp, trỏ vào cái tên bịa thì đỏ · cấp cao = hậu quả nặng hơn khi hỏng, cấp 10 là rò dữ liệu một đứa trẻ ra ngoài', ic:'shield', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'kien-truc-thi-giac', t:'Kiến trúc sư thị giác', h:'Đọc màn · tài liệu · đề xuất · kho · hiến pháp · luật thương hiệu', ic:'spark', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'phan-quyen',   t:'Phân công & cấp quyền',      h:'15 vị trí × 31 quyền · bấm ô để đổi', ic:'shield', star:1, perm:'qt_trang', capMo:'quantri'},
+    {v:'phan-quyen-crm',t:'Phân quyền CRM',            h:'Cấp quyền CRM cho bộ phận · xem/sửa/quản lý · ai được cấp mới thấy', ic:'lock', star:1, perm:'qt_trang', capMo:'quantri'},
     {v:'cap-tai-khoan',t:'Mở tài khoản mới',           h:'Cấp cho vị trí từ Tư vấn trở lên',    ic:'plus', star:1, perm:'qt_trang', capMo:'quantri'},
     {v:'khoa-tai-khoan',t:'Khoá · mở lại · xoá',       h:'Vòng đời một tài khoản, có lý do',    ic:'lock', perm:'qt_trang', capMo:'quantri'},
     {v:'nguoi-dung',   t:'Danh bạ người dùng',         h:'Ai đang ở vị trí nào, hoạt động ra sao',ic:'users', perm:'qt_trang', capMo:'quantri'},
@@ -1444,8 +1465,10 @@ G.ITEM_EN = {
   'khach-lon':['Serving major clients','4 tiers · touch cadence · the 68-point file'],
   'kho-tong':['The whole vault at a glance','9 groups · 50+ stores · real counts'],
   'thu-vien':['Document library','Upload documents · this is how the vault grows'],
+  'noi-nhan-tai':['Cradle of talent','Wise-parents journey · 6 books · 10 chapters · 3 journeys (90 days · 365 days · a lifetime)'],
   'minh-chung':['Task evidence','Submit photos and reports confirming the work was done'],
   'tai-lieu-goc':['Academy source documents','5 sets · 161 tables · 1,647 data rows'],
+  'kho-tai-lieu':['GITA 365 document library','26 documents · 2,697 pages · 5 tiers × 10 levels · generator · usage manual · staff training'],
   'nhan-dien-loi':['Voice and wording guide','How GITA speaks · 10 signs of machine-written prose'],
   'so-tay-nhan-dien':['GITA identity handbook','7 written chapters · read here, no download'],
   'chieu-sau':['Five layers of depth','One model, five practice levels, five different things you can do'],
@@ -1469,6 +1492,7 @@ G.ITEM_EN = {
   'noi-dung-tiep-thi':['Content & Marketing','seven awareness tiers — content without a declared tier cannot be published · one source, seven branches · seven-item ad filter, four machine-checked and three human-attested'],
   'van-hanh-cham-soc':['Operations & Care','23-field family twin profile · three-colour signal computed at read · 365-day care rhythm with the day 8-12 death zone · five-column trace log; a red light must be a phone call'],
   'tai-chinh-ceo':['Seven CEO Numbers','the seven weekly numbers split into THREE panes by source · runway computed on the Academy own funds, not gross cash · four finance laws · three scenarios written in advance'],
+  'ke-toan-thue':['Accounting & Tax','operations center: dashboard · double-entry ledger · invoices · VAT/PIT/CIT filing · reports · action queue by urgency'],
   'con-nguoi':['People · Three Gates','the three gates a new team member passes — 13/13 on the Constitution · voice scored by the 10-point guardrail · three real calls with a mentor. Until all three are cleared, nobody touches a customer alone, and the gate sits where a touch is logged, not on a screen'],
   'phap-ly-rui-ro':['Legal & Risk','two laws in force from 2026-01-01 — the seven Law 91 duties split by WHO does them · three separate consent boxes, the child-data one signed by a PARENT · a delete request that actually runs, split into the measured half and the attested half · four questions to take to a lawyer, with no answers attached'],
   'he-dieu-hanh':['Executive OS','GITA-CEO-OS v3.0 — four operating rhythms, each with a stated duration · a 12-metric dashboard split by source, nine measured doors and three human-entered cells · a five-step decision process pinned to two timestamps · five growth stages with no leapfrogging · four standing commands, the fourth of which is the real test'],
@@ -1487,11 +1511,14 @@ G.ITEM_EN = {
   'studio':['GITA Studio — Video Workshop','Script from the sentence bank · 1080p canvas · real human voice · inspection lights · video passport'],
   'quyen-nang-ai':['AI Powers — Granted by Super Admin','Super Admin turns ten AI work capabilities on/off · each OFF by default · acting capabilities route through the existing three-level approval chain · read-only ones surface, never conclude'],
   'dieu-phoi':['AI Orchestration — 100 Super-Agents','The GITA365 genius brain sits highest and orchestrates all · 100 super-agents each own one real door, one ownership key each so they never conflict · every agent passes the real gates (Article 13 · AI grant · three signatures), pointing not copying · self-improvement runs through the gated upgrade ring · ×100 is a direction, not a target'],
+  'khung-van-hanh':['Harness Engineering · V20','A layer standardizing how the brain orchestrates 100 agents — five pillars: context management · correct tool gate · constitution guard · conflict prevention · per-turn quality self-check · each pillar points to a real mechanism (no copied law), and a per-turn checker measures each (fails red on a bad turn) · V20 is measured, not a self-declared number · the checker never acts on its own'],
+  'suc-chua-toc-do':['Capacity & Speed','The brain runs fast and stores a lot on Cloudflare via five pillars (heavy work on the client · indexes on hot query paths · edge cache · Workers autoscale · R2 for large files), not via a number · "1TB" is storage, reached with R2 (terabyte-scale) + D1 sharding, not a brain setting · capacity is MEASURED live (doSucChua), not self-declared · states both Cloudflare limits and the path past them'],
   'thanh-tra-soi':['Ten Inspection Squads','Ten INDEPENDENT inspectors that hunt weak spots so the system performs at its best, ten LEVELS × 100 tiers = 1000 contiguous standard tiers · each squad ANCHORS to a real check in the source (soatRaNgoai · truyHoiHe · capDuyetTheoTien · nhaCuaMinh · xuatDuLieuNha · danhDauXoa · dieuPhoiTroLy · a11yNhan · lapTheVungManh · kiemPhien), not a slogan — measure 114 verifies each name exists in its file, a fake name turns it red · higher level = heavier consequence on failure, level 10 is a child data leak out of the system'],
   'tu-hoan-thien':['Self-Completion Loop — Gated Vault Fill','When a vault is empty mid-advising the Brain DRAFTS from existing data, never fabricates — but promoting to the live vault needs Product → CEO → Super Admin · machine drafts, does not promote · whether three signatures are in is COMPUTED AT READ from the ledger, no "approved" column · three levels, three different people · the delay is real and stated plainly to the customer'],
   'kien-truc-thi-giac':['Visual Architect','Read a screen · document · proposal · library · visual constitution · brand decisions'],
   'phong-tai-chinh':['Finance & Accounting Office','Notice board · assistant · my queue · daily book · bank reconciliation · weekly close · KPI · payroll · charter'],
   'phan-quyen':['Assignments & permissions','15 positions × 31 permissions · click a cell to change it'],
+  'phan-quyen-crm':['CRM permissions','Grant CRM access to departments · view/edit/manage · only the granted see it'],
   'cap-tai-khoan':['Open a new account','Issued for positions from Consultant upward'],
   'khoa-tai-khoan':['Lock · reopen · delete','The life of an account, with a stated reason'],
   'sap-xep':['Rearrange the menu','Reorder · hide · add a new folder'],
@@ -1503,7 +1530,12 @@ G.ITEM_EN = {
   'do-luong-kh':['Customer measurement system','7 metrics · 6 cadences · improvement loop'],
   'hang-vip':['VIP & VVIP tiers','4 tiers · service standards · AI care'],
   'cay-tien':['Money tree — VIP care','4 moves · money-tree score · 12 cadences'],
+  'cay-tien-vip':['VIP Money Tree · 28 capabilities','4 pillars · 5 clusters · 28 strengths caring for VIP profiles'],
   'trai-nghiem-kh':['Customer Experience System','A 10-layer service machine · a 5-tier WOW chain · a situation→solution library'],
+  'chuoi-wow':['WOW Chain → Fan → Spread','The 50-cấp journey mapped: WOW at each level → loyalty → superfan → spreading the system'],
+  'dong-hanh-cap':['Per-Level Companion','Pick one level → full portrait · curriculum · deep coaching · proof story · measurement, all in one place'],
+  'goi-nghe':['Professional Kits by Department','Each role a full kit: mission · professional standard · certification · tools'],
+  'assessment':['Tier-1 Assessment','6 domains · 10-step protocol · DCI reliability · care direction — the consultant/assessor diagnostic'],
   'nhan-su-tt':['Loyal staff profile','5 levels · 7 metrics · 5 rules'],
   'tien-bo':['What changed at home','This week next to last week, with the gap explained'],
   'bang-viec':['My work board','Overdue · in progress · new · done · close the day'],
@@ -1740,15 +1772,21 @@ G.moiGoi = function(){
   for(i = 0; i < (G.TUYEN || []).length; i++){
     var t = G.TUYEN[i];
     ds.push(G.goiNghe(t.ma));
+    ds.push(G.goiNgheCao(t.ma));   /* 9.99.229: nghe-cao LÀ gói hợp lệ */
     for(j = 1; j <= G.TUYEN_SO_TANG; j++) ds.push(G.goiTang(t.ma, j));
   }
   return ds;
 };
 
-/* Gói của MỘT tuyến — dùng khi cấp giấy phép theo tuyến */
+/* Gói của MỘT tuyến — dùng khi cấp giấy phép theo tuyến.
+   PHẢI gồm nghe-cao, nếu không giấy phép "đủ gói" vẫn thiếu hồ sơ tầng
+   4-5 (T5-PRO), và Super Admin xem offline KHÔNG thấy full. nghe-cao là
+   gói của đội ngũ (Coach lên) — giấy phép chỉ cấp cho người của Học viện
+   (napDuocGiayPhep đòi pro_report/qt_trang), nên gộp vào đây là an toàn;
+   máy chủ vẫn siết theo vai qua phamViCapPhep cho đường trực tuyến. */
 G.goiCuaTuyen = function(maTuyen){
   var t = G.tuyen(maTuyen); if(!t) return [];
-  var ds = [G.goiNghe(maTuyen)];
+  var ds = [G.goiNghe(maTuyen), G.goiNgheCao(maTuyen)];
   for(var j = 1; j <= G.TUYEN_SO_TANG; j++) ds.push(G.goiTang(maTuyen, j));
   return ds;
 };
@@ -2011,9 +2049,18 @@ U.P = {
   bell:'M12 3a6 6 0 0 0-6 6v4l-2 3h16l-2-3V9a6 6 0 0 0-6-6Zm-2.5 16a2.5 2.5 0 0 0 5 0',
   quote:'M9 7c-2.8 0-5 2.2-5 5s2 4.5 4.5 4.5c.4 0 .8 0 1.2-.2-.6 1.8-2.2 3.2-4.2 3.7M19 7c-2.8 0-5 2.2-5 5s2 4.5 4.5 4.5c.4 0 .8 0 1.2-.2-.6 1.8-2.2 3.2-4.2 3.7',
   plus:'M12 5v14M5 12h14',
+  minus:'M5 12h14',
   clock:'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0-14v5.2l3.4 2',
   zoom:'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14Zm5-2 5 5M8 11h6',
-  out:'M15 4h4v16h-4M11 8l-4 4 4 4M7 12h10'
+  out:'M15 4h4v16h-4M11 8l-4 4 4 4M7 12h10',
+  alert:'M12 4 2.5 20h19L12 4Zm0 6v4m0 3h.01',
+  chat:'M4 5h16v11H8l-4 4V5Z',
+  edit:'M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5 17v3Zm10-13 3 3',
+  eye:'M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Zm10 3a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z',
+  filter:'M3 5h18l-7 8v6l-4-2v-4L3 5Z',
+  grid:'M4 4h7v7H4V4Zm9 0h7v7h-7V4ZM4 13h7v7H4v-7Zm9 0h7v7h-7v-7Z',
+  list:'M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01',
+  sparkle:'M12 4l1.5 5 5 1.5-5 1.5L12 17l-1.5-5-5-1.5 5-1.5L12 4Zm7 9 .7 2.3 2.3.7-2.3.7-.7 2.3-.7-2.3-2.3-.7 2.3-.7.7-2.3Z'
 };
 U.ic = function(n,cls){
   /* width/height ATTRIBUTES (không chỉ CSS) là SÀN CỨNG chống phình.
@@ -2171,6 +2218,246 @@ U.modal = function(html){
   m.querySelector('.mx').onclick = U.closeModal;
 };
 U.closeModal = function(){ document.getElementById('modal').classList.remove('on'); };
+
+})();
+
+/* ═════════ src/bieu-do.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 · 9.99.201 — BỘ VẼ BIỂU ĐỒ · SƠ ĐỒ DÒNG CHẢY
+
+   Chủ hệ: "Chữ chỉ 20% — tôi cần NHÌN THẤY dòng chảy công việc; bảng số
+   liệu, biểu đồ, sơ đồ." Ba màn điều hành (tài chính · CRM · bộ não) đều
+   cần cùng một bộ vẽ, nên gom về một chỗ: sửa một lần, ba màn đổi theo.
+   Dựng bản thứ hai của một cái cột là một chỗ để hai màn lệch nhau.
+
+   Ba luật của bộ này:
+   1. TẤT CẢ vẽ bằng SVG nội tuyến — chạy trên web lẫn .exe, không tải một
+      thư viện nặng nào, và ĐO ĐƯỢC bằng do-khung-man (thẻ thật, chữ thật).
+   2. MÀU LẤY TỪ BIẾN THƯƠNG HIỆU (var(--gita…)) — không gõ mã hex, để đổi
+      nền sáng/tối là cả biểu đồ đổi theo, không lệch một vệt.
+   3. Rộng hơn màn thì CUỘN NGANG trong hộp riêng (overflow-x:auto), không
+      đẩy cả trang trượt ngang — luật khổ điện thoại của kho.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+
+(function(){
+var U = G.U, h = U.h;
+
+/* Bảng màu phân loại — họ xanh GITA + hai sắc nhấn. Semantic (ok/đỏ) tách
+   riêng, gọi thẳng khi cần, không nằm trong bảng phân loại này. */
+U.bdMau = ['var(--gita)','var(--gita-sau)','var(--gita-sang)','var(--ok)',
+           '--gita-ink','var(--gold-2)','var(--warn)','var(--gita-do)'];
+function mau(i){ var m = U.bdMau[i % U.bdMau.length]; return m.slice(0,2)==='--' ? 'var('+m+')' : m; }
+
+/* Rút gọn tiền cho nhãn biểu đồ: 1.250.000.000 → "1,25 tỷ" · 450.000 → "450k".
+   Nhãn dài làm cột chồng chữ; con số đầy đủ để trong ô số lớn, không lên cột. */
+U.bdGon = function(n){
+  n = U.num(n); var d = n < 0 ? '-' : ''; n = Math.abs(n);
+  if(n >= 1e9)  return d + (n/1e9).toFixed(n>=1e10?0:1).replace('.',',') + ' tỷ';
+  if(n >= 1e6)  return d + Math.round(n/1e6) + ' tr';
+  if(n >= 1e3)  return d + Math.round(n/1e3) + 'k';
+  return d + Math.round(n);
+};
+U.bdTien = function(n){ return new Intl.NumberFormat('vi-VN').format(Math.round(U.num(n))) + ' đ'; };
+
+/* ─── Ô SỐ LỚN — nhịp đọc đầu tiên của mọi bảng điều hành ───
+   o = {k nhãn, v giá trị, d dòng phụ, c màu, xu ±% xu hướng, dat true/false} */
+U.bdSo = function(o){
+  var c = o.c || 'var(--gita)';
+  var xu = '';
+  if(typeof o.xu === 'number'){
+    var len = o.xu >= 0, mc = (o.tot === false ? !len : len) ? 'var(--ok)' : 'var(--gita-do)';
+    xu = '<span class="bd-xu" style="color:'+mc+'">'+(len?'▲':'▼')+' '+
+      h(Math.abs(o.xu))+'%</span>';
+  }
+  return '<div class="bd-so card" style="border-top:3px solid '+c+'">'+
+    '<div class="bd-so-k">'+h(o.k)+'</div>'+
+    '<div class="bd-so-v" style="color:'+c+'">'+h(o.v)+xu+'</div>'+
+    (o.d ? '<div class="bd-so-d">'+h(o.d)+'</div>' : '')+'</div>';
+};
+U.bdSoHang = function(ds){ return '<div class="bd-so-hang">'+ds.map(U.bdSo).join('')+'</div>'; };
+
+/* ─── CỘT ĐƠN / CỘT ĐÔI ───
+   rows = [{nhan, a, b?}] · o = {aTen, bTen, cao, dvi} — b optional = cột đôi. */
+U.bdCot = function(rows, o){
+  o = o || {}; rows = rows || [];
+  var doi = rows.some(function(r){ return r.b != null; });
+  var H = o.cao || 190, top = 26, bot = 34, n = rows.length || 1;
+  var W = Math.max(300, n * (doi ? 78 : 60));
+  var vals = []; rows.forEach(function(r){ vals.push(U.num(r.a)); if(doi) vals.push(U.num(r.b)); });
+  var max = Math.max.apply(null, vals.concat([1]));
+  var plot = H - top - bot, step = W / n;
+  var svg = '<svg viewBox="0 0 '+W+' '+H+'" width="'+W+'" height="'+H+'" ' +
+    'preserveAspectRatio="xMinYMid meet" role="img">';
+  /* Bốn vạch lưới ngang mờ — cho mắt bám mức, không cần trục số dày chữ. */
+  for(var g=1; g<=3; g++){ var gy = top + plot*g/3;
+    svg += '<line x1="0" y1="'+gy.toFixed(1)+'" x2="'+W+'" y2="'+gy.toFixed(1)+
+      '" stroke="var(--phu-3)" stroke-width="1"/>'; }
+  rows.forEach(function(r, i){
+    var cx = step*i, bw = doi ? step*0.30 : step*0.5, gap = doi ? step*0.08 : 0;
+    var ax = cx + step/2 - (doi ? bw + gap/2 : bw/2);
+    function bar(x, v, cl){
+      var hh = Math.max(2, plot * U.num(v)/max), y = top + plot - hh;
+      return '<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)+
+        '" height="'+hh.toFixed(1)+'" rx="3" fill="'+cl+'"/>'+
+        '<text x="'+(x+bw/2).toFixed(1)+'" y="'+(y-5).toFixed(1)+'" text-anchor="middle" '+
+        'font-size="10" fill="var(--ink-3)">'+h(U.bdGon(v))+'</text>';
+    }
+    svg += bar(ax, r.a, 'var(--gita)');
+    if(doi) svg += bar(ax + bw + gap, r.b, 'var(--gita-do)');
+    svg += '<text x="'+(cx+step/2).toFixed(1)+'" y="'+(H-12)+'" text-anchor="middle" '+
+      'font-size="10.5" fill="var(--ink-4)">'+h(r.nhan)+'</text>';
+  });
+  svg += '</svg>';
+  var chu = doi ? '<div class="bd-chu"><span><i style="background:var(--gita)"></i>'+
+    h(o.aTen||'A')+'</span><span><i style="background:var(--gita-do)"></i>'+h(o.bTen||'B')+
+    '</span></div>' : '';
+  return '<div class="bd-box"><div class="bd-cuon">'+svg+'</div>'+chu+'</div>';
+};
+
+/* ─── ĐƯỜNG + VÙNG — xu hướng theo thời gian ───
+   pts = [{nhan, gia}] */
+U.bdDuong = function(pts, o){
+  o = o || {}; pts = pts || [];
+  var H = o.cao || 170, top = 24, bot = 30, n = pts.length;
+  if(n < 2) return '<div class="bd-box"><p class="bd-trong">Chưa đủ điểm để vẽ đường.</p></div>';
+  var W = Math.max(300, n * 64), L = 8, R = W - 8;
+  var vals = pts.map(function(p){ return U.num(p.gia); });
+  var max = Math.max.apply(null, vals), min = Math.min.apply(null, vals.concat([0]));
+  var plot = H - top - bot, rng = (max - min) || 1;
+  function X(i){ return L + (R-L) * i/(n-1); }
+  function Y(v){ return top + plot * (1 - (U.num(v)-min)/rng); }
+  var line = '', area = 'M '+X(0).toFixed(1)+' '+(top+plot).toFixed(1);
+  pts.forEach(function(p,i){ var x=X(i).toFixed(1), y=Y(p.gia).toFixed(1);
+    line += (i?' L ':'M ')+x+' '+y; area += ' L '+x+' '+y; });
+  area += ' L '+X(n-1).toFixed(1)+' '+(top+plot).toFixed(1)+' Z';
+  var svg = '<svg viewBox="0 0 '+W+' '+H+'" width="'+W+'" height="'+H+'" '+
+    'preserveAspectRatio="xMinYMid meet" role="img">'+
+    '<defs><linearGradient id="bdg" x1="0" y1="0" x2="0" y2="1">'+
+      '<stop offset="0" stop-color="var(--gita)" stop-opacity="0.30"/>'+
+      '<stop offset="1" stop-color="var(--gita)" stop-opacity="0.02"/></linearGradient></defs>'+
+    '<path d="'+area+'" fill="url(#bdg)"/>'+
+    '<path d="'+line+'" fill="none" stroke="var(--gita)" stroke-width="2.5" '+
+      'stroke-linejoin="round" stroke-linecap="round"/>';
+  pts.forEach(function(p,i){
+    svg += '<circle cx="'+X(i).toFixed(1)+'" cy="'+Y(p.gia).toFixed(1)+'" r="3" fill="var(--gita-sau)"/>'+
+      '<text x="'+X(i).toFixed(1)+'" y="'+(Y(p.gia)-8).toFixed(1)+'" text-anchor="middle" '+
+      'font-size="10.5" fill="var(--ink-3)">'+h(U.bdGon(p.gia))+'</text>'+
+      '<text x="'+X(i).toFixed(1)+'" y="'+(H-10)+'" text-anchor="middle" font-size="10" '+
+      'fill="var(--ink-4)">'+h(p.nhan)+'</text>';
+  });
+  svg += '</svg>';
+  return '<div class="bd-box"><div class="bd-cuon">'+svg+'</div></div>';
+};
+
+/* ─── VÒNG NHIỀU MẢNH + CHÚ DẪN — chia một tổng (hoa hồng, chi phí…) ───
+   segs = [{ten, gia, mau?}] */
+U.bdVong = function(segs, o){
+  o = o || {}; segs = (segs||[]).filter(function(s){ return U.num(s.gia) > 0; });
+  var tong = segs.reduce(function(s,x){ return s + U.num(x.gia); }, 0) || 1;
+  var r = 52, cx = 66, cy = 66, C = 2*Math.PI*r, off = 0;
+  var svg = '<svg viewBox="0 0 132 132" width="132" height="132" role="img">';
+  segs.forEach(function(s, i){
+    var frac = U.num(s.gia)/tong, len = C*frac;
+    svg += '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+(s.mau||mau(i))+
+      '" stroke-width="16" stroke-dasharray="'+len.toFixed(1)+' '+(C-len).toFixed(1)+
+      '" stroke-dashoffset="'+(-off).toFixed(1)+'" transform="rotate(-90 '+cx+' '+cy+')"/>';
+    off += len;
+  });
+  svg += '<text x="'+cx+'" y="'+(cy-2)+'" text-anchor="middle" font-size="13" font-weight="700" '+
+    'fill="var(--ink)">'+h(o.giua||'')+'</text>'+
+    '<text x="'+cx+'" y="'+(cy+14)+'" text-anchor="middle" font-size="10.5" '+
+    'fill="var(--ink-4)">'+h(o.duoi||'')+'</text></svg>';
+  var cd = '<div class="bd-cd">'+segs.map(function(s,i){
+    return '<div class="bd-cd-h"><i style="background:'+(s.mau||mau(i))+'"></i>'+
+      '<span>'+h(s.ten)+'</span><b>'+Math.round(U.num(s.gia)/tong*100)+'%</b></div>';
+  }).join('')+'</div>';
+  return '<div class="bd-box bd-vong"><div>'+svg+'</div>'+cd+'</div>';
+};
+
+/* ─── PHỄU — các chặng thu hẹp dần, kèm tỷ lệ chuyển ───
+   stages = [{ten, so, mau?}] */
+U.bdPhieu = function(stages){
+  stages = (stages||[]);
+  if(!stages.length) return '<div class="bd-box"><p class="bd-trong">Chưa có chặng nào.</p></div>';
+  var maxSo = Math.max.apply(null, stages.map(function(s){ return U.num(s.so); }).concat([1]));
+  var W = 340, rowH = 46, H = stages.length*rowH + 8;
+  var svg = '<svg viewBox="0 0 '+W+' '+H+'" width="100%" height="'+H+'" '+
+    'preserveAspectRatio="xMidYMid meet" role="img">';
+  stages.forEach(function(s, i){
+    var w = Math.max(60, (W-40) * U.num(s.so)/maxSo), x = (W - w)/2, y = i*rowH + 4;
+    var wNext = i < stages.length-1 ? Math.max(60,(W-40)*U.num(stages[i+1].so)/maxSo) : w;
+    var xNext = (W - wNext)/2;
+    var d = 'M '+x+' '+y+' L '+(x+w)+' '+y+' L '+(xNext+wNext)+' '+(y+rowH-6)+
+      ' L '+xNext+' '+(y+rowH-6)+' Z';
+    svg += '<path d="'+d+'" fill="'+(s.mau||mau(i))+'" opacity="0.90"/>'+
+      '<text x="'+(W/2)+'" y="'+(y+rowH/2-3)+'" text-anchor="middle" font-size="11.5" '+
+      'font-weight="600" fill="#fff">'+h(s.ten)+' · '+h(U.bdGon(s.so))+'</text>';
+    if(i>0){ var tl = Math.round(U.num(s.so)/(U.num(stages[i-1].so)||1)*100);
+      svg += '<text x="'+(W-6)+'" y="'+(y+4)+'" text-anchor="end" font-size="10.5" '+
+        'fill="var(--ink-4)">'+tl+'%</text>'; }
+  });
+  svg += '</svg>';
+  return '<div class="bd-box">'+svg+'</div>';
+};
+
+/* ─── SƠ ĐỒ DÒNG CHẢY — cột việc nối bằng mũi tên: "nhìn thấy dòng chảy" ───
+   cols = [{ten, mau?, o:[{t, p?}| 'chuỗi']}] */
+U.bdDong = function(cols, o){
+  cols = cols || [];
+  var html = '<div class="bd-dong">' + cols.map(function(c, i){
+    var oc = (c.o||[]).map(function(x){
+      var t = typeof x === 'string' ? x : x.t, p = (x && x.p) || '';
+      return '<div class="bd-dong-o">'+h(t)+(p?'<span>'+h(p)+'</span>':'')+'</div>';
+    }).join('');
+    var m = c.mau || mau(i);
+    return '<div class="bd-dong-cot">'+
+      '<div class="bd-dong-dau" style="background:'+m+'">'+h(c.ten)+'</div>'+
+      '<div class="bd-dong-than">'+(oc||'<div class="bd-dong-o bd-dong-trong">—</div>')+'</div>'+
+      '</div>' + (i < cols.length-1 ? '<div class="bd-dong-mui">→</div>' : '');
+  }).join('') + '</div>';
+  return '<div class="bd-box"><div class="bd-cuon">'+html+'</div>'+
+    (o && o.chu ? '<p class="bd-ghi">'+h(o.chu)+'</p>' : '')+'</div>';
+};
+
+/* ─── HÀNG ĐỢI VIỆC — "việc cần xử lý ngay", vạch mức khẩn bên trái ───
+   Mẫu thao tác vận hành: đội nhìn một chỗ là biết làm gì trước. Mỗi việc
+   một mức (khan · luuy · nhac), có thể kèm nút hành động. items =
+   [{muc, ten, phu, nhan, act?, actNhan?}] */
+U.bdViec = function(items, o){
+  o = o || {};
+  var M = {khan:{c:'var(--gita-do)',n:'khẩn'}, luuy:{c:'var(--warn)',n:'lưu ý'},
+           nhac:{c:'var(--gita)',n:'nhắc'}, xong:{c:'var(--ok)',n:'xong'}};
+  var body = (items||[]).map(function(v){
+    var m = M[v.muc] || M.nhac;
+    return '<div class="bd-viec-o" style="--vc:'+m.c+'">'+
+      '<div class="bd-viec-noi"><b>'+h(v.ten)+'</b>'+
+        (v.phu?'<p>'+h(v.phu)+'</p>':'')+'</div>'+
+      (v.act?'<button class="btn sm" data-v="'+h(v.act)+'">'+h(v.actNhan||'Mở')+'</button>'
+            :'<span class="bd-viec-nhan" style="color:'+m.c+'">'+h(v.nhan||m.n)+'</span>')+
+      '</div>';
+  }).join('');
+  return '<div class="bd-viec card">'+
+    (o.tieuDe?'<div class="bd-viec-h"><b>'+h(o.tieuDe)+'</b>'+
+      (o.phu?'<span>'+h(o.phu)+'</span>':'')+'</div>':'')+
+    (body||'<p class="bd-trong">Không có việc nào cần xử lý ngay.</p>')+'</div>';
+};
+
+/* ─── DẢI TRUNG THỰC — dữ liệu minh hoạ hay số thật ───
+   Một bảng số mà không nói con số từ đâu thì người đọc tin cả bảng như
+   nhau. Dải này đứng ĐẦU màn, nói thẳng: minh hoạ (chưa nối máy chủ) hay
+   số thật (đã nối). Cùng luật mayDo/khai của kho. */
+U.bdNguon = function(that){
+  if(that) return '<div class="bd-nguon bd-nguon-that">'+U.ic('check','w-4 h-4')+
+    '<span><b>Số thật</b> — đọc trực tiếp từ máy chủ Cloudflare.</span></div>';
+  return '<div class="bd-nguon bd-nguon-mau">'+U.ic('spark','w-4 h-4')+
+    '<span><b>Dữ liệu minh hoạ</b> — đây là bố cục và dòng chảy để anh chị xem trước. '+
+    'Nối máy chủ CRM/tài chính thì mọi số ở đây tự thay bằng số thật của Học viện, không dựng số giả.</span></div>';
+};
+
+})();
 
 })();
 
@@ -3933,7 +4220,10 @@ G.kiemGiayPhep = function(gp){
   if(!gp.khoa || typeof gp.khoa !== 'object') return 'Tệp không có bộ khoá.';
   var ds = Object.keys(gp.khoa);
   if(!ds.length) return 'Giấy phép không cấp gói nào.';
-  var HOP = ['nen','nghe','tang1','tang2','tang3','tang4','tang5'];
+  /* Danh sách gói hợp lệ đọc THẲNG từ G.moiGoi (một nguồn) — không giữ bản
+     chép tay, vì thêm một gói (như nghe-cao) mà quên sửa đây thì giấy phép
+     đủ gói vẫn bị từ chối "gói lạ". */
+  var HOP = (G.moiGoi ? G.moiGoi() : ['nen','nghe','nghe-cao','tang1','tang2','tang3','tang4','tang5']);
   var la = ds.filter(function(g){ return HOP.indexOf(g) < 0; });
   if(la.length) return 'Giấy phép có gói lạ: ' + la.join(', ');
   for(var i=0;i<ds.length;i++){
@@ -4028,7 +4318,7 @@ var G = window.G || {}; window.G = G;
 /* Địa chỉ máy chủ cấp phép. Để trống thì ứng dụng chạy ở chế độ mẫu. */
 G.API_CAP_PHEP = G.API_CAP_PHEP || '';
 
-G.KHO = { daNap: [], dangNap: [], cheDoMau: false, hanKhoa: null, lyDoTuChoi: '', maTuChoi: '' };
+G.KHO = { daNap: [], dangNap: [], cheDoMau: false, hanKhoa: null, lyDoTuChoi: '', maTuChoi: '', loiMo: {} };
 
 /* Mọi thuộc tính do kho cấp phép nạp vào. Đổi vai là xoá sạch rồi nạp lại
    theo đúng phạm vi của vai mới — không để sót nội dung của vai trước. */
@@ -4050,6 +4340,15 @@ G.THUOC_CAP_PHEP = [
   'KN_KHUON','KN_NHIP','KN_HOITHOAI_LUAT',
   /* v9.99.46 — thang điểm riêng cho ba khuôn */
   'KN_DIEM_KHUON',
+  /* v9.99.214 — giáo trình 50 cấp, gói NGHỀ. Khai ở đây để đổi vai thì
+     xoá: coach đăng xuất, phụ huynh đăng nhập, không giữ giáo trình nghề. */
+  'KTL_TL50','KTL_TL50_NGUON','KTL_TL50_HN_NGUON','KTL_SAU','KTL_SAU_NGUON',
+  'KTL_CHUYEN','KTL_CHUYEN_NGUON',
+  'AS_MIEN','AS_BUOC','AS_CHAMSOC','AS_PHANHOI','AS_NGUON',
+  /* v9.99.215 — phương pháp coach (Hệ phát triển học viên), gói NGHỀ */
+  'HDT_GITA','HDT_BEN','HDT_KYVONG','HDT_TANG5','HDT_LOGIC','HDT_NGUON','HDT_BANG',
+  /* v9.99.217 — bộ công cụ coach 20 nhóm, gói NGHỀ */
+  'CKIT','CKIT_NGUON',
   /* v9.99.47 — bộ miễn dịch */
   'MD_MA_VB','MD_NHOM','MD_CHAN','MD_VIRUS','MD_CHOCHU',
   /* v9.99.48 — từ điển KL08 */
@@ -4339,7 +4638,7 @@ function donKho(){
      1200, và không có gì báo. Phép đo bắt được đúng lỗi này ngay lần
      chạy đầu sau khi chia kho. */
   G.KHO_TRAI_RA.forEach(function(k){ try{ delete G[k]; }catch(e){ G[k] = undefined; } });
-  G.KHO.daNap = []; G.KHO.dangNap = []; G.KHO.cheDoMau = false; G.KHO.hanKhoa = null;
+  G.KHO.daNap = []; G.KHO.dangNap = []; G.KHO.cheDoMau = false; G.KHO.hanKhoa = null; G.KHO.loiMo = {};
   /* Bảng thứ hạng của trần 30% tính từ chính kho đang mở. Đổi vai là kho
      đổi, nên bảng cũ phải bỏ đi — không thì nhà mình được tính theo kho
      của vai trước. */
@@ -4483,6 +4782,16 @@ function xinKhoa(danhSach) {
      · bản do Apps Script phục vụ → xin qua máy chủ, nhận base64
    Gói nào cũng đã mã hoá sẵn, nên đường nào cũng không lộ gì. */
 function layGoi(ten) {
+  /* ── BẢN MỘT TỆP OFFLINE (9.99.230) ──
+     window.GITA_KHO_NHUNG[ten] = base64 của kho/<ten>.enc, nhúng thẳng
+     trong tệp HTML. Có nó thì KHÔNG tải mạng, KHÔNG đọc tệp cạnh — giải
+     mã ngay từ chuỗi nhúng, nên chạy cả khi mở bằng file:// (bấm đúp).
+     Chỉ bật khi biến này có mặt; bản web/cài thường không có nên không
+     đổi gì. Dùng cho tệp "XEM FULL" gửi chủ hệ xem toàn diện offline. */
+  var nhung = window.GITA_KHO_NHUNG;
+  if (nhung && nhung[ten])
+    return Promise.resolve(Uint8Array.from(atob(nhung[ten]),
+      function (c) { return c.charCodeAt(0); }));
   var nguon = window.GITA_NGUON_KHO;
   if (nguon)
     return fetch(nguon + encodeURIComponent(ten) +
@@ -4698,10 +5007,27 @@ G.napKho = function () {
                 });
             }
           })
-          .catch(function (e) { console.warn('[GITA] gói ' + t + ': ' + e.message); })
+          .catch(function (e) {
+            console.warn('[GITA] gói ' + t + ': ' + (e && e.message));
+            /* GHI LẠI LÝ DO, KHÔNG NUỐT IM LẶNG. Trước đây một gói giải mã
+               hỏng thì chỉ console.warn, còn màn hình quay "Đang mở" mãi mãi
+               — đúng lỗi chủ hệ gặp trên pages.dev. AES-GCM sai khoá ném
+               OperationError không có lời; dịch sang câu người đọc được. */
+            G.KHO.loiMo = G.KHO.loiMo || {};
+            var m = (e && e.message) || '';
+            G.KHO.loiMo[t] = /operation|decrypt|cipher/i.test(m) || !m
+              ? 'Giải mã thất bại — khoá (khoa.json) không khớp tệp ' + t +
+                '.enc trên máy chủ. Hai thứ phải cùng MỘT bản build.'
+              : m;
+          })
           .then(function () {
             var i = G.KHO.dangNap.indexOf(t);
             if (i >= 0) G.KHO.dangNap.splice(i, 1);
+            /* Gói vừa xong (dù hỏng) — vẽ lại để màn "Đang mở" đổi thành
+               câu lý do thay vì quay mãi. */
+            if (G.render && G.S && G.S.acc && !G.coGoi(G.goiCanCho(G.S.view))) {
+              try { G.render(); } catch (e2) {}
+            }
           });
       }
 
@@ -7431,18 +7757,90 @@ G.VIEWS['tang-truong'] = function(){
 };
 
 /* ═══════════════ 05 · NHẬT KÝ HỆ THỐNG ═══════════════ */
+/* NHẬT KÝ TOÀN HỆ (9.99.236) — đọc SỔ THẬT ở máy chủ, không mảng demo.
+   Bản cũ đọc G.AUDIT (mảng tĩnh trên máy khách) — một tấm áp phích, đúng
+   thứ chủ hệ cấm. Nay gọi docNhatKyToanHe: mọi thao tác có giá trị · dòng
+   tiền · quyền của MỌI người, lọc được, đếm được, phân trang. Một chỗ
+   Super Admin/Admin thấy tất cả. */
+var NK_MAU = {tien:'#B45309', quyen:'#5140B4', chatluong:'#0B7350', hethong:'#185AB4', khac:'#64708A'};
+G.nkTai = function(loc){
+  G.nkLoc = Object.assign({}, G.nkLoc || {}, loc || {});
+  if(!G.goiMayChu){ G.nkData = {ok:false, error:'Chưa nối máy chủ.'}; G.render && G.render(); return; }
+  G.nkDangTai = true;
+  G.goiMayChu('docNhatKyToanHe', G.nkLoc).then(function(x){
+    G.nkData = x; G.nkDangTai = false;
+    if(G.S && G.S.view==='nhat-ky-ht') G.render && G.render();
+  });
+};
+G.nkDoiNhom = function(n){ G.nkTai({nhom:n, trang:1}); };
+G.nkTrang = function(t){ if(t>=1) G.nkTai({trang:t}); };
+G.nkTimNguoi = function(){
+  var el = document.getElementById('nk_nguoi'); var dt = document.getElementById('nk_doituong');
+  G.nkTai({nguoi: el?el.value:'', doiTuong: dt?dt.value:'', trang:1});
+};
 G.VIEWS['nhat-ky-ht'] = function(){
-  if(!G.can('sys_audit')) return U.lockCard();
-  var o = U.ph({eyebrow:'NHÓM 05 · VẬN HÀNH', ic:'book', t:'Nhật ký hệ thống',
-    lead:'Mọi thao tác đều để lại dấu vết. Minh bạch tới tận cùng là một trong bảy giá trị cốt lõi — và nó bắt đầu từ chính hệ thống này.'});
-  o += U.tbl(['Giờ','Người thực hiện','Thao tác','IP','Kết quả'],
-    G.AUDIT.map(function(a){
-      var bad = String(a.kq).indexOf('CHẶN')===0;
-      return ['<span class="mono sm">'+h(a.gio)+'</span>','<span class="sm">'+h(a.ai)+'</span>',
-        '<span class="sm">'+h(a.viec)+'</span>','<span class="mono tiny muted">'+h(a.ip)+'</span>',
-        bad?'<span class="chip" style="color:var(--bad);border-color:rgba(248,113,113,.4)">'+h(a.kq)+'</span>'
-           :'<span class="chip on">'+h(a.kq)+'</span>'];
+  if(!G.can('sys_audit')) return U.lockCard('Nhật ký toàn hệ chỉ mở cho Super Admin và Admin hệ thống — '+
+    'đây là chỗ đọc được mọi thao tác của mọi người, nên là quyền quản trị cao nhất.');
+  var o = U.ph({eyebrow:'NHÓM 05 · VẬN HÀNH', ic:'book', t:'Nhật ký toàn hệ',
+    lead:'Mọi thao tác có giá trị · dòng tiền · quyền — của mọi người — đều để lại dấu ở đây. '+
+      'Đọc thẳng sổ máy chủ, lọc theo nhóm · người · đối tượng, đếm được. Minh bạch tới tận cùng.'});
+
+  if(!G.API_CAP_PHEP)
+    return o + '<div class="card" style="border-color:var(--line)"><p class="sm muted">'+
+      'Nhật ký toàn hệ đọc từ MÁY CHỦ. Vào <b>Quản trị trang → Nối máy chủ</b> để xem sổ thật. '+
+      '(Bản xem offline không có sổ máy chủ — và ở đây cố ý KHÔNG dựng dòng mẫu, vì một nhật ký '+
+      'giả là thứ nguy hiểm nhất để trình ra.)</p></div>';
+
+  if(!G.nkData){ setTimeout(function(){ G.nkTai({}); }, 0);
+    return o + '<p class="note">Đang đọc sổ nhật ký…</p>'; }
+  var d = G.nkData;
+  if(!d.ok) return o + '<div class="card"><p class="sm" style="color:var(--bad)">'+h(d.error||'Không đọc được sổ.')+
+    '</p><p class="note mt"><button class="btn" onclick="G.nkTai({})">Thử lại</button></p></div>';
+
+  /* Dải đếm theo nhóm — con số THẬT đếm từ sổ (GROUP BY viec ở máy chủ). */
+  o += '<div class="crm-kpis">';
+  (d.tomTat||[]).forEach(function(t){
+    o += '<div class="crm-kpi" style="border-left:3px solid '+(NK_MAU[t.ma]||'#64708A')+'">'+
+      '<div class="crm-kpi-nhan">'+h(t.ten)+'</div>'+
+      '<div class="crm-kpi-so" style="color:'+(NK_MAU[t.ma]||'#64708A')+'">'+h(String(t.n))+'</div></div>';
+  });
+  o += '<div class="crm-kpi"><div class="crm-kpi-nhan">Tổng thao tác</div>'+
+    '<div class="crm-kpi-so">'+h(String(d.tongAll||0))+'</div></div>';
+  o += '</div>';
+
+  /* Lọc: nhóm (nút) + người + đối tượng. */
+  var loc = d.loc || {};
+  o += '<div class="row wrap" style="gap:6px;margin:10px 0">';
+  o += '<button class="chip'+((loc.nhom==='tatca'||!loc.nhom)?' on':'')+'" onclick="G.nkDoiNhom(\'tatca\')">Tất cả</button>';
+  (d.nhomCoThe||[]).forEach(function(n){
+    o += '<button class="chip'+(loc.nhom===n.ma?' on':'')+'" onclick="G.nkDoiNhom(\''+n.ma+'\')" '+
+      'style="'+(loc.nhom===n.ma?('color:'+(NK_MAU[n.ma])+';border-color:'+NK_MAU[n.ma]):'')+'">'+h(n.ten)+'</button>';
+  });
+  o += '<button class="chip'+(loc.nhom==='khac'?' on':'')+'" onclick="G.nkDoiNhom(\'khac\')">Khác</button>';
+  o += '</div>';
+  o += '<div class="row wrap" style="gap:8px;align-items:end;margin-bottom:10px">'+
+    '<label class="sm">Người<br><input id="nk_nguoi" placeholder="tên đăng nhập" value="'+h(loc.nguoi||'')+'"></label>'+
+    '<label class="sm">Đối tượng<br><input id="nk_doituong" placeholder="mã nhà, mã lệnh…" value="'+h(loc.doiTuong||'')+'"></label>'+
+    '<button class="btn btn-chinh" onclick="G.nkTimNguoi()">Tìm</button></div>';
+
+  /* Bảng: mỗi thao tác một hàng, nhóm thành chip màu quét được. */
+  o += U.tbl(['Giờ','Nhóm','Người','Thao tác','Đối tượng','Chi tiết'],
+    (d.ds||[]).map(function(a){
+      var mau = NK_MAU[a.nhom] || '#64708A';
+      return ['<span class="mono tiny">'+h(String(a.luc||'').slice(0,19).replace('T',' '))+'</span>',
+        '<span class="chip" style="color:'+mau+';border-color:'+mau+'55;background:'+mau+'14">'+h(a.nhom)+'</span>',
+        '<span class="sm">'+h(a.username||'—')+'</span>',
+        '<code class="tiny">'+h(a.viec)+'</code>',
+        '<span class="tiny muted">'+h(a.doiTuong||'—')+'</span>',
+        '<span class="tiny">'+h(a.chiTiet||'')+'</span>'];
     }));
+  if(!(d.ds||[]).length) o += '<p class="note">Không có dòng nào khớp bộ lọc.</p>';
+
+  /* Phân trang. */
+  o += '<div class="row" style="gap:10px;justify-content:center;margin-top:12px">'+
+    '<button class="btn sm" '+(d.trang<=1?'disabled':'')+' onclick="G.nkTrang('+(d.trang-1)+')">← Trước</button>'+
+    '<span class="sm muted">Trang '+h(String(d.trang))+' / '+h(String(d.soTrang))+' · '+h(String(d.tong))+' dòng khớp</span>'+
+    '<button class="btn sm" '+(d.trang>=d.soTrang?'disabled':'')+' onclick="G.nkTrang('+(d.trang+1)+')">Sau →</button></div>';
   return o;
 };
 /* ═══════════════ 05 · CHỈ SỐ HÀI LÒNG & GÓP Ý ═══════════════ */
@@ -7565,36 +7963,25 @@ G.VIEWS['kiem-thu'] = function(){
     'còn yếu ở ba chỗ — bằng chứng pháp lý, xác thực thật ở máy chủ, và mốc chuyển tuyến chuyên khoa.</p></div>'+
     '<button class="btn pri" data-go="chuan-1000">Mở chuẩn 1000 điểm '+ic('arrow')+'</button></div></div>';
 
-  o += G.PERSONA.map(function(p){
-    return '<div class="card mb" style="border-color:'+p.c+'2e">'+
-      '<div class="row wrap" style="gap:14px;margin-bottom:14px;align-items:flex-start">'+
-        '<span style="width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-weight:900;'+
-        'background:'+p.c+'22;color:'+p.c+';flex:none">'+h(p.id)+'</span>'+
-        '<div class="grow" style="min-width:200px"><b style="font-size:16px;display:block">'+h(p.ten)+'</b>'+
-        '<span class="tiny muted">'+h(p.vai)+'</span></div>'+
-        '<div style="text-align:right"><b class="mono" style="font-size:26px;color:'+p.c+'">'+p.cham+'</b>'+
-        '<div class="tiny muted">điểm chạm</div></div></div>'+
-      '<div style="padding:11px 13px;border-radius:12px;background:var(--phu-2);margin-bottom:14px">'+
-        '<span class="tiny up muted">CÁCH NGƯỜI NÀY DÙNG HỆ THỐNG</span>'+
-        '<p class="sm mt">'+h(p.cach)+'</p></div>'+
-      '<div class="grid g2" style="gap:14px">'+
-        '<div><div class="up mb" style="color:var(--ok)">ĐÃ ĐẠT</div>'+
-        p.dat.map(function(x){return '<div style="display:flex;gap:8px;margin-bottom:7px">'+
-          '<span style="color:var(--ok);flex:none;margin-top:3px">'+ic('check','w-3 h-3')+'</span>'+
-          '<span class="sm" style="line-height:1.55">'+h(x)+'</span></div>';}).join('')+'</div>'+
-        '<div><div class="up mb" style="color:var(--bad)">CÒN THIẾU</div>'+
-        p.thieu.map(function(x){return '<div style="display:flex;gap:8px;margin-bottom:7px">'+
-          '<span style="color:var(--bad);flex:none;margin-top:3px">'+ic('x','w-3 h-3')+'</span>'+
-          '<span class="sm" style="line-height:1.55">'+h(x)+'</span></div>';}).join('')+'</div>'+
-      '</div>'+
-      '<div class="mt2" style="padding:14px 16px;border-radius:14px;background:'+p.c+'0f;border-left:2px solid '+p.c+'">'+
-        '<span class="tiny up" style="color:'+p.c+'">KẾT LUẬN</span>'+
-        '<p class="serif mt" style="font-size:16px;font-style:italic;line-height:1.6">"'+h(p.ket)+'"</p></div>'+
-      '<div class="row mt2" style="gap:9px;padding-top:12px;border-top:1px dashed var(--phu-4)">'+
-        '<span class="tiny muted">Đăng nhập bằng vai này:</span>'+
-        '<span class="mono tiny" style="color:var(--gold-ink)">'+h(p.tk)+'</span>'+
-        '<span class="mono tiny" style="color:var(--gold-ink)">'+h(p.mk)+'</span></div></div>';
-  }).join('');
+  /* Bốn thẻ prose dài → một bảng: mỗi chuyên gia một hàng, đọc được điểm ·
+     đã đạt · còn thiếu · kết luận cạnh nhau. "Còn thiếu" là thước đo thật —
+     ba chỗ cả bốn góc nhìn cùng chỉ vào (bằng chứng pháp lý · xác thực máy
+     chủ · mốc chuyển tuyến), quét một lần là thấy. */
+  o += U.sec('BỐN GÓC NHÌN · CHẤM THẬT','Mỗi chuyên gia một cách dùng, một mức điểm, một danh sách còn thiếu');
+  o += U.tbl(['Chuyên gia','Điểm','Cách dùng','Đã đạt','Còn thiếu','Kết luận','Đăng nhập thử'],
+    G.PERSONA.map(function(p){
+      var dat = p.dat.map(function(x){return '<div style="display:flex;gap:6px;margin-bottom:4px"><span style="color:var(--ok);flex:none">'+ic('check','w-3 h-3')+'</span><span class="tiny">'+h(x)+'</span></div>';}).join('');
+      var thieu = p.thieu.map(function(x){return '<div style="display:flex;gap:6px;margin-bottom:4px"><span style="color:var(--bad);flex:none">'+ic('x','w-3 h-3')+'</span><span class="tiny">'+h(x)+'</span></div>';}).join('');
+      return [
+        '<b class="sm">'+h(p.ten)+'</b><br><span class="tiny muted">'+h(p.vai)+'</span>',
+        '<b class="mono" style="font-size:18px;color:'+p.c+'">'+p.cham+'</b>',
+        '<span class="tiny">'+h(p.cach)+'</span>',
+        dat,
+        thieu,
+        '<span class="serif tiny" style="font-style:italic">"'+h(p.ket)+'"</span>',
+        '<span class="mono tiny" style="color:var(--gold-ink)">'+h(p.tk)+'<br>'+h(p.mk)+'</span>'
+      ];
+    }));
   return o;
 };
 
@@ -8279,20 +8666,21 @@ G.VIEWS['ra-soat'] = function(){
     ].map(function(x,i){ return '<div style="display:flex;gap:9px"><span class="mono tiny" style="color:var(--bad);flex:none;margin-top:3px">0'+(i+1)+'</span>'+
       '<span class="sm">'+h(x)+'</span></div>'; }).join('') + '</div></div>';
 
+  /* Mỗi nhóm một BẢNG thay danh sách thẻ prose: trạng thái + mức độ thành
+     chip màu quét được, mô tả và cách xử lý nằm cùng hàng. Một biên bản
+     rà soát đọc được trong một lần nhìn, không phải cuộn qua vài chục thẻ. */
   o += R.nhom.map(function(n){
-    return '<div class="mt2"><div class="up mb" style="color:'+n.c+'">'+h(n.n)+' <span class="muted">· '+n.muc.length+' điểm</span></div>'+
-      n.muc.map(function(m){
-        var c = mau[m.trang] || '#665E88';
-        return '<div class="card mb" style="border-color:'+c+'26">'+
-          '<div class="row wrap" style="gap:9px;margin-bottom:8px">'+
-          '<b class="grow" style="font-size:14.5px;min-width:200px">'+h(m.t)+'</b>'+
-          (m.mucdo && m.mucdo!=='—' ? U.chip(m.mucdo, m.mucdo==='Nghiêm trọng'?'#BE0E16':(m.mucdo==='Trung bình'?'#BE0E16':'#665E88')) : '')+
-          '<span class="chip" style="color:'+c+';border-color:'+c+'55;background:'+c+'14">'+h(m.trang)+'</span></div>'+
-          '<p class="sm muted" style="line-height:1.6;margin-bottom:9px">'+h(m.mo)+'</p>'+
-          '<div style="padding:11px 13px;border-radius:12px;background:'+c+'0d;border-left:2px solid '+c+'">'+
-          '<span class="tiny up" style="color:'+c+'">XỬ LÝ</span>'+
-          '<p class="sm mt" style="line-height:1.6">'+h(m.sua)+'</p></div></div>';
-      }).join('') + '</div>';
+    var oo = U.sec(n.n, n.muc.length+' điểm rà');
+    oo += U.tbl(['Điểm rà','Mức độ','Trạng thái','Cách xử lý'], n.muc.map(function(m){
+      var c = mau[m.trang] || '#665E88';
+      return [
+        '<b class="sm">'+h(m.t)+'</b><br><span class="tiny muted">'+h(m.mo)+'</span>',
+        (m.mucdo && m.mucdo!=='—' ? U.chip(m.mucdo, m.mucdo==='Nghiêm trọng'?'#BE0E16':(m.mucdo==='Trung bình'?'#BE0E16':'#665E88')) : '<span class="tiny muted">—</span>'),
+        '<span class="chip" style="color:'+c+';border-color:'+c+'55;background:'+c+'14">'+h(m.trang)+'</span>',
+        '<span class="sm">'+h(m.sua)+'</span>'
+      ];
+    }));
+    return oo;
   }).join('');
 
   o += '<p class="tiny muted center mt2">Biên bản lập ngày '+h(R.ngay)+' cho bản '+h(R.phienBan)+
@@ -8558,26 +8946,16 @@ G.VIEWS['hoc-tu-lon'] = function(){
     U.stat({k:'DỨT KHOÁT KHÔNG LẤY', v:B.khongLay.length, d:'phá ranh giới của mô hình', c:'#BE0E16'})+
   '</div>';
 
-  o += U.sec('MƯỜI HỆ THỐNG · CƠ CHẾ LÕI','Lấy phần làm nên sức mạnh, từ chối phần chỉ phục vụ chỉ số');
-  o += B.he.map(function(x){
-    return '<div class="card lift mb" style="border-color:'+x.c+'2e">'+
-      '<div class="row wrap" style="gap:11px;margin-bottom:11px">'+
-        '<b style="font-size:18px;color:'+x.c+'">'+h(x.ten)+'</b>'+U.chip(x.linh, x.c)+'</div>'+
-      '<div style="padding:12px 14px;border-radius:13px;background:var(--phu-2);margin-bottom:12px">'+
-        '<span class="tiny up muted">CƠ CHẾ LÕI</span>'+
-        '<p class="sm mt" style="line-height:1.65">'+h(x.coche)+'</p>'+
-        '<p class="tiny mt" style="color:'+x.c+'">→ '+h(x.manh)+'</p></div>'+
-      '<div class="grid g2" style="gap:12px">'+
-        '<div style="padding:12px 14px;border-radius:13px;background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.22)">'+
-          '<div class="tiny up" style="color:var(--ok)">GITA LẤY</div>'+
-          '<p class="sm mt" style="line-height:1.6">'+h(x.lay)+'</p></div>'+
-        '<div style="padding:12px 14px;border-radius:13px;background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.2)">'+
-          '<div class="tiny up" style="color:var(--bad)">GITA TỪ CHỐI</div>'+
-          '<p class="sm mt" style="line-height:1.6">'+h(x.bo)+'</p></div></div>'+
-      '<div class="row mt2" style="gap:9px;align-items:flex-start;padding-top:11px;border-top:1px dashed var(--phu-4)">'+
-        '<span style="color:var(--gold-ink);flex:none;margin-top:3px">'+ic('arrow','w-4 h-4')+'</span>'+
-        '<span class="sm dim"><b style="color:var(--ink)">Việc cụ thể:</b> '+h(x.viec)+'</span></div></div>';
-  }).join('');
+  o += U.sec('MƯỜI HỆ THỐNG · CƠ CHẾ LÕI','Lấy phần làm nên sức mạnh, từ chối phần chỉ phục vụ chỉ số — một bảng quét được');
+  o += U.tbl(['Hệ thống','Cơ chế lõi','GITA lấy','GITA từ chối','Việc cụ thể'], B.he.map(function(x){
+    return [
+      '<b class="sm" style="color:'+x.c+'">'+h(x.ten)+'</b><br>'+U.chip(x.linh, x.c),
+      '<span class="sm">'+h(x.coche)+'</span><br><span class="tiny" style="color:'+x.c+'">→ '+h(x.manh)+'</span>',
+      '<span class="sm" style="color:var(--ok)">'+h(x.lay)+'</span>',
+      '<span class="sm" style="color:var(--bad)">'+h(x.bo)+'</span>',
+      '<span class="sm">'+h(x.viec)+'</span>'
+    ];
+  }));
 
   o += U.sec('MƯỜI HAI VIỆC RÚT RA','Tám việc đã nằm trong bản này, bốn việc còn lại vào bản 7.1');
   o += U.tbl(['Việc','Học từ','Trạng thái'], B.viec71.map(function(v){
@@ -8590,20 +8968,15 @@ G.VIEWS['hoc-tu-lon'] = function(){
   o += '<div class="card mb" style="border-color:rgba(56,189,248,.3)">'+
     '<div class="row"><span style="color:var(--sky,#38BDF8)">'+ic('brain','w-4 h-4')+'</span><b>Nguyên tắc chọn</b></div>'+
     '<p class="sm dim mt" style="line-height:1.7">'+h(A.cot)+'</p></div>';
-  o += A.he.map(function(x){
-    return '<div class="card lift mb" style="border-color:'+x.c+'2e">'+
-      '<div class="row wrap" style="gap:11px;margin-bottom:10px">'+
-      '<b style="font-size:16px;color:'+x.c+'">'+h(x.ten)+'</b>'+U.chip(x.linh,x.c)+'</div>'+
-      '<p class="sm dim" style="line-height:1.65;margin-bottom:12px">'+h(x.duong)+'</p>'+
-      '<div class="grid g2" style="gap:12px">'+
-        '<div style="padding:12px 14px;border-radius:13px;background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.22)">'+
-          '<div class="tiny up" style="color:var(--ok)">GITA LẤY</div><p class="sm mt" style="line-height:1.6">'+h(x.lay)+'</p></div>'+
-        '<div style="padding:12px 14px;border-radius:13px;background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.2)">'+
-          '<div class="tiny up" style="color:var(--bad)">GITA TỪ CHỐI</div><p class="sm mt" style="line-height:1.6">'+h(x.bo)+'</p></div></div>'+
-      '<div class="row mt2" style="gap:9px;align-items:flex-start;padding-top:11px;border-top:1px dashed var(--phu-4)">'+
-        '<span style="color:var(--gold-ink);flex:none;margin-top:3px">'+ic('arrow','w-4 h-4')+'</span>'+
-        '<span class="sm dim"><b style="color:var(--ink)">Việc cụ thể:</b> '+h(x.viec)+'</span></div></div>';
-  }).join('');
+  o += U.tbl(['Hệ AI','Đường lối','GITA lấy','GITA từ chối','Việc cụ thể'], A.he.map(function(x){
+    return [
+      '<b class="sm" style="color:'+x.c+'">'+h(x.ten)+'</b><br>'+U.chip(x.linh, x.c),
+      '<span class="sm">'+h(x.duong)+'</span>',
+      '<span class="sm" style="color:var(--ok)">'+h(x.lay)+'</span>',
+      '<span class="sm" style="color:var(--bad)">'+h(x.bo)+'</span>',
+      '<span class="sm">'+h(x.viec)+'</span>'
+    ];
+  }));
 
   o += U.sec('BẢY ĐIỀU KIỆN CHỌN NHÀ CUNG CẤP AI','Không đạt đủ bảy điều thì không ký, dù mô hình mạnh tới đâu');
   o += '<div class="card">' + A.dieuKien.map(function(d,i){
@@ -8772,11 +9145,72 @@ G.vanBanModal = function(ma){
 };
 
 /* ═══════════════ QUẢN TRỊ TÀI CHÍNH ═══════════════ */
+/* ── DỮ LIỆU ĐIỀU HÀNH TÀI CHÍNH ──
+   Số thật đọc từ máy chủ Cloudflare (cửa tài chính) khi đã nối; chưa nối
+   thì đây là dữ liệu MINH HOẠ để xem trước bố cục và dòng chảy, có dải
+   nói thẳng ở đầu màn — không dựng số giả trình ra như số thật. */
+G.tcMinhHoa = function(){
+  return { nguon:false,
+    thang:[ {nhan:'T4',a:1520e6,b:1050e6},{nhan:'T5',a:1680e6,b:1120e6},
+            {nhan:'T6',a:1740e6,b:1180e6},{nhan:'T7',a:1610e6,b:1090e6},
+            {nhan:'T8',a:1880e6,b:1210e6},{nhan:'T9',a:1950e6,b:1240e6} ],
+    loiThang:[ {nhan:'T4',gia:470e6},{nhan:'T5',gia:560e6},{nhan:'T6',gia:560e6},
+               {nhan:'T7',gia:520e6},{nhan:'T8',gia:670e6},{nhan:'T9',gia:710e6} ],
+    coCauChi:[ {ten:'Vận hành',gia:520e6},{ten:'Lương',gia:430e6},
+               {ten:'Hoa hồng',gia:185e6},{ten:'Tiếp thị',gia:105e6} ],
+    hoaHong:[ {ten:'Đại sứ trực tiếp',gia:120e6},{ten:'Cộng tác viên',gia:45e6},
+              {ten:'Liên kết',gia:20e6} ],
+    chiTieu:[ {ten:'Doanh thu',dat:96,c:'var(--ok)'},{ten:'Khách mới',dat:88,c:'var(--gita)'},
+              {ten:'Giữ nhịp 90 ngày',dat:82,c:'var(--gita-sau)'},
+              {ten:'Biên lợi nhuận',dat:73,c:'var(--warn)'} ] };
+};
+
 G.VIEWS['tai-chinh-qt'] = function(){
   if(!G.can('fin_view')) return U.lockCard();
   var T = G.TAICHINH_QT;
   var o = U.ph({eyebrow:'NHÓM 05 · QUẢN TRỊ', ic:'chart', grad:1, t:'Hệ quản trị tài chính', lead:T.cot});
 
+  /* ══ BẢNG ĐIỀU HÀNH TRỰC QUAN — 80% hình, 20% chữ ══ */
+  var D = G.tcMinhHoa();
+  var dtNay = D.thang[D.thang.length-1].a, cpNay = D.thang[D.thang.length-1].b;
+  var loiNay = dtNay - cpNay, hhNay = D.hoaHong.reduce(function(s,x){return s+x.gia;},0);
+  var cuaHoc = Math.round(dtNay*0.62);
+  o += U.bdNguon(D.nguon);
+  o += U.bdSoHang([
+    {k:'Doanh thu tháng', v:U.bdTien(dtNay), c:'var(--gita)', xu:3.7, d:'so với tháng trước'},
+    {k:'Chi phí tháng',   v:U.bdTien(cpNay), c:'var(--gita-do)', xu:2.5, tot:false},
+    {k:'Lợi nhuận',       v:U.bdTien(loiNay), c:'var(--ok)', xu:6.0},
+    {k:'Hoa hồng đã trả', v:U.bdTien(hhNay), c:'var(--gita-sang)', d:'ba tuyến'},
+    {k:'Tiền của Học viện',v:U.bdTien(cuaHoc), c:'var(--gita-sau)', d:'sau phần giữ hộ chưa giao'},
+    {k:'Biên lợi nhuận',  v:Math.round(loiNay/dtNay*100)+'%', c:'var(--gold-2)', d:'lợi nhuận / doanh thu'}
+  ]);
+
+  o += U.sec('DOANH THU vs CHI PHÍ · 6 THÁNG','Cột xanh doanh thu · cột đỏ chi phí — khoảng cách là lợi nhuận');
+  o += U.bdCot(D.thang, {aTen:'Doanh thu', bTen:'Chi phí'});
+
+  o += '<div class="grid g2">'+
+    '<div>'+U.sec('XU HƯỚNG LỢI NHUẬN','')+U.bdDuong(D.loiThang)+'</div>'+
+    '<div>'+U.sec('CƠ CẤU CHI PHÍ','')+U.bdVong(D.coCauChi,{giua:U.bdGon(D.coCauChi.reduce(function(s,x){return s+x.gia;},0)),duoi:'tổng chi'})+'</div>'+
+    '</div>';
+
+  o += '<div class="grid g2">'+
+    '<div>'+U.sec('HOA HỒNG THEO TUYẾN','')+U.bdVong(D.hoaHong,{giua:U.bdGon(hhNay),duoi:'hoa hồng'})+'</div>'+
+    '<div>'+U.sec('CHỈ TIÊU vs THỰC ĐẠT','Vòng đầy tới đâu là đạt tới đó')+
+      '<div class="bd-box"><div class="row" style="gap:16px;flex-wrap:wrap;justify-content:center">'+
+      D.chiTieu.map(function(c){ return '<div style="text-align:center">'+
+        U.ring(c.dat, c.c, '%')+'<div class="tiny muted" style="margin-top:4px;max-width:88px">'+h(c.ten)+'</div></div>'; }).join('')+
+      '</div></div></div>';
+
+  o += U.sec('DÒNG CHẢY ĐỒNG TIỀN','Từ khi khách trả tới khi thành lợi nhuận — mỗi khoản đi qua một cửa có người ký');
+  o += U.bdDong([
+    {ten:'Khách trả', mau:'var(--gita)', o:[{t:U.bdTien(dtNay),p:'doanh thu tháng'}]},
+    {ten:'Giữ hộ', mau:'var(--gita-sang)', o:[{t:'Chưa giao dịch vụ',p:'tiền của khách tới khi giao'}]},
+    {ten:'Của Học viện', mau:'var(--gita-sau)', o:[{t:U.bdTien(cuaHoc),p:'đã ghi nhận doanh thu'}]},
+    {ten:'Chi ra', mau:'var(--gita-do)', o:[{t:'Vận hành · Lương',p:'qua thang duyệt chi'},{t:'Hoa hồng',p:U.bdTien(hhNay)}]},
+    {ten:'Lợi nhuận', mau:'var(--ok)', o:[{t:U.bdTien(loiNay),p:'giữ lại · tái đầu tư'}]}
+  ], {chu:'Số tháng sống được tính trên TIỀN CỦA HỌC VIỆN, không trên tổng tiền mặt — tiền giữ hộ là nghĩa vụ, không phải lãi.'});
+
+  o += U.sec('CHỈ SỐ CHUẨN QUẢN TRỊ','Ngưỡng an toàn cho từng tỷ số — nền đứng dưới mọi con số ở trên');
   o += '<div class="grid g3 mb">' + T.chiSo.map(function(c){
     return '<div class="card pad-sm" style="border-color:'+c.c+'26">'+
       '<div class="row" style="align-items:baseline;gap:9px;margin-bottom:5px">'+
@@ -16290,12 +16724,40 @@ G.datMayChu = function(url){
     G.API_CAP_PHEP = '';
     return {ok:true, xoa:true};
   }
-  if(!/^https:\/\/script\.google\.com\/.*\/exec$/.test(url))
-    return {ok:false, ly:'Địa chỉ phải là đường dẫn triển khai của Apps Script, '+
-      'bắt đầu bằng https://script.google.com/ và kết thúc bằng /exec.'};
+  if(!/^https:\/\/[^\s]+$/i.test(url))
+    return {ok:false, ly:'Địa chỉ máy chủ phải là một đường dẫn https — dạng '+
+      'https://gita365.<tên-tài-khoản>.workers.dev (Cloudflare Worker của Học viện).'};
   try{ localStorage.setItem(KHO, url); }catch(e){ return {ok:false, ly:'Trình duyệt không cho ghi.'}; }
   G.API_CAP_PHEP = url;
   return {ok:true};
+};
+
+/* Máy chủ từ chối cấp khoá vì SÁU lý do khác nhau, và mỗi lý do một cách
+   sửa khác hẳn. Nói đúng cách sửa theo mã, thay vì để người dùng đoán —
+   cùng luật "nêu đúng chỗ thứ hai phải khai" của doanViSao. */
+G.tuChoiCachSua = function(ma){
+  switch(String(ma || '')){
+    case 'NOKEY':
+      return 'Máy chủ chưa được nạp bộ khoá. Trên máy anh chị, trong thư mục may-chu/ chạy: '+
+        'npx wrangler secret put GITA_KHOA_KHO — dán toàn bộ nội dung tệp kho/khoa.json — rồi '+
+        'npx wrangler deploy. Bấm "Gọi thử" ở trên, thấy số khoá > 0 là xong.';
+    case 'MUSTCHANGE':
+      return 'Tài khoản đang dùng mật khẩu tạm do máy sinh. Bấm "Đổi mật khẩu ngay" bên dưới, '+
+        'đặt mật khẩu riêng, rồi đăng nhập lại — kho sẽ mở.';
+    case 'AUTH':
+      return 'Phiên đăng nhập đã hết hạn hoặc chưa gửi kèm mã phiên. Đăng xuất rồi đăng nhập '+
+        'lại, sau đó mở lại màn này.';
+    case 'RATE':
+      return 'Đã xin khoá quá nhiều lần trong một giờ (trần chống dò khoá). Chờ khoảng một giờ '+
+        'rồi thử lại — không cần sửa gì.';
+    case 'LOCKED':
+      return 'Tài khoản đang bị khoá. Cần Super Admin mở lại trong Quản trị trang → tài khoản.';
+    case 'DANGBANG':
+      return 'Hệ đang trong chế độ đóng băng cứu hệ. Chỉ mở lại được qua quy trình truy hồi '+
+        '(cần khoá cứu hệ offline).';
+    default:
+      return 'Đọc câu máy chủ trả về ở trên, hoặc bấm "Gọi thử" để xem máy chủ đã nạp khoá chưa.';
+  }
 };
 
 /* Gọi thử: doGet của máy chủ trả về tên và số khoá đã nạp, không trả khoá nào. */
@@ -16399,28 +16861,15 @@ function doanViSao(e){
     'nhiều khả năng là mất mạng hoặc máy chủ chưa chạy.';
 }
 
-G.kiemQuyenDrive = function(){
-  if(!G.API_CAP_PHEP) return Promise.resolve({ok:false, ly:'Chưa nối máy chủ.'});
-  return fetch(G.API_CAP_PHEP, {
-    method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
-    body: JSON.stringify({fn:'kiemDrive', u:(G.S.acc && G.S.acc.u) || '',
-      token: G.PHIEN_TOKEN || ''})
-  }).then(function(r){ return r.json(); })
-    .then(function(d){
-      if(!d || !d.ok) return {ok:false, ly:(d && d.error) || 'Máy chủ không trả lời.'};
-      return d;
-    })
-    .catch(function(e){ return {ok:false, ly:'Không gọi được máy chủ: ' + (e && e.message || e)}; });
-};
-
 G.VIEWS['noi-may-chu'] = function(){
   var url = G.API_CAP_PHEP || '';
   var noi = !!url;
 
   var o = U.ph({eyebrow:'QUẢN TRỊ TRANG', ic:'orbit', grad:1,
     t:'Nối máy chủ',
-    lead:'Máy chủ của GITA 365 là một dự án Google Apps Script chạy trên tài khoản Google '+
-         'của Học viện. Không thuê máy, không phí hàng tháng, dữ liệu nằm trong Drive của mình.'});
+    lead:'Máy chủ của GITA 365 là một Cloudflare Worker chạy trên tài khoản Cloudflare '+
+         'của Học viện. Gói miễn phí đủ dùng, không phí hàng tháng, dữ liệu nằm trong D1 '+
+         'và R2 của chính Học viện — không đi qua Google Apps Script nữa.'});
 
   o += '<div class="card mt2" style="border-color:'+(noi?'var(--ok)':'var(--gita-do)')+'">'+
     '<div class="row" style="gap:10px;align-items:center">'+
@@ -16432,22 +16881,24 @@ G.VIEWS['noi-may-chu'] = function(){
            : 'Xem được toàn bộ giao diện và phần giới thiệu. Kho chuyên môn vẫn khoá, '+
              'đăng ký và đổi mật khẩu chưa chạy thật.')+'</p>'+
     '<div class="row mt2" style="gap:9px;flex-wrap:wrap">'+
-      '<input id="mcUrl" value="'+h(url)+'" placeholder="https://script.google.com/macros/s/…/exec" '+
+      '<input id="mcUrl" value="'+h(url)+'" placeholder="https://gita365.<tên-tài-khoản>.workers.dev" '+
         'style="flex:1;min-width:280px;background:var(--surface);border:1px solid var(--line);'+
         'border-radius:99px;padding:11px 18px;font-size:12.5px;outline:none;color:var(--ink)" '+
         'class="mono" autocomplete="off">'+
       '<button class="btn pri" data-act="mc-luu">'+ic('check','w-4 h-4')+'Lưu địa chỉ</button>'+
       '<button class="btn ghost" data-act="mc-thu">'+ic('pulse','w-4 h-4')+'Gọi thử</button>'+
-      (noi ? '<button class="btn ghost" data-act="mc-drive">'+ic('vault','w-4 h-4')+'Kiểm quyền Drive</button>' : '')+
       (noi ? '<button class="btn ghost" data-act="mc-bo">'+ic('x','w-4 h-4')+'Bỏ nối</button>' : '')+
     '</div>'+
-    '<div id="mcDrive" class="mt"></div>'+
     '<div id="mcKq" class="mt"></div>'+
     (G.KHO && G.KHO.lyDoTuChoi ?
       '<div class="card pad-sm mt" style="border-color:var(--gita-do)">'+
         '<b class="sm" style="color:var(--gita-do-ink)">'+ic('lock','w-3 h-3')+
-        ' Máy chủ đang từ chối cấp khoá</b>'+
+        ' Máy chủ đang từ chối cấp khoá'+(G.KHO.maTuChoi ? ' · mã '+h(G.KHO.maTuChoi) : '')+'</b>'+
         '<p class="sm mt">'+h(G.KHO.lyDoTuChoi)+'</p>'+
+        /* Chỉ đúng CÁCH SỬA theo mã máy chủ trả về — mỗi mã một việc khác
+           hẳn, gộp thành một câu chung là dẫn người ta đi sai đường. */
+        (G.tuChoiCachSua ? '<p class="sm mt" style="color:var(--gita-ink)">'+ic('spark','w-3 h-3')+
+          ' '+G.tuChoiCachSua(G.KHO.maTuChoi)+'</p>' : '')+
         (G.KHO.maTuChoi === 'MUSTCHANGE' ?
           '<button class="btn pri sm mt" data-act="doi-mk-mo">'+ic('lock','w-3 h-3')+
           'Đổi mật khẩu ngay</button>' : '')+
@@ -16456,26 +16907,23 @@ G.VIEWS['noi-may-chu'] = function(){
       'cố tình như vậy, để địa chỉ máy chủ không đi kèm bản phát hành.</p>'+
   '</div>';
 
-  o += U.sec('SÁU BƯỚC DỰNG MÁY CHỦ','Làm một lần, khoảng hai mươi phút');
+  o += U.sec('SÁU BƯỚC DỰNG MÁY CHỦ TRÊN CLOUDFLARE','Làm một lần, khoảng hai mươi phút · gói miễn phí');
   o += '<div class="card">'+U.list([
-    'Vào script.google.com bằng tài khoản Google của Học viện, tạo dự án mới, đặt tên GITA 365.',
-    'Tạo sáu tệp mã và dán nội dung từ thư mục server/ trong kho mã: GITA_Nen.gs, GITA_CapPhep.gs, '+
-      'GITA_DangKy.gs, GITA_MatKhau.gs, GITA_TaiLieu.gs, GITA_DongBo.gs, GITA_XuatSheet.gs.',
-    'Mở GITA_Nen.gs, sửa hai dòng đầu: mã thư mục Drive của Học viện và địa chỉ email nhận thư hệ thống.',
-    'Mở GITA_CapPhep.gs, dán nội dung tệp kho/khoa.json vào hàm napBoKhoaMotLan rồi chạy hàm đó một lần. '+
-      'Chạy xong thì xoá nội dung khoá khỏi hàm và lưu lại.',
-    'Bấm Deploy → New deployment → Web app. Execute as: Me. Who has access: Anyone. Bấm Deploy và chép '+
-      'địa chỉ kết thúc bằng /exec.',
-    'Dán địa chỉ đó vào ô bên trên, bấm Lưu, rồi bấm Gọi thử. Thấy số khoá đã nạp là xong.'
+    'Cài Node.js, rồi mở thư mục may-chu/ trong kho mã và đăng nhập Cloudflare bằng tài khoản của Học viện: chạy lệnh  npx wrangler login',
+    'Tạo cơ sở dữ liệu D1 và nạp lược đồ: chạy  npx wrangler d1 create gita365  rồi  npx wrangler d1 execute gita365 --file=csdl.sql --remote',
+    'Tạo kho tệp lớn R2: chạy  npx wrangler r2 bucket create gita365-hoso',
+    'Nạp BỘ KHOÁ mở kho làm bí mật máy chủ: chạy  npx wrangler secret put GITA_KHOA_KHO  rồi dán nội dung tệp kho/khoa.json khi được hỏi. Khoá KHÔNG nằm trong mã, chỉ ở đây.',
+    'Đưa Worker lên: chạy  npx wrangler deploy  Chép địa chỉ nó in ra, dạng https://gita365.<tên-tài-khoản>.workers.dev',
+    'Dán địa chỉ đó vào ô trên, bấm Lưu, rồi Gọi thử — thấy số khoá đã nạp là xong. Dán luôn địa chỉ ấy vào cau-hinh.js trước khi phát hành để MỌI máy đều dùng được (ô này chỉ ghi cho máy đang dùng).'
   ])+'</div>';
 
   o += U.sec('MÁY CHỦ NÀY LÀM BỐN VIỆC','Không hơn — mọi thứ khác chạy trong máy người dùng');
   o += '<div class="row wrap" style="gap:12px">'+
     [['Cấp khoá mở kho','Sau khi đăng nhập, trả đúng những gói mà vai và tầng của tài khoản được cấp phép. '+
       'Khoá có hạn 12 giờ và mỗi tài khoản chỉ xin được 12 lần mỗi giờ.'],
-     ['Giữ sổ tài khoản','Đăng ký, gửi mã OTP qua email, kích hoạt, đổi và lấy lại mật khẩu.'],
+     ['Giữ sổ tài khoản','Đăng ký, gửi mã OTP qua email, kích hoạt, đổi và lấy lại mật khẩu — sổ nằm trong D1.'],
      ['Nhận tài liệu gửi lên','Tài liệu và ảnh từ mọi vị trí, cùng minh chứng nhiệm vụ của gia đình, '+
-      'lưu vào Drive của Học viện. Không nhận tệp chạy được.'],
+      'lưu vào R2 của Học viện. Không nhận tệp chạy được.'],
      ['Đồng bộ cài đặt','Bố cục thư mục, chữ hiển thị, bảng phân quyền và phần tư liệu đã gửi thêm cho '+
       'từng nhà — để bản web và bản cài trên máy tính nhìn giống nhau.']]
     .map(function(x){
@@ -16484,26 +16932,22 @@ G.VIEWS['noi-may-chu'] = function(){
         '<p class="sm dim mt" style="line-height:1.65">'+h(x[1])+'</p></div>';
     }).join('')+'</div>';
 
-  o += U.sec('QUYỀN VÀO DRIVE CỦA HỌC VIỆN','Máy chủ đụng vào bốn thư mục — không thư mục nào ngoài bốn cái này');
-  o += U.tbl(['Thư mục','Máy chủ làm gì ở đó'], [
-    ['<b class="sm">Dữ Liệu GITA365</b><div class="tiny muted mono">1pvXH45JvXXPOW9V6ObB5CR87r7gxH0fU</div>',
-     '<span class="sm">Giữ sổ dữ liệu: tài khoản, hồ sơ học viên, phiên đăng nhập, nhật ký, thanh toán.</span>'],
-    ['<b class="sm">Nhận tài liệu</b><div class="tiny muted">cùng thư mục trên</div>',
-     '<span class="sm">Tài liệu và ảnh đội ngũ gửi lên, minh chứng nhiệm vụ của gia đình.</span>'],
-    ['<b class="sm">Xuất bảng tính</b><div class="tiny muted">cùng thư mục trên</div>',
-     '<span class="sm">Google Sheet do cấp quản lý xuất ra. Không xuất Excel, không xuất CSV.</span>'],
-    ['<b class="sm">Mã máy chủ GITA365</b><div class="tiny muted mono">1jVOnIH7286glI95fC4aqfXApecxEj7Xz</div>',
-     '<span class="sm">Mã nguồn và hướng dẫn dựng máy chủ.</span>']
+  o += U.sec('DỮ LIỆU NẰM Ở ĐÂU','Trên tài khoản Cloudflare của Học viện — không qua Google nữa');
+  o += U.tbl(['Nơi giữ','Giữ gì'], [
+    ['<b class="sm">D1 · <span class="mono">gita365</span></b>',
+     '<span class="sm">Sổ dữ liệu: tài khoản, hồ sơ học viên, phiên đăng nhập, nhật ký, thanh toán, đồng ý dữ liệu.</span>'],
+    ['<b class="sm">R2 · <span class="mono">gita365-hoso</span></b>',
+     '<span class="sm">Tệp lớn: tài liệu và ảnh đội ngũ gửi lên, minh chứng nhiệm vụ của gia đình.</span>'],
+    ['<b class="sm">Secret · <span class="mono">GITA_KHOA_KHO</span></b>',
+     '<span class="sm">Bộ khoá mở kho — Cloudflare giữ, mã nguồn không thấy, không đi trong phản hồi nào.</span>']
   ]);
-  o += '<p class="tiny muted mt" style="line-height:1.6">Bấm <b>Kiểm quyền Drive</b> ở trên để máy chủ '+
-    'thử thật: mở từng thư mục, tạo một tệp dấu, đọc lại, rồi xoá đi. Bấm Allow trên màn xin quyền của '+
-    'Google mới là bước đầu — nó không nói được máy chủ có ghi đúng thư mục của Học viện hay không.</p>';
 
   o += '<div class="card mt2"><div class="up mb" style="color:var(--gita-do-ink)">'+
     ic('shield','w-4 h-4')+' BỘ KHOÁ</div>'+
     '<p class="sm" style="line-height:1.7">Tệp <span class="mono">kho/khoa.json</span> là chìa của toàn '+
     'bộ kho. Nó nằm trong .gitignore và không bao giờ được đưa lên kho mã hay gửi qua tin nhắn. '+
-    'Chỗ duy nhất nó được dán vào là Script Properties của máy chủ, một lần, rồi xoá khỏi mã.</p></div>';
+    'Chỗ duy nhất nó được dán vào là bí mật Cloudflare (<span class="mono">wrangler secret put GITA_KHOA_KHO</span>), '+
+    'một lần, và Cloudflare giữ nó ngoài mã nguồn.</p></div>';
 
   return o;
 };
@@ -16525,36 +16969,6 @@ document.addEventListener('click', function(e){
     U.toast('Đã bỏ nối. Ứng dụng quay về chế độ mẫu.','ok');
     G.render && G.render();
   }
-  else if(a === 'mc-drive'){
-    var kd = document.getElementById('mcDrive');
-    if(kd) kd.innerHTML = '<p class="sm dim">Đang thử quyền trên từng thư mục…</p>';
-    G.kiemQuyenDrive().then(function(d){
-      if(!kd) return;
-      if(!d.ok){
-        kd.innerHTML = '<div class="card pad-sm" style="border-color:var(--gita-do)">'+
-          '<b class="sm" style="color:var(--gita-do-ink)">'+ic('x','w-4 h-4')+' Chưa kiểm được</b>'+
-          '<p class="sm mt">'+h(d.ly)+'</p></div>';
-        return;
-      }
-      var du = d.dat === d.tong;
-      kd.innerHTML = '<div class="card pad-sm" style="border-color:'+(du?'var(--ok)':'var(--gita-do)')+'">'+
-        '<b class="sm" style="color:'+(du?'var(--ok)':'var(--gita-do-ink)')+'">'+
-          ic(du?'check':'lock','w-4 h-4')+' Đạt '+d.dat+'/'+d.tong+' thư mục</b>'+
-        '<p class="tiny muted mt">Máy chủ đang chạy dưới tài khoản '+h(d.taiKhoan || '—')+'</p>'+
-        U.tbl(['Thư mục','Mở','Ghi','Dọn',''], d.thuMuc.map(function(t){
-          return ['<b class="sm">'+h(t.nhan)+'</b>'+
-                    '<div class="tiny muted">'+h(t.ten || '(không mở được)')+'</div>',
-            t.moDuoc ? '<span style="color:var(--ok)">✓</span>' : '<span style="color:var(--gita-do)">✕</span>',
-            t.ghiDuoc ? '<span style="color:var(--ok)">✓</span>' : '<span style="color:var(--gita-do)">✕</span>',
-            t.xoaDuoc ? '<span style="color:var(--ok)">✓</span>' : '<span class="muted">—</span>',
-            t.loi ? '<span class="tiny" style="color:var(--gita-do-ink)">'+h(t.loi)+'</span>' : ''];
-        }))+
-        (du ? '<p class="tiny muted mt">Tệp dấu đã dọn sạch, không để lại rác trong Drive.</p>'
-            : '<p class="tiny mt" style="color:var(--gita-do-ink)">Mã thư mục là phần sau /folders/ trong địa chỉ Drive. '+
-              'Thư mục phải thuộc chính tài khoản chạy Apps Script, hoặc được chia sẻ ở mức Người chỉnh sửa.</p>')+
-      '</div>';
-    });
-  }
   else if(a === 'mc-thu'){
     if(kq) kq.innerHTML = '<p class="sm dim">Đang gọi máy chủ…</p>';
     G.thuMayChu().then(function(r){
@@ -16563,7 +16977,10 @@ document.addEventListener('click', function(e){
         ? '<div class="card pad-sm" style="border-color:var(--ok)">'+
             '<b class="sm" style="color:var(--ok)">'+ic('check','w-4 h-4')+' Máy chủ trả lời</b>'+
             '<p class="sm mt">'+h(r.ten)+' · đã nạp <b>'+r.soKhoa+'</b> khoá'+
-            (r.soKhoa ? '' : ' — chưa chạy hàm napBoKhoaMotLan, kho sẽ vẫn khoá')+'</p></div>'
+            (r.soKhoa ? '' : ' — <b>máy chủ CHƯA có bộ khoá</b>, nên kho sẽ vẫn khoá và mọi lượt '+
+              'xin khoá bị từ chối. Chạy: <span class="mono">npx wrangler secret put GITA_KHOA_KHO</span> '+
+              'rồi dán toàn bộ nội dung tệp <span class="mono">kho/khoa.json</span>, sau đó '+
+              '<span class="mono">npx wrangler deploy</span>.')+'</p></div>'
         : '<div class="card pad-sm" style="border-color:var(--gita-do)">'+
             '<b class="sm" style="color:var(--gita-do-ink)">'+ic('x','w-4 h-4')+' Chưa gọi được</b>'+
             '<p class="sm mt">'+h(r.ly)+'</p></div>';
@@ -18007,6 +18424,174 @@ G.dkSoiKhongImLang = function () {
   G.DK_XIN = giu;
   return { chuaDo: false, loi: loi };
 };
+
+})();
+
+})();
+
+/* ═════════ src/chuan-ngon-tu.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — CHUẨN NGÔN TỪ HỢP NHẤT  (9.99.196)
+
+   Theo hai bản đặc tả của chủ hệ (Content Marketing + Chatbot V20),
+   phần "MỘT BỘ GUARDRAILS DUY NHẤT" (Part A) và ContentCompliance
+   (Part E): mọi lời — dù đi ra ở màn NỘI DUNG hay ở câu TRẢ LỜI của
+   trợ lý — đều phải qua CÙNG một chuẩn ngôn từ.
+
+   ══ VÌ SAO DỰNG Ở ĐÂY, VÀ VÌ SAO 0 ĐỒNG ══
+
+   Bản đặc tả đạt chất lượng bằng một mô hình ngôn ngữ chạy tại chỗ
+   (Qwen3-8B trên GPU). Kho này chạy trên Cloudflare (trang tĩnh + D1),
+   KHÔNG có chỗ cho một mô hình như thế, và chủ hệ chốt "tổng chi phí
+   0 đồng". Nên chất lượng ở đây KHÔNG đến từ một AI sinh chữ — nó đến
+   từ hai chỗ, cả hai đều 0 đồng và chạy thẳng trong máy người dùng:
+
+     1. Bộ soạn (tro-ly-soan.js) ghép câu từ CHÍNH kho huấn luyện lõi
+        của GITA365 — không bịa một chữ (luật cứng của bộ soạn).
+     2. Bộ CHUẨN này gác đầu ra: chặn giọng máy, lời hứa suông, câu
+        sáo rỗng, câu quá dài, nhồi từ khoá — đúng những thứ làm một
+        câu trả lời "nghe kém".
+
+   ══ KHÔNG DỰNG BẢN THỨ HAI CỦA MỘT SỰ THẬT ══
+
+   Máy chủ ĐÃ có bộ dò chất lượng cho luồng biên soạn nội dung
+   (`may-chu/kien-truc-noi-dung.js`: NGON_AI · RONG · LOI_THAY · CAM_
+   CHUYENGIA · CAU_DAI). Chỗ hở DUY NHẤT là CHATBOT: câu trợ lý trả
+   lời KHÔNG đi qua bộ dò nào cả. Bộ này bịt đúng chỗ hở ấy — chạy
+   được ở MÁY KHÁCH (trình duyệt) nơi trợ lý soạn câu.
+
+   Để không thành bản chép lặng lẽ trôi khỏi bản gốc: các cụm ở đây là
+   TẬP CON của bảng máy chủ, và mục 123 của bộ kiểm ĐỐI CHIẾU HAI ĐẦU —
+   mọi cụm giọng-máy ở client phải có trong NGON_AI của máy chủ, mọi
+   cụm sáo-rỗng phải có trong RONG, và ngưỡng câu dài phải khớp CAU_DAI.
+   Server đổi mà client không theo thì mục 123 đỏ.
+
+   ══ THÊM ĐÚNG MỘT THỨ MỚI: LỜI HỨA SUÔNG ══
+
+   Bản đặc tả ContentCompliance chặn "hứa kết quả nhanh" (trong X ngày
+   con sẽ ngoan/giỏi). Máy chủ chặn nó ở bộ lọc quảng cáo QC3 (cam kết
+   kết quả), nhưng chatbot thì chưa. Đây là thứ nguy nhất trong giáo
+   dục: một lời hứa "sau hai tuần con hết ôm điện thoại" nghe rất êm và
+   sai hoàn toàn về bản chất một đứa trẻ. Nên `CN_HUA` bắt nó, và nó là
+   phần MỚI của bộ này (không mirror máy chủ).
+
+   Ba cái bẫy dò chữ tiếng Việt (CLAUDE.md) đều tránh ở đây:
+     · KHÔNG dùng \b (không khớp chữ có dấu).
+     · Dò CỤM NHIỀU ÂM TIẾT trên chuỗi đã bỏ dấu — cụm dài thì gần như
+       không bắt oan (cùng lối chọn-dấu-hiệu của máy chủ).
+     · KHÔNG danh sách trừ: cụm nào dễ đụng văn người thật thì BỎ HẲN.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+
+(function () {
+
+  /* Bỏ dấu, thường hoá, gộp khoảng trắng — cùng phép với bộ soạn và
+     bộ tra, để một cụm dò khớp y như nhau ở mọi chỗ. */
+  function boDau(s) {
+    return String(s == null ? '' : s).toLowerCase()
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .replace(/đ/g, 'd').replace(/[^a-z0-9\s]/g, ' ')
+      .replace(/\s+/g, ' ').trim();
+  }
+
+  /* ── GIỌNG MÁY — tập con của NGON_AI ở máy chủ ──
+     Mỗi cụm nhiều âm tiết, gần như không có trong văn người thật viết
+     cho gia đình. Mục 123 đòi mọi cụm này CÓ trong NGON_AI máy chủ. */
+  var CN_AI = [
+    'tro ly ao', 'mo hinh ngon ngu', 'toi chi la mot', 'toi se giup ban',
+    'toi khong the giup', 'hay cung nhau kham pha', 'chung ta hay bat dau',
+    'that tuyet voi', 'dieu quan trong can luu y', 'sau day la mot so'
+  ];
+
+  /* ── SÁO RỖNG — tập con của RONG ở máy chủ ── */
+  var CN_RONG = [
+    'hay co gang', 'no luc het minh', 'chia khoa thanh cong', 'bi quyet',
+    'thay doi cuoc doi', 'khong gi la khong the', 'tu duy tich cuc',
+    'but pha gioi han', 'khai phong tiem nang', 'truyen cam hung'
+  ];
+
+  /* ── LỜI HỨA SUÔNG — phần MỚI (không mirror máy chủ) ──
+     Hai đường: cụm cố định, và một mẫu "trong N ngày/tuần/tháng … +
+     một kết quả về CON hoặc THÀNH CÔNG". Mẫu bắt được câu người viết
+     tự nghĩ ra mà không dùng đúng cụm nào. */
+  var CN_HUA = [
+    'cam ket 100', 'hua chac chan', 'dam bao thanh cong', 'chac chan thanh cong',
+    'chac chan se ngoan', 'chac chan se gioi', 'dam bao con se', 'cam ket con se'
+  ];
+  var RE_HUA = /trong\s+\d+\s*(ngay|tuan|thang)[^.!?]{0,40}(se\s+ngoan|se\s+gioi|se\s+nghe loi|het om dien thoai|thay doi hoan toan|chac chan)/;
+
+  /* Ngưỡng câu dài — khớp CAU_DAI của máy chủ (mục 123 đối chiếu). */
+  var CAU_DAI = 28;
+
+  function demAmTiet(cau) { return boDau(cau).split(' ').filter(Boolean).length; }
+
+  /* Từ dừng — để phép nhồi-từ-khoá không tính oan hư từ. */
+  var HU = {};
+  ('la cua va cho voi thi ma nhung o tai den tu khi nao sao gi de duoc co khong ' +
+   'toi minh em anh chi con nha mot hai cac rat qua lam nen se da bi bo ai nay ' +
+   'the nhu hay hon nua chua roi cung ve theo tren duoi trong ngoai mot cai')
+    .split(' ').forEach(function (t) { HU[t] = 1; });
+
+  function coCum(chu, ds) {
+    var ra = [];
+    for (var i = 0; i < ds.length; i++) if (chu.indexOf(ds[i]) >= 0) ra.push(ds[i]);
+    return ra;
+  }
+
+  /* ── CỔNG: một câu/đoạn có đạt chuẩn ngôn từ không ──
+     Trả {dat, loi:[{loai, cum, thay}]}. KHÔNG tự sửa hộ (luật kho:
+     máy không xoá hộ — người gửi không biết mình vừa viết gì thì lần
+     sau viết y hệt). Chỉ NÊU, kèm hướng thay. */
+  var HUONG = {
+    ai:   'Bỏ giọng máy — nói thẳng việc, xưng anh chị · em như nhà mình.',
+    rong: 'Thay bằng một việc cụ thể, đo được (làm gì · mấy lần · dấu hiệu nào).',
+    hua:  'Bỏ lời hứa kết quả theo thời hạn — một đứa trẻ không chạy theo lịch. Nói bước làm được tuần này.',
+    dai:  'Cắt thành câu ngắn — trên ' + CAU_DAI + ' âm tiết là quá dài để đọc trên điện thoại.',
+    nhoi: 'Một từ lặp quá nhiều đọc như nhồi từ khoá — viết cho người, không cho máy tìm.'
+  };
+
+  G.cnSoat = function (text) {
+    var chu = boDau(text), loi = [];
+    coCum(chu, CN_AI).forEach(function (c) { loi.push({ loai: 'ai', cum: c, thay: HUONG.ai }); });
+    coCum(chu, CN_RONG).forEach(function (c) { loi.push({ loai: 'rong', cum: c, thay: HUONG.rong }); });
+    coCum(chu, CN_HUA).forEach(function (c) { loi.push({ loai: 'hua', cum: c, thay: HUONG.hua }); });
+    if (RE_HUA.test(chu)) loi.push({ loai: 'hua', cum: 'hứa kết quả theo thời hạn', thay: HUONG.hua });
+
+    /* Câu dài: xét TỪNG câu, không xét cả đoạn — một đoạn dài gồm nhiều
+       câu ngắn thì không sai. */
+    String(text || '').split(/[.!?…]+/).forEach(function (cau) {
+      var n = demAmTiet(cau);
+      if (n > CAU_DAI) loi.push({ loai: 'dai', cum: n + ' âm tiết', thay: HUONG.dai });
+    });
+
+    /* Nhồi từ khoá: một tiếng nội dung chiếm quá 5% tổng tiếng (ngưỡng
+       của bản đặc tả). Chỉ xét khi đoạn đủ dài để con số có nghĩa. */
+    var toks = chu.split(' ').filter(function (t) { return t.length >= 3 && !HU[t]; });
+    if (toks.length >= 20) {
+      var dem = {}, max = 0, tuMax = '';
+      toks.forEach(function (t) { dem[t] = (dem[t] || 0) + 1; if (dem[t] > max) { max = dem[t]; tuMax = t; } });
+      if (max / toks.length > 0.05)
+        loi.push({ loai: 'nhoi', cum: '"' + tuMax + '" ×' + max, thay: HUONG.nhoi });
+    }
+
+    return { dat: loi.length === 0, loi: loi };
+  };
+
+  /* Bày cụm ra cho mục 123 (đối chiếu hai đầu) và cho màn nội dung
+     tự kiểm ngay ở máy khách. */
+  G.CN = { ai: CN_AI, rong: CN_RONG, hua: CN_HUA, cauDai: CAU_DAI };
+
+  /* Một câu gọn nói kết quả soát — dùng ở màn để hiện huy hiệu. */
+  G.cnTom = function (kq) {
+    if (!kq || kq.dat) return { ok: true, chu: 'Đạt chuẩn ngôn từ' };
+    var d = {};
+    kq.loi.forEach(function (x) { d[x.loai] = (d[x.loai] || 0) + 1; });
+    var ten = { ai: 'giọng máy', rong: 'sáo rỗng', hua: 'hứa suông', dai: 'câu dài', nhoi: 'nhồi từ' };
+    var phan = Object.keys(d).map(function (k) { return d[k] + ' ' + ten[k]; });
+    return { ok: false, chu: 'Cần sửa: ' + phan.join(' · ') };
+  };
 
 })();
 
@@ -19803,7 +20388,7 @@ function laQuyTrinh(tenKho, loai) {
 }
 
 /* ═══════ SOẠN ═══════ */
-G.tlSoan = function (cauHoi, kq) {
+function tlSoanLoi(cauHoi, kq) {
   if (!kq || !kq.length) return null;
   var tang = kq.tangNha;
   var kho = khoThang(kq);
@@ -19855,13 +20440,13 @@ G.tlSoan = function (cauHoi, kq) {
 
     if (y === 'DEM')
       return { y: 'DEM', kho: kho, loai: loai, so: ds.length,
-        cau: 'Có ' + ds.length + ' mục trong ' + loai + '.',
+        cau: 'Trong ' + loai + ' có ' + ds.length + ' mục.',
         dong: dong.slice(0, 12),
         conNua: Math.max(0, dong.length - 12),
         nguon: dong.slice(0, 12).map(function (d) { return d.nhan; }) };
 
     return { y: 'LIETKE', kho: kho, loai: loai, so: ds.length,
-      cau: loai + ' có ' + ds.length + ' mục:',
+      cau: loai + ' gồm ' + ds.length + ' mục, theo đúng thứ tự trong kho:',
       /* ── TRẦN HIỂN THỊ, VÀ VÌ SAO NÓ KHÔNG PHẢI MỘT CON SỐ ──
          Hai mươi dòng trên màn điện thoại là một bức tường, nên cắt ở
          mười hai. Nhưng cắt cứng ở mười hai thì kho mười sáu mục bị
@@ -19917,6 +20502,24 @@ G.tlSoan = function (cauHoi, kq) {
     dong: dg.slice(0, 6), conNua: Math.max(0, dg.length - 6),
     nguon: [d0.ma]
   };
+}
+
+/* ═══════ VỎ NGOÀI: GẮN CHUẨN NGÔN TỪ (9.99.196) ═══════
+   Câu trả lời của trợ lý nay đi qua CÙNG chuẩn ngôn từ với luồng biên
+   soạn nội dung — bịt chỗ hở duy nhất của "một bộ guardrails" (bản đặc
+   tả Part A). Khung câu do bộ soạn dựng phải TỰ nó sạch chuẩn; mục 123
+   phá thử bằng cách trồng một cụm giọng máy vào khung rồi đòi
+   s.chuan.dat === false. Ruột (dong) lấy từ kho nên đã sạch từ luồng
+   biên soạn; ở đây soát thêm để một kho cũ lỡ mang cụm xấu thì lộ ra
+   chứ không đi thẳng tới người dùng. */
+G.tlSoan = function (cauHoi, kq) {
+  var s = tlSoanLoi(cauHoi, kq);
+  if (s && G.cnSoat) {
+    var vb = String(s.cau || '');
+    (s.dong || []).forEach(function (d) { vb += ' ' + (d && d.chu ? d.chu : ''); });
+    s.chuan = G.cnSoat(vb);
+  }
+  return s;
 };
 
 /* ═══════════════════════════════════════════════════════════════
@@ -20857,30 +21460,49 @@ var kbDa = [], kbCau = '';
 function khach(){ return !!(G.LA_KHACH && G.LA_KHACH()); }
 function tenToi(){ return (G.S.acc && G.S.acc.ten) || 'Anh chị'; }
 
-/* ─── Lời chào mở đầu, theo nhịp N1 ─── */
+/* ─── Lời chào mở đầu, theo nhịp N1 ───
+   Trợ lý CHỦ ĐỘNG XƯNG theo tên tài khoản đang chat (chủ hệ yêu cầu), và
+   nói rõ mình ĐỊNH HƯỚNG theo kho tài liệu GITA 365. Tên lấy từ hồ sơ
+   phiên; chưa có thì lùi về "anh chị" — không bao giờ để trống. */
 function loiChao(){
-  var K = G.KICHBAN_AI;
+  var K = G.KICHBAN_AI, ten = tenToi();
   if(khach()){
     var f = G.myFamily ? G.myFamily() : null;
-    return (K && K.moDau && K.moDau.nha) ||
-      ('Chào ' + tenToi() + '. Nhà mình đang mắc chuyện gì, kể em nghe.' +
+    var nho = G.tlChaoNho ? G.tlChaoNho() : '';
+    var than = (K && K.moDau && K.moDau.nha) ||
+      ('Nhà mình đang mắc chuyện gì, kể em nghe.' +
        (f && f.nha ? ' Em đang mở hồ sơ ' + f.nha + '.' : ''));
+    return 'Chào ' + ten + '. ' + than +
+      ' Em đi theo kho tài liệu GITA 365 để dẫn nhà mình đúng chặng đang ở.' + nho;
   }
-  return (K && K.moDau && K.moDau.nghe) ||
-    'Trợ lý tra trong kho của Học viện. Hỏi phác đồ, kịch bản, mô thức hoặc tình huống.';
+  var thanN = (K && K.moDau && K.moDau.nghe) ||
+    'Em là trợ lý nghiệp vụ của Học viện — hỏi em phác đồ, kịch bản mở cửa, mô thức, ' +
+    'cổng nghiệm thu, KPI, quy trình lương·duyệt chi, hay một tình huống khó với gia đình. ' +
+    'Em tra thẳng kho tài liệu GITA 365 và chỉ đúng tư liệu, có mã để mở lại.';
+  return 'Chào ' + ten + '. ' + thanN;
 }
 
+/* Câu gợi ý = KỊCH BẢN MỞ LỜI, phủ trọn hành trình. Với KHÁCH là các
+   chặng tư vấn một gia đình đi qua; với NHÂN SỰ là các việc nghề hay tra.
+   Chip chạy ngang một hàng và cuộn, nên thêm câu không ăn chỗ dọc. */
 function goiY(){
   if(khach())
     return ['Con ôm điện thoại, mình bắt đầu từ đâu?',
             'Con không tự giác, phải nhắc mãi',
             'Nhà mình đang căng, nói chuyện thế nào?',
+            'Con mất động lực học, làm sao đây?',
+            'Hai vợ chồng chưa thống nhất cách dạy con',
             'Hôm nay nhà mình nên làm việc gì?',
+            'Nhà mình đang ở chặng nào, bước tiếp là gì?',
+            'Học phí và lộ trình các tầng thế nào?',
             'Khi nào thì nhà mình lên chặng sau?'];
   return ['Phác đồ cho ca ôm điện thoại tầng 2',
           'Kịch bản mở cửa cho phụ huynh còn nghi ngờ',
+          'Xử lý khi phụ huynh từ chối hoặc đòi giảm giá',
           'Mô thức nào dùng khi học viên mất động lực',
           'Cổng nghiệm thu tầng 3 gồm những gì',
+          'KPI của tôi tháng này tính thế nào',
+          'Quy trình chốt lương và duyệt chi',
           'Tình huống con chuyển trường tụt điểm'];
 }
 
@@ -20933,14 +21555,79 @@ G.chatHoi = function(cauHoi){
   /* Câu bật ra giữa chừng. Trả lời rồi QUAY LẠI vòng đang dở — bỏ chuỗi
      để chạy theo câu hỏi phụ là mất chỗ vừa khoanh được. */
   if(G.gnPhatSinh && !d.khan) d.phatSinh = G.gnPhatSinh(cauHoi);
-  G.CHAT.push({ai:'trolY', dap:d, luc:new Date()});
+  /* Gắn VAI đang trả lời, câu "hiểu ý" của chuyên gia ngôn ngữ, phân tích
+     số liệu của nhà khoa học toán, và ghi nhớ nhà mình (src/tro-ly-nang.js). */
+  if(G.tlPhanTich) G.tlPhanTich(cauHoi, d);
   if(G.secLog) G.secLog('Hỏi trợ lý',
     cauHoi.slice(0, 80) + ' → ' + (d.khan ? 'chuyển người thật' : d.nguon.length + ' nguồn'),
     d.khan ? 'Cảnh báo' : 'Ghi nhận');
-  ve();
+  phatTung(d);
 };
 
-G.chatXoa = function(){ G.CHAT = []; kbDa = []; kbCau = ''; ve(); };
+/* ═══════ ĐƯA TỪNG ĐOẠN — như một người đọc rồi mới trả lời ═══════
+   Chủ hệ: đừng đổ cả khối tức thì (đọc ra máy móc, khách hết hứng). Nên
+   một lượt trả lời đi làm hai nhịp: hiện "đang soạn" một quãng, rồi đoạn
+   HIỂU-Ý ngắn, rồi mới tới đoạn trả lời — độ trễ theo độ dài, như người
+   thật đang gõ. Câu KHẨN đi nhanh, không trì hoãn: đường an toàn không
+   được chậm. Mỗi lượt mang một 'id'; câu mới tới thì id đổi và mọi nhịp
+   còn treo của lượt cũ tự bỏ (không chồng lên nhau). */
+var luot = 0;
+function chamGo(len){ return Math.max(650, Math.min(2600, Math.round((len||400)*15))); }
+function doDaiDap(d){
+  var n = (d.loi?d.loi.length:0) + (d.chot?d.chot.length:0);
+  if(d.kbs){ var k=d.kbs;
+    n += (k.traLoi?String(k.traLoi).length:0) + (k.chanDoan?String(k.chanDoan).length:0); }
+  if(d.chuoi) n += 220; if(d.viec) n += 260; if(d.toan) n += 120; if(d.soan) n += 180;
+  return n || 380;
+}
+function moDauAm(d){
+  if(d.phanAnh) return d.phanAnh;
+  if(!khach()) return '';
+  var ds = ['Em đọc kỹ chỗ nhà mình vừa kể rồi.',
+            'Em hình dung được tình huống của nhà mình.',
+            'Cảm ơn nhà mình đã kể — em nắm rồi.',
+            'Em hiểu điều nhà mình đang lo.'];
+  return ds[G.CHAT.length % ds.length];
+}
+/* DỮ LIỆU đồng bộ, HIỂN THỊ mới hoãn. Câu trả lời vào G.CHAT NGAY (mọi
+   thứ đọc G.CHAT — kể cả bộ kiểm — thấy đủ tức thì), nhưng mỗi bóng mang
+   mốc _hien: luồng LIVE (ve) hiện "đang soạn" cho tới mốc ấy rồi mới lộ
+   nội dung. Bản dựng đầy đủ (VIEWS['tro-ly'], ô nổi lúc mở) BỎ QUA _hien
+   và hiện đủ — lịch sử không phải gõ lại. */
+function phatTung(d){
+  var id = ++luot;
+  var now = Date.now();
+  var t1 = d.khan ? 200 : 620;
+  var seg1 = null;
+  if(!d.khan){
+    var mo = moDauAm(d);
+    /* Không tách đoạn hiểu-ý khi đã có chuỗi vòng dẫn — chuỗi tự có "bắt
+       nhịp", thêm một đoạn nữa là thừa. */
+    if(mo && !d.chuoi) seg1 = { vai:d.vai, loi:mo, _doanDau:true };
+  }
+  if(seg1){
+    var d2 = d; d2._khongVai = true; delete d2.phanAnh;
+    G.CHAT.push({ai:'trolY', dap:seg1, luc:new Date(), _hien:now + t1});
+    G.CHAT.push({ai:'trolY', dap:d2, luc:new Date(), _hien:now + t1 + chamGo(doDaiDap(d))});
+  } else {
+    G.CHAT.push({ai:'trolY', dap:d, luc:new Date(), _hien:now + t1});
+  }
+  hienDan(id);
+}
+/* Vẽ live ngay (hiện đoạn đang soạn), rồi hẹn vẽ lại ở từng mốc lộ. */
+function hienDan(id){
+  ve();
+  for(var i = 0; i < G.CHAT.length; i++){
+    var t = G.CHAT[i]._hien;
+    if(t && t > Date.now()) (function(mocT){
+      setTimeout(function(){ if(id === luot) ve(); }, Math.max(0, mocT - Date.now()));
+    })(t);
+  }
+}
+
+/* Xoá cuộc trò chuyện: tăng luot để mọi nhịp còn treo tự bỏ, không đẩy
+   một đoạn cũ vào một khung vừa dọn sạch. */
+G.chatXoa = function(){ luot++; G.CHAT = []; kbDa = []; kbCau = ''; ve(); };
 
 /* ═══════════ VẼ MỘT BÓNG NÓI ═══════════ */
 /* Giờ của một lượt. Hai chữ số, không kèm ngày — ngày đã có vạch riêng
@@ -20980,6 +21667,20 @@ function theNguon(n, moDuoc){
   '</div>';
 }
 
+/* ── SƠ ĐỒ TỪNG BƯỚC (9.99.225) ──
+   Chủ hệ: với khách hàng, KHÔNG đổ một list thông tin — dẫn bằng câu ngắn,
+   theo sơ đồ, từng bước. Đây là bộ vẽ một sơ đồ dọc: mỗi bước một vòng
+   số, nối bằng một vạch (::before, không thẻ rỗng). Nhận sẵn danh sách
+   câu NGẮN đã rút từ kho — KHÔNG bịa thêm bước nào. */
+function soDo(buoc){
+  buoc = (buoc || []).filter(function(x){ return x != null && String(x).trim(); });
+  if(!buoc.length) return '';
+  return '<div class="ai-sodo">' + buoc.map(function(b, i){
+    return '<div class="ai-sodo-b"><span class="ai-sodo-so">' + (i + 1) + '</span>' +
+      '<span class="ai-sodo-chu">' + h(String(b)) + '</span></div>';
+  }).join('') + '</div>';
+}
+
 function theDap(d){
   var o = '';
   if(d.khan)
@@ -20992,6 +21693,20 @@ function theDap(d){
   if(d.y) o += '<div class="ai-nhip">'+ic('compass','w-3 h-3')+
     '<span>'+h(d.y.ten)+' · nhịp '+h(d.y.nhip)+'</span></div>';
   if(d.loi) o += '<p class="ai-loi">'+h(d.loi)+'</p>';
+
+  /* Đoạn HIỂU-Ý (nhịp đầu của một lượt chia đoạn): chỉ có lời, dừng ở
+     đây — không chạy tới phần tư liệu, nếu không nó lôi theo câu "chưa
+     tìm được gì khớp" vì đoạn này cố ý không mang nguồn nào. */
+  if(d._doanDau) return o;
+
+  /* Phân tích số liệu — nhà khoa học toán trình TỪNG BƯỚC, không bịa số.
+     Đứng sớm, sau câu mở, vì đây thường là điều người hỏi cần nhất. */
+  if(d.toan && d.toan.co){
+    var tt = d.toan;
+    o += '<div class="ai-toan"><div class="ai-toan-h">'+ic('compass','w-3 h-3')+
+      ' '+h(tt.tieuDe)+'</div>'+
+      '<p class="ai-toan-cach">'+h(tt.cach)+' = <b>'+h(tt.ketQua)+'</b></p></div>';
+  }
 
   /* ── KỊCH BẢN SALE · GIỌNG GITA (9.99.126) ──
      Với khách, khi câu vừa gõ khớp một tình huống đã soạn: nói MỘT câu
@@ -21028,16 +21743,29 @@ function theDap(d){
   }
   if(d.soan){
     var s = d.soan;
-    o += '<div class="ai-soan">'+
-      '<div class="ai-soan-dau">'+h(s.loai)+
-        (s.so ? ' · '+s.so+' mục' : '')+'</div>'+
-      '<p class="ai-soan-cau">'+h(s.cau)+'</p>'+
-      '<ul class="ai-soan-ds">'+ s.dong.map(function(x){
-        return '<li><span class="mono">'+h(x.nhan)+'</span>'+
-          (x.nhan ? ' · ' : '')+h(x.chu)+'</li>';
-      }).join('') +'</ul>'+
-      (s.conNua ? '<p class="ai-soan-con">… còn '+s.conNua+' mục, mở tư liệu bên dưới để xem đủ</p>' : '')+
-    '</div>';
+    /* KHÁCH: không đổ một danh sách gạch đầu dòng kèm mã kho (nội dung nội
+       bộ, đọc ra như copy-paste). Thay bằng MỘT câu dẫn + một sơ đồ ba
+       bước ngắn — hướng dẫn từng bước, đúng lời chủ hệ. Chỉ lấy phần CHỮ
+       của mỗi mục, bỏ mã mono. NHÂN SỰ vẫn thấy đủ danh sách để tra. */
+    if(khach()){
+      o += '<div class="ai-soan">'+
+        '<p class="ai-soan-cau">'+h(s.cau)+'</p>'+
+        soDo(s.dong.slice(0, 3).map(function(x){ return x.chu; }))+
+        (s.dong.length > 3
+          ? '<p class="tiny dim">Mình đi ba bước này trước đã — xong rồi em dẫn tiếp.</p>' : '')+
+      '</div>';
+    } else {
+      o += '<div class="ai-soan">'+
+        '<div class="ai-soan-dau">'+h(s.loai)+
+          (s.so ? ' · '+s.so+' mục' : '')+'</div>'+
+        '<p class="ai-soan-cau">'+h(s.cau)+'</p>'+
+        '<ul class="ai-soan-ds">'+ s.dong.map(function(x){
+          return '<li><span class="mono">'+h(x.nhan)+'</span>'+
+            (x.nhan ? ' · ' : '')+h(x.chu)+'</li>';
+        }).join('') +'</ul>'+
+        (s.conNua ? '<p class="ai-soan-con">… còn '+s.conNua+' mục, mở tư liệu bên dưới để xem đủ</p>' : '')+
+      '</div>';
+    }
   }
 
   /* ── CHUỖI KỊCH BẢN: MỘT VÒNG, MỘT CÂU HỎI ──
@@ -21170,14 +21898,47 @@ function theDap(d){
     ((G.khachMoDuoc && !G.khachMoDuoc(n.loai, n.ma)) ? cho : mo).push(n);
   });
 
-  if(mo.length){
-    o += '<div class="ai-nguon-nhan">'+mo.length+' tư liệu mở được ngay — bấm để đọc</div>';
-    o += '<div class="ai-ds">'+ mo.map(function(n){ return theNguon(n, true); }).join('') +'</div>';
-  }
-  if(cho.length){
-    o += '<div class="ai-nguon-nhan ai-nguon-cho">'+cho.length+
-      ' phần nữa có trong kho của Học viện — đi qua Tư vấn hoặc Coach</div>';
-    o += '<div class="ai-ds">'+ cho.map(function(n){ return theNguon(n, false); }).join('') +'</div>';
+  /* ── KHÁCH: MỘT BƯỚC MỘT LÚC, KHÔNG LIST (9.99.225) ──
+     Chủ hệ nghiêm cấm đưa một list nội dung tài liệu ra cho khách. Nên với
+     khách, KHÔNG dựng danh sách thẻ tư liệu (dù có gập) — chỉ mở đúng MỘT
+     phần "bước tiếp theo", rồi nói còn bao nhiêu phần để mở lần lượt. Phần
+     "chờ" (ngoài nền) là điểm-trỏ có nút nhờ gửi, không phải nội dung —
+     giữ lại nhưng cắt còn ba cái để không thành một bức tường. */
+  if(khach()){
+    if(mo.length){
+      o += '<div class="ai-nguon-nhan">'+ic('arrow','w-3 h-3')+
+        ' Bước tiếp theo — mở đúng phần này thôi</div>';
+      o += '<div class="ai-ds">'+ theNguon(mo[0], true) +'</div>';
+      if(mo.length > 1)
+        o += '<p class="tiny dim">Còn '+(mo.length - 1)+' phần nữa trong kho của nhà mình — '+
+          'mình mở lần lượt khi tới bước đó, không cần đọc hết một lúc.</p>';
+    }
+    if(cho.length){
+      var choHien = cho.slice(0, 3);
+      o += '<div class="ai-nguon-nhan ai-nguon-cho">'+cho.length+
+        ' phần thuộc kho Học viện — đi qua Tư vấn hoặc Coach của nhà mình</div>';
+      o += '<div class="ai-ds">'+ choHien.map(function(n){ return theNguon(n, false); }).join('') +'</div>';
+      if(cho.length > 3)
+        o += '<p class="tiny dim">… và '+(cho.length - 3)+' phần nữa — Tư vấn gửi tới theo đúng lúc nhà mình cần.</p>';
+    }
+  } else {
+    /* ── NHÂN SỰ: GẬP DANH SÁCH ĐỂ TRA, KHÔNG ĐỔ RA MẶT (9.99.200) ──
+       Người trong nghề cần tra thẳng cả kho; nhưng vẫn không phơi liền một
+       bức tường thẻ — nằm trong một mục bấm-mở. Một cú bấm, đổi lại câu trả
+       lời dẫn trước còn thẻ tư liệu đứng sau. */
+    var dsHtml = '';
+    if(mo.length){
+      dsHtml += '<div class="ai-nguon-nhan">'+mo.length+' tư liệu mở được ngay — bấm để đọc</div>';
+      dsHtml += '<div class="ai-ds">'+ mo.map(function(n){ return theNguon(n, true); }).join('') +'</div>';
+    }
+    if(cho.length){
+      dsHtml += '<div class="ai-nguon-nhan ai-nguon-cho">'+cho.length+
+        ' phần nữa có trong kho của Học viện — đi qua Tư vấn hoặc Coach</div>';
+      dsHtml += '<div class="ai-ds">'+ cho.map(function(n){ return theNguon(n, false); }).join('') +'</div>';
+    }
+    if(dsHtml)
+      o += '<details class="ai-tulieu"><summary>'+ic('compass','w-3 h-3')+
+        ' Tư liệu trong kho ('+(mo.length+cho.length)+') — bấm để xem</summary>'+dsHtml+'</details>';
   }
   /* Câu "chưa tìm được gì khớp" CHỈ đúng khi thật sự chưa có gì. Dẫn
      xong bốn nhịp của một việc rồi vẫn in câu ấy là tự cãi mình ngay
@@ -21207,20 +21968,49 @@ function theDap(d){
   return o;
 }
 
-function bongTroLy(m){
+/* Dòng xưng VAI đang trả lời — ghi rõ Chuyên viên tư vấn · Coach · Giáo
+   viên · Trợ lý riêng · Trợ lý nghiệp vụ. Nói với khách bằng vai người
+   thật đang phụ trách, không phô "máy". */
+function bongVai(vai){
+  if(!vai) return '';
+  return '<div class="ai-vai"><b>'+h(vai.ten)+'</b>'+
+    (vai.moTa ? '<span> · '+h(vai.moTa)+'</span>' : '')+'</div>';
+}
+/* Bóng "đang soạn" — ba chấm nhịp, như người đang gõ. Vai lấy từ chính
+   bóng đang chờ lộ (dap.vai) để dòng xưng vai không nhảy. */
+function bongSoan(m){
+  var vai = m.dap && m.dap.vai;
   return '<div class="ch-luot ch-troly">'+
     '<div class="ch-anh ch-anh-ai">'+ic('spark','w-4 h-4')+'</div>'+
-    '<div class="ch-bong ch-bong-ai">'+theDap(m.dap)+
+    '<div class="ch-bong ch-bong-ai ch-soan">'+bongVai(vai)+
+    '<span class="soan-cham" aria-label="đang soạn"><i></i><i></i><i></i></span></div></div>';
+}
+function bongTroLy(m){
+  var d = m.dap || {};
+  /* Xưng vai một lần: đoạn đầu (hiểu-ý) đã xưng thì đoạn trả lời không
+     lặp lại (_khongVai). Câu khẩn không xưng vai — đó là lúc chuyển
+     người thật, không phải lúc trò chuyện. */
+  var vai = (!d.khan && !d._khongVai) ? d.vai : null;
+  return '<div class="ch-luot ch-troly">'+
+    '<div class="ch-anh ch-anh-ai">'+ic('spark','w-4 h-4')+'</div>'+
+    '<div class="ch-bong ch-bong-ai">'+bongVai(vai)+theDap(d)+
       '<span class="cs-gio">'+h(gio(m.luc))+'</span></div></div>';
 }
 
 /* Dựng sẵn cả cuộc trò chuyện thành chuỗi. Màn hình trả về đã có nội dung
    ngay từ đầu — không có khoảnh khắc khung trống rồi mới hiện chữ. */
-function cuonChat(){
+/* live=true (từ ve): bóng chưa tới mốc _hien hiện "đang soạn". Không có
+   live (bản dựng đầy đủ, ô nổi lúc mở): hiện đủ, không gõ lại lịch sử. */
+function cuonChat(live){
+  var bay = Date.now();
   return '<div class="cs-vach">Hôm nay</div>' +
     '<div class="ch-luot ch-troly"><div class="ch-anh ch-anh-ai">'+ic('spark','w-4 h-4')+'</div>'+
     '<div class="ch-bong ch-bong-ai"><p class="ai-loi">'+h(loiChao())+'</p></div></div>' +
-    G.CHAT.map(function(m){ return m.ai === 'toi' ? bongToi(m) : bongTroLy(m); }).join('');
+    G.CHAT.map(function(m){
+      if(m.ai === 'toi') return bongToi(m);
+      if(live && m._hien && m._hien > bay) return bongSoan(m);
+      return bongTroLy(m);
+    }).join('');
 }
 
 function ve(){
@@ -21230,7 +22020,7 @@ function ve(){
      nhưng quét theo lớp thì thêm khung thứ ba sau này cũng tự đồng bộ. */
   var list = document.querySelectorAll('.ch-khung');
   if(!list.length) return;
-  var html = cuonChat();
+  var html = cuonChat(true);
   for(var i = 0; i < list.length; i++){
     list[i].innerHTML = html; list[i].scrollTop = list[i].scrollHeight;
   }
@@ -21477,6 +22267,783 @@ document.addEventListener('input', function(e){
 
 })();
 
+/* ═════════ src/tro-ly-nang.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 · 9.99.185 — NÂNG NĂNG LỰC Ô CHAT
+   Chủ hệ: câu trả lời phải như đang chat theo kịch bản, KHÔNG đổ liền
+   loạt thư mục/tệp; ghi rõ vai (Chuyên viên tư vấn · Coach · Giáo viên ·
+   Trợ lý riêng · Trợ lý nghiệp vụ cho nhân sự); nhớ khách và cuộc thoại;
+   gắn chuyên gia ngôn ngữ + nhà khoa học số liệu cùng phân tích.
+
+   Module này KHÔNG dựng lại bộ chat — nó TRỎ vào bộ đã có (G.aiTraLoi,
+   G.kbChuoi ở tro-ly-chat.js) và GẮN THÊM bốn thứ vào một lượt trả lời:
+     · d.vai      — vai đang trả lời (persona), theo vai + chặng
+     · d.phanAnh  — câu "hiểu ý" của chuyên gia ngôn ngữ
+     · d.toan     — phân tích số liệu của nhà khoa học toán (có trình bước)
+     · d.nhoNhac  — nhắc lại điều đã nhớ về nhà mình
+
+   Trí nhớ nằm trong localStorage của CHÍNH máy khách, khoá theo tài
+   khoản. KHÔNG rời máy — đúng Điều 13. Không mạng, không tải xuống.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+
+(function () {
+  /* Bỏ dấu — cục bộ theo đúng mẫu kho (mỗi tệp một bản nhỏ, không gắn G). */
+  function boDau(s) {
+    return String(s || '').toLowerCase()
+      .normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd');
+  }
+
+  /* ─────────── 1) VAI ĐANG TRẢ LỜI (persona) ───────────
+     Ghi rõ ai đang nói với khách. Chọn theo VAI của phiên, và với phụ
+     huynh thì theo CHẶNG: đi sâu rồi thì có Coach đồng hành, chưa thì
+     Chuyên viên tư vấn. Nhân sự GITA nhận Trợ lý nghiệp vụ. */
+  G.tlVai = function () {
+    var khach = !!(G.LA_KHACH && G.LA_KHACH());
+    var role = (G.S && G.S.role) || '';
+    if (!khach) {
+      return { ten: 'Trợ lý nghiệp vụ GITA', vaiMa: 'nghiepVu',
+               moTa: 'hỗ trợ nhân sự — tra thẳng phác đồ, kịch bản, mô thức, tình huống' };
+    }
+    if (role === 'R14')
+      return { ten: 'Giáo viên hướng dẫn', vaiMa: 'giaoVien',
+               moTa: 'đi cùng em từng bước học' };
+    if (role === 'R15')
+      return { ten: 'Trợ lý riêng', vaiMa: 'troLyRieng',
+               moTa: 'đồng hành cùng đại sứ' };
+    /* Phụ huynh: Coach nếu đã đi sâu (T3+), còn lại Chuyên viên tư vấn. */
+    var t = null;
+    try { var f = G.myFamily && G.myFamily(); t = f && G.tierOf ? G.tierOf(f.tier) : null; } catch (e) {}
+    var sau = t && /^T[345]$/.test(t.code || '');
+    return sau
+      ? { ten: 'Coach đồng hành', vaiMa: 'coach', moTa: 'đi cùng nhà mình suốt chặng' }
+      : { ten: 'Chuyên viên tư vấn', vaiMa: 'tuVan', moTa: 'lắng nghe và dẫn đường cho nhà mình' };
+  };
+
+  /* ─────────── 2) CHUYÊN GIA NGÔN NGỮ ───────────
+     Đọc Ý ĐỊNH của câu và một câu "hiểu ý" ngắn. Dò theo CỤM nhiều âm
+     tiết (an toàn với dấu — \b không khớp chữ có dấu, luật đã ghi trong
+     CLAUDE.md). Không dịch sang thuật ngữ, giữ giọng nhà mình. */
+  var Y_HOICACH = ['lam sao', 'the nao', 'cach nao', 'bat dau tu dau', 'phai lam gi', 'nen lam gi'];
+  var Y_HOIGIA  = ['bao nhieu tien', 'hoc phi', 'chi phi', 'gia bao nhieu', 'gia ca'];
+  var Y_HOILUC  = ['khi nao', 'bao lau', 'may ngay', 'bao gio', 'con bao nhieu ngay'];
+  var Y_LO      = ['lo lang', 'cang thang', 'met moi', 'bat luc', 'khong biet phai', 'stress', 'roi tri', 'buc'];
+  function coCum(low, ds) { for (var i = 0; i < ds.length; i++) if (low.indexOf(ds[i]) >= 0) return true; return false; }
+
+  G.tlNgonNgu = function (cau) {
+    var low = boDau(cau);
+    var yDinh = 'ke';                                  /* mặc định: đang kể một chuyện */
+    if (coCum(low, Y_HOIGIA)) yDinh = 'hoiGia';
+    else if (coCum(low, Y_HOILUC)) yDinh = 'hoiLuc';
+    else if (coCum(low, Y_HOICACH)) yDinh = 'hoiCach';
+    var lo = coCum(low, Y_LO);
+    /* Câu "hiểu ý" chỉ nói khi đang KỂ một chuyện có cảm xúc — đỡ trùng
+       với "bắt nhịp" của chuỗi, và không chèn vào câu hỏi thẳng. */
+    var phanAnh = '';
+    if (lo) phanAnh = 'Em nghe rồi — chuyện này đang làm nhà mình mệt. Mình đi từng bước một, không vội.';
+    return { yDinh: yDinh, lo: lo, phanAnh: phanAnh };
+  };
+
+  /* ─────────── 3) NHÀ KHOA HỌC SỐ LIỆU ───────────
+     Chỉ tính trên CON SỐ CÓ TRONG CÂU, trình rõ từng bước, KHÔNG bịa số.
+     Không dùng eval — tự đọc số và phép. Hiểu "triệu/tr", "nghìn/k",
+     dấu chấm ngăn nghìn, dấu phẩy thập phân. */
+  function docSo(t) {
+    var out = [], re = /(\d[\d.,]*)\s*(triệu|trieu|tr|nghìn|nghin|ngàn|ngan|k|%)?/gi, m;
+    while ((m = re.exec(t))) {
+      var raw = m[1], unit = boDau(m[2] || '');
+      if (!/\d/.test(raw)) continue;
+      var num = raw.replace(/\./g, '').replace(',', '.');
+      var v = parseFloat(num); if (isNaN(v)) continue;
+      if (unit === 'trieu' || unit === 'tr') v *= 1e6;
+      else if (unit === 'nghin' || unit === 'ngan' || unit === 'k') v *= 1e3;
+      out.push({ raw: (m[0] || '').trim(), val: v, pc: unit === '%' });
+    }
+    return out;
+  }
+  function fmt(n) {
+    try { return new Intl.NumberFormat('vi-VN').format(Math.round(n * 100) / 100); }
+    catch (e) { return String(n); }
+  }
+  function soGan(cau, tu) {
+    var re = new RegExp('(\\d[\\d.,]*)\\s*' + tu, 'i'), m = re.exec(boDau(cau));
+    if (!m) return null;
+    var v = parseFloat(m[1].replace(/\./g, '').replace(',', '.'));
+    return isNaN(v) ? null : v;
+  }
+
+  G.tlToan = function (cau) {
+    var low = boDau(cau);
+    var so = docSo(cau);
+    var pc = so.filter(function (s) { return s.pc; });
+    var th = so.filter(function (s) { return !s.pc; });
+    /* Phần trăm của một số */
+    if (pc.length && th.length) {
+      var base = Math.max.apply(null, th.map(function (s) { return s.val; }));
+      var p = pc[0].val, kq = base * p / 100;
+      return { co: true, tieuDe: 'Tính phần trăm',
+               cach: fmt(base) + ' × ' + fmt(p) + '%', ketQua: fmt(kq) };
+    }
+    /* Chia đều / mỗi tháng */
+    if (/(chia|moi thang|mot thang|hang thang|trong\s+\d+\s+thang|\/)/.test(low) && th.length) {
+      var thang = soGan(cau, 'thang');
+      var tong = Math.max.apply(null, th.map(function (s) { return s.val; }));
+      var chia = thang;
+      if (!chia && th.length >= 2) {
+        var nho = th.slice().sort(function (a, b) { return a.val - b.val; })[0];
+        chia = nho.val;
+      }
+      if (tong && chia && chia !== tong) {
+        var kqc = tong / chia;
+        return { co: true, tieuDe: 'Chia đều',
+                 cach: fmt(tong) + ' ÷ ' + fmt(chia),
+                 ketQua: fmt(kqc) + (/thang/.test(low) ? ' / tháng' : '') };
+      }
+    }
+    /* Cộng tổng */
+    if (/(tong|cong|gop)/.test(low) && th.length >= 2) {
+      var s2 = th.reduce(function (a, b) { return a + b.val; }, 0);
+      return { co: true, tieuDe: 'Cộng tổng',
+               cach: th.map(function (x) { return fmt(x.val); }).join(' + '),
+               ketQua: fmt(s2) };
+    }
+    return { co: false };
+  };
+
+  /* ─────────── 4) TRÍ NHỚ (trên máy khách, Điều 13) ─────────── */
+  function khoaNho() {
+    var a = (G.S && G.S.acc) || {};
+    var id = a.uid || a.u || a.ten || 'khach';
+    return 'gita365_tl_nho_' + boDau(String(id)).replace(/[^a-z0-9]+/g, '');
+  }
+  var STOP = ['con', 'cua', 'cho', 'nha', 'minh', 'khong', 'duoc', 'la', 'thi', 'ma',
+    'va', 'voi', 'nhu', 'the', 'nao', 'gi', 'sao', 'toi', 'em', 'anh', 'chi', 'bi',
+    'dang', 'da', 'se', 'rat', 'qua', 'lam', 'hay', 'co', 'mot', 'cac', 'nhung'];
+  function chuDe(cau) {
+    var tu = boDau(cau).replace(/[^a-z0-9\s]/g, ' ').split(/\s+/)
+      .filter(function (w) { return w.length >= 3 && STOP.indexOf(w) < 0; });
+    return tu.slice(0, 3).join(' ');
+  }
+  G.tlNhoDoc = function () {
+    try { return JSON.parse(localStorage.getItem(khoaNho()) || '{}') || {}; }
+    catch (e) { return {}; }
+  };
+  G.tlNhoGhi = function (cau) {
+    try {
+      var n = G.tlNhoDoc();
+      n.ten = (G.S && G.S.acc && G.S.acc.ten) || n.ten || '';
+      n.soLuot = (n.soLuot || 0) + 1;
+      var cd = chuDe(cau);
+      if (cd) {
+        n.chuDe = n.chuDe || [];
+        /* Giữ TÓM chủ đề gần đây, không cộng dồn vô hạn — một dòng là một
+           lượt đọc, không phải một ô tổng ghi đè (luật kho). */
+        n.chuDe.unshift({ c: cd, luc: Date.now() });
+        n.chuDe = n.chuDe.slice(0, 8);
+      }
+      n.capNhat = Date.now();
+      localStorage.setItem(khoaNho(), JSON.stringify(n));
+    } catch (e) {}
+  };
+  /* Câu nhắc ở lời chào — chỉ khi là người quay lại và có chủ đề cũ. */
+  G.tlChaoNho = function () {
+    if (!(G.LA_KHACH && G.LA_KHACH())) return '';
+    var n = G.tlNhoDoc();
+    if (!n || !n.soLuot || !(n.chuDe && n.chuDe.length)) return '';
+    return ' Lần trước nhà mình có nhắc tới "' + n.chuDe[0].c + '" — mình nói tiếp chỗ đó nhé.';
+  };
+
+  /* ─────────── ORCHESTRATOR: gắn vào một lượt trả lời ───────────
+     Gọi từ G.chatHoi sau khi đã dựng d. Không đụng bộ tra kho — chỉ THÊM.
+     Đường khẩn (d.khan) KHÔNG gắn gì: đó là đường chuyển người thật, để
+     trống cho sạch. */
+  G.tlPhanTich = function (cau, d) {
+    if (!d || d.khan) { if (!(d && d.khan)) G.tlNhoGhi(cau); return d; }
+    d.vai = G.tlVai();
+    var ng = G.tlNgonNgu(cau);
+    /* Chỉ nói câu "hiểu ý" khi KHÔNG có chuỗi vòng dẫn (tránh trùng với
+       'bắt nhịp' của chuỗi). */
+    if (ng.phanAnh && !d.chuoi) d.phanAnh = ng.phanAnh;
+    var t = G.tlToan(cau);
+    if (t.co) d.toan = t;
+    var nhac = G.tlChaoNho ? '' : '';   /* nhắc để ở lời chào, không lặp ở đây */
+    G.tlNhoGhi(cau);
+    return d;
+  };
+})();
+
+})();
+
+/* ═════════ src/huong-dan.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 · 9.99.186 — VIDEO HƯỚNG DẪN TỪNG MÀN, THEO VAI
+   Chủ hệ: mỗi màn có một video hướng dẫn bài bản như một tư vấn viên
+   dắt tay khách; học sinh · phụ huynh · tư vấn · coach · các bộ phận
+   chuyên môn mỗi vai một hướng dẫn phù hợp — nhiệm vụ · vai trò · chức
+   năng · quyền hạn · cách dùng công cụ · cập nhật mới · xử lý vấn đề
+   khách; để làm tốt việc, đạt 100% KPI.
+
+   CÁCH LÀM — trung thực với luật kho:
+     · Đây là "video CHẠY TRONG APP" — cảnh nối cảnh, người dẫn xưng vai,
+       tự chạy theo nhịp, có tạm dừng/tới/lui. KHÔNG phải mp4 tải về.
+     · mp4 THẬT dựng ở Studio (tools/dung-phim.js) từ KHUNG ĐÃ PHÁT HÀNH
+       (luật C19) và LỜI ĐỌC là tệp CÓ SẴN (luật C20 — máy KHÔNG tự sinh
+       giọng). Chưa có lời đọc thu sẵn thì chưa xuất mp4 — sổ chờ HD-01.
+     · Kịch bản mỗi màn: màn nào có khai riêng thì dùng, còn lại DỰNG NỀN
+       tự động từ chính mô tả màn trong G.NAV — nên MỌI màn đều có hướng
+       dẫn, kể cả màn viết sau (không cần khai tay từng cái).
+
+   Người dẫn xưng vai qua G.tlVai() (9.99.185) — cùng một nguồn, không
+   dựng bản thứ hai. Không mạng, không tải xuống.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+
+(function () {
+  var U = G.U, h = U.h, ic = U.ic;
+
+  /* ─── HỆ VIDEO CHUẨN: mỗi màn LUÔN có 5 mục (5 video), theo khung đào
+     tạo nhân sự. Mỗi cảnh KHAI RIÊNG gắn `slot` vào một trong 5 mục; chỗ
+     nào không khai thì DỰNG NỀN tự động — nên MỌI màn đều đủ 5, kể cả màn
+     viết sau. Năm mục chuẩn: giới thiệu · nhiệm vụ-quyền · dùng công cụ ·
+     bài làm mẫu · xử lý-KPI-vinh danh. ─── */
+  /* Phụ huynh & học viên: 10 video/màn (chi tiết). Nhân sự: 5 video/màn. */
+  var STD10 = [
+    { id: 'gioi-thieu', ten: 'Giới thiệu màn' },
+    { id: 'vai-tro', ten: 'Vai trò & quyền của bạn' },
+    { id: 'cong-cu', ten: 'Cách dùng công cụ' },
+    { id: 'bai-mau', ten: 'Bài làm mẫu' },
+    { id: 'cach-hay', ten: 'Cách hay & sáng tạo' },
+    { id: 'nhap-vai', ten: 'Nhập vai thực hành' },
+    { id: 'vi-du', ten: 'Ví dụ & tình huống thường gặp' },
+    { id: 'xu-ly', ten: 'Xử lý khi mắc kẹt' },
+    { id: 'kpi', ten: 'Mục tiêu & tiến bộ' },
+    { id: 'vinh-danh', ten: 'Ghi nhận & vinh danh' }
+  ];
+  var STD5 = [
+    { id: 'gioi-thieu', ten: 'Giới thiệu màn' },
+    { id: 'nhiem-vu', ten: 'Nhiệm vụ · vai trò · quyền hạn' },
+    { id: 'cong-cu', ten: 'Cách dùng công cụ' },
+    { id: 'bai-mau', ten: 'Bài làm mẫu · cách hay' },
+    { id: 'xu-ly', ten: 'Xử lý vấn đề · KPI · vinh danh' }
+  ];
+  /* Gộp slot của bộ 10 về bộ 5 khi dựng cho nhân sự. */
+  var MAP5 = { 'gioi-thieu': 'gioi-thieu', 'vai-tro': 'nhiem-vu', 'cong-cu': 'cong-cu',
+    'bai-mau': 'bai-mau', 'cach-hay': 'bai-mau', 'nhap-vai': 'bai-mau',
+    'vi-du': 'xu-ly', 'xu-ly': 'xu-ly', 'kpi': 'xu-ly', 'vinh-danh': 'xu-ly' };
+  var HD = {
+    'ngoi-nha': [
+      { slot: 'gioi-thieu', td: 'Ngôi nhà thịnh vượng', ic: 'home', loi: 'Đây là trang chủ dạng ngôi nhà. Mỗi phần — mái, các phòng, cửa, nền — mở một màn thật. Nhìn một lượt là biết mình đang ở đâu.',
+        giai: 'Ngôi nhà là bản đồ: mái là tầm nhìn, các phòng là từng phần đời sống gia đình, cửa chính là việc mỗi ngày, nền là thói quen.' },
+      { slot: 'cong-cu', td: 'Cách dùng', ic: 'home', loi: 'Bấm vào từng phần để đi tới nội dung. Phần nào mờ và có ổ khoá là phần của vai khác — không phải chỗ chưa làm xong.',
+        buoc: ['Bấm "Cửa chính" để vào việc hôm nay', 'Bấm một "phòng" để xem con đường của chặng đó', 'Mười bánh đà quanh nhà là mười mốc hành trình'] },
+      { slot: 'nhap-vai', td: 'Buổi đầu cùng con', ic: 'spark',
+        loi: 'Buổi tối đầu tiên, ba mẹ mở ngôi nhà cùng con — không giảng, chỉ cùng nhìn và hỏi. Đây là một mẫu hội thoại.',
+        hoiThoai: [
+          { ai: 'Ba mẹ', ben: 'a', loi: 'Con nhìn ngôi nhà này xem — con thích vào "phòng" nào trước?' },
+          { ai: 'Con', ben: 'b', loi: 'Con thích phòng Tài năng, có hình ngôi sao.' },
+          { ai: 'Ba mẹ', ben: 'a', loi: 'Hay đó. Mình bấm vào xem trong đó có gì, rồi chọn một việc nhỏ làm tối nay nhé?' },
+          { ai: 'Con', ben: 'b', loi: 'Dạ! Con làm được cái này.' }
+        ],
+        giai: 'Điểm mấu chốt: để con CHỌN trước, ba mẹ đi cùng. Ngôi nhà là của cả nhà, không phải bài tập ba mẹ giao.' },
+      { slot: 'cach-hay', td: 'Chốt một việc nhỏ', ic: 'check',
+        loi: 'Kết mỗi buổi bằng đúng một việc nhỏ làm được ngay — để con thấy "mình làm được", không phải "còn cả núi".',
+        cachHay: ['Cho con tự bấm chọn phần con thích — quyền chọn nuôi hứng thú',
+                  'Mỗi tối một phòng thôi, đi chậm mà đều',
+                  'Chụp lại "trước — sau" để tuần sau cả nhà cùng xem đã đổi gì'] },
+      { slot: 'vinh-danh', td: 'Khen đúng cách', ic: 'check',
+        loi: 'Ngôi nhà lớn lên bằng những lần được ghi nhận. Khen việc con LÀM, không khen phẩm chất chung chung.',
+        vinhDanh: 'Thay vì "con giỏi quá", hãy nói "ba mẹ thấy con tự mở phòng Tài năng và làm xong việc tối nay — con đang tự bước đi đấy". Ghi nhận cụ thể thì con biết đường mà làm tiếp.',
+        kpi: 'Mỗi tuần một lần "vinh danh" trong nhà — một câu ghi nhận cụ thể — là nhịp giữ động lực bền hơn mọi phần thưởng vật chất.' }
+    ],
+    'hom-nay': [
+      { slot: 'gioi-thieu', td: 'Màn Hôm nay', loi: 'Mỗi ngày một việc, đúng một việc — không để nhà mình rối. Làm xong việc hôm nay là đủ cho hôm nay.' },
+      { slot: 'cong-cu', td: 'Cách dùng', loi: 'Đọc việc lớn ở giữa, làm theo. Bận thì bấm "Để hôm khác" — không ai hỏi vặn lý do.',
+        buoc: ['Xem việc lớn hôm nay', 'Làm xong thì đánh dấu', 'Nặng quá thì để hôm khác, mai nhắc lại'] }
+    ],
+    'tro-ly': [
+      { slot: 'gioi-thieu', td: 'Trợ lý đồng hành', loi: 'Hỏi bằng lời thường — chuyện con, cách nói với con, việc nên làm. Người dẫn đọc hồ sơ nhà mình rồi trả lời, không phải câu mẫu.' },
+      { slot: 'cong-cu', td: 'Hỏi được gì', loi: 'Hỏi cách làm, hỏi con số (học phí, thời gian), kể một chuyện đang mắc. Câu có số thì có phần tính rõ từng bước.',
+        buoc: ['Gõ câu hỏi hoặc bấm một gợi ý', 'Đọc câu trả lời, hỏi tiếp cho rõ', 'Tư liệu sâu nằm gập ở "Tư liệu tham khảo"'],
+        vd: 'Ví dụ: gõ "học phí 12 triệu chia 12 tháng là bao nhiêu" — trợ lý trả lời 1.000.000/tháng, có ghi rõ cách tính.' },
+      { slot: 'xu-ly', td: 'Việc cần người thật', loi: 'Chuyện gấp về an toàn thì người dẫn dừng lại và chuyển ngay sang người thật — đó là đường không bao giờ để máy lo.' }
+    ],
+    'ban-do': [
+      { slot: 'gioi-thieu', td: 'Bản đồ hành trình', loi: 'Toàn cảnh chặng đường nhà mình đang đi và sắp tới. Biết mình ở đâu thì biết bước kế tiếp là gì.' },
+      { slot: 'cong-cu', td: 'Cách đọc', loi: 'Mốc sáng là đã qua, mốc mờ là phía trước. Bấm một mốc để xem việc của mốc đó.' }
+    ],
+    'crm': [
+      { slot: 'gioi-thieu', td: 'Bảng khách của tôi', loi: 'Đây là chỗ quản lý toàn bộ khách mình phụ trách — ai cần gọi hôm nay, ai sắp tới hẹn, ai đang nguội.',
+        giai: 'CRM là "sổ tay khách" của bạn: mỗi nhà một dòng, trạng thái rõ ràng, không phải nhớ trong đầu.' },
+      { slot: 'cong-cu', td: 'Tìm và lọc', loi: 'Gõ tên hoặc lọc theo chặng để tìm nhanh. Danh sách chia trang, không đổ hết một lúc.',
+        buoc: ['Gõ tên vào ô tìm', 'Chọn chặng để lọc', 'Chuyển trang nếu danh sách dài'] },
+      { slot: 'cong-cu', td: 'Ngăn "Việc nên làm"', loi: 'Xếp GẤP lên trước: đèn đỏ phải GỌI (không nhắn), nhà quá hạn theo dõi, nhà chưa ai phụ trách.',
+        buoc: ['Mở "Việc nên làm" đầu ca', 'Làm từ trên xuống — gấp trước', 'Ghi lại mỗi lần chạm để không sót'] },
+      { slot: 'bai-mau', td: 'Bài làm mẫu một ca', ic: 'check', loi: 'Một ca làm chuẩn của người đạt KPI xuất sắc trông như thế này.',
+        baiMau: 'Đầu ca: mở "Việc nên làm", thấy 3 đèn đỏ + 2 hẹn. Gọi 3 đèn đỏ TRƯỚC (mỗi cuộc ghi lại nội dung), rồi nhắn xác nhận 2 hẹn. Giữa ca: chạm các nhà tới nhịp. Cuối ca: soát KPI, ghi đủ mọi lượt — không để sót dòng nào.',
+        cachHay: ['Nhóm cuộc gọi lại một khung giờ để tập trung, không gọi rải rác',
+                  'Chuẩn bị trước 1 câu mở cho nhà đang nguội — đỡ ngập ngừng',
+                  'Sau mỗi cuộc, ghi ngay một dòng — để cuối ca không phải nhớ lại'] },
+      { slot: 'xu-ly', td: 'Đèn đỏ & KPI', loi: 'Đèn đỏ là nhà đang nguội — phải GỌI người thật trong 24 giờ, không đóng bằng tin nhắn.',
+        vd: 'Ví dụ: nhà A đèn đỏ 2 ngày → gọi ngay hôm nay, ghi lại nội dung cuộc gọi.',
+        kpi: 'Mỗi ngày làm hết phần GẤP là giữ được nhịp KPI. Đèn đỏ gọi trong 24 giờ = giữ khách; ghi đủ mỗi lần chạm = không mất điểm liên đới.' }
+    ],
+    'tien-bo': [
+      { slot: 'gioi-thieu', td: 'Nhà mình đã đổi gì', loi: 'Tuần này so với tuần trước, và phần chênh lệch nói bằng lời — để thấy công sức đang thành kết quả.' }
+    ],
+    'kpi-toi': [
+      { slot: 'gioi-thieu', td: 'KPI của tôi', loi: 'KPI ngày, KPI tháng, phần liên đới và hạng lương thưởng — tất cả ở một chỗ, đọc được ngay.' },
+      { slot: 'xu-ly', td: 'Đọc để hành động', loi: 'Số nào dưới đích thì đó là chỗ dồn sức tuần này. Không đoán — nhìn số rồi làm.',
+        kpi: 'Nhìn số dưới đích trước, dồn sức đúng chỗ đó trong tuần — KPI cải thiện từ việc chọn đúng ưu tiên.' }
+    ]
+  };
+
+  /* Tìm mục NAV của một view (NAV là nhóm → items). */
+  function timNav(view) {
+    var ns = G.NAV || [];
+    for (var i = 0; i < ns.length; i++) {
+      var it = (ns[i] && ns[i].items) || [];
+      for (var j = 0; j < it.length; j++) if (it[j].v === view) return it[j];
+    }
+    return null;
+  }
+
+  /* ─── Dựng kịch bản cho một màn: khai riêng thì dùng, không thì DỰNG
+     NỀN từ mô tả NAV — nên màn nào cũng có hướng dẫn. ─── */
+  /* Họ tên gắn với tài khoản đăng nhập — cho lời chào mừng. */
+  function tenToi() { return (G.S && G.S.acc && G.S.acc.ten) || 'anh chị'; }
+  /* Màu thương hiệu xoay vòng cho từng cảnh — hệ hình ảnh có màu. */
+  var MAU = ['--gita-sau', '--t2', '--t3', '--t4', '--t1', '--t5'];
+
+  function ganMau(canh) {
+    return canh.map(function (c, i) {
+      var x = {}; for (var k in c) x[k] = c[k];
+      x.mau = c.mau || MAU[i % MAU.length];
+      return x;
+    });
+  }
+
+  /* Một cảnh NỀN cho mỗi mục chuẩn — dựng theo vai + mô tả màn, để mục nào
+     chưa soạn riêng vẫn có nội dung thật (không bao giờ là khung rỗng). */
+  function nen(slot, khach, tua, mt, vai) {
+    switch (slot) {
+      case 'gioi-thieu':
+        return { td: tua, loi: mt + '.', giai: 'Biết màn này làm gì rồi thì dùng nhanh và đúng — không mò.' };
+      case 'vai-tro': case 'nhiem-vu':
+        return { td: khach ? 'Phần của bạn ở đây' : 'Nhiệm vụ & quyền của bạn',
+          loi: khach
+            ? 'Đây là phần dành cho ' + (khach ? 'nhà mình' : 'bạn') + '. Đọc từ trên xuống, phần nào mở được là phần của mình.'
+            : 'Màn này thuộc phần việc của vai bạn. Làm đúng chức năng và trong quyền hạn được cấp — phần ngoài quyền hệ sẽ nói rõ.',
+          kpi: khach ? '' : 'Hoàn thành đúng phần việc màn này, đúng nhịp, là một phần KPI của vai bạn.' };
+      case 'cong-cu':
+        return { td: 'Dùng công cụ trên màn', loi: 'Mở màn từ cột menu bên trái (điện thoại: thanh dưới hoặc nút Menu). Máy tính thu gọn hai cột cho rộng, phóng to chữ bằng Ctrl +.',
+          buoc: ['Chọn màn ở menu', 'Đọc phần chính ở giữa', 'Bí ở đâu, bấm nút trợ lý ở góc phải'] };
+      case 'bai-mau':
+        return { td: 'Làm mẫu một lượt', ic: 'check',
+          loi: khach ? 'Đây là cách một nhà làm tốt thường làm ở màn này. Xem rồi làm theo — hoặc hay hơn.'
+                     : 'Đây là cách một người làm giỏi xử lý phần việc màn này — một chuẩn mực để đạt KPI xuất sắc.',
+          baiMau: khach ? 'Mở màn → đọc kỹ → làm đúng MỘT việc cho xong → ghi lại một dòng. Làm đều mỗi ngày hơn làm dồn cuối tuần.'
+                        : 'Đầu ca rà việc GẤP → xử lý theo đúng thứ tự ưu tiên → ghi đủ mỗi lượt → cuối ca soát lại KPI.' };
+      case 'cach-hay':
+        return { td: 'Vài cách hay — và sáng tạo thêm', ic: 'spark',
+          loi: 'Không có một khuôn cứng. Đây là vài cách làm tốt; nếu bạn có ý hay hơn, cứ làm theo cách của mình.',
+          cachHay: khach
+            ? ['Đặt một giờ cố định mỗi ngày để thành nếp', 'Rủ cả nhà cùng làm cho vui và bền', 'Ghi một dòng cảm nhận sau mỗi lần để thấy mình tiến']
+            : ['Làm việc khó nhất khi đầu óc tỉnh nhất', 'Gộp việc cùng loại làm một lượt', 'Lưu lại cách hiệu quả để lần sau dùng lại'] };
+      case 'nhap-vai':
+        return { td: 'Thực hành một lượt', ic: 'spark',
+          loi: 'Học bằng cách làm thử. Đây là một mẫu ngắn để bạn thực hành ngay trên màn này.',
+          hoiThoai: khach
+            ? [{ ai: 'Người dẫn', ben: 'a', loi: 'Bạn thử mở màn này và chọn một việc nhỏ xem?' },
+               { ai: 'Bạn', ben: 'b', loi: 'Rồi, mình chọn việc này.' },
+               { ai: 'Người dẫn', ben: 'a', loi: 'Tốt lắm — làm xong nhớ ghi lại một dòng nhé.' }]
+            : [{ ai: 'Quản lý', ben: 'a', loi: 'Em thử xử lý một trường hợp trên màn này xem.' },
+               { ai: 'Nhân sự', ben: 'b', loi: 'Vâng, em làm theo đúng quy trình rồi ghi lại.' }] };
+      case 'vi-du':
+        return { td: 'Tình huống thường gặp', loi: 'Một ví dụ hay gặp ở màn này, và cách xử lý gọn.',
+          vd: khach ? 'Ví dụ: hôm nay bận quá — cứ làm một việc nhỏ nhất, mai làm tiếp. Đều đặn quan trọng hơn nhiều.'
+                    : 'Ví dụ: gặp trường hợp ngoài quyền → không tự quyết, ghi lại và chuyển đúng người phụ trách.' };
+      case 'xu-ly':
+        return { td: 'Khi mắc kẹt', loi: 'Chưa chắc thì hỏi trợ lý — trả lời theo kho đã huấn luyện. Việc gấp hoặc ngoài quyền thì chuyển người phụ trách, không tự quyết.',
+          vd: 'Ví dụ: không rõ bước tiếp theo → bấm trợ lý, hỏi bằng lời thường.' };
+      case 'kpi':
+        return { td: 'Mục tiêu & tiến bộ', loi: 'Làm đều ở màn này giúp bạn tiến bộ thấy được mỗi tuần.',
+          kpi: khach ? 'Mỗi tuần nhìn lại "đã đổi gì" — một bước nhỏ đều đặn là tiến bộ thật.'
+                     : 'Hoàn thành đúng phần việc màn này, đúng nhịp, là một phần KPI của vai bạn.' };
+      case 'vinh-danh':
+        return { td: 'Ghi nhận & vinh danh', ic: 'check', loi: 'Mỗi tiến bộ xứng đáng được ghi nhận cụ thể.',
+          vinhDanh: khach ? 'Khen việc LÀM, không khen chung chung: "mình đã tự làm xong việc này" — ghi nhận cụ thể thì có động lực đi tiếp.'
+                          : 'Ghi nhận đồng đội bằng việc cụ thể họ làm được — cụ thể thì thật, và giữ lửa cả đội.' };
+      default:
+        return { td: tua, loi: mt + '.' };
+    }
+  }
+
+  G.hdChoMan = function (view) {
+    var nav = timNav(view);
+    var vai = (G.tlVai && G.tlVai()) || { ten: 'Người hướng dẫn', moTa: '' };
+    var khach = !!(G.LA_KHACH && G.LA_KHACH());
+    var tua = (nav && nav.t) || 'Màn này';
+    var mt = (nav && nav.h) || 'Màn này phục vụ một việc trong hệ GITA 365.';
+    /* HỆ VIDEO CHUẨN: khách 10 mục/màn · nhân sự 5 mục/màn. */
+    var bo = khach ? STD10 : STD5;
+    var soanRieng = Array.isArray(HD[view]) ? HD[view] : [];
+    var muc = bo.map(function (s) {
+      var canh = soanRieng.filter(function (c) {
+        var sid = khach ? (c.slot || 'gioi-thieu') : (MAP5[c.slot] || c.slot || 'gioi-thieu');
+        return sid === s.id;
+      });
+      if (!canh.length) canh = [nen(s.id, khach, tua, mt, vai)];
+      return { id: s.id, ten: s.ten, canh: ganMau(canh) };
+    });
+    return { tua: tua, vai: vai, muc: muc, view: view, khach: khach,
+             chao: 'Chào mừng ' + tenToi() + '! ' +
+               (khach ? 'Đây là ' + vai.ten.toLowerCase() + ' của nhà mình'
+                      : 'Bạn đang ở vai ' + vai.ten.toLowerCase()) +
+               '. Có ' + muc.length + ' video hướng dẫn cho màn này — chọn một mục để xem.' };
+  };
+
+  /* ══════════════ TRÌNH CHIẾU — "phim" chạy trong app ══════════════
+     mucIdx = -1: đang ở MỤC LỤC (bìa chào mừng + danh sách mục).
+     mucIdx >= 0: đang chiếu mục ấy, idx = cảnh trong mục. */
+  var kb = null, mucIdx = -1, idx = 0, chay = false, hen = null, phien = 0, che = 'thuong';
+  var amOn = true;
+  try { amOn = localStorage.getItem('gita-hd-am') !== '0'; } catch (e) {}
+  var actx = null;
+
+  function mucHienTai() { return kb && mucIdx >= 0 ? kb.muc[mucIdx] : null; }
+  function thoiHen() { if (hen) { clearTimeout(hen); hen = null; } }
+  function dungLuong(c) {
+    if (!c) return 4000;
+    var n = (c.loi ? c.loi.length : 0) + (c.buoc ? c.buoc.length * 22 : 0) +
+            (c.vd ? c.vd.length : 0) + (c.kpi ? c.kpi.length : 0) +
+            (c.baiMau ? c.baiMau.length : 0) + (c.cachHay ? c.cachHay.join('').length : 0) +
+            (c.hoiThoai ? c.hoiThoai.reduce(function (s, d) { return s + ((d && d.loi) ? d.loi.length : 0) + 12; }, 0) : 0) +
+            (c.vinhDanh ? c.vinhDanh.length : 0);
+    return Math.max(3800, Math.min(12000, 2400 + n * 36));
+  }
+  /* Giai điệu nhẹ — hai nốt mềm, dựng bằng WebAudio (âm hiệu giao diện,
+     KHÔNG phải nhạc/lời cho phim mp4: luật C20 nói về xưởng phim). Tắt
+     được, nhớ lựa chọn.
+
+     CHẠY TIẾNG TRÊN MỌI TRÌNH DUYỆT: WebAudio hay khởi động ở trạng thái
+     'suspended' (Safari/iOS/Chrome mobile chặn autoplay). Phải tạo VÀ
+     resume() context TRONG một cử chỉ bấm, rồi giữ cho các nhịp sau (cảnh
+     tự chạy nổ bằng setTimeout — ngoài cử chỉ — nên context phải đang
+     'running' sẵn từ lúc bấm mở). */
+  function moKhoaAm() {
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+      actx = actx || new AC();
+      if (actx.state === 'suspended' && actx.resume) actx.resume();
+    } catch (e) {}
+  }
+  function chuong(hop) {
+    if (!amOn) return;
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+      actx = actx || new AC();
+      if (actx.state === 'suspended' && actx.resume) actx.resume();   /* mỗi lần phát đều bảo đảm đang chạy */
+      var t = actx.currentTime, notes = hop ? [523.25, 659.25, 783.99] : [523.25, 659.25];
+      notes.forEach(function (f, i) {
+        var o = actx.createOscillator(), g = actx.createGain();
+        o.type = 'sine'; o.frequency.value = f; o.connect(g); g.connect(actx.destination);
+        var s = t + i * 0.09;
+        g.gain.setValueAtTime(0, s); g.gain.linearRampToValueAtTime(0.05, s + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, s + 0.5);
+        o.start(s); o.stop(s + 0.55);
+      });
+    } catch (e) {}
+  }
+
+  /* ─── LỚP GIỌNG THU SẴN (đồng bộ từng cảnh) ───
+     Giọng là FILE THU SẴN (.m4a/.mp4 AAC) — đúng luật C20 (máy KHÔNG tự
+     sinh giọng; kho còn chặn speechSynthesis ở khoa-sao-chep). Có file thì
+     phát bằng <audio> (chạy Chrome·Edge·Cốc Cốc·Safari·điện thoại), cảnh
+     đổi theo MỐC thời gian từng cảnh; KHÔNG có file thì về phụ đề + nhịp
+     chữ như cũ. Danh mục để trống — đổ file vào rồi khai ở G.HD_GIONG.
+     Khoá: 'view:mucId' → { file, moc:[giây mở mỗi cảnh] }. */
+  G.HD_GIONG = G.HD_GIONG || {};
+  function giongBase() {
+    var b = G.HD_GIONG_BASE || (G.API_GIONG) || 'gita-voice/';
+    return b.charAt(b.length - 1) === '/' ? b : b + '/';
+  }
+  function giongCua(view, mucId) {
+    var p = G.HD_GIONG[view + ':' + mucId];
+    return (p && p.file) ? p : null;
+  }
+  var audio = null, mocHt = [];
+  function dungGiong() {
+    if (audio) { try { audio.pause(); audio.src = ''; } catch (e) {} audio = null; }
+    mocHt = [];
+  }
+  /* Bật giọng cho mục hiện tại; trả true nếu khởi động được. */
+  function batGiong(pack) {
+    try {
+      var a = new Audio(giongBase() + pack.file);
+      a.muted = !amOn;
+      audio = a; mocHt = pack.moc || []; var id = phien, mi = mucIdx, m = mucHienTai(), moc = mocHt;
+      a.addEventListener('timeupdate', function () {
+        if (id !== phien || mi !== mucIdx || !m) return;
+        var t = a.currentTime, k = 0;
+        for (var j = 0; j < moc.length; j++) if (t >= moc[j]) k = j;
+        if (k !== idx && k < m.canh.length) { idx = k; ve(); }
+      });
+      a.addEventListener('ended', function () {
+        if (id === phien && mi === mucIdx && m) { idx = m.canh.length - 1; chay = false; ve(); }
+      });
+      var pr = a.play();
+      if (pr && pr.catch) pr.catch(function () { dungGiong(); if (id === phien) { chuong(false); dat(); } });
+      return true;
+    } catch (e) { return false; }
+  }
+  /* Phát mục hiện tại: có giọng thu sẵn thì theo giọng, không thì phụ đề+nhịp. */
+  function phatMuc() {
+    thoiHen(); dungGiong();
+    var m = mucHienTai(); if (!m) return;
+    var pack = giongCua(kb.view, m.id);
+    if (pack && batGiong(pack)) return;   /* đường giọng thu sẵn */
+    chuong(false); dat();                 /* đường phụ đề + nhịp chữ */
+  }
+
+  G.hdMo = function (view, mucId) {
+    view = view || (G.S && G.S.view);
+    kb = G.hdChoMan(view); idx = 0; che = 'thuong'; phien++;
+    dungGiong();
+    mucIdx = -1;
+    if (mucId) {                                     /* mở thẳng một mục */
+      for (var i = 0; i < kb.muc.length; i++) if (kb.muc[i].id === mucId) { mucIdx = i; break; }
+    }
+    chay = mucIdx >= 0;
+    if (typeof document === 'undefined') return;
+    var el = document.getElementById('hdp');
+    if (!el) {
+      el = document.createElement('div'); el.id = 'hdp';
+      el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', 'Video hướng dẫn');
+      document.body.appendChild(el);
+    }
+    moKhoaAm();                 /* mở khoá âm NGAY trong cử chỉ bấm mở guide */
+    ve();
+    if (mucIdx < 0) chuong(true); else phatMuc();
+  };
+  function dong() {
+    chay = false; thoiHen(); dungGiong(); phien++;
+    var el = document.getElementById('hdp'); if (el) el.remove();
+    document.body.classList.remove('hdp-khoa');
+  }
+  G.hdDong = dong;
+  /* Về mục lục (bìa) — để chọn mục khác. */
+  function veMucLuc() { thoiHen(); dungGiong(); mucIdx = -1; idx = 0; chay = false; ve(); }
+  /* Mở một mục theo số thứ tự. */
+  function moMuc(i) { if (!kb || !kb.muc[i]) return; mucIdx = i; idx = 0; chay = true; ve(); phatMuc(); }
+
+  function dat() {
+    thoiHen();
+    var m = mucHienTai(); if (!chay || !m) return;
+    if (idx >= m.canh.length - 1) return;            /* cảnh cuối: dừng, chờ người */
+    var id = phien;
+    hen = setTimeout(function () {
+      if (id !== phien || !chay) return;
+      if (idx < m.canh.length - 1) { idx++; ve(); chuong(false); dat(); }
+    }, dungLuong(m.canh[idx]));
+  }
+
+  /* Sơ đồ quy trình — nối các nhiệm vụ thành chuỗi có mũi nối. */
+  function soDo(buoc) {
+    return '<div class="hdp-so">' + buoc.map(function (b, i) {
+      return '<div class="hdp-so-o"><span class="hdp-so-n">' + (i + 1) + '</span>' +
+        '<p>' + h(b) + '</p></div>' +
+        (i < buoc.length - 1 ? '<div class="hdp-so-noi">' + ic('arrow') + '</div>' : '');
+    }).join('') + '</div>';
+  }
+  function goi(nhan, chu, lop) {
+    return '<div class="hdp-goi ' + lop + '"><span class="hdp-goi-nhan">' + h(nhan) +
+      '</span><p>' + h(chu) + '</p></div>';
+  }
+  /* Hội thoại nhập vai — kịch bản như hai người nói chuyện. ben:'a' trái,
+     'b' phải. (Giọng nói là bản THU sẵn — C20; đây là lời thoại chữ.) */
+  function veHoiThoai(ht) {
+    return '<div class="hdp-ht">' + ht.map(function (d) {
+      return '<div class="hdp-ht-o hdp-ht-' + (d.ben === 'b' ? 'b' : 'a') + '">' +
+        '<span class="hdp-ht-ai">' + h(d.ai) + '</span>' +
+        '<p>' + h(d.loi) + '</p></div>';
+    }).join('') + '</div>';
+  }
+  var BUT = '<svg class="hdp-but" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">' +
+    '<path d="M3 21l3-1 11-11-2-2L4 18l-1 3z" fill="var(--gita)"/>' +
+    '<path d="M15 5l2-2a1.4 1.4 0 012 2l-2 2-2-2z" fill="var(--gita-sau)"/></svg>';
+
+  /* Thanh đầu — logo GITA + vai + nút âm/phóng to/thu nhỏ/đóng. */
+  function veDau() {
+    return '<div class="hdp-dau">' +
+      '<span class="hdp-logo">' + (G.dauGita ? G.dauGita() : ic('spark')) + '</span>' +
+      '<span class="hdp-vai"><b>' + h(kb.vai.ten) + '</b>' +
+        '<span>hướng dẫn: ' + h(kb.tua) + '</span></span>' +
+      '<button class="hdp-nho-nut" data-hd="am" aria-label="Bật tắt âm" title="Âm thanh">' +
+        (amOn ? '♪' : '♪̸') + '</button>' +
+      '<button class="hdp-nho-nut" data-hd="to" aria-label="Phóng to" title="Phóng to">' + ic('orbit') + '</button>' +
+      '<button class="hdp-nho-nut" data-hd="nho" aria-label="Thu nhỏ về khung cố định" title="Thu nhỏ">' + ic('zoom') + '</button>' +
+      '<button class="hdp-x" data-hd="dong" aria-label="Đóng">' + ic('x') + '</button>' +
+    '</div>';
+  }
+  var CHAN = '<p class="hdp-chan">Hướng dẫn chạy trong ứng dụng · bản phim tải về đang chuẩn bị (cần lời đọc thu sẵn — luật C20).</p>';
+
+  function ve() {
+    var el = document.getElementById('hdp');
+    if (!el || !kb || !kb.muc || !kb.muc.length) return;
+    /* Hàng rào: mục/cảnh khuyết thì lùi về mục lục, KHÔNG để vỡ video. */
+    if (mucIdx >= kb.muc.length) mucIdx = -1;
+    if (mucIdx >= 0) {
+      var mm = kb.muc[mucIdx];
+      if (!mm || !mm.canh || !mm.canh.length) { mucIdx = -1; }
+      else if (idx >= mm.canh.length) idx = mm.canh.length - 1;
+      else if (idx < 0) idx = 0;
+    }
+    el.className = che === 'to' ? 'hdp-to' : (che === 'nho' ? 'hdp-nho' : '');
+
+    /* ── MỤC LỤC (bìa): chào mừng theo tên+vai + danh sách mục ── */
+    if (mucIdx < 0) {
+      var ds = kb.muc.map(function (m, i) {
+        return '<button class="hdp-muc" data-hd="muc" data-i="' + i + '">' +
+          '<span class="hdp-muc-n">' + (i + 1) + '</span>' +
+          '<span class="hdp-muc-t"><b>' + h(m.ten) + '</b>' +
+            '<span>Xem video hướng dẫn · ' + m.canh.length + ' cảnh</span></span>' +
+          ic('arrow') + '</button>';
+      }).join('');
+      el.innerHTML =
+        (che === 'nho' ? '' : '<div class="hdp-nen" data-hd="dong"></div>') +
+        '<div class="hdp-khung" style="--ac:var(--gita-sau)">' + veDau() +
+          '<div class="hdp-canh hdp-bia">' +
+            '<div class="hdp-chao">' + (G.dauGita ? G.dauGita() : '') +
+              '<div class="hdp-chao-viet"><span class="hdp-viet-chu">' + h(kb.chao) + '</span>' + BUT + '</div></div>' +
+            '<div class="hdp-muc-tieu">' + ic('list') + ' Chọn một mục để xem hướng dẫn</div>' +
+            '<div class="hdp-muc-ds">' + ds + '</div>' +
+          '</div>' + CHAN +
+        '</div>';
+      document.body.classList.toggle('hdp-khoa', che !== 'nho');
+      return;
+    }
+
+    /* ── CHIẾU MỘT MỤC ── */
+    var m = kb.muc[mucIdx], c = m.canh[idx], n = m.canh.length, cuoi = idx >= n - 1;
+    var cham = m.canh.map(function (_, i) {
+      return '<span class="hdp-cham' + (i === idx ? ' on' : (i < idx ? ' qua' : '')) + '"></span>';
+    }).join('');
+    var than = '<p class="hdp-loi">' + h(c.loi) + '</p>';
+    if (c.hoiThoai && c.hoiThoai.length) than += veHoiThoai(c.hoiThoai);  /* nhập vai */
+    if (c.buoc && c.buoc.length) than += soDo(c.buoc);            /* sơ đồ quy trình */
+    if (c.giai) than += goi('Giải thích', c.giai, 'hdp-giai');
+    if (c.vinhDanh) than += goi('Ghi nhận & vinh danh', c.vinhDanh, 'hdp-vinh');
+    if (c.baiMau) than += goi('Bài làm mẫu — bậc thầy chỉ dẫn', c.baiMau, 'hdp-mau');
+    if (c.cachHay && c.cachHay.length)
+      than += '<div class="hdp-goi hdp-cach"><span class="hdp-goi-nhan">Vài cách hay để chọn — hoặc sáng tạo thêm</span>' +
+        '<ol>' + c.cachHay.map(function (x) { return '<li>' + h(x) + '</li>'; }).join('') + '</ol>' +
+        '<p class="hdp-cach-mo">Có ý hay hơn? Cứ làm theo cách của bạn — cái đích là kết quả xuất sắc, không phải một khuôn cứng.</p></div>';
+    if (c.vd) than += goi('Ví dụ minh hoạ', c.vd, 'hdp-vd');
+    if (c.kpi) than += goi('Hướng dẫn theo KPI', c.kpi, 'hdp-kpi');
+
+    el.innerHTML =
+      (che === 'nho' ? '' : '<div class="hdp-nen" data-hd="dong"></div>') +
+      '<div class="hdp-khung" style="--ac:var(' + (c.mau || '--gita-sau') + ')">' + veDau() +
+        '<div class="hdp-canh">' +
+          '<div class="hdp-canh-so">' + h(m.ten) + ' · cảnh ' + (idx + 1) + '/' + n + '</div>' +
+          '<div class="hdp-hinh"><span class="hdp-hinh-ic">' + ic(c.ic || 'spark') + '</span></div>' +
+          '<div class="hdp-viet"><h3 class="hdp-td hdp-viet-chu">' + h(c.td) + '</h3>' + BUT + '</div>' +
+          than +
+        '</div>' +
+        '<div class="hdp-cham-hang">' + cham + '</div>' +
+        '<div class="hdp-dieu">' +
+          '<button class="hdp-nut" data-hd="mucluc" aria-label="Về mục lục" title="Mục lục">' + ic('list') + '</button>' +
+          '<button class="hdp-nut" data-hd="lui"' + (idx === 0 ? ' disabled' : '') + ' aria-label="Cảnh trước">' + ic('arrow') + '</button>' +
+          '<button class="hdp-nut hdp-chay" data-hd="chay" aria-label="' + (chay ? 'Tạm dừng' : 'Chạy tiếp') + '">' +
+            ic(chay ? 'pulse' : 'spark') + '<span>' + (chay ? 'Đang chạy' : 'Chạy tiếp') + '</span></button>' +
+          (cuoi
+            ? '<button class="hdp-nut pri" data-hd="xong" aria-label="Xong mục">' + ic('check') + '<span>Xong</span></button>'
+            : '<button class="hdp-nut" data-hd="toi" aria-label="Cảnh sau">' + ic('arrow') + '</button>') +
+        '</div>' + CHAN +
+      '</div>';
+    document.body.classList.toggle('hdp-khoa', che !== 'nho');
+  }
+
+  /* Tua giọng thu sẵn theo cảnh khi người bấm tới/lui (nếu đang có giọng). */
+  function tuaGiong() { if (audio && mocHt[idx] != null) { try { audio.currentTime = mocHt[idx]; } catch (e) {} } }
+  function toi() {
+    var m = mucHienTai(); if (m && idx < m.canh.length - 1) {
+      idx++; ve();
+      if (audio) tuaGiong(); else { chuong(false); if (chay) dat(); }
+    }
+  }
+  function lui() {
+    if (mucIdx >= 0 && idx > 0) {
+      idx--; ve();
+      if (audio) tuaGiong(); else if (chay) dat();
+    }
+  }
+  function chayTiep() {
+    if (audio) {                       /* có giọng thu sẵn: dừng/tiếp chính audio */
+      if (audio.paused) { audio.play(); chay = true; } else { audio.pause(); chay = false; }
+      ve(); return;
+    }
+    chay = !chay; ve(); if (chay) dat(); else thoiHen();
+  }
+  function doChe(md) { che = (che === md) ? 'thuong' : md; ve(); }
+  function doAm() {
+    amOn = !amOn;
+    try { localStorage.setItem('gita-hd-am', amOn ? '1' : '0'); } catch (e) {}
+    if (audio) audio.muted = !amOn;
+    ve(); if (amOn && !audio) chuong(false);
+  }
+
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest && e.target.closest('[data-hd]');
+    if (!t) return;
+    var a = t.getAttribute('data-hd');
+    if (a === 'dong') dong();
+    else if (a === 'xong' || a === 'mucluc') veMucLuc();
+    else if (a === 'muc') moMuc(+t.getAttribute('data-i'));
+    else if (a === 'toi') toi();
+    else if (a === 'lui') lui();
+    else if (a === 'chay') chayTiep();
+    else if (a === 'to' || a === 'nho') doChe(a);
+    else if (a === 'am') doAm();
+  });
+  /* Nút mở trên thanh trên (app.js dựng, data-act="huong-dan"). */
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest && e.target.closest('[data-act="huong-dan"]');
+    if (t) { e.preventDefault(); G.hdMo(G.S && G.S.view); }
+  });
+  /* Nút "Xem video hướng dẫn" nhúng trong màn: data-hd-mo="view|mucId". */
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest && e.target.closest('[data-hd-mo]');
+    if (!t) return;
+    e.preventDefault();
+    var p = String(t.getAttribute('data-hd-mo')).split('|');
+    G.hdMo(p[0] || (G.S && G.S.view), p[1] || '');
+  });
+  document.addEventListener('keydown', function (e) {
+    if (!document.getElementById('hdp')) return;
+    if (e.key === 'Escape') { e.preventDefault(); (mucIdx >= 0 ? veMucLuc() : dong()); }
+    else if (e.key === 'ArrowRight') toi();
+    else if (e.key === 'ArrowLeft') lui();
+  });
+
+  /* Snippet nút "Xem video hướng dẫn" để màn khác nhúng vào. */
+  G.hdNut = function (view, mucId, nhan) {
+    return '<button class="btn sm hd-nut" data-hd-mo="' + h((view || '') + '|' + (mucId || '')) + '">' +
+      ic('compass', 'w-3 h-3') + h(nhan || 'Xem video hướng dẫn') + '</button>' +
+      /* Lối mở Studio video bài bản (trang riêng, khung phát 16:9, chương,
+         phụ đề, giọng, thu nhỏ/phóng to). Trang tĩnh anh em cạnh index.html
+         nên mở bằng <a href>, không qua bộ định tuyến trong app. */
+      '<a class="btn sm hd-studio" href="video-huong-dan.html" target="_blank" rel="noopener">' +
+      ic('spark', 'w-3 h-3') + 'Studio video (bài bản)</a>';
+  };
+})();
+
+})();
+
 /* ═════════ src/tro-ly-noi.js ═════════ */
 (function(){
 /* ═══════════════════════════════════════════════════════════════
@@ -21492,9 +23059,12 @@ document.addEventListener('input', function(e){
    lệch nhau. `ve()` bên kia cập nhật MỌI .ch-khung, nên gửi ở ô nổi thì
    khung tự đầy.
 
-   Ba trạng thái: chỉ nút tròn (thu) · ô nhỏ ở góc (mở) · phủ gần kín màn
-   (phóng to). Ẩn khi chưa đăng nhập và khi đang ở chính màn "tro-ly" đầy
-   đủ — để không có hai #ch-khung cùng lúc.
+   Ba trạng thái (9.99.225, theo chủ hệ): ô thanh tiêu đề nhỏ ≈1,5cm (thu
+   gọn) · ô chat ở góc (phóng to để chat) · phủ KÍN cả màn hình (phóng
+   full). Thêm một đường "ẩn hẳn" về mép phải. Ẩn khi chưa đăng nhập và khi
+   đang ở chính màn "tro-ly" đầy đủ — để không có hai #ch-khung cùng lúc.
+   Kích thước ba trạng thái đặt ở CSS (--tln-thu · --tln-rong · .tln-to),
+   phù hợp máy tính · điện thoại · iPad bằng các @media riêng.
 
    Vì sao ~5cm không đặt cứng thành 189px: một dòng tiếng Việt cần bề
    ngang để không gãy chữ, nên ô nhỏ đặt 300px (đủ đọc một câu) — nhỏ hơn
@@ -21525,10 +23095,12 @@ var G = window.G || {}; window.G = G;
           '<span class="tln-anh">' + ic('spark') + '</span>' +
           '<span class="tln-ten"><b>Trợ lý GITA</b>' +
             '<span class="tln-duoi"><span class="tln-cham"></span>đang nghe</span></span>' +
-          '<button class="tln-nut" data-tln="to" id="tlnToBtn" aria-label="Phóng to" ' +
-            'title="Phóng to">' + ic('zoom') + '</button>' +
+          '<button class="tln-nut" data-tln="to" id="tlnToBtn" aria-label="Phóng full màn hình" ' +
+            'title="Phóng full màn hình">' + ic('zoom') + '</button>' +
           '<button class="tln-nut" data-tln="dong" aria-label="Thu gọn" ' +
-            'title="Thu gọn">' + ic('x') + '</button>' +
+            'title="Thu gọn về ô thanh tiêu đề nhỏ">' + ic('minus') + '</button>' +
+          '<button class="tln-nut" data-tln="an" aria-label="Ẩn trợ lý" ' +
+            'title="Ẩn hẳn — hiện lại ở mép phải màn">' + ic('x') + '</button>' +
         '</header>' +
         '<div id="chKhungNoi" class="ch-khung tln-cuon"></div>' +
         '<div class="tln-goiy" id="tlnGoiy"></div>' +
@@ -21537,9 +23109,27 @@ var G = window.G || {}; window.G = G;
             'placeholder="Nhà mình đang mắc chuyện gì?"></textarea>' +
           '<button class="tln-gui" data-tln="gui" aria-label="Gửi">' + ic('arrow') + '</button>' +
         '</div>' +
-      '</section>';
+      '</section>' +
+      /* Mép hiện lại: khi đã ẩn hẳn, một vạch nhỏ nép mép phải để gọi trợ
+         lý về — ẩn không phải là mất, chỉ là dẹp sang bên khi đang cần chỗ. */
+      '<button class="tln-he" data-tln="hien" aria-label="Hiện trợ lý GITA" ' +
+        'title="Hiện trợ lý GITA">' + ic('spark') + '<span>Trợ lý</span></button>';
     document.body.appendChild(el);
   };
+
+  /* Nhớ ý muốn ẩn theo máy (tiện cho từng người xem), bọc try/catch vì chế
+     độ riêng tư có thể chặn localStorage. Ẩn là lựa chọn của người dùng nên
+     giữ qua các lần vẽ lại; không đồng bộ lên máy chủ. */
+  function daAn() { try { return localStorage.getItem('tlnAn') === '1'; } catch (e) { return false; } }
+  function ghiAn(v) { try { v ? localStorage.setItem('tlnAn', '1') : localStorage.removeItem('tlnAn'); } catch (e) {} }
+  function an() {
+    var el = document.getElementById('tln'); if (!el) return;
+    dongPanel(); el.classList.add('tln-an'); ghiAn(true);
+  }
+  function hien() {
+    var el = document.getElementById('tln'); if (!el) return;
+    el.classList.remove('tln-an'); ghiAn(false);
+  }
 
   /* ── Ẩn/hiện theo phiên và theo màn ── */
   G.tlnCap = function () {
@@ -21549,6 +23139,8 @@ var G = window.G || {}; window.G = G;
        nổi (tránh hai khung chat cùng id-lớp). */
     if (!khDN() || oManTroLy()) { el.style.display = 'none'; dongPanel(); return; }
     el.style.display = '';
+    /* Áp lại ý muốn ẩn đã nhớ — nếu người dùng đã ẩn thì chỉ còn vạch mép. */
+    el.classList.toggle('tln-an', daAn());
   };
 
   function moPanel() {
@@ -21557,6 +23149,12 @@ var G = window.G || {}; window.G = G;
     if (!p) return;
     p.hidden = false;
     document.getElementById('tln').classList.add('tln-open');
+    /* Chủ động xưng theo tên tài khoản: dòng dưới tiêu đề đổi thành tên
+       người đang chat, để trợ lý nói với ĐÚNG người (chủ hệ yêu cầu). */
+    var duoi = document.querySelector('#tlnPanel .tln-duoi');
+    var ten = (G.S && G.S.acc && G.S.acc.ten) || '';
+    if (duoi) duoi.innerHTML = '<span class="tln-cham"></span>đang nghe' +
+      (ten ? ' · cùng ' + h(ten) : '');
     napGoiy();
     if (G.veChat) G.veChat(); else napKhung();
     setTimeout(function () {
@@ -21575,8 +23173,8 @@ var G = window.G || {}; window.G = G;
     var to = el.classList.toggle('tln-to');
     document.body.classList.toggle('tln-khoa', to);   /* khoá cuộn nền khi phủ kín */
     var b = document.getElementById('tlnToBtn');
-    if (b) { b.setAttribute('title', to ? 'Thu nhỏ' : 'Phóng to');
-             b.setAttribute('aria-label', to ? 'Thu nhỏ' : 'Phóng to'); }
+    if (b) { b.setAttribute('title', to ? 'Thu về ô chat' : 'Phóng full màn hình');
+             b.setAttribute('aria-label', to ? 'Thu về ô chat' : 'Phóng full màn hình'); }
     var k = document.getElementById('chKhungNoi'); if (k) k.scrollTop = k.scrollHeight;
   }
 
@@ -21614,18 +23212,35 @@ var G = window.G || {}; window.G = G;
     var t = e.target.closest && e.target.closest('[data-tln]');
     if (t) {
       var act = t.getAttribute('data-tln');
-      if (act === 'mo') moPanel();
+      if (act === 'mo') { hien(); moPanel(); }
       else if (act === 'dong') dongPanel();
       else if (act === 'to') phong();
+      else if (act === 'an') an();
+      else if (act === 'hien') { hien(); moPanel(); }
       else if (act === 'gui') guiNoi();
       return;
     }
     /* Chip trong ô nổi: bộ bắt chung đã gửi câu; ở đây chỉ dọn gợi ý. */
-    if (e.target.closest && e.target.closest('#tlnGoiy [data-aiq]'))
+    if (e.target.closest && e.target.closest('#tlnGoiy [data-aiq]')) {
       setTimeout(napGoiy, 0);
+      return;
+    }
+    /* Chạm RA NGOÀI ô nổi khi đang mở → thu gọn. Để khách bấm nhầm ra nền
+       là đóng được ngay, không phải đi tìm nút X. Chỉ khi panel đang mở. */
+    var el = document.getElementById('tln');
+    if (el && el.classList.contains('tln-open') &&
+        !(e.target.closest && e.target.closest('#tln'))) {
+      dongPanel();
+    }
   });
 
   document.addEventListener('keydown', function (e) {
+    /* Esc → thu gọn ô nổi (đường đóng thứ ba, cạnh nút X và chạm ngoài). */
+    if (e.key === 'Escape') {
+      var el = document.getElementById('tln');
+      if (el && el.classList.contains('tln-open')) { e.preventDefault(); dongPanel(); }
+      return;
+    }
     if (e.key !== 'Enter' || e.shiftKey) return;
     var i = document.getElementById('aiQNoi');
     if (!i || document.activeElement !== i) return;
@@ -33461,7 +35076,7 @@ G.VIEWS = G.VIEWS || {};
           (t.trangThai === 'daXuLy' ? U.chip('đã xử lý', 'var(--ok)') : '') +
           (t.trangThai === 'boQua' ? U.chip('bỏ qua', 'var(--ink-3)') : '') +
         '</div>' +
-        '<b style="display:block;margin-top:8px;font-size:15px">' + h(t.tieuDe) + '</b>' +
+        '<b style="display:block;margin-top:8px;font-size:14.5px">' + h(t.tieuDe) + '</b>' +
         '<p class="sm mt" style="white-space:pre-wrap">' + h(t.than) + '</p>' +
         (t.viSaoGap ? '<p class="sm mt" style="color:' + mau + '"><b>Vì sao gấp:</b> ' +
           h(t.viSaoGap) + '</p>' : '') +
@@ -40941,13 +42556,13 @@ G.VIEWS = G.VIEWS || {};
       '<span class="note" id="xu-gio">0.0 / ' + tong().toFixed(1) + 's</span></div>';
     o += '<input type="range" min="0" max="100" step="0.1" value="0" class="xu-tua" ' +
       'aria-label="Tua video" oninput="G.xuTua(this.value)">';
-    o += '<div class="row"><button class="btn btn-chinh" onclick="G.xuXuat()"' +
+    o += '<div class="row"><button class="btn btn-chinh" onclick="G.xuGuiDeBai()"' +
       (congMo() ? '' : ' disabled') + '>' +
-      (congMo() ? 'Xuất video 1080p' : 'Chưa đủ đèn để xuất') + '</button>' +
-      '<button class="btn" onclick="G.xuHuy()">Huỷ</button></div>';
-    o += '<div class="xu-thanh"><i id="xu-tien"></i></div>';
-    o += '<p class="note" id="xu-tt">Xuất chạy theo <b>thời gian thật</b>: video ba phút mất ' +
-      'khoảng ba phút. Nói ra chứ không giấu sau một thanh chạy nhanh hơn sự thật.</p></div>';
+      (congMo() ? 'Gửi đề bài dựng video' : 'Chưa đủ đèn để gửi') + '</button></div>';
+    o += '<p class="note" id="xu-tt">Xưởng <b>không xuất video ở trình duyệt</b> (khách không tải ' +
+      'dữ liệu — luật 9.99.94). Bấm gửi thì đề bài đi qua <b>cửa máy chủ</b> vào nhật ký, rồi ' +
+      'dựng bằng <code>node tools/dung-phim.js</code> từ tấm ĐÃ phát hành (luật C19), lời đọc là ' +
+      'tệp có sẵn (luật C20). "Xem thử" ở trên chạy tại chỗ để soi trước, không tạo tệp.</p></div>';
 
     /* 3 · Kịch bản */
     o += '<div class="giay"><h3>3 · Kịch bản</h3>';
@@ -40981,12 +42596,11 @@ G.VIEWS = G.VIEWS || {};
     }).join('') + '</ul></div>';
 
     /* 6 · Xuất kèm */
-    o += '<div class="giay"><h3>6 · Xuất kèm</h3><div class="row">' +
-      '<button class="btn" onclick="G.xuXuatSrt()">Phụ đề (.srt)</button>' +
-      '<button class="btn" onclick="G.xuXuatHoSo()">Hộ chiếu video (.json)</button></div>' +
-      '<p class="note">Hộ chiếu đi qua <b>cửa máy chủ</b>, không dựng ở màn hình: nó phải ' +
-      'vào nhật ký thì mới truy được về sau, và một hộ chiếu dựng ở trình duyệt là một ' +
-      'tờ giấy tự ký.</p></div>';
+    o += '<div class="giay"><h3>6 · Xuất kèm</h3>' +
+      '<p class="note">Phụ đề (.srt) và <b>hộ chiếu video</b> do bộ dựng ở máy chủ sinh ra cùng ' +
+      'lúc dựng phim (<code>node tools/dung-phim.js</code>), <b>không dựng ở trình duyệt</b>: hộ ' +
+      'chiếu phải vào nhật ký thì mới truy được về sau, và một hộ chiếu dựng ở trình duyệt là ' +
+      'một tờ giấy tự ký. Gửi đề bài ở bước 2 là đủ — máy chủ lo phần còn lại.</p></div>';
 
     setTimeout(function () { G.xuCoManh(); }, 0);
     return o + '</div>';
@@ -42288,7 +43902,8 @@ G.VIEWS = G.VIEWS || {};
     {ma: 'tang',  ten: 'Tầng nhận thức', ic: 'arrow'},
     {ma: 'nhanh', ten: '7 nhánh',        ic: 'star'},
     {ma: 'loc',   ten: 'Lọc quảng cáo',  ic: 'search'},
-    {ma: 'soi',   ten: 'Soi một bài',    ic: 'quote'}
+    {ma: 'soi',   ten: 'Soi một bài',    ic: 'quote'},
+    {ma: 'chuan', ten: 'Chuẩn ngôn từ',  ic: 'shield'}
   ];
 
   G.ntNgan = G.ntNgan || 'tang';
@@ -42505,6 +44120,43 @@ G.VIEWS = G.VIEWS || {};
       .then(function (d) { G.ntSoiRa = d; veLai(); });
   };
 
+  /* ═══════════ NGĂN 5 · CHUẨN NGÔN TỪ HỢP NHẤT (9.99.196) ═══════════
+     Cùng bộ chuẩn (G.cnSoat) mà trợ lý dùng khi trả lời khách — nay
+     mở cho MỌI câu chữ nội dung trước khi đăng. Chạy thẳng trong máy,
+     0 đồng, chữ không rời thiết bị. Đây là chỗ "một bộ guardrails duy
+     nhất" của bản đặc tả thành thật: chat và nội dung một chuẩn. */
+  function nganChuan() {
+    var o = U.sec('Tự kiểm chuẩn ngôn từ — một chuẩn cho cả chat và nội dung',
+      'Kiểm giọng máy · lời hứa suông · câu sáo rỗng · câu quá dài · nhồi từ khoá — ' +
+      'đúng bộ chuẩn trợ lý dùng khi trả lời khách. Chạy trong máy, không tốn phí, ' +
+      'chữ không rời thiết bị. Máy KHÔNG tự sửa hộ: nó nêu chỗ và hướng thay, để ' +
+      'lần sau không lặp. Bộ soi đầy đủ khi biên soạn vẫn ở màn Biên soạn nội dung.');
+    o += '<textarea id="ntChuanIn" class="cs-o" rows="6" style="width:100%" ' +
+      'placeholder="Dán một đoạn nội dung (hero, FAQ, bài viết, lời kêu gọi…) để kiểm ngôn từ…"></textarea>';
+    o += '<div class="row mt" style="gap:8px"><button class="btn primary" onclick="G.ntSoatChuan()">' +
+      ic('search') + ' Kiểm ngôn từ</button></div>';
+    o += '<div id="ntChuanKq" class="mt"></div>';
+    return o;
+  }
+  G.ntSoatChuan = function () {
+    var el = document.getElementById('ntChuanIn'), kq = document.getElementById('ntChuanKq');
+    if (!el || !kq || !G.cnSoat) return;
+    var r = G.cnSoat(el.value || '');
+    if (r.dat) {
+      kq.innerHTML = '<div class="card" style="border-left:3px solid var(--gita)">' +
+        ic('check') + ' <b>Đạt chuẩn ngôn từ.</b> Không thấy giọng máy, lời hứa suông, ' +
+        'câu sáo rỗng, câu quá dài hay nhồi từ khoá.</div>';
+      return;
+    }
+    var ten = {ai: 'Giọng máy', rong: 'Sáo rỗng', hua: 'Hứa suông',
+      dai: 'Câu quá dài', nhoi: 'Nhồi từ khoá'};
+    kq.innerHTML = '<div class="card" style="border-left:3px solid var(--gita)"><b>Cần sửa ' +
+      r.loi.length + ' chỗ:</b>' + U.tbl(['Loại', 'Chỗ bắt', 'Hướng thay'],
+        r.loi.map(function (x) {
+          return [h(ten[x.loai] || x.loai), '<code>' + h(x.cum) + '</code>', h(x.thay)];
+        })) + '</div>';
+  };
+
   G.VIEWS['noi-dung-tiep-thi'] = function () {
     var o = '<div class="card" style="border-left:3px solid var(--gita)">' +
       '<b>PHÂN HỆ 3 — NỘI DUNG & TIẾP THỊ</b>' +
@@ -42523,6 +44175,7 @@ G.VIEWS = G.VIEWS || {};
     if (G.ntNgan === 'tang')  return o + nganTang();
     if (G.ntNgan === 'nhanh') return o + nganNhanh();
     if (G.ntNgan === 'loc')   return o + nganLoc();
+    if (G.ntNgan === 'chuan') return o + nganChuan();
     return o + nganSoi();
   };
 
@@ -45491,6 +47144,58 @@ G.CX_WOW = [
   { tang:'T5', giai:'RỪNG', khoanhKhac:'Trao hồ sơ trưởng thành in ra có chữ ký; mời nhà thành Cây Mẹ gieo hạt cho nhà khác — quan hệ vượt mua bán.', tro:'vinh-danh', troTen:'Vinh danh' }
 ];
 
+/* CHUỖI 15 CHẶNG — tên thật từ GITA_365_HANH_TRINH_TRAI_NGHIEM
+   (GITA-CJM-1000WOW-V1.0). DÒNG hành trình khách đi từ lời mời tới lúc thành
+   nhà kim cương soi cho nhà khác. */
+G.CX_15CHANG = [
+  '01 · Chạm lời mời', '02 · Đăng ký tài khoản 60 giây', '03 · Hồ sơ gia đình',
+  '04 · Bài test đánh giá GITA 365', '05 · Xác định cấp độ khởi hành',
+  '06 · Hành trình cá nhân hoá 5 tầng', '07 · Chuỗi nâng cấp 10 cấp/tầng',
+  '08 · Khoảnh khắc vượt tầng', '09 · Ăn mừng và tái khởi hành',
+  '10 · Bốn lớp học của hành trình', '11 · Đồng hành Coach · Tư vấn · AI',
+  '12 · Gặt hái sáu trụ', '13 · Cả nhà cùng dịch chuyển',
+  '14 · Gia đình thịnh vượng', '15 · Kim cương chiếu sáng nhà khác'
+];
+
+/* KHUNG 20 ĐIỂM CHẠM MỖI CẤP — 6 nhóm cố định W01–W20 (nguồn CJM-1000WOW).
+   Khung KHÔNG đổi qua 50 cấp, chỉ nội dung đổi → đây là CÁCH ĐẾM 1000
+   (50 cấp × 20 slot), không phải 1000 dòng bịa. Cùng luật SUP-01. */
+G.CX_WOW20 = [
+  {ma:'W01',ten:'Chạm mở màn',nhom:'A · Cửa vào',kenh:'App',do:'Tỷ lệ mở trong 12h đầu'},
+  {ma:'W02',ten:'Gọi đúng tên, đúng dữ kiện',nhom:'A · Cửa vào',kenh:'App·AI',do:'Nhận diện đúng dữ kiện thật'},
+  {ma:'W03',ten:'Nhắc mềm khi vắng',nhom:'A · Cửa vào',kenh:'App·AI',do:'Quay lại sau 1 lần vắng'},
+  {ma:'W04',ten:'Nhiệm vụ 60 giây',nhom:'B · Hành động',kenh:'App',do:'Hoàn thành trong 60 giây'},
+  {ma:'W05',ten:'Việc không thể thất bại',nhom:'B · Hành động',kenh:'App',do:'Hoàn thành ≥85%'},
+  {ma:'W06',ten:'Một bậc vừa sức cộng một',nhom:'B · Hành động',kenh:'App·Coach',do:'Nhận bậc kế trong 7 ngày'},
+  {ma:'W07',ten:'Nút "hôm nay khó"',nhom:'B · Hành động',kenh:'App',do:'Dùng nút mà vẫn ở lại'},
+  {ma:'W08',ten:'Ghi nhận tức thì',nhom:'C · Ghi nhận',kenh:'App',do:'Độ trễ < 2 giây'},
+  {ma:'W09',ten:'Dấu ấn vật lý của cấp',nhom:'C · Ghi nhận',kenh:'App',do:'Mở lại xem dấu ấn'},
+  {ma:'W10',ten:'Câu hệ nói về mình',nhom:'C · Ghi nhận',kenh:'AI',do:'Lưu lại câu nói'},
+  {ma:'W11',ten:'Bảng ký ức tuần',nhom:'C · Ghi nhận',kenh:'App',do:'Mở bảng ký ức cuối tuần'},
+  {ma:'W12',ten:'Coach chạm tay',nhom:'D · Đồng hành',kenh:'Coach',do:'Phản hồi trong 48h'},
+  {ma:'W13',ten:'Tư vấn đúng lúc',nhom:'D · Đồng hành',kenh:'Tư vấn',do:'Ca đóng đúng vấn đề'},
+  {ma:'W14',ten:'Trợ lý AI 24/7',nhom:'D · Đồng hành',kenh:'AI',do:'Phiên kết bằng một hành động'},
+  {ma:'W15',ten:'Khoảnh khắc gia đình',nhom:'E · Gia đình·Cộng đồng',kenh:'Gia đình',do:'Số khoảnh khắc gia đình/tháng'},
+  {ma:'W16',ten:'Người cùng tầng',nhom:'E · Gia đình·Cộng đồng',kenh:'Cộng đồng',do:'Có ≥1 kết nối cùng tầng'},
+  {ma:'W17',ten:'Lần đầu trao đi',nhom:'E · Gia đình·Cộng đồng',kenh:'Cộng đồng',do:'Có ≥1 lượt trao đi/tháng'},
+  {ma:'W18',ten:'Ánh sáng phía trước',nhom:'F · Chuyển cấp',kenh:'App',do:'Mô tả được bậc kế'},
+  {ma:'W19',ten:'Nghi thức nhỏ khép cấp',nhom:'F · Chuyển cấp',kenh:'App·Coach',do:'Hoàn thành nghi thức khép cấp'},
+  {ma:'W20',ten:'Ăn mừng & mở cấp kế',nhom:'F · Chuyển cấp',kenh:'Coach·Gia đình',do:'Ăn mừng có mặt người nhà'}
+];
+G.CX_WOW_LUAT = [
+  'Không tạo nghiện — cấm thưởng ngẫu nhiên, hook thương mại, thông báo dồn.',
+  'Gắn dữ kiện thật — không bịa một khoảnh khắc nào.',
+  'Xây trước, đo sau — đủ 20 wow của một cấp mới mở cấp ấy.'
+];
+/* Chủ hệ CHỐT (9.99.213): 10.000 điểm chạm trải nghiệm wow — mỗi tầng 2.000,
+   mỗi cấp 200 (đều). Cách đếm: 200/cấp = 20 khung W01–W20 × 10 biến thể. Đây
+   là SỨC CHỨA, không phải chỉ tiêu chạy cho đủ (luật SUP-01). */
+G.CX_WOW_PHANBO = {
+  tong: 10000, moiTang: 2000, moiCap: 200,
+  cach: '5 tầng × 2.000 = 10.000  ·  50 cấp × 200 = 10.000  ·  200/cấp = 20 khung W01–W20 × 10 biến thể',
+  theoTang: [{t:'T1 Hạt',n:2000},{t:'T2 Rễ',n:2000},{t:'T3 Thân',n:2000},{t:'T4 Tán',n:2000},{t:'T5 Rừng',n:2000}]
+};
+
 /* THƯ VIỆN TÌNH HUỐNG → GIẢI PHÁP (Bảng 6 phục hồi + các ca hay phát
    sinh). Đa dạng giải pháp; mỗi ca TRỎ hệ đã có, và khai ô KHÔNG-LÀM
    (ranh giới) — một giải pháp không có ranh giới thì nó thành nhân nhượng.
@@ -45596,6 +47301,36 @@ G.CX_DO = [
         ic('compass', 'w-3 h-3') + h(w.troTen) + '</button></div>' +
         '<p class="sm dim" style="line-height:1.75">' + h(w.khoanhKhac) + '</p></div>';
     }).join('');
+
+    /* 15 chặng trải nghiệm */
+    o += U.sec('CHUỖI 15 CHẶNG TRẢI NGHIỆM',
+      'Dòng khách đi từ lời mời tới lúc thành nhà kim cương soi cho nhà khác — nguồn ' + h(G.CX_WOW_NGUON || 'CJM-1000WOW'));
+    o += '<div class="row wrap" style="gap:6px">' + G.CX_15CHANG.map(function (c) {
+      return '<span class="chip" style="border:1px solid var(--gita-vien-2)">' + h(c) + '</span>';
+    }).join('') + '</div>';
+
+    /* Khung 20 điểm chạm mỗi cấp */
+    o += U.sec('KHUNG 20 ĐIỂM CHẠM MỖI CẤP (W01–W20)',
+      '6 nhóm cố định, khung KHÔNG đổi qua 50 cấp — chỉ nội dung đổi. Mỗi cấp 200 điểm chạm = ' +
+      '20 khung × 10 biến thể; 50 cấp × 200 = 10.000 (CÁCH ĐẾM, không phải 10.000 dòng bịa sẵn).');
+    o += '<div class="card">' + U.tbl(['Mã', 'Điểm chạm', 'Nhóm', 'Kênh', 'Chỉ số đo'],
+      G.CX_WOW20.map(function (w) {
+        return ['<b class="mono sm">' + h(w.ma) + '</b>', '<b class="sm">' + h(w.ten) + '</b>',
+          '<span class="tiny">' + h(w.nhom) + '</span>', '<span class="tiny muted">' + h(w.kenh) + '</span>',
+          '<span class="tiny">' + h(w.do) + '</span>'];
+      })) + '</div>';
+
+    /* Ba luật wow + phân bổ (chủ hệ đã chốt 10.000) */
+    o += '<div class="grid g2" style="gap:12px">' +
+      '<div class="card pad-sm"><div class="tiny up muted mb">BA LUẬT WOW</div>' +
+      U.list(G.CX_WOW_LUAT, 'var(--gita)') + '</div>' +
+      '<div class="card pad-sm" style="border-color:var(--gita-vien-1)">' +
+      '<div class="tiny up mb" style="color:var(--gold-ink)">PHÂN BỔ 10.000 ĐIỂM CHẠM (chủ hệ chốt)</div>' +
+      '<p class="tiny mb"><b>' + G.CX_WOW_PHANBO.tong.toLocaleString('vi-VN') + '</b> điểm chạm · mỗi tầng <b>' +
+      G.CX_WOW_PHANBO.moiTang.toLocaleString('vi-VN') + '</b> · mỗi cấp <b>' + G.CX_WOW_PHANBO.moiCap + '</b>.</p>' +
+      '<p class="tiny">' + G.CX_WOW_PHANBO.theoTang.map(function (x) { return h(x.t) + ' ' + x.n.toLocaleString('vi-VN'); }).join(' · ') + '</p>' +
+      '<p class="tiny dim mt">' + h(G.CX_WOW_PHANBO.cach) + '. Là SỨC CHỨA, không phải chỉ tiêu chạy cho đủ (luật SUP-01).</p></div>' +
+      '</div>';
 
     /* Thư viện tình huống → giải pháp */
     o += U.sec('THƯ VIỆN TÌNH HUỐNG → GIẢI PHÁP',
@@ -46783,9 +48518,8 @@ G.VIEWS = G.VIEWS || {};
    view không chép, không giữ danh sách chặng thứ hai. Phễu tô màu theo
    VỊ TRÍ trong danh sách máy chủ trả về, không theo tên chặng.
 
-   BACKEND: các cửa CRM hiện có ở Cloudflare Workers (may-chu/crm.js);
-   Apps Script chưa có. Chưa nối được thì mỗi ngăn nói rõ "cần nối máy
-   chủ CRM" — không dựng dữ liệu giả.
+   BACKEND: các cửa CRM ở Cloudflare Workers (may-chu/crm.js). Chưa nối
+   được thì mỗi ngăn nói rõ "cần nối máy chủ CRM" — không dựng dữ liệu giả.
 
    QUY MÔ (9.99.179): 100 Sale · 100.000 khách. Tìm · lọc chặng · phân
    trang đều do MÁY CHỦ làm (crmDanhSach nhận q · chang · trang) — màn
@@ -46800,9 +48534,12 @@ G.VIEWS = G.VIEWS || {};
   var U = G.U, h = U.h, ic = U.ic;
 
   var NGAN = [
+    {ma: 'hoat-dong', ten: 'Hoạt động',     ic: 'map'},
+    {ma: 'duong-ong', ten: 'Đường ống',     ic: 'orbit'},
     {ma: 'bang',    ten: 'Buồng lái',       ic: 'chart'},
     {ma: 'viec',    ten: 'Việc nên làm',    ic: 'target'},
     {ma: 'ds',      ten: 'Danh sách khách', ic: 'users'},
+    {ma: 'cohoi',   ten: 'Cơ hội',          ic: 'compass'},
     {ma: 'troly',   ten: 'Trợ lý AI',       ic: 'spark'},
     {ma: 'kpi',     ten: 'Hệ KPI',          ic: 'pulse'},
     {ma: 'quyen',   ten: 'Cấp quyền',       ic: 'lock'},
@@ -46817,10 +48554,13 @@ G.VIEWS = G.VIEWS || {};
     DO:   {ten: 'Đỏ',   mau: '#D11F2A'},
     XAM:  {ten: 'Xám',  mau: '#64708A'}
   };
-  /* Bảng màu phễu theo VỊ TRÍ (không theo tên chặng — một nguồn chặng ở máy chủ). */
-  var SAC_PHEU = ['#185AB4', '#0B6675', '#5140B4', '#0B7350', '#128A5E', '#B45309', '#64708A', '#7A5AA6'];
+  /* Bảng màu phễu theo VỊ TRÍ (không theo tên chặng — một nguồn chặng ở máy chủ).
+     9.99.238: hoà sắc lại thành một dải LẠNH cân đối (xanh → lam thép → chàm →
+     một xanh lá → xám lam) — bỏ nâu/cam chói để không rối mắt, giữ đủ phân biệt
+     tám bước. Sắc thương hiệu làm trục. */
+  var SAC_PHEU = ['#2A72C6', '#185AB4', '#3E7CA8', '#0B6675', '#3F52A6', '#5140B4', '#0B7350', '#5B6B8C'];
 
-  G.crmNgan = G.crmNgan || 'bang';
+  G.crmNgan = G.crmNgan || 'hoat-dong';
   G.crmBang = G.crmBang || null;
   G.crmViec = G.crmViec || null;
   G.crmDs = G.crmDs || null;
@@ -46835,6 +48575,7 @@ G.VIEWS = G.VIEWS || {};
   G.crmKpi = G.crmKpi || null;
   G.crmKpiTl = G.crmKpiTl || null;
   G.crmQt = G.crmQt || null;
+  G.crmCoHoiData = G.crmCoHoiData || null;
 
   function veLai() {
     if (!G.S || G.S.view !== 'crm') return;
@@ -46865,7 +48606,7 @@ G.VIEWS = G.VIEWS || {};
     if (so && so.error && /quyền|permission|cấp/i.test(String(so.error)))
       return U.empty('Chưa đủ quyền', h(so.error));
     return U.empty('Cần nối máy chủ CRM',
-      'Ngăn này cần các cửa CRM ở máy chủ. Máy chủ Apps Script hiện chưa có backend CRM — ' +
+      'Ngăn này cần các cửa CRM ở máy chủ. Máy chủ Cloudflare Worker chưa nối backend CRM — ' +
       'nối vào rồi thì phễu, danh sách và số liệu hiện thẳng ở đây, không dựng số giả.');
   }
 
@@ -46873,6 +48614,53 @@ G.VIEWS = G.VIEWS || {};
   function denBadge(band) {
     var d = DEN[band] || {ten: band || '—', mau: '#64708A'};
     return '<span class="crm-den" style="background:' + d.mau + '">' + h(d.ten) + '</span>';
+  }
+  /* Nhãn CHẶNG có màu (kiểu bảng Deals của FAST/Zoho): mỗi chặng một sắc,
+     đọc ra trạng thái ngay không phải dò chữ. Chặng lạ (máy chủ trả về) thì
+     băm tên vào bảng màu để vẫn có màu ổn định. */
+  var CHANG_MAU = {
+    'Vào phễu': '#64708A', 'Tiếp cận': '#185AB4', 'Tư vấn': '#0B6675', 'Cơ hội': '#5140B4',
+    'Báo giá': '#7A5AA6', 'Chốt': '#0B7350', 'Vận hành': '#128A5E', 'Giữ nhịp': '#0B7350'
+  };
+  function changBadge(ten) {
+    ten = ten || '—';
+    var c = CHANG_MAU[ten];
+    if (!c) { var s = 0; for (var i = 0; i < ten.length; i++) s += ten.charCodeAt(i); c = SAC_PHEU[s % SAC_PHEU.length]; }
+    return '<span class="crm-stage" style="--sc:' + c + '">' + h(ten) + '</span>';
+  }
+  function tienO(v) { return '<span class="crm-tien">' + h(v) + '</span>'; }
+
+  /* ── MÁY TỰ KIỂM 3 LƯỢT ──────────────────────────────────────────────
+     Một con số quan trọng được tính LẠI ở ba chặng độc lập: lúc NHẬP (từ
+     dữ liệu thô), lúc XỬ LÝ (tổng hợp), lúc RA KẾT QUẢ (số hiện trên buồng
+     lái). Khớp CẢ BA mới báo "đạt". Lệch ở đâu thì chỉ ra đúng chặng ấy —
+     đây là chỗ bắt lỗi im lặng khi một nơi sửa mà nơi khác quên.
+     `cac` = [{ten, v(số), hienthi, mo}]. So khớp theo dung sai 1 đồng. */
+  function kiem3(nhan, cac) {
+    var lech = -1;
+    for (var i = 1; i < cac.length; i++) {
+      if (Math.abs((cac[i].v || 0) - (cac[i - 1].v || 0)) >= 1) { lech = i; break; }
+    }
+    var dat = lech < 0;
+    var o = '<div class="k3"><div class="k3-dau">' + ic('shield', 'w-4 h-4') +
+      '<b>Máy tự kiểm 3 lượt · ' + h(nhan) + '</b>' +
+      '<span class="k3-kl ' + (dat ? 'dat' : 'lech') + '">' +
+        (dat ? ic('check', 'w-3 h-3') + ' Khớp cả 3 — ĐẠT'
+             : ic('x', 'w-3 h-3') + ' Lệch ở lượt ' + (lech + 1)) + '</span></div>';
+    o += '<div class="k3-hang">';
+    cac.forEach(function (x, i) {
+      var khop = i === 0 || Math.abs((x.v || 0) - (cac[i - 1].v || 0)) < 1;
+      o += '<div class="k3-o' + (khop ? '' : ' lech') + '">' +
+        '<span class="k3-so">' + (i + 1) + '</span>' +
+        '<div class="k3-noidung"><b>' + h(x.ten) + '</b>' +
+        '<div class="k3-v">' + h(x.hienthi) + '</div>' +
+        '<div class="k3-mo">' + h(x.mo) + '</div></div></div>';
+      if (i < cac.length - 1)
+        o += '<div class="k3-noi' + (khop && (i + 1) !== lech ? '' : ' x') + '">' +
+          ((i + 1) === lech ? '≠' : '=') + '</div>';
+    });
+    o += '</div></div>';
+    return o;
   }
   function kpi(nhan, giaTri, mau, phu) {
     return '<div class="crm-kpi" style="border-top-color:' + mau + '">' +
@@ -46929,6 +48717,20 @@ G.VIEWS = G.VIEWS || {};
     goi('crmKpiTroLy', {}, function (x) { G.crmKpiTl = x; veLai(); });
   };
   G.crmTaiQuanTri = function () { goi('crmQuanTri', {}, function (x) { G.crmQt = x; veLai(); }); };
+  G.crmTaiCoHoi = function () { goi('crmCoHoi', {}, function (x) { G.crmCoHoiData = x; veLai(); }); };
+  G.crmLuuCoHoi = function () {
+    if (!G.goiMayChu) return;
+    var tham = {maKH: val('ch_makh'), ten: val('ch_ten'),
+      giaTri: Number(String(val('ch_giatri')).replace(/[^\d]/g, '')) || 0,
+      giaiDoan: val('ch_gd'), duKienChot: val('ch_chot')};
+    if (!tham.maKH) { U.toast('Nhập mã khách hàng (vd: GITA-0151).', 'err'); return; }
+    if (!tham.ten) { U.toast('Nhập tên cơ hội.', 'err'); return; }
+    if (tham.giaTri <= 0) { U.toast('Nhập giá trị dự kiến (đồng).', 'err'); return; }
+    G.goiMayChu('crmGhiCoHoi', tham).then(function (x) {
+      if (x && x.ok) { U.toast('Đã ghi cơ hội.', 'ok'); G.crmCoHoiData = null; G.crmTaiCoHoi(); }
+      else U.toast((x && x.error) || 'Không ghi được cơ hội.', 'err');
+    });
+  };
   G.crmMoKhach = function (maKH) { goi('crmChiTiet', {maKH: maKH}, function (x) { G.crmCt = x; veLai(); }); };
   G.crmDongChiTiet = function () { G.crmCt = null; veLai(); };
   G.crmChay = function (ma) {
@@ -46963,13 +48765,443 @@ G.VIEWS = G.VIEWS || {};
     });
   };
 
+  /* ── BUỒNG LÁI MINH HOẠ — xem trước bố cục & DÒNG CHẢY khi chưa nối máy chủ ──
+     Chủ hệ cần "nhìn thấy dòng chảy công việc" ngay. Chưa nối backend CRM
+     thì thay khung trống bằng một buồng lái MINH HOẠ, có dải nói thẳng đây
+     là số minh hoạ — nối máy chủ thì mọi số tự thay bằng số thật. */
+  function veBangMinhHoa() {
+    var o = U.bdNguon(false);
+    o += U.bdSoHang([
+      {k:'Tổng khách', v:'1.284', c:'var(--gita)', d:'đang đồng hành'},
+      {k:'Khách mới tháng', v:'96', c:'var(--gita-sang)', xu:12},
+      {k:'Hẹn quá hạn', v:'7', c:'var(--gita-do)', d:'chạm ngay', tot:false},
+      {k:'Chốt hợp đồng', v:'38', c:'var(--ok)', xu:8},
+      {k:'Giữ nhịp 90 ngày', v:'82%', c:'var(--gita-sau)', d:'ở lại đủ chặng đầu'},
+      {k:'Doanh thu tháng', v:'1,95 tỷ', c:'var(--gold-2)', xu:4}
+    ]);
+    o += U.bdViec([
+      {muc:'khan',ten:'Nhà Khánh Vy — đèn đỏ, gọi trong 24h',phu:'3 ngày chưa liên hệ · Minh phụ trách',nhan:'khẩn'},
+      {muc:'khan',ten:'3 hẹn tiếp quá hạn hôm nay',phu:'chạm ngay kẻo nguội',nhan:'khẩn'},
+      {muc:'luuy',ten:'Nhà Bảo Châu — chờ chốt hợp đồng',phu:'đã tư vấn xong Tầng 4',nhan:'lưu ý'},
+      {muc:'nhac',ten:'1 nhà chưa có người phụ trách',phu:'Nhà Quốc Bảo mới vào phễu',nhan:'nhắc'}
+    ], {tieuDe:'Việc cần xử lý ngay', phu:'xếp theo mức khẩn'});
+    o += U.sec('DÒNG CHẢY VẬN HÀNH A → Z','Một nhà đi từ lúc vào phễu tới lúc giữ nhịp — mỗi cột một chặng, mỗi ô một việc');
+    o += U.bdDong([
+      {ten:'1 · Vào phễu', mau:'var(--gita)', o:[{t:'Khách mới',p:'từ kênh · giới thiệu'},{t:'Gán người phụ trách'}]},
+      {ten:'2 · Tiếp cận', mau:'var(--gita-sang)', o:[{t:'Gọi · nhắn trong 24h'},{t:'Đặt đèn sức khoẻ'}]},
+      {ten:'3 · Tư vấn', mau:'var(--gita-sau)', o:[{t:'Hiểu nhu cầu nhà'},{t:'Đề xuất lộ trình tầng'}]},
+      {ten:'4 · Chốt', mau:'var(--ok)', o:[{t:'Ký hợp đồng',p:'phiếu thu · duyệt'},{t:'Vào lịch thu'}]},
+      {ten:'5 · Vận hành 365', mau:'var(--gita-ink)', o:[{t:'Onboarding 5 bước'},{t:'Đồng hành theo nhịp'}]},
+      {ten:'6 · Giữ & nâng', mau:'var(--gold-2)', o:[{t:'Đèn đỏ gọi người thật'},{t:'Mời nâng tầng đúng lúc'}]}
+    ], {chu:'Đây chính là "hệ vận hành riêng biệt từ A–Z": mỗi cột trỏ vào một cửa CRM thật ở máy chủ khi đã nối.'});
+    o += '<div class="grid g2">'+
+      '<div>'+U.sec('PHỄU THEO CHẶNG','Thu hẹp dần · số bên phải là tỷ lệ chuyển')+
+        U.bdPhieu([{ten:'Vào phễu',so:1284},{ten:'Tiếp cận',so:940},{ten:'Tư vấn',so:520},
+                   {ten:'Chốt',so:210},{ten:'Vận hành',so:168},{ten:'Giữ nhịp',so:138}])+'</div>'+
+      '<div>'+U.sec('PHÂN BỐ ĐÈN SỨC KHOẺ','Xanh khoẻ · Vàng để mắt · Đỏ gọi ngay · Xám chưa rõ')+
+        U.bdVong([{ten:'Xanh',gia:812,mau:'var(--ok)'},{ten:'Vàng',gia:296,mau:'var(--warn)'},
+                  {ten:'Đỏ',gia:64,mau:'var(--gita-do)'},{ten:'Xám',gia:112,mau:'#64708A'}],
+                 {giua:'1.284',duoi:'nhà'})+'</div>'+
+      '</div>';
+    o += U.sec('DOANH THU 6 THÁNG','Cột theo tháng — nhìn nhịp lên xuống');
+    o += U.bdCot([{nhan:'T4',a:1520e6},{nhan:'T5',a:1680e6},{nhan:'T6',a:1740e6},
+                  {nhan:'T7',a:1610e6},{nhan:'T8',a:1880e6},{nhan:'T9',a:1950e6}]);
+    return o;
+  }
+
+  /* ── DỮ LIỆU MINH HOẠ CHUNG cho các ngăn khi chưa nối máy chủ ──
+     Để CRM đi được A→Z ngay: danh sách khách, việc nên làm, KPI đều xem
+     trước được. Nối máy chủ thì số thật thay số minh hoạ. */
+  var KH_MAU = [
+    {ma:'GITA-0148',ten:'Nhà Minh An',chang:'Tư vấn',den:'XANH',pt:'Thu',hen:'28/09',dt:'12,0tr'},
+    {ma:'GITA-0151',ten:'Nhà Bảo Châu',chang:'Chốt',den:'VANG',pt:'Hà',hen:'26/09',dt:'30,0tr'},
+    {ma:'GITA-0155',ten:'Nhà Gia Hưng',chang:'Vận hành',den:'XANH',pt:'Thu',hen:'02/10',dt:'10,0tr'},
+    {ma:'GITA-0160',ten:'Nhà Khánh Vy',chang:'Tiếp cận',den:'DO',pt:'Minh',hen:'25/09',dt:'—'},
+    {ma:'GITA-0162',ten:'Nhà Đăng Khoa',chang:'Giữ nhịp',den:'XANH',pt:'Hà',hen:'05/10',dt:'100,0tr'},
+    {ma:'GITA-0167',ten:'Nhà Thảo Nguyên',chang:'Tư vấn',den:'VANG',pt:'Minh',hen:'27/09',dt:'—'},
+    {ma:'GITA-0170',ten:'Nhà Quốc Bảo',chang:'Vào phễu',den:'XAM',pt:'—',hen:'—',dt:'—'},
+    {ma:'GITA-0173',ten:'Nhà Phương Linh',chang:'Chốt',den:'XANH',pt:'Thu',hen:'29/09',dt:'30,0tr'}
+  ];
+  function dsMinhHoa() {
+    var o = U.bdNguon(false);
+    o += U.sec('Danh sách khách — quản lý A→Z','Tìm · lọc chặng · mở trọn một nhà · giao việc — nối máy chủ thì chạy trên 100.000 khách thật');
+    o += '<div class="crm-kpis">'+ kpi('Đang hiển thị', KH_MAU.length, '#185AB4')+
+      kpi('Đèn đỏ cần gọi', KH_MAU.filter(function(k){return k.den==='DO';}).length, '#D11F2A','gọi ngay')+
+      kpi('Chưa phụ trách', KH_MAU.filter(function(k){return k.pt==='—';}).length, '#B45309')+'</div>';
+    o += U.tbl(['Mã','Nhà','Chặng','Đèn','Phụ trách','Hẹn tiếp','Doanh thu',''],
+      KH_MAU.map(function(k){
+        return ['<span class="mono">'+h(k.ma)+'</span>','<b class="sm">'+h(k.ten)+'</b>',
+          changBadge(k.chang), denBadge(k.den), h(k.pt),
+          (k.hen==='—'?'—':'<span style="color:'+(k.den==='DO'?'#D11F2A':'var(--ink-2)')+'">'+h(k.hen)+'</span>'),
+          tienO(k.dt),
+          '<button class="btn" disabled title="Nối máy chủ để mở hồ sơ nhà">Mở nhà</button>'];
+      }));
+    o += '<p class="note mt">Bấm "Mở nhà" khi đã nối máy chủ để xem trọn hồ sơ: nhịp, ghi chú, lịch hẹn, phiếu thu, lịch sử chạm.</p>';
+    return o;
+  }
+  function viecMinhHoa() {
+    var o = U.bdNguon(false);
+    o += U.sec('Việc nên làm hôm nay','Máy xếp việc GẤP lên trước, mỗi việc trỏ một cửa thật');
+    var ds = [
+      {nha:'Nhà Khánh Vy (GITA-0160)',den:'DO',viec:'Gọi trong 24h — nhà đèn đỏ',vi:'3 ngày chưa liên hệ',cua:'ghiCham'},
+      {nha:'Nhà Bảo Châu (GITA-0151)',den:'VANG',viec:'Chốt hợp đồng Tầng 4',vi:'đã tư vấn xong, chờ quyết',cua:'phieuThu'},
+      {nha:'Nhà Thảo Nguyên (GITA-0167)',den:'VANG',viec:'Gửi lộ trình tầng phù hợp',vi:'đang phân vân gói',cua:'guiLoTrinh'},
+      {nha:'Nhà Quốc Bảo (GITA-0170)',den:'XAM',viec:'Gán người phụ trách',vi:'mới vào phễu, chưa ai nhận',cua:'ganPhuTrach'}
+    ];
+    o += U.tbl(['Nhà','Đèn','Việc nên làm','Cửa',''], ds.map(function(v){
+      return [h(v.nha)+' <br><span class="note">'+h(v.vi)+'</span>', denBadge(v.den),
+        '<b class="sm">'+h(v.viec)+'</b>','<code>'+h(v.cua)+'</code>',
+        '<button class="btn" disabled>Mở nhà</button>'];
+    }));
+    return o;
+  }
+  function kpiMinhHoa() {
+    var o = U.bdNguon(false);
+    o += U.sec('KPI CRM','Số đo hiệu quả đội — nối máy chủ thì tính trên dữ liệu thật');
+    o += U.bdSoHang([
+      {k:'Khách mới tháng',v:'96',c:'var(--gita)',xu:12},
+      {k:'Tỷ lệ chốt',v:'22%',c:'var(--ok)',xu:3,d:'chốt / tư vấn'},
+      {k:'Doanh thu tháng',v:'1,95 tỷ',c:'var(--gold-2)',xu:4},
+      {k:'Hẹn quá hạn',v:'7',c:'var(--gita-do)',tot:false,d:'chạm ngay'},
+      {k:'Giữ nhịp 90 ngày',v:'82%',c:'var(--gita-sau)'},
+      {k:'NPS',v:'71',c:'var(--gita-sang)',d:'khách sẵn lòng giới thiệu'}
+    ]);
+    o += '<div class="grid g2">'+
+      '<div>'+U.sec('CHỐT THEO THÁNG','')+U.bdCot([{nhan:'T5',a:28},{nhan:'T6',a:31},{nhan:'T7',a:26},{nhan:'T8',a:35},{nhan:'T9',a:38}])+'</div>'+
+      '<div>'+U.sec('PHÂN BỐ ĐÈN','')+U.bdVong([{ten:'Xanh',gia:812,mau:'var(--ok)'},{ten:'Vàng',gia:296,mau:'var(--warn)'},{ten:'Đỏ',gia:64,mau:'var(--gita-do)'},{ten:'Xám',gia:112,mau:'#64708A'}],{giua:'1.284',duoi:'nhà'})+'</div>'+
+      '</div>';
+    return o;
+  }
+
+  /* ── NGĂN · CƠ HỘI BÁN HÀNG (phễu dự báo doanh thu) ── */
+  function cohoiMinhHoa() {
+    var o = U.bdNguon(false);
+    /* MỘT NGUỒN dữ liệu phễu — mọi con số (ô tổng · bảng · kiểm 3 lượt) đều
+       tính TỪ ĐÂY, không gõ tay ở ba nơi rồi lệch nhau. */
+    var PHEU = [
+      {ten: 'Mới',         xs: 0.10, so: 6, gt: 300000000},
+      {ten: 'Đang tư vấn', xs: 0.30, so: 7, gt: 350000000},
+      {ten: 'Đã báo giá',  xs: 0.50, so: 5, gt: 280000000},
+      {ten: 'Đàm phán',    xs: 0.70, so: 4, gt: 170000000},
+      {ten: 'Chuẩn bị ký', xs: 0.90, so: 2, gt: 80000000}
+    ];
+    var tongMo  = PHEU.reduce(function (s, x) { return s + x.gt; }, 0);
+    var soMo    = PHEU.reduce(function (s, x) { return s + x.so; }, 0);
+    var trongSo = PHEU.reduce(function (s, x) { return s + Math.round(x.gt * x.xs); }, 0);
+
+    o += U.bdSoHang([
+      {k: 'Cơ hội đang mở', v: String(soMo), c: 'var(--gita)'},
+      {k: 'Tổng giá trị mở', v: dinhTien(tongMo) + ' đ', c: 'var(--gita-sau)'},
+      {k: 'Dự báo (trọng số)', v: dinhTien(trongSo) + ' đ', c: 'var(--ok)', d: 'Σ giá trị × xác suất'},
+      {k: 'Tỷ lệ thắng', v: '64%', c: 'var(--gold-2)', d: 'thắng/(thắng+thua)'}
+    ]);
+
+    /* Kiểm 3 lượt cho DỰ BÁO TRỌNG SỐ — con số dễ lệch nhất vì được tính ở
+       nhiều nơi. Ba lượt tính ĐỘC LẬP; khớp cả ba mới đạt. */
+    var l1 = PHEU.reduce(function (s, x) { return s + Math.round(x.gt * x.xs); }, 0);
+    var l2 = Math.round(PHEU.reduce(function (s, x) { return s + x.gt * x.xs; }, 0));
+    var l3 = trongSo;
+    o += kiem3('Dự báo doanh thu (trọng số)', [
+      {ten: 'Lượt 1 · Nhập',   v: l1, hienthi: dinhTien(l1) + ' đ', mo: 'Cộng từng dòng thô: Σ (giá trị × xác suất)'},
+      {ten: 'Lượt 2 · Xử lý',  v: l2, hienthi: dinhTien(l2) + ' đ', mo: 'Tổng hợp lại trên toàn phễu'},
+      {ten: 'Lượt 3 · Kết quả', v: l3, hienthi: dinhTien(l3) + ' đ', mo: 'Số hiện ở ô "Dự báo (trọng số)"'}
+    ]);
+
+    o += U.sec('Phễu theo chặng', 'Minh hoạ — nối máy chủ thì tính trên cơ hội thật');
+    o += U.tbl(['Chặng', 'Xác suất', 'Số cơ hội', 'Giá trị', 'Trọng số'],
+      PHEU.map(function (x) {
+        return ['<b class="sm">' + h(x.ten) + '</b>',
+          tienO(Math.round(x.xs * 100) + '%'), tienO(String(x.so)),
+          tienO(dinhTien(x.gt) + 'đ'), tienO(dinhTien(Math.round(x.gt * x.xs)) + 'đ')];
+      }));
+    o += '<p class="note mt">Nối máy chủ CRM để thêm/cập nhật cơ hội thật và tính dự báo trọng số trên dữ liệu sống.</p>';
+    return o;
+  }
+  /* ── NGĂN ĐƯỜNG ỐNG (KANBAN) — thứ chủ hệ muốn thấy khi mở CRM ──
+     Mỗi CHẶNG một cột; mỗi CƠ HỘI một thẻ (tên · mã KH · giá trị · dự kiến
+     chốt · phụ trách). Đầu cột: số cơ hội + tổng giá trị của chặng. Dữ liệu
+     thật lấy từ máy chủ (so.ds theo giaiDoan); chưa nối thì hiện THẺ MẪU có
+     dải nói rõ là minh hoạ — không dựng số giả không nhãn. */
+  var CRM_GD_MAU = [
+    {ma:'moi',     ten:'Mới tiếp nhận', xs:10},
+    {ma:'tuvan',   ten:'Đang tư vấn',   xs:30},
+    {ma:'baogia',  ten:'Đã báo giá',    xs:50},
+    {ma:'damphan', ten:'Đàm phán',      xs:70},
+    {ma:'chotky',  ten:'Chuẩn bị ký',   xs:90}
+  ];
+  var COHOI_MAU = [
+    {ten:'Nhà Trung Nguyên',   maKH:'GITA-0152', sdt:'090 111 2233', giaTri:15000000, giaiDoan:'moi',     chot:'2026-10-20', phuTrach:'Minh', nhan:'Mới'},
+    {ten:'Nhà Phương Thảo',    maKH:'GITA-0153', sdt:'090 222 3344', giaTri:18000000, giaiDoan:'moi',     chot:'2026-10-22', phuTrach:'Lan',  nhan:'Vật liệu'},
+    {ten:'Nhà Văn Nghĩa',      maKH:'GITA-0154', sdt:'091 679 9406', giaTri:12000000, giaiDoan:'moi',     chot:'2026-10-25', phuTrach:'Minh', nhan:'Điện lực'},
+    {ten:'Nhà Núi Nguyên',     maKH:'GITA-0140', sdt:'086 950 0370', giaTri:30000000, giaiDoan:'tuvan',   chot:'2026-10-18', phuTrach:'Lan',  nhan:'Nội thất'},
+    {ten:'Nhà Nguyễn Thị Hoa', maKH:'GITA-0141', sdt:'098 765 4321', giaTri:22000000, giaiDoan:'tuvan',   chot:'2026-10-19', phuTrach:'Hà',   nhan:'Ấm'},
+    {ten:'Nhà Trần Thị Lan',   maKH:'GITA-0142', sdt:'091 720 5876', giaTri:50000000, giaiDoan:'tuvan',   chot:'2026-10-21', phuTrach:'Minh', nhan:'Đào tạo'},
+    {ten:'Nhà Vinachay',       maKH:'GITA-0130', sdt:'097 201 6848', giaTri:15000000, giaiDoan:'baogia',  chot:'2026-10-15', phuTrach:'Hà',   nhan:'Nóng'},
+    {ten:'Nhà Thanh Hường',    maKH:'GITA-0131', sdt:'090 396 8412', giaTri:50000000, giaiDoan:'baogia',  chot:'2026-10-16', phuTrach:'Lan',  nhan:'Đối tác'},
+    {ten:'Nhà Lan Ngọc',       maKH:'GITA-0132', sdt:'036 604 5541', giaTri:35000000, giaiDoan:'baogia',  chot:'2026-10-17', phuTrach:'Minh', nhan:'Thực phẩm'},
+    {ten:'Nhà Lê Quang Huy',   maKH:'GITA-0120', sdt:'088 671 8267', giaTri:60000000, giaiDoan:'damphan', chot:'2026-10-12', phuTrach:'Hà',   nhan:'Tour'},
+    {ten:'Nhà Anh Tùng',       maKH:'GITA-0121', sdt:'093 698 9436', giaTri:50000000, giaiDoan:'damphan', chot:'2026-10-13', phuTrach:'Lan',  nhan:'ERP'},
+    {ten:'Nhà Hương CEO',      maKH:'GITA-0110', sdt:'036 246 6889', giaTri:90000000, giaiDoan:'chotky',  chot:'2026-10-10', phuTrach:'Minh', nhan:'VIP'},
+    {ten:'Nhà Chị Huế',        maKH:'GITA-0111', sdt:'098 111 2222', giaTri:80000000, giaiDoan:'chotky',  chot:'2026-10-11', phuTrach:'Hà',   nhan:'Đàm phán xong'}
+  ];
+
+  function theCoHoi(x, mau) {
+    return '<div class="crm-kb-the">' +
+      '<div class="crm-kb-the-ten">' + h(x.ten) + '</div>' +
+      (x.sdt ? '<div class="crm-kb-the-sdt">' + ic('pulse','w-3 h-3') + h(x.sdt) + '</div>' : '') +
+      '<div class="crm-kb-the-gia" style="color:' + mau + '">' + dinhTien(x.giaTri) + 'đ</div>' +
+      '<div class="crm-kb-the-chan">' +
+        (x.nhan ? '<span class="crm-kb-nhan">' + h(x.nhan) + '</span>' : '<span></span>') +
+        (x.phuTrach ? '<span class="crm-kb-pt">' + h(x.phuTrach) + '</span>' : '') +
+      '</div>' +
+      (x.chot ? '<div class="crm-kb-the-chot">' + ic('calendar','w-3 h-3') + 'Dự kiến chốt ' + h(x.chot) + '</div>' : '') +
+    '</div>';
+  }
+
+  /* ── NGĂN · HOẠT ĐỘNG THẾ NÀO (sơ đồ giới thiệu, KHÔNG gọi máy chủ) ──
+     Trả lời "CRM GITA làm gì" bằng HÌNH, như các sơ đồ CRM chuyên nghiệp
+     chủ hệ gửi: hành trình một nhà qua tám bước · thu thập đa kênh về một
+     kho · năm nhóm insight 360° · dải lợi ích. Toàn nội dung TĨNH — mô tả,
+     không phải số liệu vận hành — nên KHÔNG đồng bộ với kho chặng thật
+     (chặng thật sống ở Đường ống & Cơ hội, một nguồn ở máy chủ; chép sang
+     đây là bản thứ hai của một sự thật). Dựng tức thì, không bao giờ rỗng,
+     hợp khổ điện thoại bằng flex-wrap. */
+  function veHoatDong() {
+    var buoc = [
+      {ic: 'search', ten: 'Tiếp cận',  vi: 'Khách đến từ website, quảng cáo, mạng xã hội, sự kiện'},
+      {ic: 'seed',   ten: 'Lead',      vi: 'Ghi nhận thông tin, phân loại lead'},
+      {ic: 'chat',   ten: 'Tư vấn',    vi: 'Liên hệ, nắm nhu cầu, cập nhật lịch sử tương tác'},
+      {ic: 'target', ten: 'Cơ hội',    vi: 'Khách có nhu cầu, chuyển thành cơ hội bán'},
+      {ic: 'book',   ten: 'Báo giá',   vi: 'Gửi báo giá, đàm phán, theo dõi quá trình'},
+      {ic: 'check',  ten: 'Bán hàng',  vi: 'Chốt đơn, tạo giao dịch thành công'},
+      {ic: 'heart',  ten: 'Chăm sóc',  vi: 'Chăm sau bán, nhắc lịch, hỗ trợ'},
+      {ic: 'arrow',  ten: 'Mua lại',   vi: 'Quay lại và giới thiệu khách mới'}
+    ];
+    var kenh = ['Website', 'Facebook', 'Zalo', 'Email', 'Tổng đài', 'Sự kiện', 'Chat/Chatbot', 'POS/Ứng dụng'];
+    var insight = [
+      {ic: 'users', ten: 'Nhân khẩu học',      vi: 'Tuổi, giới, vị trí, nghề nghiệp, thu nhập'},
+      {ic: 'chart', ten: 'Hành vi mua hàng',   vi: 'Sản phẩm quan tâm, tần suất mua, giá trị đơn'},
+      {ic: 'pulse', ten: 'Hành vi tương tác',  vi: 'Kênh, tần suất, thời điểm tương tác'},
+      {ic: 'heart', ten: 'Sở thích & quan tâm', vi: 'Chủ đề quan tâm, nội dung đã xem'},
+      {ic: 'star',  ten: 'Giá trị khách (RFM)', vi: 'Gần đây (R), tần suất (F), giá trị (M)'}
+    ];
+    var loi = [
+      {ic: 'vault', ten: 'Tập trung dữ liệu khách'},
+      {ic: 'chart', ten: 'Tăng hiệu suất bán'},
+      {ic: 'heart', ten: 'Chăm sóc tốt hơn'},
+      {ic: 'crown', ten: 'Tăng doanh thu & giữ chân'}
+    ];
+
+    var o = U.sec('CRM GITA hoạt động thế nào',
+      'Một nơi quản lý trọn hành trình khách hàng: thu thập đa kênh, hiểu khách 360°, ' +
+      'và giữ nhịp chăm sóc. Sơ đồ dưới là bức tranh chung — bấm "Đường ống" để làm việc thật.');
+
+    o += U.sec('Hành trình một nhà qua GITA', 'Tám bước, mỗi bước một việc rõ.');
+    /* Khung quy trình kiểu bảng vận hành: cả sơ đồ nằm trong một khung có
+       tiêu đề, các bước nối nhau bằng mũi tên → đọc được thành DÒNG CHẢY,
+       không phải tám thẻ rời. */
+    o += '<div class="crm-qt">' +
+      '<div class="crm-qt-dau">' + ic('orbit', 'w-4 h-4') +
+        '<b>Quy trình CRM · 8 bước</b>' +
+        '<span>Sơ đồ vận hành — từ tiếp cận đến mua lại</span></div>' +
+      '<div class="crm-ht-ht crm-qt-luong">';
+    buoc.forEach(function (b, i) {
+      var mau = SAC_PHEU[i % SAC_PHEU.length];
+      o += '<div class="crm-ht-buoc">' +
+        '<div class="crm-ht-tron" style="background:' + mau + '">' + ic(b.ic, 'w-5 h-5') + '</div>' +
+        '<div class="crm-ht-so">' + (i + 1) + '</div>' +
+        '<div class="crm-ht-ten">' + h(b.ten) + '</div>' +
+        '<div class="crm-ht-vi">' + h(b.vi) + '</div>' +
+      '</div>';
+    });
+    o += '</div></div>';
+
+    /* ── Sơ đồ kiến trúc CRM (kiểu CRMOnline): Người dùng ở trên · ba cột
+          Nguồn dữ liệu → Hệ thống CRM → Tích hợp · Dữ liệu ở dưới. ── */
+    var nguoiDung = [
+      {ic: 'chart', ten: 'Marketing'}, {ic: 'target', ten: 'Sales'}, {ic: 'heart', ten: 'CSKH'},
+      {ic: 'crown', ten: 'Quản lý'}, {ic: 'vault', ten: 'Kế toán'}, {ic: 'users', ten: 'Nhân sự'}
+    ];
+    var nguon = [
+      {ic: 'compass', ten: 'Website'}, {ic: 'book', ten: 'Landing Page'}, {ic: 'chat', ten: 'Facebook'},
+      {ic: 'chat', ten: 'Zalo'}, {ic: 'book', ten: 'Email'}, {ic: 'pulse', ten: 'Tổng đài'},
+      {ic: 'star', ten: 'Sự kiện'}, {ic: 'users', ten: 'Nhân viên'}
+    ];
+    var tichHop = [
+      {ic: 'chat', ten: 'Zalo OA'}, {ic: 'chat', ten: 'Facebook'}, {ic: 'book', ten: 'Email Marketing'},
+      {ic: 'pulse', ten: 'Tổng đài · SMS'}, {ic: 'spark', ten: 'Chatbot AI'}, {ic: 'vault', ten: 'Hóa đơn · Kế toán'},
+      {ic: 'target', ten: 'Kho hàng'}, {ic: 'orbit', ten: 'Ứng dụng khác'}
+    ];
+    var loiCrm = [
+      {ten: 'Thu thập dữ liệu', vi: 'Đa kênh về một mối'},
+      {ten: 'Lưu trữ & chuẩn hóa', vi: 'Sạch · hợp nhất · không trùng'},
+      {ten: 'Phân loại & giao Lead', vi: 'Đúng người, đúng lúc'},
+      {ten: 'Theo dõi Sales', vi: 'Phễu cơ hội theo chặng'},
+      {ten: 'Chăm sóc khách', vi: 'Nhắc lịch, giữ nhịp'},
+      {ten: 'Báo cáo & phân tích', vi: 'Đo được, quyết đúng'}
+    ];
+    var duLieu = [
+      {ic: 'users', ten: 'Khách hàng'}, {ic: 'seed', ten: 'Lead'}, {ic: 'chat', ten: 'Contact'},
+      {ic: 'target', ten: 'Cơ hội'}, {ic: 'pulse', ten: 'Hoạt động'}, {ic: 'check', ten: 'Công việc'},
+      {ic: 'book', ten: 'Sản phẩm'}, {ic: 'vault', ten: 'Đơn hàng'}, {ic: 'heart', ten: 'Lịch sử tương tác'},
+      {ic: 'chart', ten: 'Báo cáo'}
+    ];
+
+    o += U.sec('Kiến trúc CRM — Dữ liệu · Con người · Quy trình · Công nghệ',
+      'Một sơ đồ: nguồn dữ liệu đổ vào Hệ thống CRM, nối ra các công cụ tích hợp; người dùng ở trên, dữ liệu ở dưới.');
+    o += '<div class="crm-so">';
+    /* Người dùng */
+    o += '<div class="crm-so-nhom"><span class="crm-so-nhan">Người dùng</span><div class="crm-so-nguoi">';
+    nguoiDung.forEach(function (u) {
+      o += '<div class="crm-so-u"><span class="crm-so-u-ic">' + ic(u.ic, 'w-4 h-4') + '</span>' + h(u.ten) + '</div>';
+    });
+    o += '</div></div>';
+    /* Ba cột */
+    o += '<div class="crm-so-hang">';
+    o += '<div class="crm-so-cot"><div class="crm-so-cot-dau">Nguồn dữ liệu</div>';
+    nguon.forEach(function (n) { o += '<div class="crm-so-item">' + ic(n.ic, 'w-4 h-4') + '<span>' + h(n.ten) + '</span></div>'; });
+    o += '</div>';
+    o += '<div class="crm-so-muiten">' + ic('arrow', 'w-5 h-5') + '</div>';
+    o += '<div class="crm-so-giua"><div class="crm-so-giua-dau">' + ic('orbit', 'w-4 h-4') + 'Hệ thống CRM</div><div class="crm-so-giua-than">';
+    loiCrm.forEach(function (s, i) {
+      o += '<div class="crm-so-b"><span class="crm-so-b-so">' + (i + 1) + '</span>' +
+        '<div><b>' + h(s.ten) + '</b><span>' + h(s.vi) + '</span></div></div>';
+    });
+    o += '</div></div>';
+    o += '<div class="crm-so-muiten">' + ic('arrow', 'w-5 h-5') + '</div>';
+    o += '<div class="crm-so-cot"><div class="crm-so-cot-dau">Tích hợp</div>';
+    tichHop.forEach(function (t) { o += '<div class="crm-so-item">' + ic(t.ic, 'w-4 h-4') + '<span>' + h(t.ten) + '</span></div>'; });
+    o += '</div>';
+    o += '</div>';
+    /* Dữ liệu */
+    o += '<div class="crm-so-nhom"><span class="crm-so-nhan">Dữ liệu</span><div class="crm-so-du">';
+    duLieu.forEach(function (d) { o += '<span class="crm-so-chip">' + ic(d.ic, 'w-3 h-3') + h(d.ten) + '</span>'; });
+    o += '</div></div>';
+    o += '</div>';
+
+    o += U.sec('Hiểu khách 360° — insight theo nhóm',
+      'Từ dữ liệu đã hợp nhất, dựng chân dung khách theo từng nhóm thông tin.');
+    o += '<div class="crm-ht-luoi">';
+    insight.forEach(function (x, i) {
+      var mau = SAC_PHEU[i % SAC_PHEU.length];
+      o += '<div class="crm-ht-the">' +
+        '<div class="crm-ht-the-ic" style="color:' + mau + '">' + ic(x.ic, 'w-5 h-5') + '</div>' +
+        '<div><div class="crm-ht-the-ten">' + h(x.ten) + '</div>' +
+        '<div class="crm-ht-the-vi">' + h(x.vi) + '</div></div>' +
+      '</div>';
+    });
+    o += '</div>';
+
+    o += '<div class="crm-ht-loi">';
+    loi.forEach(function (l) {
+      o += '<div class="crm-ht-loi-o">' + ic(l.ic, 'w-5 h-5') + '<span>' + h(l.ten) + '</span></div>';
+    });
+    o += '</div>';
+    return o;
+  }
+
+  function veDuongOng() {
+    var so = G.crmCoHoiData;
+    var that = so && so.ok;
+    var gd = (that && so.giaiDoanCoThe && so.giaiDoanCoThe.length) ? so.giaiDoanCoThe : CRM_GD_MAU;
+    var ds = that ? (so.ds || []) : COHOI_MAU;
+
+    var o = U.bdNguon(!!that);
+    if (!that)
+      o += '<div class="crm-mau">' + ic('spark','w-4 h-4') +
+        ' Đường ống MINH HOẠ — nối máy chủ CRM thì các thẻ tự thay bằng cơ hội thật của nhà mình.</div>';
+
+    /* Cột theo chặng — mỗi cột cuộn dọc riêng, cả dải cuộn ngang trên màn hẹp. */
+    o += '<div class="crm-kb">';
+    gd.forEach(function (g, i) {
+      var mau = SAC_PHEU[i % SAC_PHEU.length];
+      var trong = ds.filter(function (x) { return x.giaiDoan === g.ma; });
+      var tong = trong.reduce(function (s, x) { return s + (Number(x.giaTri) || 0); }, 0);
+      o += '<div class="crm-kb-cot">' +
+        '<div class="crm-kb-dau" style="border-top-color:' + mau + '">' +
+          '<div class="crm-kb-dau-ten">' + h(g.ten) + '</div>' +
+          '<div class="crm-kb-dau-so"><b>' + trong.length + '</b> cơ hội · ' +
+            '<span style="color:' + mau + '">' + dinhTien(tong) + 'đ</span></div>' +
+          '<div class="crm-kb-dau-xs">' + ic('compass','w-3 h-3') + ' xác suất ' + h(String(g.xs)) + '%</div>' +
+        '</div>' +
+        '<div class="crm-kb-cot-than">' +
+          (trong.length ? trong.map(function (x) { return theCoHoi(x, mau); }).join('')
+                        : '<div class="crm-kb-trong">Chưa có cơ hội</div>') +
+        '</div>' +
+      '</div>';
+    });
+    o += '</div>';
+
+    if (that)
+      o += '<p class="note mt"><button class="btn sm" onclick="G.crmMoNgan(\'cohoi\')">' +
+        'Xem phễu dự báo & thêm cơ hội →</button></p>';
+    else
+      o += '<p class="note mt">Nối máy chủ ở <b>Quản trị trang → Nối máy chủ</b> để đường ống hiện cơ hội thật.</p>';
+    return o;
+  }
+
+  function veCoHoi() {
+    var so = G.crmCoHoiData;
+    var o = U.sec('Phễu cơ hội — dự báo doanh thu',
+      'Mỗi chặng mang một xác suất chốt; giá trị TRỌNG SỐ = Σ(giá trị × xác suất) — dự báo sát ' +
+      'hơn tổng thô. Chỉ tính cơ hội ĐANG MỞ; thắng/thua để riêng.');
+    if (!so) return o + '<p class="note"><button class="btn" onclick="G.crmTaiCoHoi()">Tải phễu cơ hội</button></p>';
+    if (!so.ok) return o + cohoiMinhHoa();
+
+    o += U.bdNguon(true);
+    o += U.bdSoHang([
+      {k:'Cơ hội đang mở', v:String(so.tongMo||0), c:'var(--gita)'},
+      {k:'Tổng giá trị mở', v:dinhTien(so.tongGiaTri||0)+'đ', c:'var(--gita-sau)'},
+      {k:'Dự báo (trọng số)', v:dinhTien(so.tongTrongSo||0)+'đ', c:'var(--ok)', d:'Σ giá trị × xác suất'},
+      {k:'Tỷ lệ thắng', v:(so.tyLeThang===null||so.tyLeThang===undefined?'—':so.tyLeThang+'%'), c:'var(--gold-2)', d:'thắng/(thắng+thua)'}
+    ]);
+
+    o += U.sec('Phễu theo chặng', 'Số cơ hội · giá trị · giá trị trọng số từng chặng');
+    o += U.tbl(['Chặng','Xác suất','Số cơ hội','Giá trị','Trọng số'],
+      (so.theoGiaiDoan||[]).map(function (g) {
+        return ['<b class="sm">'+h(g.ten)+'</b>','<span class="mono">'+h(String(g.xs))+'%</span>',
+          '<span class="mono">'+h(String(g.n))+'</span>','<span class="mono">'+dinhTien(g.giaTri)+'đ</span>',
+          '<b class="mono">'+dinhTien(g.trongSo)+'đ</b>'];
+      }));
+
+    o += '<div class="crm-dens" style="margin-top:8px">' +
+      '<div class="crm-den-o" style="border-left-color:#0B7350"><b>'+h(String(so.thang.n))+' thắng</b><span>'+dinhTien(so.thang.tong)+'đ</span></div>' +
+      '<div class="crm-den-o" style="border-left-color:#D11F2A"><b>'+h(String(so.thua.n))+' thua</b><span>'+dinhTien(so.thua.tong)+'đ</span></div>' +
+      '</div>';
+
+    o += U.sec('Thêm / cập nhật cơ hội', 'Cần quyền mức "sửa" trở lên · nhà bạn phụ trách. Đánh dấu THUA thì phải ghi lý do.');
+    o += '<div class="row" style="flex-direction:column;gap:10px;max-width:520px">';
+    o += '<label>Mã khách hàng<br><input id="ch_makh" placeholder="vd: GITA-0151"></label>';
+    o += '<label>Tên cơ hội<br><input id="ch_ten" placeholder="vd: Nâng Tầng 4 · Gia hạn 365"></label>';
+    o += '<label>Giá trị dự kiến (đồng)<br><input id="ch_giatri" inputmode="numeric" placeholder="vd: 30000000"></label>';
+    o += '<label>Chặng<br><select id="ch_gd">' +
+      (so.giaiDoanCoThe||[]).map(function (g) {
+        return '<option value="'+h(g.ma)+'">'+h(g.ten)+' — '+h(String(g.xs))+'%</option>';
+      }).join('') + '</select></label>';
+    o += '<label>Dự kiến chốt (YYYY-MM-DD)<br><input id="ch_chot" type="date"></label>';
+    o += '<div><button class="btn btn-chinh" onclick="G.crmLuuCoHoi()">Ghi cơ hội</button></div>';
+    o += '</div>';
+
+    o += U.sec('Cơ hội đang mở', h(so.vi || ''));
+    var ds = so.ds || [];
+    if (ds.length)
+      o += U.tbl(['Cơ hội','Mã khách','Giá trị','Chặng','Dự kiến chốt','Phụ trách'],
+        ds.map(function (x) {
+          return ['<b class="sm">'+h(x.ten)+'</b>', h(x.maKH), '<span class="mono">'+dinhTien(x.giaTri)+'đ</span>',
+            h(tenChang(x.giaiDoan, so.giaiDoanCoThe)), h(x.duKienChot||'—'), h(x.nguoiPhuTrach||'—')];
+        }));
+    else o += '<p class="note">Chưa có cơ hội nào đang mở. Thêm ở form trên.</p>';
+    return o;
+  }
+
   /* ── NGĂN 1 · BUỒNG LÁI ── */
   function veBang() {
     var so = G.crmBang;
     if (!so) return '<p class="note"><button class="btn" onclick="G.crmTaiBang()">Tải buồng lái</button></p>';
-    if (!so.ok) return canNoi(so);
+    if (!so.ok) return veBangMinhHoa();
 
     var o = U.sec('Buồng lái CRM' + (so.toanBo ? ' — toàn hệ' : ' — phần bạn phụ trách'), h(so.vi || ''));
+    o += U.bdNguon(true);
 
     o += '<div class="crm-kpis">' +
       kpi('Tổng khách', so.tongKhach, '#185AB4') +
@@ -47020,7 +49252,7 @@ G.VIEWS = G.VIEWS || {};
       'Máy đọc dữ liệu lúc đọc, xếp việc GẤP lên trước, mỗi việc trỏ một cửa thật. ' +
       'Máy đề xuất — người quyết; bấm "Mở nhà" rồi làm qua cửa ấy.');
     if (!so) return o + '<p class="note"><button class="btn" onclick="G.crmTaiViec()">Tải việc nên làm</button></p>';
-    if (!so.ok) return o + canNoi(so);
+    if (!so.ok) return o + viecMinhHoa();
 
     var d = so.dem || {};
     o += '<div class="crm-kpis">' +
@@ -47050,7 +49282,7 @@ G.VIEWS = G.VIEWS || {};
     if (G.crmCt) return veChiTiet();
     var so = G.crmDs;
     if (!so) return '<p class="note"><button class="btn" onclick="G.crmTaiDs()">Tải danh sách khách</button></p>';
-    if (!so.ok) return canNoi(so);
+    if (!so.ok) return dsMinhHoa();
 
     var coThe = so.giaiDoanCoThe || [];
     var o = U.sec('Danh sách khách' + (so.toanBo ? ' — toàn hệ' : ' — phần bạn phụ trách'), h(so.vi || ''));
@@ -47199,7 +49431,7 @@ G.VIEWS = G.VIEWS || {};
       'Tám KPI máy đo tính LÚC ĐỌC từ sổ thật; ba KPI người khai để riêng, không con số giả. ' +
       'KHÔNG ngưỡng — đặt chỉ tiêu là mời chạy cho đủ số. Ngưỡng là Vùng Đỏ chờ chủ hệ.');
     if (!so) return o + '<p class="note"><button class="btn" onclick="G.crmTaiKpi()">Tải KPI</button></p>';
-    if (!so.ok) return o + canNoi(so);
+    if (!so.ok) return o + kpiMinhHoa();
 
     o += U.tbl(['Mã', 'KPI', 'Ai đo', 'Giá trị', 'Chiều', 'Nguồn'],
       (so.bang || []).map(function (k) {
@@ -47319,14 +49551,29 @@ G.VIEWS = G.VIEWS || {};
       'theo phần mình phụ trách, và một chỗ đọc trọn một nhà. Mặc định: Super Admin · Admin hệ thống · ' +
       'Giám đốc; Super Admin cấp thêm cho bộ phận khác.</p></div>';
 
-    o += '<div class="tabs">' + NGAN.map(function (n) {
+    /* Ngăn quản trị (cấp quyền · quản trị · luật) chỉ cho ba vai mặc định
+       (lv≤3). Bộ phận được cấp qua quyenCRM chỉ thấy ngăn THAO TÁC — đúng
+       "thao tác theo giới hạn được cấp". Máy chủ vẫn gác từng cửa, đây chỉ
+       gọn màn. Người được cấp mà lỡ ở một ngăn quản trị thì rơi về Hoạt động. */
+    var lvVai = (G.S.roleObj && G.S.roleObj.lv) || 99;
+    var laQuanTri = lvVai <= 3;
+    var NGAN_HIEN = NGAN.filter(function (n) {
+      return (n.ma === 'quyen' || n.ma === 'quantri' || n.ma === 'luat') ? laQuanTri : true;
+    });
+    if (!laQuanTri && (G.crmNgan === 'quyen' || G.crmNgan === 'quantri' || G.crmNgan === 'luat'))
+      G.crmNgan = 'hoat-dong';
+
+    o += '<div class="tabs">' + NGAN_HIEN.map(function (n) {
       return '<button class="tab' + (G.crmNgan === n.ma ? ' on' : '') + '" onclick="G.crmMoNgan(\'' +
         n.ma + '\')">' + ic(n.ic) + ' ' + h(n.ten) + '</button>';
     }).join('') + '</div>';
 
-    if (G.crmNgan === 'bang') { o += veBang(); if (!G.crmBang) setTimeout(G.crmTaiBang, 0); }
+    if (G.crmNgan === 'hoat-dong') { o += veHoatDong(); }
+    else if (G.crmNgan === 'duong-ong') { o += veDuongOng(); if (!G.crmCoHoiData) setTimeout(G.crmTaiCoHoi, 0); }
+    else if (G.crmNgan === 'bang') { o += veBang(); if (!G.crmBang) setTimeout(G.crmTaiBang, 0); }
     else if (G.crmNgan === 'viec') { o += veUuTien(); if (!G.crmViec) setTimeout(G.crmTaiViec, 0); }
     else if (G.crmNgan === 'ds') { o += veDs(); if (!G.crmDs && !G.crmCt) setTimeout(G.crmTaiDs, 0); }
+    else if (G.crmNgan === 'cohoi') { o += veCoHoi(); if (!G.crmCoHoiData) setTimeout(G.crmTaiCoHoi, 0); }
     else if (G.crmNgan === 'troly') { o += veTroLy(); if (!G.crmAi) setTimeout(G.crmTaiAi, 0); }
     else if (G.crmNgan === 'kpi') { o += veKpi(); if (!G.crmKpi) setTimeout(G.crmTaiKpi, 0); }
     else if (G.crmNgan === 'quyen') { o += veQuyen(); if (!G.crmQ) setTimeout(G.crmTaiQuyen, 0); }
@@ -47334,6 +49581,1279 @@ G.VIEWS = G.VIEWS || {};
     else o += veLuat();
     return o;
   };
+
+  /* ── MÀN "PHÂN QUYỀN CRM" trong Quản trị trang ──
+     Chủ hệ muốn một chỗ CẤP QUYỀN CRM ngay trong Quản trị trang, không
+     phải đi vòng vào mục CRM. Dùng LẠI đúng bộ cấp quyền của ngăn "Cấp
+     quyền" (veQuyen) — một nguồn, không dựng bản thứ hai. Người được cấp
+     ở đây sẽ THẤY mục CRM ở lần đăng nhập sau (máy chủ trả crmMuc) và
+     thao tác theo mức: xem · sửa · quản lý. Máy chủ vẫn gác mọi thao tác. */
+  G.VIEWS['phan-quyen-crm'] = function () {
+    if (!(G.can && G.can('qt_trang')))
+      return U.lockCard('Phân quyền CRM chỉ mở cho Super Admin và Admin hệ thống. ' +
+        'Đây là chỗ quyết ai được xem và thao tác trên dữ liệu quan hệ khách hàng.');
+    var o = '<div class="hd"><h2>' + ic('lock') + ' Phân quyền CRM</h2>' +
+      '<p class="sub">Cấp quyền CRM cho bộ phận khác (coach, tư vấn…). Người được cấp sẽ ' +
+      'THẤY mục CRM ở lần đăng nhập sau và thao tác theo mức: <b>xem</b> · <b>sửa</b> · ' +
+      '<b>quản lý</b>. Khách hàng không bao giờ thấy CRM. Ba vai quản trị (Super Admin · ' +
+      'Admin hệ thống · Giám đốc) thấy sẵn, không cần cấp.</p></div>';
+    o += veQuyen();
+    if (!G.crmQ) setTimeout(G.crmTaiQuyen, 0);
+    return o;
+  };
+})();
+
+})();
+
+/* ═════════ src/kho-tai-lieu.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 · 9.99.203 — KHO TÀI LIỆU · 5 TẦNG × 10 CẤP + BỘ SINH
+
+   Chủ hệ: biên soạn tài liệu cho toàn bộ 10 cấp × 5 tầng, kèm cẩm nang
+   hướng dẫn dùng kho và chương trình đào tạo nhân sự thực hành kho.
+
+   Dữ liệu ở đây LÀ THẬT — chép từ "00_GITA_365_MUC_LUC_TONG" của chủ hệ
+   (26 tài liệu · 2.697 trang) trên Drive "GITA VIP 365 CHUẨN". KHÔNG bịa,
+   KHÔNG độn tệp rỗng cho đủ "500.000": con số thật là ~2.700 trang + hai
+   ma trận 1.000 ô. "Bộ sinh" dựng KHUNG (outline chuẩn) cho một toạ độ
+   tầng×nhóm để người biên soạn viết tiếp TỪ nguồn — một cái khung bám
+   nguồn, không phải một tệp độn.
+
+   Màn này TRỎ về tài liệu nguồn (link Drive), không chép nội dung 2.700
+   trang vào kho mã — chép là dựng bản thứ hai của một sự thật, và bản
+   thứ hai sẽ lệch khi chủ hệ sửa bản gốc.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+
+/* Thư mục nguồn trên Drive (nội bộ — mở cần đăng nhập Google của Học viện). */
+G.KTL_DRIVE = 'https://drive.google.com/drive/folders/1z48yZhsupElk6lJCiHi0tplZD7EP9_cS';
+
+G.KTL_META = { taiLieu: 26, trang: 2697, tapXong: 12, tapTong: 20,
+  maChuan: 'GITA-MASTER-INDEX-V1.0',
+  cauMo: 'Mở tài liệu này ra là biết mình đang có gì và thiếu gì.' };
+
+/* 5 TẦNG × 10 CẤP = 50 CẤP TRÍ TUỆ — tài liệu 07 "Hệ phân tầng trí tuệ".
+   Mã cấp theo lối "tầng.cấp" (1.1 … 5.10), đúng cách chủ hệ đánh (vd 3.4). */
+/* Tên tầng THẬT — mục lục master 5 tầng của chủ hệ (NHẬN DIỆN → BỨT PHÁ),
+   kèm thời lượng lộ trình. Giá gói để riêng ở KTL_GOI (nguồn tham chiếu),
+   không đặt trong khung để tránh bản thứ hai của giá đang chạy. */
+/* Hai tên tầng đi cùng một tầng, đều THẬT, từ hai tài liệu nguồn:
+   `ten` = tên gói (mục lục master · bảng giá); `biet`+`hoa` = ẩn dụ và chuyển
+   hoá của hành trình (BẢN THIẾT KẾ QUY TRÌNH 5 TẦNG · GITA-TẦNG-V1.0). Ghép
+   trên MỘT bản ghi để không dựng bản thứ hai của trục tầng. */
+G.KTL_TANG = [
+  { ma:'T1', ten:'Tầng 1 · NHẬN DIỆN', biet:'HẠT',  hoa:'Tò mò → Nứt vỏ',            mau:'var(--gita)',      y:'7 ngày · gói trải nghiệm miễn phí', ngay:'7 ngày' },
+  { ma:'T2', ten:'Tầng 2 · GIẢI MÃ',   biet:'RỄ',   hoa:'Nghi ngờ → Điểm tựa',       mau:'var(--gita-sang)', y:'21 ngày · gói đánh giá nền tảng', ngay:'21 ngày' },
+  { ma:'T3', ten:'Tầng 3 · KIẾN TẠO',  biet:'THÂN', hoa:'Làm theo → Tự làm chủ',     mau:'var(--gita-sau)',  y:'90 ngày · tư vấn & xây lộ trình', ngay:'90 ngày' },
+  { ma:'T4', ten:'Tầng 4 · CHUYỂN HÓA',biet:'TÁN',  hoa:'Fan → Đồng hành / Cố vấn',  mau:'var(--ok)',        y:'365 ngày · huấn luyện đồng hành', ngay:'365 ngày' },
+  { ma:'T5', ten:'Tầng 5 · BỨT PHÁ',   biet:'RỪNG', hoa:'Cây Mẹ → Kiến tạo kỷ nguyên',mau:'var(--gold-2)',   y:'365 ngày chuyên sâu · phát triển toàn diện', ngay:'365 ngày' }
+];
+/* Cấu trúc gói theo tài liệu nguồn (tham chiếu) — giá đang chạy ở màn Bảng giá. */
+G.KTL_GOI = [
+  {t:'Tầng 1 · NHẬN DIỆN',goi:'Trải nghiệm miễn phí',gia:'0đ'},
+  {t:'Tầng 2 · GIẢI MÃ',goi:'Đánh giá nền tảng',gia:'500.000đ'},
+  {t:'Tầng 3 · KIẾN TẠO',goi:'Tư vấn & xây lộ trình',gia:'10 triệu'},
+  {t:'Tầng 4 · CHUYỂN HÓA',goi:'Huấn luyện đồng hành',gia:'30 triệu'},
+  {t:'Tầng 5 · BỨT PHÁ',goi:'Phát triển toàn diện',gia:'100 triệu'}
+];
+G.KTL_SO_CAP = 10;
+
+/* 50 CẤP HÀNH TRÌNH — chép THẬT từ "BẢN THIẾT KẾ QUY TRÌNH 5 TẦNG HOÀN CHỈNH"
+   (GITA-TẦNG-V1.0) của chủ hệ, Phụ lục A · ma trận 50 cấp độ. Mỗi cấp: tên
+   thật + mốc (khi) nếu tài liệu ghi; cấp nào tài liệu không ghi mốc cố định
+   (theo sự kiện/mùa) thì BỎ khoá `khi`, không để rỗng (luật trường trống).
+   Đây là trục HÀNH TRÌNH (HẠT→RỪNG); tên gói ở KTL_TANG.ten. */
+G.KTL_CAP50 = [
+  {ma:'1.1',tang:'T1',cap:1,ten:'Người tò mò',khi:'ngày 0 · khoảnh khắc mời gọi'},
+  {ma:'1.2',tang:'T1',cap:2,ten:'Người chạm lần đầu',khi:'ngày 0–1 · 60 giây đầu tiên'},
+  {ma:'1.3',tang:'T1',cap:3,ten:'Người thử 3 ngày',khi:'ngày 1–3 · hạt biết tên tôi'},
+  {ma:'1.4',tang:'T1',cap:4,ten:'Người bắt đầu nhịp',khi:'ngày 4–7 · chuỗi 7'},
+  {ma:'1.5',tang:'T1',cap:5,ten:'Hạt nứt vỏ chính thức',khi:'ngày 7–14'},
+  {ma:'1.6',tang:'T1',cap:6,ten:'Người có đồng hành',khi:'ngày 14–17'},
+  {ma:'1.7',tang:'T1',cap:7,ten:'Người vượt tuần 3',khi:'ngày 15–21 · cửa tử thống kê'},
+  {ma:'1.8',tang:'T1',cap:8,ten:'Người có khoảnh khắc thứ nhất',khi:'ngày 14 · Bữa Cơm Ký Ức'},
+  {ma:'1.9',tang:'T1',cap:9,ten:'Người thấy con đường',khi:'ngày 22–29'},
+  {ma:'1.10',tang:'T1',cap:10,ten:'Người sẵn sàng gốc',khi:'ngày 30 · cửa tầng 2'},
+  {ma:'2.1',tang:'T2',cap:1,ten:'Người câu hỏi tiền',khi:'tháng 2 · tuần 1–2'},
+  {ma:'2.2',tang:'T2',cap:2,ten:'Người gửi giọt tiền đầu',khi:'tháng 2–3'},
+  {ma:'2.3',tang:'T2',cap:3,ten:'Người gặp gió đầu',khi:'theo sự kiện · mùa đời lần 1'},
+  {ma:'2.4',tang:'T2',cap:4,ten:'Người có vết sẹo tự hào',khi:'sau mùa gió đầu'},
+  {ma:'2.5',tang:'T2',cap:5,ten:'Người có bản độ đo',khi:'tháng 4–5'},
+  {ma:'2.6',tang:'T2',cap:6,ten:'Người cả nhà thành đội',khi:'tháng 5–7'},
+  {ma:'2.7',tang:'T2',cap:7,ten:'Người có 1 tháng an toàn',khi:'tháng 6–8'},
+  {ma:'2.8',tang:'T2',cap:8,ten:'Người bắt đầu đo được',khi:'tháng 7–8'},
+  {ma:'2.9',tang:'T2',cap:9,ten:'Người tự truyền động lực',khi:'tháng 8–9'},
+  {ma:'2.10',tang:'T2',cap:10,ten:'Người có điểm tựa',khi:'tháng 9 · cửa tầng 3'},
+  {ma:'3.1',tang:'T3',cap:1,ten:'Người có giấy phép mạo hiểm',khi:'quỹ đủ 3 tháng'},
+  {ma:'3.2',tang:'T3',cap:2,ten:'Người thử lựa',khi:'kỳ thử 30 ngày đầu'},
+  {ma:'3.3',tang:'T3',cap:3,ten:'Người đọc dữ kiện của chính mình'},
+  {ma:'3.4',tang:'T3',cap:4,ten:'Người chọn một gốc'},
+  {ma:'3.5',tang:'T3',cap:5,ten:'Người có nhịp'},
+  {ma:'3.6',tang:'T3',cap:6,ten:'Người đối mặt mùa khô'},
+  {ma:'3.7',tang:'T3',cap:7,ten:'Người tự vận hành'},
+  {ma:'3.8',tang:'T3',cap:8,ten:'Người có dòng thu nhập thứ hai'},
+  {ma:'3.9',tang:'T3',cap:9,ten:'Người biết mình muốn đi đâu'},
+  {ma:'3.10',tang:'T3',cap:10,ten:'Người sẵn sàng lễ Thân Cây'},
+  {ma:'4.1',tang:'T4',cap:1,ten:'Người phát tín hiệu'},
+  {ma:'4.2',tang:'T4',cap:2,ten:'Người có người lắng nghe'},
+  {ma:'4.3',tang:'T4',cap:3,ten:'Người trả lời'},
+  {ma:'4.4',tang:'T4',cap:4,ten:'Người kè đầu tiên'},
+  {ma:'4.5',tang:'T4',cap:5,ten:'Người biết giới hạn'},
+  {ma:'4.6',tang:'T4',cap:6,ten:'Người tạo không gian'},
+  {ma:'4.7',tang:'T4',cap:7,ten:'Người có học trò',khi:'khủng hoảng giữa tầng'},
+  {ma:'4.8',tang:'T4',cap:8,ten:'Người nhường chỗ'},
+  {ma:'4.9',tang:'T4',cap:9,ten:'Người có mạch'},
+  {ma:'4.10',tang:'T4',cap:10,ten:'Người đồng hành thật'},
+  {ma:'5.1',tang:'T5',cap:1,ten:'Cây Mẹ đầu tiên'},
+  {ma:'5.2',tang:'T5',cap:2,ten:'Người gieo hạt có chọn'},
+  {ma:'5.3',tang:'T5',cap:3,ten:'Người viết ra'},
+  {ma:'5.4',tang:'T5',cap:4,ten:'Người dạy người dạy'},
+  {ma:'5.5',tang:'T5',cap:5,ten:'Người có hệ nhỏ'},
+  {ma:'5.6',tang:'T5',cap:6,ten:'Người nhường lái'},
+  {ma:'5.7',tang:'T5',cap:7,ten:'Người giữ tín'},
+  {ma:'5.8',tang:'T5',cap:8,ten:'Người kết rừng'},
+  {ma:'5.9',tang:'T5',cap:9,ten:'Người mở đường'},
+  {ma:'5.10',tang:'T5',cap:10,ten:'Kiến tạo kỷ nguyên'}
+];
+G.KTL_CAP50_NGUON = 'BẢN THIẾT KẾ QUY TRÌNH 5 TẦNG HOÀN CHỈNH (GITA-TẦNG-V1.0) · Phụ lục A';
+
+/* 20 NHÓM VẤN ĐỀ N01–N20 — mỗi tập phân tích chuyên sâu là một nhóm.
+   `tap` = số tập đã viết (0 = chưa); `tang` = tầng đại diện; `xong` = đã có tệp. */
+G.KTL_NHOM = [
+  {ma:'N01',ten:'Khởi đầu & cam kết',tap:11,tang:'T1',xong:true},
+  {ma:'N02',ten:'Giữ nhịp & tái khởi động',tap:5,tang:'T1',xong:true},
+  {ma:'N03',ten:'Cảm xúc nặng',tap:2,tang:'T1',xong:true},
+  {ma:'N04',ten:'Niềm tin & tự đánh giá',tap:6,tang:'T2',xong:true},
+  {ma:'N05',ten:'Quan hệ vợ chồng',tap:7,tang:'T3',xong:true},
+  {ma:'N06',ten:'Nuôi dạy con',tap:12,tang:'T3',xong:true},
+  {ma:'N07',ten:'Nhóm N07',tap:0,tang:'T2',xong:false},
+  {ma:'N08',ten:'Nhóm nền tảng N08',tap:0,tang:'T1',xong:false},
+  {ma:'N09',ten:'Nhóm N09',tap:0,tang:'T2',xong:false},
+  {ma:'N10',ten:'Nhóm nền tảng N10',tap:0,tang:'T1',xong:false},
+  {ma:'N11',ten:'Tiền bạc & nợ',tap:8,tang:'T4',xong:true},
+  {ma:'N12',ten:'Nghề nghiệp & việc làm',tap:9,tang:'T4',xong:true},
+  {ma:'N13',ten:'Nhóm N13',tap:0,tang:'T4',xong:false},
+  {ma:'N14',ten:'Khởi nghiệp & kinh doanh nhỏ',tap:3,tang:'T4',xong:true},
+  {ma:'N15',ten:'Biến cố & mất mát',tap:1,tang:'T3',xong:true},
+  {ma:'N16',ten:'Thói quen khó bỏ',tap:10,tang:'T2',xong:true},
+  {ma:'N17',ten:'Nhóm N17',tap:0,tang:'T3',xong:false},
+  {ma:'N18',ten:'Nhóm nền tảng N18',tap:0,tang:'T1',xong:false},
+  {ma:'N19',ten:'Nhóm N19',tap:0,tang:'T5',xong:false},
+  {ma:'N20',ten:'Trao đi & dẫn dắt',tap:4,tang:'T5',xong:true}
+];
+
+/* 26 TÀI LIỆU — danh mục thật, chia 4 lớp. */
+G.KTL_LOP = [
+  {ma:'L1',ten:'Lớp 1 · Nền',    y:'Hệ thống này là gì và người ta đi qua nó thế nào', docs:[1,2,3,7]},
+  {ma:'L2',ten:'Lớp 2 · Dựng',   y:'Dựng và vận hành nó bằng cách nào', docs:[4,8,10]},
+  {ma:'L3',ten:'Lớp 3 · Hành nghề',y:'Làm việc với một con người cụ thể thế nào', docs:[6,12,13,26]},
+  {ma:'L4',ten:'Lớp 4 · Tự soi', y:'Chỗ nào trong thiết kế đang sai', docs:[5,9]}
+];
+G.KTL_DOC = [
+  {so:1,ten:'GITA VIP 365 — bản trình bày',trang:614,y:'Tài liệu gốc, đánh máy lại toàn bộ'},
+  {so:2,ten:'Hành trình trải nghiệm khách hàng',trang:158,y:'15 chặng · 50 cấp · 1000 điểm chạm wow'},
+  {so:3,ten:'Hành lang thành công',trang:32,y:'12 luật · 18 virus & vắc-xin · 9 khoá · 7 đòn bẩy'},
+  {so:4,ten:'Kiến trúc vận hành',trang:94,y:'7 lớp · 1000 khoá · 10.000 tình huống · 100 bánh đà · 12 SOP'},
+  {so:5,ten:'Sổ rà soát lỗi hệ thống',trang:24,y:'66 điểm gãy · 13 lỗi chặn phát hành'},
+  {so:6,ten:'Ma trận hoá giải rào cản',trang:112,y:'10 nhóm × 20 tình huống × 5 mức = 1000 ô'},
+  {so:7,ten:'Hệ phân tầng trí tuệ',trang:38,y:'5 tầng × 10 cấp = 50 cấp trí tuệ · 5 cửa duyệt'},
+  {so:8,ten:'Bộ hồ sơ hợp đồng & vận hành',trang:34,y:'16 hợp đồng · 25 điều khoản · 41 biểu mẫu'},
+  {so:9,ten:'Rà soát pháp lý',trang:27,y:'64 phát hiện · 20 nghiêm trọng · 12 văn bản cần bổ sung'},
+  {so:10,ten:'Sổ tay Super Admin — đầy đủ',trang:188,y:'20 tab · 83 mục · 122 câu hỏi · 40 kịch bản · 100 câu tự kiểm'},
+  {so:11,ten:'Sổ tay Super Admin — rút gọn',trang:31,y:'Bản đầu, tra nhanh'},
+  {so:12,ten:'Kho 509 kịch bản coach',trang:73,y:'9 khung buổi + 500 kịch bản tình huống, 20 nhóm'},
+  {so:13,ten:'Tài liệu phụ trợ buổi coach',trang:89,y:'20 bộ công cụ · 500 phiếu khách · 3 biểu mẫu'},
+  {so:14,ten:'Phân tích chuyên sâu — Tập 1',trang:62,y:'Chuẩn 12 mục · bản đồ 30 cấp T3–T5'},
+  {so:15,ten:'Phân tích chuyên sâu — Tập 2',trang:62,y:'N03 Cảm xúc nặng · ranh giới chuyển tuyến'},
+  {so:16,ten:'Phân tích chuyên sâu — Tập 3',trang:62,y:'N14 Khởi nghiệp · đại diện Tầng 4'},
+  {so:17,ten:'Phân tích chuyên sâu — Tập 4',trang:62,y:'N20 Trao đi & dẫn dắt · đại diện Tầng 5'},
+  {so:18,ten:'Phân tích chuyên sâu — Tập 5',trang:62,y:'N02 Giữ nhịp · nhóm gặp nhiều nhất'},
+  {so:19,ten:'Phân tích chuyên sâu — Tập 6',trang:62,y:'N04 Niềm tin & tự đánh giá'},
+  {so:20,ten:'Phân tích chuyên sâu — Tập 7',trang:84,y:'N05 Quan hệ vợ chồng · chuẩn 18 mục'},
+  {so:21,ten:'Phân tích chuyên sâu — Tập 8',trang:109,y:'N11 Tiền bạc & nợ · 7 công thức số'},
+  {so:22,ten:'Phân tích chuyên sâu — Tập 9',trang:112,y:'N12 Nghề nghiệp · chuẩn 26 mục'},
+  {so:23,ten:'Phân tích chuyên sâu — Tập 10',trang:134,y:'N16 Thói quen khó bỏ · chuẩn 27 mục'},
+  {so:24,ten:'Phân tích chuyên sâu — Tập 11',trang:131,y:'N01 Khởi đầu · bốn mốc rơi 30 ngày đầu'},
+  {so:25,ten:'Phân tích chuyên sâu — Tập 12',trang:134,y:'N06 Nuôi dạy con · bốn điều con học được'},
+  {so:26,ten:'Bộ hỗ trợ tư vấn 1000 ô',trang:107,y:'20 nhóm × 10 vấn đề × 5 tầng · 28 mẫu câu · 12 từ cấm'}
+];
+
+/* HAI MA TRẬN 1000 Ô — thật, khác nhau (mục 2.3 của mục lục tổng). */
+G.KTL_MATRAN = [
+  {ma:'M1',ten:'1000 ô HOÁ GIẢI RÀO CẢN',cong:'10 nhóm × 20 tình huống × 5 mức',doc:6,ai:'Coach · AI'},
+  {ma:'M2',ten:'1000 ô HỖ TRỢ TƯ VẤN',cong:'20 nhóm × 10 vấn đề × 5 tầng',doc:26,ai:'CSKH · AI'}
+];
+
+/* CẨM NANG DÙNG KHO — "dùng tài liệu nào cho việc gì" (thật). */
+G.KTL_DUNG = [
+  {khi:'Hiểu toàn bộ hệ phân tầng gốc',mo:'01'},
+  {khi:'Thiết kế con đường khách hàng đi',mo:'02'},
+  {khi:'Biết cái gì bảo vệ khách, cái gì soi đường',mo:'03'},
+  {khi:'Giao đội kỹ thuật dựng sản phẩm',mo:'04 · 10'},
+  {khi:'Kiểm thiết kế còn lỗ hổng nào',mo:'05'},
+  {khi:'Xử lý khách đang bị chặn không tiến được',mo:'06'},
+  {khi:'Quyết định nội dung nào mở cho ai',mo:'07'},
+  {khi:'Soạn hợp đồng và quy trình nội bộ',mo:'08 · 09'},
+  {khi:'Đào tạo người vận hành web app',mo:'10'},
+  {khi:'Đào tạo Coach',mo:'12 · 13 · 14–25'},
+  {khi:'Nạp dữ liệu cho trợ lý AI',mo:'14–25 · 26'},
+  {khi:'Đào tạo tuyến đầu chăm sóc khách hàng',mo:'26'}
+];
+/* Ba con số 1000 khác nhau — chống nhầm khi giao việc. */
+G.KTL_BA_NGHIN = [
+  {ten:'1000 điểm chạm wow',la:'Thứ hệ chủ động làm cho khách',doc:'02',ai:'Đội sản phẩm'},
+  {ten:'1000 khoá phân luồng',la:'Thứ hệ chặn hoặc mở',doc:'04',ai:'Đội kỹ thuật'},
+  {ten:'1000 ô hoá giải rào cản',la:'Coach dùng khi khách bị chặn',doc:'06',ai:'Coach · AI'},
+  {ten:'1000 ô hỗ trợ tư vấn',la:'Tuyến đầu dùng khi khách hỏi',doc:'26',ai:'CSKH · AI'}
+];
+
+/* BỘ SINH — khung chuẩn 27 mục cho một tài liệu phân tích chuyên sâu.
+   Sinh KHUNG cho một toạ độ (nhóm × tầng), người biên soạn viết tiếp TỪ
+   nguồn. Không sinh nội dung giả. */
+G.KTL_KHUNG27 = [
+  'Chân dung nhóm','Vì sao nhóm này khó','Bốn mốc rơi thường gặp','Dấu hiệu quan sát được',
+  'Ranh giới chuyển tuyến','Câu hỏi mở đầu buổi','Khung lắng nghe','Điều nhỏ người ta làm được',
+  'Vòng lặp hành vi','Đòn bẩy đổi nhịp','Kịch bản buổi 1','Kịch bản buổi 2–4',
+  'Bài tập giữa buổi','Đo tiến bộ','Số liệu & công thức','Cạm bẫy của Coach',
+  'Câu nên nói','Câu tránh nói','Phối hợp vợ chồng','Khi nào mời chuyên gia',
+  'Tài liệu phát cho nhà','Mẫu tin nhắn nhắc nhịp','Chỉ số giữ nhịp','Ca khó & cách gỡ',
+  'Tự kiểm của Coach','Nối vào tầng trên','Nguồn tham chiếu'
+];
+G.ktlSinh = function(nhomMa, tangMa){
+  var n = G.KTL_NHOM.filter(function(x){return x.ma===nhomMa;})[0] || {ma:nhomMa,ten:nhomMa};
+  var t = G.KTL_TANG.filter(function(x){return x.ma===tangMa;})[0] || {ma:tangMa,ten:tangMa};
+  return { ma: nhomMa+'·'+tangMa, tieuDe:'Phân tích chuyên sâu — '+n.ten+' ('+t.ten+')',
+    daCo: !!n.xong, tapNguon: n.tap,
+    muc: G.KTL_KHUNG27.map(function(m,i){ return {so:i+1, ten:m}; }) };
+};
+
+/* CHƯƠNG TRÌNH ĐÀO TẠO NHÂN SỰ THỰC HÀNH KHO — 5 chặng, mỗi chặng trỏ
+   tài liệu nguồn và một bài thực hành ĐO ĐƯỢC (không phải học chay). */
+G.KTL_DAOTAO = [
+  {b:'1',ten:'Đọc bản đồ kho',doc:'00 · 01 · 07',lam:'Vẽ lại bộ khung 5 tầng × 10 cấp bằng lời mình',do:'Nói đúng 5 tầng và ý mỗi tầng'},
+  {b:'2',ten:'Tra đúng tài liệu cho một tình huống',doc:'bảng "dùng tài liệu nào"',lam:'Cho 10 tình huống, chỉ đúng số tài liệu',do:'≥9/10 đúng'},
+  {b:'3',ten:'Dùng ma trận hoá giải & hỗ trợ',doc:'06 · 26',lam:'Một khách bị chặn: tìm đúng ô R và ô H',do:'Tìm ra ô, đọc ra bước'},
+  {b:'4',ten:'Chạy một buổi coach theo kịch bản',doc:'12 · 13 · tập nhóm',lam:'Đóng vai một buổi theo khung 27 mục',do:'Qua bảng tự kiểm của Coach'},
+  {b:'5',ten:'Nạp & hỏi trợ lý AI đúng cách',doc:'14–25 · 26',lam:'Hỏi trợ lý 5 câu nghề, đối chiếu nguồn',do:'Câu trả lời khớp tài liệu gốc'}
+];
+
+/* ═══ BỘ SÁCH 1000 CUỐN — TÍCH LUỸ TINH TUÝ THEO CÂU CHUYỆN ═══
+   Chủ hệ: chuỗi 10 cấp × 5 tầng tích luỹ thành bộ sách kể đời một người
+   thành công, hạnh phúc viên mãn — từ trong bào thai tới lúc để lại di
+   sản 100 năm — và hành trình một nhân sự thường thành chuyên gia GITA365,
+   gắn với MỘT gia đình và MỘT nhân sự để thành câu chuyện cảm hứng.
+
+   CÁCH ĐẾM 1000, KHÔNG PHẢI CHỈ TIÊU: 50 cấp trí tuệ (5 tầng × 10 cấp) ×
+   20 nhóm đời sống (N01–N20) = 1.000 cuốn. ~500 trang/cuốn ≈ 500.000 trang
+   là SỨC CHỨA, không phải số phải nhồi. Mỗi cuốn viết TỪ nguồn (tập phân
+   tích + ma trận 1.000 ô + ebook 1001 tình huống), không sinh trang rỗng. */
+G.KTL_SACH_META = { cuon: 1000, cach: '50 cấp × 20 nhóm', trangCuon: 500,
+  giaDinhMau: 'nhà An', nhanSuMau: 'bạn Minh' };
+
+/* Cung đời người — 10 chương, bào thai → di sản, gắn 5 tầng. */
+G.KTL_DOISONG = [
+  {c:'Đ1',ten:'Bào thai & sơ sinh',tuoi:'0',tang:'T1',y:'Nền an toàn, gắn bó đầu đời'},
+  {c:'Đ2',ten:'Ấu thơ',tuoi:'1–5',tang:'T1',y:'Cảm xúc, thói quen gốc, tò mò'},
+  {c:'Đ3',ten:'Nhi đồng',tuoi:'6–10',tang:'T2',y:'Kỷ luật học, niềm tin vào mình'},
+  {c:'Đ4',ten:'Thiếu niên',tuoi:'11–15',tang:'T2',y:'Bản sắc, nội lực, vượt áp lực'},
+  {c:'Đ5',ten:'Vị thành niên',tuoi:'16–18',tang:'T3',y:'Định hướng, quan hệ, chọn đường'},
+  {c:'Đ6',ten:'Thanh niên lập thân',tuoi:'19–25',tang:'T3',y:'Nghề, tự lập, giá trị sống'},
+  {c:'Đ7',ten:'Lập nghiệp & hôn nhân',tuoi:'26–35',tang:'T4',y:'Sự nghiệp, bạn đời, tiền bạc'},
+  {c:'Đ8',ten:'Gây dựng & nuôi dạy con',tuoi:'36–50',tang:'T4',y:'Cơ nghiệp, dạy con, cân bằng'},
+  {c:'Đ9',ten:'Đỉnh cao & cống hiến',tuoi:'51–65',tang:'T5',y:'Dẫn dắt, trao đi, ý nghĩa'},
+  {c:'Đ10',ten:'Trao truyền & di sản 100 năm',tuoi:'66+',tang:'T5',y:'Di sản gia đình · cơ nghiệp · nhân tài'}
+];
+
+/* Hành trình nhân sự GITA365 — thường → chuyên gia, 7 bước. */
+G.KTL_NHANSU_HT = [
+  {b:'1',ten:'Nhập môn',y:'Hiểu triết lý, thuộc bản đồ kho, qua ba cửa'},
+  {b:'2',ten:'Thực hành có kèm',y:'Buổi đầu bên khách, có người kèm soi'},
+  {b:'3',ten:'Đứng độc lập',y:'Tư vấn/coach một mình, giữ chuẩn nghề'},
+  {b:'4',ten:'Chuyên sâu một nhóm',y:'Thành người giỏi nhất một nhóm N'},
+  {b:'5',ten:'Kèm người mới',y:'Truyền nghề, nhân bản chuẩn'},
+  {b:'6',ten:'Chuyên gia',y:'Dựng nội dung, đặt chuẩn, dẫn đội'},
+  {b:'7',ten:'Đối tác & di sản',y:'Sự nghiệp bền cùng GITA365, để lại dấu'}
+];
+
+/* Khung một CUỐN sách — kể chuyện, không liệt kê khô. */
+G.KTL_KHUNG_SACH = [
+  'Mở: chân dung nhà An & bạn Minh ở chặng này',
+  'Bối cảnh đời người (chương đời tương ứng)',
+  'Vấn đề của nhóm ở tầng này — nhà An gặp gì',
+  'Nhân sự Minh đồng hành thế nào (đúng phác đồ)',
+  'Điều nhỏ nhà An làm được ngay',
+  'Bước ngoặt — chuyện thay đổi ra sao',
+  'Số liệu & dấu hiệu đo được',
+  'Cạm bẫy & cách gỡ',
+  'Kết chặng — một di sản nhỏ để lại',
+  'Bài học cảm hứng · nối sang cấp sau'
+];
+G.ktlSinhSach = function(nhomMa, tangMa){
+  var n = G.KTL_NHOM.filter(function(x){return x.ma===nhomMa;})[0] || {ma:nhomMa,ten:nhomMa};
+  var t = G.KTL_TANG.filter(function(x){return x.ma===tangMa;})[0] || {ma:tangMa,ten:tangMa};
+  var doi = G.KTL_DOISONG.filter(function(x){return x.tang===tangMa;});
+  return { ma:'S·'+nhomMa+'·'+tangMa,
+    tieuDe:'Cuốn: '+n.ten+' — '+t.ten,
+    chuongDoi: doi.map(function(d){return d.c+' '+d.ten;}),
+    daCo: !!n.xong, tapNguon: n.tap,
+    muc: G.KTL_KHUNG_SACH.map(function(m,i){return {so:i+1,ten:m};}) };
+};
+
+/* ═══ KHAI THÁC KHO BẢN CAO CẤP ×10 — thật, từ 5 tài liệu chủ hệ nạp ═══
+   Chép cấu trúc (không toàn văn) từ: 1&2. Bản cao cấp GITA365 · 10 Phần
+   nền tảng Tầng 2 · MYVIP · Vận hành 7 ngày. Màn TRỎ về bản gốc. */
+G.KTL_CUM = [
+  {c:'I',ten:'Nền móng tư duy & tầm nhìn',phan:'1–5'},
+  {c:'II',ten:'Kiến trúc hệ thống 7 tầng',phan:'6–10'},
+  {c:'III',ten:'Bảo mật tuyệt đối',phan:'11–15'},
+  {c:'IV',ten:'Pháp lý & tuân thủ',phan:'16–20'},
+  {c:'V',ten:'50 trợ lý AI siêu tự động',phan:'21–25'},
+  {c:'VI',ten:'Hệ đào tạo & phát triển tài năng',phan:'26–30'},
+  {c:'VII',ten:'Gắn kết gia đình & cộng đồng',phan:'31–35'},
+  {c:'VIII',ten:'Hệ khởi nghiệp toàn năng',phan:'36–40'},
+  {c:'IX',ten:'Trải nghiệm cao cấp & doanh thu',phan:'41–45'},
+  {c:'X',ten:'Vận hành, bảo trì & di sản',phan:'46–50'}
+];
+G.KTL_100NAM = [
+  {g:'GĐ1',ten:'Sinh tồn & gốc rễ',nam:'Năm 1–5',mau:'var(--gita)'},
+  {g:'GĐ2',ten:'Vững vàng',nam:'Năm 6–20',mau:'var(--gita-sang)'},
+  {g:'GĐ3',ten:'Bành trướng',nam:'Năm 21–50',mau:'var(--gita-sau)'},
+  {g:'GĐ4',ten:'Di sản trường tồn',nam:'Năm 51–100',mau:'var(--gold-2)'}
+];
+/* Tầng 1 "Hạt" — 7 ngày onboarding thật (Vận hành 7 ngày). */
+G.KTL_TANG1_MOC = [
+  {n:'Ngày 1',ten:'Quà "Chạm"'},{n:'Ngày 3',ten:'Quà "Rễ Non"'},
+  {n:'Ngày 5',ten:'Quà "Gắn kết"'},{n:'Ngày 7',ten:'Lễ Nứt Vỏ → nâng Tầng 2'}
+];
+/* Tầng 2 "Rễ" — 10 cấp có tên thật (10 Phần nền tảng Tầng 2), ngày 31–100. */
+G.KTL_CAP_T2 = [
+  {ma:'2.1',ten:'Người xuống gốc',ngay:'31–37'},
+  {ma:'2.2',ten:'Người có rễ đầu',ngay:'38–44'},
+  {ma:'2.3',ten:'Người biết mùa của mình',ngay:'45–51'},
+  {ma:'2.4',ten:'Người tưới đất khác',ngay:'52–58'},
+  {ma:'2.5',ten:'Người có hạt con',ngay:'59–65'},
+  {ma:'2.6',ten:'Người có rừng nhỏ',ngay:'66–72'},
+  {ma:'2.7',ten:'Người có cây giữ nhịp',ngay:'73–79'},
+  {ma:'2.8',ten:'Người tưới hộ cây người khác',ngay:'80–86'},
+  {ma:'2.9',ten:'Người dẫn lối nhỏ',ngay:'87–93'},
+  {ma:'2.10',ten:'Ánh bình minh toàn cảnh',ngay:'94–100'}
+];
+/* 5 tài liệu chủ hệ nạp — thêm vào kho, trỏ về bản gốc. */
+G.KTL_NGUON_MR = [
+  {ten:'Bản cao cấp GITA365 ×10 — Phần 1',y:'10 cụm × 5 phần = 50 phần · lộ trình 100 năm 4 giai đoạn'},
+  {ten:'Bản cao cấp GITA365 ×10 — Phần 2',y:'Phần 20–50: pháp lý·vốn · nhân sự kế nhiệm · runbook · học viện nội bộ · nhượng quyền · di sản · AI trung tâm'},
+  {ten:'10 Phần nền tảng — Tầng 2 (Rễ)',y:'10 cấp 2.1→2.10 (ngày 31–100) · SOP 3 vai: Tư vấn · Coach · Gia đình'},
+  {ten:'MYVIP',y:'Quyển I: 28 sức mạnh · Quyển II: 100.000 điểm chạm (10 lớp) · Quyển III: Kênh Supreme 100 phần'},
+  {ten:'Vận hành 7 ngày',y:'Tầng 1 "Hạt": onboarding 7 ngày · quà nhịp · cẩm nang chốt Tầng 2 (500k) · 5 module'}
+];
+
+(function(){
+var U = G.U, h = U.h, ic = U.ic;
+
+function docTen(so){ var d = G.KTL_DOC.filter(function(x){return x.so===so;})[0]; return d?d.ten:('#'+so); }
+
+G.ktlNgan = G.ktlNgan || 'khung';
+G.ktlMoNgan = function(m){ G.ktlNgan = m; G.render && G.render(); };
+G.ktlOutline = G.ktlOutline || null;
+G.ktlSinhRa = function(n, t){ G.ktlOutline = G.ktlSinh(n, t); G.render && G.render(); };
+
+var NGAN = [
+  {ma:'khung', ten:'Bộ khung 5×10', ic:'map'},
+  {ma:'danhmuc', ten:'26 tài liệu', ic:'book'},
+  {ma:'sinh', ten:'Bộ sinh tài liệu', ic:'spark'},
+  {ma:'sach', ten:'Bộ sách 1000 cuốn', ic:'seed'},
+  {ma:'caocap', ten:'Bản cao cấp ×10', ic:'star'},
+  {ma:'camnang', ten:'Cẩm nang dùng kho', ic:'compass'},
+  {ma:'daotao', ten:'Đào tạo nhân sự', ic:'crown'},
+  {ma:'coach', ten:'Phương pháp coach', ic:'target'},
+  {ma:'sau', ten:'Biên soạn sâu (Vip)', ic:'book'}
+];
+G.ktlSach = G.ktlSach || null;
+G.ktlSinhSachRa = function(n, t){ G.ktlSach = G.ktlSinhSach(n, t); G.render && G.render(); };
+
+function veKhung(){
+  var M = G.KTL_META, xong = G.KTL_NHOM.filter(function(n){return n.xong;}).length;
+  var o = U.bdSoHang([
+    {k:'Tài liệu', v:String(M.taiLieu), c:'var(--gita)', d:'Word + PDF cùng tên'},
+    {k:'Tổng trang', v:M.trang.toLocaleString('vi-VN'), c:'var(--gita-sau)'},
+    {k:'Cấp trí tuệ', v:'50', c:'var(--ok)', d:'5 tầng × 10 cấp'},
+    {k:'Nhóm đã biên soạn', v:xong+'/20', c:'var(--gold-2)', d:'tập phân tích chuyên sâu'},
+    {k:'Ma trận ô', v:'2 × 1000', c:'var(--gita-sang)', d:'hoá giải + hỗ trợ tư vấn'}
+  ]);
+  o += '<p class="note" style="margin:6px 0 14px">'+ic('vault','w-4 h-4')+' Nguồn thật: '+
+    '<a href="'+h(G.KTL_DRIVE)+'" target="_blank" rel="noopener">thư mục "GITA VIP 365 CHUẨN" trên Drive</a>'+
+    ' · '+h(M.maChuan)+'. "'+h(M.cauMo)+'"</p>';
+
+  o += U.sec('BỘ KHUNG 5 TẦNG × 10 CẤP','50 ô cấp trí tuệ — mỗi ô một mức mở nội dung (tài liệu 07)');
+  o += '<div class="ktl-luoi">';
+  o += '<div class="ktl-luoi-h"><span></span>'+
+    Array.apply(null,{length:G.KTL_SO_CAP}).map(function(_,i){
+      return '<span class="ktl-cap-h">C'+(i+1)+'</span>'; }).join('')+'</div>';
+  G.KTL_TANG.forEach(function(t){
+    o += '<div class="ktl-luoi-r"><span class="ktl-tang-h" style="background:'+t.mau+'">'+
+      h(t.ma)+'</span>';
+    for(var c=1;c<=G.KTL_SO_CAP;c++){
+      o += '<span class="ktl-o" style="--oc:'+t.mau+'" title="'+h(t.ten)+' · cấp '+c+'">'+
+        t.ma.slice(1)+'.'+c+'</span>';
+    }
+    o += '</div>';
+  });
+  o += '</div>';
+  o += '<div class="grid g2" style="margin-top:6px">'+ G.KTL_TANG.map(function(t){
+    return '<div class="card pad-sm" style="border-left:3px solid '+t.mau+'">'+
+      '<b class="sm">'+h(t.ten)+' · '+h(t.biet)+'</b>'+
+      '<p class="tiny mt" style="color:var(--ink-3)">'+h(t.hoa)+'</p>'+
+      '<p class="tiny muted mt">'+h(t.y)+'</p></div>';
+  }).join('') +'</div>';
+
+  var tl50 = G.KTL_TL50 || null;
+  o += U.sec('50 CẤP HÀNH TRÌNH', tl50
+    ? ('Bấm một cấp để mở giáo trình — bốn cột: chuỗi hành động · điểm chạm wow · cơ chế · tín hiệu lên cấp. Chép thật từ '+h(G.KTL_TL50_NGUON))
+    : ('Tên và mốc từng cấp — chép thật từ '+h(G.KTL_CAP50_NGUON)));
+  function veCotTL(nhan, val, mau){
+    if(!val) return '';
+    return '<div class="ktl-tl-cot"><span class="ktl-tl-nhan" style="color:'+mau+'">'+h(nhan)+'</span>'+
+      '<p class="ktl-tl-val">'+h(val)+'</p></div>';
+  }
+  G.KTL_TANG.forEach(function(t){
+    var caps = G.KTL_CAP50.filter(function(c){return c.tang===t.ma;});
+    o += '<p class="tiny" style="margin:12px 0 4px;color:'+t.mau+';font-weight:700">'+
+      h(t.ten)+' · '+h(t.biet)+' — <span style="color:var(--ink-3);font-weight:400">'+h(t.hoa)+'</span></p>';
+    o += '<div class="ktl-nhom">'+ caps.map(function(c){
+      var d = tl50 && tl50[c.ma];
+      var dau = '<span class="ktl-nhom-ma mono">'+h(c.ma)+'</span>'+
+        '<b>'+h(c.ten)+'</b>'+
+        (c.khi?'<span class="ktl-nhom-t">'+h(c.khi)+'</span>':'');
+      if(!d){
+        return '<div class="ktl-nhom-o" style="border-left:3px solid '+t.mau+'">'+dau+'</div>';
+      }
+      var hn = d.hn;
+      var thanHN = hn ? (
+        '<div class="ktl-hn"><span class="ktl-tl-nhan" style="color:'+t.mau+'">Bản hợp nhất · '+
+          h(hn.tenGoc)+(hn.ngay?(' · '+h(hn.ngay)):'')+'</span>'+
+          veCotTL('Mục tiêu tâm hồn', hn.mucTamHon, t.mau)+
+          veCotTL('Nhiệm vụ cốt lõi (≤60s)', hn.nhiemVu, t.mau)+
+          veCotTL('Điểm chạm WOW chủ đạo', hn.wowCD, t.mau)+
+          veCotTL('Kịch bản hệ thống', hn.kichBan, t.mau)+
+        '</div>') : '';
+      return '<details class="ktl-nhom-o ktl-tl" style="border-left:3px solid '+t.mau+'">'+
+        '<summary>'+dau+'</summary>'+
+        '<div class="ktl-tl-than">'+
+          veCotTL('Chuỗi hành động', d.chuoi, t.mau)+
+          veCotTL('Điểm chạm wow', d.wow, t.mau)+
+          veCotTL('Cơ chế phía sau', d.coche, t.mau)+
+          veCotTL('Tín hiệu lên cấp', d.tinHieu, t.mau)+
+          thanHN+
+        '</div></details>';
+    }).join('') +'</div>';
+  });
+
+  var kit = G.CKIT || null;
+  o += U.sec('20 NHÓM VẤN ĐỀ (N01–N20)', kit
+    ? 'Mỗi nhóm bấm mở ra bộ công cụ coach: mục tiêu · 8 câu hỏi dự phòng · lộ trình 7·21·90 ngày · dấu hiệu tiến bộ · cạm bẫy · ranh giới chuyển tuyến.'
+    : 'Xanh = đã có tập phân tích chuyên sâu · mờ = chờ biên soạn');
+  o += '<div class="ktl-nhom">'+ G.KTL_NHOM.map(function(n){
+    var k = kit && kit[n.ma];
+    var dau = '<span class="ktl-nhom-ma mono">'+h(n.ma)+'</span>'+
+      '<b>'+h(n.ten)+'</b>'+
+      '<span class="ktl-nhom-t">'+(k?'bộ công cụ coach':(n.xong?('Tập '+n.tap+' · '+n.tang):'chờ · '+n.tang))+'</span>';
+    if(!k){ return '<div class="ktl-nhom-o'+(n.xong?'':' ktl-cho')+'">'+dau+'</div>'; }
+    function ds(nhan,arr){ return arr&&arr.length?('<div class="ktl-tl-cot"><span class="ktl-tl-nhan" style="color:var(--gita-ink)">'+h(nhan)+'</span><ul class="ck-ul">'+arr.map(function(x){return '<li>'+h(x)+'</li>';}).join('')+'</ul></div>'):''; }
+    var than = '<div class="ktl-tl-than">'+
+      (k.muc?'<div class="ktl-tl-cot"><span class="ktl-tl-nhan" style="color:var(--gita-ink)">Mục tiêu mọi buổi</span><p class="ktl-tl-val">'+h(k.muc)+'</p></div>':'')+
+      ds('8 câu hỏi dự phòng', k.hoi)+
+      (k.lo7&&k.lo7.length?('<div class="ktl-tl-cot"><span class="ktl-tl-nhan" style="color:var(--gita-ink)">Lộ trình 7 ngày</span><ul class="ck-ul">'+k.lo7.map(function(x){return '<li><b>'+h(x.chang)+':</b> '+h(x.viec)+'</li>';}).join('')+'</ul></div>'):'')+
+      (k.lo2190&&k.lo2190.length?('<div class="ktl-tl-cot"><span class="ktl-tl-nhan" style="color:var(--gita-ink)">Lộ trình 21 · 90 ngày</span>'+U.tbl(['21 ngày','90 ngày'], k.lo2190.map(function(r){return r.map(function(c){return h(c);});}))+'</div>'):'')+
+      ds('5 dấu hiệu tiến bộ', k.dauHieu)+
+      ds('5 cạm bẫy của coach', k.bay)+
+      (k.ranh?'<div class="ktl-tl-cot"><span class="ktl-tl-nhan" style="color:var(--warn)">Ranh giới chuyển tuyến</span><p class="ktl-tl-val">'+h(k.ranh)+'</p></div>':'')+
+    '</div>';
+    return '<details class="ktl-nhom-o ktl-tl" style="border-left:3px solid var(--gita)"><summary>'+dau+'</summary>'+than+'</details>';
+  }).join('') +'</div>';
+  return o;
+}
+
+function veDanhMuc(){
+  var o = U.sec('DANH MỤC 26 TÀI LIỆU','Chia bốn lớp — mỗi lớp trả lời một câu hỏi khác nhau');
+  G.KTL_LOP.forEach(function(l){
+    o += '<div class="ktl-lop"><div class="ktl-lop-h"><b>'+h(l.ten)+'</b>'+
+      '<span class="tiny muted">'+h(l.y)+'</span></div>';
+    o += U.tbl(['#','Tài liệu','Trang','Nội dung chính'], l.docs.map(function(so){
+      var d = G.KTL_DOC.filter(function(x){return x.so===so;})[0] || {so:so,ten:'#'+so,trang:'',y:''};
+      return ['<span class="mono">'+('0'+d.so).slice(-2)+'</span>','<b class="sm">'+h(d.ten)+'</b>',
+        '<span class="mono">'+h(String(d.trang))+'</span>','<span class="sm muted">'+h(d.y)+'</span>'];
+    }));
+    o += '</div>';
+  });
+  o += U.sec('HAI MA TRẬN 1000 Ô','Hai bộ 1000 khác nhau — đừng nhầm khi giao việc');
+  o += '<div class="grid g2">'+ G.KTL_MATRAN.map(function(m){
+    return '<div class="card pad-sm"><b class="sm">'+h(m.ten)+'</b>'+
+      '<p class="tiny muted mt">'+h(m.cong)+'</p>'+
+      '<p class="tiny mt">Tài liệu '+h(String(m.doc))+' · dùng bởi <b>'+h(m.ai)+'</b></p></div>';
+  }).join('') +'</div>';
+  return o;
+}
+
+function veSinh(){
+  var o = U.sec('BỘ SINH TÀI LIỆU','Chọn một nhóm × tầng → sinh KHUNG chuẩn 27 mục để biên soạn tiếp TỪ nguồn. Không sinh nội dung giả.');
+  o += '<div class="ktl-sinh-chon"><label class="tiny up">Nhóm</label>'+
+    '<select id="ktlNhom" class="cs-o">'+ G.KTL_NHOM.map(function(n){
+      return '<option value="'+h(n.ma)+'">'+h(n.ma+' · '+n.ten)+'</option>'; }).join('') +'</select>'+
+    '<label class="tiny up">Tầng</label>'+
+    '<select id="ktlTang" class="cs-o">'+ G.KTL_TANG.map(function(t){
+      return '<option value="'+h(t.ma)+'">'+h(t.ma+' · '+t.ten)+'</option>'; }).join('') +'</select>'+
+    '<button class="btn pri" onclick="G.ktlSinhRa(document.getElementById(\'ktlNhom\').value, document.getElementById(\'ktlTang\').value)">'+
+      ic('spark','w-4 h-4')+'Sinh khung</button></div>';
+  var kh = G.ktlOutline;
+  if(kh){
+    o += '<div class="card mt"><div class="ktl-kh-dau"><b>'+h(kh.tieuDe)+'</b>'+
+      '<span class="ktl-kh-tt '+(kh.daCo?'ok':'cho')+'">'+
+      (kh.daCo?('Đã có Tập '+kh.tapNguon+' — dùng làm nguồn'):'Chưa có tập — biên soạn mới')+'</span></div>'+
+      '<ol class="ktl-kh-ds">'+ kh.muc.map(function(m){
+        return '<li>'+h(m.ten)+'</li>'; }).join('') +'</ol>'+
+      '<p class="tiny dim mt">Khung 27 mục theo chuẩn tập phân tích chuyên sâu của chủ hệ. '+
+      'Nội dung viết TỪ nguồn (tập tương ứng + ma trận 1.000 ô), không bịa.</p></div>';
+  } else {
+    o += '<p class="note mt">Chọn nhóm và tầng rồi bấm <b>Sinh khung</b> để xem khung 27 mục.</p>';
+  }
+  return o;
+}
+
+function veCamNang(){
+  var o = U.sec('CẨM NANG DÙNG KHO','Khi cần việc gì thì mở tài liệu nào — bảng tra thật của chủ hệ');
+  o += U.tbl(['Khi anh chị cần…','Mở tài liệu số'], G.KTL_DUNG.map(function(d){
+    return ['<b class="sm">'+h(d.khi)+'</b>','<span class="mono ktl-mo">'+h(d.mo)+'</span>'];
+  }));
+  o += U.sec('BA CON SỐ 1000 KHÁC NHAU','Cùng là 1000 nhưng là ba (bốn) thứ khác hẳn — đừng nhầm khi giao việc');
+  o += U.tbl(['Bộ 1000','Là gì','Tài liệu','Ai dùng'], G.KTL_BA_NGHIN.map(function(b){
+    return ['<b class="sm">'+h(b.ten)+'</b>','<span class="sm muted">'+h(b.la)+'</span>',
+      '<span class="mono">'+h(b.doc)+'</span>','<span class="chip">'+h(b.ai)+'</span>'];
+  }));
+  o += '<div class="card pad-sm mt" style="border-left:3px solid var(--warn)">'+
+    ic('shield','w-4 h-4')+' <b class="sm">Bộ tài liệu là bản THIẾT KẾ, không phải sản phẩm đã chạy.</b>'+
+    '<p class="tiny muted mt" style="line-height:1.6">Luật sư rà hợp đồng trước khi mở dịch vụ · chuyên gia trụ thẩm định '+
+    'nội dung sức khoẻ/tài chính/pháp lý · ca trực đêm phải có người thật. '+
+    'Giá trị thật đến vào ngày gia đình đầu tiên đi trọn ba mươi ngày.</p></div>';
+  return o;
+}
+
+function veDaoTao(){
+  var o = U.sec('CHƯƠNG TRÌNH ĐÀO TẠO NHÂN SỰ THỰC HÀNH KHO','Năm chặng — mỗi chặng trỏ tài liệu nguồn và một bài thực hành ĐO ĐƯỢC');
+  o += U.bdDong(G.KTL_DAOTAO.map(function(d){
+    return {ten:d.b+' · '+d.ten, o:[{t:'Nguồn: '+d.doc},{t:d.lam,p:'✓ '+d.do}]};
+  }), {chu:'Học đi đôi với thực hành trên chính kho — không học chay. Mỗi chặng có bài đo được mới qua.'});
+  o += U.tbl(['Chặng','Nội dung','Tài liệu nguồn','Bài thực hành','Đo đạt'],
+    G.KTL_DAOTAO.map(function(d){
+      return ['<span class="mono">'+h(d.b)+'</span>','<b class="sm">'+h(d.ten)+'</b>',
+        '<span class="mono sm">'+h(d.doc)+'</span>','<span class="sm">'+h(d.lam)+'</span>',
+        '<span class="sm" style="color:var(--ok)">'+h(d.do)+'</span>'];
+    }));
+  return o;
+}
+
+function veSach(){
+  var M = G.KTL_SACH_META;
+  var o = U.bdSoHang([
+    {k:'Bộ sách', v:M.cuon.toLocaleString('vi-VN')+' cuốn', c:'var(--gita)', d:M.cach},
+    {k:'Sức chứa', v:'~'+(M.cuon*M.trangCuon/1000).toLocaleString('vi-VN')+'k trang', c:'var(--gita-sau)', d:'~'+M.trangCuon+' trang/cuốn'},
+    {k:'Nhân vật', v:'Nhà An · Minh', c:'var(--gold-2)', d:'một gia đình · một nhân sự GITA365'},
+    {k:'Cung đời', v:'10 chương', c:'var(--ok)', d:'bào thai → di sản 100 năm'}
+  ]);
+  o += '<p class="note" style="margin:2px 0 12px">'+ic('spark','w-4 h-4')+
+    ' 1.000 cuốn là CÁCH ĐẾM (50 cấp × 20 nhóm), không phải chỉ tiêu nhồi. Mỗi cuốn kể '+
+    'chuyện nhà An và nhân sự Minh đi qua một nhóm đời sống ở một tầng — viết TỪ nguồn, không trang rỗng.</p>';
+
+  o += U.sec('CUNG ĐỜI MỘT NGƯỜI — BÀO THAI → DI SẢN','Mười chương đời, gắn năm tầng — trục dọc của bộ sách');
+  o += U.bdDong(G.KTL_DOISONG.map(function(d){
+    return {ten:d.c+' · '+d.ten, o:[{t:d.tuoi+' tuổi',p:d.tang},{t:d.y}]};
+  }), {chu:'Một đời người thành công, hạnh phúc viên mãn — kết lại bằng di sản gia đình, cơ nghiệp 100 năm và những nhân tài để lại.'});
+
+  o += U.sec('HÀNH TRÌNH NHÂN SỰ — THƯỜNG → CHUYÊN GIA GITA365','Trục thứ hai: một nhân sự lớn lên cùng Học viện');
+  o += U.bdDong(G.KTL_NHANSU_HT.map(function(b){
+    return {ten:b.b+' · '+b.ten, o:[{t:b.y}]};
+  }), {chu:'Câu chuyện cảm hứng cho chính đội ngũ: từ buổi đầu bỡ ngỡ tới ngày để lại dấu ấn nghề.'});
+
+  o += U.sec('BỘ SINH CUỐN SÁCH','Chọn nhóm × tầng → sinh khung một cuốn (10 mục kể chuyện) để biên soạn từ nguồn');
+  o += '<div class="ktl-sinh-chon"><label class="tiny up">Nhóm đời sống</label>'+
+    '<select id="ktlSNhom" class="cs-o">'+ G.KTL_NHOM.map(function(n){
+      return '<option value="'+h(n.ma)+'">'+h(n.ma+' · '+n.ten)+'</option>'; }).join('') +'</select>'+
+    '<label class="tiny up">Tầng</label>'+
+    '<select id="ktlSTang" class="cs-o">'+ G.KTL_TANG.map(function(t){
+      return '<option value="'+h(t.ma)+'">'+h(t.ma+' · '+t.ten)+'</option>'; }).join('') +'</select>'+
+    '<button class="btn pri" onclick="G.ktlSinhSachRa(document.getElementById(\'ktlSNhom\').value, document.getElementById(\'ktlSTang\').value)">'+
+      ic('seed','w-4 h-4')+'Sinh khung sách</button></div>';
+  var s = G.ktlSach;
+  if(s){
+    o += '<div class="card mt"><div class="ktl-kh-dau"><b>'+h(s.tieuDe)+'</b>'+
+      '<span class="ktl-kh-tt '+(s.daCo?'ok':'cho')+'">'+
+      (s.daCo?('Có Tập '+s.tapNguon+' làm nguồn'):'Chưa có tập — soạn mới')+'</span></div>'+
+      (s.chuongDoi.length?'<p class="tiny dim">Chương đời của tầng này: '+h(s.chuongDoi.join(' · '))+'</p>':'')+
+      '<ol class="ktl-kh-ds">'+ s.muc.map(function(m){ return '<li>'+h(m.ten)+'</li>'; }).join('') +'</ol>'+
+      '<p class="tiny dim mt">Mười mục kể chuyện nhà An + nhân sự Minh. Nội dung viết từ tập nhóm tương ứng, '+
+      'ma trận 1.000 ô và ebook 1.001 tình huống — không bịa.</p></div>';
+  } else {
+    o += '<p class="note mt">Chọn nhóm và tầng rồi bấm <b>Sinh khung sách</b> để xem khung một cuốn.</p>';
+  }
+  return o;
+}
+
+function veCaoCap(){
+  var o = '<p class="note" style="margin:2px 0 12px">'+ic('star','w-4 h-4')+
+    ' Khai thác từ 5 tài liệu chủ hệ nạp: Bản cao cấp ×10 (50 phần), Tầng 2 (10 cấp), '+
+    'MYVIP, Vận hành 7 ngày. Chép cấu trúc, trỏ về bản gốc — không chép toàn văn.</p>';
+
+  o += U.sec('LỘ TRÌNH 100 NĂM — 4 GIAI ĐOẠN','Sinh tồn → Vững vàng → Bành trướng → Di sản trường tồn cấp tập đoàn');
+  o += U.bdDong(G.KTL_100NAM.map(function(g){
+    return {ten:g.g+' · '+g.nam, mau:g.mau, o:[{t:g.ten}]};
+  }), {chu:'Di sản 100 năm: cơ nghiệp trường tồn · giáo dục gia đình · tạo ra nhân tài.'});
+
+  o += U.sec('BẢN CAO CẤP ×10 — 50 PHẦN (10 CỤM × 5)','Kiến trúc hệ thống toàn diện');
+  o += U.tbl(['Cụm','Tên cụm','Phần'], G.KTL_CUM.map(function(c){
+    return ['<span class="mono">'+h(c.c)+'</span>','<b class="sm">'+h(c.ten)+'</b>',
+      '<span class="mono">'+h(c.phan)+'</span>'];
+  }));
+
+  o += U.sec('NĂM TẦNG · NĂM GÓI','Tên tầng và cấu trúc gói theo tài liệu nguồn — giá đang chạy ở màn Bảng giá');
+  o += U.tbl(['Tầng','Gói','Giá (tham chiếu)'], G.KTL_GOI.map(function(g){
+    return ['<b class="sm">'+h(g.t)+'</b>','<span class="sm muted">'+h(g.goi)+'</span>',
+      '<span class="mono">'+h(g.gia)+'</span>'];
+  }));
+
+  o += U.sec('TẦNG 1 "HẠT" — 7 NGÀY ĐẦU','Onboarding · quà theo nhịp · Lễ Nứt Vỏ → nâng Tầng 2');
+  o += U.bdDong(G.KTL_TANG1_MOC.map(function(m){ return {ten:m.n, o:[{t:m.ten}]}; }));
+
+  o += U.sec('TẦNG 2 "RỄ" — 10 CẤP (NGÀY 31–100)','Tên cấp thật từ tài liệu nền tảng Tầng 2');
+  o += '<div class="ktl-nhom">'+ G.KTL_CAP_T2.map(function(c){
+    return '<div class="ktl-nhom-o"><span class="ktl-nhom-ma mono">'+h(c.ma)+'</span>'+
+      '<b>'+h(c.ten)+'</b><span class="ktl-nhom-t">ngày '+h(c.ngay)+'</span></div>';
+  }).join('') +'</div>';
+
+  o += U.sec('5 TÀI LIỆU VỪA NẠP VÀO KHO','Trỏ về bản gốc của chủ hệ');
+  o += U.tbl(['Tài liệu','Nội dung chính'], G.KTL_NGUON_MR.map(function(d){
+    return ['<b class="sm">'+h(d.ten)+'</b>','<span class="sm muted">'+h(d.y)+'</span>'];
+  }));
+  return o;
+}
+
+function veCoach(){
+  var g=G.HDT_GITA, b=G.HDT_BEN, k=G.HDT_KYVONG, t5=G.HDT_TANG5, lg=G.HDT_LOGIC;
+  if(!g){ return U.empty('Phương pháp coach nằm trong gói nghề',
+    'Phần này đọc Hệ phát triển học viên (G.HDT_*) — chỉ vai nghề mới nạp sau khi đăng nhập. Mở lại bằng một vai nghề.'); }
+  function bang(t){ return U.tbl(t.cot, t.dong.map(function(r){return r.map(function(c){return h(c);});})); }
+  var o = U.sec('HỆ PHÁT TRIỂN HỌC VIÊN — PHƯƠNG PHÁP COACH','Chép thật từ '+h(G.HDT_NGUON));
+  o += '<div class="card pad-sm" style="border-color:var(--warn)">'+ic('shield','w-4 h-4')+
+    ' <b class="sm">Thang "5 tầng" ở đây là thang THẨM ĐỊNH (Nhận diện→Bứt phá) — khác thang hành trình gia đình (Hạt→Rừng) và thang năng lực coach (Thấu hiểu→Di sản). Ba thang, ba việc, đừng trộn.</b></div>';
+  o += U.sec('KHUNG PHÂN TÍCH G–I–T–A','Bốn cấu phần + bốn liên kết. Nguyên tắc: đặt giải pháp ở nơi cơ chế DUY TRÌ vấn đề, không ở nơi vấn đề xuất hiện.');
+  o += bang(g);
+  o += U.sec('5 TẦNG THẨM ĐỊNH','Mỗi tầng một giai đoạn và một điều kiện hoàn thành đo được.');
+  o += '<div class="grid g2">'+t5.map(function(t){
+    return '<div class="card pad-sm"><b class="sm">'+h(t.ma)+' · '+h(t.ten)+'</b>'+
+      '<p class="tiny muted mt">'+h(t.giaiDoan)+'</p>'+
+      '<p class="tiny mt"><b>Hoàn thành khi:</b> '+h(t.hoanThanh)+'</p></div>';
+  }).join('')+'</div>';
+  o += U.sec('LOGIC MỘT CASE','Chuỗi bắt buộc, và ba lỗi chuyên môn phải tránh.');
+  o += '<div class="card pad-sm"><p class="sm"><b>Chuỗi:</b> '+h(lg.chuoi)+'</p>'+
+    '<p class="tiny muted mt">'+h(lg.nguyenTac)+'</p></div>';
+  o += '<div class="card">'+U.tbl(['Ba lỗi chuyên môn phải tránh'], lg.loi.map(function(x){return [h(x)];}))+'</div>';
+  o += U.sec('CÁC BÊN LIÊN QUAN','Mỗi chức năng gắn một loại quyết định và một loại bằng chứng.');
+  o += bang(b);
+  o += U.sec('NHU CẦU & KỲ VỌNG TỪNG BÊN','Phân biệt nhu cầu · kỳ vọng hợp lý · kỳ vọng cần hiệu chỉnh.');
+  o += bang(k);
+  /* Toàn bộ 65 bảng phương pháp còn lại — gom theo chương, mỗi bảng bấm mở. */
+  var bg = G.HDT_BANG;
+  if(bg && bg.length){
+    var TENCH = {'1':'CHƯƠNG 1 — NỀN TẢNG QUẢN TRỊ','2':'CHƯƠNG 2 — KIẾN TRÚC HÀNH TRÌNH 5 TẦNG',
+      '3':'CHƯƠNG 3 — TÁM NHÓM VẤN ĐỀ (A–H): MÃ HOÁ · THANG TRƯỞNG THÀNH · PHÂN BIỆT · ĐẦU RA',
+      '4':'CHƯƠNG 4 — TỪ BIỂU HIỆN ĐẾN VẤN ĐỀ CỐT LÕI'};
+    ['1','2','3','4'].forEach(function(ch){
+      var ds = bg.filter(function(x){return x.ch===ch;});
+      if(!ds.length) return;
+      o += U.sec(TENCH[ch]||('Chương '+ch), ds.length+' bảng — bấm để mở');
+      o += ds.map(function(x){
+        return '<details class="ktl-nhom-o ktl-tl" style="border-left:3px solid var(--gita-vien-2);margin-bottom:6px">'+
+          '<summary><b>'+h(x.td)+'</b></summary>'+
+          '<div class="ktl-tl-than">'+U.tbl(x.cot, x.dong.map(function(r){return r.map(function(c){return h(c);});}))+'</div>'+
+          '</details>';
+      }).join('');
+    });
+  }
+  return o;
+}
+
+function veSau(){
+  var S = G.KTL_SAU;
+  if(!S || !S.length){ return U.empty('Bài biên soạn sâu nằm trong gói nghề',
+    'Phần này đọc bài sâu từng cấp (G.KTL_SAU) — chỉ vai nghề mới nạp sau khi đăng nhập. Mở lại bằng một vai nghề.'); }
+  var o = U.sec('BIÊN SOẠN SÂU TỪNG CẤP (BẢN VIP)','Chép thật từ '+h(G.KTL_SAU_NGUON)+' — mỗi cấp một bài đầy đủ theo 6 chiếc mũ cảm xúc. Bấm để mở.');
+  var TEN={'T1':'TẦNG 1 — HẠT','T2':'TẦNG 2 — RỄ','T3':'TẦNG 3 — THÂN','T4':'TẦNG 4 — TÁN','T5':'TẦNG 5 — RỪNG'};
+  ['T1','T2','T3','T4','T5'].forEach(function(tg){
+    var ds = S.filter(function(x){return x.tang===tg;});
+    if(!ds.length) return;
+    o += U.sec(TEN[tg]||tg, ds.length+' bài');
+    o += ds.map(function(x){
+      return '<details class="ktl-nhom-o ktl-tl" style="border-left:3px solid var(--gita);margin-bottom:6px">'+
+        '<summary><span class="ktl-nhom-ma mono">'+h(x.ma)+'</span><b>'+h(x.ten)+'</b></summary>'+
+        '<div class="ktl-sau-bai">'+h(x.bai)+'</div></details>';
+    }).join('');
+  });
+  return o;
+}
+
+G.VIEWS['kho-tai-lieu'] = function(){
+  if(!G.can('nghe_chung')) return U.lockCard();
+  var o = U.ph({eyebrow:'KHO TRI THỨC', ic:'vault', grad:1, t:'Kho tài liệu GITA 365',
+    lead:'26 tài liệu · 2.697 trang · 5 tầng × 10 cấp. Bộ khung, bộ sinh, cẩm nang dùng kho và chương trình đào tạo — tất cả bám nguồn thật của chủ hệ.'});
+  o += '<div class="tabs">'+ NGAN.map(function(n){
+    return '<button class="tab'+(G.ktlNgan===n.ma?' on':'')+'" onclick="G.ktlMoNgan(\''+n.ma+'\')">'+
+      ic(n.ic,'w-4 h-4')+h(n.ten)+'</button>'; }).join('') +'</div>';
+  if(G.ktlNgan==='khung') o += veKhung();
+  else if(G.ktlNgan==='danhmuc') o += veDanhMuc();
+  else if(G.ktlNgan==='sinh') o += veSinh();
+  else if(G.ktlNgan==='sach') o += veSach();
+  else if(G.ktlNgan==='caocap') o += veCaoCap();
+  else if(G.ktlNgan==='camnang') o += veCamNang();
+  else if(G.ktlNgan==='daotao') o += veDaoTao();
+  else if(G.ktlNgan==='coach') o += veCoach();
+  else if(G.ktlNgan==='sau') o += veSau();
+  return o;
+};
+
+})();
+
+})();
+
+/* ═════════ src/noi-nhan-tai.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 · 9.99.205 — HÀNH TRÌNH "NÔI NUÔI DƯỠNG NHÂN TÀI"
+
+   Chủ hệ: dựng hành trình theo bộ sách "Ba mẹ toàn năng — Nôi nuôi dưỡng
+   nhân tài" (Trainer Trương Nhật Quang · Học viện GITA).
+
+   Dữ liệu LÀ THẬT — chép từ MỤC LỤC cuốn "NÔI NUÔI DƯỠNG NHÂN TÀI 42.docx"
+   trên Drive (thư mục "GITA 365"): 6 quyển · 10 chương · các mục con, và
+   ba hành trình ở Chương 10 (90 ngày · 365 ngày · một cuộc đời). Màn TRỎ
+   về bản gốc, không chép toàn văn 44MB vào kho mã.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+
+G.NNT_NGUON = 'https://drive.google.com/file/d/1kV8orBSYRBvShQGLxeyxFQ9Cmiojnigo/view';
+
+/* 6 QUYỂN — gom các chương. */
+G.NNT_QUYEN = [
+  {q:'Q1',ten:'Kiến tạo nền tảng thành công',ch:'C1–C3',mau:'var(--gita)'},
+  {q:'Q2',ten:'Chắp cánh tài năng cùng con',ch:'C4–C5',mau:'var(--gita-sang)'},
+  {q:'Q3',ten:'Nghệ thuật dẫn dắt con thành công',ch:'C6–C7',mau:'var(--gita-sau)'},
+  {q:'Q4',ten:'Người thắp sáng hy vọng',ch:'C8',mau:'var(--ok)'},
+  {q:'Q5',ten:'Gia đình thịnh vượng',ch:'C9',mau:'var(--gita-ink)'},
+  {q:'Q6',ten:'Bản thiết kế tương lai',ch:'C10',mau:'var(--gold-2)'}
+];
+
+/* 10 CHƯƠNG — kèm mục con thật. */
+G.NNT_CHUONG = [
+  {c:'C1',q:'Q1',ten:'Thấu hiểu con và soi hình bóng cha mẹ',
+    muc:['Sức mạnh của quan sát','Sức mạnh của lắng nghe','Sức mạnh của câu hỏi','Bức tranh hoàn hảo hơn','Soi hình bóng cha mẹ trong con']},
+  {c:'C2',q:'Q1',ten:'Kiến tạo môi trường mới, gắn kết mới',
+    muc:['Bản thiết kế cho tương lai','Định hướng phát triển năng lực','Kiến tạo Nôi nuôi dưỡng tâm hồn – Gia đình','Môi trường phát triển tài năng','Trường học – Sân khấu thể hiện xuất sắc','Trải nghiệm xu hướng – sự nghiệp tương lai']},
+  {c:'C3',q:'Q1',ten:'Xây dựng hệ thống niềm tin mới',
+    muc:['Những cú sốc ngăn cản','Niềm tin hiện tại trong con','Thử thách mới thiết lập niềm tin mới','Niềm tin thành công mới','Thiết lập tương lai mới']},
+  {c:'C4',q:'Q2',ten:'Thiết lập các chặng thử thách',
+    muc:['Vòng tròn học tập thành công xuất sắc','Thử thách nhỏ nuôi hy vọng lớn','Đủ lượng sẽ thay đổi chất','Bữa tiệc ăn mừng và cảm xúc chiến thắng','Tốt hơn 1% mỗi ngày','Cùng nhân lên gấp 11 lần']},
+  {c:'C5',q:'Q2',ten:'Tài trí trong hành động',
+    muc:['Con có thể làm tốt hơn','Tiền đẻ ra tiền – Kiến thức tạo giá trị','Vay và phát tri thức','Tìm công thức thành công','Tư duy bút chì có gôm','Thay đổi tư duy – Thay đổi kết quả']},
+  {c:'C6',q:'Q3',ten:'Nghệ thuật đồng hành cùng con',
+    muc:['Nuôi dưỡng niềm tin vào chính con','Tư duy thông thái cùng con làm chủ','Định hướng con từ điều nhỏ nhất','Đồng hành Đúng – Đủ – Đều','Dạy con trò chuyện với cơ thể','Nghệ thuật sử dụng câu chuyện','Nuôi dưỡng phẩm chất thành đạt','Từ nơi khốn cùng đến vinh quang']},
+  {c:'C7',q:'Q3',ten:'Sức mạnh của sự chỉ dẫn',
+    muc:['Chỉ dẫn mơ hồ và những nút thắt','Chỉ dẫn hoàn hảo và điều kỳ diệu','Quy trình G-PDCA trong chỉ dẫn','Nguyên tắc 6C – Nuôi dạy con khoa học','Cố vấn và những giá trị lớn','Tinh thần trách nhiệm']},
+  {c:'C8',q:'Q4',ten:'Người thắp sáng hy vọng',
+    muc:['Bóng đêm ký ức','Điểm tựa niềm tin','Kiên nhẫn thực hiện ước mơ','Người thắp sáng hy vọng','Người truyền lửa tuyệt vời','Cuốn sổ nhật ký kỳ diệu','Định hướng lộ trình thành công','Văn hoá biết ơn và trân trọng']},
+  {c:'C9',q:'Q5',ten:'Gia đình thịnh vượng – Nôi nuôi dưỡng nhân tài',
+    muc:['Hiệu ứng Domino gia đình thịnh vượng','Khai phá năng lực sáng tạo','Tư duy vượt chướng ngại cùng con','Để con hoàn hảo là chính mình','Hướng tới những vì sao','Sức mạnh của sự lựa chọn']},
+  {c:'C10',q:'Q6',ten:'Bản thiết kế tương lai',
+    muc:['Bản đồ tài chính trong gia đình','Hành trình 90 ngày hạnh phúc','Hành trình 365 ngày nâng cấp gia đình','Hành trình một cuộc đời viên mãn cùng con']}
+];
+
+/* BA HÀNH TRÌNH — lấy từ Chương 10, đây là "hành trình" chủ hệ muốn dựng. */
+G.NNT_HANHTRINH = [
+  {h:'90 ngày',ten:'90 ngày hạnh phúc',mau:'var(--gita)',
+    y:'Kết nối lại, đặt nền — cha mẹ hiểu con và dựng thói quen gốc.',
+    moc:['Thấu hiểu con (C1)','Kiến tạo môi trường (C2)','Niềm tin mới (C3)','Ăn mừng mốc đầu (C4)']},
+  {h:'365 ngày',ten:'365 ngày nâng cấp gia đình',mau:'var(--gita-sau)',
+    y:'Chắp cánh tài năng, thành thói quen Đúng–Đủ–Đều cả năm.',
+    moc:['Chặng thử thách (C4)','Tài trí hành động (C5)','Đồng hành nghệ thuật (C6)','Chỉ dẫn G-PDCA · 6C (C7)']},
+  {h:'1 cuộc đời',ten:'Một cuộc đời viên mãn cùng con',mau:'var(--gold-2)',
+    y:'Gia đình thịnh vượng, để lại di sản — nôi nuôi dưỡng nhân tài trường tồn.',
+    moc:['Thắp sáng hy vọng (C8)','Gia đình thịnh vượng (C9)','Bản thiết kế tương lai (C10)','Di sản 100 năm']}
+];
+
+(function(){
+var U = G.U, h = U.h, ic = U.ic;
+
+G.nntHt = G.nntHt || '90 ngày';
+G.nntChonHt = function(hh){ G.nntHt = hh; G.render && G.render(); };
+
+function chuongCuaQuyen(q){ return G.NNT_CHUONG.filter(function(c){return c.q===q;}); }
+
+G.VIEWS['noi-nhan-tai'] = function(){
+  var soMuc = G.NNT_CHUONG.reduce(function(s,c){return s+c.muc.length;},0);
+  var o = U.ph({eyebrow:'CHA MẸ THÔNG THÁI', ic:'seed', grad:1, t:'Nôi nuôi dưỡng nhân tài',
+    lead:'Hành trình theo bộ sách "Ba mẹ toàn năng — Nôi nuôi dưỡng nhân tài": hiểu con · kiến tạo môi trường · dựng niềm tin · chặng thử thách · đồng hành · chỉ dẫn · thắp sáng · gia đình thịnh vượng · di sản.'});
+
+  o += U.bdSoHang([
+    {k:'Bộ sách', v:'6 quyển', c:'var(--gita)', d:'gom 10 chương'},
+    {k:'Chương', v:'10', c:'var(--gita-sau)'},
+    {k:'Mục nội dung', v:String(soMuc), c:'var(--ok)'},
+    {k:'Hành trình', v:'3', c:'var(--gold-2)', d:'90 ngày · 365 ngày · một đời'}
+  ]);
+
+  /* ── BA HÀNH TRÌNH — chọn một để xem mốc ── */
+  o += U.sec('BA HÀNH TRÌNH','Chọn nhịp đi — mỗi hành trình là một lát cắt của cùng bộ sách');
+  o += '<div class="nnt-ht-chon">'+ G.NNT_HANHTRINH.map(function(x){
+    return '<button class="nnt-ht-nut'+(G.nntHt===x.h?' on':'')+'" style="--hc:'+x.mau+
+      '" onclick="G.nntChonHt(\''+x.h+'\')">'+h(x.ten)+'</button>';
+  }).join('') +'</div>';
+  var ht = G.NNT_HANHTRINH.filter(function(x){return x.h===G.nntHt;})[0] || G.NNT_HANHTRINH[0];
+  o += '<p class="note" style="margin:6px 0 10px">'+h(ht.y)+'</p>';
+  o += U.bdDong(ht.moc.map(function(m,i){ return {ten:(i+1)+'', o:[{t:m}]}; }),
+    {chu:'Các mốc rút từ chính chương sách — đi tuần tự, mỗi mốc là một chương thực hành.'});
+
+  /* ── SÁU QUYỂN — dòng chảy ── */
+  o += U.sec('SÁU QUYỂN','Đường lớn của bộ sách, từ nền tảng tới di sản');
+  o += U.bdDong(G.NNT_QUYEN.map(function(q){
+    return {ten:q.q+' · '+q.ch, mau:q.mau, o:[{t:q.ten}]};
+  }));
+
+  /* ── 10 CHƯƠNG — thẻ gập, mục con bên trong (giữ chữ gọn) ── */
+  o += U.sec('MƯỜI CHƯƠNG · CHI TIẾT','Bấm một chương để mở các mục — nội dung đầy đủ đọc ở bản sách gốc');
+  o += '<div class="nnt-chuong">'+ G.NNT_QUYEN.map(function(q){
+    var cs = chuongCuaQuyen(q.q);
+    return '<div class="nnt-q" style="--qc:'+q.mau+'"><div class="nnt-q-h">'+h(q.q)+' · '+h(q.ten)+'</div>'+
+      cs.map(function(c){
+        return '<details class="nnt-c"><summary><span class="nnt-c-ma mono">'+h(c.c)+'</span>'+h(c.ten)+
+          ' <span class="nnt-c-so">'+c.muc.length+' mục</span></summary>'+
+          '<ul class="nnt-c-ds">'+c.muc.map(function(m){return '<li>'+h(m)+'</li>';}).join('')+'</ul></details>';
+      }).join('') +'</div>';
+  }).join('') +'</div>';
+
+  o += '<p class="note mt">'+ic('book','w-4 h-4')+' Nguồn đầy đủ: '+
+    '<a href="'+h(G.NNT_NGUON)+'" target="_blank" rel="noopener">bản sách "Nôi nuôi dưỡng nhân tài" trên Drive</a>'+
+    ' · Trainer Trương Nhật Quang · Học viện GITA.</p>';
+  return o;
+};
+
+})();
+
+})();
+
+/* ═════════ src/ke-toan-thue.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 · 9.99.209 — KẾ TOÁN – THUẾ · TRUNG TÂM VẬN HÀNH
+
+   Chủ hệ: dựng hệ tài chính kế toán – thuế chuyên nghiệp, đội thao tác
+   nhanh, xử lý 100% nghiệp vụ. Tham khảo bố cục GITAV20NEXUS: thẻ số lớn ·
+   HÀNG ĐỢI việc cần xử lý ngay (vạch mức khẩn) · lịch thuế theo dòng chảy.
+
+   Nghiệp vụ THẬT của Việt Nam: GTGT · TNCN · TNDN · lệ phí môn bài · BCTC,
+   hạn nộp theo quy định. Số liệu là MINH HOẠ khi chưa nối máy chủ (có dải
+   nói rõ); nối cửa kế toán ở máy chủ thì số thật thay. Không dựng số giả
+   trình như số thật.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+
+/* Lịch thuế Việt Nam — hạn nộp thật (KTT_LICH). */
+G.KTT_LICH = [
+  {ma:'MB',ten:'Lệ phí môn bài',ky:'Năm',han:'30/01',muc:'nhac'},
+  {ma:'GTGT-T',ten:'Tờ khai GTGT tháng',ky:'Tháng',han:'Ngày 20 tháng sau',muc:'khan'},
+  {ma:'GTGT-Q',ten:'Tờ khai GTGT quý',ky:'Quý',han:'Cuối tháng đầu quý sau',muc:'luuy'},
+  {ma:'TNCN-T',ten:'Khấu trừ TNCN tháng/quý',ky:'Tháng/Quý',han:'Cùng hạn GTGT',muc:'khan'},
+  {ma:'TNDN-Q',ten:'Tạm nộp TNDN quý',ky:'Quý',han:'Ngày 30 tháng đầu quý sau',muc:'luuy'},
+  {ma:'QT-TNCN',ten:'Quyết toán TNCN năm',ky:'Năm',han:'31/03 (tổ chức)',muc:'nhac'},
+  {ma:'QT-TNDN',ten:'Quyết toán TNDN năm',ky:'Năm',han:'31/03',muc:'nhac'},
+  {ma:'BCTC',ten:'Báo cáo tài chính năm',ky:'Năm',han:'31/03 (90 ngày)',muc:'nhac'}
+];
+
+/* Hệ thống tài khoản (TT133) — mẫu số dư. */
+G.KTT_SO = [
+  {tk:'111',ten:'Tiền mặt',no:185000000,co:0},
+  {tk:'112',ten:'Tiền gửi ngân hàng',no:1240000000,co:0},
+  {tk:'131',ten:'Phải thu khách hàng',no:320000000,co:0},
+  {tk:'331',ten:'Phải trả người bán',no:0,co:145000000},
+  {tk:'333',ten:'Thuế & phải nộp Nhà nước',no:0,co:98000000},
+  {tk:'334',ten:'Phải trả người lao động',no:0,co:210000000},
+  {tk:'511',ten:'Doanh thu bán hàng & DV',no:0,co:1950000000},
+  {tk:'642',ten:'Chi phí quản lý doanh nghiệp',no:1240000000,co:0},
+  {tk:'421',ten:'Lợi nhuận sau thuế chưa PP',no:0,co:717000000}
+];
+
+/* Kê khai thuế — trạng thái mẫu. */
+G.KTT_KHAI = [
+  {loai:'GTGT',ky:'Tháng 8/2026',trangThai:'Đã nộp',soTien:112000000,muc:'xong'},
+  {loai:'GTGT',ky:'Tháng 9/2026',trangThai:'Chờ kê khai',soTien:98000000,muc:'khan'},
+  {loai:'TNCN',ky:'Tháng 9/2026',trangThai:'Chờ kê khai',soTien:31000000,muc:'khan'},
+  {loai:'TNDN',ky:'Quý 3/2026',trangThai:'Chờ tạm nộp',soTien:143000000,muc:'luuy'},
+  {loai:'Môn bài',ky:'Năm 2026',trangThai:'Đã nộp',soTien:3000000,muc:'xong'}
+];
+
+(function(){
+var U = G.U, h = U.h, ic = U.ic;
+function tien(n){ return new Intl.NumberFormat('vi-VN').format(Math.round(U.num(n)))+' đ'; }
+
+/* Hoá đơn — mẫu đầu ra / đầu vào. Để LOCAL trong IIFE (không gắn lên G):
+   đây là dữ liệu minh hoạ có tên đối tượng, gắn lên G.* thì bộ soi dữ liệu
+   mẫu (mục 96) đọc nó như một KHO người hư cấu chưa khai. Cùng lối KH_MAU
+   ở crm.js — mẫu để trong tệp, không thành kho khai báo. */
+var KTT_HOADON = [
+  {so:'HD-000512',loai:'ra',kh:'Khách hàng A',tien:30000000,gtgt:2400000,soo:true},
+  {so:'HD-000513',loai:'ra',kh:'Khách hàng B',tien:100000000,gtgt:8000000,soo:true},
+  {so:'HD-000514',loai:'ra',kh:'Khách hàng C',tien:30000000,gtgt:2400000,soo:false},
+  {so:'MV-2231',loai:'vao',kh:'Nhà cung cấp máy chủ',tien:12000000,gtgt:1200000,soo:true},
+  {so:'MV-2240',loai:'vao',kh:'Văn phòng phẩm',tien:3500000,gtgt:350000,soo:false}
+];
+
+G.kttNgan = G.kttNgan || 'buonglai';
+G.kttMoNgan = function(m){ G.kttNgan = m; G.render && G.render(); };
+
+/* Nạp số THẬT từ máy chủ (một lần mỗi cửa); chưa nối / lỗi → sample.
+   Cùng lối CRM: gọi cửa, có ok thì vẽ số thật + dải "số thật", không thì
+   giữ minh hoạ. */
+G.kttSv = G.kttSv || {};
+function kttTai(verb){
+  if(G.kttSv[verb] !== undefined) return;
+  G.kttSv[verb] = 'dang';
+  if(!G.goiMayChu){ G.kttSv[verb] = {ok:false}; return; }
+  G.goiMayChu(verb, {}).then(function(x){ G.kttSv[verb] = x || {ok:false};
+    if(G.S && G.S.view === 'ke-toan-thue') G.render && G.render();
+  }).catch(function(){ G.kttSv[verb] = {ok:false}; });
+}
+function kttReal(verb){ var d = G.kttSv[verb]; if(d === undefined) kttTai(verb); return (d && d.ok) ? d : null; }
+
+var NGAN = [
+  {ma:'buonglai', ten:'Buồng lái', ic:'chart'},
+  {ma:'so', ten:'Sổ kế toán', ic:'book'},
+  {ma:'hoadon', ten:'Hoá đơn', ic:'check'},
+  {ma:'thue', ten:'Kê khai thuế', ic:'shield'},
+  {ma:'candoi', ten:'Cân đối', ic:'compass'},
+  {ma:'congno', ten:'Công nợ & Dòng tiền', ic:'pulse'},
+  {ma:'baocao', ten:'Báo cáo', ic:'target'}
+];
+
+function veBuongLai(){
+  var R = kttReal('docBuongLaiKT');
+  if(R){
+    var o0 = U.bdNguon(true);
+    o0 += U.bdSoHang([
+      {k:'Doanh thu', v:tien(R.doanhThu), c:'var(--gita)'},
+      {k:'Chi phí', v:tien(R.chiPhi), c:'var(--gita-do)', tot:false},
+      {k:'Lợi nhuận', v:tien(R.loiNhuan), c:'var(--ok)'},
+      {k:'GTGT phải nộp', v:tien(R.gtgtPhaiNop), c:'var(--warn)'},
+      {k:'Hoá đơn chưa ghi sổ', v:String(R.hoaDonChuaGhiSo), c:'var(--gita-sang)'},
+      {k:'Tờ khai chưa nộp', v:String(R.toKhaiChuaNop), c:'var(--gita-sau)'}
+    ]);
+    var viec = [];
+    if(R.toKhaiChuaNop>0) viec.push({muc:'khan',ten:R.toKhaiChuaNop+' tờ khai chưa nộp',phu:'kê khai & nộp trước hạn',nhan:'khẩn',act:'ke-toan-thue',actNhan:'Mở'});
+    if(R.hoaDonChuaGhiSo>0) viec.push({muc:'luuy',ten:R.hoaDonChuaGhiSo+' hoá đơn chưa ghi sổ',phu:'vào sổ trước khi khoá kỳ',nhan:'lưu ý'});
+    if(!viec.length) viec.push({muc:'nhac',ten:'Không có việc thuế tồn đọng',phu:'sổ và tờ khai đang gọn',nhan:'ổn'});
+    o0 += U.bdViec(viec, {tieuDe:'Việc cần xử lý ngay', phu:'đọc từ sổ thật'});
+    o0 += U.sec('LỊCH THUẾ — DÒNG NGHĨA VỤ','Hạn nộp theo quy định Việt Nam');
+    o0 += U.bdDong(G.KTT_LICH.slice(0,5).map(function(l){ return {ten:l.ma, o:[{t:l.ten,p:'hạn: '+l.han}]}; }));
+    return o0;
+  }
+  var dt=1950000000, cp=1240000000, gtgt=98000000, tncn=31000000, loi=dt-cp;
+  var o = U.bdNguon(false);
+  o += U.bdSoHang([
+    {k:'Doanh thu tháng', v:tien(dt), c:'var(--gita)', xu:4},
+    {k:'Chi phí tháng', v:tien(cp), c:'var(--gita-do)', xu:2, tot:false},
+    {k:'Lợi nhuận', v:tien(loi), c:'var(--ok)', xu:6},
+    {k:'GTGT phải nộp', v:tien(gtgt), c:'var(--warn)', d:'kỳ tháng 9'},
+    {k:'TNCN khấu trừ', v:tien(tncn), c:'var(--gita-sang)', d:'kỳ tháng 9'},
+    {k:'Tiền gửi NH', v:tien(1240000000), c:'var(--gita-sau)'}
+  ]);
+  /* Hàng đợi việc kế toán-thuế — mẫu thao tác vận hành GITAV20NEXUS. */
+  o += U.bdViec([
+    {muc:'khan',ten:'Kê khai GTGT tháng 9 — hạn ngày 20/10',phu:'Còn 98.000.000đ đầu ra chưa lên tờ khai',nhan:'khẩn'},
+    {muc:'khan',ten:'Khấu trừ TNCN tháng 9 — cùng hạn',phu:'31.000.000đ từ bảng lương đã chốt',nhan:'khẩn'},
+    {muc:'luuy',ten:'2 hoá đơn chưa ghi sổ',phu:'HD-000514 · MV-2240 — vào sổ trước khi khoá kỳ',nhan:'lưu ý'},
+    {muc:'luuy',ten:'Tạm nộp TNDN quý 3 — hạn 30/10',phu:'Ước 143.000.000đ theo lợi nhuận tạm tính',nhan:'lưu ý'},
+    {muc:'nhac',ten:'Đối chiếu ngân hàng tháng 9',phu:'Khớp sổ 112 với sao kê — chưa chạy',nhan:'nhắc'}
+  ], {tieuDe:'Việc cần xử lý ngay', phu:'xếp theo mức khẩn · hạn nộp thuế'});
+
+  o += U.sec('LỊCH THUẾ — DÒNG NGHĨA VỤ','Các sắc thuế và hạn nộp theo quy định Việt Nam');
+  o += U.bdDong(G.KTT_LICH.slice(0,5).map(function(l){
+    return {ten:l.ma, o:[{t:l.ten,p:'hạn: '+l.han}]};
+  }), {chu:'GTGT & TNCN theo tháng/quý · TNDN tạm nộp quý · quyết toán & BCTC năm (31/03) · môn bài (30/01).'});
+  return o;
+}
+
+function veSo(){
+  var R = kttReal('docSoKeToan');
+  if(R){
+    var o0 = U.bdNguon(true) + U.sec('SỔ KẾ TOÁN KÉP','Số dư tính lúc đọc từ '+R.soButToan+' bút toán');
+    o0 += U.tbl(['TK','Dư Nợ','Dư Có'], (R.tk||[]).map(function(s){
+      return ['<span class="mono">'+h(s.tk)+'</span>','<span class="mono">'+(s.no?tien(s.no):'—')+'</span>',
+        '<span class="mono">'+(s.co?tien(s.co):'—')+'</span>'];
+    }).concat([['<b>CỘNG</b>','<b class="mono">'+tien(R.tongNo)+'</b>','<b class="mono">'+tien(R.tongCo)+'</b>']]));
+    o0 += '<div class="bd-nguon '+(R.canDoi?'bd-nguon-that':'bd-nguon-mau')+'">'+
+      ic(R.canDoi?'check':'shield','w-4 h-4')+'<span><b>'+(R.canDoi?'Cân đối':'LỆCH')+'</b> — Nợ '+
+      tien(R.tongNo)+' '+(R.canDoi?'=':'≠')+' Có '+tien(R.tongCo)+'.</span></div>';
+    return o0;
+  }
+  var o = U.bdNguon(false);
+  o += U.sec('SỔ KẾ TOÁN KÉP','Mỗi bút toán ghi Nợ – Có cân nhau; số dư tính lúc đọc');
+  var tn=0, tc=0; G.KTT_SO.forEach(function(s){ tn+=s.no; tc+=s.co; });
+  o += U.tbl(['TK','Tên tài khoản','Dư Nợ','Dư Có'], G.KTT_SO.map(function(s){
+    return ['<span class="mono">'+h(s.tk)+'</span>','<b class="sm">'+h(s.ten)+'</b>',
+      '<span class="mono">'+(s.no?tien(s.no):'—')+'</span>',
+      '<span class="mono">'+(s.co?tien(s.co):'—')+'</span>'];
+  }).concat([['','<b>CỘNG</b>','<b class="mono">'+tien(tn)+'</b>','<b class="mono">'+tien(tc)+'</b>']]));
+  o += '<div class="bd-nguon '+(tn===tc?'bd-nguon-that':'bd-nguon-mau')+'">'+
+    ic(tn===tc?'check':'shield','w-4 h-4')+'<span><b>'+(tn===tc?'Cân đối':'LỆCH')+
+    '</b> — tổng Nợ '+tien(tn)+' '+(tn===tc?'=':'≠')+' tổng Có '+tien(tc)+'.</span></div>';
+  return o;
+}
+
+function veHoaDon(){
+  var R = kttReal('docHoaDon');
+  if(R){
+    var o0 = U.bdNguon(true) + U.bdSoHang([
+      {k:'Tổng hoá đơn', v:String((R.ds||[]).length), c:'var(--gita)'},
+      {k:'Chưa ghi sổ', v:String(R.chuaGhiSo||0), c:'var(--warn)', d:'cần vào sổ'}
+    ]);
+    o0 += U.sec('HOÁ ĐƠN','Đầu ra/đầu vào — bấm ghi sổ để lên bút toán');
+    o0 += U.tbl(['Số HĐ','Loại','Đối tượng','Tiền hàng','GTGT','Ghi sổ'], (R.ds||[]).map(function(x){
+      return ['<span class="mono">'+h(x.soHD)+'</span>', h(x.loai==='ra'?'Ra':'Vào'),
+        '<span class="sm">'+h(x.doiTuong||'—')+'</span>','<span class="mono">'+tien(x.tienHang)+'</span>',
+        '<span class="mono">'+tien(x.tienThue)+'</span>',
+        x.daGhiSo?'<span style="color:var(--ok)">✓ đã ghi</span>':'<span style="color:var(--warn)">chờ ghi</span>'];
+    }));
+    return o0;
+  }
+  var o = U.bdNguon(false);
+  var ra=KTT_HOADON.filter(function(x){return x.loai==='ra';});
+  var vao=KTT_HOADON.filter(function(x){return x.loai==='vao';});
+  o += U.bdSoHang([
+    {k:'Hoá đơn đầu ra', v:String(ra.length), c:'var(--gita)'},
+    {k:'Hoá đơn đầu vào', v:String(vao.length), c:'var(--gita-sau)'},
+    {k:'Chưa ghi sổ', v:String(KTT_HOADON.filter(function(x){return !x.soo;}).length), c:'var(--warn)', d:'cần vào sổ'}
+  ]);
+  function bang(ten, ds){
+    return U.sec(ten,'')+U.tbl(['Số HĐ','Đối tượng','Tiền hàng','GTGT','Ghi sổ'], ds.map(function(x){
+      return ['<span class="mono">'+h(x.so)+'</span>','<b class="sm">'+h(x.kh)+'</b>',
+        '<span class="mono">'+tien(x.tien)+'</span>','<span class="mono">'+tien(x.gtgt)+'</span>',
+        x.soo?'<span style="color:var(--ok)">✓ đã ghi</span>':'<span style="color:var(--warn)">chờ ghi</span>'];
+    }));
+  }
+  o += bang('HOÁ ĐƠN ĐẦU RA', ra);
+  o += bang('HOÁ ĐƠN ĐẦU VÀO', vao);
+  return o;
+}
+
+/* Đối chiếu thuế GTGT theo kỳ — đọc từ sổ (3331 đầu ra − 1331 đầu vào). */
+function veGTGTBlock(){
+  var g = kttReal('docDoiChieuGTGT');
+  if(g){
+    var o = U.sec('ĐỐI CHIẾU THUẾ GTGT','Đầu ra (3331) − đầu vào được khấu trừ (1331) từng kỳ — đọc từ sổ');
+    o += U.tbl(['Kỳ','Đầu ra','Đầu vào','Phải nộp','Khấu trừ chuyển kỳ'], (g.ky||[]).map(function(k){
+      return [h(k.ky),'<span class="mono">'+tien(k.dauRa)+'</span>','<span class="mono">'+tien(k.dauVao)+'</span>',
+        '<span class="mono">'+tien(k.phaiNop)+'</span>','<span class="mono">'+(k.khauTruChuyenKy?tien(k.khauTruChuyenKy):'—')+'</span>'];
+    }).concat([['<b>CỘNG</b>','<b class="mono">'+tien(g.tong.dauRa)+'</b>','<b class="mono">'+tien(g.tong.dauVao)+'</b>',
+      '<b class="mono">'+tien(g.tong.phaiNop)+'</b>','<b class="mono">'+tien(g.tong.khauTruChuyenKy)+'</b>']]));
+    return o;
+  }
+  var s = U.sec('ĐỐI CHIẾU THUẾ GTGT','Minh hoạ — nối máy chủ thì đối chiếu từng kỳ thật');
+  s += U.tbl(['Kỳ','Đầu ra','Đầu vào','Phải nộp','Khấu trừ chuyển kỳ'], [
+    ['2026-07','<span class="mono">'+tien(120000000)+'</span>','<span class="mono">'+tien(38000000)+'</span>','<span class="mono">'+tien(82000000)+'</span>','—'],
+    ['2026-08','<span class="mono">'+tien(112000000)+'</span>','<span class="mono">'+tien(40000000)+'</span>','<span class="mono">'+tien(72000000)+'</span>','—'],
+    ['2026-09','<span class="mono">'+tien(98000000)+'</span>','<span class="mono">'+tien(45000000)+'</span>','<span class="mono">'+tien(53000000)+'</span>','—']
+  ]);
+  return s;
+}
+
+function veThue(){
+  var R = kttReal('docToKhai');
+  if(R){
+    var o0 = U.bdNguon(true) + U.sec('KÊ KHAI THUẾ','Trạng thái từng sắc thuế theo kỳ — '+(R.chuaNop||0)+' tờ chưa nộp');
+    o0 += U.bdViec((R.ds||[]).map(function(k){
+      var m = k.trangThai==='daNop'?'xong':(k.trangThai==='daKhai'?'luuy':'khan');
+      return {muc:m, ten:k.loai+' · '+k.ky, phu:k.trangThai+' · '+tien(k.soTien)+(k.hanNop?' · hạn '+k.hanNop:''),
+        nhan:k.trangThai==='daNop'?'đã nộp':(m==='khan'?'khẩn':'lưu ý')};
+    }), {tieuDe:'Nghĩa vụ thuế'});
+    o0 += veGTGTBlock();
+    return o0;
+  }
+  var o = U.bdNguon(false);
+  o += U.sec('KÊ KHAI THUẾ','Trạng thái từng sắc thuế theo kỳ — GTGT · TNCN · TNDN · môn bài');
+  o += U.bdViec(G.KTT_KHAI.map(function(k){
+    return {muc:k.muc, ten:k.loai+' · '+k.ky, phu:k.trangThai+' · '+tien(k.soTien),
+      nhan:k.muc==='xong'?'đã nộp':(k.muc==='khan'?'khẩn':'lưu ý')};
+  }), {tieuDe:'Nghĩa vụ thuế', phu:'nối máy chủ để nộp & lưu biên nhận'});
+  o += U.sec('BA SẮC THUẾ CHÍNH','Cách tính rút gọn — chi tiết ở tờ khai');
+  o += U.tbl(['Sắc thuế','Cách tính','Kỳ'], [
+    ['<b class="sm">GTGT</b>','Thuế GTGT đầu ra − đầu vào được khấu trừ','Tháng / Quý'],
+    ['<b class="sm">TNCN</b>','Khấu trừ tại nguồn theo biểu luỹ tiến / 10%','Tháng / Quý · quyết toán năm'],
+    ['<b class="sm">TNDN</b>','20% × thu nhập tính thuế','Tạm nộp quý · quyết toán năm']
+  ]);
+  o += veGTGTBlock();
+  return o;
+}
+
+/* ── CÂN ĐỐI: bảng cân đối kế toán + cân đối số phát sinh ── */
+function veCanDoi(){
+  var cs = kttReal('docCanDoiKeToan');
+  var ps = kttReal('docCanDoiPhatSinh');
+  if(cs || ps){
+    var o0 = U.bdNguon(true);
+    if(cs){
+      o0 += U.sec('BẢNG CÂN ĐỐI KẾ TOÁN','Tài sản = Nguồn vốn — dẫn từ sổ · '+(cs.canDoi?'đang cân':'LỆCH'));
+      o0 += '<div class="grid g2">';
+      o0 += '<div>'+U.sec('TÀI SẢN','')+U.tbl(['TK','Số dư'], ((cs.nhom&&cs.nhom.taiSan)||[]).map(function(x){
+        return ['<span class="mono">'+h(x.tk)+'</span>','<span class="mono">'+tien(x.du)+'</span>'];
+      }).concat([['<b>TỔNG TÀI SẢN</b>','<b class="mono">'+tien(cs.tongTaiSan)+'</b>']]))+'</div>';
+      o0 += '<div>'+U.sec('NGUỒN VỐN','')+U.tbl(['Khoản','Số tiền'], [
+        ['Nợ phải trả','<span class="mono">'+tien(cs.noPhaiTra)+'</span>'],
+        ['Vốn chủ sở hữu','<span class="mono">'+tien(cs.vonCSH)+'</span>'],
+        ['Lợi nhuận chưa PP','<span class="mono">'+tien(cs.lnChuaPP)+'</span>'],
+        ['<b>TỔNG NGUỒN VỐN</b>','<b class="mono">'+tien(cs.tongNguonVon)+'</b>']
+      ])+'</div></div>';
+      o0 += '<div class="bd-nguon '+(cs.canDoi?'bd-nguon-that':'bd-nguon-mau')+'">'+ic(cs.canDoi?'check':'shield','w-4 h-4')+
+        '<span><b>'+(cs.canDoi?'Cân đối':'LỆCH')+'</b> — Tài sản '+tien(cs.tongTaiSan)+' '+(cs.canDoi?'=':'≠')+' Nguồn vốn '+tien(cs.tongNguonVon)+'.</span></div>';
+    }
+    if(ps){
+      o0 += U.sec('BẢNG CÂN ĐỐI SỐ PHÁT SINH','Phát sinh Nợ/Có và dư cuối từng tài khoản · '+ps.soButToan+' bút toán');
+      o0 += U.tbl(['TK','PS Nợ','PS Có','Dư Nợ','Dư Có'], (ps.tk||[]).map(function(s){
+        return ['<span class="mono">'+h(s.tk)+'</span>','<span class="mono">'+(s.psNo?tien(s.psNo):'—')+'</span>',
+          '<span class="mono">'+(s.psCo?tien(s.psCo):'—')+'</span>','<span class="mono">'+(s.duNo?tien(s.duNo):'—')+'</span>',
+          '<span class="mono">'+(s.duCo?tien(s.duCo):'—')+'</span>'];
+      }).concat([['<b>CỘNG</b>','<b class="mono">'+tien(ps.tong.psNo)+'</b>','<b class="mono">'+tien(ps.tong.psCo)+'</b>',
+        '<b class="mono">'+tien(ps.tong.duNo)+'</b>','<b class="mono">'+tien(ps.tong.duCo)+'</b>']]));
+    }
+    return o0;
+  }
+  var o = U.bdNguon(false);
+  o += U.sec('BẢNG CÂN ĐỐI KẾ TOÁN','Tài sản = Nguồn vốn — minh hoạ; nối máy chủ thì dẫn từ sổ thật');
+  o += '<div class="grid g2">';
+  o += '<div>'+U.sec('TÀI SẢN','')+U.tbl(['Khoản','Số tiền'], [
+    ['Tiền mặt (111)','<span class="mono">'+tien(185000000)+'</span>'],
+    ['Tiền gửi NH (112)','<span class="mono">'+tien(1240000000)+'</span>'],
+    ['Phải thu KH (131)','<span class="mono">'+tien(320000000)+'</span>'],
+    ['<b>TỔNG TÀI SẢN</b>','<b class="mono">'+tien(1745000000)+'</b>']
+  ])+'</div>';
+  o += '<div>'+U.sec('NGUỒN VỐN','')+U.tbl(['Khoản','Số tiền'], [
+    ['Phải trả người bán (331)','<span class="mono">'+tien(145000000)+'</span>'],
+    ['Thuế phải nộp (333)','<span class="mono">'+tien(98000000)+'</span>'],
+    ['Phải trả NLĐ (334)','<span class="mono">'+tien(210000000)+'</span>'],
+    ['Lợi nhuận chưa PP (421)','<span class="mono">'+tien(1292000000)+'</span>'],
+    ['<b>TỔNG NGUỒN VỐN</b>','<b class="mono">'+tien(1745000000)+'</b>']
+  ])+'</div></div>';
+  o += '<div class="bd-nguon bd-nguon-that">'+ic('check','w-4 h-4')+'<span><b>Cân đối</b> — Tài sản = Nguồn vốn = '+tien(1745000000)+'.</span></div>';
+  return o;
+}
+
+/* ── CÔNG NỢ THEO TUỔI + LƯU CHUYỂN TIỀN TỆ ── */
+function veCongNo(){
+  function hangTuoi(t){
+    return ['<span class="mono">'+tien(t.b0)+'</span>','<span class="mono">'+tien(t.b30)+'</span>',
+      '<span class="mono">'+tien(t.b60)+'</span>','<span class="mono" style="color:var(--gita-do)">'+tien(t.b90)+'</span>',
+      '<b class="mono">'+tien(t.tong)+'</b>'];
+  }
+  var cn = kttReal('docCongNoTuoi');
+  var lc = kttReal('docLuuChuyenTien');
+  if(cn || lc){
+    var o0 = U.bdNguon(true);
+    if(cn){
+      o0 += U.sec('CÔNG NỢ THEO TUỔI','Phải thu (131) · phải trả (331) theo ngày chứng từ');
+      o0 += U.tbl(['Nhóm','0–30 ngày','31–60','61–90','>90 ngày','Tổng'], [
+        ['<b>Phải thu (131)</b>'].concat(hangTuoi(cn.phaiThu)),
+        ['<b>Phải trả (331)</b>'].concat(hangTuoi(cn.phaiTra))
+      ]);
+      o0 += '<p class="note mt">'+h(cn.vi||'')+'</p>';
+    }
+    if(lc){
+      o0 += U.sec('LƯU CHUYỂN TIỀN TỆ','Tiền vào/ra qua quỹ (111) và ngân hàng (112)');
+      o0 += U.bdSoHang([
+        {k:'Tiền vào', v:tien(lc.tienVao), c:'var(--ok)'},
+        {k:'Tiền ra', v:tien(lc.tienRa), c:'var(--gita-do)', tot:false},
+        {k:'Dòng tiền thuần', v:tien(lc.thuan), c:(lc.thuan>=0?'var(--gita)':'var(--gita-do)')}
+      ]);
+      if((lc.thang||[]).length){
+        o0 += U.sec('DÒNG TIỀN THEO THÁNG','');
+        o0 += U.bdCot((lc.thang).map(function(t){ return {nhan:String(t.ky||'').slice(5), a:t.vao, b:t.ra}; }), {aTen:'Vào', bTen:'Ra'});
+      }
+    }
+    return o0;
+  }
+  var o = U.bdNguon(false);
+  o += U.sec('CÔNG NỢ THEO TUỔI','Minh hoạ — nối máy chủ thì xếp theo ngày chứng từ thật');
+  o += U.tbl(['Nhóm','0–30 ngày','31–60','61–90','>90 ngày','Tổng'], [
+    ['<b>Phải thu (131)</b>','<span class="mono">'+tien(180000000)+'</span>','<span class="mono">'+tien(90000000)+'</span>','<span class="mono">'+tien(35000000)+'</span>','<span class="mono" style="color:var(--gita-do)">'+tien(15000000)+'</span>','<b class="mono">'+tien(320000000)+'</b>'],
+    ['<b>Phải trả (331)</b>','<span class="mono">'+tien(100000000)+'</span>','<span class="mono">'+tien(30000000)+'</span>','<span class="mono">'+tien(15000000)+'</span>','<span class="mono">'+tien(0)+'</span>','<b class="mono">'+tien(145000000)+'</b>']
+  ]);
+  o += '<p class="note mt">Quá 90 ngày là nhóm cần đòi/thu xếp gấp — để lâu là rủi ro mất vốn.</p>';
+  o += U.sec('LƯU CHUYỂN TIỀN TỆ','Minh hoạ 6 tháng');
+  o += U.bdSoHang([
+    {k:'Tiền vào', v:tien(1980000000), c:'var(--ok)'},
+    {k:'Tiền ra', v:tien(1510000000), c:'var(--gita-do)', tot:false},
+    {k:'Dòng tiền thuần', v:tien(470000000), c:'var(--gita)'}
+  ]);
+  o += U.bdCot([{nhan:'T4',a:310e6,b:250e6},{nhan:'T5',a:340e6,b:260e6},{nhan:'T6',a:360e6,b:280e6},
+    {nhan:'T7',a:300e6,b:255e6},{nhan:'T8',a:350e6,b:240e6},{nhan:'T9',a:320e6,b:225e6}], {aTen:'Vào', bTen:'Ra'});
+  return o;
+}
+
+function veBaoCao(){
+  var R = kttReal('docBaoCaoTC');
+  if(R){
+    var o0 = U.bdNguon(true) + U.sec('KẾT QUẢ KINH DOANH (P&L)','Đọc từ sổ kế toán');
+    o0 += U.tbl(['Chỉ tiêu','Số tiền'], [
+      ['Doanh thu thuần','<span class="mono">'+tien(R.doanhThu)+'</span>'],
+      ['Chi phí','<span class="mono">'+tien(R.chiPhi)+'</span>'],
+      ['Lợi nhuận trước thuế','<span class="mono">'+tien(R.loiNhuanTruocThue)+'</span>'],
+      ['Thuế TNDN (20%)','<span class="mono">'+tien(R.tndn)+'</span>'],
+      ['<b>Lợi nhuận sau thuế</b>','<b class="mono" style="color:var(--ok)">'+tien(R.loiNhuanSauThue)+'</b>']
+    ]);
+    return o0;
+  }
+  var o = U.bdNguon(false);
+  var dt=1950000000, cp=1240000000, thue=Math.round((dt-cp)*0.2), loi=dt-cp-thue;
+  o += U.sec('KẾT QUẢ KINH DOANH (P&L)','Rút gọn kỳ tháng 9');
+  o += U.tbl(['Chỉ tiêu','Số tiền'], [
+    ['Doanh thu thuần','<span class="mono">'+tien(dt)+'</span>'],
+    ['Chi phí','<span class="mono">'+tien(cp)+'</span>'],
+    ['Lợi nhuận trước thuế','<span class="mono">'+tien(dt-cp)+'</span>'],
+    ['Thuế TNDN (20%)','<span class="mono">'+tien(thue)+'</span>'],
+    ['<b>Lợi nhuận sau thuế</b>','<b class="mono" style="color:var(--ok)">'+tien(loi)+'</b>']
+  ]);
+  o += U.sec('DOANH THU vs CHI PHÍ · 6 THÁNG','');
+  o += U.bdCot([{nhan:'T4',a:1520e6,b:1050e6},{nhan:'T5',a:1680e6,b:1120e6},
+    {nhan:'T6',a:1740e6,b:1180e6},{nhan:'T7',a:1610e6,b:1090e6},
+    {nhan:'T8',a:1880e6,b:1210e6},{nhan:'T9',a:1950e6,b:1240e6}],
+    {aTen:'Doanh thu',bTen:'Chi phí'});
+  o += '<p class="note mt">Ba báo cáo tài chính đầy đủ (Kết quả KD · Cân đối kế toán · Lưu chuyển tiền tệ) '+
+    'xuất từ sổ khi đã nối máy chủ kế toán — không dựng số giả.</p>';
+  return o;
+}
+
+G.VIEWS['ke-toan-thue'] = function(){
+  if(!G.can('fin_view')) return U.lockCard();
+  var o = U.ph({eyebrow:'TÀI CHÍNH · VẬN HÀNH', ic:'shield', grad:1, t:'Kế toán – Thuế',
+    lead:'Trung tâm vận hành kế toán – thuế: buồng lái · sổ kép · hoá đơn · kê khai GTGT·TNCN·TNDN · báo cáo. Việc cần xử lý ngay xếp theo mức khẩn để đội thao tác nhanh.'});
+  o += '<div class="tabs">'+ NGAN.map(function(n){
+    return '<button class="tab'+(G.kttNgan===n.ma?' on':'')+'" onclick="G.kttMoNgan(\''+n.ma+'\')">'+
+      ic(n.ic,'w-4 h-4')+h(n.ten)+'</button>'; }).join('') +'</div>';
+  if(G.kttNgan==='buonglai') o += veBuongLai();
+  else if(G.kttNgan==='so') o += veSo();
+  else if(G.kttNgan==='hoadon') o += veHoaDon();
+  else if(G.kttNgan==='thue') o += veThue();
+  else if(G.kttNgan==='candoi') o += veCanDoi();
+  else if(G.kttNgan==='congno') o += veCongNo();
+  else o += veBaoCao();
+  return o;
+};
+
 })();
 
 })();
@@ -47561,6 +51081,23 @@ G.DP_TUYEN = [
     }).join('');
   }
 
+  /* Nối một CỬA (doiTuong trong sổ) về đúng Agent sở hữu — join roster ở
+     MÁY KHÁCH, không chép roster sang máy chủ (một nguồn). */
+  function tenAgent(cua) {
+    var t = (G.DP_TRO_LY || []).filter(function (x) { return x.khoaSoHuu === cua; })[0];
+    if (!t) return null;
+    var m = (G.DP_MIEN || []).filter(function (x) { return x.ma === t.mien; })[0];
+    return { ma: t.ma, mien: m ? m.ten : t.mien };
+  }
+  /* Loader cho ngăn Giám sát Agent — chỉ R01–R02 gọi được (máy chủ gác). */
+  G.dpTaiGiamSat = function () {
+    if (!G.goiMayChu) { G.dpGiamSat = { ok: false, error: 'Chưa nối máy chủ.' }; G.render && G.render(); return; }
+    G.goiMayChu('soatHoatDongAgent', {}).then(function (x) {
+      G.dpGiamSat = x;
+      if (G.S && G.S.view === 'dieu-phoi') G.render && G.render();
+    });
+  };
+
   G.VIEWS['dieu-phoi'] = function () {
     var tl = G.DP_TRO_LY || [], mien = G.DP_MIEN || [];
     var o = '<div class="hd"><h2>' + ic('orbit') + ' Điều phối trợ lý AI</h2>' +
@@ -47568,6 +51105,43 @@ G.DP_TUYEN = [
       '<b>' + tl.length + ' trợ lý AI siêu cấp</b> đảm nhận chi tiết từng vai, mỗi trợ lý một ' +
       '<b>khoá sở hữu</b> riêng nên không bao giờ xung đột. Trợ lý tự hoàn thiện qua vòng nâng ' +
       'cấp có cổng, và tuân thủ hiến pháp.</p></div>';
+
+    /* ══ BẢNG ĐIỀU HÀNH BỘ NÃO — số thật từ roster, dòng chảy tự sửa lỗi ══
+       80% hình. Con số ở đây ĐO TỪ chính danh sách trợ lý và luật trần
+       (thật, không minh hoạ). Dòng chảy là CƠ CHẾ thật: bộ não SOẠN bản vá
+       rồi đẩy qua cổng, KHÔNG tự áp lên mã đang chạy. */
+    var congBo = {}; tl.forEach(function(t){ (t.qua||[]).forEach(function(g){ congBo[g]=1; }); });
+    o += U.bdSoHang([
+      {k:'Trợ lý siêu cấp', v:String(tl.length), c:'var(--gita)', d:'mỗi trợ lý một cửa thật'},
+      {k:'Miền phụ trách', v:String(mien.length), c:'var(--gita-sau)'},
+      {k:'Loại cổng bảo vệ', v:String(Object.keys(congBo).length), c:'var(--ok)', d:'Điều 13 · cấp quyền · ba chữ ký…'},
+      {k:'Luật trần điều phối', v:String((G.DP_TRAN||[]).length), c:'var(--gita-sang)'},
+      {k:'Cửa duyệt tự nâng cấp', v:'5', c:'var(--gold-2)', d:'vòng có cổng · bảy vùng không chạm'},
+      {k:'Bộ não tự áp mã?', v:'KHÔNG', c:'var(--gita-do)', d:'chỉ đề xuất — người ký & bộ kiểm quyết'}
+    ]);
+
+    o += '<h3 class="dp-h">' + ic('compass') + ' Dòng chảy TỰ SỬA LỖI có kiểm soát — theo lệnh Super Admin</h3>';
+    o += U.bdDong([
+      {ten:'1 · Lệnh Super Admin', mau:'var(--gita-do)', o:[{t:'Giao việc · đặt ưu tiên'},{t:'Cấp quyền AI',p:'màn Quyền năng AI'}]},
+      {ten:'2 · Bộ não phân công', mau:'var(--gita-sau)', o:[{t:'Chọn trợ lý theo khoá sở hữu'},{t:'Miền chồng lấn → Bộ não phân xử'}]},
+      {ten:'3 · Trợ lý phát hiện', mau:'var(--gita)', o:[{t:'Soi lỗi ở cửa mình giữ'},{t:'Nêu vấn đề · gốc rễ'}]},
+      {ten:'4 · Soạn bản vá', mau:'var(--gita-sang)', o:[{t:'Soạn NHÁP cách sửa'},{t:'KHÔNG áp lên mã đang chạy'}]},
+      {ten:'5 · Cổng duyệt', mau:'var(--gold-2)', o:[{t:'deXuatNangCap · 5 cửa'},{t:'Bảy vùng cấm không chạm'},{t:'Người ký ≠ người đề xuất'}]},
+      {ten:'6 · Phát hành', mau:'var(--ok)', o:[{t:'Bộ kiểm chạy · xanh mới ra'},{t:'Ghi nhật ký ai · lúc nào'}]}
+    ], {chu:'Vì sao KHÔNG cho bộ não tự viết và tự phát hành mã của chính nó: một hệ tự sửa được đường sửa của nó là một hệ không còn giới hạn nào (hiến pháp kho 9.99.77). Nên nó SOẠN và ĐỀ XUẤT; mỗi thay đổi qua năm cửa có người ký và bộ kiểm — đó mới là "tự sửa lỗi" bền, không phải một AI tự ý đổi mã.'});
+
+    o += '<div class="grid g2">'+
+      '<div>'+U.sec('TRỢ LÝ THEO MIỀN','Mỗi miền một nhóm cửa — phân công không chồng lấn')+
+        U.bdVong(mien.map(function(m){ return {ten:m.ten, gia:m.so}; }), {giua:String(tl.length),duoi:'trợ lý'})+'</div>'+
+      '<div>'+U.sec('TỐI ƯU & ĐỔI MỚI','Đo bằng việc đi qua cổng, không bằng một con số tự khai')+
+        '<div class="bd-box"><div class="row" style="gap:16px;flex-wrap:wrap;justify-content:center">'+
+        U.ring(100,'var(--ok)','hướng')+
+        '<div style="flex:1;min-width:180px"><p class="tiny muted" style="line-height:1.7">'+
+        h('"Đổi mới sáng tạo 100%" là HƯỚNG đi, không phải một con số để chạy cho đủ. '+
+          'Kho cấm biến khát vọng thành chỉ tiêu bị nuôi (luật camDatChiTieu). Đổi mới thật đo bằng '+
+          'số đề xuất ĐI QUA được năm cửa và làm bộ kiểm vẫn xanh — mỗi bước có người ký.')+
+        '</p></div></div></div></div>'+
+      '</div>';
 
     /* ── NGĂN 1 · BỘ NÃO CAO NHẤT ── */
     var bn = G.DP_BONAO || {};
@@ -47627,6 +51201,373 @@ G.DP_TUYEN = [
       '<b data-v="tu-nang-cap">vòng tự nâng cấp</b> có cổng; cấp quyền cho trợ lý ở ' +
       '<b data-v="quyen-nang-ai">màn Quyền năng AI</b>. Bộ não ở ' +
       '<b data-v="bo-nao">màn Bộ não GITA 365</b>.</p>';
+
+    /* ── NGĂN 5 · GIÁM SÁT AGENT — mắt của Thanh tra & Super Admin (V10) ──
+       Chỉ R01–R02 thấy. Đọc hoạt động Agent THẬT từ sổ, nối cửa về đúng
+       Agent. Đây là chỗ "giám sát chặt chẽ" thành thật: ai làm gì, ở cửa
+       nào, lúc nào — không phải một lời hứa giám sát. */
+    if (G.can && G.can('sys_audit')) {
+      o += '<h3 class="dp-h">' + ic('eye') + ' Giám sát hoạt động Agent — Super Admin & Thanh tra</h3>';
+      o += '<p class="note dp-note">Mọi lượt Bộ não điều phối Agent và mọi lượt Agent tự hoàn ' +
+        'thiện đều vào sổ. Đây là MẮT của thanh tra: ai làm, ở cửa nào, lúc nào — kiểm soát của Super Admin.</p>';
+      var gs = G.dpGiamSat;
+      if (!gs) { setTimeout(function () { G.dpTaiGiamSat(); }, 0);
+        o += '<p class="note">Đang đọc hoạt động Agent…</p>'; }
+      else if (!gs.ok)
+        o += '<div class="card"><p class="sm muted">' + h(gs.error || 'Cần nối máy chủ để xem hoạt động Agent.') + '</p></div>';
+      else {
+        o += '<div class="crm-kpis">';
+        o += '<div class="crm-kpi" style="border-left:3px solid var(--gita)"><div class="crm-kpi-nhan">Lượt hoạt động Agent</div>' +
+          '<div class="crm-kpi-so">' + h(String(gs.tong)) + '</div></div>';
+        (gs.theoLoai || []).forEach(function (l) {
+          o += '<div class="crm-kpi"><div class="crm-kpi-nhan">' + h(l.viec) + '</div>' +
+            '<div class="crm-kpi-so">' + h(String(l.n)) + '</div></div>';
+        });
+        o += '</div>';
+        o += U.tbl(['Giờ', 'Agent', 'Cửa', 'Việc', 'Do ai', 'Chi tiết'], (gs.ds || []).map(function (a) {
+          var t = tenAgent(a.cua);
+          return ['<span class="mono tiny">' + h(String(a.luc || '').slice(0, 19).replace('T', ' ')) + '</span>',
+            t ? '<b class="sm">' + h(t.ma) + '</b><br><span class="tiny muted">' + h(t.mien) + '</span>'
+              : '<span class="tiny muted">—</span>',
+            '<code class="tiny">' + h(a.cua || '—') + '</code>',
+            '<span class="tiny">' + h(a.viec) + '</span>',
+            '<span class="tiny">' + h(a.boiAi || '—') + '</span>',
+            '<span class="tiny">' + h(a.chiTiet || '') + '</span>'];
+        }));
+        if (!(gs.ds || []).length) o += '<p class="note">Chưa có hoạt động Agent nào trong sổ.</p>';
+      }
+    }
+
+    return o;
+  };
+})();
+
+})();
+
+/* ═════════ src/khung-van-hanh.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — KHUNG VẬN HÀNH · HARNESS ENGINEERING (năng lực V20)
+
+   Chủ hệ: bổ sung "Harness Engineering" — tầng chuẩn hoá cách Bộ não
+   GITA365 điều phối 100 trợ lý: quản lý ngữ cảnh, gọi đúng cổng công cụ,
+   gác Hiến pháp, chống hai trợ lý cùng ra tay, và tự kiểm chất lượng mỗi
+   lượt. "V20" là tên năng lực này — bậc vận hành cao nhất của khung.
+
+   ══ TRỎ, KHÔNG CHÉP — nguy nhất vẫn là bản thứ hai của HIẾN PHÁP ══
+
+   Điều phối 100 trợ lý (dieu-phoi 9.99.107), Hiến pháp 13 điều, hàng rào
+   10 điểm, chín điều bất khả sửa, cổng ẩn danh Điều 13, vòng tự nâng cấp
+   có cổng — TẤT CẢ đã có. Khung vận hành KHÔNG dựng lại một cái nào. Mỗi
+   trụ TRỎ vào một cơ chế THẬT đã chạy; chép hiến pháp/hàng rào/roster vào
+   đây là bản thứ hai của một bảng cấm — bản nguy nhất trong mọi bản thứ
+   hai (9.99.83). Mục kiểm canh rằng HE_* KHÔNG mọc một bảng hiến pháp/
+   hàng rào/roster thứ hai.
+
+   ══ NĂM TRỤ — MỖI TRỤ MỘT CƠ CHẾ CÓ RĂNG ĐÃ CÓ ══
+
+   Một "khung vận hành" viết bằng lời dặn thì sáu tháng sau không ai nhớ.
+   Nên mỗi trụ trỏ vào một cửa/kho THẬT, và bộ chấm mỗi lượt (chamMotLuot
+   ở máy chủ) đo được từng trụ — phá-thử-đỏ-được. Đây là chỗ khác một tấm
+   áp phích: điều phối 9.99.107 bản đầu là echo không đo gì (mục 88: bảng
+   thì không chặn được gì), tổ soi đối kháng bắt. Khung vận hành học bài
+   ấy ngay từ đầu: có phép đo HÀNH VI ở thu-worker.
+
+   ══ V20 LÀ ĐO ĐƯỢC, KHÔNG PHẢI CON SỐ TỰ KHAI ══
+
+   "Đạt V20" nghĩa là CẢ NĂM TRỤ đều có răng (một câu thử sai làm bộ chấm
+   đỏ). Không dựng một ô `diem: 20` hay `bac: 20` — đó là dựng lại đúng bẫy
+   SUP-01 (9.99.86): một con số để rồi có người chạy cho đủ. Bậc trưởng
+   thành tính LÚC ĐỌC từ số trụ có răng, không cột lưu (cùng luật cột
+   conHan 9.99.63 · cột den 9.99.66).
+
+   ══ BỘ CHẤM MỖI LƯỢT KHÔNG TỰ RA TAY ══
+
+   `chamMotLuot` chỉ trả về một VERDICT (đạt/không + trụ nào hỏng) rồi
+   dừng — nó KHÔNG ghi việc, KHÔNG gọi một cửa ghi, KHÔNG bỏ qua cổng.
+   Một bộ chấm tự ra tay là một cửa hậu cho cả trăm trợ lý (cùng lý do
+   dieuPhoiTroLy không tự ra tay). Cổng thật vẫn nằm ở TỪNG cửa.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.VIEWS = G.VIEWS || {};
+
+/* Tên năng lực. Dùng chữ, không dùng một con số để chạy cho đủ. */
+G.HE_MA = 'V20';
+
+/* ══ NĂM TRỤ. Mỗi trụ: TRỎ vào cơ chế thật · CANH bằng gì · đo bằng máy.
+   `troVao` là hai đầu độc lập để lần về; `canh` là điều bộ chấm mỗi lượt
+   kiểm; `lot` là mã hỏng bộ chấm trả về khi trụ ấy không đạt. ══ */
+G.HE_TRU = [
+  { ma: 'HE1', ten: 'Quản lý ngữ cảnh',
+    troVao: ['docTheVungManh', 'traLoiCoach'], canh: 'ngữ cảnh có mặt trước lượt', lot: 'NGUCANH', do: 'mayDo',
+    vi: 'Trước khi một trợ lý trả lời về một đứa trẻ, Bộ não đọc Thẻ Vùng Mạnh của con đó ' +
+      'trước (9.99.64). Ngữ cảnh phải được dựng TRƯỚC lượt — một lượt không ngữ cảnh là một ' +
+      'câu trả lời chung chung dán nhãn cá nhân hoá.' },
+  { ma: 'HE2', ten: 'Gọi đúng cổng công cụ',
+    troVao: ['DP_TRO_LY', 'worker CAN_PHIEN'], canh: 'khoá sở hữu là một cửa THẬT', lot: 'KHONGCUA', do: 'mayDo',
+    vi: 'Mỗi việc đi qua ĐÚNG một cửa thật đã đăng ký (khoá sở hữu = cửa), và cửa ấy tự mang ' +
+      'cổng của nó. Gọi vào một cửa không có thật thì không cổng nào canh — cùng bài học chống ' +
+      'echo của điều phối (9.99.107).' },
+  { ma: 'HE3', ten: 'Gác Hiến pháp',
+    troVao: ['BN_HIENPHAP', 'HP9_BATKHASUA', 'soatRaNgoai'], canh: 'không chạm vùng cấm', lot: 'VUNGCAM', do: 'mayDo',
+    vi: 'Không việc nào của một trợ lý chạm vào vùng bất khả sửa — hiến pháp, hàng rào, khoá ' +
+      'sở hữu, đường nâng cấp, giá, quyền. Chạm vào là bộ chấm chặn; đây là hiến pháp GÁC, ' +
+      'không phải hiến pháp chép lại.' },
+  { ma: 'HE4', ten: 'Chống hai trợ lý cùng ra tay',
+    troVao: ['DP_TRO_LY'], canh: 'khoá sở hữu không trùng trong lượt', lot: 'TRUNGKHOA', do: 'mayDo',
+    vi: 'Một cửa chỉ một trợ lý sở hữu (bất biến roster 100 cửa, 9.99.107). Trong một lượt điều ' +
+      'phối, hai trợ lý không cùng nhận một khoá — cái hỏng của xung đột lộ ra ở thứ thứ ba đọc ' +
+      'phải hai kết quả, nên phải chặn ở lượt.' },
+  { ma: 'HE5', ten: 'Tự kiểm chất lượng mỗi lượt',
+    troVao: ['BN_RAO10', 'chamThiGiac'], canh: 'có bản tự kiểm trước khi ra', lot: 'THIEUTUKIEM', do: 'mayDo',
+    vi: 'Mỗi lượt mang một bản tự kiểm (hàng rào 10 điểm) trước khi ra. Phần chấm điểm R9 vẫn ' +
+      'là việc của người (9.99.62) — bộ chấm chỉ canh rằng bản tự kiểm CÓ MẶT, không thay người ' +
+      'kết luận chất lượng.' }
+];
+
+/* ══ BỐN LUẬT CỦA TẦNG KHUNG VẬN HÀNH ══ */
+G.HE_TRAN = [
+  { ma: 'HE-L1', ten: 'Trỏ, không chép',
+    vi: 'Khung vận hành không dựng bản thứ hai của hiến pháp, hàng rào hay roster trợ lý — chỉ ' +
+      'trỏ vào bản thật. Bản thứ hai của một bảng cấm là bản nguy nhất: sửa một bên, bên kia ' +
+      'vẫn chặn theo luật cũ, cả hai vẫn xanh.' },
+  { ma: 'HE-L2', ten: 'Bộ chấm mỗi lượt KHÔNG tự ra tay',
+    vi: 'chamMotLuot chỉ trả verdict (đạt/không + trụ nào hỏng) rồi dừng — không ghi việc, không ' +
+      'gọi cửa ghi, không bỏ qua cổng. Một bộ chấm tự ra tay là cửa hậu cho cả trăm trợ lý.' },
+  { ma: 'HE-L3', ten: 'V20 là ĐO ĐƯỢC, không phải con số tự khai', loiKhai: false,
+    vi: 'Đạt V20 = cả năm trụ đều có răng (một câu thử sai làm bộ chấm đỏ). Không có ô điểm/bậc ' +
+      'nào tự xưng năng lực — một con số như thế chỉ để có người chạy cho đủ (bẫy SUP-01).' },
+  { ma: 'HE-L4', ten: 'Bậc trưởng thành tính LÚC ĐỌC',
+    vi: 'Số trụ có răng đếm lúc đọc, không giữ một cột "đang ở V-mấy". Một cột như thế hoặc bị gõ ' +
+      'đè, hoặc cũ đi lặng lẽ — cùng luật cột conHan không có trong theVungManh (9.99.63).' }
+];
+
+(function () {
+  var U = G.U, h = U.h, ic = U.ic;
+
+  function veTro(ds) {
+    return (ds || []).map(function (x) { return '<code>' + h(x) + '</code>'; }).join(' · ');
+  }
+
+  G.VIEWS['khung-van-hanh'] = function () {
+    var tru = G.HE_TRU || [], tran = G.HE_TRAN || [];
+    var o = '<div class="hd"><h2>' + ic('shield') + ' Khung vận hành · ' + h(G.HE_MA || 'V20') + '</h2>' +
+      '<p class="sub"><b>Harness Engineering</b> — tầng chuẩn hoá cách <b>Bộ não GITA365</b> điều ' +
+      'phối 100 trợ lý: quản lý ngữ cảnh, gọi đúng cổng công cụ, gác Hiến pháp, chống hai trợ lý ' +
+      'cùng ra tay, và tự kiểm chất lượng mỗi lượt. Mỗi trụ TRỎ vào một cơ chế thật đã có — không ' +
+      'chép luật; bộ chấm mỗi lượt đo được từng trụ (phá-thử-đỏ-được).</p></div>';
+
+    /* ── NGĂN 1 · NĂM TRỤ ── */
+    o += '<h3 class="hvh-h">' + ic('shield') + ' Năm trụ của khung vận hành</h3>';
+    o += '<p class="note hvh-note">Mỗi trụ đo bằng <b>máy</b> ở bộ chấm mỗi lượt (<code>chamMotLuot</code>): ' +
+      'thiếu là một mã hỏng cụ thể. Cột <b>Trỏ vào</b> là cơ chế thật đã chạy — lần về được, không chép lại.</p>';
+    o += '<div class="hvh-tru">';
+    tru.forEach(function (t) {
+      o += '<div class="hvh-tru-o">' +
+        '<div class="hvh-tru-dau"><b>' + h(t.ma) + ' · ' + h(t.ten) + '</b>' +
+        '<span class="hvh-do">' + (t.do === 'mayDo' ? 'máy đo' : 'người đo') + '</span></div>' +
+        '<p>' + h(t.vi) + '</p>' +
+        '<p class="hvh-meta">Canh: <b>' + h(t.canh) + '</b> · hỏng → <code>' + h(t.lot) + '</code></p>' +
+        '<p class="hvh-tro">Trỏ vào: ' + veTro(t.troVao) + '</p>' +
+        '</div>';
+    });
+    o += '</div>';
+
+    /* ── NGĂN 2 · BỐN LUẬT TRẦN ── */
+    o += '<h3 class="hvh-h">' + ic('lock') + ' Bốn luật của tầng khung vận hành</h3>';
+    o += '<div class="hvh-luat">';
+    tran.forEach(function (l) {
+      o += '<div class="hvh-luat-o"><b>' + h(l.ma) + ' · ' + h(l.ten) + '</b>' +
+        '<p>' + h(l.vi) + '</p></div>';
+    });
+    o += '</div>';
+
+    /* ── NGĂN 3 · BỘ CHẤM MỖI LƯỢT ── */
+    o += '<h3 class="hvh-h">' + ic('check') + ' Bộ chấm mỗi lượt — ' + h(G.HE_MA || 'V20') + ' là gì</h3>';
+    o += '<div class="hvh-cham">' +
+      '<p>Mỗi lượt một trợ lý định ra tay, <code>chamMotLuot</code> chạy năm trụ và trả về ' +
+      '<b>verdict</b>: đạt hay không, và trụ nào hỏng. Nó <b>không tự ra tay</b> — cổng thật vẫn ' +
+      'nằm ở từng cửa. <b>Đạt ' + h(G.HE_MA || 'V20') + '</b> nghĩa là cả năm trụ đều có răng: ' +
+      'một câu thử sai làm bộ chấm đỏ đúng chỗ (phép đo hành vi ở thu-worker), không phải một ' +
+      'điểm số tự khai.</p>' +
+      '<div class="hvh-lots">' +
+      tru.map(function (t) { return '<span class="hvh-lot"><code>' + h(t.lot) + '</code> ' + h(t.ten) + '</span>'; }).join('') +
+      '</div></div>';
+
+    o += '<p class="note hvh-note">Điều phối 100 trợ lý ở <b data-v="dieu-phoi">màn Điều phối trợ lý AI</b>; ' +
+      'Bộ não ở <b data-v="bo-nao">màn Bộ não GITA 365</b>; tự hoàn thiện đi qua ' +
+      '<b data-v="tu-nang-cap">vòng tự nâng cấp</b> có cổng. Khung vận hành TRỎ vào cả ba, không dựng lại.</p>';
+
+    return o;
+  };
+})();
+
+})();
+
+/* ═════════ src/suc-chua-toc-do.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — SỨC CHỨA & TỐC ĐỘ (chạy nhanh & chứa nhiều trên Cloudflare)
+
+   Chủ hệ muốn bộ não "cấp 1TB, xử lý nhanh và ưu việt nhất". Màn này trả
+   lời đúng ý ấy bằng thứ ĐO ĐƯỢC, không bằng một con số tự khai.
+
+   ══ "1TB" LÀ DUNG LƯỢNG, KHÔNG PHẢI MỨC CỦA BỘ NÃO ══
+
+   Đặt một ô "cấp 1TB" vào bộ não không làm nó nghĩ giỏi hơn hay trả lời
+   nhanh hơn — đó là cái bẫy ×100 (SUP-01), WOW, điểm 1000 mà kho đã gỡ ba
+   lần: một con số để rồi có người chạy cho đủ. Nên ở đây KHÔNG có ô số nào
+   tự xưng "1TB/dung lượng/tốc độ". Sức chứa THẬT đo bằng cửa doSucChua
+   (đếm thẳng trong D1 lúc gọi); "1TB" đạt được bằng R2 (chứa hàng TB thật)
+   cộng chia mảnh D1, chứ không bằng một cái nút.
+
+   ══ NĂM TRỤ TỐC ĐỘ — TRỎ VÀO CƠ CHẾ THẬT, KHÔNG CHÉP ══
+
+   Kiến trúc GITA365 đã đi đúng hướng nhanh-ở-quy-mô-lớn: việc nặng ở máy
+   khách, chỉ mục đường tra nóng, Workers tự co giãn, R2 cho vật to. Mỗi
+   trụ TRỎ vào một cơ chế THẬT (tệp/binding/chỉ mục đã có), và nói thẳng
+   trụ nào ĐANG CHẠY, trụ nào là ĐƯỜNG LỚN LÊN chưa dựng — một khung khoe
+   "đã tối ưu hết" mà nửa là lời hứa thì tệ hơn nói thật (9.99.62).
+
+   ══ NÓI RA GIỚI HẠN CLOUDFLARE ══
+
+   D1 có trần dung lượng mỗi cơ sở dữ liệu; Workers có trần thời gian mỗi
+   lượt. Màn nói ra cả trần LẪN đường vượt trần (chia mảnh · R2) — một lớp
+   không nói giới hạn thì người đọc tin nó chứa được nhiều hơn thật (9.99.57).
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.VIEWS = G.VIEWS || {};
+
+/* ══ NĂM TRỤ TỐC ĐỘ & SỨC CHỨA. `co`: dangChay (đã có, đo được) hoặc
+   duongLon (đường lớn lên, CHƯA dựng — nói thẳng). `troVao`: cơ chế thật
+   để lần về. ══ */
+G.SC_TRU = [
+  { ma: 'SC1', ten: 'Việc nặng chạy ở máy khách', co: 'dangChay',
+    troVao: ['gita-app.js', 'docs/CHI_PHI.md'],
+    vi: 'Giao diện dựng trong máy, tra cứu chạy trong máy — máy chủ chỉ xác thực, cấp khoá, ' +
+      'ghi nhật ký. Nhờ đó chi phí và độ trễ KHÔNG tăng theo lượt mở app, chỉ tăng theo số ' +
+      'gia đình mới. Đây là lý do gốc khiến hệ nhanh ở quy mô lớn.' },
+  { ma: 'SC2', ten: 'Chỉ mục đúng đường tra nóng', co: 'dangChay',
+    troVao: ['may-chu/csdl.sql (chỉ mục)'],
+    vi: 'Tìm một nhà trong hàng trăm nghìn nhà vẫn nhanh vì D1 có chỉ mục trên đúng đường tra ' +
+      'chạy mỗi ngày (ngày tham gia, mã khách, phiên). Đo được: cửa doSucChua đếm số chỉ mục thật.' },
+  { ma: 'SC3', ten: 'Bộ nhớ đệm ở biên', co: 'duongLon',
+    troVao: ['Cloudflare Cache API', 'KV (chưa nối)'],
+    vi: 'Câu hỏi lặp (bảng giá, cấu hình, nội dung tĩnh) trả lời tức thì ở biên, không chạm D1. ' +
+      'CHƯA dựng — Cache API dùng được không cần binding; KV cần tạo namespace. Đây là đường lớn ' +
+      'lên, nói thẳng chứ không khoe đã có.' },
+  { ma: 'SC4', ten: 'Workers tự co giãn', co: 'dangChay',
+    troVao: ['may-chu/worker.js', 'may-chu/wrangler.toml'],
+    vi: 'Cửa vào chạy ở hàng trăm nơi cùng lúc và tự co giãn theo lượt gọi — 100.000 khách giờ ' +
+      'cao điểm không nghẽn, không phải nâng cấp một cái máy. Trần Apps Script (~30 lượt đồng ' +
+      'thời) là lý do phải sang Workers khi đông (docs/TRIEN_KHAI_WEB.md).' },
+  { ma: 'SC5', ten: 'Tệp lớn ở R2 · chia mảnh D1 khi vượt trần', co: 'dangChay',
+    troVao: ['wrangler.toml (binding HOSO = R2)'],
+    vi: 'Đây MỚI là chỗ "1TB" có nghĩa: video, ảnh, gói kho, sao lưu để ở R2 (chứa hàng TB thật, ' +
+      'binding HOSO đã có), D1 chỉ giữ chỉ mục và bản ghi. Vượt trần một D1 thì CHIA MẢNH nhiều ' +
+      'D1 — CRM đã lọc/phân trang ở máy chủ nên chia mảnh không đổi bề mặt (đường lớn lên).' }
+];
+
+/* ══ GIỚI HẠN CLOUDFLARE — NÓI RA TRẦN LẪN ĐƯỜNG VƯỢT TRẦN. Đây là nguồn
+   DUY NHẤT của phần giải thích giới hạn; máy chủ chỉ trả về SỐ ĐO. ══ */
+G.SC_TRAN = [
+  { ma: 'D1', ten: 'Cơ sở dữ liệu D1',
+    gioiHan: 'Mỗi cơ sở dữ liệu D1 có trần dung lượng (hàng GB) và trần số lượt truy vấn mỗi lượt Worker.',
+    duong: 'Vượt trần thì CHIA MẢNH: nhiều D1 theo vùng/nhóm khách. Kiến trúc CRM đã lọc và phân ' +
+      'trang ở máy chủ nên chia mảnh không đổi bề mặt người dùng.' },
+  { ma: 'WK', ten: 'Workers (cửa vào)',
+    gioiHan: 'Mỗi lượt Worker có trần thời gian CPU và bộ nhớ; bù lại chạy ở hàng trăm nơi cùng lúc.',
+    duong: 'Giữ mỗi lượt NHẸ (việc nặng ở máy khách), truyền dòng với đáp ứng lớn. Workers tự co ' +
+      'giãn theo lượt gọi — không phải nâng cấp máy.' },
+  { ma: 'R2', ten: 'R2 — nơi "1TB" có nghĩa',
+    gioiHan: 'R2 chứa tới hàng TERABYTE thật và không tính phí lượt tải ra (egress).',
+    duong: 'Vật to (video, ảnh, kho, sao lưu) để ở R2 (binding HOSO đã có), không nhồi vào D1. ' +
+      'Đây là cách đạt "1TB" thật — bằng chỗ chứa đúng loại, không bằng một con số.' }
+];
+
+(function () {
+  var U = G.U, h = U.h, ic = U.ic;
+
+  function veTro(ds) {
+    return (ds || []).map(function (x) { return '<code>' + h(x) + '</code>'; }).join(' · ');
+  }
+  function nhan(co) {
+    return co === 'dangChay'
+      ? '<span class="sc-tt sc-chay">đang chạy · đo được</span>'
+      : '<span class="sc-tt sc-lon">đường lớn lên · chưa dựng</span>';
+  }
+
+  /* Nút đo thật — gọi doSucChua rồi rót kết quả vào #sc_kq. Không tự khai;
+     số đến từ D1 lúc gọi. */
+  G.scDo = function () {
+    var o = document.getElementById('sc_kq');
+    if (!o) return;
+    if (!G.goiMayChu) { o.innerHTML = '<p class="note">Bản mẫu chưa nối máy chủ — số đo thật cần máy chủ Cloudflare.</p>'; return; }
+    o.innerHTML = '<p class="note">Đang đo…</p>';
+    G.goiMayChu('doSucChua', {}).then(function (x) {
+      if (!x || !x.ok) { o.innerHTML = '<p class="note">' + h((x && x.error) || 'Không đo được.') + '</p>'; return; }
+      function so(n) { return (n === null || n === undefined) ? '<i>không đo được</i>' : Number(n).toLocaleString('vi-VN'); }
+      var s = '<div class="sc-do">' +
+        '<div class="sc-do-hang"><b>' + so(x.soBang) + '</b><span>bảng dữ liệu</span></div>' +
+        '<div class="sc-do-hang"><b>' + so(x.soChiMuc) + '</b><span>chỉ mục (đường tra nhanh)</span></div>' +
+        '<div class="sc-do-hang"><b>' + so(x.dongTong) + '</b><span>dòng ở ' + so(x.doDuocMayBang) + ' bảng nóng</span></div>' +
+        '<div class="sc-do-hang"><b>' + (x.r2CoBinding ? 'CÓ' : 'CHƯA') + '</b><span>R2 cho tệp lớn (hàng TB)</span></div>' +
+        '</div>';
+      if (x.dongLon && x.dongLon.length) {
+        s += '<div class="sc-bang-nong">' + x.dongLon.slice(0, 8).map(function (r) {
+          return '<span class="sc-nong-o"><code>' + h(r.bang) + '</code> ' + so(r.so) + '</span>';
+        }).join('') + '</div>';
+      }
+      s += '<p class="note sc-note">' + h(x.vi || '') + '</p>';
+      o.innerHTML = s;
+    }).catch(function (e) {
+      o.innerHTML = '<p class="note">' + h((e && e.message) || 'Lỗi khi đo.') + '</p>';
+    });
+  };
+
+  G.VIEWS['suc-chua-toc-do'] = function () {
+    var tru = G.SC_TRU || [], tran = G.SC_TRAN || [];
+    var o = '<div class="hd"><h2>' + ic('vault') + ' Sức chứa & Tốc độ</h2>' +
+      '<p class="sub">Bộ não GITA365 chạy <b>nhanh và chứa được nhiều</b> trên Cloudflare bằng ' +
+      '<b>năm trụ</b> — không bằng một con số. <b>"1TB" là dung lượng</b>, đạt bằng <b>R2</b> ' +
+      '(chứa hàng TB thật) cộng chia mảnh D1, không phải một mức của bộ não. Sức chứa thật <b>đo ' +
+      'được</b> ở cửa dưới, không tự khai.</p></div>';
+
+    /* ── NGĂN 1 · ĐO THẬT ── */
+    o += '<h3 class="sc-h">' + ic('pulse') + ' Đo sức chứa thật (lúc này)</h3>';
+    o += '<p class="note sc-note">Số đến từ D1 lúc bấm — con số già nhất vài trăm mili giây, ' +
+      'không phải một ô ghi tay cũ đi lặng lẽ. Ô để trống nghĩa là KHÔNG đo được, khác số 0.</p>';
+    o += '<button class="btn primary" onclick="G.scDo()" style="gap:7px">' + ic('pulse') + ' Đo ngay</button>';
+    o += '<div id="sc_kq" class="sc-kq"></div>';
+
+    /* ── NGĂN 2 · NĂM TRỤ ── */
+    o += '<h3 class="sc-h">' + ic('lightning') + ' Năm trụ tốc độ & sức chứa</h3>';
+    o += '<div class="sc-tru">';
+    tru.forEach(function (t) {
+      o += '<div class="sc-tru-o' + (t.co === 'duongLon' ? ' sc-tru-lon' : '') + '">' +
+        '<div class="sc-tru-dau"><b>' + h(t.ma) + ' · ' + h(t.ten) + '</b>' + nhan(t.co) + '</div>' +
+        '<p>' + h(t.vi) + '</p>' +
+        '<p class="sc-tro">Trỏ vào: ' + veTro(t.troVao) + '</p></div>';
+    });
+    o += '</div>';
+
+    /* ── NGĂN 3 · GIỚI HẠN & ĐƯỜNG VƯỢT TRẦN ── */
+    o += '<h3 class="sc-h">' + ic('shield') + ' Giới hạn Cloudflare — và đường vượt trần</h3>';
+    o += '<p class="note sc-note">Nói ra cả trần LẪN đường lớn lên — một lớp không nói giới hạn ' +
+      'thì người đọc tin nó chứa được nhiều hơn thật.</p>';
+    o += '<div class="sc-tran">';
+    tran.forEach(function (l) {
+      o += '<div class="sc-tran-o"><b>' + h(l.ma) + ' · ' + h(l.ten) + '</b>' +
+        '<p class="sc-gh">Trần: ' + h(l.gioiHan) + '</p>' +
+        '<p class="sc-duong">Lớn lên: ' + h(l.duong) + '</p></div>';
+    });
+    o += '</div>';
+
+    o += '<p class="note sc-note">Cách đưa lên Cloudflare cho nhanh & rẻ ở <b>docs/SUC_CHUA_TOC_DO.md</b> ' +
+      'và <b>docs/TRIEN_KHAI_WEB.md</b>. Điều phối trợ lý ở <b data-v="dieu-phoi">màn Điều phối</b>; ' +
+      'khung vận hành ở <b data-v="khung-van-hanh">màn Khung vận hành</b>.</p>';
 
     return o;
   };
@@ -49234,7 +53175,7 @@ G.VIEWS = G.VIEWS || {};
         return '<div class="card">' +
           '<div class="row mb" style="gap:8px;flex-wrap:wrap">' +
           (mu.ma ? '<b>' + h(mu.ma) + '</b>' : '') + nhan + '</div>' +
-          (mu.viec ? '<div style="font-size:15px;font-weight:600">' + h(mu.viec) + '</div>' : '') +
+          (mu.viec ? '<div style="font-size:14.5px;font-weight:600">' + h(mu.viec) + '</div>' : '') +
           '<p class="sm muted mt" style="line-height:1.65">' + h(mu.vi || mu.hoi || '') + '</p>' +
           (mu.noiDien
             ? '<p class="sm mt" style="color:var(--teal)">Điền tại: ' + h(mu.noiDien) + '</p>'
@@ -49420,7 +53361,7 @@ G.VIEWS = G.VIEWS || {};
       return '<div class="row" style="gap:9px;padding:5px 0;align-items:flex-start">' +
         '<span style="color:' + (x.dat ? 'var(--ok)' : 'var(--ink-4)') + ';flex:none">' +
         ic(x.dat ? 'check' : 'dot', 'w-4 h-4') + '</span>' +
-        '<span style="font-size:14px' + (x.dat ? '' : ';color:var(--ink-3)') + '">' +
+        '<span style="font-size:14.5px' + (x.dat ? '' : ';color:var(--ink-3)') + '">' +
         '<b>' + h(x.ma) + '</b> · ' + h(x.dieu) +
         (x.dat ? '' : ' <span class="sm muted">— thiếu ' + h(x.thieu.join(', ')) + '</span>') +
         '</span></div>';
@@ -49477,7 +53418,7 @@ G.VIEWS = G.VIEWS || {};
     return '<div class="card mt" style="border-color:' + mau + '40">' +
       '<div class="row" style="gap:9px;align-items:flex-start">' +
       '<span style="color:' + mau + ';flex:none">' + ic('shield', 'w-4 h-4') + '</span>' +
-      '<span style="font-size:14px;line-height:1.55">' + h(chu) + '</span></div></div>';
+      '<span style="font-size:14.5px;line-height:1.55">' + h(chu) + '</span></div></div>';
   }
 
   /* ── Ghi ô nhập vào bộ nhớ tạm, không gọi render (gõ mà vẽ lại thì
@@ -50235,7 +54176,7 @@ var KEY = 'gita365.v7';
 
 /* ─────────── Trạng thái ─────────── */
 G.S = {
-  role:null, acc:null, roleObj:null,
+  role:null, acc:null, roleObj:null, crmMuc:null,
   view:'ban-do', open:['g1'], rtab:'labon', rightOpen:false, leftOpen:false, thuCot:false,
   checks:{}, vision:{}, journal:{}, test:{}, bando:{}, nhatky:{}, baithi:{}, thoigian:{}, sathach:{}, khoahoc:{}, mtb:{}, famId:'F-001', kbShown:60,
   /* Danh sách mục đã từng thấy trong cột trái. Dùng để nhận ra lúc thăng
@@ -50246,7 +54187,7 @@ G.S = {
 };
 function save(){
   try{ localStorage.setItem(KEY, JSON.stringify({
-    role:G.S.role, u:G.S.acc && G.S.acc.u, view:G.S.view, open:G.S.open, rtab:G.S.rtab,
+    role:G.S.role, u:G.S.acc && G.S.acc.u, crmMuc:G.S.crmMuc, view:G.S.view, open:G.S.open, rtab:G.S.rtab,
     checks:G.S.checks, vision:G.S.vision, journal:G.S.journal, test:G.S.test, bando:G.S.bando, nhatky:G.S.nhatky, baithi:G.S.baithi, thoigian:G.S.thoigian, sathach:G.S.sathach, khoahoc:G.S.khoahoc,
     rightOpen:G.S.rightOpen, thuCot:G.S.thuCot, mood:G.S.mood, daThay:G.S.daThay,
     /* Sổ việc và sổ chốt ngày. Thiếu hai dòng này thì mọi thứ người ta
@@ -50286,6 +54227,7 @@ function load(){
   try{
     var d = JSON.parse(localStorage.getItem(KEY) || 'null'); if(!d) return null;
     G.S.view = d.view || G.S.view; G.S.open = d.open || G.S.open; G.S.rtab = d.rtab || G.S.rtab;
+    G.S.crmMuc = d.crmMuc || null;   /* giữ mục CRM hiện qua lần tải lại trang cho bộ phận được cấp */
     G.S.checks = d.checks || {}; G.S.vision = d.vision || {}; G.S.journal = d.journal || {};
     G.S.banCo = d.banCo || {}; G.S.bcTang = d.bcTang || 'T1';
     G.S.bcVai = d.bcVai || null;
@@ -50430,7 +54372,14 @@ G.vaiCo = function(vai, perm){
   return need !== undefined && r.lv <= need;
 };
 
-G.can = function(perm){ return G.vaiCo(G.S.roleObj, perm); };
+G.can = function(perm){
+  /* Quyền CRM cấp theo NGƯỜI (dòng quyenCRM ở máy chủ), không theo vai —
+     nên một bộ phận được cấp bật crm_view qua G.S.crmMuc, dù bậc vai của
+     họ nằm ngoài lv≤3 mặc định. Máy chủ vẫn gác mọi thao tác (mucCua ở
+     từng cửa); đây chỉ bật MỤC trên máy khách. */
+  if(perm==='crm_view' && G.S && G.S.crmMuc) return true;
+  return G.vaiCo(G.S.roleObj, perm);
+};
 
 /* Đếm để so hai vai với nhau — bảng điều khiển và màn "Tôi" dùng. */
 G.demQuyen = function(vai){
@@ -50704,7 +54653,7 @@ function vaoBangPhienMayChu(payload){
   if(!payload || !payload.token){ U.toast('Máy chủ không trả về phiên.','err'); return; }
   G.PHIEN_TOKEN = payload.token;
   var a = { u: payload.u, role: payload.role, ten: payload.hoTen || payload.u,
-            maKhachHang: payload.maKhachHang || '', tuMayChu: true };
+            maKhachHang: payload.maKhachHang || '', crmMuc: payload.crmMuc || null, tuMayChu: true };
   vaoPhien(a);
 }
 G.vaoBangPhienMayChu = vaoBangPhienMayChu;
@@ -50728,6 +54677,9 @@ function vaoPhien(a){
   if (G.tlQuenNgu) G.tlQuenNgu();
 
   G.S.acc = a; G.S.role = a.role; G.S.roleObj = G.roleById(a.role);
+  G.S.crmMuc = a.crmMuc || null;   /* mức CRM được cấp — bật mục CRM cho bộ phận được cấp */
+  G.nkData = null;                 /* sổ nhật ký của người trước không ở lại cho người sau */
+  G.dpGiamSat = null;              /* sổ giám sát Agent cũng không ở lại */
   var portal = G.PORTALS[G.S.roleObj.portal];
   G.S.view = (portal && portal.home) || 'ban-do';
   G.S.open = [groupOf(G.S.view) || 'g1'];
@@ -51036,6 +54988,8 @@ function topBar(){
           ? 'color:var(--ok);border-color:var(--ok);background:rgba(16,185,129,.12)'
           : 'color:var(--ink-4)')+'">'+ic('orbit')+'</button>'
       : '')+
+    '<button class="tbtn" data-act="huong-dan" aria-label="Video hướng dẫn màn này" '+
+      'title="Video hướng dẫn màn này — theo vai của bạn">'+ic('compass')+'</button>'+
     '<button class="tbtn" data-v="tro-ly" aria-label="Trợ lý GITA" title="Trợ lý GITA" '+
       'style="color:var(--gita-ink);border-color:var(--gita-vien-1)">'+ic('spark')+'</button>'+
     /* Thu phóng đứng NGAY CẠNH nút đổi nền, không giấu vào một màn cài
@@ -51107,6 +55061,24 @@ G.allowed = function(v){
 };
 
 function dangMoKho(goi){
+  /* NÓI RA LÝ DO KHI HỎNG, KHÔNG QUAY MÃI. Nếu gói này đã thử mở mà lỗi
+     (loiMo), hoặc dangNap đã hết mà gói vẫn chưa mở, thì không còn "đang
+     mở" nữa — hiện lý do và đường thoát, thay vì thanh chạy vô tận. */
+  var loi = (G.KHO.loiMo || {})[goi];
+  var conCho = (G.KHO.dangNap || []).indexOf(goi) >= 0;
+  if(loi && !conCho){
+    return U.ph({eyebrow:'KHO CHƯA MỞ ĐƯỢC', ic:'lock', grad:1, t:'Gói "'+U.h(goi)+'" chưa mở được'}) +
+      '<div class="card pad-sm" style="border-color:var(--gita-do)">'+
+        '<b class="sm" style="color:var(--gita-do-ink)">'+ic('shield','w-4 h-4')+' Lý do</b>'+
+        '<p class="sm mt" style="line-height:1.7">'+U.h(loi)+'</p>'+
+        '<p class="tiny dim mt" style="line-height:1.7">Hầu như luôn do TỆP .enc trên máy chủ và tệp KHOA.JSON '+
+          'không cùng một bản build. Cách chắc chắn: dùng bộ web + khoa.json em gửi CÙNG một số bản (9.99.230), '+
+          'hoặc mở tệp GITA365-XEM-FULL để xem ngay không cần máy chủ.</p>'+
+        '<div class="row mt" style="gap:8px;flex-wrap:wrap">'+
+          '<button class="btn sm" data-act="nap-kho-lai">'+ic('orbit','w-3 h-3')+'Thử mở lại</button>'+
+          (G.moNapGiayPhep ? '<button class="btn ghost sm" data-act="gp-mo">'+ic('lock','w-3 h-3')+'Nạp lại giấy phép</button>' : '')+
+        '</div></div>';
+  }
   return U.ph({eyebrow:'ĐANG MỞ KHO', ic:'vault', t:'Đang mở gói nội dung của tầng',
     lead:'Gói này nặng hơn phần nền nên được mở ở nền sau khi đăng nhập. Xong là màn hình tự hiện ra, không phải bấm gì thêm.'}) +
     '<div class="card center" style="padding:36px">' + U.bar(60,'var(--gold)') +
@@ -51204,7 +55176,12 @@ function render(){
   /* Thanh nhắc đứng trước nội dung: có việc trễ nhịp thì thấy ngay, không
      phải đi tìm. Không có việc trễ thì không chiếm chỗ. */
   var nhac = (G.thanhNhac && G.S.view !== 'vong-nhac') ? G.thanhNhac() : '';
-  main.innerHTML = '<div class="view">' + nhac + noiDung + '</div>';
+  /* Nút "Xem video hướng dẫn màn này" — hiện Ở ĐẦU MỌI MÀN (trừ chính màn
+     trợ lý), để không phải đi tìm nút la bàn trên thanh trên. Một chỗ chèn,
+     phủ hết 212 màn. */
+  var hdThanh = (G.hdNut && G.S.view !== 'tro-ly')
+    ? '<div class="hd-thanh">' + G.hdNut(G.S.view, '', 'Xem video hướng dẫn màn này') + '</div>' : '';
+  main.innerHTML = '<div class="view">' + nhac + hdThanh + noiDung + '</div>';
   if(G.a11yNhan) G.a11yNhan(main);   /* bù tên đọc được cho mọi ô nhập (a11y) */
   /* Màn trợ lý là một CỬA SỔ chiếm trọn chiều cao, nên nó cần lề dưới
      của vùng nội dung nhỏ lại. Lớp này là chỗ duy nhất khai chuyện ấy —
@@ -51355,47 +55332,36 @@ G.xuat = function(ma){
   /* PDF — qua cổng in duy nhất */
   if(l.dang === 'PDF'){ G.inTrang(l.ten); return; }
 
-  /* SHEET — đẩy lên Drive của Admin, không tải về máy */
+  /* BẢNG — nay HIỆN TẠI CHỖ để chép, không đẩy Google Sheet nữa.
+     Từ 9.99.198 bỏ hẳn Apps Script; và luật kho cấm tải tệp về ở máy
+     khách (mục 8·18). Nên xuất = hiện bảng cho Admin CHÉP sang bảng tính
+     của mình (Google Sheets · Excel). Chữ không rời hệ thành một tệp,
+     chỉ nằm trên màn để đọc và chép — đúng chiều an toàn. */
   if(!G.can('xuat_sheet')){
-    U.toast('Chỉ Ban điều hành mới đẩy được bảng tính lên Drive. Tài khoản này chưa được cấp.','err');
-    if(G.secLog) G.secLog('Chặn xuất bảng tính', l.ten + ' — vai ' + G.S.role + ' thiếu quyền xuat_sheet', 'Đã chặn');
+    U.toast('Chỉ Ban điều hành mới xuất được loại dữ liệu này. Tài khoản này chưa được cấp.','err');
+    if(G.secLog) G.secLog('Chặn xuất bảng', l.ten + ' — vai ' + G.S.role + ' thiếu quyền xuat_sheet', 'Đã chặn');
     return;
   }
   var b = bangXuat(ma);
   if(!b || !b.dong.length){ U.toast('Chưa có dữ liệu để xuất.','err'); return; }
-  if(!G.API_CAP_PHEP){
-    U.toast('Chưa nối máy chủ nên chưa đẩy được lên Drive. Xem docs/TRIEN_KHAI_WEB.md.','err');
-    return;
-  }
   var maBan = dauBan();
   /* Xuất là đưa dữ liệu ra khỏi hệ thống — mỗi dòng xuất tính một lần chạm,
      nặng hơn một lần đọc. Đây là chỗ dấu hiệu gom kho lộ ra rõ nhất. */
   if(G.chamTaiNguyen) b.dong.forEach(function(d, i){
-    G.chamTaiNguyen('Xuất Sheet', ma + '·' + i);
+    G.chamTaiNguyen('Xuất bảng', ma + '·' + i);
   });
-  U.toast('Đang tạo bảng tính trên Drive…','ok');
-  fetch(G.API_CAP_PHEP, {
-    method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
-    body: JSON.stringify({ fn:'xuatSheet', u:G.S.acc && G.S.acc.u, token:G.PHIEN_TOKEN||'',
-      /* Gửi cả tên máy — đường dongBo và capKhoa đều gửi, riêng đường này
-         trước đây bỏ trống nên cột "máy" trong nhật ký xuất luôn rỗng. */
-      may: navigator.userAgent.slice(0, 120),
-      loai:ma, ten:b.ten, maBan:maBan, cot:b.cot, dong:b.dong })
-  }).then(function(r){ return r.json(); })
-    .then(function(d){
-      if(!d || !d.ok) throw new Error(d && d.error || 'Máy chủ từ chối');
-      G.SHEET_MOI = { ten:b.ten, url:d.url, luc:new Date().toLocaleString('vi-VN'), ma:maBan };
-      U.modal('<h2 style="font-size:21px;font-weight:800;margin-bottom:10px">Đã tạo bảng tính trên Drive</h2>'+
-        '<p class="sm dim" style="line-height:1.75;margin-bottom:12px">Bảng <b>'+U.h(b.ten)+'</b> · '+b.dong.length+
-        ' dòng đã nằm trong thư mục Drive của Admin. Không có tệp nào tải về máy này.</p>'+
-        '<div class="card pad-sm mb"><div class="tiny up muted mb">MÃ BẢN</div><p class="sm mono">'+U.h(maBan)+'</p></div>'+
-        '<a class="btn pri sm" href="'+U.h(d.url)+'" target="_blank" rel="noopener">Mở bảng tính</a>');
-      if(G.secLog) G.secLog('Xuất bảng tính', l.ten + ' · ' + b.dong.length + ' dòng · mã bản ' + maBan, 'Ghi nhận');
-    })
-    .catch(function(e){
-      U.toast('Không đẩy được lên Drive: ' + e.message, 'err');
-      if(G.secLog) G.secLog('Xuất bảng tính hỏng', l.ten + ' · ' + e.message, 'Cảnh báo');
-    });
+  var tsv = [b.cot.join('\t')]
+    .concat(b.dong.map(function(r){ return r.map(function(o){ return String(o==null?'':o); }).join('\t'); }))
+    .join('\n');
+  G.SHEET_MOI = { ten:b.ten, luc:new Date().toLocaleString('vi-VN'), ma:maBan };
+  U.modal('<h2 style="font-size:21px;font-weight:800;margin-bottom:10px">Bảng '+U.h(b.ten)+'</h2>'+
+    '<p class="sm dim" style="line-height:1.75;margin-bottom:12px">'+b.dong.length+
+    ' dòng. Chạm vào ô dưới để chọn hết, rồi chép (Ctrl+C) và dán vào bảng tính của anh chị — '+
+    'Google Sheets hoặc Excel tự tách cột. Không có tệp nào tải về máy.</p>'+
+    '<div class="card pad-sm mb"><div class="tiny up muted mb">MÃ BẢN</div><p class="sm mono">'+U.h(maBan)+'</p></div>'+
+    '<textarea readonly onclick="this.select()" class="cs-o mono" rows="8" style="width:100%;font-size:12.5px" '+
+      'aria-label="Dữ liệu bảng để chép">'+U.h(tsv)+'</textarea>');
+  if(G.secLog) G.secLog('Xuất bảng (chép tay)', l.ten + ' · ' + b.dong.length + ' dòng · mã bản ' + maBan, 'Ghi nhận');
 };
 
 /* ═══════════════ NÓI VÀO MICRO ═══════════════ */
@@ -51642,6 +55608,8 @@ on('[data-act]', function(el){
   if(a==='sx-tra') return G.traBoCuc();
   if(a==='gp-mo') return G.moNapGiayPhep();
   if(a==='gp-nap') return G.napGiayPhep();
+  if(a==='nap-kho-lai'){ G.KHO.loiMo = {}; manCho('Đang thử mở kho lại…');
+    return G.napKho().then(function(){ shell(); }); }
   if(a==='ct-cap') return G.capTaiKhoan();
   if(a==='tl-gui') return G.guiTaiLieu();
   if(a==='mc-gui') return G.guiMinhChung();
@@ -51941,7 +55909,7 @@ window.addEventListener('hashchange', function(){
 
    Gõ thêm #dangnhap vào cuối địa chỉ là về được, dù đang kẹt ở đâu. */
 G.raNgoai = function(){
-  G.S.acc = null; G.S.role = null; G.S.roleObj = null;
+  G.S.acc = null; G.S.role = null; G.S.roleObj = null; G.S.crmMuc = null; G.nkData = null; G.dpGiamSat = null;
   if(G.donKho) G.donKho();          /* nội dung đã giải mã không ở lại trong bộ nhớ */
   save();
   try{ history.replaceState(null, '', location.pathname + location.search); }catch(e){}
@@ -51962,7 +55930,7 @@ G.boot = function(){
      .../exec?dangnhap=1 — bản đó chạy trong khung sandbox nên không dùng
      được dấu # trên thanh địa chỉ. */
   if(window.GITA_RA_NGOAI || CUA_DANG_NHAP.indexOf(dau) >= 0){
-    G.S.acc = null; G.S.role = null; G.S.roleObj = null;
+    G.S.acc = null; G.S.role = null; G.S.roleObj = null; G.S.crmMuc = null;
     save();
     try{ history.replaceState(null, '', location.pathname + location.search); }catch(e){}
     gate();

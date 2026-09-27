@@ -6,16 +6,20 @@
 <meta name="theme-color" content="#070510">
 <!-- Lớp bảo vệ đi theo trang, không phụ thuộc máy chủ đặt tiêu đề hay không.
      GitHub Pages không đặt được tiêu đề HTTP nên phần này là chốt chặn duy nhất ở đó.
-     connect-src chỉ mở đúng hai tên miền của Apps Script — không nơi nào khác.
+     CSP chỉ cho gọi ra đúng máy chủ cấp phép Cloudflare Worker, không nơi nào khác.
      frame-ancestors không đặt được bằng thẻ meta; nó nằm ở _headers, cần máy chủ
      đặt được tiêu đề (Cloudflare). Xem docs/TEN_MIEN.md. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://script.google.com https://script.googleusercontent.com; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
-<!-- connect-src PHẢI kèm origin của máy chủ cấp phép. Nền Apps Script
-     cũ nằm ở script.google.com; nền Cloudflare Workers mới là một
-     origin KHÁC, và thiếu nó thì trình duyệt chặn sạch mọi lượt gọi —
-     bản web trông y như chưa nối máy chủ. Dán địa chỉ vào cau-hinh.js
-     thì phải thêm origin ấy vào đây cùng lượt; tools/soat-san-sang.js
-     canh hai chỗ đi cùng nhau. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://*.workers.dev https://*.pages.dev https://gita.edu.vn https://*.gita.edu.vn; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+<!-- connect-src PHẢI kèm origin của máy chủ cấp phép. Thiếu nó thì trình
+     duyệt chặn sạch mọi lượt gọi — bản web trông y như chưa nối máy chủ,
+     kho trống, đăng nhập không được. Từ 9.99.226 mở sẵn MỌI hình triển
+     khai Cloudflare để anh không phải sửa tệp này khi đổi cách đặt:
+       · *.workers.dev  — Worker gọi thẳng (gita365.<tài-khoản>.workers.dev)
+       · *.pages.dev    — app ở Pages gọi Worker khác origin
+       · gita.edu.vn + *.gita.edu.vn — tên miền riêng, hoặc Worker đặt route
+                                        gita.edu.vn/api/* (cùng origin)
+     Dán địa chỉ vào cau-hinh.js hoặc màn "Nối máy chủ"; tools/soat-san-sang.js
+     canh cho origin ấy nằm trong danh sách này. -->
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 <meta name="googlebot" content="index, follow">

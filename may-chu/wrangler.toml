@@ -1,0 +1,189 @@
+# ═══════════════════════════════════════════════════════════════
+#  GITA 365 · CẤU HÌNH TRIỂN KHAI CỬA VÀO MỚI
+#
+#  Chưa triển khai — tệp này là bản khai để lúc triển khai không phải
+#  nhớ lại từ đầu. Năm việc chủ hệ phải làm bằng tay, kê ở cuối tệp.
+#
+#  ── VÌ SAO CLOUDFLARE WORKERS ──
+#
+#  Đo ở tools/do-tai-may-chu.js: chỗ chặn sớm nhất KHÔNG phải Sheets mà
+#  là trần 30 LƯỢT CHẠY ĐỒNG THỜI của Apps Script. Ở 100.000 tài khoản,
+#  giờ cao điểm cần khoảng 1.250 lượt. Đổi kho dữ liệu mà giữ cửa vào
+#  Apps Script là gỡ trần thứ nhất, giữ nguyên trần thứ hai.
+#
+#  Workers không có trần ấy — nó chạy ở hàng trăm nơi cùng lúc và tự
+#  giãn. Thêm ba lý do nữa, theo đúng thứ tự quan trọng với kho này:
+#
+#    · D1 CHÍNH LÀ SQLite, nên may-chu/csdl.sql chạy ở máy và chạy trên
+#      máy chủ là cùng một cỗ máy — bộ thử không phải bản mô phỏng.
+#    · Pages phục vụ luôn phần tĩnh (index.html, gita-app.js, kho/*.enc)
+#      trên CÙNG một tên miền với Worker, nên không có CORS, không có
+#      lượt gọi thăm dò trước mỗi yêu cầu.
+#    · Một nhà cung cấp, một hoá đơn. Mức miễn phí đủ cho giai đoạn đầu.
+#
+#  ── CÒN Ở LẠI GOOGLE ──
+#
+#  Drive vẫn giữ tài liệu và minh chứng: chúng đã ở đó, chủ hệ đã quen
+#  thao tác trên đó, và chuyển đi không đổi được con số nào trong bản
+#  đo. Chuyển một thứ đang chạy tốt là mua rủi ro không mua lợi ích.
+# ═══════════════════════════════════════════════════════════════
+
+name = "gita365"
+main = "worker.js"
+compatibility_date = "2026-09-01"
+
+[vars]
+# KHÔNG phải bí mật — đây là địa chỉ công khai của bản web, dùng để dựng
+# đường dẫn kích hoạt trong thư. Sai địa chỉ ở đây thì thư đi đúng nhưng
+# đường dẫn trong thư trỏ vào chỗ không có gì.
+GITA_DIA_CHI_WEB = "https://gita.edu.vn"
+
+# Địa chỉ đứng tên người gửi. Tên miền này PHẢI được xác thực ở nhà gửi
+# thư (SPF/DKIM), nếu không thì thư đi nhưng rơi vào mục spam — mà một
+# mã xác nhận nằm trong mục spam thì coi như không gửi.
+GITA_THU_GUI_TU = "GITA 365 <khonggui@gita.edu.vn>"
+
+# Hòm thư nhận báo DÒNG DOANH THU — chốt của chủ hệ thống bản 9.96.
+# Mỗi lượt khách chuyển tiền gửi một thư về đây, và mỗi sáng gửi bản
+# tổng của ngày hôm trước.
+#
+# Để ở cấu hình chứ không gõ cứng trong mã: đổi người nhận là một lượt
+# sửa cấu hình, không phải một lượt sửa mã và phát hành lại.
+#
+# ĐỂ TRỐNG THÌ KHÔNG GỬI GÌ CẢ — và đó là hành vi đúng cho một bản chạy
+# thử: không ai muốn bộ thử của mình gửi thư thật vào hòm thư thật.
+GITA_THU_DOANH_THU = "typhuquanggita@gmail.com"
+
+# Khoá cửa ngân hàng. KHÔNG để ở đây — đây là tệp nằm trong kho mã.
+# Nạp bằng:  npx wrangler secret put GITA_KHOA_NGANHANG
+#
+# Khoá này chỉ mở ĐÚNG MỘT việc: đẩy một dòng sao kê vào. Nó không mở
+# được bất kỳ cửa nào khác, nên lộ nó không mất dữ liệu khách — nhưng
+# người cầm nó ghi được những dòng ngân hàng giả, và bản đối chiếu là
+# thứ duy nhất trong hệ đứng ngoài. Giữ nó như giữ khoá két.
+
+# HAI KHUNG GIỜ, HAI VIỆC KHÁC NHAU.
+#
+#   20:00 UTC = 03:00 sáng giờ Việt Nam — DỌN. Giờ chết, không ai dùng.
+#   00:00 UTC = 07:00 sáng giờ Việt Nam — BẢN TỔNG DOANH THU ngày hôm
+#               qua. Thư nằm sẵn trong hòm lúc chủ hệ mở máy, và ngày
+#               hôm qua lúc ấy đã đóng hẳn.
+#
+# Bộ chạy theo giờ nhận CẢ HAI lần nổ; nó tự phân theo giờ UTC trong
+# worker.js. Thiếu dòng 00:00 ở đây thì bản tổng KHÔNG BAO GIỜ gửi, mà
+# mã vẫn trông như đã làm xong việc — đúng lớp lỗi im lặng nhất.
+[triggers]
+crons = ["0 20 * * *", "0 0 * * *"]
+
+# Nguồn dữ liệu. Tạo bằng:  npx wrangler d1 create gita365
+# rồi dán database_id vào đây (id KHÔNG phải bí mật — nó chỉ định danh).
+[[d1_databases]]
+binding = "CSDL"
+database_name = "gita365"
+database_id = "CHUA-TAO — chạy: npx wrangler d1 create gita365"
+
+# Kho tệp cho RUỘT hồ sơ người dùng.
+#
+# Vì sao ruột không nằm trong D1: nửa triệu hồ sơ × 50 KB là 25 GB,
+# quá sức D1 (trần 10 GB) và vừa vặn kho tệp (10 GB đầu miễn phí).
+# Xem chú giải ở bảng hosoApp trong csdl.sql.
+[[r2_buckets]]
+binding = "HOSO"
+bucket_name = "gita365-hoso"
+
+# ═══════════════════════════════════════════════════════════════
+#  BỐN BÍ MẬT — KHÔNG BAO GIỜ VIẾT VÀO TỆP NÀY
+#
+#  Tệp này nằm trong kho mã. Kho mã đi qua git, qua máy người khác, qua
+#  màn hình lúc chia sẻ. Một bí mật viết vào đây là một bí mật đã lộ từ
+#  dòng đầu tiên nó được viết ra — cùng đúng cái luật mà máy chủ cũ đã
+#  ghi ở đầu GITA365_TATCA.gs về mật khẩu nằm cứng trong mã.
+#
+#  Nạp bằng lệnh, mỗi lệnh hỏi giá trị rồi cất vào kho bí mật của
+#  Cloudflare:
+#
+#    npx wrangler secret put GITA_TIEU
+#        Tiêu băm mật khẩu. Sinh MỘT LẦN rồi giữ mãi:
+#            node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+#        ĐỔI TIÊU LÀ MỌI MẬT KHẨU HỎNG CÙNG LÚC — không ai đăng nhập
+#        được nữa và không có đường lùi. Cất một bản ở nơi an toàn.
+#
+#    npx wrangler secret put GITA_KHOA_KHO
+#        Nội dung kho/khoa.json. Đây là chìa mở toàn bộ tài sản nội
+#        dung của Học viện. Không nằm trong cơ sở dữ liệu — một bản sao
+#        lưu cơ sở dữ liệu bị lộ mà kéo theo bộ khoá thì mất tất cả,
+#        chứ không phải mất dữ liệu một người.
+#
+#    npx wrangler secret put GITA_KHOA_KY
+#        Khoá ký chứng cứ hoa hồng (HMAC). Chưa dùng tới ở phần đã
+#        port; nạp sẵn để lúc port GITA_ChungCu.gs không phải quay lại.
+#
+#    npx wrangler secret put GITA_KHOA_THU
+#
+# ── CỬA ĐI RA NGOÀI (tuỳ chọn — TẮT SẴN) ──
+# Chủ hệ chốt ở 9.99.11: được phép nối một bộ tạo ảnh bên ngoài.
+# Thiếu MỘT trong hai thì cửa ĐÓNG, và máy chủ nói rõ là đóng chứ không
+# im lặng trả về như đã gửi. Đây là mặc định cố ý: nối một bộ vẽ bên
+# ngoài là một quyết định phải bấm, không phải một thứ có sẵn.
+# Thứ đi ra là ĐÚNG NĂM TRƯỜNG của đề bài — nội dung KHÔNG bao giờ đi ra.
+#    npx wrangler secret put GITA_KHOA_VE
+#    npx wrangler secret put GITA_CONG_VE
+#
+# ── VẼ NHƯ CHATGPT (9.99.40) ──
+# ChatGPT vẽ ảnh bằng API ảnh của OpenAI — một cửa HTTP mua được. Bộ
+# chuyển đổi đã có sẵn trong mã, nên chỉ cần khai KIỂU cổng:
+#    npx wrangler secret put GITA_KIEU_VE    -> openai   (hoặc gita)
+#    npx wrangler secret put GITA_MAU_VE     -> tên mô hình ảnh
+# Với kiểu `openai`: GITA_CONG_VE là đường dẫn tạo ảnh của OpenAI, và
+# GITA_KHOA_VE là khoá API tài khoản OpenAI của Học viện.
+# Không khai GITA_KIEU_VE thì mặc định `gita` — dạng riêng, dành cho ai
+# tự dựng một lớp trung gian.
+#
+# LƯU Ý MỘT CHỖ HAY BỊ HỎI: mô hình NGÔN NGỮ (loại đang chạy trợ lý
+# này) ĐỌC được ảnh nhưng KHÔNG sinh ra ảnh. Ảnh người như ảnh chụp là
+# việc của mô hình KHUẾCH TÁN, một loại máy khác. Không có công tắc nào
+# trong kho mã bật được nó lên — nó là thứ mua tài khoản.
+#        Khoá của nhà gửi thư (mặc định Resend). Mã xác nhận đăng ký và
+#        mã lấy lại mật khẩu đi bằng khoá này — không có nó thì luồng
+#        đăng ký dừng ở bước một và NÓI RA, chứ không im lặng báo "đã
+#        gửi mã" cho một lá thư không đi.
+#
+#        VÌ SAO KHÔNG GỬI QUA GMAIL NHƯ NỀN CŨ: Gmail thường cho 100
+#        thư/ngày, Workspace 1.500–2.000. Ở 100.000 tài khoản, riêng mã
+#        đăng ký và mã lấy lại mật khẩu đã vượt trong một ngày bình
+#        thường — và hết hạn ngày là hết SẠCH, mã của khách hàng thật
+#        ngừng gửi tới nửa đêm mà không có gì báo trước.
+#
+#        Chi phí: Resend miễn phí 3.000 thư/tháng, rồi khoảng 20 đô cho
+#        50.000 thư. CHỦ HỆ NÊN NHÌN CON SỐ NÀY TRƯỚC KHI TRIỂN KHAI.
+#        Đổi sang Mailgun/SendGrid/SES là viết một hàm cùng chữ ký với
+#        guiQuaResend_ trong may-chu/thu.js — đúng một chỗ.
+#
+#  ═══════════════ NĂM VIỆC LÚC TRIỂN KHAI ═══════════════
+#
+#  1. npx wrangler d1 create gita365          → dán database_id lên trên
+#  2. npx wrangler d1 execute gita365 --file=csdl.sql --remote
+#  3. bốn lệnh secret put ở trên
+#  4. xác thực tên miền gita.edu.vn ở nhà gửi thư (SPF + DKIM)
+#     Chủ hệ quản lý trực tiếp tên miền này, nên bước ấy là tự làm được:
+#     nhà gửi thư đưa ra vài bản ghi TXT/CNAME, thêm vào DNS của
+#     gita.edu.vn rồi bấm xác thực. KHÔNG BỎ QUA BƯỚC NÀY — thư vẫn đi
+#     nhưng rơi vào mục spam, mà một mã xác nhận nằm trong mục spam thì
+#     đúng bằng không gửi, và người dùng chỉ thấy "mã không tới".
+#
+#     Vì tên miền là của chủ hệ, phần tĩnh cũng nên chạy trên chính nó:
+#     Worker đặt route gita.edu.vn/api/* và Pages phục vụ phần còn lại.
+#     Cùng một tên miền thì không có CORS, không có lượt gọi thăm dò
+#     trước mỗi yêu cầu, và địa chỉ máy chủ không phải một tên lạ mà
+#     khách hàng nhìn thấy trong thanh địa chỉ.
+#  5. npx wrangler deploy
+#
+#  Rồi trong ứng dụng: Super Admin → Quản trị trang → Nối máy chủ →
+#  dán địa chỉ Worker → Lưu → Gọi thử.
+#
+#  ĐỔI ĐỊA CHỈ LÀ ĐỔI NỀN, VÀ ĐỔI NGƯỢC LẠI ĐƯỢC TRONG MỘT PHÚT. Cửa
+#  vào mới giữ nguyên bề mặt của máy chủ cũ đúng để làm được việc ấy:
+#  hai máy chủ cùng chạy một thời gian, có chuyện thì dán lại địa chỉ
+#  cũ. Đổi bề mặt cùng lúc với đổi nền thì lúc hỏng không ai biết hỏng
+#  vì nền hay vì bề mặt.
+# ═══════════════════════════════════════════════════════════════

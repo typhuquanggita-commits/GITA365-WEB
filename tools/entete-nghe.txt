@@ -1,0 +1,12 @@
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — MÃ CỦA GÓI NGHỀ · 36 TỆP
+
+   TỆP NÀY DỰNG RA, KHÔNG PHẢI MÃ NGUỒN. Sửa trong src/ rồi chạy:
+   node tools/gop-src.js
+
+   Tệp này KHÔNG nằm trong index.html và KHÔNG nằm trong danh sách
+   đệm ngoại tuyến. Nó chỉ được nạp sau khi đăng nhập, và chỉ khi
+   giấy phép có gói nghề — cùng lúc với gói kho nghề, cùng một điều
+   kiện. Máy của gia đình không bao giờ hỏi tới nó.
+   ═══════════════════════════════════════════════════════════════ */
+

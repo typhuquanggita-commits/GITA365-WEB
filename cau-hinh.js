@@ -6,12 +6,21 @@
 'use strict';
 var G = window.G || {}; window.G = G;
 
-/* Dán URL triển khai của Apps Script (…/exec) vào đây.
-   Để trống thì ứng dụng chạy ở CHẾ ĐỘ MẪU — xem được giao diện và phần
-   giới thiệu, kho chuyên môn vẫn khoá. Xem docs/TRIEN_KHAI_WEB.md. */
-/* Giữ giá trị đã có sẵn. Bản do Apps Script phục vụ tiêm địa chỉ máy chủ vào
-   trước khi tệp này chạy — gán đè bằng chuỗi rỗng là xoá mất nó. */
-G.API_CAP_PHEP = G.API_CAP_PHEP || 'https://script.google.com/macros/s/AKfycbznfEAFAwonOey_4M0c68tr0wCATpd2iaCFOUpsKZkV_F3cEcvXQByKtqG2sBdNcJashA/exec';
+/* ══ MÁY CHỦ NAY LÀ CLOUDFLARE WORKER, KHÔNG CÒN APPS SCRIPT (9.99.197) ══
+   Dán địa chỉ Cloudflare Worker của Học viện vào đây, dạng:
+       https://gita365.<TÊN-TÀI-KHOẢN>.workers.dev
+   (tên Worker là "gita365" — xem may-chu/wrangler.toml; <TÊN-TÀI-KHOẢN>
+   là tên miền con Cloudflare cấp cho anh khi triển khai lần đầu).
+
+   Để TRỐNG thì ứng dụng chạy ở CHẾ ĐỘ MẪU — xem được giao diện và phần
+   giới thiệu, kho chuyên môn vẫn khoá. Các bước dựng Worker: xem màn
+   "Quản trị trang → Nối máy chủ" trong ứng dụng, hoặc docs/MAY_CHU.md.
+
+   HAI CHỖ PHẢI ĐI CÙNG NHAU: đổi địa chỉ ở đây thì connect-src trong
+   index.html cũng phải cho phép origin ấy (đã mở sẵn https://*.workers.dev).
+   Thiếu một chỗ là trình duyệt chặn im lặng — chạy node tools/soat-san-sang.js
+   để máy đối chiếu hai chỗ. */
+G.API_CAP_PHEP = G.API_CAP_PHEP || '';
 
 /* Không phải ai cũng sửa được tệp này — bản cài trên máy Windows nằm trong
    thư mục chương trình. Nên Super Admin còn một đường thứ hai: vào màn

@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   GITA 365 — MÃ CỦA GÓI NGHỀ · 31 TỆP
+   GITA 365 — MÃ CỦA GÓI NGHỀ · 36 TỆP
 
    TỆP NÀY DỰNG RA, KHÔNG PHẢI MÃ NGUỒN. Sửa trong src/ rồi chạy:
    node tools/gop-src.js
@@ -241,32 +241,29 @@ G.VIEWS['dau-mat'] = function(){
 G.VIEWS['dong-chay'] = function(){
   if(!G.can('pro_report')) return U.lockCard();
   var Q = G.QUYTRINH;
-  var o = U.ph({eyebrow:'NHÓM 05 · QUẢN TRỊ', ic:'orbit', grad:1, t:'Dòng chảy thông tin',
+  var o = U.ph({eyebrow:'NHÓM 05 · VẬN HÀNH', ic:'orbit', grad:1, t:'Dòng chảy thông tin',
     lead:Q.cot});
 
-  o += Q.dong.map(function(d){
-    return '<div class="card lift mb" style="border-color:'+d.c+'2e">'+
-      '<div class="row wrap" style="gap:11px;margin-bottom:12px">'+
-      '<span style="width:36px;height:36px;border-radius:12px;display:grid;place-items:center;font-weight:900;'+
-      'background:'+d.c+'22;color:'+d.c+'">'+d.no+'</span>'+
-      '<b style="font-size:16px;color:'+d.c+'">'+h(d.ten)+'</b></div>'+
-      '<div class="row wrap" style="gap:10px;align-items:center;margin-bottom:12px">'+
-        '<div style="flex:1;min-width:150px;padding:11px 13px;border-radius:12px;background:var(--phu-2)">'+
-        '<span class="tiny up muted">TỪ</span><p class="sm mt">'+h(d.tu)+'</p></div>'+
-        '<span style="color:'+d.c+'">'+ic('arrow','w-4 h-4')+'</span>'+
-        '<div style="flex:1.4;min-width:180px"><div class="row wrap" style="gap:5px">'+
-        d.qua.map(function(x){return U.chip(x,d.c);}).join('')+'</div></div>'+
-        '<span style="color:'+d.c+'">'+ic('arrow','w-4 h-4')+'</span>'+
-        '<div style="flex:1;min-width:150px;padding:11px 13px;border-radius:12px;background:'+d.c+'12">'+
-        '<span class="tiny up" style="color:'+d.c+'">ĐẾN</span><p class="sm mt">'+h(d.den)+'</p></div>'+
-      '</div>'+
-      '<div class="grid g2" style="gap:12px">'+
-        '<div><span class="tiny up muted">ĐO BẰNG GÌ</span><p class="sm mt" style="line-height:1.55">'+h(d.do)+'</p></div>'+
-        '<div style="padding:11px 13px;border-radius:12px;background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.2)">'+
-        '<span class="tiny up" style="color:var(--bad)">TẮC KHI NÀO</span>'+
-        '<p class="sm mt" style="line-height:1.55">'+h(d.tac)+'</p></div>'+
-      '</div></div>';
-  }).join('');
+  o += '<div class="grid g3 mb">'+
+    U.stat({k:'DÒNG NUÔI HỆ', v:Q.dong.length, d:'bảy dòng thông tin lõi', c:'#0B7350'})+
+    U.stat({k:'ĐIỂM QUẢN TRỊ', v:Q.vongQuanTri.length, d:'nhịp rà soát có người chịu', c:'#185AB4'})+
+    U.stat({k:'ĐỀU CÓ THƯỚC ĐO', v:Q.dong.length+'/'+Q.dong.length, d:'mỗi dòng khai "đo bằng gì"', c:'#5140B4'})+
+  '</div>';
+
+  /* Bảng thay bảy thẻ prose: mỗi dòng một hàng, quét được cả bảy trong
+     một lần nhìn. Cột "Đo bằng gì" là thước đo thật của từng dòng — đây
+     là chỗ phân biệt một dòng chảy CÓ người canh với một dòng để trôi. */
+  o += U.sec('BẢY DÒNG THÔNG TIN','Từ đâu · qua đâu · đến đâu · đo bằng gì · tắc khi nào — một bảng, quét một lần');
+  o += U.tbl(['#','Dòng','Từ → Đến','Qua','Đo bằng gì','Tắc khi nào'], Q.dong.map(function(d){
+    return [
+      '<b class="mono" style="color:'+d.c+'">'+h(d.no)+'</b>',
+      '<b class="sm" style="color:'+d.c+'">'+h(d.ten)+'</b>',
+      '<span class="sm">'+h(d.tu)+'</span><br><span class="tiny" style="color:'+d.c+'">↓ '+h(d.den)+'</span>',
+      '<div class="row wrap" style="gap:4px">'+d.qua.map(function(x){return U.chip(x,d.c);}).join('')+'</div>',
+      '<span class="sm">'+h(d.do)+'</span>',
+      '<span class="sm" style="color:var(--bad)">'+h(d.tac)+'</span>'
+    ];
+  }));
 
   o += U.sec('VÒNG QUẢN TRỊ','Ai nhìn gì, theo nhịp nào — ban lãnh đạo không phải đọc từng màn hình');
   o += U.tbl(['Nhịp','Việc rà soát','Người chịu trách nhiệm'], Q.vongQuanTri.map(function(v){
@@ -2418,18 +2415,23 @@ G.VIEWS['tu-van-hanh'] = function(){
       '<p class="sm" style="flex:1;line-height:1.7">Mọi mục canh đo được ở đây đều đang đạt. '+
       h(q.chuaDo)+' mục còn lại đo ở máy chủ hoặc cần người đọc ngữ cảnh — chúng được ghi rõ, không bỏ qua.</p></div></div>';
 
-  /* Bốn mức */
-  o += U.sec('BỐN MỨC TỰ ĐỘNG','Mức bốn không phải chỗ hệ thống yếu — là chỗ quyết định gắn với người đứng tên');
-  o += '<div class="row wrap" style="gap:11px">'+ MUC.map(function(m){
-    return '<div class="card" style="flex:1;min-width:230px;border-top:3px solid '+m.c+'">'+
-      '<div class="row" style="gap:8px;align-items:baseline">'+
-        '<b class="mono" style="color:'+m.c+'">'+h(m.ma)+'</b>'+
-        '<b style="flex:1;font-size:14.5px">'+h(m.ten)+'</b>'+
-        (m.tuDong ? U.chip('máy tự làm', m.c) : U.chip('cần người', '#BE0E16'))+'</div>'+
-      '<p class="sm mt" style="line-height:1.7">'+h(m.y)+'</p>'+
-      '<p class="tiny muted mt2" style="line-height:1.6"><b>Ví dụ:</b> '+h(m.vd)+'</p>'+
-      '<p class="tiny mt" style="line-height:1.6;color:var(--gita-do-ink)"><b>Rủi ro:</b> '+h(m.rui)+'</p></div>';
-  }).join('') +'</div>';
+  /* Bốn mức — sơ đồ quy trình M1→M4 (khung có tiêu đề, các mức nối bằng mũi tên) */
+  o += '<div class="crm-qt"><div class="crm-qt-dau">' + ic('shield', 'w-4 h-4') +
+    '<b>Bốn mức tự động</b>' +
+    '<span>M1 → M4 · càng lên mức, quyết định càng gắn với người đứng tên</span></div>' +
+    '<div class="crm-qt-hang">';
+  MUC.forEach(function (m, i) {
+    o += '<div class="crm-qt-the" style="border-top:3px solid ' + m.c + '">' +
+      '<div class="row" style="gap:8px;align-items:baseline">' +
+        '<b class="mono" style="color:' + m.c + '">' + h(m.ma) + '</b>' +
+        '<b style="flex:1;font-size:14.5px">' + h(m.ten) + '</b>' +
+        (m.tuDong ? U.chip('máy tự làm', m.c) : U.chip('cần người', '#BE0E16')) + '</div>' +
+      '<p class="sm mt" style="line-height:1.7">' + h(m.y) + '</p>' +
+      '<p class="tiny muted mt2" style="line-height:1.6"><b>Ví dụ:</b> ' + h(m.vd) + '</p>' +
+      '<p class="tiny mt" style="line-height:1.6;color:var(--gita-do-ink)"><b>Rủi ro:</b> ' + h(m.rui) + '</p></div>';
+    if (i < MUC.length - 1) o += '<div class="crm-qt-muiten">›</div>';
+  });
+  o += '</div></div>';
 
   /* Danh mục canh + kết quả quét */
   o += U.sec('DANH MỤC CANH — VÀ KẾT QUẢ QUÉT NGAY BÂY GIỜ',
@@ -2450,18 +2452,24 @@ G.VIEWS['tu-van-hanh'] = function(){
               oDat];
     }));
 
-  /* Đường cập nhật kiến thức */
-  o += U.sec('ĐƯỜNG CẬP NHẬT KIẾN THỨC','Máy đi ba chặng đầu và DỪNG trước cửa kho — chỉ tài liệu đã duyệt mới thành chuẩn nghề');
-  o += '<div class="row wrap" style="gap:11px">'+ (G.TD_TRITHUC || []).map(function(x){
+  /* Đường cập nhật kiến thức — sơ đồ quy trình có mũi tên */
+  var _td = (G.TD_TRITHUC || []);
+  o += '<div class="crm-qt"><div class="crm-qt-dau">' + ic('book', 'w-4 h-4') +
+    '<b>Đường cập nhật kiến thức</b>' +
+    '<span>Máy đi ba chặng đầu và DỪNG trước cửa kho — chỉ tài liệu đã duyệt mới thành chuẩn nghề</span></div>' +
+    '<div class="crm-qt-hang">';
+  _td.forEach(function (x, i) {
     var c = x.may ? '#0B7350' : '#BE0E16';
-    return '<div class="card" style="flex:1;min-width:220px;border-top:3px solid '+c+'">'+
-      '<div class="row" style="gap:8px;align-items:baseline">'+
-        '<b class="mono" style="color:'+c+'">'+h(x.b)+'</b>'+
-        '<b style="flex:1;font-size:14.5px">'+h(x.ten)+'</b></div>'+
-      (x.may ? U.chip('máy làm', c) : U.chip('người quyết', c))+
-      '<p class="sm mt" style="line-height:1.7">'+h(x.lam)+'</p>'+
-      '<p class="tiny muted mt2" style="line-height:1.6"><b>Ra:</b> '+h(x.ra)+'</p></div>';
-  }).join('') +'</div>';
+    o += '<div class="crm-qt-the" style="border-top:3px solid ' + c + '">' +
+      '<div class="row" style="gap:8px;align-items:baseline">' +
+        '<b class="mono" style="color:' + c + '">' + h(x.b) + '</b>' +
+        '<b style="flex:1;font-size:14.5px">' + h(x.ten) + '</b></div>' +
+      (x.may ? U.chip('máy làm', c) : U.chip('người quyết', c)) +
+      '<p class="sm mt" style="line-height:1.7">' + h(x.lam) + '</p>' +
+      '<p class="tiny muted mt2" style="line-height:1.6"><b>Ra:</b> ' + h(x.ra) + '</p></div>';
+    if (i < _td.length - 1) o += '<div class="crm-qt-muiten">›</div>';
+  });
+  o += '</div></div>';
 
   /* Máy chủ nhà */
   var MC = G.TD_MAYCHU || {};
@@ -12416,6 +12424,663 @@ G.VIEWS = G.VIEWS || {};
           : '<b style="color:#0B6675">' + kqD.so + ' việc · ' + kqD.lamNgay +
             ' việc làm được ngay</b>']
     ]) + '</div>';
+
+    return o;
+  };
+})();
+
+})();
+
+/* ═════════ src/cay-tien-vip.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — CÂY TIỀN VIP · 4 TRỤ · 5 CỤM · 28 NĂNG LỰC  (9.99.213)
+
+   Chủ hệ chốt: "Cây tiền VIP gắn 4 trụ · 5 cụm · 28 năng lực, triển khai
+   để CHĂM SÓC hệ thống hồ sơ VIP của khách hàng."
+
+   NGUỒN THẬT: MYVIP.doc (Quyển I — 14 nền tảng → ma trận 28 sức mạnh),
+   chủ hệ nạp trên Drive. Màn TRỎ về bản gốc, chép CẤU TRÚC (4 trụ · 5 cụm ·
+   28 năng lực), KHÔNG chép toàn văn — bản thứ hai của một bảng sẽ lệch.
+
+   RANH GIỚI (gói NGHỀ · pro_consult): đây là công cụ QUẢN TRỊ chăm sóc VIP,
+   khách KHÔNG xem — cùng ranh giới Cây tiền / Cây giá trị (9.99.162). Cây giá
+   trị của GIA ĐÌNH ở màn `cay-vip` (mặt khách); màn này là cây NĂNG LỰC của
+   KÊNH để chăm sóc hồ sơ VIP.
+
+   ĐỤNG LUẬT KHÔNG BẬT KHỐNG: vài năng lực (Escrow · GITA Moment · Arena · An
+   toàn trẻ "từng giây" · Streak · Uplift Pay · Thị Trường Thịnh Vượng) chạm
+   luật bất khả sửa / cổng đã chốt. Mỗi cái mang ô `va` TRỎ vào mã luật thật
+   (SUP-05 · Điều 13 · L07 · L08 · VIP_CAM · LR1) — trình để BIẾT, không mở.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.VIEWS = G.VIEWS || {};
+
+/* GỐC — 4 trụ (14 nền tảng đỉnh). Hợp nhất bằng phép NHÂN: thiếu một trụ là sụp. */
+G.CTV_TRU4 = [
+  { ma:'I',   ten:'Kết nối & Hạ tầng liên',      nen:'Facebook · WhatsApp · Telegram · Zalo' },
+  { ma:'II',  ten:'Tri thức & Nội dung giá trị',  nen:'YouTube · Pinterest · Reddit' },
+  { ma:'III', ten:'Đồng hành thời gian thực',     nen:'Discord · Twitch' },
+  { ma:'IV',  ten:'Chân thật & Bản sắc cá nhân',  nen:'BeReal · LinkedIn · Instagram' }
+];
+
+/* THÂN — 5 cụm (cỗ máy). Nhóm 28 năng lực theo cỗ máy, không theo số thứ tự. */
+G.CTV_CUM5 = [
+  { ma:'C1', ten:'Cỗ máy Tri thức & Phân phối',   so:7,  mau:'var(--gita)' },
+  { ma:'C2', ten:'Cỗ máy Cộng đồng & Đồng hành',  so:10, mau:'var(--gita-sang)' },
+  { ma:'C3', ten:'Cỗ máy Chân thật & Niềm tin',   so:4,  mau:'var(--gita-sau)' },
+  { ma:'C4', ten:'Cỗ máy Kinh tế',                so:6,  mau:'var(--ok)' },
+  { ma:'C5', ten:'Lớp neo giữ bền',               so:1,  mau:'var(--gold-2)' }
+];
+
+/* LÁ — 28 năng lực. `cum` = mã cụm; `va` (nếu có) = mã luật kho mà năng lực
+   này chạm — trỏ để BIẾT, không phải để bật. Tổng: 7+10+4+6+1 = 28. */
+G.CTV_SM28 = [
+  { so:1,  ten:'Uplift Index',              cum:'C1', y:'Đảo hàm mục tiêu: đo tiến bộ thật, không watch-time' },
+  { so:2,  ten:'Studio 1 chạm',             cum:'C1', y:'Chi phí sản xuất nội dung giá trị về gần 0' },
+  { so:3,  ten:'Cửa hàng tri thức Escrow',  cum:'C1', y:'Đảo cấu trúc rủi ro thương mại', va:'SUP-05' },
+  { so:7,  ten:'GITA Cinema',               cum:'C1', y:'Kinh tế "thư viện vĩnh cửu"' },
+  { so:8,  ten:'Tìm kiếm ngữ nghĩa',        cum:'C1', y:'Tìm theo ý, không theo từ khoá' },
+  { so:15, ten:'Bản tin kiểm chứng',        cum:'C1', y:'Hạ tầng sự thật — tin có nguồn' },
+  { so:16, ten:'Kiểm chứng kép',            cum:'C1', y:'Hai lớp xác minh trước khi lên' },
+  { so:4,  ten:'Vòng Đồng Hành + GPI nhóm', cum:'C2', y:'Nâng đơn vị đo từ cá nhân lên nhóm' },
+  { so:5,  ten:'Gia Đình Space',            cum:'C2', y:'Đơn vị nền tảng — cả nhà một không gian' },
+  { so:6,  ten:'Sự kiện 10.000 điểm chạm',  cum:'C2', y:'Cầu nối số ↔ thật' },
+  { so:13, ten:'Broadcast 1-triệu-nhiều',   cum:'C2', y:'Một người chạm rất nhiều, vẫn riêng' },
+  { so:14, ten:'Bot 24/7 gắn DNA cá nhân',  cum:'C2', y:'Trợ lý theo đúng chất người ấy' },
+  { so:18, ten:'Thread chuẩn + Quy tắc 3 câu + Vô Danh có xác thực', cum:'C2', y:'Nói gọn, thật, an toàn' },
+  { so:19, ten:'Voice nhịp 6h/21h',         cum:'C2', y:'Nhịp giọng sáng–tối giữ kết nối' },
+  { so:20, ten:'6 tầng vai trò + Chứng Chỉ Dẫn Lối', cum:'C2', y:'Kỷ luật thành bằng cấp xã hội' },
+  { so:21, ten:'Livestream lớp',            cum:'C2', y:'Lớp học trực tiếp theo nhịp' },
+  { so:28, ten:'Arena',                     cum:'C2', y:'Đồng hành có "đấu trường"', va:'VIP_CAM C1 · LR1' },
+  { so:9,  ten:'Nhãn ✅ bắt buộc',           cum:'C3', y:'Dàn dựng/chỉnh sửa phải khai — trị "áp lực đẹp"' },
+  { so:10, ten:'GITA Moment',               cum:'C3', y:'Khoảnh khắc thật, camera kép, giờ ngẫu nhiên', va:'L07 · Điều 13' },
+  { so:23, ten:'Xác thực dữ liệu thật',     cum:'C3', y:'Bằng chứng kiểm chứng = điều kiện GITA-VIP' },
+  { so:26, ten:'An toàn trẻ em "từng giây"',cum:'C3', y:'Bảo vệ trẻ theo thời gian thực', va:'VIP_CAM (TRE) · Điều 13' },
+  { so:11, ten:'Siêu App 5 động từ',        cum:'C4', y:'Học · Rèn · Kết nối · Kiếm · Cho đi' },
+  { so:12, ten:'Mã hoá đầu-cuối mặc định',  cum:'C4', y:'Tuyên ngôn kiến trúc niềm tin' },
+  { so:17, ten:'Thị Trường Thịnh Vượng',    cum:'C4', y:'"LinkedIn bằng bằng chứng, không bằng lời khoe"', va:'SUP-05' },
+  { so:22, ten:'Thư viện Cảm Hứng',         cum:'C4', y:'Nút "bắt đầu 5 phút"' },
+  { so:24, ten:'Cập nhật 1 dòng "Hôm nay tôi đã…"', cum:'C4', y:'Cam kết công khai vi mô' },
+  { so:25, ten:'Uplift Pay',                cum:'C4', y:'Trả theo tác động thật, không theo lượt xem', va:'SUP-05' },
+  { so:27, ten:'Streak + hồ sơ không bỏ + gia đình níu chân', cum:'C5', y:'Ba lớp neo gắn bó', va:'L08 · VIP_CAM C4–C5' }
+];
+
+/* Cơ chế TẠO & NHẬN giá trị (không qua bảng quyền lợi theo hạng). */
+G.CTV_COCHE = [
+  { ten:'5 động từ', y:'Học → Rèn → Kết nối → Kiếm → Cho đi — vòng tạo-nhận giá trị khép kín (NL 11).' },
+  { ten:'Ripple Index', y:'"Tiền tệ danh dự" — đo bằng TIẾN BỘ của người khác mình giúp; không mua, không farm. Công bố ở Gala Vinh Danh 365.' },
+  { ten:'6 tầng vai trò', y:'Giá trị NHẬN được — thăng theo kỷ luật + đóng góp kiểm chứng; khách hàng → người cung cấp (NL 20).' }
+];
+
+/* TRIỂN KHAI CHĂM SÓC HỒ SƠ VIP — mỗi cụm là một TRỤC chăm sóc, TRỎ vào màn
+   đã có (không dựng lại): cây tiền này là bản đồ NĂNG LỰC, việc chăm sóc thật
+   chạy ở các cửa/màn dưới. */
+G.CTV_CHAM = [
+  { cum:'C1', truc:'Cấp đúng tri thức theo tầng hồ sơ VIP', tro:'kho-tai-lieu', troTen:'Kho tài liệu' },
+  { cum:'C2', truc:'Đồng hành & giữ nhịp hồ sơ VIP',        tro:'cay-tien',     troTen:'Cây tiền · chăm sóc VIP' },
+  { cum:'C3', truc:'Xác thực & bảo vệ hồ sơ VIP thật',      tro:'hoso-vip',     troTen:'Chuẩn hồ sơ VIP' },
+  { cum:'C4', truc:'Giá trị & quyền lợi theo hạng VIP',     tro:'hang-vip',     troTen:'Phân hạng VIP' },
+  { cum:'C5', truc:'Neo giữ bền — chống rời bỏ',            tro:'van-hanh-cham-soc', troTen:'Vận hành & chăm sóc' }
+];
+G.CTV_NGUON = 'MYVIP · Quyển I (14 nền tảng → 28 sức mạnh) — Drive chủ hệ';
+
+(function () {
+  var U = G.U, h = U.h, ic = U.ic;
+  function cumTen(ma){ var c = G.CTV_CUM5.filter(function(x){return x.ma===ma;})[0]; return c?c.ten:ma; }
+  function cumMau(ma){ var c = G.CTV_CUM5.filter(function(x){return x.ma===ma;})[0]; return c?c.mau:'var(--gita)'; }
+
+  G.VIEWS['cay-tien-vip'] = function () {
+    if (!G.can('pro_consult')) return U.lockCard();
+
+    var o = U.ph({ eyebrow:'CHĂM SÓC VIP · QUẢN TRỊ', ic:'seed', grad:1,
+      t:'Cây tiền VIP — 4 trụ · 5 cụm · 28 năng lực',
+      lead:'Cây NĂNG LỰC của kênh để chăm sóc hồ sơ VIP: bốn trụ nền tảng (gốc) → năm cỗ máy ' +
+        '(thân) → 28 sức mạnh (lá). Đây là bản đồ năng lực; việc chăm sóc thật chạy ở các cửa được trỏ. ' +
+        'Nguồn: ' + h(G.CTV_NGUON) });
+
+    o += U.bdSoHang([
+      {k:'Trụ nền tảng', v:'4', c:'var(--gita)', d:'14 nền tảng đỉnh'},
+      {k:'Cỗ máy (cụm)', v:'5', c:'var(--gita-sau)'},
+      {k:'Năng lực (sức mạnh)', v:'28', c:'var(--ok)', d:'7·10·4·6·1'},
+      {k:'Đụng luật — trỏ cổng', v:String(G.CTV_SM28.filter(function(s){return s.va;}).length), c:'var(--warn)', d:'không bật khống'}
+    ]);
+
+    /* GỐC — 4 trụ */
+    o += U.sec('GỐC — 4 TRỤ NỀN TẢNG', 'Hợp nhất bằng phép NHÂN: thiếu một trụ là cả cây sụp.');
+    o += '<div class="grid g2">' + G.CTV_TRU4.map(function (t) {
+      return '<div class="card pad-sm"><b class="sm">Trụ ' + h(t.ma) + ' · ' + h(t.ten) + '</b>' +
+        '<p class="tiny muted mt">' + h(t.nen) + '</p></div>';
+    }).join('') + '</div>';
+
+    /* THÂN — 5 cụm */
+    o += U.sec('THÂN — 5 CỖ MÁY (CỤM)', 'Mỗi cụm gom một nhóm năng lực theo chức năng, không theo số.');
+    o += '<div class="grid g2">' + G.CTV_CUM5.map(function (c) {
+      return '<div class="card pad-sm" style="border-left:3px solid ' + c.mau + '">' +
+        '<b class="sm">' + h(c.ma) + ' · ' + h(c.ten) + '</b>' +
+        '<span class="chip" style="margin-left:6px">' + c.so + ' năng lực</span></div>';
+    }).join('') + '</div>';
+
+    /* LÁ — 28 năng lực theo cụm */
+    o += U.sec('LÁ — 28 SỨC MẠNH', 'Nhóm theo cụm. Ô "Đụng luật" trỏ vào mã cổng thật — trình để BIẾT, không mở.');
+    G.CTV_CUM5.forEach(function (c) {
+      var la = G.CTV_SM28.filter(function (s) { return s.cum === c.ma; });
+      o += '<p class="tiny" style="margin:12px 0 4px;color:' + c.mau + ';font-weight:700">' +
+        h(c.ma) + ' · ' + h(c.ten) + '</p>';
+      o += '<div class="card">' + U.tbl(['#', 'Năng lực', 'Là gì', 'Đụng luật'],
+        la.map(function (s) {
+          return ['<b class="mono sm">' + s.so + '</b>', '<b class="sm">' + h(s.ten) + '</b>',
+            '<span class="tiny muted">' + h(s.y) + '</span>',
+            s.va ? '<span class="chip" style="border:1px solid var(--warn);color:var(--warn)">' + h(s.va) + '</span>' : '<span class="tiny dim">—</span>'];
+        })) + '</div>';
+    });
+
+    /* Cơ chế tạo & nhận giá trị */
+    o += U.sec('TẠO & NHẬN GIÁ TRỊ', 'Không qua bảng quyền lợi theo hạng — qua ba cơ chế sống.');
+    o += '<div class="card">' + U.tbl(['Cơ chế', 'Là gì'],
+      G.CTV_COCHE.map(function (m) { return ['<b class="sm">' + h(m.ten) + '</b>', '<span class="tiny">' + h(m.y) + '</span>']; })) + '</div>';
+
+    /* Triển khai chăm sóc hồ sơ VIP */
+    o += U.sec('TRIỂN KHAI — CHĂM SÓC HỒ SƠ VIP', 'Mỗi cụm là một TRỤC chăm sóc, trỏ vào cửa/màn đã có. Bấm để mở.');
+    o += '<div class="card">' + U.tbl(['Cụm', 'Trục chăm sóc hồ sơ VIP', 'Mở'],
+      G.CTV_CHAM.map(function (m) {
+        return ['<span class="chip" style="border:1px solid ' + cumMau(m.cum) + '">' + h(m.cum) + '</span>',
+          '<b class="sm">' + h(m.truc) + '</b>',
+          '<button class="chip" data-v="' + h(m.tro) + '" style="cursor:pointer;border:1px solid var(--gita-vien-2)">' +
+            ic('compass', 'w-3 h-3') + h(m.troTen) + '</button>'];
+      })) + '</div>';
+
+    /* Ranh giới luật */
+    o += '<div class="card pad-sm mt" style="border-color:var(--warn)">' + ic('shield', 'w-4 h-4') +
+      ' <b class="sm">Năng lực đụng luật đi qua cổng đã có, không bật ở đây.</b>' +
+      '<p class="tiny muted mt" style="line-height:1.7">Escrow · Thị Trường · Uplift Pay chờ giấy phép trung gian thanh toán ' +
+      '(SUP-05, hỏi luật sư trước đồng tiền đầu tiên). GITA Moment · An toàn trẻ "từng giây" · Arena chạm dữ liệu trẻ / ' +
+      'xếp hạng trẻ — giữ theo Điều 13 · L07 · VIP_CAM · LR1. Streak giữ chân theo L08. Bản đồ này TRÌNH để biết năng lực ' +
+      'nào cần cổng nào, không phải để mở.</p></div>';
+
+    return o;
+  };
+})();
+
+})();
+
+/* ═════════ src/chuoi-wow.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — CHUỖI WOW → TRUNG THÀNH → FAN → LAN TOẢ  (9.99.220)
+
+   Chủ hệ: "biên soạn full 5 tầng × 10 cấp BÁM SÁT hành trình đã coach từ
+   đầu, và hệ sống cây tiền bám sát hành trình, để chuỗi 100.000 trải
+   nghiệm WOW thúc đẩy khách trung thành → fan cuồng → lan toả."
+
+   MÀN NÀY TRỎ, KHÔNG CHÉP. Nó KHÔNG dựng nội dung mới — nó xâu bốn hệ đã
+   có vào ĐÚNG một hành trình:
+     · Hành trình 50 cấp   → G.KTL_CAP50 · G.KTL_TL50 (điểm chạm WOW mỗi cấp)
+     · Cây tiền 28 năng lực → G.CTV_CUM5 (5 cỗ máy nuôi từng tầng)
+     · Nguồn WOW           → G.SUP_WOW (W1–W5)
+     · Việc fan làm        → G.SUP_FAN (F1–F10)
+
+   VÌ SAO hành trình LÀ vòng trung thành: bản thiết kế GITA-TẦNG-V1.0 đã
+   viết arc ấy — T1 tò mò → T2 tin → T3 tự chủ → T4 FAN → T5 RỪNG (hệ sống
+   nhờ họ). Fan và lan toả KHÔNG phải một chiến dịch cắm thêm; chúng là
+   KẾT QUẢ của việc đi trọn hành trình. Màn này chỉ nói ra mạch ấy.
+
+   Ánh xạ việc-fan / cụm-cây-tiền theo tầng là ĐỀ XUẤT (máy đề xuất, chủ hệ
+   chốt) — suy từ NGHĨA của từng việc + arc của bản thiết kế, không phải
+   con số bịa. Mã F/W/C đối chiếu kho thật; trỏ sai một mã là đỏ ở mục 107.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.VIEWS = G.VIEWS || {};
+
+/* Vòng trung thành = 5 tầng của hành trình. `fan`/`cum` là mã trỏ vào
+   G.SUP_FAN / G.CTV_CUM5 — đối chiếu kho thật, không chép tên. */
+G.CWOW_ARC = [
+  { tang:'T1', pha:'THỬ',      chuyen:'tò mò → nứt vỏ',
+    y:'WOW đầu tiên rất nhỏ: 60 giây mỗi tối, hạt tự đặt tên, không một bảng số. Người lạ thành người THỬ.',
+    fan:['F1'], cum:['C1','C3'] },
+  { tang:'T2', pha:'TIN',      chuyen:'nghi ngờ → điểm tựa',
+    y:'Qua mùa gió đầu mà không gãy → tin không phải tin hệ, mà tin CHÍNH MÌNH đã đổi. Bắt đầu đánh giá, góp ý, dùng đều.',
+    fan:['F1','F2','F6','F7'], cum:['C3','C2'] },
+  { tang:'T3', pha:'GẮN BÓ',   chuyen:'làm theo → tự làm chủ',
+    y:'Tự vận hành, có dòng thu thứ hai → gắn bó vì TỰ THẤY giá trị, không vì bị nhắc. Cần quyền thành viên, bảo mật cao.',
+    fan:['F2','F8','F9'], cum:['C4','C2'] },
+  { tang:'T4', pha:'FAN',      chuyen:'fan → đồng hành',
+    y:'Kèm được người khác tự lập → thành FAN chủ động: giới thiệu khách, mở cửa hàng giá trị, tự truyền thông trong cộng đồng.',
+    fan:['F3','F4','F5'], cum:['C2','C5'] },
+  { tang:'T5', pha:'LAN TOẢ',  chuyen:'Cây Mẹ → kiến tạo kỷ nguyên',
+    y:'Hệ SỐNG NHỜ HỌ — fan cuồng lan toả tối đa: một người 5.10 trở thành buổi-đầu (BĐ1) của một ai đó. Vòng khép.',
+    fan:['F5','F10','F3'], cum:['C4','C5','C1'] }
+];
+
+/* Bốn luật giữ chuỗi WOW không biến thành cỗ máy chạy-cho-đủ-số. */
+G.CWOW_LUAT = [
+  { ten:'100.000 là CÁCH ĐẾM, không phải chỉ tiêu',
+    y:'SUP-01 đã chốt: 10 tầng × 10.000 biến thể (câu gốc × trạng thái × thời khắc × ngôn ngữ). Đặt đích cho WOW là mời người chạy cho đủ số — cấm (SUP_WOW_LUAT.camDatChiTieu).' },
+  { ten:'Fan sinh từ WOW THẬT — không mua, không farm',
+    y:'Mười việc fan làm (F1–F10) là DẤU HIỆU của một fan, không phải mười cái ô để tối ưu. Lấy dấu hiệu làm đích thì được dấu hiệu mà mất cái sinh ra chúng.' },
+  { ten:'Lan toả là KẾT QUẢ, không phải chiến dịch',
+    y:'Vòng: WOW mỗi cấp → trung thành → fan (T4) → lan toả (T5). Không cắm một bước "kêu gọi chia sẻ" vào giữa hành trình — nó đến khi người ta đã đi trọn.' },
+  { ten:'Tần suất dùng (F2) đo để BIẾT, không đặt đích',
+    y:'L08 cấm giữ chân: một nhà mở app nhiều hơn KHÔNG phải một nhà khá hơn. Đếm để hiểu, không để thúc.' }
+];
+
+(function () {
+  var U = G.U, h = U.h, ic = U.ic;
+  function ten(list, kho, keyMa, keyTen){
+    return (list||[]).map(function(ma){
+      var r = (kho||[]).filter(function(x){return x[keyMa]===ma;})[0];
+      return { ma:ma, ten: r ? (r[keyTen]||'') : '' };
+    });
+  }
+  function chip(items, mau){
+    return items.map(function(it){
+      return '<span class="chip" style="border:1px solid '+mau+';margin:2px 4px 2px 0">'+
+        h(it.ma)+(it.ten?(' · '+h(it.ten)):'')+'</span>';
+    }).join('');
+  }
+
+  G.VIEWS['chuoi-wow'] = function () {
+    if (!G.can || !G.can('pro_consult')) return U.lockCard ? U.lockCard() : U.empty('Cần gói nghề','Màn này khoá ở quyền nghề.');
+    var CAP = G.KTL_CAP50 || [], TL = G.KTL_TL50 || {}, FAN = G.SUP_FAN || [], WOW = G.SUP_WOW || [], CUM = G.CTV_CUM5 || [];
+
+    var o = U.ph({ eyebrow:'HÀNH TRÌNH · WOW · FAN · LAN TOẢ', ic:'spark', grad:1,
+      t:'Chuỗi WOW bám sát hành trình',
+      lead:'Bốn hệ — hành trình 50 cấp, cây tiền 28 năng lực, nguồn WOW, việc fan làm — xâu vào ĐÚNG một mạch: mỗi trải nghiệm WOW đẩy khách một bậc trên vòng trung thành, tới khi họ thành fan cuồng lan toả cả hệ.' });
+
+    /* đếm điểm chạm WOW thật trong kho, theo tầng */
+    var wowTang = {}; Object.keys(TL).forEach(function(k){ if(TL[k] && TL[k].wow){ var t='T'+k.split('.')[0]; wowTang[t]=(wowTang[t]||0)+1; } });
+    var tongWow = Object.keys(wowTang).reduce(function(s,k){return s+wowTang[k];},0);
+
+    o += U.bdSoHang([
+      {k:'Tầng hành trình', v:'5', c:'var(--gita)', d:'THỬ→TIN→GẮN BÓ→FAN→LAN TOẢ'},
+      {k:'Cấp có điểm chạm WOW', v:String(tongWow), c:'var(--gita-sau)', d:'trỏ KTL_TL50'},
+      {k:'Việc fan làm', v:String(FAN.length), c:'var(--ok)', d:'F1–F10 · dấu hiệu, không phải đích'},
+      {k:'Cách đếm WOW', v:'100.000', c:'var(--gold-2)', d:'10 tầng × 10.000 biến thể — SUP-01'}
+    ]);
+
+    /* Thang hành trình — RỪNG trên đỉnh xuống HẠT dưới gốc, như cây mọc */
+    o += U.sec('VÒNG TRUNG THÀNH = HÀNH TRÌNH', 'Mỗi tầng một bậc. Fan (T4) và lan toả (T5) là KẾT QUẢ của đi trọn, không phải chiến dịch cắm thêm.');
+    G.CWOW_ARC.slice().reverse().forEach(function (a) {
+      var tt = CAP.filter(function(c){return c.tang===a.tang;});
+      var tenTang = (G.KTL_TANG ? (G.KTL_TANG.filter(function(x){return x.ma===a.tang;})[0]||{}) : {});
+      var mau = tenTang.mau || 'var(--gita)';
+      o += '<div class="cw-tang" style="border-left:4px solid '+mau+'">'+
+        '<div class="cw-dau">'+
+          '<span class="cw-pha" style="background:'+mau+'">'+h(a.pha)+'</span>'+
+          '<b>'+h(a.tang)+' · '+h(tenTang.ten||'')+(tenTang.biet?(' — '+h(tenTang.biet)):'')+'</b>'+
+          '<span class="cw-chuyen">'+h(a.chuyen)+'</span>'+
+        '</div>'+
+        '<p class="tiny" style="line-height:1.7;margin:6px 0">'+h(a.y)+'</p>'+
+        '<div class="cw-luoi">'+
+          '<div class="cw-o"><span class="ktl-tl-nhan" style="color:'+mau+'">Điểm chạm WOW</span>'+
+            '<button class="chip" data-v="kho-tai-lieu" style="cursor:pointer;border:1px solid '+mau+'">'+
+              ic('vault','w-3 h-3')+(wowTang[a.tang]||0)+' cấp có WOW · mở kho</button></div>'+
+          '<div class="cw-o"><span class="ktl-tl-nhan" style="color:var(--ok)">Việc fan làm</span><div>'+
+            chip(ten(a.fan, FAN, 'ma', 'ten'), 'var(--ok)')+'</div></div>'+
+          '<div class="cw-o"><span class="ktl-tl-nhan" style="color:var(--gita-sau)">Cây tiền nuôi tầng</span><div>'+
+            chip(ten(a.cum, CUM, 'ma', 'ten'), 'var(--gita-sau)')+
+            ' <button class="chip" data-v="cay-tien-vip" style="cursor:pointer;border:1px dashed var(--gita-vien-2)">mở cây tiền</button></div></div>'+
+        '</div></div>';
+    });
+
+    /* Năm nguồn WOW — vì sao người ở lại */
+    o += U.sec('NĂM NGUỒN WOW (VÌ SAO Ở LẠI)', 'Đây là thứ sinh ra fan — không phải mười việc fan làm.');
+    o += '<div class="grid g2">'+ WOW.map(function(w){
+      return '<div class="card pad-sm"><b class="sm">'+h(w.ma)+' · '+h(w.ten||'')+'</b></div>';
+    }).join('') +'</div>';
+
+    /* Bốn luật */
+    o += U.sec('BỐN LUẬT GIỮ CHUỖI WOW KHÔNG THÀNH CỖ MÁY CHẠY SỐ', 'Vì sao đếm được mà cấm đặt đích.');
+    o += '<div class="card">'+ U.tbl(['Luật','Vì sao'],
+      G.CWOW_LUAT.map(function(l){ return ['<b class="sm">'+h(l.ten)+'</b>','<span class="tiny">'+h(l.y)+'</span>']; })) +'</div>';
+
+    o += '<div class="card pad-sm mt" style="border-color:var(--gold-2)">'+ic('star','w-4 h-4')+
+      ' <b class="sm">Mạch một câu:</b> <span class="tiny">một hạt tò mò được chạm đúng WOW mỗi cấp → tin → tự chủ → thành fan kèm người khác → thành Cây Mẹ gieo cả rừng. Fan cuồng lan toả là <b>đỉnh của hành trình</b>, không phải một nút "chia sẻ".</span></div>';
+
+    return o;
+  };
+})();
+
+})();
+
+/* ═════════ src/dong-hanh.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — ĐỒNG HÀNH TỪNG CẤP (trọn gói mỗi cấp) · 9.99.222
+
+   Chủ hệ: cần chiều sâu, chi tiết — bài coach chuyên sâu + kịch bản + câu
+   chuyện minh chứng + chuỗi nhiệm vụ + đo lường, chuẩn chuyên gia, full 5
+   tầng, để dịch vụ đồng hành đạt chất lượng tốt nhất.
+
+   MÀN NÀY TRỎ, KHÔNG CHÉP. Nội dung sâu ĐÃ có, rải ở nhiều kho; màn này gom
+   TRỌN GÓI về MỘT cấp: chọn một cấp (1.1–5.10) là thấy đủ mọi lớp cho cấp
+   ấy — coach/tư vấn mở một chỗ là đồng hành được ngay:
+     · Chân dung + mốc      → G.KTL_CAP50
+     · Vai vòng trung thành → G.CWOW_ARC (THỬ→TIN→GẮN BÓ→FAN→LAN TOẢ)
+     · Giáo trình 4 cột     → G.KTL_TL50 (chuỗi·wow·cơ chế·tín hiệu)
+     · Bản hợp nhất         → G.KTL_TL50[].hn (tâm hồn·≤60s·kịch bản — tầng 2)
+     · Bài coach chuyên sâu → G.KTL_SAU (6 chiếc mũ cảm xúc)
+     · Câu chuyện minh chứng→ G.KTL_CHUYEN (mẫu — chỉ nơi nguồn có thật)
+     · Đo lường             → tín hiệu lên cấp + số điểm chạm WOW
+
+   Cấp nào nguồn CHƯA có một lớp thì màn NÓI "chưa có trong nguồn", không
+   bịa (luật kho: không độn, minh chứng phải thật).
+   GÓI NGHỀ (pro_consult): giáo trình đồng hành là tài sản nghề.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.VIEWS = G.VIEWS || {};
+
+G.dhCap = G.dhCap || '1.1';
+G.dhChon = function (ma) { G.dhCap = ma; G.render && G.render(); };
+
+(function () {
+  var U = G.U, h = U.h, ic = U.ic;
+
+  function cot(nhan, val, mau) {
+    if (!val) return '';
+    return '<div class="ktl-tl-cot"><span class="ktl-tl-nhan" style="color:' + mau + '">' + h(nhan) + '</span>' +
+      '<p class="ktl-tl-val">' + h(val) + '</p></div>';
+  }
+
+  G.VIEWS['dong-hanh-cap'] = function () {
+    if (!G.can || !G.can('pro_consult')) return U.lockCard ? U.lockCard() : U.empty('Cần gói nghề', 'Màn này khoá ở quyền nghề.');
+    var CAP = G.KTL_CAP50 || [], TL = G.KTL_TL50 || {}, SAU = G.KTL_SAU || [],
+        CHUYEN = G.KTL_CHUYEN || [], ARC = G.CWOW_ARC || [], TANG = G.KTL_TANG || [];
+
+    var o = U.ph({ eyebrow: 'DỊCH VỤ ĐỒNG HÀNH · TRỌN GÓI MỖI CẤP', ic: 'compass', grad: 1,
+      t: 'Đồng hành từng cấp',
+      lead: 'Chọn một cấp là thấy đủ mọi lớp cho cấp ấy — chân dung, vai trò vòng trung thành, giáo trình bốn cột, bài coach chuyên sâu, câu chuyện minh chứng, và đo lường. Một chỗ mở ra, đồng hành được ngay.' });
+
+    /* Bộ chọn tầng → cấp */
+    var cur = CAP.filter(function (c) { return c.ma === G.dhCap; })[0] || CAP[0] || {};
+    var curTang = cur.tang || 'T1';
+    o += '<div class="dh-chon">';
+    TANG.forEach(function (t) {
+      var caps = CAP.filter(function (c) { return c.tang === t.ma; });
+      o += '<div class="dh-tang-hang"><span class="dh-tang-nhan" style="color:' + (t.mau || 'var(--gita)') + '">' +
+        h(t.ma) + ' ' + h(t.biet || '') + '</span><div class="dh-caps">' +
+        caps.map(function (c) {
+          var on = c.ma === G.dhCap;
+          return '<button class="dh-cap' + (on ? ' on' : '') + '" onclick="G.dhChon(\'' + c.ma + '\')"' +
+            (on ? ' style="background:' + (t.mau || 'var(--gita)') + ';border-color:' + (t.mau || 'var(--gita)') + '"' : '') +
+            '>' + h(c.ma) + '</button>';
+        }).join('') + '</div></div>';
+    });
+    o += '</div>';
+
+    /* Panel trọn gói cho cấp đang chọn */
+    var tObj = TANG.filter(function (t) { return t.ma === curTang; })[0] || {};
+    var mau = tObj.mau || 'var(--gita)';
+    var d = TL[G.dhCap] || null;
+    var arc = ARC.filter(function (a) { return a.tang === curTang; })[0] || null;
+    var sau = SAU.filter(function (s) { return s.ma === G.dhCap; })[0] || null;
+
+    o += '<div class="dh-panel" style="border-top:4px solid ' + mau + '">';
+    o += '<div class="dh-dau"><span class="mono dh-ma" style="background:' + mau + '">' + h(cur.ma) + '</span>' +
+      '<div><b class="dh-ten">' + h(cur.ten || '') + '</b>' +
+      '<div class="tiny muted">' + h(tObj.ten || curTang) + ' · ' + h(tObj.biet || '') +
+      (cur.khi ? (' · ' + h(cur.khi)) : '') + (arc ? (' · vòng trung thành: ' + h(arc.pha)) : '') + '</div></div></div>';
+
+    if (arc) o += '<p class="tiny" style="line-height:1.7;margin:8px 0;color:var(--ink-2)">' + ic('spark', 'w-3 h-3') + ' ' + h(arc.y) + '</p>';
+
+    /* Giáo trình 4 cột */
+    o += U.sec('GIÁO TRÌNH', 'Bốn cột cốt lõi của cấp.');
+    if (d) {
+      o += '<div class="card"><div class="ktl-tl-than">' +
+        cot('Chuỗi hành động', d.chuoi, mau) +
+        cot('Điểm chạm WOW', d.wow, mau) +
+        cot('Cơ chế phía sau', d.coche, mau) +
+        cot('Tín hiệu lên cấp (đo lường)', d.tinHieu, mau) +
+        '</div></div>';
+      if (d.hn) {
+        o += '<div class="card mt"><div class="ktl-tl-than">' +
+          '<span class="ktl-tl-nhan" style="color:' + mau + '">Bản hợp nhất · ' + h(d.hn.tenGoc || '') + (d.hn.ngay ? (' · ' + h(d.hn.ngay)) : '') + '</span>' +
+          cot('Mục tiêu tâm hồn', d.hn.mucTamHon, mau) +
+          cot('Nhiệm vụ cốt lõi (≤60s)', d.hn.nhiemVu, mau) +
+          cot('Điểm chạm WOW chủ đạo', d.hn.wowCD, mau) +
+          cot('Kịch bản hệ thống', d.hn.kichBan, mau) +
+          '</div></div>';
+      }
+    } else {
+      o += U.empty('Chưa nạp giáo trình cấp này', 'Đăng nhập vai nghề để nạp gói tài liệu, rồi mở lại.');
+    }
+
+    /* Bài coach chuyên sâu */
+    o += U.sec('BÀI COACH CHUYÊN SÂU', sau ? 'Bài đầy đủ theo 6 chiếc mũ cảm xúc — bấm để mở.' : 'Cấp này chưa có bài sâu trong nguồn.');
+    if (sau) {
+      o += '<details class="ktl-nhom-o ktl-tl" style="border-left:3px solid ' + mau + '">' +
+        '<summary><b>' + h(sau.ten || ('Bài sâu ' + sau.ma)) + '</b></summary>' +
+        '<div class="ktl-sau-bai">' + h(sau.bai) + '</div></details>';
+    } else {
+      o += '<p class="tiny dim">— Bài biên soạn sâu cho cấp ' + h(cur.ma) + ' chưa có trong tài liệu nguồn (không bịa; chờ chủ hệ gửi).</p>';
+    }
+
+    /* Câu chuyện minh chứng — chỉ nơi nguồn có */
+    o += U.sec('CÂU CHUYỆN MINH CHỨNG', CHUYEN.length ? 'Câu chuyện thực hành mẫu (chuẩn 10 điểm chạm) — tạo niềm tin bằng minh chứng thật của nguồn.' : 'Chưa có câu chuyện trong nguồn.');
+    if (CHUYEN.length && curTang === 'T2') {
+      o += CHUYEN.map(function (s) {
+        return '<details class="ktl-nhom-o ktl-tl" style="border-left:3px solid var(--gold-2)">' +
+          '<summary><span class="ktl-nhom-ma mono">#' + h(s.so) + '</span><b>' + h(s.ten) + '</b></summary>' +
+          '<div class="ktl-sau-bai">' + h(s.bai) + '</div></details>';
+      }).join('');
+    } else {
+      o += '<p class="tiny dim">— Câu chuyện minh chứng hiện có ở bối cảnh tầng 2 (3 câu mẫu từ nguồn). Tầng khác chờ chủ hệ gửi câu chuyện thật — không bịa chứng thực.</p>';
+    }
+
+    o += '</div>'; /* dh-panel */
+    return o;
+  };
+})();
+
+})();
+
+/* ═════════ src/goi-nghe.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — GÓI NGHỀ · BỘ PHẬN CHUYÊN MÔN · 9.99.223
+
+   Chủ hệ: biên tập full hệ thống gói nghề chất lượng cao cho các bộ phận
+   chuyên môn của GITA365.
+
+   MÀN NÀY TRỎ, KHÔNG CHÉP. Gói nghề của mỗi bộ phận đã có sẵn, rải nhiều
+   kho; màn này gom TRỌN GÓI theo bộ phận: chọn một vai là thấy đủ chuẩn
+   nghề của vai ấy — sứ mệnh, chuẩn nghề (trách nhiệm·quyết định·giới
+   hạn·KPI·bằng chứng), sát hạch, số màn/công cụ mở được.
+     · Danh tính vai      → G.ROLES (tên · bậc · cổng · sứ mệnh)
+     · Chuẩn nghề         → G.HDT_BEN (bảng bên liên quan của master doc)
+     · Sát hạch nghề      → G.SH_HOI (ngân hàng câu hỏi theo vai)
+     · Công cụ & màn      → G.NAV lọc bằng G.vaiCo (quyền thật của vai)
+
+   Ánh xạ vai→chuẩn (GN_CHUAN) và vai→sát hạch (GN_SAT) là ĐỀ XUẤT khớp
+   theo TÊN VAI — mã đối chiếu kho thật ở mục 127; khớp sai thì đỏ.
+   Bộ phận/vai nào nguồn CHƯA có một lớp thì màn NÓI ra, không bịa.
+   GÓI NGHỀ (nghe_chung): mỗi người nghề mở để thấy chuẩn của chính mình.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.VIEWS = G.VIEWS || {};
+
+/* Bốn bộ phận chuyên môn, gom theo cổng làm việc (R13–R15 là khách, không kể). */
+G.GN_BOPHAN = [
+  { ma:'DH', ten:'Điều hành & Quản trị', vai:['R01','R02','R03','R04','R12'], mau:'var(--gita)' },
+  { ma:'HL', ten:'Huấn luyện — đội Coach', vai:['R05','R06','R07','R08','R09','R10'], mau:'var(--gita-sau)' },
+  { ma:'TV', ten:'Tư vấn — mở cửa cho gia đình', vai:['R11'], mau:'var(--gita-do)' },
+  /* Bộ phận Tài chính là một TRỤC quyền riêng, KHÔNG gom vai R-nào — nên
+     bỏ hẳn khoá `vai` (vắng mặt = không áp dụng; luật kho cấm để []). */
+  { ma:'TC', ten:'Tài chính – Kế toán (trục quyền riêng)', mau:'var(--gold-2)',
+    ghiChu:'Trục quyền tài chính (kế toán thu · chi · trưởng) vuông góc thang vai — cấp bằng quyenTaiChinh, chi tiết ở màn Phòng tài chính.' }
+];
+/* vai → tên trong HDT_BEN (chuẩn nghề master doc). Khớp theo tên vai. */
+G.GN_CHUAN = { R04:'Quản lý chuyên môn', R05:'Coach', R06:'Coach', R07:'Coach',
+  R09:'Mentor', R10:'Chuyên gia đánh giá', R11:'Chuyên gia tư vấn' };
+/* vai → vai trong SH_HOI (sát hạch nghề). */
+G.GN_SAT = { R05:'COACH', R06:'COACH', R07:'COACH', R08:'GV', R11:'TV' };
+
+G.gnVai = G.gnVai || 'R07';
+G.gnChon = function (id) { G.gnVai = id; G.render && G.render(); };
+
+(function () {
+  var U = G.U, h = U.h, ic = U.ic;
+
+  function benRow(ten) {
+    var b = G.HDT_BEN; if (!b || !b.dong) return null;
+    var r = b.dong.filter(function (x) { return x[0] === ten; })[0];
+    if (!r) return null;
+    return { vaiTro:r[1], quyetDinh:r[2], duLieu:r[3], trachNhiem:r[4], gioiHan:r[5], kpi:r[6], bangChung:r[7] };
+  }
+  function cot(nhan, val, mau) {
+    if (!val) return '';
+    return '<div class="ktl-tl-cot"><span class="ktl-tl-nhan" style="color:' + mau + '">' + h(nhan) + '</span>' +
+      '<p class="ktl-tl-val">' + h(val) + '</p></div>';
+  }
+
+  G.VIEWS['goi-nghe'] = function () {
+    if (!G.can || !G.can('nghe_chung')) return U.lockCard ? U.lockCard() : U.empty('Cần gói nghề', 'Màn này khoá ở quyền nghề.');
+    var ROLES = G.ROLES || [], SH = G.SH_HOI || [], NAV = G.NAV || [];
+    var roleById = {}; ROLES.forEach(function (r) { roleById[r.id] = r; });
+
+    var o = U.ph({ eyebrow: 'GÓI NGHỀ · BỘ PHẬN CHUYÊN MÔN', ic: 'crown', grad: 1,
+      t: 'Gói nghề — bộ phận chuyên môn',
+      lead: 'Mỗi bộ phận chuyên môn của GITA365 có một gói nghề trọn vẹn: sứ mệnh, chuẩn nghề (trách nhiệm · quyết định được phép · giới hạn · KPI · bằng chứng), sát hạch, và bộ công cụ. Chọn một vai để mở gói nghề của vai ấy.' });
+
+    /* Đếm nhanh */
+    var soVaiCoChuan = Object.keys(G.GN_CHUAN).length;
+    o += U.bdSoHang([
+      {k:'Bộ phận chuyên môn', v:String(G.GN_BOPHAN.length), c:'var(--gita)'},
+      {k:'Vai nghề', v:String(ROLES.filter(function(r){return r.lv<=12;}).length), c:'var(--gita-sau)', d:'R01–R12'},
+      {k:'Vai có chuẩn nghề', v:String(soVaiCoChuan), c:'var(--ok)', d:'HDT_BEN'},
+      {k:'Ngân hàng sát hạch', v:String(SH.length), c:'var(--gold-2)', d:'câu hỏi nghề'}
+    ]);
+
+    /* Bộ chọn theo bộ phận */
+    o += '<div class="dh-chon">';
+    G.GN_BOPHAN.forEach(function (bp) {
+      if (!bp.vai || !bp.vai.length) return;
+      o += '<div class="dh-tang-hang"><span class="dh-tang-nhan" style="color:' + bp.mau + '">' + h(bp.ten) + '</span><div class="dh-caps">' +
+        bp.vai.map(function (id) {
+          var r = roleById[id]; if (!r) return '';
+          var on = id === G.gnVai;
+          return '<button class="dh-cap' + (on ? ' on' : '') + '" onclick="G.gnChon(\'' + id + '\')"' +
+            (on ? ' style="background:' + bp.mau + ';border-color:' + bp.mau + '"' : '') + '>' + h(r.short || id) + '</button>';
+        }).join('') + '</div></div>';
+    });
+    o += '</div>';
+
+    /* Panel gói nghề của vai đang chọn */
+    var r = roleById[G.gnVai] || ROLES[0] || {};
+    var bp = G.GN_BOPHAN.filter(function (x) { return (x.vai || []).indexOf(r.id) >= 0; })[0] || {};
+    var mau = bp.mau || 'var(--gita)';
+    o += '<div class="dh-panel" style="border-top:4px solid ' + mau + '">';
+    o += '<div class="dh-dau"><span class="mono dh-ma" style="background:' + mau + '">' + h(r.id || '') + '</span>' +
+      '<div><b class="dh-ten">' + h(r.n || '') + '</b>' +
+      '<div class="tiny muted">bậc ' + h(String(r.lv || '')) + ' · cổng ' + h(r.portal || '') + ' · ' + h(bp.ten || '') + '</div></div></div>';
+    if (r.ln) o += '<p class="tiny" style="line-height:1.7;margin:8px 0;color:var(--ink-2)">' + ic('star', 'w-3 h-3') + ' ' + h(r.ln) + '</p>';
+
+    /* Chuẩn nghề từ HDT_BEN */
+    var ten = G.GN_CHUAN[r.id];
+    var std = ten ? benRow(ten) : null;
+    o += U.sec('CHUẨN NGHỀ', std ? ('Trích chuẩn "bên liên quan" của bản phương pháp coach — ' + h(ten)) : 'Vai này chưa có dòng chuẩn riêng trong HDT_BEN.');
+    if (std) {
+      o += '<div class="card"><div class="ktl-tl-than">' +
+        cot('Vai trò chính', std.vaiTro, mau) +
+        cot('Quyết định được phép đưa ra', std.quyetDinh, mau) +
+        cot('Trách nhiệm chính', std.trachNhiem, mau) +
+        cot('Giới hạn', std.gioiHan, mau) +
+        cot('KPI chức năng (đo lường)', std.kpi, mau) +
+        cot('Bằng chứng bắt buộc', std.bangChung, mau) +
+        '</div></div>';
+    } else {
+      o += '<p class="tiny dim">— Chuẩn nghề chi tiết cho vai ' + h(r.id) + ' nằm ở các kho chuyên môn khác (quản trị/tài chính); chưa gộp vào bảng HDT_BEN. Không bịa thêm.</p>';
+    }
+
+    /* Sát hạch nghề */
+    var sv = G.GN_SAT[r.id];
+    var soSat = sv ? SH.filter(function (q) { return (q.vai || q.role) === sv; }).length : 0;
+    o += U.sec('SÁT HẠCH NGHỀ', soSat ? ('Ngân hàng ' + soSat + ' câu hỏi sát hạch cho vai này — mở ở màn Sát hạch.') : 'Vai này chưa có bộ sát hạch riêng trong nguồn.');
+    if (soSat) o += '<div class="card pad-sm">' + ic('target', 'w-4 h-4') + ' <b class="sm">' + soSat + ' câu</b> <span class="tiny muted">· chuẩn hoá theo vai ' + h(sv) + '</span> <button class="chip" data-v="sat-hach" style="cursor:pointer;border:1px solid ' + mau + '">mở màn sát hạch</button></div>';
+    else o += '<p class="tiny dim">— Chưa có bộ sát hạch cho vai ' + h(r.id) + ' (nguồn chỉ có COACH · GV · TV · CTV · PH · HS).</p>';
+
+    /* Công cụ & màn mở được — đếm thật bằng quyền của vai */
+    var canFn = (typeof G.vaiCo === 'function') ? G.vaiCo : null;
+    var moDuoc = [];
+    NAV.forEach(function (nhom) {
+      (nhom.items || []).forEach(function (it) {
+        if (!it.v) return;
+        var ok = !it.perm || (canFn ? canFn(r, it.perm) : false);
+        if (ok) moDuoc.push(it);
+      });
+    });
+    o += U.sec('CÔNG CỤ & MÀN MỞ ĐƯỢC', canFn ? (moDuoc.length + ' màn vai này mở được (đếm bằng quyền thật).') : 'Không đọc được quyền lúc chạy.');
+    if (moDuoc.length) {
+      o += '<div class="ktl-nhom">' + moDuoc.slice(0, 40).map(function (it) {
+        return '<button class="ktl-nhom-o" data-v="' + h(it.v) + '" style="cursor:pointer;text-align:left;border-left:3px solid ' + mau + '">' +
+          '<b class="sm">' + h(it.t || it.v) + '</b>' + (it.h ? '<span class="ktl-nhom-t">' + h(it.h) + '</span>' : '') + '</button>';
+      }).join('') + '</div>';
+      if (moDuoc.length > 40) o += '<p class="tiny dim mt">… và ' + (moDuoc.length - 40) + ' màn nữa.</p>';
+    }
+
+    o += '</div>'; /* panel */
+
+    if (G.GN_BOPHAN.filter(function (x) { return !x.vai || !x.vai.length; }).length) {
+      o += '<div class="card pad-sm mt" style="border-color:var(--gold-2)">' + ic('shield', 'w-4 h-4') +
+        ' <b class="sm">Bộ phận Tài chính – Kế toán</b> <span class="tiny muted">là một TRỤC quyền riêng (thu · chi · trưởng) vuông góc thang vai R01–R15, cấp bằng quyenTaiChinh — gói nghề chi tiết ở màn Phòng tài chính, không lặp ở đây.</span></div>';
+    }
+    return o;
+  };
+})();
+
+})();
+
+/* ═════════ src/assessment.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — ASSESSMENT TẦNG 1 · màn nghề · 9.99.224
+
+   TRỎ, KHÔNG CHÉP: đọc bộ chẩn đoán chuyên gia Tầng 1 từ G.AS_* (kho mã
+   hoá, nguồn "Bộ hồ sơ khách hàng - Assessment Tầng 1"). Công cụ của Tư
+   vấn/Assessor: đọc hồ sơ → chấm 6 miền → theo ĐÚNG thứ tự 10 bước → giao
+   thử 7 ngày. KHÔNG kết luận sâu khi DCI thấp. Không bịa 30 câu (nguồn
+   chưa trích sạch — nói ra, không đưa dữ liệu méo).
+   GÓI NGHỀ (pro_consult).
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.VIEWS = G.VIEWS || {};
+
+(function () {
+  var U = G.U, h = U.h, ic = U.ic;
+
+  G.VIEWS['assessment'] = function () {
+    if (!G.can || !G.can('pro_consult')) return U.lockCard ? U.lockCard() : U.empty('Cần gói nghề', 'Màn này khoá ở quyền nghề.');
+    var MIEN = G.AS_MIEN, BUOC = G.AS_BUOC || [], CS = G.AS_CHAMSOC, PH = G.AS_PHANHOI;
+    if (!MIEN) return U.empty('Assessment nằm trong gói nghề', 'Đăng nhập vai nghề để nạp bộ chẩn đoán (G.AS_*), rồi mở lại.');
+
+    var o = U.ph({ eyebrow: 'HỒ SƠ & CHẨN ĐOÁN BAN ĐẦU · TẦNG 1', ic: 'check', grad: 1,
+      t: 'Assessment Tầng 1',
+      lead: 'Bộ chẩn đoán chuyên gia cho lượt gặp đầu: chấm điểm sáu miền (ánh xạ G-I-T-A), đọc theo đúng thứ tự bắt buộc, và chỉ kết luận sâu khi dữ liệu đủ tin cậy. Công cụ của Tư vấn và Chuyên gia đánh giá.' });
+
+    o += U.bdSoHang([
+      {k:'Miền chấm điểm', v:String(MIEN.dong.length), c:'var(--gita)', d:'D1–D6 → G·I·T·A'},
+      {k:'Bước phân tích bắt buộc', v:String(BUOC.length), c:'var(--gita-sau)', d:'theo đúng thứ tự'},
+      {k:'Ngưỡng tin cậy', v:'DCI', c:'var(--warn)', d:'<60 → chưa kết luận sâu'}
+    ]);
+
+    o += U.sec('SÁU MIỀN CHẤM ĐIỂM', 'Mỗi miền 5 câu · điểm miền = (thô − 5) ÷ 20 × 100. Ánh xạ đúng khung G-I-T-A.');
+    o += '<div class="card">' + U.tbl(MIEN.cot, MIEN.dong.map(function (r) { return r.map(function (c) { return h(c); }); })) + '</div>';
+
+    o += U.sec('QUY TRÌNH PHÂN TÍCH — THỨ TỰ BẮT BUỘC', 'Không nhìn tổng điểm trước. Đọc cấu hình, không đọc điểm lẻ. Chỉ quyết hướng sau 7 ngày dữ liệu.');
+    o += '<div class="card"><ol class="as-buoc">' + BUOC.map(function (b) {
+      return '<li><b>Bước ' + b.so + '.</b> ' + h(b.y) + '</li>';
+    }).join('') + '</ol></div>';
+
+    if (CS) { o += U.sec('ĐỊNH HƯỚNG CHĂM SÓC THEO NHÓM VẤN ĐỀ', ''); o += '<div class="card pad-sm"><p class="ktl-tl-val">' + h(CS) + '</p></div>'; }
+    if (PH) { o += U.sec('CÔNG THỨC PHẢN HỒI GITA', ''); o += '<div class="card pad-sm"><p class="ktl-tl-val">' + h(PH) + '</p></div>'; }
+
+    o += '<div class="card pad-sm mt" style="border-color:var(--warn)">' + ic('shield', 'w-4 h-4') +
+      ' <b class="sm">Ba lằn ranh của Tầng 1:</b> <span class="tiny muted">không dán nhãn (dữ liệu, không kết luận vội) · DCI &lt; 60 thì bổ sung dữ liệu trước khi kết luận · điểm thấp nhất KHÔNG mặc định là điểm cần xử lý trước — chọn điểm ĐÒN BẨY. 30 câu hỏi gốc nằm ở nguồn dạng bảng trộn, chưa trích sạch nên chưa đưa vào (không đưa dữ liệu méo).</span></div>';
 
     return o;
   };

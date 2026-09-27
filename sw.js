@@ -3,7 +3,7 @@
    Cài một lần, dùng được cả khi mất mạng. Toàn bộ kho tri thức
    nằm trong máy — không cần đường truyền để mở bản đồ nhà mình.
    ═══════════════════════════════════════════════════════════════ */
-const CACHE = 'gita365-v9-99-183';
+const CACHE = 'gita365-v9-99-237';
 /* Danh sách này phải khớp với thứ tự thẻ <script> trong index.html.
    Thiếu tệp thì lần cài đầu vẫn chạy — trình xử lý fetch bên dưới cache
    lại mọi thứ tải về — nhưng mất mạng ngay sau khi cài thì vỡ. */
@@ -88,17 +88,25 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  /* Trang và mã: vẫn làm mới ngầm, vì đây là đường nhận bản vá */
+  /* ── TRANG VÀ MÃ: MẠNG TRƯỚC, KHO SAU (9.99.226) ──
+     Trước đây chỗ này trả bản trong kho TRƯỚC rồi mới làm mới ngầm
+     (return hit || net). Hệ quả đúng thứ chủ hệ gặp: đẩy bản mới lên
+     Cloudflare xong, mở ra vẫn thấy bản CŨ — vì service worker phục vụ
+     bản đã cache, bản mới chỉ vào kho cho LẦN SAU. Người dùng tưởng bản
+     vá chưa lên.
+
+     Nay khi CÓ mạng thì lấy bản MỚI NHẤT từ mạng, cập nhật kho, và chỉ
+     rơi về kho khi mất mạng. index.html · gita-app.js · gita-nghe.js ·
+     cau-hinh.js · style.css luôn là bản vừa đẩy. Tệp nặng bất biến (.enc,
+     phông, ảnh) vẫn lấy trong kho ở nhánh trên — chúng chỉ đổi khi đổi số
+     bản, mà đổi số bản là đổi tên CACHE và xoá sạch bản cũ ở 'activate'. */
   e.respondWith(
-    caches.match(req).then(hit => {
-      const net = fetch(req).then(res => {
-        if (res && res.status === 200) {
-          const copy = res.clone();
-          caches.open(CACHE).then(c => c.put(req, copy));
-        }
-        return res;
-      }).catch(() => hit);
-      return hit || net;
-    })
+    fetch(req).then(res => {
+      if (res && res.status === 200) {
+        const copy = res.clone();
+        caches.open(CACHE).then(c => c.put(req, copy));
+      }
+      return res;
+    }).catch(() => caches.match(req))
   );
 });
