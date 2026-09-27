@@ -218,6 +218,33 @@ G.VIEWS['noi-may-chu'] = function(){
       'cố tình như vậy, để địa chỉ máy chủ không đi kèm bản phát hành.</p>'+
   '</div>';
 
+  /* ── ĐĂNG NHẬP MÁY CHỦ (mở kho) — chỉ hiện khi đã nối. Đăng nhập bằng vai
+        ở Cổng vào chỉ để XEM; muốn MỞ KHO phải có phiên THẬT với máy chủ. ── */
+  if(noi){
+    var oInp = 'flex:1;min-width:170px;background:var(--surface);border:1px solid var(--line);'+
+      'border-radius:12px;padding:11px 14px;font-size:13px;outline:none;color:var(--ink)';
+    o += '<div class="card mt2" style="border-color:var(--gita-vien-2)">'+
+      '<div class="up mb" style="color:var(--gita-ink)">'+ic('lock','w-4 h-4')+' ĐĂNG NHẬP MÁY CHỦ ĐỂ MỞ KHO</div>'+
+      '<p class="sm dim" style="line-height:1.65">Đăng nhập bằng vai (nút ở Cổng vào) chỉ để XEM giao diện — đó là phiên trong trình duyệt, máy chủ không biết. Muốn <b>mở kho nội dung</b>, phải đăng nhập THẬT ở đây để máy chủ cấp khoá.</p>'+
+      '<div class="row mt2" style="gap:9px;flex-wrap:wrap">'+
+        '<input id="mcDnU" placeholder="Tên đăng nhập" autocomplete="username" style="'+oInp+'">'+
+        '<input id="mcDnMk" type="password" placeholder="Mật khẩu" autocomplete="current-password" style="'+oInp+'">'+
+        '<button class="btn pri" data-act="mc-dangnhap">'+ic('check','w-4 h-4')+'Đăng nhập máy chủ</button>'+
+      '</div>'+
+      '<div id="mcDnKq" class="mt"></div>'+
+      '<details class="mt2"><summary class="sm" style="cursor:pointer;color:var(--gita-ink)">'+
+        ic('spark','w-3 h-3')+' Lần đầu dựng máy chủ? Tạo Super Admin đầu tiên</summary>'+
+        '<p class="tiny muted mt">Chỉ chạy được MỘT LẦN — khi hệ chưa có quản trị nào. Mật khẩu được máy chủ băm an toàn, không lưu bản rõ.</p>'+
+        '<div class="row mt" style="gap:9px;flex-wrap:wrap">'+
+          '<input id="mcAdU" placeholder="Tên đăng nhập mới" style="'+oInp+'">'+
+          '<input id="mcAdMk" type="password" placeholder="Mật khẩu (≥8 ký tự)" style="'+oInp+'">'+
+          '<input id="mcAdTen" placeholder="Họ tên" style="'+oInp+'">'+
+          '<button class="btn ghost" data-act="mc-taoadmin">'+ic('users','w-4 h-4')+'Tạo Super Admin</button>'+
+        '</div><div id="mcAdKq" class="mt"></div>'+
+      '</details>'+
+    '</div>';
+  }
+
   o += U.sec('SÁU BƯỚC DỰNG MÁY CHỦ TRÊN CLOUDFLARE','Làm một lần, khoảng hai mươi phút · gói miễn phí');
   o += '<div class="card">'+U.list([
     'Cài Node.js, rồi mở thư mục may-chu/ trong kho mã và đăng nhập Cloudflare bằng tài khoản của Học viện: chạy lệnh  npx wrangler login',
@@ -279,6 +306,43 @@ document.addEventListener('click', function(e){
     G.datMayChu('');
     U.toast('Đã bỏ nối. Ứng dụng quay về chế độ mẫu.','ok');
     G.render && G.render();
+  }
+  else if(a === 'mc-dangnhap'){
+    var du = document.getElementById('mcDnU'), dmk = document.getElementById('mcDnMk');
+    var dbox = document.getElementById('mcDnKq');
+    var uu = du ? String(du.value||'').trim() : '', mm = dmk ? String(dmk.value||'') : '';
+    if(!uu || !mm){ U.toast('Nhập tên đăng nhập và mật khẩu.','err'); return; }
+    if(dbox) dbox.innerHTML = '<p class="sm dim">Đang đăng nhập máy chủ…</p>';
+    fetch(G.API_CAP_PHEP, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify({fn:'dangNhap', u:uu, mk:mm})})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(d && d.ok && d.token){
+          U.toast('Đăng nhập máy chủ thành công — đang mở kho…','ok');
+          G.vaoBangPhienMayChu(d);   /* lưu token thật → capKhoa chạy → kho mở */
+        } else if(dbox){
+          dbox.innerHTML = '<div class="card pad-sm" style="border-color:var(--gita-do)">'+
+            '<p class="sm" style="color:var(--gita-do-ink)">'+ic('x','w-3 h-3')+' '+
+            U.h((d && d.error) || 'Đăng nhập không thành công.')+'</p></div>';
+        }
+      })
+      .catch(function(){ if(dbox) dbox.innerHTML = '<p class="sm" style="color:var(--gita-do-ink)">Không gọi được máy chủ.</p>'; });
+  }
+  else if(a === 'mc-taoadmin'){
+    var au = document.getElementById('mcAdU'), amk = document.getElementById('mcAdMk'), aten = document.getElementById('mcAdTen');
+    var abox = document.getElementById('mcAdKq');
+    var auu = au ? String(au.value||'').trim() : '', amm = amk ? String(amk.value||'') : '', at = aten ? String(aten.value||'').trim() : '';
+    if(!auu || !amm){ U.toast('Nhập tên đăng nhập và mật khẩu.','err'); return; }
+    if(abox) abox.innerHTML = '<p class="sm dim">Đang tạo Super Admin…</p>';
+    fetch(G.API_CAP_PHEP, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify({fn:'taoAdminDau', tenMoi:auu, mk:amm, hoTen:at})})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(abox) abox.innerHTML = '<div class="card pad-sm" style="border-color:'+((d&&d.ok)?'var(--ok)':'var(--gita-do)')+'">'+
+          '<p class="sm">'+ic((d&&d.ok)?'check':'x','w-3 h-3')+' '+U.h((d&&(d.msg||d.error))||'Không rõ kết quả.')+'</p></div>';
+        if(d && d.ok){ var dd = document.getElementById('mcDnU'); if(dd) dd.value = auu; U.toast('Đã tạo Super Admin. Giờ đăng nhập máy chủ ngay bên trên.','ok'); }
+      })
+      .catch(function(){ if(abox) abox.innerHTML = '<p class="sm" style="color:var(--gita-do-ink)">Không gọi được máy chủ.</p>'; });
   }
   else if(a === 'mc-thu'){
     if(kq) kq.innerHTML = '<p class="sm dim">Đang gọi máy chủ…</p>';

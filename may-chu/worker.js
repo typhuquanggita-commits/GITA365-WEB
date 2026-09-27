@@ -306,6 +306,11 @@ async function lam(fn, y, env, db) {
   /* Kiểm bản mới — KHÔNG cần phiên: app hỏi lúc mở, trước cả đăng nhập. */
   if (fn === 'kiemBanMoi') return await kiemBanMoi(y, env, db);
 
+  /* Tạo Super Admin ĐẦU TIÊN — cửa mở-máy MỘT LẦN, KHÔNG cần phiên (chưa
+     ai đăng nhập được khi hệ chưa có ai). Tự đóng vĩnh viễn ngay khi đã có
+     một quản trị (R01/R02) — không dùng để leo quyền về sau. */
+  if (fn === 'taoAdminDau') return await taoAdminDau(y, env, db);
+
   /* ── CỬA NGÂN HÀNG: XÁC THỰC BẰNG KHOÁ RIÊNG, KHÔNG BẰNG PHIÊN ──
 
      Ngân hàng không đăng nhập được vào hệ. Cửa này phải đứng TRƯỚC cổng
@@ -615,6 +620,43 @@ async function lam(fn, y, env, db) {
    Học viện, và danh sách ấy tự nó đã là dữ liệu của khách hàng. Nền cũ
    làm đúng chỗ này; giữ nguyên. */
 const SAI = {ok: false, error: 'Tên đăng nhập hoặc mật khẩu chưa đúng.'};
+
+/* ═══════════════ TẠO SUPER ADMIN ĐẦU TIÊN (BOOTSTRAP) ═══════════════
+   Sau khi dựng máy chủ, D1 rỗng — chưa có tài khoản nào, nên KHÔNG ai đăng
+   nhập được, nên KHÔNG ai xin được khoá (capKhoa đòi phiên thật). Cửa này
+   phá thế bí ấy: tạo Super Admin đầu tiên. Nó CHỈ chạy khi hệ chưa có quản
+   trị (R01/R02); có rồi thì đóng vĩnh viễn. Mật khẩu băm bằng GITA_TIEU
+   ngay trong máy chủ — không có bản rõ nào rời máy chủ. */
+async function taoAdminDau(y, env, db) {
+  const co = await db.prepare(
+    "SELECT COUNT(*) AS n FROM users WHERE role IN ('R01','R02') AND (deletedAt IS NULL OR deletedAt = '')"
+  ).first();
+  if (co && Number(co.n) > 0)
+    return {ok: false, code: 'DACO',
+      error: 'Hệ đã có quản trị — cửa tạo Super Admin đầu tiên đã đóng.'};
+
+  const u = String(y.tenMoi || y.u || '').trim().toLowerCase();
+  const mk = String(y.mk || '');
+  const hoTen = String(y.hoTen || 'Super Admin').trim().slice(0, 80) || 'Super Admin';
+  if (u.length < 3)  return {ok: false, error: 'Tên đăng nhập cần ít nhất 3 ký tự.'};
+  if (mk.length < 8) return {ok: false, error: 'Mật khẩu cần ít nhất 8 ký tự.'};
+
+  const trung = await Kho.nguoiTheoTen(db, u);
+  if (trung) return {ok: false, error: 'Tên đăng nhập đã có người dùng. Chọn tên khác.'};
+
+  const id = crypto.randomUUID();
+  const muoi = muoiMoi();
+  const bam = await bamMoi(mk, muoi, env.GITA_TIEU);
+  const now = new Date().toISOString();
+  await db.prepare(
+    'INSERT INTO users (id, username, hoTen, role, pwSalt, pwHash, active, createdAt) ' +
+    'VALUES (?, ?, ?, ?, ?, ?, 1, ?)'
+  ).bind(id, u, hoTen, 'R01', muoi, bam, now).run();
+
+  await Kho.ghiNhatKy(db, {uid: id, username: u, viec: 'TAO_ADMIN_DAU',
+    doiTuong: 'R01', chiTiet: 'Bootstrap Super Admin đầu tiên'});
+  return {ok: true, msg: 'Đã tạo Super Admin "' + u + '". Đăng nhập máy chủ bằng tên và mật khẩu vừa đặt.'};
+}
 
 async function dangNhap(y, env, db) {
   const u = String(y.u || '').trim().toLowerCase();
