@@ -45,7 +45,7 @@ window.G = G;
    trong khi nội dung đổi là một cách nói dối không cố ý. */
 G.META = {
   name: 'GITA 365',
-  version: '9.99.237',
+  version: '9.99.241',
   tagline: 'Hệ Sinh Thái Gia Đình Thịnh Vượng',
   hotline: '08.5555.4688',
   site: 'truongnhatquang.com',
@@ -4096,16 +4096,18 @@ G.dongBo = function(tuTay){
   if(G.DONGBO.trangThai === 'dang') return Promise.resolve(false);
 
   var g = gomThayDoi();
+  var token = G.PHIEN_TOKEN || '';
   G.DONGBO.trangThai = 'dang';
   var batDau = Date.now();
 
   return fetch(G.API_CAP_PHEP, {
     method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
-    body: JSON.stringify({ fn:'dongBo', u:G.S.acc.u, token:G.PHIEN_TOKEN||'',
+    body: JSON.stringify({ fn:'dongBo', u:G.S.acc.u, token:token,
       day:g.day, mocTruong:g.mocDay, caiDat:goiCaiDat(),
       may:navigator.userAgent.slice(0,120) })
   }).then(function(r){ return r.json(); })
     .then(function(d){
+      if(G.nhanPhanHoiMayChu) G.nhanPhanHoiMayChu(d, token);
       if(!d || !d.ok) throw new Error(d && d.error || 'Máy chủ từ chối');
       var ve = nhanVe(d.keo, d.mocTruong) + nhanCaiDat(d.caiDat);
       /* Phần kéo về nằm trong G.S. Không ghi xuống đĩa ngay thì đóng tab
@@ -4638,7 +4640,9 @@ function donKho(){
      1200, và không có gì báo. Phép đo bắt được đúng lỗi này ngay lần
      chạy đầu sau khi chia kho. */
   G.KHO_TRAI_RA.forEach(function(k){ try{ delete G[k]; }catch(e){ G[k] = undefined; } });
-  G.KHO.daNap = []; G.KHO.dangNap = []; G.KHO.cheDoMau = false; G.KHO.hanKhoa = null; G.KHO.loiMo = {};
+  G.KHO.daNap = []; G.KHO.dangNap = []; G.KHO.cheDoMau = false;
+  G.KHO.hanKhoa = null; G.KHO.lyDoTuChoi = ''; G.KHO.maTuChoi = '';
+  G.KHO.maPhien = ''; G.KHO.loiMo = {};
   /* Bảng thứ hạng của trần 30% tính từ chính kho đang mở. Đổi vai là kho
      đổi, nên bảng cũ phải bỏ đi — không thì nhà mình được tính theo kho
      của vai trước. */
@@ -4732,6 +4736,7 @@ function xinKhoa(danhSach) {
      Bản web không bao giờ có sẵn khoá — luôn phải hỏi máy chủ. */
   if (window.GITA_KHOA) return Promise.resolve(window.GITA_KHOA);
   if (!G.API_CAP_PHEP) return Promise.resolve(null);
+  var token = G.PHIEN_TOKEN || '';
   return fetch(G.API_CAP_PHEP, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -4744,25 +4749,47 @@ function xinKhoa(danhSach) {
          lượt xin khoá của bản web trả về AUTH và kho mã hoá không bao
          giờ mở — im lặng, vì ứng dụng vẫn chạy ở chế độ mẫu.
          Gửi kèm thì máy chủ cũ bỏ qua, máy chủ mới dùng. */
-      token: G.PHIEN_TOKEN || '',
+      token: token,
       vai: G.S.role,
       goi: danhSach,
       may: navigator.userAgent.slice(0, 120)
     })
-  }).then(function (r) { return r.json(); })
+  }).then(function (r) {
+    return r.json().then(function(d){
+      if(!r.ok && (!d || d.ok))
+        throw new Error('Máy chủ trả HTTP ' + r.status + ' khi cấp khoá.');
+      return d;
+    });
+  })
     .then(function (d) {
+      if(!d || typeof d !== 'object' || typeof d.ok !== 'boolean'){
+        G.KHO.maTuChoi = 'SERVER';
+        G.KHO.lyDoTuChoi = 'Máy chủ trả về phản hồi cấp phép không hợp lệ.';
+        throw new Error(G.KHO.lyDoTuChoi);
+      }
       if (!d || !d.ok) {
         /* Máy chủ từ chối có lý do, và lý do ấy phải tới được người dùng.
            Rơi thẳng về chế độ mẫu mà không nói gì là cách chắc chắn nhất
            để một người ngồi hàng giờ tưởng ứng dụng hỏng. */
         G.KHO.lyDoTuChoi = (d && d.error) || 'Máy chủ chưa cấp khoá';
-        G.KHO.maTuChoi   = (d && d.code) || '';
+        G.KHO.maTuChoi   = (d && d.code) || 'SERVER';
+        if (d && d.code === 'AUTH' && G.hetHanPhienMayChu) G.hetHanPhienMayChu(token);
         if (d && d.code === 'MUSTCHANGE' && G.U && G.U.toast)
           setTimeout(function () {
             G.U.toast('Kho chưa mở vì tài khoản còn dùng mật khẩu tạm. ' +
               'Đổi mật khẩu rồi đăng nhập lại.', 'err');
             if (G.moDoiMatKhau) G.moDoiMatKhau();
           }, 400);
+        throw new Error(G.KHO.lyDoTuChoi);
+      }
+      if(!d.khoa || typeof d.khoa !== 'object' || Array.isArray(d.khoa)){
+        G.KHO.maTuChoi = 'SERVER';
+        G.KHO.lyDoTuChoi = 'Máy chủ phản hồi sai định dạng khoá.';
+        throw new Error(G.KHO.lyDoTuChoi);
+      }
+      if(!Object.keys(d.khoa).length){
+        G.KHO.maTuChoi = 'SERVER';
+        G.KHO.lyDoTuChoi = 'Máy chủ xác nhận cấp phép nhưng không trả khoá nào.';
         throw new Error(G.KHO.lyDoTuChoi);
       }
       G.KHO.lyDoTuChoi = ''; G.KHO.maTuChoi = '';
@@ -4773,6 +4800,14 @@ function xinKhoa(danhSach) {
          khi ấy chuỗi rỗng, và layGoi gọi y như cũ. */
       G.KHO.maPhien = d.phien || '';
       return d.khoa;
+    })
+    .catch(function(e){
+      if(!G.KHO.maTuChoi){
+        G.KHO.maTuChoi = 'NETWORK';
+        G.KHO.lyDoTuChoi = 'Không gọi được máy chủ cấp phép: ' +
+          ((e && e.message) || 'Lỗi mạng hoặc phản hồi không đọc được.');
+      }
+      throw e;
     });
 }
 
@@ -5240,7 +5275,6 @@ G.canCapPhep = function (goi) {
       'trên máy dựng, tệp ra ở thư mục <span class="mono">giay-phep/</span>.</p></div>';
   return o;
 };
-
 
 })();
 
@@ -16721,6 +16755,7 @@ G.datMayChu = function(url){
   url = String(url || '').trim();
   if(!url){
     try{ localStorage.removeItem(KHO); }catch(e){}
+    if(G.dangXuatMayChu) G.dangXuatMayChu();
     G.API_CAP_PHEP = '';
     return {ok:true, xoa:true};
   }
@@ -16728,6 +16763,7 @@ G.datMayChu = function(url){
     return {ok:false, ly:'Địa chỉ máy chủ phải là một đường dẫn https — dạng '+
       'https://gita365.<tên-tài-khoản>.workers.dev (Cloudflare Worker của Học viện).'};
   try{ localStorage.setItem(KHO, url); }catch(e){ return {ok:false, ly:'Trình duyệt không cho ghi.'}; }
+  if(G.API_CAP_PHEP !== url && G.dangXuatMayChu) G.dangXuatMayChu();
   G.API_CAP_PHEP = url;
   return {ok:true};
 };
@@ -16741,12 +16777,25 @@ G.tuChoiCachSua = function(ma){
       return 'Máy chủ chưa được nạp bộ khoá. Trên máy anh chị, trong thư mục may-chu/ chạy: '+
         'npx wrangler secret put GITA_KHOA_KHO — dán toàn bộ nội dung tệp kho/khoa.json — rồi '+
         'npx wrangler deploy. Bấm "Gọi thử" ở trên, thấy số khoá > 0 là xong.';
+    case 'MISSINGKEY':
+      return 'Bộ khoá máy chủ thiếu một hoặc nhiều gói mà tài khoản được cấp. Nạp lại đầy đủ tệp '+
+        'kho/khoa.json bằng lệnh npx wrangler secret put GITA_KHOA_KHO trong thư mục may-chu/, '+
+        'sau đó chạy npx wrangler deploy.';
+    case 'BADKEY':
+      return 'Một hoặc nhiều khoá máy chủ không phải khoá AES-256 hợp lệ. Nạp lại đúng tệp '+
+        'kho/khoa.json của cùng bản phát hành bằng lệnh npx wrangler secret put GITA_KHOA_KHO, '+
+        'sau đó chạy npx wrangler deploy.';
     case 'MUSTCHANGE':
       return 'Tài khoản đang dùng mật khẩu tạm do máy sinh. Bấm "Đổi mật khẩu ngay" bên dưới, '+
         'đặt mật khẩu riêng, rồi đăng nhập lại — kho sẽ mở.';
     case 'AUTH':
-      return 'Phiên đăng nhập đã hết hạn hoặc chưa gửi kèm mã phiên. Đăng xuất rồi đăng nhập '+
-        'lại, sau đó mở lại màn này.';
+      return 'Phiên máy chủ không hợp lệ hoặc đã hết hạn. Ở phần Đăng nhập máy chủ bên dưới, '+
+        'đăng nhập lại bằng tài khoản thật của Học viện rồi mở lại kho.';
+    case 'NETWORK':
+      return 'Không liên lạc được máy chủ cấp phép. Kiểm tra kết nối mạng, địa chỉ Worker và '+
+        'mục connect-src trong index.html, rồi bấm Gọi thử.';
+    case 'SERVER':
+      return 'Máy chủ trả về dữ liệu cấp phép sai định dạng. Kiểm tra phiên bản Worker và triển khai lại.';
     case 'RATE':
       return 'Đã xin khoá quá nhiều lần trong một giờ (trần chống dò khoá). Chờ khoảng một giờ '+
         'rồi thử lại — không cần sửa gì.';
@@ -16810,11 +16859,13 @@ G.goiMayChu = function(fn, than){
   }).then(function(r){ return r.json(); })
     .then(function(d){
       if(!d) return {ok:false, error:'Máy chủ trả về nội dung không đọc được.'};
+      if(G.nhanPhanHoiMayChu) G.nhanPhanHoiMayChu(d, body.token);
       /* Phiên hết hạn nói RÕ là hết hạn, không lẫn vào "không có quyền":
          hai câu ấy dẫn tới hai việc khác nhau — đăng nhập lại, hay đi
          xin quyền. */
-      if(!d.ok && d.code === 'AUTH')
+      if(!d.ok && d.code === 'AUTH'){
         return {ok:false, code:'AUTH', error:'Phiên đã hết hạn. Đăng nhập lại rồi thử lại.'};
+      }
       return d;
     })
     .catch(function(e){
@@ -16923,8 +16974,9 @@ G.VIEWS['noi-may-chu'] = function(){
       '<div id="mcDnKq" class="mt"></div>'+
       '<details class="mt2"><summary class="sm" style="cursor:pointer;color:var(--gita-ink)">'+
         ic('spark','w-3 h-3')+' Lần đầu dựng máy chủ? Tạo Super Admin đầu tiên</summary>'+
-        '<p class="tiny muted mt">Chỉ chạy được MỘT LẦN — khi hệ chưa có quản trị nào. Mật khẩu được máy chủ băm an toàn, không lưu bản rõ.</p>'+
+        '<p class="tiny muted mt">Chỉ chạy được MỘT LẦN — khi hệ chưa có quản trị nào và đã nạp secret <span class="mono">GITA_TAO_ADMIN</span>. Nhập secret khởi tạo cùng mật khẩu quản trị; mật khẩu được máy chủ băm an toàn, không lưu bản rõ. Xoá secret sau khi tạo tài khoản.</p>'+
         '<div class="row mt" style="gap:9px;flex-wrap:wrap">'+
+          '<input id="mcAdKey" type="password" autocomplete="off" placeholder="Secret khởi tạo (GITA_TAO_ADMIN)" style="'+oInp+'">'+
           '<input id="mcAdU" placeholder="Tên đăng nhập mới" style="'+oInp+'">'+
           '<input id="mcAdMk" type="password" placeholder="Mật khẩu (≥8 ký tự)" style="'+oInp+'">'+
           '<input id="mcAdTen" placeholder="Họ tên" style="'+oInp+'">'+
@@ -17018,18 +17070,18 @@ document.addEventListener('click', function(e){
       .catch(function(){ if(dbox) dbox.innerHTML = '<p class="sm" style="color:var(--gita-do-ink)">Không gọi được máy chủ.</p>'; });
   }
   else if(a === 'mc-taoadmin'){
-    var au = document.getElementById('mcAdU'), amk = document.getElementById('mcAdMk'), aten = document.getElementById('mcAdTen');
+    var akey = document.getElementById('mcAdKey'), au = document.getElementById('mcAdU'), amk = document.getElementById('mcAdMk'), aten = document.getElementById('mcAdTen');
     var abox = document.getElementById('mcAdKq');
-    var auu = au ? String(au.value||'').trim() : '', amm = amk ? String(amk.value||'') : '', at = aten ? String(aten.value||'').trim() : '';
-    if(!auu || !amm){ U.toast('Nhập tên đăng nhập và mật khẩu.','err'); return; }
+    var ask = akey ? String(akey.value||'') : '', auu = au ? String(au.value||'').trim() : '', amm = amk ? String(amk.value||'') : '', at = aten ? String(aten.value||'').trim() : '';
+    if(!ask || !auu || !amm){ U.toast('Nhập secret khởi tạo, tên đăng nhập và mật khẩu.','err'); return; }
     if(abox) abox.innerHTML = '<p class="sm dim">Đang tạo Super Admin…</p>';
     fetch(G.API_CAP_PHEP, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body: JSON.stringify({fn:'taoAdminDau', tenMoi:auu, mk:amm, hoTen:at})})
+      body: JSON.stringify({fn:'taoAdminDau', setupKey:ask, tenMoi:auu, mk:amm, hoTen:at})})
       .then(function(r){ return r.json(); })
       .then(function(d){
         if(abox) abox.innerHTML = '<div class="card pad-sm" style="border-color:'+((d&&d.ok)?'var(--ok)':'var(--gita-do)')+'">'+
           '<p class="sm">'+ic((d&&d.ok)?'check':'x','w-3 h-3')+' '+U.h((d&&(d.msg||d.error))||'Không rõ kết quả.')+'</p></div>';
-        if(d && d.ok){ var dd = document.getElementById('mcDnU'); if(dd) dd.value = auu; U.toast('Đã tạo Super Admin. Giờ đăng nhập máy chủ ngay bên trên.','ok'); }
+        if(d && d.ok){ if(akey) akey.value = ''; if(amk) amk.value = ''; var dd = document.getElementById('mcDnU'); if(dd) dd.value = auu; U.toast('Đã tạo Super Admin. Xoá secret GITA_TAO_ADMIN ở Cloudflare rồi đăng nhập máy chủ.','ok'); }
       })
       .catch(function(){ if(abox) abox.innerHTML = '<p class="sm" style="color:var(--gita-do-ink)">Không gọi được máy chủ.</p>'; });
   }
@@ -24178,12 +24230,14 @@ function quyetDinh(id, viec, canLyDo){
      buổi sáng, sổ trên Google Sheet vẫn "chờ duyệt" cả hai mươi, và Admin
      thứ hai mở máy mình thấy y nguyên rồi duyệt lại lần nữa. */
   if(G.API_CAP_PHEP){
+    var token = G.PHIEN_TOKEN || '';
     fetch(G.API_CAP_PHEP, {
       method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
       body: JSON.stringify({fn:'duyetTaiLieu', u:(G.S.acc && G.S.acc.u) || '',
-        token: G.PHIEN_TOKEN || '', ma: t.id, viec: viec, lyDo: ly})
+        token: token, ma: t.id, viec: viec, lyDo: ly})
     }).then(function(r){ return r.json(); })
       .then(function(d){
+        if(G.nhanPhanHoiMayChu) G.nhanPhanHoiMayChu(d, token);
         if(d && d.ok){ U.toast('Đã ghi quyết định cho ' + t.id + ' — máy chủ đã nhận.','ok'); return; }
         t.chuaDongBo = true; luu();
         U.toast('Đã ghi trên máy này, nhưng máy chủ chưa nhận: ' +
@@ -24212,16 +24266,18 @@ document.addEventListener('click', function(e){
 G.dayTepLen = function(ban, tep){
   var doc = new FileReader();
   doc.onload = function(){
+    var token = G.PHIEN_TOKEN || '';
     fetch(G.API_CAP_PHEP, {
       method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
       body: JSON.stringify({
-        fn:'napTaiLieu', u:(G.S.acc && G.S.acc.u), token:G.PHIEN_TOKEN || '',
+        fn:'napTaiLieu', u:(G.S.acc && G.S.acc.u), token:token,
         ban:{id:ban.id, ten:ban.ten, loai:ban.loai, tang:ban.tang, moTa:ban.moTa,
              tenTep:ban.tenTep, kieuTep:ban.kieuTep},
         dulieu: String(doc.result).split(',')[1] || ''
       })
     }).then(function(r){ return r.json(); })
       .then(function(d){
+        if(G.nhanPhanHoiMayChu) G.nhanPhanHoiMayChu(d, token);
         if(!d || !d.ok) throw new Error(d && d.error || 'Máy chủ từ chối');
         var t = G.THUVIEN.filter(function(x){ return x.id === ban.id; })[0];
         if(t){ t.daLuuTep = true; t.driveId = d.driveId || ''; luu(); }
@@ -33335,7 +33391,10 @@ G.VIEWS = G.VIEWS || {};
       method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(than)
     }).then(function (r) { return r.json(); })
-      .then(function (d) { return d || { ok: false, ly: 'Máy chủ không trả lời.' }; })
+      .then(function (d) {
+        if(G.nhanPhanHoiMayChu) G.nhanPhanHoiMayChu(d, than.token);
+        return d || { ok: false, ly: 'Máy chủ không trả lời.' };
+      })
       .catch(function (e) { return { ok: false, ly: 'Không gọi được máy chủ: ' + (e && e.message || e) }; });
   };
 
@@ -54251,7 +54310,8 @@ G.S = {
 };
 function save(){
   try{ localStorage.setItem(KEY, JSON.stringify({
-    role:G.S.role, u:G.S.acc && G.S.acc.u, crmMuc:G.S.crmMuc, view:G.S.view, open:G.S.open, rtab:G.S.rtab,
+    role:G.S.role, u:G.S.acc && G.S.acc.u, tuMayChu:!!(G.S.acc && G.S.acc.tuMayChu),
+    crmMuc:G.S.crmMuc, view:G.S.view, open:G.S.open, rtab:G.S.rtab,
     checks:G.S.checks, vision:G.S.vision, journal:G.S.journal, test:G.S.test, bando:G.S.bando, nhatky:G.S.nhatky, baithi:G.S.baithi, thoigian:G.S.thoigian, sathach:G.S.sathach, khoahoc:G.S.khoahoc,
     rightOpen:G.S.rightOpen, thuCot:G.S.thuCot, mood:G.S.mood, daThay:G.S.daThay,
     /* Sổ việc và sổ chốt ngày. Thiếu hai dòng này thì mọi thứ người ta
@@ -54705,19 +54765,118 @@ function doLogin(u, p){
   if(p !== undefined && p !== null && String(p).length && a.p !== p){
     U.toast('Mật khẩu chưa đúng.','err'); return;
   }
+  G.dangXuatMayChu();
   vaoPhien(a);
 }
 G.doLogin = doLogin;
 
+var KHOA_PHIEN_MAY_CHU = 'gita365_phien_may_chu';
+G.xoaPhienMayChu = function(token){
+  if(arguments.length && G.PHIEN_TOKEN !== token) return;
+  G.PHIEN_TOKEN = '';
+  try{ sessionStorage.removeItem(KHOA_PHIEN_MAY_CHU); }
+  catch(e){ console.warn('[GITA] Không xoá được mã phiên máy chủ khỏi sessionStorage:', e); }
+};
+
+G.hetHanPhienMayChu = function(token){
+  if(G.PHIEN_TOKEN !== token) return;
+  G.PHIEN_TOKEN = '';
+  try{
+    var p = JSON.parse(sessionStorage.getItem(KHOA_PHIEN_MAY_CHU) || 'null');
+    if(p && p.api === (G.API_CAP_PHEP || '')){
+      p.token = '';
+      sessionStorage.setItem(KHOA_PHIEN_MAY_CHU, JSON.stringify(p));
+    }
+  }catch(e){ console.warn('[GITA] Không thể cập nhật trạng thái phiên máy chủ:', e); }
+};
+
+G.nhanPhanHoiMayChu = function(data, token){
+  if(data && !data.ok && data.code === 'AUTH') G.hetHanPhienMayChu(token);
+  return data;
+};
+
+G.dangXuatMayChu = function(){
+  var token = G.PHIEN_TOKEN || '', api = G.API_CAP_PHEP || '';
+  G.xoaPhienMayChu();
+  if(!token || !api) return;
+  var request;
+  try{
+    request = fetch(api, {
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify({fn:'dangXuat', token:token}),
+      keepalive:true
+    });
+  }catch(e){
+    console.warn('[GITA] Không thu hồi được phiên máy chủ:', e && e.message || e);
+    return;
+  }
+  request.then(function(r){
+    if(!r.ok) throw new Error('Máy chủ trả HTTP ' + r.status);
+    return r.json();
+  }).then(function(d){
+    if(!d || !d.ok) throw new Error((d && d.error) || 'Máy chủ không xác nhận đăng xuất.');
+  }).catch(function(e){
+    console.warn('[GITA] Không thu hồi được phiên máy chủ:', e && e.message || e);
+  });
+};
+
+function luuPhienMayChu(payload){
+  G.PHIEN_TOKEN = payload.token;
+  try{
+    sessionStorage.setItem(KHOA_PHIEN_MAY_CHU, JSON.stringify({
+      u: String(payload.u || '').toLowerCase(),
+      role: payload.role,
+      hoTen: payload.hoTen || payload.u,
+      tier: Number(payload.tier) || 0,
+      maKhachHang: payload.maKhachHang || '',
+      crmMuc: payload.crmMuc || '',
+      api: G.API_CAP_PHEP || '',
+      token: payload.token
+    }));
+  }catch(e){
+    console.warn('[GITA] Không thể giữ mã phiên máy chủ qua tải lại trang:', e);
+    U.toast('Đăng nhập thành công, nhưng trình duyệt không giữ được phiên. Tải lại trang sẽ cần đăng nhập lại máy chủ.','err');
+  }
+}
+
+function khoiPhucPhienMayChu(u){
+  G.PHIEN_TOKEN = '';
+  try{
+    var p = JSON.parse(sessionStorage.getItem(KHOA_PHIEN_MAY_CHU) || 'null');
+    var coVai = p && G.ROLES.some(function(r){ return r.id === p.role; });
+    if(p && p.u === String(u || '').toLowerCase() &&
+       p.api === (G.API_CAP_PHEP || '') && coVai){
+      G.PHIEN_TOKEN = typeof p.token === 'string' ? p.token : '';
+      return {
+        u:p.u, role:p.role, ten:p.hoTen || p.u, tang:Number(p.tier) || 0,
+        maKhachHang:p.maKhachHang || '', crmMuc:p.crmMuc || '', tuMayChu:true
+      };
+    } else if(p){
+      sessionStorage.removeItem(KHOA_PHIEN_MAY_CHU);
+    }
+  }catch(e){
+    console.warn('[GITA] Không đọc được mã phiên máy chủ đã lưu:', e);
+    G.xoaPhienMayChu();
+  }
+  return null;
+}
+
 /* Vào phiên từ một payload MÁY CHỦ (đăng nhập bằng khuôn mặt, và sau này
    cả mật khẩu thật). Dựng một object tài khoản từ payload rồi đi qua đúng
    vaoPhien — MỘT nguồn cho phần dựng phiên, không chép lại. Token phiên
-   lưu vào G.PHIEN_TOKEN để mọi cửa goiMayChu sau đó mang theo. */
+   lưu tạm trong sessionStorage để tải lại trang không làm mất phiên thật;
+   đóng tab, đăng xuất, đổi tài khoản hoặc đổi máy chủ đều bỏ token. */
 function vaoBangPhienMayChu(payload){
-  if(!payload || !payload.token){ U.toast('Máy chủ không trả về phiên.','err'); return; }
-  G.PHIEN_TOKEN = payload.token;
+  if(!payload || !payload.token || !payload.u ||
+     !G.ROLES.some(function(r){ return r.id === payload.role; })){
+    U.toast('Máy chủ không trả về phiên hoặc vai hợp lệ.','err'); return;
+  }
+  G.dangXuatMayChu();
+  luuPhienMayChu(payload);
   var a = { u: payload.u, role: payload.role, ten: payload.hoTen || payload.u,
-            maKhachHang: payload.maKhachHang || '', crmMuc: payload.crmMuc || null, tuMayChu: true };
+            tang: Number(payload.tier) || 0, maKhachHang: payload.maKhachHang || '',
+            crmMuc: payload.crmMuc || null, tuMayChu: true };
   vaoPhien(a);
 }
 G.vaoBangPhienMayChu = vaoBangPhienMayChu;
@@ -54750,6 +54909,14 @@ function vaoPhien(a){
   save();
   manCho('Đang mở kho theo phạm vi được cấp phép…');
   G.napKho().then(function(){
+    if(a.tuMayChu && G.KHO.maTuChoi){
+      shell();
+      U.toast(G.KHO.maTuChoi === 'AUTH'
+        ? 'Phiên máy chủ đã hết hạn. Mở Quản trị trang → Nối máy chủ và đăng nhập lại để mở kho.'
+        : 'Chưa mở được kho từ máy chủ: ' + G.KHO.lyDoTuChoi +
+          '. Mở Quản trị trang → Nối máy chủ để xem hướng xử lý.', 'err');
+      return;
+    }
     shell();
     U.toast(G.LOI_CHAO ? G.LOI_CHAO(a.ten)
       : ('Chào ' + a.ten + ' · ' + G.S.roleObj.n), 'ok');
@@ -55973,6 +56140,7 @@ window.addEventListener('hashchange', function(){
 
    Gõ thêm #dangnhap vào cuối địa chỉ là về được, dù đang kẹt ở đâu. */
 G.raNgoai = function(){
+  G.dangXuatMayChu();
   G.S.acc = null; G.S.role = null; G.S.roleObj = null; G.S.crmMuc = null; G.nkData = null; G.dpGiamSat = null;
   if(G.donKho) G.donKho();          /* nội dung đã giải mã không ở lại trong bộ nhớ */
   save();
@@ -55994,6 +56162,7 @@ G.boot = function(){
      .../exec?dangnhap=1 — bản đó chạy trong khung sandbox nên không dùng
      được dấu # trên thanh địa chỉ. */
   if(window.GITA_RA_NGOAI || CUA_DANG_NHAP.indexOf(dau) >= 0){
+    G.dangXuatMayChu();
     G.S.acc = null; G.S.role = null; G.S.roleObj = null; G.S.crmMuc = null;
     save();
     try{ history.replaceState(null, '', location.pathname + location.search); }catch(e){}
@@ -56003,6 +56172,16 @@ G.boot = function(){
 
   var d = load();
   if(d && d.u){
+    var accMayChu = khoiPhucPhienMayChu(d.u);
+    if(accMayChu){
+      vaoPhien(accMayChu);
+      return;
+    }
+    if(d.tuMayChu && G.API_CAP_PHEP &&
+       G.ROLES.some(function(r){ return r.id === d.role; })){
+      vaoPhien({u:d.u, role:d.role, ten:d.u, tang:0, tuMayChu:true});
+      return;
+    }
     var a = G.ACCOUNTS.concat(G.AUDITORS).filter(function(x){return x.u===d.u;})[0];
     if(a){
       G.S.acc=a; G.S.role=a.role; G.S.roleObj=G.roleById(a.role);
@@ -56010,6 +56189,14 @@ G.boot = function(){
       if(hv && G.manCoThat(hv)) G.S.view = hv;
       manCho('Đang mở kho theo phạm vi được cấp phép…');
       G.napKho().then(function(){ shell(); if(G.batDongBo) G.batDongBo(); if(G.kiemBanMoi) G.kiemBanMoi(); });
+      return;
+    }
+    /* Tài khoản máy chủ không nằm trong danh sách tài khoản demo. Sau khi
+       đóng tab, sessionStorage (nơi giữ token) được xoá; vẫn dựng vỏ ứng
+       dụng theo vai đã lưu để người dùng vào Nối máy chủ đăng nhập lại.
+       Không có token thì máy chủ không cấp khoá hay cho phép thao tác. */
+    if(G.API_CAP_PHEP && G.ROLES.some(function(r){ return r.id === d.role; })){
+      vaoPhien({u:d.u, role:d.role, ten:d.u, tang:0, tuMayChu:true});
       return;
     }
   }

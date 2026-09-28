@@ -20,7 +20,8 @@ G.S = {
 };
 function save(){
   try{ localStorage.setItem(KEY, JSON.stringify({
-    role:G.S.role, u:G.S.acc && G.S.acc.u, crmMuc:G.S.crmMuc, view:G.S.view, open:G.S.open, rtab:G.S.rtab,
+    role:G.S.role, u:G.S.acc && G.S.acc.u, tuMayChu:!!(G.S.acc && G.S.acc.tuMayChu),
+    crmMuc:G.S.crmMuc, view:G.S.view, open:G.S.open, rtab:G.S.rtab,
     checks:G.S.checks, vision:G.S.vision, journal:G.S.journal, test:G.S.test, bando:G.S.bando, nhatky:G.S.nhatky, baithi:G.S.baithi, thoigian:G.S.thoigian, sathach:G.S.sathach, khoahoc:G.S.khoahoc,
     rightOpen:G.S.rightOpen, thuCot:G.S.thuCot, mood:G.S.mood, daThay:G.S.daThay,
     /* Sổ việc và sổ chốt ngày. Thiếu hai dòng này thì mọi thứ người ta
@@ -474,19 +475,118 @@ function doLogin(u, p){
   if(p !== undefined && p !== null && String(p).length && a.p !== p){
     U.toast('Mật khẩu chưa đúng.','err'); return;
   }
+  G.dangXuatMayChu();
   vaoPhien(a);
 }
 G.doLogin = doLogin;
 
+var KHOA_PHIEN_MAY_CHU = 'gita365_phien_may_chu';
+G.xoaPhienMayChu = function(token){
+  if(arguments.length && G.PHIEN_TOKEN !== token) return;
+  G.PHIEN_TOKEN = '';
+  try{ sessionStorage.removeItem(KHOA_PHIEN_MAY_CHU); }
+  catch(e){ console.warn('[GITA] Không xoá được mã phiên máy chủ khỏi sessionStorage:', e); }
+};
+
+G.hetHanPhienMayChu = function(token){
+  if(G.PHIEN_TOKEN !== token) return;
+  G.PHIEN_TOKEN = '';
+  try{
+    var p = JSON.parse(sessionStorage.getItem(KHOA_PHIEN_MAY_CHU) || 'null');
+    if(p && p.api === (G.API_CAP_PHEP || '')){
+      p.token = '';
+      sessionStorage.setItem(KHOA_PHIEN_MAY_CHU, JSON.stringify(p));
+    }
+  }catch(e){ console.warn('[GITA] Không thể cập nhật trạng thái phiên máy chủ:', e); }
+};
+
+G.nhanPhanHoiMayChu = function(data, token){
+  if(data && !data.ok && data.code === 'AUTH') G.hetHanPhienMayChu(token);
+  return data;
+};
+
+G.dangXuatMayChu = function(){
+  var token = G.PHIEN_TOKEN || '', api = G.API_CAP_PHEP || '';
+  G.xoaPhienMayChu();
+  if(!token || !api) return;
+  var request;
+  try{
+    request = fetch(api, {
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify({fn:'dangXuat', token:token}),
+      keepalive:true
+    });
+  }catch(e){
+    console.warn('[GITA] Không thu hồi được phiên máy chủ:', e && e.message || e);
+    return;
+  }
+  request.then(function(r){
+    if(!r.ok) throw new Error('Máy chủ trả HTTP ' + r.status);
+    return r.json();
+  }).then(function(d){
+    if(!d || !d.ok) throw new Error((d && d.error) || 'Máy chủ không xác nhận đăng xuất.');
+  }).catch(function(e){
+    console.warn('[GITA] Không thu hồi được phiên máy chủ:', e && e.message || e);
+  });
+};
+
+function luuPhienMayChu(payload){
+  G.PHIEN_TOKEN = payload.token;
+  try{
+    sessionStorage.setItem(KHOA_PHIEN_MAY_CHU, JSON.stringify({
+      u: String(payload.u || '').toLowerCase(),
+      role: payload.role,
+      hoTen: payload.hoTen || payload.u,
+      tier: Number(payload.tier) || 0,
+      maKhachHang: payload.maKhachHang || '',
+      crmMuc: payload.crmMuc || '',
+      api: G.API_CAP_PHEP || '',
+      token: payload.token
+    }));
+  }catch(e){
+    console.warn('[GITA] Không thể giữ mã phiên máy chủ qua tải lại trang:', e);
+    U.toast('Đăng nhập thành công, nhưng trình duyệt không giữ được phiên. Tải lại trang sẽ cần đăng nhập lại máy chủ.','err');
+  }
+}
+
+function khoiPhucPhienMayChu(u){
+  G.PHIEN_TOKEN = '';
+  try{
+    var p = JSON.parse(sessionStorage.getItem(KHOA_PHIEN_MAY_CHU) || 'null');
+    var coVai = p && G.ROLES.some(function(r){ return r.id === p.role; });
+    if(p && p.u === String(u || '').toLowerCase() &&
+       p.api === (G.API_CAP_PHEP || '') && coVai){
+      G.PHIEN_TOKEN = typeof p.token === 'string' ? p.token : '';
+      return {
+        u:p.u, role:p.role, ten:p.hoTen || p.u, tang:Number(p.tier) || 0,
+        maKhachHang:p.maKhachHang || '', crmMuc:p.crmMuc || '', tuMayChu:true
+      };
+    } else if(p){
+      sessionStorage.removeItem(KHOA_PHIEN_MAY_CHU);
+    }
+  }catch(e){
+    console.warn('[GITA] Không đọc được mã phiên máy chủ đã lưu:', e);
+    G.xoaPhienMayChu();
+  }
+  return null;
+}
+
 /* Vào phiên từ một payload MÁY CHỦ (đăng nhập bằng khuôn mặt, và sau này
    cả mật khẩu thật). Dựng một object tài khoản từ payload rồi đi qua đúng
    vaoPhien — MỘT nguồn cho phần dựng phiên, không chép lại. Token phiên
-   lưu vào G.PHIEN_TOKEN để mọi cửa goiMayChu sau đó mang theo. */
+   lưu tạm trong sessionStorage để tải lại trang không làm mất phiên thật;
+   đóng tab, đăng xuất, đổi tài khoản hoặc đổi máy chủ đều bỏ token. */
 function vaoBangPhienMayChu(payload){
-  if(!payload || !payload.token){ U.toast('Máy chủ không trả về phiên.','err'); return; }
-  G.PHIEN_TOKEN = payload.token;
+  if(!payload || !payload.token || !payload.u ||
+     !G.ROLES.some(function(r){ return r.id === payload.role; })){
+    U.toast('Máy chủ không trả về phiên hoặc vai hợp lệ.','err'); return;
+  }
+  G.dangXuatMayChu();
+  luuPhienMayChu(payload);
   var a = { u: payload.u, role: payload.role, ten: payload.hoTen || payload.u,
-            maKhachHang: payload.maKhachHang || '', crmMuc: payload.crmMuc || null, tuMayChu: true };
+            tang: Number(payload.tier) || 0, maKhachHang: payload.maKhachHang || '',
+            crmMuc: payload.crmMuc || null, tuMayChu: true };
   vaoPhien(a);
 }
 G.vaoBangPhienMayChu = vaoBangPhienMayChu;
@@ -519,6 +619,14 @@ function vaoPhien(a){
   save();
   manCho('Đang mở kho theo phạm vi được cấp phép…');
   G.napKho().then(function(){
+    if(a.tuMayChu && G.KHO.maTuChoi){
+      shell();
+      U.toast(G.KHO.maTuChoi === 'AUTH'
+        ? 'Phiên máy chủ đã hết hạn. Mở Quản trị trang → Nối máy chủ và đăng nhập lại để mở kho.'
+        : 'Chưa mở được kho từ máy chủ: ' + G.KHO.lyDoTuChoi +
+          '. Mở Quản trị trang → Nối máy chủ để xem hướng xử lý.', 'err');
+      return;
+    }
     shell();
     U.toast(G.LOI_CHAO ? G.LOI_CHAO(a.ten)
       : ('Chào ' + a.ten + ' · ' + G.S.roleObj.n), 'ok');
@@ -1742,6 +1850,7 @@ window.addEventListener('hashchange', function(){
 
    Gõ thêm #dangnhap vào cuối địa chỉ là về được, dù đang kẹt ở đâu. */
 G.raNgoai = function(){
+  G.dangXuatMayChu();
   G.S.acc = null; G.S.role = null; G.S.roleObj = null; G.S.crmMuc = null; G.nkData = null; G.dpGiamSat = null;
   if(G.donKho) G.donKho();          /* nội dung đã giải mã không ở lại trong bộ nhớ */
   save();
@@ -1763,6 +1872,7 @@ G.boot = function(){
      .../exec?dangnhap=1 — bản đó chạy trong khung sandbox nên không dùng
      được dấu # trên thanh địa chỉ. */
   if(window.GITA_RA_NGOAI || CUA_DANG_NHAP.indexOf(dau) >= 0){
+    G.dangXuatMayChu();
     G.S.acc = null; G.S.role = null; G.S.roleObj = null; G.S.crmMuc = null;
     save();
     try{ history.replaceState(null, '', location.pathname + location.search); }catch(e){}
@@ -1772,6 +1882,16 @@ G.boot = function(){
 
   var d = load();
   if(d && d.u){
+    var accMayChu = khoiPhucPhienMayChu(d.u);
+    if(accMayChu){
+      vaoPhien(accMayChu);
+      return;
+    }
+    if(d.tuMayChu && G.API_CAP_PHEP &&
+       G.ROLES.some(function(r){ return r.id === d.role; })){
+      vaoPhien({u:d.u, role:d.role, ten:d.u, tang:0, tuMayChu:true});
+      return;
+    }
     var a = G.ACCOUNTS.concat(G.AUDITORS).filter(function(x){return x.u===d.u;})[0];
     if(a){
       G.S.acc=a; G.S.role=a.role; G.S.roleObj=G.roleById(a.role);
@@ -1779,6 +1899,14 @@ G.boot = function(){
       if(hv && G.manCoThat(hv)) G.S.view = hv;
       manCho('Đang mở kho theo phạm vi được cấp phép…');
       G.napKho().then(function(){ shell(); if(G.batDongBo) G.batDongBo(); if(G.kiemBanMoi) G.kiemBanMoi(); });
+      return;
+    }
+    /* Tài khoản máy chủ không nằm trong danh sách tài khoản demo. Sau khi
+       đóng tab, sessionStorage (nơi giữ token) được xoá; vẫn dựng vỏ ứng
+       dụng theo vai đã lưu để người dùng vào Nối máy chủ đăng nhập lại.
+       Không có token thì máy chủ không cấp khoá hay cho phép thao tác. */
+    if(G.API_CAP_PHEP && G.ROLES.some(function(r){ return r.id === d.role; })){
+      vaoPhien({u:d.u, role:d.role, ten:d.u, tang:0, tuMayChu:true});
       return;
     }
   }

@@ -195,16 +195,18 @@ G.dongBo = function(tuTay){
   if(G.DONGBO.trangThai === 'dang') return Promise.resolve(false);
 
   var g = gomThayDoi();
+  var token = G.PHIEN_TOKEN || '';
   G.DONGBO.trangThai = 'dang';
   var batDau = Date.now();
 
   return fetch(G.API_CAP_PHEP, {
     method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
-    body: JSON.stringify({ fn:'dongBo', u:G.S.acc.u, token:G.PHIEN_TOKEN||'',
+    body: JSON.stringify({ fn:'dongBo', u:G.S.acc.u, token:token,
       day:g.day, mocTruong:g.mocDay, caiDat:goiCaiDat(),
       may:navigator.userAgent.slice(0,120) })
   }).then(function(r){ return r.json(); })
     .then(function(d){
+      if(G.nhanPhanHoiMayChu) G.nhanPhanHoiMayChu(d, token);
       if(!d || !d.ok) throw new Error(d && d.error || 'Máy chủ từ chối');
       var ve = nhanVe(d.keo, d.mocTruong) + nhanCaiDat(d.caiDat);
       /* Phần kéo về nằm trong G.S. Không ghi xuống đĩa ngay thì đóng tab

@@ -32,6 +32,7 @@ G.datMayChu = function(url){
   url = String(url || '').trim();
   if(!url){
     try{ localStorage.removeItem(KHO); }catch(e){}
+    if(G.dangXuatMayChu) G.dangXuatMayChu();
     G.API_CAP_PHEP = '';
     return {ok:true, xoa:true};
   }
@@ -39,6 +40,7 @@ G.datMayChu = function(url){
     return {ok:false, ly:'Địa chỉ máy chủ phải là một đường dẫn https — dạng '+
       'https://gita365.<tên-tài-khoản>.workers.dev (Cloudflare Worker của Học viện).'};
   try{ localStorage.setItem(KHO, url); }catch(e){ return {ok:false, ly:'Trình duyệt không cho ghi.'}; }
+  if(G.API_CAP_PHEP !== url && G.dangXuatMayChu) G.dangXuatMayChu();
   G.API_CAP_PHEP = url;
   return {ok:true};
 };
@@ -52,12 +54,25 @@ G.tuChoiCachSua = function(ma){
       return 'Máy chủ chưa được nạp bộ khoá. Trên máy anh chị, trong thư mục may-chu/ chạy: '+
         'npx wrangler secret put GITA_KHOA_KHO — dán toàn bộ nội dung tệp kho/khoa.json — rồi '+
         'npx wrangler deploy. Bấm "Gọi thử" ở trên, thấy số khoá > 0 là xong.';
+    case 'MISSINGKEY':
+      return 'Bộ khoá máy chủ thiếu một hoặc nhiều gói mà tài khoản được cấp. Nạp lại đầy đủ tệp '+
+        'kho/khoa.json bằng lệnh npx wrangler secret put GITA_KHOA_KHO trong thư mục may-chu/, '+
+        'sau đó chạy npx wrangler deploy.';
+    case 'BADKEY':
+      return 'Một hoặc nhiều khoá máy chủ không phải khoá AES-256 hợp lệ. Nạp lại đúng tệp '+
+        'kho/khoa.json của cùng bản phát hành bằng lệnh npx wrangler secret put GITA_KHOA_KHO, '+
+        'sau đó chạy npx wrangler deploy.';
     case 'MUSTCHANGE':
       return 'Tài khoản đang dùng mật khẩu tạm do máy sinh. Bấm "Đổi mật khẩu ngay" bên dưới, '+
         'đặt mật khẩu riêng, rồi đăng nhập lại — kho sẽ mở.';
     case 'AUTH':
-      return 'Phiên đăng nhập đã hết hạn hoặc chưa gửi kèm mã phiên. Đăng xuất rồi đăng nhập '+
-        'lại, sau đó mở lại màn này.';
+      return 'Phiên máy chủ không hợp lệ hoặc đã hết hạn. Ở phần Đăng nhập máy chủ bên dưới, '+
+        'đăng nhập lại bằng tài khoản thật của Học viện rồi mở lại kho.';
+    case 'NETWORK':
+      return 'Không liên lạc được máy chủ cấp phép. Kiểm tra kết nối mạng, địa chỉ Worker và '+
+        'mục connect-src trong index.html, rồi bấm Gọi thử.';
+    case 'SERVER':
+      return 'Máy chủ trả về dữ liệu cấp phép sai định dạng. Kiểm tra phiên bản Worker và triển khai lại.';
     case 'RATE':
       return 'Đã xin khoá quá nhiều lần trong một giờ (trần chống dò khoá). Chờ khoảng một giờ '+
         'rồi thử lại — không cần sửa gì.';
@@ -121,11 +136,13 @@ G.goiMayChu = function(fn, than){
   }).then(function(r){ return r.json(); })
     .then(function(d){
       if(!d) return {ok:false, error:'Máy chủ trả về nội dung không đọc được.'};
+      if(G.nhanPhanHoiMayChu) G.nhanPhanHoiMayChu(d, body.token);
       /* Phiên hết hạn nói RÕ là hết hạn, không lẫn vào "không có quyền":
          hai câu ấy dẫn tới hai việc khác nhau — đăng nhập lại, hay đi
          xin quyền. */
-      if(!d.ok && d.code === 'AUTH')
+      if(!d.ok && d.code === 'AUTH'){
         return {ok:false, code:'AUTH', error:'Phiên đã hết hạn. Đăng nhập lại rồi thử lại.'};
+      }
       return d;
     })
     .catch(function(e){
@@ -234,8 +251,9 @@ G.VIEWS['noi-may-chu'] = function(){
       '<div id="mcDnKq" class="mt"></div>'+
       '<details class="mt2"><summary class="sm" style="cursor:pointer;color:var(--gita-ink)">'+
         ic('spark','w-3 h-3')+' Lần đầu dựng máy chủ? Tạo Super Admin đầu tiên</summary>'+
-        '<p class="tiny muted mt">Chỉ chạy được MỘT LẦN — khi hệ chưa có quản trị nào. Mật khẩu được máy chủ băm an toàn, không lưu bản rõ.</p>'+
+        '<p class="tiny muted mt">Chỉ chạy được MỘT LẦN — khi hệ chưa có quản trị nào và đã nạp secret <span class="mono">GITA_TAO_ADMIN</span>. Nhập secret khởi tạo cùng mật khẩu quản trị; mật khẩu được máy chủ băm an toàn, không lưu bản rõ. Xoá secret sau khi tạo tài khoản.</p>'+
         '<div class="row mt" style="gap:9px;flex-wrap:wrap">'+
+          '<input id="mcAdKey" type="password" autocomplete="off" placeholder="Secret khởi tạo (GITA_TAO_ADMIN)" style="'+oInp+'">'+
           '<input id="mcAdU" placeholder="Tên đăng nhập mới" style="'+oInp+'">'+
           '<input id="mcAdMk" type="password" placeholder="Mật khẩu (≥8 ký tự)" style="'+oInp+'">'+
           '<input id="mcAdTen" placeholder="Họ tên" style="'+oInp+'">'+
@@ -329,18 +347,18 @@ document.addEventListener('click', function(e){
       .catch(function(){ if(dbox) dbox.innerHTML = '<p class="sm" style="color:var(--gita-do-ink)">Không gọi được máy chủ.</p>'; });
   }
   else if(a === 'mc-taoadmin'){
-    var au = document.getElementById('mcAdU'), amk = document.getElementById('mcAdMk'), aten = document.getElementById('mcAdTen');
+    var akey = document.getElementById('mcAdKey'), au = document.getElementById('mcAdU'), amk = document.getElementById('mcAdMk'), aten = document.getElementById('mcAdTen');
     var abox = document.getElementById('mcAdKq');
-    var auu = au ? String(au.value||'').trim() : '', amm = amk ? String(amk.value||'') : '', at = aten ? String(aten.value||'').trim() : '';
-    if(!auu || !amm){ U.toast('Nhập tên đăng nhập và mật khẩu.','err'); return; }
+    var ask = akey ? String(akey.value||'') : '', auu = au ? String(au.value||'').trim() : '', amm = amk ? String(amk.value||'') : '', at = aten ? String(aten.value||'').trim() : '';
+    if(!ask || !auu || !amm){ U.toast('Nhập secret khởi tạo, tên đăng nhập và mật khẩu.','err'); return; }
     if(abox) abox.innerHTML = '<p class="sm dim">Đang tạo Super Admin…</p>';
     fetch(G.API_CAP_PHEP, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body: JSON.stringify({fn:'taoAdminDau', tenMoi:auu, mk:amm, hoTen:at})})
+      body: JSON.stringify({fn:'taoAdminDau', setupKey:ask, tenMoi:auu, mk:amm, hoTen:at})})
       .then(function(r){ return r.json(); })
       .then(function(d){
         if(abox) abox.innerHTML = '<div class="card pad-sm" style="border-color:'+((d&&d.ok)?'var(--ok)':'var(--gita-do)')+'">'+
           '<p class="sm">'+ic((d&&d.ok)?'check':'x','w-3 h-3')+' '+U.h((d&&(d.msg||d.error))||'Không rõ kết quả.')+'</p></div>';
-        if(d && d.ok){ var dd = document.getElementById('mcDnU'); if(dd) dd.value = auu; U.toast('Đã tạo Super Admin. Giờ đăng nhập máy chủ ngay bên trên.','ok'); }
+        if(d && d.ok){ if(akey) akey.value = ''; if(amk) amk.value = ''; var dd = document.getElementById('mcDnU'); if(dd) dd.value = auu; U.toast('Đã tạo Super Admin. Xoá secret GITA_TAO_ADMIN ở Cloudflare rồi đăng nhập máy chủ.','ok'); }
       })
       .catch(function(){ if(abox) abox.innerHTML = '<p class="sm" style="color:var(--gita-do-ink)">Không gọi được máy chủ.</p>'; });
   }

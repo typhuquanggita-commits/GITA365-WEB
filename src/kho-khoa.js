@@ -343,7 +343,9 @@ function donKho(){
      1200, và không có gì báo. Phép đo bắt được đúng lỗi này ngay lần
      chạy đầu sau khi chia kho. */
   G.KHO_TRAI_RA.forEach(function(k){ try{ delete G[k]; }catch(e){ G[k] = undefined; } });
-  G.KHO.daNap = []; G.KHO.dangNap = []; G.KHO.cheDoMau = false; G.KHO.hanKhoa = null; G.KHO.loiMo = {};
+  G.KHO.daNap = []; G.KHO.dangNap = []; G.KHO.cheDoMau = false;
+  G.KHO.hanKhoa = null; G.KHO.lyDoTuChoi = ''; G.KHO.maTuChoi = '';
+  G.KHO.maPhien = ''; G.KHO.loiMo = {};
   /* Bảng thứ hạng của trần 30% tính từ chính kho đang mở. Đổi vai là kho
      đổi, nên bảng cũ phải bỏ đi — không thì nhà mình được tính theo kho
      của vai trước. */
@@ -437,6 +439,7 @@ function xinKhoa(danhSach) {
      Bản web không bao giờ có sẵn khoá — luôn phải hỏi máy chủ. */
   if (window.GITA_KHOA) return Promise.resolve(window.GITA_KHOA);
   if (!G.API_CAP_PHEP) return Promise.resolve(null);
+  var token = G.PHIEN_TOKEN || '';
   return fetch(G.API_CAP_PHEP, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -449,25 +452,47 @@ function xinKhoa(danhSach) {
          lượt xin khoá của bản web trả về AUTH và kho mã hoá không bao
          giờ mở — im lặng, vì ứng dụng vẫn chạy ở chế độ mẫu.
          Gửi kèm thì máy chủ cũ bỏ qua, máy chủ mới dùng. */
-      token: G.PHIEN_TOKEN || '',
+      token: token,
       vai: G.S.role,
       goi: danhSach,
       may: navigator.userAgent.slice(0, 120)
     })
-  }).then(function (r) { return r.json(); })
+  }).then(function (r) {
+    return r.json().then(function(d){
+      if(!r.ok && (!d || d.ok))
+        throw new Error('Máy chủ trả HTTP ' + r.status + ' khi cấp khoá.');
+      return d;
+    });
+  })
     .then(function (d) {
+      if(!d || typeof d !== 'object' || typeof d.ok !== 'boolean'){
+        G.KHO.maTuChoi = 'SERVER';
+        G.KHO.lyDoTuChoi = 'Máy chủ trả về phản hồi cấp phép không hợp lệ.';
+        throw new Error(G.KHO.lyDoTuChoi);
+      }
       if (!d || !d.ok) {
         /* Máy chủ từ chối có lý do, và lý do ấy phải tới được người dùng.
            Rơi thẳng về chế độ mẫu mà không nói gì là cách chắc chắn nhất
            để một người ngồi hàng giờ tưởng ứng dụng hỏng. */
         G.KHO.lyDoTuChoi = (d && d.error) || 'Máy chủ chưa cấp khoá';
-        G.KHO.maTuChoi   = (d && d.code) || '';
+        G.KHO.maTuChoi   = (d && d.code) || 'SERVER';
+        if (d && d.code === 'AUTH' && G.hetHanPhienMayChu) G.hetHanPhienMayChu(token);
         if (d && d.code === 'MUSTCHANGE' && G.U && G.U.toast)
           setTimeout(function () {
             G.U.toast('Kho chưa mở vì tài khoản còn dùng mật khẩu tạm. ' +
               'Đổi mật khẩu rồi đăng nhập lại.', 'err');
             if (G.moDoiMatKhau) G.moDoiMatKhau();
           }, 400);
+        throw new Error(G.KHO.lyDoTuChoi);
+      }
+      if(!d.khoa || typeof d.khoa !== 'object' || Array.isArray(d.khoa)){
+        G.KHO.maTuChoi = 'SERVER';
+        G.KHO.lyDoTuChoi = 'Máy chủ phản hồi sai định dạng khoá.';
+        throw new Error(G.KHO.lyDoTuChoi);
+      }
+      if(!Object.keys(d.khoa).length){
+        G.KHO.maTuChoi = 'SERVER';
+        G.KHO.lyDoTuChoi = 'Máy chủ xác nhận cấp phép nhưng không trả khoá nào.';
         throw new Error(G.KHO.lyDoTuChoi);
       }
       G.KHO.lyDoTuChoi = ''; G.KHO.maTuChoi = '';
@@ -478,6 +503,14 @@ function xinKhoa(danhSach) {
          khi ấy chuỗi rỗng, và layGoi gọi y như cũ. */
       G.KHO.maPhien = d.phien || '';
       return d.khoa;
+    })
+    .catch(function(e){
+      if(!G.KHO.maTuChoi){
+        G.KHO.maTuChoi = 'NETWORK';
+        G.KHO.lyDoTuChoi = 'Không gọi được máy chủ cấp phép: ' +
+          ((e && e.message) || 'Lỗi mạng hoặc phản hồi không đọc được.');
+      }
+      throw e;
     });
 }
 
@@ -945,4 +978,3 @@ G.canCapPhep = function (goi) {
       'trên máy dựng, tệp ra ở thư mục <span class="mono">giay-phep/</span>.</p></div>';
   return o;
 };
-

@@ -41,7 +41,8 @@
    khẩu để nâng một lớp kỹ thuật là chuyển cái giá của mình sang cho
    họ, và một phần trong số ấy sẽ không quay lại. */
 
-const VONG = 210000;   /* Khuyến nghị của OWASP cho PBKDF2-SHA256 */
+/* Cloudflare Workers rejects PBKDF2 iteration counts above 100,000. */
+const VONG = 100000;
 
 function hex(buf) {
   return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
