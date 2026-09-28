@@ -3,7 +3,7 @@
    Cài một lần, dùng được cả khi mất mạng. Toàn bộ kho tri thức
    nằm trong máy — không cần đường truyền để mở bản đồ nhà mình.
    ═══════════════════════════════════════════════════════════════ */
-const CACHE = 'gita365-v9-99-242';
+const CACHE = 'gita365-v9-99-243';
 /* Danh sách này phải khớp với thứ tự thẻ <script> trong index.html.
    Thiếu tệp thì lần cài đầu vẫn chạy — trình xử lý fetch bên dưới cache
    lại mọi thứ tải về — nhưng mất mạng ngay sau khi cài thì vỡ. */
@@ -19,24 +19,9 @@ const FILES = [
      Bộ xử lý fetch bên dưới đã tự lưu đệm gói nào được mở, nên tải sẵn
      cả bảy chỉ là tải hộ thứ không ai dùng. */
   './kho/mau.json',
-  './assets/fonts.css',
-  './assets/fonts/bevietnampro-400-italic-latin.woff2',
-  './assets/fonts/bevietnampro-400-italic-vietnamese.woff2',
-  './assets/fonts/bevietnampro-400-normal-latin.woff2',
-  './assets/fonts/bevietnampro-400-normal-vietnamese.woff2',
-  './assets/fonts/bevietnampro-600-normal-latin.woff2',
-  './assets/fonts/bevietnampro-600-normal-vietnamese.woff2',
-  './assets/fonts/bevietnampro-700-normal-latin.woff2',
-  './assets/fonts/bevietnampro-700-normal-vietnamese.woff2',
-  './assets/fonts/bevietnampro-800-normal-latin.woff2',
-  './assets/fonts/bevietnampro-800-normal-vietnamese.woff2',
-  './assets/fonts/playfairdisplay-500-italic-latin.woff2',
-  './assets/fonts/playfairdisplay-500-italic-vietnamese.woff2',
-  './assets/fonts/playfairdisplay-600-normal-latin.woff2',
-  './assets/fonts/playfairdisplay-600-normal-vietnamese.woff2',
-  './assets/icons/icon-192.png',
-  './assets/icons/icon-512.png',
-  './assets/icons/maskable-512.png',
+  /* Font subsets and install icons load on demand and are cached by the
+     fetch handler below. Precaching every weight/language variant made a
+     fresh offline install wait on files the current page may never use. */
   './gita-app.js',
   './cau-hinh.js',
 ];
