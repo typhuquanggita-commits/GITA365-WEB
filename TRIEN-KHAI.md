@@ -1,6 +1,6 @@
 # GITA 365 — HƯỚNG DẪN TRIỂN KHAI (Cloudflare + GitHub)
 
-> Bản full 9.99.242 · sửa phiên/cấp khoá, hỗ trợ cấp các gói có khóa khi thiếu gói khác và tương thích PBKDF2 với Cloudflare Workers.
+> Bản full 9.99.243 · sửa phiên/cấp khoá, hỗ trợ cấp các gói có khóa khi thiếu gói khác, tương thích PBKDF2 với Cloudflare Workers và giảm tải precache PWA.
 > Đọc phần ⚠ BẢO MẬT trước tiên.
 
 ---
