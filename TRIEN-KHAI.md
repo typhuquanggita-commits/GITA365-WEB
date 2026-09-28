@@ -1,6 +1,6 @@
 # GITA 365 — HƯỚNG DẪN TRIỂN KHAI (Cloudflare + GitHub)
 
-> Bản full 9.99.241 · sửa phiên/cấp khoá, bảo vệ khởi tạo quản trị và tương thích PBKDF2 với Cloudflare Workers.
+> Bản full 9.99.242 · sửa phiên/cấp khoá, hỗ trợ cấp các gói có khóa khi thiếu gói khác và tương thích PBKDF2 với Cloudflare Workers.
 > Đọc phần ⚠ BẢO MẬT trước tiên.
 
 ---
@@ -15,6 +15,8 @@
   **toàn bộ nội dung chuyên môn** của Học viện. Đó là mất tài sản, và không lấy lại được.
 - Khoá chỉ nằm **một chỗ duy nhất**: trong **secret của Cloudflare Worker** (`GITA_KHOA_KHO`).
   Máy khách xin khoá từ Worker sau khi đăng nhập, giải mã trong bộ nhớ, không lưu lại.
+- Worker chỉ cấp các gói có khóa tương ứng. Nếu thiếu khóa một gói, các gói còn khóa vẫn mở
+  và ứng dụng nêu rõ gói chưa thể mở; không thể suy ra khóa thay thế từ tệp `.enc`.
 - Gói này **không** chứa khoá. File `.gitignore` cũng chặn sẵn `kho/khoa.json` và `giay-phep/`.
 
 ---
