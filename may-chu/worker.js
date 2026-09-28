@@ -28,7 +28,7 @@
    chỗ suốt buổi.
    ═══════════════════════════════════════════════════════════════ */
 
-import { Kho, kiemPhien, kiemMatKhau, bamMoi, muoiMoi, mkQuaDeDoan } from './nen.js';
+import { Kho, kiemPhien, kiemMatKhau, bamMoi, muoiMoi, soSanhAnToan, mkQuaDeDoan } from './nen.js';
 import { dongBo } from './dong-bo.js';
 import { dangKy, guiLaiOtp, xacThucOtp, kichHoat } from './dang-ky.js';
 import { quenMatKhau, datLaiMatKhau } from './mat-khau.js';
@@ -628,6 +628,12 @@ const SAI = {ok: false, error: 'Tên đăng nhập hoặc mật khẩu chưa đ�
    trị (R01/R02); có rồi thì đóng vĩnh viễn. Mật khẩu băm bằng GITA_TIEU
    ngay trong máy chủ — không có bản rõ nào rời máy chủ. */
 async function taoAdminDau(y, env, db) {
+  const khoaKhoiTao = String(env.GITA_TAO_ADMIN || '');
+  const khoaGuiLen = String(y.setupKey || '');
+  if (!khoaKhoiTao || !khoaGuiLen || !soSanhAnToan(khoaGuiLen, khoaKhoiTao))
+    return {ok: false, code: 'AUTH',
+      error: 'Thiếu hoặc sai khoá khởi tạo quản trị.'};
+
   const co = await db.prepare(
     "SELECT COUNT(*) AS n FROM users WHERE role IN ('R01','R02') AND (deletedAt IS NULL OR deletedAt = '')"
   ).first();
@@ -804,7 +810,7 @@ async function capKhoa(y, env, db, hoSo) {
   }
 
   const duocCap = phamViCapPhep(hoSo);
-  const xin = Array.isArray(y.goi) ? y.goi : duocCap;
+  const xin = Array.isArray(y.goi) && y.goi.length ? y.goi : duocCap;
   const cap = duocCap.filter(g => xin.indexOf(g) >= 0);
 
   /* BỘ KHOÁ NẰM TRONG SECRET CỦA WORKER, KHÔNG NẰM TRONG CƠ SỞ DỮ LIỆU.
@@ -825,8 +831,21 @@ async function capKhoa(y, env, db, hoSo) {
   if (!Object.keys(kho).length)
     return {ok: false, code: 'NOKEY', error: 'Máy chủ chưa được nạp bộ khoá.'};
 
+  const thieu = cap.filter(g => !kho[g]);
+  if (thieu.length)
+    return {ok: false, code: 'MISSINGKEY',
+      error: 'Bộ khoá máy chủ đang thiếu các gói được cấp: ' + thieu.join(', ') + '.'};
+
+  const saiDinhDang = cap.filter(g => {
+    if (typeof kho[g] !== 'string' || !/^[A-Za-z0-9+/]+={0,2}$/.test(kho[g])) return true;
+    try { return atob(kho[g]).length !== 32; } catch (e) { return true; }
+  });
+  if (saiDinhDang.length)
+    return {ok: false, code: 'BADKEY',
+      error: 'Khoá máy chủ sai định dạng AES-256 cho các gói: ' + saiDinhDang.join(', ') + '.'};
+
   const traVe = {};
-  for (const g of cap) if (kho[g]) traVe[g] = kho[g];
+  for (const g of cap) traVe[g] = kho[g];
 
   await Kho.ghiNhatKy(db, {uid: hoSo.uid, username: hoSo.u, viec: 'CAP_KHOA',
     doiTuong: cap.join(','), chiTiet: String(y.may || '').slice(0, 120)});

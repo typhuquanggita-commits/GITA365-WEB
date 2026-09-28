@@ -18,7 +18,7 @@ window.G = G;
    trong khi nội dung đổi là một cách nói dối không cố ý. */
 G.META = {
   name: 'GITA 365',
-  version: '9.99.237',
+  version: '9.99.241',
   tagline: 'Hệ Sinh Thái Gia Đình Thịnh Vượng',
   hotline: '08.5555.4688',
   site: 'truongnhatquang.com',

@@ -304,12 +304,14 @@ function quyetDinh(id, viec, canLyDo){
      buổi sáng, sổ trên Google Sheet vẫn "chờ duyệt" cả hai mươi, và Admin
      thứ hai mở máy mình thấy y nguyên rồi duyệt lại lần nữa. */
   if(G.API_CAP_PHEP){
+    var token = G.PHIEN_TOKEN || '';
     fetch(G.API_CAP_PHEP, {
       method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
       body: JSON.stringify({fn:'duyetTaiLieu', u:(G.S.acc && G.S.acc.u) || '',
-        token: G.PHIEN_TOKEN || '', ma: t.id, viec: viec, lyDo: ly})
+        token: token, ma: t.id, viec: viec, lyDo: ly})
     }).then(function(r){ return r.json(); })
       .then(function(d){
+        if(G.nhanPhanHoiMayChu) G.nhanPhanHoiMayChu(d, token);
         if(d && d.ok){ U.toast('Đã ghi quyết định cho ' + t.id + ' — máy chủ đã nhận.','ok'); return; }
         t.chuaDongBo = true; luu();
         U.toast('Đã ghi trên máy này, nhưng máy chủ chưa nhận: ' +
@@ -338,16 +340,18 @@ document.addEventListener('click', function(e){
 G.dayTepLen = function(ban, tep){
   var doc = new FileReader();
   doc.onload = function(){
+    var token = G.PHIEN_TOKEN || '';
     fetch(G.API_CAP_PHEP, {
       method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
       body: JSON.stringify({
-        fn:'napTaiLieu', u:(G.S.acc && G.S.acc.u), token:G.PHIEN_TOKEN || '',
+        fn:'napTaiLieu', u:(G.S.acc && G.S.acc.u), token:token,
         ban:{id:ban.id, ten:ban.ten, loai:ban.loai, tang:ban.tang, moTa:ban.moTa,
              tenTep:ban.tenTep, kieuTep:ban.kieuTep},
         dulieu: String(doc.result).split(',')[1] || ''
       })
     }).then(function(r){ return r.json(); })
       .then(function(d){
+        if(G.nhanPhanHoiMayChu) G.nhanPhanHoiMayChu(d, token);
         if(!d || !d.ok) throw new Error(d && d.error || 'Máy chủ từ chối');
         var t = G.THUVIEN.filter(function(x){ return x.id === ban.id; })[0];
         if(t){ t.daLuuTep = true; t.driveId = d.driveId || ''; luu(); }

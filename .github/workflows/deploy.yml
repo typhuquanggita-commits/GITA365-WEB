@@ -1,16 +1,27 @@
-# ═══════════════════════════════════════════════════════════════
-# GITA 365 — Tự giải nén web-app.zip rồi xuất bản lên GitHub Pages
-# Chủ hệ chỉ cần tải lên MỘT tệp web-app.zip. Quy trình này tự lo phần
-# còn lại: giải nén giữ đúng thư mục assets/ kho/ src/, rồi đăng.
-# Không thể mất tệp vì tải lên chỉ một tệp duy nhất.
-# ═══════════════════════════════════════════════════════════════
-name: Xuat ban Web App GITA365
+# Build and publish the tracked static app; this repository does not use a
+# web-app.zip upload artifact.
+name: Publish GITA365 Web App
 
 on:
   push:
-    branches: [ main ]
-    paths: [ 'web-app.zip' ]
-  workflow_dispatch:   # cho phép bấm chạy tay ở tab Actions
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'gita-app.js'
+      - 'gita-nghe.js'
+      - 'cau-hinh.js'
+      - 'sw.js'
+      - 'manifest.webmanifest'
+      - '404.html'
+      - 'CNAME'
+      - '_headers'
+      - '_redirects'
+      - 'robots.txt'
+      - 'sitemap.xml'
+      - 'assets/**'
+      - 'kho/**'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -28,25 +39,29 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Lay ma nguon
+      - name: Check out application
         uses: actions/checkout@v4
 
-      - name: Giai nen web-app.zip
+      - name: Assemble static site
         run: |
+          set -eu
           mkdir -p _site
-          unzip -o web-app.zip -d _site
-          # .nojekyll de GitHub Pages phuc vu ca tep bat dau bang dau _
+          cp index.html gita-app.js gita-nghe.js cau-hinh.js sw.js \
+            manifest.webmanifest 404.html _headers _redirects \
+            robots.txt sitemap.xml _site/
+          cp -R assets kho _site/
           touch _site/.nojekyll
-          echo "=== Cay tep se xuat ban ==="
-          ls -la _site
-          echo "assets: $(find _site/assets -type f 2>/dev/null | wc -l) tep"
-          echo "kho:    $(find _site/kho -type f 2>/dev/null | wc -l) tep"
+          test -s _site/index.html
+          test -s _site/gita-app.js
+          test -s _site/gita-nghe.js
+          test -d _site/kho
+          printf 'Prepared Pages artifact: %s files\n' "$(find _site -type f | wc -l)"
 
-      - name: Dong goi cho Pages
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: _site
 
-      - name: Xuat ban
+      - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

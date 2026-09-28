@@ -80,7 +80,7 @@ crons = ["0 20 * * *", "0 0 * * *"]
 [[d1_databases]]
 binding = "CSDL"
 database_name = "gita365"
-database_id = "CHUA-TAO — chạy: npx wrangler d1 create gita365"
+database_id = "8ce5271b-be05-47cb-bc34-d25c9e0436d8"
 
 # Kho tệp cho RUỘT hồ sơ người dùng.
 #

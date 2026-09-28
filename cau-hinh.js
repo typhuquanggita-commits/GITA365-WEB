@@ -20,7 +20,7 @@ var G = window.G || {}; window.G = G;
    index.html cũng phải cho phép origin ấy (đã mở sẵn https://*.workers.dev).
    Thiếu một chỗ là trình duyệt chặn im lặng — chạy node tools/soat-san-sang.js
    để máy đối chiếu hai chỗ. */
-G.API_CAP_PHEP = G.API_CAP_PHEP || '';
+G.API_CAP_PHEP = G.API_CAP_PHEP || 'https://gita365.typhuquanggita.workers.dev';
 
 /* Không phải ai cũng sửa được tệp này — bản cài trên máy Windows nằm trong
    thư mục chương trình. Nên Super Admin còn một đường thứ hai: vào màn

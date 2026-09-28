@@ -121,7 +121,10 @@ G.VIEWS = G.VIEWS || {};
       method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(than)
     }).then(function (r) { return r.json(); })
-      .then(function (d) { return d || { ok: false, ly: 'Máy chủ không trả lời.' }; })
+      .then(function (d) {
+        if(G.nhanPhanHoiMayChu) G.nhanPhanHoiMayChu(d, than.token);
+        return d || { ok: false, ly: 'Máy chủ không trả lời.' };
+      })
       .catch(function (e) { return { ok: false, ly: 'Không gọi được máy chủ: ' + (e && e.message || e) }; });
   };
 
