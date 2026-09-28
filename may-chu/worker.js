@@ -207,6 +207,12 @@ export function phamViCapPhep(hoSo) {
 }
 const gon_ = ds => ds.filter((x, i) => x && ds.indexOf(x) === i);
 
+export function tachKhoaDuocCap(goi, kho) {
+  const co = goi.filter(g => Object.prototype.hasOwnProperty.call(kho, g) && kho[g]);
+  const thieu = goi.filter(g => !Object.prototype.hasOwnProperty.call(kho, g) || !kho[g]);
+  return {co, thieu};
+}
+
 /* ═══════════════ VIỆC ═══════════════ */
 
 /* CHUA_PORT đã RỖNG từ 9.99.198–199: bảy cửa còn lại chuyển sang cong-dong.js
@@ -831,12 +837,12 @@ async function capKhoa(y, env, db, hoSo) {
   if (!Object.keys(kho).length)
     return {ok: false, code: 'NOKEY', error: 'Máy chủ chưa được nạp bộ khoá.'};
 
-  const thieu = cap.filter(g => !kho[g]);
-  if (thieu.length)
-    return {ok: false, code: 'MISSINGKEY',
-      error: 'Bộ khoá máy chủ đang thiếu các gói được cấp: ' + thieu.join(', ') + '.'};
+  const {co: coKhoa, thieu} = tachKhoaDuocCap(cap, kho);
+  if (!coKhoa.length)
+    return {ok: false, code: 'NOKEY',
+      error: 'Máy chủ chưa có khoá cho gói nội dung được cấp.'};
 
-  const saiDinhDang = cap.filter(g => {
+  const saiDinhDang = coKhoa.filter(g => {
     if (typeof kho[g] !== 'string' || !/^[A-Za-z0-9+/]+={0,2}$/.test(kho[g])) return true;
     try { return atob(kho[g]).length !== 32; } catch (e) { return true; }
   });
@@ -845,12 +851,14 @@ async function capKhoa(y, env, db, hoSo) {
       error: 'Khoá máy chủ sai định dạng AES-256 cho các gói: ' + saiDinhDang.join(', ') + '.'};
 
   const traVe = {};
-  for (const g of cap) traVe[g] = kho[g];
+  for (const g of coKhoa) traVe[g] = kho[g];
 
   await Kho.ghiNhatKy(db, {uid: hoSo.uid, username: hoSo.u, viec: 'CAP_KHOA',
-    doiTuong: cap.join(','), chiTiet: String(y.may || '').slice(0, 120)});
+    doiTuong: coKhoa.join(','), chiTiet:
+      (thieu.length ? 'Thiếu khoá: ' + thieu.join(', ') + ' · ' : '') +
+      String(y.may || '').slice(0, 120)});
 
-  return {ok: true, khoa: traVe, phamVi: cap,
+  return {ok: true, khoa: traVe, phamVi: coKhoa, thieuKhoa: thieu,
     hetHan: new Date(Date.now() + HAN_KHOA_GIO * 3600e3).toISOString()};
 }
 

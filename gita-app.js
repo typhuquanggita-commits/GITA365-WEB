@@ -45,7 +45,7 @@ window.G = G;
    trong khi nội dung đổi là một cách nói dối không cố ý. */
 G.META = {
   name: 'GITA 365',
-  version: '9.99.241',
+  version: '9.99.242',
   tagline: 'Hệ Sinh Thái Gia Đình Thịnh Vượng',
   hotline: '08.5555.4688',
   site: 'truongnhatquang.com',
@@ -4320,7 +4320,7 @@ var G = window.G || {}; window.G = G;
 /* Địa chỉ máy chủ cấp phép. Để trống thì ứng dụng chạy ở chế độ mẫu. */
 G.API_CAP_PHEP = G.API_CAP_PHEP || '';
 
-G.KHO = { daNap: [], dangNap: [], cheDoMau: false, hanKhoa: null, lyDoTuChoi: '', maTuChoi: '', loiMo: {} };
+G.KHO = { daNap: [], dangNap: [], cheDoMau: false, hanKhoa: null, lyDoTuChoi: '', maTuChoi: '', loiMo: {}, thieuKhoa: [] };
 
 /* Mọi thuộc tính do kho cấp phép nạp vào. Đổi vai là xoá sạch rồi nạp lại
    theo đúng phạm vi của vai mới — không để sót nội dung của vai trước. */
@@ -4642,7 +4642,7 @@ function donKho(){
   G.KHO_TRAI_RA.forEach(function(k){ try{ delete G[k]; }catch(e){ G[k] = undefined; } });
   G.KHO.daNap = []; G.KHO.dangNap = []; G.KHO.cheDoMau = false;
   G.KHO.hanKhoa = null; G.KHO.lyDoTuChoi = ''; G.KHO.maTuChoi = '';
-  G.KHO.maPhien = ''; G.KHO.loiMo = {};
+  G.KHO.maPhien = ''; G.KHO.loiMo = {}; G.KHO.thieuKhoa = [];
   /* Bảng thứ hạng của trần 30% tính từ chính kho đang mở. Đổi vai là kho
      đổi, nên bảng cũ phải bỏ đi — không thì nhà mình được tính theo kho
      của vai trước. */
@@ -4793,6 +4793,19 @@ function xinKhoa(danhSach) {
         throw new Error(G.KHO.lyDoTuChoi);
       }
       G.KHO.lyDoTuChoi = ''; G.KHO.maTuChoi = '';
+      G.KHO.thieuKhoa = Array.isArray(d.thieuKhoa)
+        ? d.thieuKhoa.filter(function (ten) { return typeof ten === 'string'; }) : [];
+      Object.keys(G.KHO.loiMo).forEach(function (ten) {
+        if (G.KHO.loiMo[ten].indexOf('Máy chủ chưa nạp khóa giải mã gói này.') === 0)
+          delete G.KHO.loiMo[ten];
+      });
+      G.KHO.thieuKhoa.forEach(function (ten) {
+        G.KHO.loiMo[ten] = 'Máy chủ chưa nạp khóa giải mã gói này. Gói nội dung "' +
+          ten + '" hiện chưa thể mở; các gói khác vẫn dùng bình thường.';
+      });
+      if (G.KHO.thieuKhoa.length && G.U && G.U.toast)
+        G.U.toast('Đã cấp các gói có khóa. Máy chủ còn thiếu khóa cho: ' +
+          G.KHO.thieuKhoa.join(', ') + '.', 'err');
       G.KHO.hanKhoa = d.hetHan || null;
       /* Máy chủ của chủ hệ thống (desktop/may-chu.js) trả kèm mã phiên.
          Gói của phiên nào chỉ lấy được bằng mã phiên ấy, nên phải giữ lại
