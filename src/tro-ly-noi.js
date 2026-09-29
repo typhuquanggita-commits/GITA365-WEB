@@ -49,7 +49,7 @@ var G = window.G || {}; window.G = G;
             '<span class="tln-duoi"><span class="tln-cham"></span>đang nghe</span></span>' +
           '<button class="tln-nut" data-tln="to" id="tlnToBtn" aria-label="Phóng full màn hình" ' +
             'title="Phóng full màn hình">' + ic('zoom') + '</button>' +
-          '<button class="tln-nut" data-tln="dong" aria-label="Thu gọn" ' +
+          '<button class="tln-nut" data-tln="dong" id="tlnDongBtn" aria-label="Thu gọn" ' +
             'title="Thu gọn về ô thanh tiêu đề nhỏ">' + ic('minus') + '</button>' +
           '<button class="tln-nut" data-tln="an" aria-label="Ẩn trợ lý" ' +
             'title="Ẩn hẳn — hiện lại ở mép phải màn">' + ic('x') + '</button>' +
@@ -101,6 +101,7 @@ var G = window.G || {}; window.G = G;
     if (!p) return;
     p.hidden = false;
     document.getElementById('tln').classList.add('tln-open');
+    document.getElementById('tln').classList.remove('tln-mini');
     /* Chủ động xưng theo tên tài khoản: dòng dưới tiêu đề đổi thành tên
        người đang chat, để trợ lý nói với ĐÚNG người (chủ hệ yêu cầu). */
     var duoi = document.querySelector('#tlnPanel .tln-duoi');
@@ -116,12 +117,30 @@ var G = window.G || {}; window.G = G;
   }
   function dongPanel() {
     var el = document.getElementById('tln'); if (!el) return;
-    el.classList.remove('tln-open', 'tln-to');
+    el.classList.remove('tln-open', 'tln-to', 'tln-mini');
     var p = document.getElementById('tlnPanel'); if (p) p.hidden = true;
     document.body.classList.remove('tln-khoa');
   }
+  /* THU GỌN THẬT (khác đóng hẳn): giữ nguyên cuộc chat, chỉ ẩn thân panel,
+     còn lại một thanh tiêu đề nhỏ. Bấm lại nút này, hoặc bấm vào chính
+     thanh tiêu đề, để mở thân panel ra lại — không mất gì cả. */
+  function thuGon() {
+    var el = document.getElementById('tln'); if (!el || !el.classList.contains('tln-open')) return;
+    var mini = el.classList.toggle('tln-mini');
+    if (mini) { el.classList.remove('tln-to'); document.body.classList.remove('tln-khoa'); }
+    var b = document.getElementById('tlnDongBtn');
+    if (b) {
+      b.setAttribute('title', mini ? 'Mở lại ô chat' : 'Thu gọn về ô thanh tiêu đề nhỏ');
+      b.setAttribute('aria-label', mini ? 'Mở lại ô chat' : 'Thu gọn');
+    }
+    if (!mini) setTimeout(function () {
+      var k = document.getElementById('chKhungNoi'); if (k) k.scrollTop = k.scrollHeight;
+      var i = document.getElementById('aiQNoi'); if (i) i.focus();
+    }, 0);
+  }
   function phong() {
     var el = document.getElementById('tln'); if (!el) return;
+    el.classList.remove('tln-mini');
     var to = el.classList.toggle('tln-to');
     document.body.classList.toggle('tln-khoa', to);   /* khoá cuộn nền khi phủ kín */
     var b = document.getElementById('tlnToBtn');
@@ -165,7 +184,7 @@ var G = window.G || {}; window.G = G;
     if (t) {
       var act = t.getAttribute('data-tln');
       if (act === 'mo') { hien(); moPanel(); }
-      else if (act === 'dong') dongPanel();
+      else if (act === 'dong') thuGon();
       else if (act === 'to') phong();
       else if (act === 'an') an();
       else if (act === 'hien') { hien(); moPanel(); }
@@ -175,6 +194,12 @@ var G = window.G || {}; window.G = G;
     /* Chip trong ô nổi: bộ bắt chung đã gửi câu; ở đây chỉ dọn gợi ý. */
     if (e.target.closest && e.target.closest('#tlnGoiy [data-aiq]')) {
       setTimeout(napGoiy, 0);
+      return;
+    }
+    /* Đang thu gọn (chỉ còn thanh tiêu đề) → bấm vào chính thanh đó để mở
+       thân panel ra lại, khỏi phải mò đúng nút. */
+    if (e.target.closest && e.target.closest('#tln.tln-mini .tln-dau')) {
+      thuGon();
       return;
     }
     /* Chạm RA NGOÀI ô nổi khi đang mở → thu gọn. Để khách bấm nhầm ra nền

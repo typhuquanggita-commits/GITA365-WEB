@@ -2657,6 +2657,18 @@ button.nha-o-nen:hover .nha-ic{transform:scale(1.06)}
 .tln-to .tln-dau{ padding-top:calc(10px + var(--sat)) }
 body.tln-khoa{ overflow:hidden }
 
+/* THU GỌN THẬT — chỉ còn thanh tiêu đề nhỏ ≈ 1,5cm, thân chat/gợi ý/ô gõ
+   ẩn hết (không dỡ DOM, chỉ ẩn — mở lại là còn nguyên cuộc chat). Trước
+   bản này nút "Thu gọn" đóng hẳn panel giống hệt nút "Ẩn trợ lý", trái
+   với đúng lời hứa trên tooltip — nhà mình bấm nhầm là mất cả ô, phải mở
+   lại từ đầu. Bấm vào chính thanh tiêu đề khi đang thu gọn để mở lại. */
+.tln-mini .tln-panel{ height:var(--tln-thu); min-height:var(--tln-thu) }
+.tln-mini .tln-cuon,
+.tln-mini .tln-goiy,
+.tln-mini .tln-go{ display:none }
+.tln-mini .tln-dau{ cursor:pointer; border-bottom:none }
+.tln-mini .tln-duoi{ display:none }
+
 .tln-dau{ display:flex; align-items:center; gap:8px; flex:none;
   padding:10px 12px; border-bottom:1px solid var(--gita-vien-2); background:var(--bg-2) }
 .tln-anh{ width:28px; height:28px; border-radius:50%; flex:none;
