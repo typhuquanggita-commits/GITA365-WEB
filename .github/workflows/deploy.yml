@@ -1,67 +1,67 @@
-# Build and publish the tracked static app; this repository does not use a
-# web-app.zip upload artifact.
-name: Publish GITA365 Web App
+name: Deploy GITA365 to Cloudflare
 
 on:
   push:
     branches: [main]
-    paths:
-      - 'index.html'
-      - 'gita-app.js'
-      - 'gita-nghe.js'
-      - 'cau-hinh.js'
-      - 'sw.js'
-      - 'manifest.webmanifest'
-      - '404.html'
-      - 'CNAME'
-      - '_headers'
-      - '_redirects'
-      - 'robots.txt'
-      - 'sitemap.xml'
-      - 'assets/**'
-      - 'kho/**'
-      - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: pages
+  group: cloudflare-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  pages:
+    name: Deploy static application
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Check out application
         uses: actions/checkout@v4
 
-      - name: Assemble static site
+      - name: Build browser bundles from source
+        run: |
+          set -eu
+          node tools/gop-src.js
+          node tools/gop-src.js --kiem
+
+      - name: Assemble public Pages artifact
         run: |
           set -eu
           mkdir -p _site
-          cp index.html gita-app.js gita-nghe.js cau-hinh.js sw.js \
-            manifest.webmanifest 404.html _headers _redirects \
-            robots.txt sitemap.xml _site/
+          find . -maxdepth 1 -type f -name '*.html' -exec cp {} _site/ \;
+          cp gita-app.js gita-nghe.js cau-hinh.js sw.js manifest.webmanifest \
+            _headers _redirects robots.txt sitemap.xml _site/
           cp -R assets kho _site/
           touch _site/.nojekyll
           test -s _site/index.html
           test -s _site/gita-app.js
           test -s _site/gita-nghe.js
           test -d _site/kho
-          printf 'Prepared Pages artifact: %s files\n' "$(find _site -type f | wc -l)"
+          test ! -e _site/may-chu
+          test ! -e _site/tools
+          printf 'Prepared Cloudflare Pages artifact: %s files\n' "$(find _site -type f | wc -l)"
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
         with:
-          path: _site
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy _site --project-name=gita365 --branch=main
 
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+  worker:
+    name: Deploy API worker
+    if: github.event_name == 'workflow_dispatch' || contains(join(github.event.commits.*.modified, ' '), 'may-chu/') || contains(join(github.event.commits.*.added, ' '), 'may-chu/') || contains(join(github.event.commits.*.removed, ' '), 'may-chu/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out application
+        uses: actions/checkout@v4
+
+      - name: Deploy Cloudflare Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: may-chu
+          command: deploy

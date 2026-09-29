@@ -30,35 +30,47 @@
 
 ---
 
-## Kiến trúc (đồng nhất một tên miền)
+## Kiến trúc triển khai
 
 ```
    Trình duyệt khách
         │
-        ├──►  GitHub Pages       →  phần tĩnh: index.html · gita-app.js · assets · kho/*.enc
-        │                            (lấy trực tiếp từ repo — CÔNG KHAI, KHÔNG khoá)
+        ├──►  Cloudflare Pages   →  https://gita365.pages.dev
+        │                            phần tĩnh: index.html · gita-app.js · assets · kho/*.enc
+        │                            (lấy từ artifact được GitHub Actions dựng — CÔNG KHAI, KHÔNG khoá)
         │
         └──►  Cloudflare Worker  →  máy chủ: đăng nhập · cấp khoá · CRM · nhật ký · tài chính
                                      (mã ở may-chu/ — khoá nằm trong SECRET, không ở repo)
 ```
 
-Cùng một tên miền (ví dụ `gita.edu.vn`): Pages phục vụ phần tĩnh, Worker giữ route `/api/*`.
-Cùng tên miền thì không có CORS, không có lượt gọi thăm dò trước mỗi yêu cầu.
+Hiện phần tĩnh chạy tại `gita365.pages.dev` và API tại
+`gita365.typhuquanggita.workers.dev`. Ứng dụng đã đặt sẵn đúng địa chỉ API
+trong `cau-hinh.js`. Khi đưa `gita.edu.vn` vào Cloudflare, có thể cấu hình
+Pages cho tên miền này và Worker cho route `/api/*` để hai đầu cùng một origin.
 
 ---
 
-## PHẦN 1 — GITHUB PAGES (phần tĩnh, công khai)
+## PHẦN 1 — CLOUDFLARE PAGES (phần tĩnh, công khai)
 
 **Thứ tự phát hành an toàn:** hoàn thành migration D1, đồng bộ secret khóa và triển khai
 Worker ở Phần 2 trước; chỉ phát hành Pages sau khi Worker đã sẵn sàng. Không phát hành
 riêng Pages mới vì màn T5-PRO mới cần API quyền và bảng `quyenT5Pro`.
 
-1. Đẩy thay đổi vào nhánh `main` của repo `GITA365-WEB`.
-2. GitHub Actions tự gom các tệp tĩnh cần thiết và phát hành; không cần `web-app.zip`
-   hay nối lại repo với Cloudflare Pages.
-3. Mở **Actions → Publish GITA365 Web App** và đợi trạng thái xanh.
-4. Kiểm tra `https://typhuquanggita-commits.github.io/GITA365-WEB/`. Máy chủ cấp phép
-   Cloudflare đã được khai mặc định trong `cau-hinh.js`; không cần dán địa chỉ bằng tay.
+1. Trong Cloudflare, tạo Pages project tên **`gita365`** (production branch:
+   `main`). URL production phải là `https://gita365.pages.dev`.
+2. Trong **GitHub → Settings → Secrets and variables → Actions**, tạo hai
+   repository secrets: `CLOUDFLARE_API_TOKEN` (quyền **Cloudflare Pages: Edit**
+   và **Workers Scripts: Edit**) và `CLOUDFLARE_ACCOUNT_ID`.
+3. Đẩy thay đổi vào nhánh `main` của repo `GITA365-WEB`. Workflow
+   **Deploy GITA365 to Cloudflare** tự dựng lại `gita-app.js` và `gita-nghe.js`
+   từ `src/`, chỉ đóng gói tệp public, rồi phát hành lên Pages. Không phát hành
+   `may-chu/`, `tools/`, `kho-goc/` hoặc bất kỳ khóa nào.
+4. Mở **Actions → Deploy GITA365 to Cloudflare** và đợi job **Deploy static
+   application** thành công. Kiểm tra `https://gita365.pages.dev/`.
+
+> Mỗi thay đổi frontend trong `src/` được đưa vào bundle trong chính pipeline;
+> không cần chạy hoặc commit thủ công `node tools/gop-src.js`. Thay đổi dưới
+> `may-chu/` kích hoạt thêm job phát hành Worker.
 
 ## PHẦN 2 — CLOUDFLARE WORKER (máy chủ, có khoá)
 
@@ -88,7 +100,8 @@ bash nap-bi-mat.sh /duong/dan/toi/khoa.json
 
 # 4) (Tên miền) xác thực gita.edu.vn ở nhà gửi thư — SPF/DKIM (xem wrangler.toml)
 
-# 5) Đưa Worker lên
+# 5) Đưa Worker lên lần đầu. Những thay đổi may-chu/ tiếp theo
+#    được GitHub Actions triển khai tự động sau khi đã có hai secrets ở Phần 1.
 npx wrangler deploy
 ```
 

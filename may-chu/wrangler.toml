@@ -36,7 +36,7 @@ compatibility_date = "2026-09-01"
 # KHÔNG phải bí mật — đây là địa chỉ công khai của bản web, dùng để dựng
 # đường dẫn kích hoạt trong thư. Sai địa chỉ ở đây thì thư đi đúng nhưng
 # đường dẫn trong thư trỏ vào chỗ không có gì.
-GITA_DIA_CHI_WEB = "https://gita.edu.vn"
+GITA_DIA_CHI_WEB = "https://gita365.pages.dev"
 
 # Địa chỉ đứng tên người gửi. Tên miền này PHẢI được xác thực ở nhà gửi
 # thư (SPF/DKIM), nếu không thì thư đi nhưng rơi vào mục spam — mà một
