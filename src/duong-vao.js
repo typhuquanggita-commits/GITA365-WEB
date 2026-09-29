@@ -198,16 +198,15 @@ G.VIEWS['hoc-phi'] = function(){
       '</div>';
   });
 
-  /* Quy trình thu — lấy thẳng từ G.THANHTOAN đã có sẵn trong kho */
+  /* Quy trình thu — giữ hướng dẫn, còn thông tin nhận tiền chỉ lấy từ D1 */
   var TT = G.THANHTOAN;
   if(TT){
     o += U.sec('THU TIỀN VÀO ĐÂU, GHI NỘI DUNG THẾ NÀO',
       'Tiền vào phải khớp được một gia đình, một tầng, một kỳ. Sai mẫu là phải dò tay, và dò tay là chỗ sinh sai sót.');
     o += '<div class="grid g2 mb" style="gap:10px">'+
-      '<div class="card pad-sm"><div class="tiny up muted mb">TÀI KHOẢN NHẬN</div>'+
-      '<p class="sm"><b>'+h(TT.taiKhoan.chuTk)+'</b></p>'+
-      '<p class="sm mono">'+h(TT.taiKhoan.soTk)+'</p>'+
-      '<p class="tiny muted">'+h(TT.taiKhoan.nganHang)+'</p></div>'+
+      '<div class="card pad-sm"><div class="tiny up muted mb">QR VÀ TÀI KHOẢN NHẬN</div>'+
+      '<p class="tiny">Không dùng thông tin sao chép từ tài liệu cũ. Mở mục '+
+      '<b>Thanh toán học phí</b> để xem cấu hình hiện hành từ máy chủ.</p></div>'+
       '<div class="card pad-sm"><div class="tiny up muted mb">MẪU NỘI DUNG CHUYỂN KHOẢN</div>'+
       '<p class="sm mono">'+h(TT.noiDungCk.mau)+'</p>'+
       '<p class="tiny" style="color:var(--gold-ink)">Ví dụ: '+h(TT.noiDungCk.vd)+'</p>'+

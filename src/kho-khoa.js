@@ -210,14 +210,13 @@ G.THUOC_CAP_PHEP = [
   'T34_AUDIT','T34_LECH','T34_LUAT',
   /* Dòng T5-PRO (T5P_*): sách nghề của một dòng có khách riêng —
      cửa vào, kịch bản từ chối, bốn loại phiên, bảy nghi thức, mười
-     hai điều đạo đức. Ở gói NGHỀ, và màn của nó còn khoá chặt hơn
-     mọi màn nghề khác: dừng ở Senior Coach. */
+     hai điều đạo đức. T5-PRO được cấp riêng theo tài khoản, không theo vai. */
   'T5P_LOI','T5P_BATRU','T5P_KHAC_T5','T5P_KHAC_LUAT','T5P_KHONGLA',
   'T5P_GIAIDOAN','T5P_TRINHTU','T5P_DOI','T5P_PHOI_DOI','T5P_DAODUC',
   'T5P_DAODUC_LUAT','T5P_NANGLUC','T5P_CUM','T5P_MUC','T5P_NANGLUC_LUAT',
   'T5P_SANGLOC','T5P_SANGLOC_LUAT','T5P_TUCHOI_LUAT','T5P_TUCHOI','T5P_SAUTUCHOI',
   'T5P_PHIEN','T5P_NGHITHUC','T5P_NGHITHUC_LUAT','T5P_KHUNGHOANG','T5P_KHUNGHOANG_LUAT',
-  'T5P_DICH','T5P_GIA','T5P_LECH','T5P_CHOCHU','T5P_LUAT',
+  'T5P_DICH','T5P_GIA','T5P_LECH','T5P_CHOCHU','T5P_QUYETDINH','T5P_R5','T5P_LUAT',
   /* Bộ bản vẽ 13 tờ (BV_*): đặc tả vận hành — ma trận 50 ô có tag,
      bốn cổng, mười nhịp, hai mươi tín hiệu đỏ, trần công suất từng
      vai, và bản đồ nâng cấp Web App. Ở gói NGHỀ: nhà mình đọc bảng
@@ -393,10 +392,10 @@ G.goiDuocCap = function () {
        "Kho báu vật" và "Sách gốc" trong trình đơn mà bấm vào chỉ ra màn
        xin cấp phép. */
     if (r.lv <= 12) ds.push(G.goiNghe(mt));
-    /* Gói NGHỀ CAO dừng ở bậc của Coach, không dừng ở 12. Con số ấy đọc
-       từ chính G.ROLES chứ không gõ ở đây — đổi bậc của Coach trong bảng
-       vai thì chỗ này đổi theo, và không có bản thứ hai để lệch. */
-    if (G.xkBacCoach && r.lv <= G.xkBacCoach()) ds.push(G.goiNgheCao(mt));
+    /* Xin gói NGHỀ CAO cho mọi vai đội ngũ; đây chỉ là danh sách xin.
+       Máy chủ chỉ trả khóa cho R01–R02 hoặc tài khoản có quyền T5-PRO
+       cá nhân còn hạn. */
+    if (r.lv <= 12) ds.push(G.goiNgheCao(mt));
     if (moTang)
       for (var i = 1; i <= tangToiDa; i++) ds.push(G.goiTang(mt, i));
   });

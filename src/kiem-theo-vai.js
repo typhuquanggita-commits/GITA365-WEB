@@ -45,6 +45,27 @@ G.demTheoVai = function(){
   });
 };
 
+/* Đối chiếu tỉ lệ màn thực tế với TAM_NHIN; R01–R02 phải thấy đủ 100%. */
+G.doiChieuTamNhin = function(){
+  var mucTieu = {};
+  (G.TAM_NHIN || []).forEach(function(x){
+    (x.vai || []).forEach(function(id){ mucTieu[id] = x.pt; });
+  });
+  return G.demTheoVai().map(function(d){
+    var dich = mucTieu[d.vai.id];
+    var batBuocDayDu = d.vai.id === 'R01' || d.vai.id === 'R02';
+    var lech = typeof dich === 'number'
+      ? (d.tong ? d.thay * 100 / d.tong : 0) - dich
+      : null;
+    return Object.assign({}, d, {
+      dich:dich,
+      lech:lech,
+      dat:typeof dich === 'number' &&
+        (batBuocDayDu ? d.pt === 100 && d.khoa === 0 : Math.abs(lech) <= 2)
+    });
+  });
+};
+
 /* Hai vai khác nhau ở đúng những màn nào */
 G.soSanhVai = function(a, b){
   var man = moiMan(), chiA = [], chiB = [], caHai = 0;
@@ -65,17 +86,28 @@ function tkCuaVai(id){
 
 G.VIEWS['kiem-theo-vai'] = function(){
   if(!G.can('qt_trang')) return U.lockCard(
-    'Màn kiểm thử theo vai cho thấy toàn bộ ma trận màn × vai và mật khẩu của mọi tài khoản mẫu. '+
+    'Màn kiểm thử theo vai cho thấy toàn bộ ma trận màn × vai và tài khoản mẫu. '+
     'Chỉ mở cho Super Admin và Admin hệ thống.');
 
-  var dem = G.demTheoVai(), man = moiMan(), toi = G.S.roleObj;
+  var dem = G.doiChieuTamNhin(), man = moiMan(), toi = G.S.roleObj;
   var NAV = G.NAV || [];
+  var adminChuaDayDu = dem.filter(function(d){
+    return (d.vai.id === 'R01' || d.vai.id === 'R02') && !d.dat;
+  });
 
   var o = U.ph({eyebrow:'QUẢN TRỊ TRANG', ic:'users', grad:1,
     t:'Kiểm thử theo vai',
-    lead:'Mười chín tài khoản, một cú bấm là vào vai ấy. Ma trận bên dưới tính từ '+
-         'chính bảng quyền đang chạy — không bảng nào khai tay, nên thêm một màn hay '+
-         'đổi một quyền là ma trận đổi theo ngay.'});
+    lead:'Ma trận và tỉ lệ bên dưới được tính từ bảng quyền đang chạy. R01–R02 phải '+
+         'thấy đủ 100% màn; các vai còn lại được đối chiếu với tỉ lệ TAM_NHIN.'});
+
+  o += '<div class="card mt2" style="border-left:3px solid '+(adminChuaDayDu.length ? 'var(--gita-do)' : 'var(--ok)')+'">'+
+    '<b class="sm">'+(adminChuaDayDu.length
+      ? 'CẦN RÀ SOÁT: VAI QUẢN TRỊ CHƯA THẤY ĐỦ MÀN'
+      : 'R01–R02 ĐẠT YÊU CẦU 100% HIỂN THỊ')+'</b>'+
+    '<p class="sm muted mt">'+(adminChuaDayDu.length
+      ? 'Không tự mở quyền. Kiểm tra các màn bị khoá trong ma trận và sửa tại bảng phân quyền có thẩm quyền.'
+      : 'Tỉ lệ các vai khác được so với TAM_NHIN, dung sai ±2 điểm phần trăm.')+
+      ' Tỉ lệ này đo quyền mặc định theo vai, không tính quyền T5-PRO cấp riêng theo tài khoản và không phải phần trăm dữ liệu được cấp.</p></div>';
 
   o += '<div class="card mt2" style="border-left:3px solid var(--gita)">'+
     '<div class="row" style="gap:9px;align-items:baseline;flex-wrap:wrap">'+
@@ -86,22 +118,27 @@ G.VIEWS['kiem-theo-vai'] = function(){
     'Quay lại Super Admin cũng bằng đúng cách ấy.</p></div>';
 
   /* ── A · MƯỜI LĂM VAI, MỘT CÚ BẤM ── */
-  o += U.sec('MƯỜI LĂM VAI — TÀI KHOẢN, MẬT KHẨU, SỐ MÀN THẤY ĐƯỢC',
+  o += U.sec('MƯỜI LĂM VAI — TÀI KHOẢN MẪU VÀ PHẠM VI HIỂN THỊ',
     'Cột "khoá" là số màn vai ấy KHÔNG thấy. Đây là con số đáng nhìn hơn con số thấy được.');
 
-  o += U.tbl(['Vai','Tài khoản mẫu','Thấy được','Khoá','Phủ','Vào vai'],
+  o += U.tbl(['Vai','Tài khoản mẫu','Thấy được','Khoá','Thực tế / đích','Đối chiếu','Vào vai'],
     dem.map(function(d){
       var a = tkCuaVai(d.vai.id);
       var dang = d.vai.id === toi.id;
       return ['<b class="sm" style="color:'+d.vai.c+'">'+h(d.vai.short)+'</b>'+
                 '<div class="tiny mono muted">'+h(d.vai.id)+' · LV'+d.vai.lv+'</div>',
-              a ? '<span class="tiny mono">'+h(a.u)+'</span>'+
-                  '<div class="tiny mono muted">'+h(a.p)+'</div>'
+              a ? '<span class="tiny mono">'+h(a.u)+'</span>'
                 : '<span class="tiny muted">chưa có tài khoản mẫu</span>',
               '<b class="mono">'+d.thay+'</b><span class="tiny muted">/'+d.tong+'</span>',
               '<span class="mono" style="color:'+(d.khoa ? 'var(--gita-do-ink)' : 'var(--ok)')+'">'+d.khoa+'</span>',
               '<div style="min-width:90px">'+U.bar(d.pt, d.vai.c)+
-                '<div class="tiny mono muted mt">'+d.pt+'%</div></div>',
+                '<div class="tiny mono muted mt">'+d.pt+'% / '+
+                (typeof d.dich === 'number' ? d.dich+'%' : 'chưa khai')+'</div></div>',
+              typeof d.lech !== 'number' ? '<span class="tiny muted">chưa khai đích</span>'
+                : '<span class="chip" style="color:'+(d.dat ? 'var(--ok)' : 'var(--gita-do-ink)')+
+                  ';border-color:'+(d.dat ? 'var(--ok)' : 'var(--gita-do)')+'">'+
+                  (d.dat ? 'ĐẠT' : 'LỆCH')+' · '+(d.lech > 0 ? '+' : '')+
+                  (Math.round(d.lech * 10) / 10)+' điểm</span>',
               dang ? '<span class="chip" style="color:var(--ok);border-color:var(--ok)">đang ở đây</span>'
                    : (a ? '<button class="btn ghost sm" data-switch="'+h(d.vai.id)+'">Vào vai này</button>'
                         : '<span class="tiny muted">—</span>')];
@@ -115,7 +152,7 @@ G.VIEWS['kiem-theo-vai'] = function(){
         var v = G.roleById(a.role) || {};
         return ['<b class="sm">'+h(a.ten)+'</b>',
                 '<span class="tiny mono">'+h(a.role)+' · '+h(v.short || '')+'</span>',
-                '<span class="tiny mono">'+h(a.u)+'</span><div class="tiny mono muted">'+h(a.p)+'</div>',
+                '<span class="tiny mono">'+h(a.u)+'</span>',
                 '<button class="btn ghost sm" data-login="'+h(a.u)+'">Vào vai này</button>'];
       }));
   }

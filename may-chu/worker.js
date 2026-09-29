@@ -33,6 +33,8 @@ import { dongBo } from './dong-bo.js';
 import { dangKy, guiLaiOtp, xacThucOtp, kichHoat } from './dang-ky.js';
 import { quenMatKhau, datLaiMatKhau } from './mat-khau.js';
 import { capQuyenXem, thuHoiQuyenXem, soiQuyenXem, xemKhachCao, nangTang } from './quyen-xem.js';
+import { capQuyenT5Pro, thuHoiQuyenT5Pro, dsQuyenT5Pro, quyenT5ProDangHieuLuc } from './quyen-t5pro.js';
+import { xemThongTinThanhToan, capNhatThongTinThanhToan } from './tai-khoan-nhan.js';
 import { kyChungCu, xacNhanChungCu, soiChungCu } from './chung-cu.js';
 import { xemTepKhach, suaTepKhach, dsTepKhach } from './ho-so-khach.js';
 import { ghiPhieuThu, duyetPhieuThu, congNo, banKeTaiChinh,
@@ -136,8 +138,6 @@ const SO_TANG = 5;
 /* Bậc vai — bản chép của G.ROLES. Càng nhỏ càng nhiều quyền. */
 const BAC = {R01:1,R02:2,R03:3,R04:4,R05:5,R06:6,R07:7,R08:8,
              R09:9,R10:10,R11:11,R12:12,R13:13,R14:14,R15:15};
-const BAC_COACH = 7;   /* gói NGHỀ CAO dừng ở đúng bậc Coach — xem GITA_XemKhach.gs */
-
 const tuyen_   = ma => TUYEN.find(t => t.ma === ma) || null;
 const goiNghe_ = ma => { const t = tuyen_(ma); return t ? (t.goiCu ? 'nghe' : ma.toLowerCase() + '-nghe') : ''; };
 const goiNgheCao_ = ma => { const t = tuyen_(ma); return t ? (t.goiCu ? 'nghe-cao' : ma.toLowerCase() + '-nghe-cao') : ''; };
@@ -192,7 +192,7 @@ export function phamViCapPhep(hoSo) {
   if (lv <= 12) {
     for (const k of tuyenTK) {
       ds.push(goiNghe_(k));
-      if (lv <= BAC_COACH) ds.push(goiNgheCao_(k));
+      if (lv <= 2) ds.push(goiNgheCao_(k));
       for (let i = 1; i <= SO_TANG; i++) ds.push(goiTang_(k, i));
     }
     return gon_(ds);
@@ -224,6 +224,8 @@ export function tachKhoaDuocCap(goi, kho) {
 const CAN_PHIEN = ['capKhoa', 'doiMatKhau', 'dongBo',
   'docTinCongDong', 'ghiTinCongDong', 'guiChuyen', 'napTaiLieu', 'duyetTaiLieu', 'napTinhHuongKhach',
   'capQuyenXem', 'thuHoiQuyenXem', 'soiQuyenXem', 'xemKhachCao', 'nangTang',
+  'capQuyenT5Pro', 'thuHoiQuyenT5Pro', 'dsQuyenT5Pro',
+  'xemThongTinThanhToan', 'capNhatThongTinThanhToan',
   'kyChungCu', 'xacNhanChungCu', 'soiChungCu',
   'xemTepKhach', 'suaTepKhach', 'dsTepKhach',
   'ghiPhieuThu', 'duyetPhieuThu', 'congNo', 'banKeTaiChinh',
@@ -366,6 +368,11 @@ async function lam(fn, y, env, db) {
   if (fn === 'soiQuyenXem')    return await soiQuyenXem(y, env, db, hoSo);
   if (fn === 'xemKhachCao')    return await xemKhachCao(y, env, db, hoSo);
   if (fn === 'nangTang')       return await nangTang(y, env, db, hoSo);
+  if (fn === 'capQuyenT5Pro')    return await capQuyenT5Pro(y, env, db, hoSo);
+  if (fn === 'thuHoiQuyenT5Pro') return await thuHoiQuyenT5Pro(y, env, db, hoSo);
+  if (fn === 'dsQuyenT5Pro')     return await dsQuyenT5Pro(y, env, db, hoSo);
+  if (fn === 'xemThongTinThanhToan') return await xemThongTinThanhToan(y, env, db, hoSo);
+  if (fn === 'capNhatThongTinThanhToan') return await capNhatThongTinThanhToan(y, env, db, hoSo);
 
   if (fn === 'kyChungCu')      return await kyChungCu(y, env, db, hoSo);
   if (fn === 'xacNhanChungCu') return await xacNhanChungCu(y, env, db, hoSo);
@@ -816,6 +823,9 @@ async function capKhoa(y, env, db, hoSo) {
   }
 
   const duocCap = phamViCapPhep(hoSo);
+  if ((BAC[hoSo.role] || 99) > 2 && (BAC[hoSo.role] || 99) <= 12 &&
+      await quyenT5ProDangHieuLuc(db, hoSo.uid))
+    for (const k of tuyenCuaTK_(hoSo)) duocCap.push(goiNgheCao_(k));
   const xin = Array.isArray(y.goi) && y.goi.length ? y.goi : duocCap;
   const cap = duocCap.filter(g => xin.indexOf(g) >= 0);
 
