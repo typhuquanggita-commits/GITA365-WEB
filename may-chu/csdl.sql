@@ -640,6 +640,39 @@ CREATE UNIQUE INDEX IF NOT EXISTS ix_qcrm_mot ON quyenCRM (username)
   WHERE thuHoiLuc IS NULL;
 CREATE INDEX IF NOT EXISTS ix_qcrm_ten ON quyenCRM (username);
 
+-- T5-PRO — quyền theo TÀI KHOẢN, không theo vai. R01–R02 được mặc định;
+-- nhân sự R03–R12 cần một dòng còn hạn do R01/R02 cấp. Ghi nhận thu hồi,
+-- không xoá lịch sử. Khóa gói chỉ được Worker cấp lại ở lần xin tiếp theo.
+CREATE TABLE IF NOT EXISTS quyenT5Pro (
+  id          TEXT PRIMARY KEY,
+  userId      TEXT NOT NULL,
+  username    TEXT NOT NULL,
+  role        TEXT NOT NULL,
+  lyDo        TEXT NOT NULL,
+  nguoiCap    TEXT NOT NULL,
+  capLuc      TEXT NOT NULL,
+  hetHan      TEXT NOT NULL,
+  thuHoiLuc   TEXT,
+  thuHoiBoi   TEXT
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_qt5pro_mot
+  ON quyenT5Pro (userId) WHERE thuHoiLuc IS NULL;
+CREATE INDEX IF NOT EXISTS ix_qt5pro_han
+  ON quyenT5Pro (userId, hetHan);
+
+-- Thông tin nhận chuyển khoản. QR/tài khoản không nằm trong Pages hoặc
+-- gói tĩnh; Worker chỉ trả dữ liệu cho phiên khách hợp lệ tại màn thanh toán.
+CREATE TABLE IF NOT EXISTS taiKhoanNhan (
+  id          TEXT PRIMARY KEY CHECK (id = 'gita365'),
+  nganHang    TEXT NOT NULL,
+  chuTk       TEXT NOT NULL,
+  soTk        TEXT NOT NULL,
+  qrDataUrl   TEXT NOT NULL,
+  noiDungCk   TEXT NOT NULL DEFAULT '',
+  capLuc      TEXT NOT NULL,
+  capBoi      TEXT NOT NULL
+);
+
 -- ═════════════════════════════════════════════════════════════
 --  CRM · CƠ HỘI BÁN HÀNG — phễu dự báo doanh thu (9.99.211)
 --  Mỗi chặng cơ hội mang một XÁC SUẤT; giá trị TRỌNG SỐ tính lúc đọc

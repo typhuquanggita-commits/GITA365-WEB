@@ -18,7 +18,7 @@ window.G = G;
    trong khi nội dung đổi là một cách nói dối không cố ý. */
 G.META = {
   name: 'GITA 365',
-  version: '9.99.243',
+  version: '9.99.247',
   tagline: 'Hệ Sinh Thái Gia Đình Thịnh Vượng',
   hotline: '08.5555.4688',
   site: 'truongnhatquang.com',
@@ -77,12 +77,11 @@ G.PERM = {
   crm_view:3,
   pro_approve:4, pro_report:4, pro_override:4, pro_assign:5, pro_coach:8, pro_assess:10,
   pro_view_all:4, pro_consult:11,
-  /* Dòng T5-PRO dừng ở Senior Coach. Sổ tay nâng cao ghi người đọc:
-     Coach cấp cao, Tư vấn Gia nghiệp, Giám đốc hệ. Coach thường cầm
-     nhà tầng 2-3 không cần đọc kịch bản từ chối một gia đình của dòng
-     ấy, và Giáo viên thì càng không — đọc một kịch bản nghề mà không
-     có case để dùng chỉ tạo ra cảm giác biết. */
-  pro_gia_nghiep:6,
+  /* Chỉ R01–R02 có mặc định. Nhân sự khác cần quyền cá nhân còn hạn
+     do máy chủ xác nhận cùng lúc cấp gói nghe-cao. */
+  pro_gia_nghiep:2,
+  /* Danh sách trắng cố định trong app.js; không cấp qua ghi đè quyền chung. */
+  pay_view:4,
   usr_self_data:15, usr_do_test:15, usr_referral:15,
 
   /* Ba vai cuối cùng bậc nhưng KHÁC việc. Nếu chỉ so bậc thì phụ huynh,
@@ -153,7 +152,8 @@ G.PERM_TEN = {
   pro_override:'Vượt quyết định chuyên môn', pro_assign:'Phân công đội ngũ',
   pro_coach:'Công cụ Coach',             pro_assess:'Chấm đánh giá',
   pro_view_all:'Xem toàn bộ hồ sơ nhà',  pro_consult:'Công cụ tư vấn',
-  pro_gia_nghiep:'Dòng gia nghiệp T5-PRO',
+  pro_gia_nghiep:'Chương trình VIP T5-PRO',
+  pay_view:'Thông tin nhận thanh toán',
   usr_self_data:'Dữ liệu của chính mình',usr_do_test:'Làm bài test',
   usr_referral:'Giới thiệu người quen',
   kh_gia_dinh:'Hồ sơ và nhịp sống nhà mình', kh_hanh_trinh:'Hành trình của con',
@@ -181,7 +181,7 @@ G.PERM_NHOM = [
   {id:'sys', t:'HỆ THỐNG',   c:'#185AB4', ds:['sys_config','sys_delete_user','sys_restore','sys_manage_user','sys_audit','sys_fraud','qt_trang','sua_noi_dung','tl_duyet','tl_xem_het']},
   {id:'fin', t:'TÀI CHÍNH',  c:'#0B7350', ds:['fin_view','fin_payout','fin_payroll','fin_create_order']},
   {id:'pro', t:'CHUYÊN MÔN', c:'#5140B4', ds:['pro_approve','pro_report','pro_override','pro_assign','pro_coach','pro_assess','pro_view_all','pro_consult','pro_gia_nghiep','dh_toan_he','nghe_chung','mc_duyet']},
-  {id:'kh',  t:'KHÁCH HÀNG', c:'#0B6675', ds:['usr_self_data','usr_do_test','usr_referral','kh_gia_dinh','kh_hanh_trinh','kh_qua_tang','tl_gui','mc_gui']},
+  {id:'kh',  t:'KHÁCH HÀNG',  c:'#0B6675', ds:['usr_self_data','usr_do_test','usr_referral','kh_gia_dinh','kh_hanh_trinh','kh_qua_tang','tl_gui','mc_gui']},
   {id:'ctv', t:'CỘNG TÁC',   c:'#BE0E16', ds:['ctv_lien_ket','ctv_hoa_hong']},
   {id:'out', t:'XUẤT RA NGOÀI', c:'#F61824', ds:['xuat_pdf','xuat_sheet']}
 ];
@@ -373,23 +373,12 @@ G.TAM_NHIN = [
      bảy vị trí này không hề mở thêm một màn quản trị nào. Giữ số cũ
      thì bài kiểm đỏ ở chỗ không có lỗi, và bộ kiểm đỏ oan vài lần là
      bộ kiểm bị tắt. */
-  /* Tách R05–R06 khỏi R07–R08 ở bản 9.55, và làm đúng việc ba lần trước
-     đã làm: sửa SỐ CÔNG BỐ, không nới dung sai.
-
-     Màn dòng T5-PRO khoá ở pro_gia_nghiep, dừng đúng Senior Coach — nên
-     R05 và R06 thấy nó, R07 và R08 thì không. Bốn vị trí này không còn
-     thấy như nhau, và gộp một con số thì phải nới dung sai để cả bốn
-     cùng lọt. Ghi hai con số thật thì canh được chặt hơn.
-
-     Phép thử vẫn là phép thử cũ: phần KHOÁ của bốn vị trí này có mở
-     thêm màn quản trị nào không. Không — không một màn tài chính, quản
-     trị hay điều hành nào mở thêm. Phần dày lên là phần NGHỀ, và nghề
-     thì họ vốn được thấy. Nên tỉ lệ nhích lên là con số thật đổi, không
-     phải hàng rào bị nới. */
-  {vai:['R05','R06'], pt:77,
-   ghi:'Khoá phần quản trị hệ thống, thêm tài chính và điều hành toàn hệ.'},
-  {vai:['R07','R08'], pt:76,
-   ghi:'Như R05–R06, và không mở màn của dòng gia nghiệp T5-PRO.'},
+  /* T5-PRO là quyền theo tài khoản, không mặc định theo chức danh.
+     Ma trận này đo mức mặc định; R01–R02 có sẵn, R03–R12 cần được cấp. */
+  {vai:['R05','R06','R07'], pt:77,
+   ghi:'Quyền T5-PRO cá nhân không tính vào mặc định của ma trận vai.'},
+  {vai:['R08'], pt:76,
+   ghi:'Quyền T5-PRO cá nhân không tính vào mặc định của ma trận vai.'},
   /* 73 chứ không còn 75. Hai màn mới ở 9.65 — Hành lang thành công và
      Rà soát lỗi hệ thống — khoá ở pro_coach, tức dừng đúng R08. Tử số
      của ba vị trí này đứng yên mà mẫu số tăng hai, nên tỉ lệ tụt.
@@ -652,6 +641,7 @@ G.NAV = [
        đơn mà bấm vào chỉ ra màn xin cấp phép: một mục chết. */
     {v:'diem-cham',   t:'Bản đồ điểm chạm cảm xúc',   h:'Chín khoảnh khắc quyết định họ ở lại', ic:'heart', perm:'nghe_chung', capMo:'nghe'},
     {v:'dong-hanh',   t:'Người đồng hành',             h:'Cố vấn luôn lắng nghe, có mặt mọi lúc',ic:'heart', star:1, capMo:'chung'},
+    {v:'thanh-toan',  t:'Thanh toán học phí',          h:'QR nhận chuyển khoản · thông tin do hệ thống xác thực', ic:'chart', perm:'pay_view', capMo:'chung'},
     {v:'wow',         t:'Chuỗi WOW',                   h:'Bảy khoảnh khắc đáng nhớ của hành trình',ic:'spark', capMo:'chung'}
    ]},
 
@@ -733,9 +723,8 @@ G.NAV = [
        bản của chính buổi gặp mình sắp dự. */
     {v:'so-tay-van-hanh', t:'Mười điều, và chỗ mỗi điều thật sự chặn', h:'Thứ tự ưu tiên · 10 điều lệ · 4 điều cấm khi lớn lên · 4 chỗ hệ gãy', ic:'compass', star:1, perm:'pro_coach', capMo:'nghe'},
     {v:'tang34',      t:'Tầng 3 và tầng 4 — việc của ai',  h:'Ranh giới Trợ lý với Coach · 5 nhịp G-I-T-S-A · 3 trụ đo · 14 dạng khó', ic:'compass', star:1, perm:'pro_consult', capMo:'nghe'},
-    /* Dòng T5-PRO: không phải tầng thứ sáu, nên nó không nằm cạnh năm
-       tầng ở nhóm hành trình — nó là một sách nghề, và nó khoá chặt
-       nhất trong mọi màn nghề. */
+    /* Chương trình VIP khởi nghiệp T5-PRO: đứng ngoài 10 cấp Tầng 5,
+       không đổi cấu trúc năm tầng; nội dung/entitlement ở gói NGHỀ CAO. */
     /* Bộ bản vẽ 13 tờ: đặc tả vận hành của cả hệ — ma trận 50 ô, bốn
        cổng, hai mươi tín hiệu đỏ, trần công suất từng vai. Khoá ở
        pro_coach: đây là bảng điều phối, và nhà mình đọc thì thấy
@@ -791,7 +780,7 @@ G.NAV = [
     {v:'hoat-dong',   t:'Đăng ký hoạt động — việc nào không ai nhận', h:'21 hoạt động · 3 mức tự động · 4 việc máy không được nhận · đường rơi của từng việc', ic:'grid', star:1, perm:'pro_coach', capMo:'nghe'},
     {v:'ban-coach',   t:'Bàn làm việc của Coach', h:'5 ngăn vét cạn · gói 8 ô đóng sẵn · trợ lý nhắc việc có hạn giờ · 4 lượt rà soát', ic:'pulse', star:1, perm:'pro_coach', capMo:'nghe'},
     {v:'ban-ve',      t:'Bộ bản vẽ — 50 ô, mỗi ô một tag', h:'4 nguyên tắc · 50 cấp độ · 4 cổng · 10 nhịp · 20 tín hiệu đỏ · bản đồ nâng cấp', ic:'map', star:1, perm:'pro_coach', capMo:'nghe'},
-    {v:'tang5-pro',   t:'Dòng T5-PRO — Gia đình Thịnh vượng', h:'24 tháng · 4 giai đoạn · đội 3 vai · 6 tiêu chí cửa vào · 5 kịch bản từ chối', ic:'vault', star:1, perm:'pro_gia_nghiep', capMo:'nghe'},
+    {v:'tang5-pro',   t:'Chương trình VIP T5-PRO', h:'Khởi nghiệp · hệ sinh thái doanh nghiệp · cửa tuyển chọn · giá 500 triệu–2 tỷ', ic:'vault', star:1, perm:'pro_gia_nghiep', capMo:'nghe'},
     {v:'nam-dau',     t:'Sổ tay năm đầu',              h:'12 tháng · 6 mốc kiểm · 8 kịch bản lần đầu', ic:'compass', star:1, perm:'nghe_chung', capMo:'nghe'},
     {v:'dao-tao-dh',  t:'Bốn mươi giờ đào tạo',        h:'12 buổi · 20 ca thi vai · 1 tiêu chí tuyệt đối', ic:'brain', perm:'nghe_chung', capMo:'nghe'},
     {v:'tinh-gon',    t:'Quy trình tinh gọn',          h:'7 loại lãng phí · 10 nguyên tắc cắt chi phí', ic:'lightning', perm:'nghe_chung', capMo:'nghe'},
@@ -994,7 +983,7 @@ G.NAV = [
     {v:'giam-sat', t:'Trần giám sát', h:'GITA-VIP dựng CÁI TRẦN trước, chưa dựng bộ giám sát — một cái cổng dựng sau một cái cửa đã chạy thì nó chỉ là một lời nhắc · sáu điều CẤM TUYỆT ĐỐI không lệnh nào mở được, kể cả lệnh R01 có chữ ký · ba ngăn phạm vi khác nhau ở CĂN CỨ PHÁP LÝ chứ không ở mức độ · lệnh uỷ quyền phải có hạn và tự thu hồi · sổ nối băm, sửa một dòng là vỡ mọi dòng sau', ic:'shield', star:1, perm:'nghe_chung', capMo:'chung'},
     {v:'supreme', t:'GITA Supreme · bản đồ', h:'Bản đồ ba quyển nghiên cứu của chủ hệ và CÁI TRẦN của chúng — ngăn đầu là BẪY TÊN GỌI: ba thang cùng mang chữ điểm chạm (1.000 tiến độ · 9 cảm xúc · 100.000 hệ thống), và một luật bị phạm thì có người cãi còn hai thang cùng tên thì không ai cãi · bốn chỗ va MỚI, không chép lại sáu điều cấm đã có · hai chỗ phép dò của chính tôi BẮT OAN vì tài liệu đang phê phán chính thứ bị dò · ma trận 28 năng lực · mười lớp điểm chạm · 45/100 phần đã có chữ', ic:'shield', star:1, perm:'nghe_chung', capMo:'chung'},
     {v:'bien-soan-noi-dung', t:'Biên soạn nội dung', h:'Khuôn 24 khối · máy đo · thang năm cổng · hiến pháp nội dung', ic:'book', star:1, perm:'qt_trang', capMo:'chung'},
-    {v:'studio', t:'GITA Studio · Xưởng dựng video', h:'Kịch bản · canvas 1080p · giọng người thật · đèn kiểm định · hộ chiếu', ic:'spark', star:1, perm:'qt_trang', capMo:'chung'},
+    {v:'studio', t:'GITA Studio · Xưởng dựng video', h:'Kịch bản · MC tham chiếu · chuyển động 2.5D · phối âm cục bộ', ic:'spark', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'tu-hoan-thien', t:'Vòng tự hoàn thiện · lấp kho có cấp phép', h:'Kho rỗng lúc tư vấn thì Bộ não SOẠN từ dữ liệu đã có, KHÔNG bịa — nhưng 入库 (đưa vào kho phục vụ khách) phải qua Bộ phận sản phẩm → Giám đốc → Super Admin · máy soạn không nhập, hai cửa tách hẳn · đủ ba chữ ký hay chưa TÍNH LÚC ĐỌC từ sổ, không cột đãDuyệt · ba cấp ba người khác nhau · sự chậm là có thật và được nói thẳng với khách', ic:'shield', star:1, perm:'nghe_chung', capMo:'chung'},
     {v:'quyen-nang-ai', t:'Quyền năng AI · Super Admin cấp', h:'Super Admin bật/thu MƯỜI chức năng cho AI xử lý công việc · mỗi chức năng TẮT mặc định, chỉ R01 bật, AI không tự bật · bật hay chưa tính LÚC ĐỌC từ sổ, không cột đang-bật · chức năng SOẠN đi qua chuỗi cấp phép ba cấp đã có (trỏ, không dựng cổng thứ hai) · chức năng ĐỌC thì nêu không kết luận · năm cửa chạy thật, năm cái khai chuaCoCua', ic:'shield', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'dieu-phoi', t:'Điều phối trợ lý AI · 100 siêu cấp', h:'Bộ não GITA365 cao nhất, điều phối toàn diện · 100 trợ lý siêu cấp đảm nhận từng cửa thật, mỗi trợ lý MỘT khoá sở hữu nên không xung đột · mọi trợ lý qua đúng cổng (Điều 13 · cấp quyền AI · ba chữ ký), TRỎ chứ không chép luật · tự hoàn thiện đi qua vòng nâng cấp có cổng · ×100 là hướng, không phải chỉ tiêu · sẵn sàng nối tuyến web app nhánh không trùng khoá', ic:'orbit', star:1, perm:'qt_trang', capMo:'chung'},

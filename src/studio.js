@@ -28,9 +28,10 @@
 
    ══ CHỖ BẢN MẪU ĐÚNG VÀ KHÔNG ĐƯỢC "CẢI TIẾN" ══
 
-   **Giọng chỉ đến từ micro người thật hoặc tệp có sẵn.** Không một
-   dòng sinh giọng nào. Đó là luật C20 giữ nguyên, và nó là chỗ dễ bị
-   sửa nhất ở bản sau — nên nó có một phép đo riêng ở mục 103.
+   **Không gọi dịch vụ tạo giọng/ảnh/video bên ngoài.** Giọng đến từ
+   micro người thật hoặc tệp có sẵn. Hình tham chiếu, phối cảnh, màu phim
+   và nhạc được xử lý cục bộ; ảnh tĩnh không được quảng bá là MC 3D biết
+   nói hay biểu cảm thật.
    ═══════════════════════════════════════════════════════════════ */
 'use strict';
 var G = window.G || {}; window.G = G;
@@ -57,7 +58,23 @@ G.VIEWS = G.VIEWS || {};
     nguon: 'KS-04 · Triết lý Một Điều Nhỏ',
     canh: []
   };
+  var mcMacDinh = {
+    hinh: 'mc-gita-mau', sacThai: 'than-thien', mayQuay: 'dolly',
+    mauPhim: 'dien-anh', viTri: 'phai', nhacNen: '', amLuongNhac: 0.18,
+    amLuongGiong: 1
+  };
+  G.xuDA.mc = G.xuDA.mc || {};
+  Object.keys(mcMacDinh).forEach(function (k) {
+    if (G.xuDA.mc[k] == null) G.xuDA.mc[k] = mcMacDinh[k];
+  });
   G.xuVat = G.xuVat || {};       // mã → {ma,ten,loai,url,el,buffer}
+  if (typeof Image !== 'undefined' && !G.xuVat['mc-gita-mau']) {
+    var anhMC = new Image();
+    G.xuVat['mc-gita-mau'] = {ma: 'mc-gita-mau', ten: 'MC GITA · ảnh tham chiếu',
+      loai: 'hinh', el: anhMC, mau: true};
+    anhMC.onload = function () { veLai(); };
+    anhMC.src = 'assets/anh/gita-mc-tham-chieu.png';
+  }
   G.xuSoat = G.xuSoat || null;   // kết quả cửa soatNoiDung
   G.xuDangSoat = false;
   G.xuGiuLai = '';               // lời khai lúc bấm Dừng khẩn
@@ -90,7 +107,8 @@ G.VIEWS = G.VIEWS || {};
   function moiCanh(vai, giay, dem) {
     var x = lay(vai, dem);
     return {id: ma('c'), vai: vai, giay: giay,
-      loi: x.loi, chuMan: x.chu, hinh: x.hinh, vatHinh: '', vatTieng: ''};
+      loi: x.loi, chuMan: x.chu, hinh: x.hinh, vatHinh: '', vatTieng: '',
+      sacThai: 'than-thien'};
   }
 
   G.xuViet = function () {
@@ -139,12 +157,20 @@ G.VIEWS = G.VIEWS || {};
     if (!c) return;
     c[o] = (o === 'giay') ? Math.max(1, Math.min(60, +gt || 1)) : gt;
     if (o === 'loi') G.xuSoat = null;
-    if (o === 'giay' || o === 'vatHinh') G.xuVe(G.xuDongHo);
+    if (o === 'giay' || o === 'vatHinh' || o === 'sacThai') G.xuVe(G.xuDongHo);
     G.xuTomTat();
   };
   G.xuSuaO = function (o, gt) {
     G.xuDA[o] = gt;
     if (o === 'kho') G.xuCoManh();
+    veLai();
+  };
+  G.xuSuaMC = function (o, gt) {
+    if (['hinh', 'sacThai', 'mayQuay', 'mauPhim', 'viTri', 'nhacNen',
+      'amLuongNhac', 'amLuongGiong'].indexOf(o) < 0) return;
+    G.xuDA.mc[o] = (o === 'amLuongNhac' || o === 'amLuongGiong')
+      ? Math.max(0, Math.min(1, +gt || 0)) : gt;
+    G.xuVe(G.xuDongHo);
     veLai();
   };
 
@@ -226,6 +252,13 @@ G.VIEWS = G.VIEWS || {};
         : 'Chưa có giọng — video xuất ra sẽ im tiếng. Xưởng KHÔNG sinh giọng: luật C20 ' +
           'nói máy TRỘN, không SINH.'});
 
+    var mc = G.xuDA.mc || {}, anhMC = G.xuVat[mc.hinh];
+    var anhMCsanSang = anhMC && anhMC.loai === 'hinh' && anhMC.el &&
+      (anhMC.el.width || anhMC.el.naturalWidth);
+    o.push({tt: anhMCsanSang ? 'ok' : 'warn', t: 'Ảnh tham chiếu MC',
+      ref: 'ST-MC', n: anhMC ? 'Ảnh chỉ được dùng làm lớp tham chiếu cục bộ, không biến thành hoạt ảnh khuôn mặt.'
+        : 'Chưa chọn ảnh MC. Có thể dùng ảnh mẫu hoặc tệp ảnh chọn ngay trên thiết bị.'});
+
     o.push({tt: 'nguoi', t: 'Chất ấm — nghe có như người quen nói không', ref: 'LT_AM.WS-3',
       n: 'Một người nghe hết rồi ký tên, và người ấy không được là người dựng. Máy chấm ' +
         'được từ ngữ và nhịp câu; nó KHÔNG chấm được câu này, và câu trả lời của máy cho ' +
@@ -235,15 +268,17 @@ G.VIEWS = G.VIEWS || {};
       n: G.xuGiuLai});
     return o;
   }
-  function congMo() {
-    return !den().some(function (l) { return l.tt === 'bad'; });
-  }
-
   /* ══ VẼ 1080p ══ */
   G.xuDongHo = 0;
   function khung() {
     var k = KHO_HINH().filter(function (x) { return x.ma === G.xuDA.kho; })[0];
     return (k && k.r) || [1080, 1920];
+  }
+  function boLocMau(mau) {
+    return mau === 'am' ? 'sepia(.16) saturate(1.12)'
+      : mau === 'lanh' ? 'saturate(.86) hue-rotate(8deg)'
+        : mau === 'trang-den' ? 'grayscale(1) contrast(1.08)'
+          : mau === 'song-dong' ? 'saturate(1.18) contrast(1.04)' : 'contrast(1.05) saturate(1.04)';
   }
   G.xuCoManh = function () {
     var cv = document.getElementById('xu-man'); if (!cv) return;
@@ -278,8 +313,30 @@ G.VIEWS = G.VIEWS || {};
     var c = cur.c, p = (cur.b - cur.a) ? (giay - cur.a) / (cur.b - cur.a) : 0;
 
     var v = G.xuVat[c.vatHinh];
-    if (v && v.loai === 'hinh' && v.el) phu(ct, v.el, W, H, 1.06 + 0.08 * p);
+    var mc = G.xuDA.mc || {};
+    var mayQuay = mc.mayQuay || 'dolly';
+    var doLech = (giay - cur.a) * 0.7;
+    var tiLe = mayQuay === 'tinh' ? 1.03
+      : mayQuay === 'orbit' ? 1.12
+        : mayQuay === 'troi' ? 1.09 : 1.06 + 0.08 * p;
+    var panX = mayQuay === 'orbit' ? Math.sin(doLech) * W * 0.012
+      : mayQuay === 'troi' ? Math.sin(doLech * 0.45) * W * 0.008 : 0;
+    var panY = mayQuay === 'troi' ? Math.cos(doLech * 0.5) * H * 0.008 : 0;
+    ct.save();
+    if ('filter' in ct) ct.filter = boLocMau(mc.mauPhim);
+    if (v && v.loai === 'hinh' && v.el) phu(ct, v.el, W, H, tiLe, panX, panY);
     else nenDen(ct, W, H, cur.i, p);
+    ct.restore();
+
+    if (cur.i > 0 && p < 0.5) {
+      var truoc = G.xuVat[G.xuDA.canh[cur.i - 1].vatHinh];
+      if (truoc && truoc.loai === 'hinh' && truoc.el) {
+        ct.save(); ct.globalAlpha = 1 - p / 0.5;
+        phu(ct, truoc.el, W, H, tiLe, -panX, -panY);
+        ct.restore();
+      }
+    }
+    veMC(ct, mc, W, H, u, c.sacThai);
 
     var g = ct.createLinearGradient(0, H * 0.45, 0, H);
     g.addColorStop(0, 'rgba(6,8,12,0)'); g.addColorStop(1, 'rgba(6,8,12,.82)');
@@ -292,6 +349,7 @@ G.VIEWS = G.VIEWS || {};
       ct.globalAlpha = 1;
     }
     if (c.loi) karaoke(ct, c, giay - cur.a, W, H, u);
+    if (mc.mauPhim === 'dien-anh') veKhungDienAnh(ct, W, H);
 
     ct.fillStyle = 'rgba(255,255,255,.14)'; ct.fillRect(0, 0, W, 6 * u);
     ct.fillStyle = '#E8A33C'; ct.fillRect(0, 0, W * (giay / t), 6 * u);
@@ -310,11 +368,42 @@ G.VIEWS = G.VIEWS || {};
     g.addColorStop(1, '#0B0E15');
     ct.fillStyle = g; ct.fillRect(0, 0, W, H);
   }
-  function phu(ct, el, W, H, ti) {
+  function phu(ct, el, W, H, ti, panX, panY) {
     var iw = el.width || el.naturalWidth, ih = el.height || el.naturalHeight;
     if (!iw || !ih) return;
+    panX = +panX || 0; panY = +panY || 0;
     var r = Math.max(W / iw, H / ih) * ti, w = iw * r, hh = ih * r;
-    ct.drawImage(el, (W - w) / 2, (H - hh) / 2, w, hh);
+    ct.drawImage(el, (W - w) / 2 + panX, (H - hh) / 2 + panY, w, hh);
+  }
+  function veMC(ct, mc, W, H, u, sacThaiCanh) {
+    var v = G.xuVat[mc.hinh], el = v && v.el;
+    if (!el || v.loai !== 'hinh' || !(el.width || el.naturalWidth)) return;
+    var iw = el.width || el.naturalWidth, ih = el.height || el.naturalHeight;
+    var bw = W * 0.31, bh = H * 0.40, pad = 10 * u;
+    var x = mc.viTri === 'trai' ? W * 0.045 : W - bw - W * 0.045;
+    var y = H * 0.075;
+    ct.save();
+    ct.shadowColor = 'rgba(0,0,0,.55)'; ct.shadowBlur = 28 * u;
+    ct.fillStyle = 'rgba(7,18,39,.78)'; ct.fillRect(x, y, bw, bh);
+    ct.shadowBlur = 0;
+    if ('filter' in ct) ct.filter = boLocMau(mc.mauPhim);
+    var r = Math.min((bw - pad * 2) / iw, (bh - pad * 2) / ih);
+    var w = iw * r, h = ih * r;
+    ct.drawImage(el, x + (bw - w) / 2, y + (bh - h) / 2, w, h);
+    if ('filter' in ct) ct.filter = 'none';
+    ct.strokeStyle = 'rgba(255,255,255,.78)'; ct.lineWidth = 2 * u;
+    ct.strokeRect(x, y, bw, bh);
+    ct.fillStyle = 'rgba(5,14,28,.82)'; ct.fillRect(x, y + bh - 46 * u, bw, 46 * u);
+    ct.fillStyle = '#FFFFFF'; ct.textAlign = 'left';
+    ct.font = '700 ' + (22 * u) + 'px sans-serif';
+    ct.fillText('MC GITA · ' + String(sacThaiCanh || mc.sacThai || 'than-thien').replace(/-/g, ' ').toUpperCase(),
+      x + 12 * u, y + bh - 16 * u, bw - 24 * u);
+    ct.restore();
+  }
+  function veKhungDienAnh(ct, W, H) {
+    ct.fillStyle = 'rgba(0,0,0,.48)';
+    ct.fillRect(0, 0, W, H * 0.025);
+    ct.fillRect(0, H * 0.975, W, H * 0.025);
   }
   function xuong(ct, chu, x, y, rong, co, dam) {
     ct.font = dam + ' ' + co + 'px sans-serif';
@@ -358,11 +447,25 @@ G.VIEWS = G.VIEWS || {};
     (G.xuDA.canh || []).forEach(function (c) {
       var v = G.xuVat[c.vatTieng];
       if (v && v.buffer) {
-        var n = a.createBufferSource(); n.buffer = v.buffer;
-        n.connect(dich); n.start(t0 + at); nut.push(n);
+        var n = a.createBufferSource(), gain = a.createGain();
+        var pan = a.createStereoPanner ? a.createStereoPanner() : null;
+        n.buffer = v.buffer; gain.gain.value = G.xuDA.mc.amLuongGiong;
+        n.connect(gain);
+        if (pan) {
+          pan.pan.value = G.xuDA.mc.viTri === 'trai' ? -0.18 : 0.18;
+          gain.connect(pan); pan.connect(dich);
+        } else gain.connect(dich);
+        n.start(t0 + at); nut.push(n);
       }
       at += (+c.giay || 0);
     });
+    var nhac = G.xuVat[G.xuDA.mc.nhacNen];
+    if (nhac && nhac.buffer) {
+      var nen = a.createBufferSource(), am = a.createGain();
+      nen.buffer = nhac.buffer; nen.loop = true;
+      am.gain.value = G.xuDA.mc.amLuongNhac;
+      nen.connect(am); am.connect(dich); nen.start(t0); nut.push(nen);
+    }
   }
   function dungTieng() { nut.forEach(function (n) { try { n.stop(); } catch (e) {} }); nut = []; }
 
@@ -426,7 +529,7 @@ G.VIEWS = G.VIEWS || {};
         /* Tệp PHIM cần một địa chỉ để `<video src>` bám vào, và địa chỉ
            ấy là thứ bị cấm. Nói ra thay vì im: một tệp lặng lẽ bị bỏ
            qua thì người dùng tưởng mình đã gắn được. */
-        U.toast('Xưởng web nhận ảnh và tiếng. Tệp phim dựng ở tools/bo-phim.js.', 'ok');
+        U.toast('Studio hiện nhận ảnh và âm thanh cục bộ; chưa nhận hoặc kết xuất tệp phim.', 'err');
         het();
       }
     });
@@ -461,41 +564,6 @@ G.VIEWS = G.VIEWS || {};
     });
   };
 
-  /* ══ GỬI ĐỀ BÀI SANG XƯỞNG DỰNG ══
-
-     KHÔNG có một đường tải tệp nào trong tệp này, và đó KHÔNG phải một
-     chỗ thiếu — nó là luật của chủ hệ, canh cứng ở mục 8 và mục 18:
-     `src/` không được có `a.download`, không được có `createObjectURL`,
-     không được có `showSaveFilePicker`.
-
-     Bản mẫu xuất thẳng WebM bằng `MediaRecorder` rồi bấm một thẻ `<a
-     download>`. Bộ kiểm bắt ngay, và nó bắt ĐÚNG: một màn xuất tệp là
-     một đường vòng quanh mọi cổng khác, và nó không hỏi người bấm là ai.
-
-     Câu trả lời đúng đã nằm sẵn trong kho từ lâu — `tools/dung-phim.js`
-     và `tools/bo-phim.js` dựng phim ngoài trình duyệt, có ffmpeg, và
-     có luật C19 buộc dựng từ tấm ĐÃ PHÁT HÀNH. Xưởng web làm phần nó
-     làm tốt: viết kịch bản, xem thử ở đúng khổ, soát đèn. Rồi đề bài
-     đi qua MÁY CHỦ sang bộ dựng — không qua một tệp nằm trên máy ai đó.
-
-     Kéo theo, và đây là phần đáng giữ: đề bài đi qua cửa thì nó vào
-     nhật ký. Một tệp tải về thì không. */
-  G.xuGuiDeBai = function () {
-    if (!congMo()) { U.toast('Còn đèn đỏ — cổng gửi đóng.', 'err'); return; }
-    if (!G.goiMayChu) return;
-    G.goiMayChu('ghiDeBaiVideo', {
-      ten: G.xuDA.ten, kho: G.xuDA.kho, tang: G.xuDA.tang, nguon: G.xuDA.nguon,
-      dieuNho: G.xuDA.dieuNho, khuon: G.xuDA.khuon, giay: tong(),
-      canh: (G.xuDA.canh || []).map(function (c) {
-        return {vai: c.vai, giay: +c.giay || 0, loi: c.loi, chuMan: c.chuMan, hinh: c.hinh};
-      })
-    }).then(function (x) {
-      U.toast((x && x.ok)
-        ? 'Đã gửi đề bài ' + x.ma + ' — dựng bằng: node tools/dung-phim.js'
-        : String((x && x.vi) || 'Cửa đề bài từ chối.'), (x && x.ok) ? 'ok' : 'err');
-    }).catch(function (e) { U.toast(String(e && e.message || e), 'err'); });
-  };
-
   /* ══ MÀN ══ */
   function oChon(o, gt, ds) {
     return '<select onchange="G.xuSuaO(\'' + o + '\',this.value)">' + ds.map(function (x) {
@@ -515,6 +583,13 @@ G.VIEWS = G.VIEWS || {};
       '" oninput="G.xuSuaCanh(\'' + h(c.id) + '\',\'chuMan\',this.value)"></label>';
     o += '<label>Giây <input type="number" min="1" max="60" step="0.5" value="' +
       h(String(c.giay)) + '" oninput="G.xuSuaCanh(\'' + h(c.id) + '\',\'giay\',this.value)"></label>';
+    o += '<label>Chỉ đạo biểu cảm <select onchange="G.xuSuaCanh(\'' + h(c.id) +
+      '\',\'sacThai\',this.value)">' +
+      [['than-thien','Thân thiện'],['vui-tuoi','Vui tươi'],['dong-cam','Đồng cảm'],
+        ['suy-tu','Suy tư'],['nghiem-tuc','Nghiêm túc'],['khich-le','Khích lệ']]
+        .map(function (x) { return '<option value="' + x[0] + '"' +
+          ((c.sacThai || 'than-thien') === x[0] ? ' selected' : '') + '>' + x[1] + '</option>'; }).join('') +
+      '</select></label>';
     o += '<label>Hình <select onchange="G.xuSuaCanh(\'' + h(c.id) + '\',\'vatHinh\',this.value)">' +
       '<option value="">— nền ánh đèn —</option>' + vHinh.map(function (k) {
         return '<option value="' + h(k) + '"' + (k === c.vatHinh ? ' selected' : '') + '>' +
@@ -543,21 +618,18 @@ G.VIEWS = G.VIEWS || {};
   G.VIEWS['studio'] = function () {
     var o = '<div class="hd"><h2>' + ic('spark') + ' GITA Studio · Xưởng dựng video</h2>' +
       '<p class="sub">Kịch bản sinh tại chỗ từ Ngân khố câu, hình dựng bằng canvas 1080p, ' +
-      'giọng lấy từ micro người thật hoặc tệp có sẵn, video xuất thẳng trong trình duyệt. ' +
-      'Tệp nằm trong máy anh — không lượt tải lên nào.</p></div>';
+      'MC tham chiếu, chuyển động máy quay, màu phim và phối nhạc xử lý ngay trên thiết bị. ' +
+      'Ảnh, giọng và nhạc không tải lên máy chủ hay dịch vụ ngoài.</p></div>';
 
     /* Một chỗ chặn duy nhất, TRƯỚC mọi ngăn. Vai không có gói nghề thì
        kho không bao giờ nạp, và mọi ngăn sẽ dựng ra khung rỗng — mà
        một khung rỗng đọc ra là "chỗ này chưa làm xong", không đọc ra
        là "vai của bạn không mở được" (bài học 9.99.63). */
     if (!(G.XU_NGANKHO || []).length) {
-      return o + U.empty('Xưởng dựng video thuộc gói nghề',
-        'Màn này là công cụ sản xuất của Học viện: nó xuất tệp video, tệp phụ đề và hộ ' +
-        'chiếu video ra máy người dùng, nên nó chỉ mở cho người của Học viện đã đăng ' +
-        'nhập bằng tài khoản nghề. Gia đình xem video đã phát hành ở kênh, không dựng ' +
-        'video trong hệ — và đó là một quyết định về bảo mật, không phải một chỗ chưa ' +
-        'làm xong. Ngân khố câu, năm khuôn kịch bản và tám đèn kiểm định đều nằm trong ' +
-        'gói nghề, nên với vai này màn không có gì để dựng.');
+      return o + U.empty('Xưởng Studio dành cho tài khoản được cấp quyền',
+        'Màn sản xuất nội bộ chỉ mở khi phiên có gói nghề tương ứng. Nội dung dựng, hình ' +
+        'tham chiếu và âm thanh được xử lý tại thiết bị; quyền xem không đồng nghĩa với ' +
+        'quyền phát hành video.');
     }
 
     /* Bọc phần điều khiển trong .man-xu để nới vùng chạm ĐÚNG Ở ĐÂY,
@@ -591,8 +663,52 @@ G.VIEWS = G.VIEWS || {};
     o += '<p class="note">Bộ viết chạy ngay trong máy, không gọi mạng. Ngân khố câu nằm ' +
       'trong kho nghề nên người viết nội dung sửa được mà không phải sửa mã.</p></div>';
 
-    /* 2 · Màn xem thử */
-    o += '<div class="giay"><h3>2 · Xem thử</h3>' +
+    /* 2 · MC và đạo diễn hình ảnh — tài liệu tham chiếu chỉ xử lý tại máy. */
+    var hinhMC = Object.keys(G.xuVat).filter(function (k) {
+      return G.xuVat[k].loai === 'hinh';
+    });
+    var amNhac = Object.keys(G.xuVat).filter(function (k) {
+      return G.xuVat[k].loai === 'tieng';
+    });
+    var mc = G.xuDA.mc;
+    o += '<div class="giay xu-mc"><h3>2 · MC &amp; đạo diễn hình ảnh</h3>' +
+      '<div class="row"><label>Ảnh MC tham chiếu <select onchange="G.xuSuaMC(\'hinh\',this.value)">' +
+      '<option value="">— không chèn MC —</option>' + hinhMC.map(function (k) {
+        return '<option value="' + h(k) + '"' + (k === mc.hinh ? ' selected' : '') + '>' +
+          h(G.xuVat[k].ten) + '</option>';
+      }).join('') + '</select></label>' +
+      '<label>Vị trí MC <select onchange="G.xuSuaMC(\'viTri\',this.value)">' +
+      '<option value="phai"' + (mc.viTri === 'phai' ? ' selected' : '') + '>Phải</option>' +
+      '<option value="trai"' + (mc.viTri === 'trai' ? ' selected' : '') + '>Trái</option></select></label>' +
+      '<label>Sắc thái dẫn chuyện <select onchange="G.xuSuaMC(\'sacThai\',this.value)">' +
+      [['than-thien','Thân thiện'],['truyen-cam-hung','Truyền cảm hứng'],['binh-tinh','Bình tĩnh'],['nghiem-tuc','Nghiêm túc']]
+        .map(function (x) { return '<option value="' + x[0] + '"' +
+          (mc.sacThai === x[0] ? ' selected' : '') + '>' + x[1] + '</option>'; }).join('') +
+      '</select></label></div>' +
+      '<div class="row"><label>Chuyển động máy quay <select onchange="G.xuSuaMC(\'mayQuay\',this.value)">' +
+      [['dolly','Dolly-in nhẹ'],['orbit','Trôi vòng cung'],['troi','Trôi mềm'],['tinh','Khung tĩnh']]
+        .map(function (x) { return '<option value="' + x[0] + '"' +
+          (mc.mayQuay === x[0] ? ' selected' : '') + '>' + x[1] + '</option>'; }).join('') +
+      '</select></label><label>Màu phim <select onchange="G.xuSuaMC(\'mauPhim\',this.value)">' +
+      [['dien-anh','Điện ảnh'],['am','Ấm'],['lanh','Lạnh'],['song-dong','Sống động'],['trang-den','Trắng đen']]
+        .map(function (x) { return '<option value="' + x[0] + '"' +
+          (mc.mauPhim === x[0] ? ' selected' : '') + '>' + x[1] + '</option>'; }).join('') +
+      '</select></label><label>Nhạc nền cục bộ <select onchange="G.xuSuaMC(\'nhacNen\',this.value)">' +
+      '<option value="">— không nhạc —</option>' + amNhac.map(function (k) {
+        return '<option value="' + h(k) + '"' + (k === mc.nhacNen ? ' selected' : '') + '>' +
+          h(G.xuVat[k].ten) + '</option>';
+      }).join('') + '</select></label></div>' +
+      '<div class="row"><label>Âm lượng giọng <input type="range" min="0" max="1" step="0.05" value="' +
+      h(String(mc.amLuongGiong)) + '" onchange="G.xuSuaMC(\'amLuongGiong\',this.value)"></label>' +
+      '<label>Âm lượng nhạc <input type="range" min="0" max="0.6" step="0.02" value="' +
+      h(String(mc.amLuongNhac)) + '" onchange="G.xuSuaMC(\'amLuongNhac\',this.value)"></label></div>' +
+      '<p class="note">MC hiện là ảnh tĩnh trong khung giới thiệu; sắc thái từng cảnh chỉ là chỉ đạo nội dung, ' +
+      'không làm biến đổi nét mặt. Máy quay tác động lên cảnh nền. Giọng dùng micro hoặc tệp thu sẵn; ' +
+      'bộ dựng không tạo bản sao giọng AI. ' +
+      'Âm thanh stereo được đặt nhẹ theo vị trí MC; đây không phải âm thanh 4D/5D.</p></div>';
+
+    /* 3 · Màn xem thử */
+    o += '<div class="giay"><h3>3 · Xem thử</h3>' +
       '<canvas id="xu-man" class="xu-man" width="1080" height="1920"></canvas>';
     o += '<div class="row"><button class="btn btn-chinh" onclick="G.xuXem()">Xem thử</button>' +
       '<button class="btn" onclick="G.xuDung()">Tạm dừng</button>' +
@@ -601,16 +717,12 @@ G.VIEWS = G.VIEWS || {};
       '<span class="note" id="xu-gio">0.0 / ' + tong().toFixed(1) + 's</span></div>';
     o += '<input type="range" min="0" max="100" step="0.1" value="0" class="xu-tua" ' +
       'aria-label="Tua video" oninput="G.xuTua(this.value)">';
-    o += '<div class="row"><button class="btn btn-chinh" onclick="G.xuGuiDeBai()"' +
-      (congMo() ? '' : ' disabled') + '>' +
-      (congMo() ? 'Gửi đề bài dựng video' : 'Chưa đủ đèn để gửi') + '</button></div>';
-    o += '<p class="note" id="xu-tt">Xưởng <b>không xuất video ở trình duyệt</b> (khách không tải ' +
-      'dữ liệu — luật 9.99.94). Bấm gửi thì đề bài đi qua <b>cửa máy chủ</b> vào nhật ký, rồi ' +
-      'dựng bằng <code>node tools/dung-phim.js</code> từ tấm ĐÃ phát hành (luật C19), lời đọc là ' +
-      'tệp có sẵn (luật C20). "Xem thử" ở trên chạy tại chỗ để soi trước, không tạo tệp.</p></div>';
+    o += '<p class="note" id="xu-tt">Đây là bản xem trước 2.5D dựng tại thiết bị; chưa phải nhân vật 3D ' +
+      'biểu cảm thật, phim 4D/5D hay tệp video hoàn chỉnh. Hiện hệ thống chưa có renderer nội bộ ' +
+      'để kết xuất phim. Hình, giọng và nhạc không được gửi đi; không có nút xuất giả.</p></div>';
 
     /* 3 · Kịch bản */
-    o += '<div class="giay"><h3>3 · Kịch bản</h3>';
+    o += '<div class="giay"><h3>4 · Kịch bản</h3>';
     var a = 0;
     o += (G.xuDA.canh || []).map(function (c, i) {
       var s = veCanh(c, i, a); a += (+c.giay || 0); return s;
@@ -620,7 +732,7 @@ G.VIEWS = G.VIEWS || {};
       phut(tong()) + ' · đích ' + phut(+G.xuDA.dich || 0) + '</span></div></div>';
 
     /* 4 · Kho vật liệu */
-    o += '<div class="giay"><h3>4 · Kho hình &amp; tiếng</h3>' +
+    o += '<div class="giay"><h3>5 · Kho hình &amp; tiếng</h3>' +
       '<input type="file" multiple accept="image/*,video/*,audio/*" ' +
       'onchange="G.xuNhanTep(this.files)" aria-label="Chọn ảnh, video hoặc tiếng">';
     var ks = Object.keys(G.xuVat);
@@ -630,7 +742,7 @@ G.VIEWS = G.VIEWS || {};
       '</p></div>';
 
     /* 5 · Đèn */
-    o += '<div class="giay"><h3>5 · Đèn kiểm định</h3>' +
+    o += '<div class="giay"><h3>6 · Đèn kiểm định</h3>' +
       '<p class="note">Một đèn đỏ là cổng xuất đóng — cổng cứng, không có “xuất tạm” ' +
       '(LT_RM.RM-1). Hai đèn đầu <b>không đo ở đây</b>: chúng hỏi cửa <code>soatNoiDung</code>, ' +
       'vì hai bảng dấu hiệu lệch nhau thì cả hai đều xanh trên hai thứ khác nhau.</p>';
@@ -641,11 +753,10 @@ G.VIEWS = G.VIEWS || {};
     }).join('') + '</ul></div>';
 
     /* 6 · Xuất kèm */
-    o += '<div class="giay"><h3>6 · Xuất kèm</h3>' +
-      '<p class="note">Phụ đề (.srt) và <b>hộ chiếu video</b> do bộ dựng ở máy chủ sinh ra cùng ' +
-      'lúc dựng phim (<code>node tools/dung-phim.js</code>), <b>không dựng ở trình duyệt</b>: hộ ' +
-      'chiếu phải vào nhật ký thì mới truy được về sau, và một hộ chiếu dựng ở trình duyệt là ' +
-      'một tờ giấy tự ký. Gửi đề bài ở bước 2 là đủ — máy chủ lo phần còn lại.</p></div>';
+    o += '<div class="giay"><h3>7 · Xuất phim</h3>' +
+      '<p class="note">Kết xuất video, phụ đề và hộ chiếu phát hành chưa được nối với renderer ' +
+      'nội bộ. Không gửi ảnh/giọng lên dịch vụ ngoài; bản xem trước chỉ giúp kiểm tra kịch bản, ' +
+      'khung hình, chuyển động và phối âm.</p></div>';
 
     setTimeout(function () { G.xuCoManh(); }, 0);
     return o + '</div>';

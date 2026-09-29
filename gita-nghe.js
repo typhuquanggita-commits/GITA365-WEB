@@ -2773,6 +2773,27 @@ G.demTheoVai = function(){
   });
 };
 
+/* Đối chiếu tỉ lệ màn thực tế với TAM_NHIN; R01–R02 phải thấy đủ 100%. */
+G.doiChieuTamNhin = function(){
+  var mucTieu = {};
+  (G.TAM_NHIN || []).forEach(function(x){
+    (x.vai || []).forEach(function(id){ mucTieu[id] = x.pt; });
+  });
+  return G.demTheoVai().map(function(d){
+    var dich = mucTieu[d.vai.id];
+    var batBuocDayDu = d.vai.id === 'R01' || d.vai.id === 'R02';
+    var lech = typeof dich === 'number'
+      ? (d.tong ? d.thay * 100 / d.tong : 0) - dich
+      : null;
+    return Object.assign({}, d, {
+      dich:dich,
+      lech:lech,
+      dat:typeof dich === 'number' &&
+        (batBuocDayDu ? d.pt === 100 && d.khoa === 0 : Math.abs(lech) <= 2)
+    });
+  });
+};
+
 /* Hai vai khác nhau ở đúng những màn nào */
 G.soSanhVai = function(a, b){
   var man = moiMan(), chiA = [], chiB = [], caHai = 0;
@@ -2793,17 +2814,28 @@ function tkCuaVai(id){
 
 G.VIEWS['kiem-theo-vai'] = function(){
   if(!G.can('qt_trang')) return U.lockCard(
-    'Màn kiểm thử theo vai cho thấy toàn bộ ma trận màn × vai và mật khẩu của mọi tài khoản mẫu. '+
+    'Màn kiểm thử theo vai cho thấy toàn bộ ma trận màn × vai và tài khoản mẫu. '+
     'Chỉ mở cho Super Admin và Admin hệ thống.');
 
-  var dem = G.demTheoVai(), man = moiMan(), toi = G.S.roleObj;
+  var dem = G.doiChieuTamNhin(), man = moiMan(), toi = G.S.roleObj;
   var NAV = G.NAV || [];
+  var adminChuaDayDu = dem.filter(function(d){
+    return (d.vai.id === 'R01' || d.vai.id === 'R02') && !d.dat;
+  });
 
   var o = U.ph({eyebrow:'QUẢN TRỊ TRANG', ic:'users', grad:1,
     t:'Kiểm thử theo vai',
-    lead:'Mười chín tài khoản, một cú bấm là vào vai ấy. Ma trận bên dưới tính từ '+
-         'chính bảng quyền đang chạy — không bảng nào khai tay, nên thêm một màn hay '+
-         'đổi một quyền là ma trận đổi theo ngay.'});
+    lead:'Ma trận và tỉ lệ bên dưới được tính từ bảng quyền đang chạy. R01–R02 phải '+
+         'thấy đủ 100% màn; các vai còn lại được đối chiếu với tỉ lệ TAM_NHIN.'});
+
+  o += '<div class="card mt2" style="border-left:3px solid '+(adminChuaDayDu.length ? 'var(--gita-do)' : 'var(--ok)')+'">'+
+    '<b class="sm">'+(adminChuaDayDu.length
+      ? 'CẦN RÀ SOÁT: VAI QUẢN TRỊ CHƯA THẤY ĐỦ MÀN'
+      : 'R01–R02 ĐẠT YÊU CẦU 100% HIỂN THỊ')+'</b>'+
+    '<p class="sm muted mt">'+(adminChuaDayDu.length
+      ? 'Không tự mở quyền. Kiểm tra các màn bị khoá trong ma trận và sửa tại bảng phân quyền có thẩm quyền.'
+      : 'Tỉ lệ các vai khác được so với TAM_NHIN, dung sai ±2 điểm phần trăm.')+
+      ' Tỉ lệ này đo quyền mặc định theo vai, không tính quyền T5-PRO cấp riêng theo tài khoản và không phải phần trăm dữ liệu được cấp.</p></div>';
 
   o += '<div class="card mt2" style="border-left:3px solid var(--gita)">'+
     '<div class="row" style="gap:9px;align-items:baseline;flex-wrap:wrap">'+
@@ -2814,22 +2846,27 @@ G.VIEWS['kiem-theo-vai'] = function(){
     'Quay lại Super Admin cũng bằng đúng cách ấy.</p></div>';
 
   /* ── A · MƯỜI LĂM VAI, MỘT CÚ BẤM ── */
-  o += U.sec('MƯỜI LĂM VAI — TÀI KHOẢN, MẬT KHẨU, SỐ MÀN THẤY ĐƯỢC',
+  o += U.sec('MƯỜI LĂM VAI — TÀI KHOẢN MẪU VÀ PHẠM VI HIỂN THỊ',
     'Cột "khoá" là số màn vai ấy KHÔNG thấy. Đây là con số đáng nhìn hơn con số thấy được.');
 
-  o += U.tbl(['Vai','Tài khoản mẫu','Thấy được','Khoá','Phủ','Vào vai'],
+  o += U.tbl(['Vai','Tài khoản mẫu','Thấy được','Khoá','Thực tế / đích','Đối chiếu','Vào vai'],
     dem.map(function(d){
       var a = tkCuaVai(d.vai.id);
       var dang = d.vai.id === toi.id;
       return ['<b class="sm" style="color:'+d.vai.c+'">'+h(d.vai.short)+'</b>'+
                 '<div class="tiny mono muted">'+h(d.vai.id)+' · LV'+d.vai.lv+'</div>',
-              a ? '<span class="tiny mono">'+h(a.u)+'</span>'+
-                  '<div class="tiny mono muted">'+h(a.p)+'</div>'
+              a ? '<span class="tiny mono">'+h(a.u)+'</span>'
                 : '<span class="tiny muted">chưa có tài khoản mẫu</span>',
               '<b class="mono">'+d.thay+'</b><span class="tiny muted">/'+d.tong+'</span>',
               '<span class="mono" style="color:'+(d.khoa ? 'var(--gita-do-ink)' : 'var(--ok)')+'">'+d.khoa+'</span>',
               '<div style="min-width:90px">'+U.bar(d.pt, d.vai.c)+
-                '<div class="tiny mono muted mt">'+d.pt+'%</div></div>',
+                '<div class="tiny mono muted mt">'+d.pt+'% / '+
+                (typeof d.dich === 'number' ? d.dich+'%' : 'chưa khai')+'</div></div>',
+              typeof d.lech !== 'number' ? '<span class="tiny muted">chưa khai đích</span>'
+                : '<span class="chip" style="color:'+(d.dat ? 'var(--ok)' : 'var(--gita-do-ink)')+
+                  ';border-color:'+(d.dat ? 'var(--ok)' : 'var(--gita-do)')+'">'+
+                  (d.dat ? 'ĐẠT' : 'LỆCH')+' · '+(d.lech > 0 ? '+' : '')+
+                  (Math.round(d.lech * 10) / 10)+' điểm</span>',
               dang ? '<span class="chip" style="color:var(--ok);border-color:var(--ok)">đang ở đây</span>'
                    : (a ? '<button class="btn ghost sm" data-switch="'+h(d.vai.id)+'">Vào vai này</button>'
                         : '<span class="tiny muted">—</span>')];
@@ -2843,7 +2880,7 @@ G.VIEWS['kiem-theo-vai'] = function(){
         var v = G.roleById(a.role) || {};
         return ['<b class="sm">'+h(a.ten)+'</b>',
                 '<span class="tiny mono">'+h(a.role)+' · '+h(v.short || '')+'</span>',
-                '<span class="tiny mono">'+h(a.u)+'</span><div class="tiny mono muted">'+h(a.p)+'</div>',
+                '<span class="tiny mono">'+h(a.u)+'</span>',
                 '<button class="btn ghost sm" data-login="'+h(a.u)+'">Vào vai này</button>'];
       }));
   }
@@ -5136,42 +5173,41 @@ G.VIEWS = G.VIEWS || {};
 /* ═══════════════════════════════════════════════════════════════
    GITA 365 — MÁY CHẠY DÒNG T5-PRO
 
-   Kho chuẩn ở kho-goc/data.tang5-pro.js. Toàn bộ ở gói NGHỀ, khoá ở
-   quyền dừng tại Senior Coach.
+   Kho chuẩn ở gói NGHỀ CAO. Chương trình VIP này đứng ngoài 10 cấp của
+   Tầng 5; R01–R02 có mặc định, nhân sự khác cần quyền cá nhân còn hạn.
 
    ═══ NĂM CÁI MỞ ═══
 
-   t5pSangLoc(diem)     sáu điểm vào, một phán quyết ra. Không phải
-                        phép cộng: hai tiêu chí loại cứng chặn TRƯỚC
-                        khi nhìn tổng.
+   t5pSangLoc(diem, dieuKien) sáu điểm vào, hai cổng cứng và điều kiện
+                        VIP được người có thẩm quyền xác minh.
    t5pTuChoi(ma)        kịch bản từ chối, nguyên văn.
    t5pGiaiDoan(thang)   tháng thứ mấy thì đang ở giai đoạn nào.
    t5pNghiThuc(gd)      nghi thức nào được phép chạy ở giai đoạn này.
    t5pNhanCase(bang)    Coach này đã đủ chuẩn cầm case chưa.
 
-   ═══ MỘT CÁI TỪ CHỐI ═══
+   ═══ BẢNG GIÁ RIÊNG CỦA CHƯƠNG TRÌNH VIP ═══
 
-   t5pBaoGia() KHÔNG báo giá. Tài liệu ghi một con số, kho chưa có
-   dòng nào trong HP_TANG. Luật HP_LUAT đã chốt từ lâu: chưa điền giá
-   thì màn không hiện bảng giá — và luật ấy không có ngoại lệ cho một
-   con số vừa đọc được trong một tài liệu.
+   Giá T5-PRO là một khoảng giá chính thức, tách khỏi HP_TANG. Đây là
+   chương trình chuyên gia đồng hành khởi nghiệp; mức cụ thể được xác
+   định theo hồ sơ và phạm vi hợp đồng, không biến thành tầng thứ sáu.
 
-   Hàm này trả về con số của TÀI LIỆU kèm nhãn, để Coach biết nó tồn
-   tại, nhưng cờ baoDuoc luôn là false cho tới khi giá vào bảng.
-
-   ═══ BỐN CÁI KHOÁ ═══
+   ═══ BẢY CÁI KHOÁ ═══
 
    t5pSoiKhongPhaiTang()  quan trọng nhất tệp. Nó đỏ nếu có bản ghi
                           nào của dòng này mang một tầng thứ sáu, hoặc
                           nếu HP_TANG khác năm dòng. Đây là phép kiểm
                           giữ cho một lần biên soạn tài liệu KHÔNG âm
                           thầm đổi số tầng của cả hệ.
+   t5pSoiSangLoc()        sáu tiêu chí, hai cổng cứng và hai điều kiện
+                          VIP có cách xác minh.
    t5pSoiDaoDuc()         mười hai điều, đủ bốn cụm, mỗi điều có chi
                           tiết hoặc hậu quả.
    t5pSoiNangLuc()        mười một năng lực, ba cụm, và đúng ba cái
                           đòi M4 — N1, N2, N9.
    t5pSoiNghiThuc()       bảy nghi thức, mỗi cái khai giai đoạn sớm
-                          nhất, và giai đoạn ấy nằm trong 1..4.
+                          nhất; hai nghi thức cuối có mười bộ mẫu.
+   t5pSoiGia()            kiểm khoảng giá chính thức và cách báo giá.
+   t5pSoiR5()             giữ đúng năm nguyên tắc R5 chủ hệ đã chốt.
 
    ═══ VÌ SAO t5pSangLoc() CHẶN TRƯỚC KHI CỘNG ═══
 
@@ -5199,9 +5235,24 @@ G.VIEWS = G.VIEWS || {};
      Thiếu tiêu chí nào thì KHÔNG đoán bằng 0 và cũng không bỏ qua —
      trả về chuaChamDu, kèm tên tiêu chí còn trống. Chấm thiếu mà ra
      phán quyết là phán quyết trên dữ liệu chưa có. */
-  G.t5pSangLoc = function (diem) {
+  G.t5pSangLoc = function (diem, dieuKien) {
     var ds = G.T5P_SANGLOC || [], l = G.T5P_SANGLOC_LUAT || {};
     if (!ds.length) return { chuaDo: true, thieu: 'T5P_SANGLOC' };
+    var tienQuyet = l.dieuKienTienQuyet || [];
+    dieuKien = dieuKien || {};
+    var chuaXacNhan = tienQuyet.filter(function (x) {
+      return dieuKien[x.ma] !== true && dieuKien[x.ma] !== false;
+    });
+    if (chuaXacNhan.length) return {
+      chuaChamDu: true, thieuDieuKien: chuaXacNhan.map(function (x) { return x.ten; }),
+      ghiChu: 'Điều kiện tiên quyết phải được người có thẩm quyền xác minh trước khi kết luận.'
+    };
+    var khongDat = tienQuyet.filter(function (x) { return dieuKien[x.ma] === false; });
+    if (khongDat.length) return {
+      ket: 'khong-nhan', loaiCung: true,
+      phamDieuKien: khongDat.map(function (x) { return x.ten; }),
+      vi: 'Chương trình VIP chỉ dành cho hồ sơ đạt chuẩn về năng lực khởi nghiệp và mức phù hợp với hệ sinh thái.'
+    };
     diem = diem || {};
 
     var thieu = [], tong = 0, bang = [];
@@ -5314,10 +5365,15 @@ G.VIEWS = G.VIEWS || {};
   /* ═══════════ TỪ CHỐI: BÁO GIÁ ═══════════ */
   G.t5pBaoGia = function () {
     var g = G.T5P_GIA || {};
-    if (!g.viChuaBaoGia) return { chuaDo: true, thieu: 'T5P_GIA' };
+    if (!g.donVi) return { chuaDo: true, thieu: 'T5P_GIA' };
 
-    /* Nếu một ngày chủ hệ đưa dòng này vào bảng giá thì cổng tự mở —
-       không phải sửa hàm. Tìm theo tên tầng, không tìm theo con số. */
+    var giaTu = Number(g.giaTu);
+    var giaDen = Number(g.giaDen);
+    if (Number.isFinite(giaTu) && Number.isFinite(giaDen) && giaTu > 0 && giaDen >= giaTu)
+      return { baoDuoc: true, khoangGia: true, giaTu: giaTu, giaDen: giaDen,
+        donVi: g.donVi, cachBao: g.cachBao || '' };
+
+    /* Giữ tương thích với bản cũ cho tới khi kho mới được cấp. */
     var trongBang = null;
     if (coKho('HP_TANG'))
       trongBang = (G.HP_TANG || []).filter(function (x) {
@@ -5327,14 +5383,9 @@ G.VIEWS = G.VIEWS || {};
     if (trongBang && trongBang.gia !== null && trongBang.gia !== undefined)
       return { baoDuoc: true, gia: trongBang.gia, donVi: trongBang.donVi, tuBang: true };
 
-    return {
-      baoDuoc: false,
-      viChua: g.viChuaBaoGia,
-      giaTaiLieu: g.giaTaiLieu,
-      donViTaiLieu: g.donViTaiLieu,
-      nhan: 'CON SỐ CỦA TÀI LIỆU — CHƯA VÀO BẢNG GIÁ CỦA HỆ',
-      luatKhac: (g.luatKhac || []).slice()
-    };
+    return { baoDuoc: false, viChua: g.viChuaBaoGia || 'Chưa có bảng giá T5-PRO.',
+      giaTaiLieu: g.giaTaiLieu, donViTaiLieu: g.donViTaiLieu,
+      nhan: 'CHƯA CÓ GIÁ ĐƯỢC DUYỆT', luatKhac: (g.luatKhac || []).slice() };
   };
 
   G.t5pPhien = function (ma) {
@@ -5363,6 +5414,21 @@ G.VIEWS = G.VIEWS || {};
       if (n !== 5) loi.push('HP_TANG có ' + n + ' dòng, phải năm — dòng PRO không được thành tầng thứ sáu');
     }
     return { chuaDo: false, loi: loi, doBangGia: coKho('HP_TANG') };
+  };
+
+  G.t5pSoiSangLoc = function () {
+    var ds = G.T5P_SANGLOC || [], l = G.T5P_SANGLOC_LUAT || {}, loi = [];
+    if (ds.length !== 6) loi.push('cửa vào phải có đúng sáu tiêu chí');
+    if (ds.filter(function (x) { return x.loaiCung; }).length !== 2)
+      loi.push('phải có đúng hai tiêu chí loại cứng');
+    var gates = (l.dieuKienTienQuyet || []).map(function (x) { return x.ma; }).sort();
+    if (gates.join(',') !== 'nangLucKhoiNghiep,phuHopHeSinhThai')
+      loi.push('thiếu hoặc sai hai điều kiện tiên quyết VIP');
+    (l.dieuKienTienQuyet || []).forEach(function (x) {
+      if (!x.ten || !x.cachXacMinh) loi.push('điều kiện tiên quyết thiếu cách xác minh');
+    });
+    return { chuaDo: !ds.length, loi: loi, so: ds.length,
+      dieuKienTienQuyet: gates.length };
   };
 
   /* ═══════════ KHOÁ 2: MƯỜI HAI ĐIỀU ĐẠO ĐỨC ═══════════ */
@@ -5433,6 +5499,15 @@ G.VIEWS = G.VIEWS || {};
       if (!(Number(n.tuGiaiDoan) >= 1 && Number(n.tuGiaiDoan) <= soGd))
         loi.push(t + ' khai giai đoạn ngoài 1–' + soGd + ': ' + n.tuGiaiDoan);
       if (!n.lam) loi.push(t + ' chưa nói làm gì');
+      if (n.chuaChiTiet) loi.push(t + ' còn đánh dấu chưa có nội dung');
+      if (n.so === 6 || n.so === 7) {
+        var mau = n.mauThamKhao || [];
+        if (mau.length !== 10) loi.push(t + ' phải có đúng mười bộ mẫu tham khảo');
+        mau.forEach(function (m, i) {
+          if (!m.ten || !m.mucTieu || !m.cacBuoc || !m.dauRa || !m.ranhGioi)
+            loi.push(t + ' · mẫu ' + (i + 1) + ' thiếu trường bắt buộc');
+        });
+      }
       /* Cái sâu nhất phải có điều kiện riêng — cổng giai đoạn một
          mình nó không đủ cho một nghi thức mở vết thương. */
       if (n.sauNhat && !n.dieuKienRieng) loi.push(t + ' đánh dấu sâu nhất mà không khai điều kiện riêng');
@@ -5441,21 +5516,44 @@ G.VIEWS = G.VIEWS || {};
     return { chuaDo: false, loi: loi, so: ds.length, chuaRuot: chuaRuot };
   };
 
+  G.t5pSoiGia = function () {
+    var g = G.T5P_GIA || {}, loi = [];
+    if (!(Number(g.giaTu) === 500000000 && Number(g.giaDen) === 2000000000))
+      loi.push('khoảng giá chính thức phải từ 500 triệu đến 2 tỷ đồng');
+    if (!g.donVi || !g.cachBao) loi.push('thiếu đơn vị hoặc nguyên tắc báo giá theo hồ sơ');
+    return { chuaDo: !Object.keys(g).length, loi: loi,
+      giaTu: Number(g.giaTu) || 0, giaDen: Number(g.giaDen) || 0 };
+  };
+
+  G.t5pSoiR5 = function () {
+    var ds = (G.T5P_R5 || {}).nguyenTac || [];
+    var chuan = ['Minh bạch', 'Rõ ràng', 'Chuẩn mực', 'Cam kết', 'Chính trực'];
+    var loi = [];
+    if ((G.T5P_R5 || {}).ma !== 'R5') loi.push('thiếu mã quy tắc R5');
+    if (ds.length !== chuan.length || ds.some(function (x, i) {
+      return x !== chuan[i];
+    })) loi.push('năm nguyên tắc R5 không khớp quyết định chủ hệ');
+    return {chuaDo: !G.T5P_R5, loi: loi, nguyenTac: ds.length};
+  };
+
   G.t5pChoChu = function () { return (G.T5P_CHOCHU || []).slice(); };
 
   /* ═══════════════════════════════════════════════════════════
      MÀN HÌNH
      ═══════════════════════════════════════════════════════════ */
   G.VIEWS['tang5-pro'] = function () {
+    if (!G.can('pro_gia_nghiep'))
+      return U.empty('Chưa được cấp quyền T5-PRO',
+        'R01–R02 có quyền mặc định. Nhân sự khác cần được Admin cấp quyền cá nhân còn hạn rồi đăng nhập lại.');
     if (!G.T5P_LOI)
       return U.empty('Chưa mở được phần này',
-        'Phần này khoá ở quyền của Coach cấp cao. Đăng nhập bằng tài khoản có quyền ấy để nạp.');
+        'Gói T5-PRO chưa được cấp hoặc chưa giải mã trong phiên này.');
 
     var loi = G.T5P_LOI;
-    var o = U.ph({ eyebrow: 'DÒNG T5-PRO · GIA ĐÌNH THỊNH VƯỢNG', ic: 'vault', grad: 1,
-      t: 'Hai tư tháng, và một hệ gia đình tự chạy sau khi mình rút',
-      lead: 'Dòng riêng, không phải tầng thứ sáu. Khách riêng, đội ba vai, hợp đồng riêng, ' +
-        'nhịp riêng — và một cửa vào chặt hơn mọi dòng khác.' });
+    var o = U.ph({ eyebrow: 'CHƯƠNG TRÌNH VIP T5-PRO · KHỞI NGHIỆP', ic: 'vault', grad: 1,
+      t: 'Chương trình VIP T5-PRO · Khởi nghiệp và hệ sinh thái doanh nghiệp',
+      lead: 'Chương trình chuyên gia đồng hành được chuẩn bị riêng cho khách hàng tiềm năng đạt chuẩn; ' +
+        'đứng ngoài 10 cấp Tầng 5, không làm thay đổi cấu trúc năm tầng.' });
 
     o += '<div class="card mb" style="border-color:#0B667556">' +
       '<p style="line-height:1.9"><b>' + h(loi.dinhVi || '') + '</b></p>' +
@@ -5465,9 +5563,15 @@ G.VIEWS = G.VIEWS || {};
       '<p class="tiny mt" style="line-height:1.7;color:#0B6675"><b>Thước cuối: ' + h(loi.thuocDoCuoi || '') + '</b></p></div>';
 
     var skt = G.t5pSoiKhongPhaiTang();
+    var ssl = G.t5pSoiSangLoc();
+    var sgia = G.t5pSoiGia();
+    var sr5 = G.t5pSoiR5();
     if (skt.loi && skt.loi.length)
       o += '<div class="card mb" style="border-color:#BE0E16"><b class="sm" style="color:#BE0E16">' +
         'LỆCH — dòng này đang chạm vào cấu trúc năm tầng: ' + h(skt.loi.join(' · ')) + '</b></div>';
+    if (ssl.loi.length || sgia.loi.length || sr5.loi.length)
+      o += '<div class="card mb" style="border-left:3px solid #BE0E16"><b class="sm" style="color:#BE0E16">CẦN RÀ SOÁT CỬA VÀO / GIÁ / R5</b>' +
+        '<p class="tiny mt">' + h(ssl.loi.concat(sgia.loi, sr5.loi).join(' · ')) + '</p></div>';
 
     o += G.kaKhung ? G.kaKhung('tang5-pro', 'dau') : '';
 
@@ -5503,7 +5607,7 @@ G.VIEWS = G.VIEWS || {};
 
     /* ── Cửa vào ── */
     var sl = G.T5P_SANGLOC_LUAT || {};
-    o += U.sec('Cửa vào — sáu tiêu chí, và hai tiêu chí loại cứng', sl.thang || '');
+    o += U.sec('Cửa vào — sáu tiêu chí, hai tiêu chí loại cứng và điều kiện VIP', sl.thang || '');
     o += '<div class="card mb">' + (G.T5P_SANGLOC || []).map(function (t) {
       return '<div style="padding:9px 0;border-bottom:1px solid var(--gita-vien-2)">' +
         '<b class="sm">' + t.so + '. ' + h(t.ten) + '</b>' +
@@ -5516,10 +5620,18 @@ G.VIEWS = G.VIEWS || {};
       '<p class="tiny dim mt" style="line-height:1.7">' + h(sl.viLoaiCung || '') + '</p>' +
       '<p class="tiny mt" style="line-height:1.7;color:#B4720F">' + h(sl.viChamThap || '') + '</p>' +
       '<p class="tiny mt" style="line-height:1.7;color:#B4720F">' + h(sl.khongTuChamTuQuyet || '') + '</p></div>';
+    o += '<div class="card mb" style="border-left:3px solid #5140B4"><b class="sm">ĐIỀU KIỆN TIÊN QUYẾT — NGƯỜI CÓ THẨM QUYỀN PHẢI XÁC MINH</b>' +
+      '<p class="tiny mt" style="line-height:1.7">' + h(sl.dieuKienTienQuyetGhiChu || '') + '</p>' +
+      '<ul class="tiny mt" style="line-height:1.8;padding-left:20px">' +
+        (sl.dieuKienTienQuyet || []).map(function (x) {
+          return '<li><b>' + h(x.ten) + ':</b> ' + h(x.cachXacMinh || '') + '</li>';
+        }).join('') + '</ul>' +
+      '<p class="tiny mt" style="color:#BE0E16">Thiếu xác minh hoặc không đạt một điều kiện thì không kết luận nhận vào, dù tổng điểm cao.</p></div>';
 
     /* Hai ca chạy thật, để thấy cổng loại cứng làm việc. */
-    var caA = G.t5pSangLoc({ 1: 4, 2: 3, 3: 3, 4: 3, 5: 3, 6: 3 });
-    var caB = G.t5pSangLoc({ 1: 1, 2: 4, 3: 4, 4: 4, 5: 4, 6: 4 });
+    var dieuKienMau = { nangLucKhoiNghiep: true, phuHopHeSinhThai: true };
+    var caA = G.t5pSangLoc({ 1: 4, 2: 3, 3: 3, 4: 3, 5: 3, 6: 3 }, dieuKienMau);
+    var caB = G.t5pSangLoc({ 1: 1, 2: 4, 3: 4, 4: 4, 5: 4, 6: 4 }, dieuKienMau);
     if (caA && caA.ket)
       o += '<div class="card mb"><span class="tiny up dim">CỔNG CHẠY THẬT</span>' +
         '<p class="sm mt" style="line-height:1.8"><b>Ca A</b> — tổng ' + caA.tong + '/' + caA.tran +
@@ -5712,8 +5824,26 @@ G.VIEWS = G.VIEWS || {};
           h(n.dieuKienRieng) + '</p>' : '') +
         (n.camTuyetDoi ? '<p class="tiny mt" style="line-height:1.7;color:#BE0E16"><b>' +
           h(n.camTuyetDoi) + '</b></p>' : '') +
-        (n.chuaChiTiet ? '<p class="tiny mt" style="line-height:1.7;color:#B4720F">CHƯA CÓ RUỘT — ' +
-          h(n.chuaChiTiet) + '</p>' : '') + '</div>';
+        (n.nguyenTacDongThuan ? '<p class="tiny mt" style="line-height:1.7;color:#B4720F">' +
+          h(n.nguyenTacDongThuan) + '</p>' : '') +
+        (n.mauThamKhao ? '<div class="mt"><b class="tiny up">10 BỘ MẪU THAM KHẢO · KHÔNG PHẢI KỊCH BẢN BẮT BUỘC</b>' +
+          n.mauThamKhao.map(function (m) {
+            return '<details class="mt" style="border-top:1px solid var(--gita-vien-2);padding:8px 0">' +
+              '<summary class="sm" style="cursor:pointer">' + h(m.so) + '. ' + h(m.ten) + '</summary>' +
+              '<p class="tiny mt"><b>Mục tiêu:</b> ' + h(m.mucTieu) + '</p>' +
+              '<p class="tiny mt"><b>Thành phần:</b> ' + h(m.doiTuong || '') +
+                (m.thoiLuong ? ' · <b>Thời lượng:</b> ' + h(m.thoiLuong) : '') + '</p>' +
+              (m.chuanBi ? '<p class="tiny mt"><b>Chuẩn bị:</b> ' + h(m.chuanBi) + '</p>' : '') +
+              '<ol class="tiny mt" style="line-height:1.8;padding-left:20px">' +
+                (m.cacBuoc || []).map(function (b) { return '<li>' + h(b) + '</li>'; }).join('') +
+              '</ol>' +
+              (m.cauHoi ? '<p class="tiny mt"><b>Câu gợi mở:</b> ' + h(m.cauHoi.join(' · ')) + '</p>' : '') +
+              '<p class="tiny mt"><b>Đầu ra gợi ý:</b> ' + h(m.dauRa) + '</p>' +
+              '<p class="tiny mt" style="color:#BE0E16"><b>Ranh giới an toàn:</b> ' + h(m.ranhGioi) + '</p>' +
+              (m.theoDoi ? '<p class="tiny mt"><b>Theo dõi:</b> ' + h(m.theoDoi) + '</p>' : '') +
+              '</details>';
+          }).join('') + '</div>' : '') +
+        (n.nguonMau ? '<p class="tiny dim mt">' + h(n.nguonMau) + '</p>' : '') + '</div>';
     }).join('') + '</div>';
     o += '<p class="tiny mb" style="line-height:1.7;color:#B4720F">' +
       h((G.T5P_NGHITHUC_LUAT || {}).antoanTruoc || '') + '</p>';
@@ -5745,13 +5875,18 @@ G.VIEWS = G.VIEWS || {};
     /* ── Tiền ── */
     var bg = G.t5pBaoGia();
     if (bg && !bg.chuaDo) {
-      o += U.sec('Tiền', bg.baoDuoc ? '' : 'Máy CHƯA báo giá được dòng này.');
+      o += U.sec('Bảng giá chương trình VIP', bg.baoDuoc ? '' : 'Chưa có giá được duyệt.');
       o += '<div class="card mb" style="border-color:#B4720F55">';
-      if (bg.baoDuoc) {
+      if (bg.baoDuoc && bg.khoangGia) {
+        o += '<p class="sm" style="line-height:1.8"><b>' +
+          Number(bg.giaTu).toLocaleString('vi-VN') + ' – ' +
+          Number(bg.giaDen).toLocaleString('vi-VN') + ' đồng</b> — ' + h(bg.donVi) + '</p>' +
+          '<p class="tiny mt" style="line-height:1.7">' + h(bg.cachBao) + '</p>';
+      } else if (bg.baoDuoc) {
         o += '<p class="sm" style="line-height:1.8"><b>' +
           Number(bg.gia).toLocaleString('vi-VN') + ' đồng</b> — ' + h(bg.donVi || '') +
           ' <span class="tiny dim">đọc từ bảng giá</span></p>';
-      } else {
+      } else if (bg.giaTaiLieu) {
         o += '<p class="sm" style="line-height:1.8"><b style="color:#BE0E16">' + h(bg.nhan) + ':</b> ' +
           Number(bg.giaTaiLieu).toLocaleString('vi-VN') + ' đồng — ' + h(bg.donViTaiLieu) + '</p>' +
           '<p class="tiny mt" style="line-height:1.7;color:#B4720F">' + h(bg.viChua) + '</p>';
@@ -5766,8 +5901,25 @@ G.VIEWS = G.VIEWS || {};
       }).join('') + '</div>';
     }
 
-    /* ── Chỗ lệch ── */
-    o += U.sec('Chỗ sổ tay lệch — với kho, và với chính nó', 'Máy đọc kho. Chỗ lệch ghi ra, không tự chọn hộ.');
+    var r5 = G.T5P_R5 || {};
+    o += U.sec('Quy tắc R5', r5.moTa || 'Năm nguyên tắc chủ hệ đã chốt cho chương trình T5-PRO.');
+    o += '<div class="card mb">' + (r5.nguyenTac || []).map(function (x, i) {
+      return '<p class="sm" style="padding:7px 0;border-bottom:1px solid var(--gita-vien-2)">' +
+        '<b>R5.' + (i + 1) + '</b> · ' + h(x) + '</p>';
+    }).join('') + (!r5.nguyenTac || !r5.nguyenTac.length
+      ? '<p class="tiny" style="color:#BE0E16">Chưa nạp bộ nguyên tắc R5.</p>' : '') +
+      (sr5.loi.length ? '<p class="tiny mt" style="color:#BE0E16">' + h(sr5.loi.join(' · ')) + '</p>' : '') +
+      '</div>';
+
+    /* ── Quyết định đã chốt và nguồn còn thiếu ── */
+    if ((G.T5P_QUYETDINH || []).length) {
+      o += U.sec('Quyết định chủ hệ đã chốt', 'Đã áp dụng vào cấu trúc và nội dung chương trình.');
+      o += '<div class="card mb">' + G.T5P_QUYETDINH.map(function (q) {
+        return '<div style="padding:8px 0;border-bottom:1px solid var(--gita-vien-2)">' +
+          '<b class="sm">' + h(q.chuDe) + '</b><p class="tiny mt">' + h(q.ketLuan) + '</p></div>';
+      }).join('') + '</div>';
+    }
+    o += U.sec('Mục cần đối chiếu tài liệu gốc', 'Không suy diễn mã nghiệp vụ khi thiếu phụ lục nguồn.');
     o += '<div class="card mb">' + (G.T5P_LECH || []).map(function (l) {
       return '<div style="padding:10px 0;border-bottom:1px solid var(--gita-vien-2)">' +
         '<b class="sm">' + h(l.ma) + ' · ' + h(l.o) + '</b>' +
@@ -5782,24 +5934,94 @@ G.VIEWS = G.VIEWS || {};
     }).join('') + '</div>';
 
     /* ── Chờ chủ hệ ── */
-    o += U.sec('Ba câu chờ chủ hệ', 'Mã không tự trả lời được ba câu này.');
-    o += '<div class="card mb">' + G.t5pChoChu().map(function (c) {
+    var choChu = G.t5pChoChu();
+    o += U.sec('Mục chờ tài liệu/chủ hệ', choChu.length
+      ? 'Chưa có đủ nguồn để chuẩn hóa an toàn.' : 'Không còn câu hỏi quyết định đang mở.');
+    o += '<div class="card mb">' + (choChu.length ? choChu.map(function (c) {
       return '<div style="padding:9px 0;border-bottom:1px solid var(--gita-vien-2)">' +
         '<b class="sm">' + h(c.hoi) + '</b>' +
         '<p class="tiny dim mt" style="line-height:1.7">' + h(c.boi) + '</p>' +
-        (c.neuLaTangSau ? '<p class="tiny mt" style="line-height:1.7;color:#BE0E16">' +
-          h(c.neuLaTangSau) + '</p>' : '') +
-        (c.toiNghieng ? '<p class="tiny mt" style="line-height:1.7;color:#0B6675">' + h(c.toiNghieng) + '</p>' : '') +
-        (c.toiKhongTuDat ? '<p class="tiny mt" style="line-height:1.7;color:#0B6675">' +
-          h(c.toiKhongTuDat) + '</p>' : '') +
-        (c.mayDangLam ? '<p class="tiny mt" style="line-height:1.7;color:#B4720F">' + h(c.mayDangLam) + '</p>' : '') +
-        (c.canXacNhan ? '<p class="tiny mt" style="line-height:1.7;color:#B4720F">' + h(c.canXacNhan) + '</p>' : '') +
+        (c.canGi ? '<p class="tiny mt" style="line-height:1.7;color:#B4720F">' + h(c.canGi) + '</p>' : '') +
         '</div>';
-    }).join('') + '</div>';
+    }).join('') : '<p class="tiny">Các quyết định về phạm vi VIP, giá và quyền truy cập đã được cập nhật.</p>') + '</div>';
+
+    if (G.S && G.S.roleObj && G.S.roleObj.lv <= 2) o += veQuyenT5Pro();
 
     o += G.kaKhung ? G.kaKhung('tang5-pro', 'cuoi') : '';
     return o;
   };
+
+  G.t5pQuyenSo = null;
+  G.t5pTaiQuyen = function () {
+    if (!G.goiMayChu) return;
+    G.goiMayChu('dsQuyenT5Pro', {}).then(function (x) {
+      G.t5pQuyenSo = x; veLai();
+    }).catch(function (e) {
+      G.t5pQuyenSo = {ok: false, error: e && e.message}; veLai();
+    });
+  };
+  G.t5pCapQuyen = function () {
+    if (!G.goiMayChu) return;
+    var username = document.getElementById('t5p-quyen-ten');
+    var lyDo = document.getElementById('t5p-quyen-lydo');
+    var hetHan = document.getElementById('t5p-quyen-han');
+    if (!username || !lyDo || !hetHan || !username.value || !lyDo.value || !hetHan.value) {
+      U.toast('Điền tài khoản, lý do và thời điểm hết hạn.', 'err'); return;
+    }
+    var lucHetHan = new Date(hetHan.value);
+    if (!Number.isFinite(lucHetHan.getTime()) || lucHetHan <= new Date()) {
+      U.toast('Thời điểm hết hạn phải ở tương lai.', 'err'); return;
+    }
+    G.goiMayChu('capQuyenT5Pro', {username: username.value, lyDo: lyDo.value,
+      hetHan: lucHetHan.toISOString()}).then(function (x) {
+      if (x && x.ok) { U.toast('Đã cấp quyền T5-PRO có hạn.', 'ok'); G.t5pQuyenSo = null; G.t5pTaiQuyen(); }
+      else U.toast((x && x.error) || 'Không cấp được quyền T5-PRO.', 'err');
+    }).catch(function (e) { U.toast((e && e.message) || 'Lỗi cấp quyền T5-PRO.', 'err'); });
+  };
+  G.t5pThuQuyen = function (username) {
+    if (!G.goiMayChu) return;
+    if (!confirm('Thu hồi quyền T5-PRO của ' + username + '?')) return;
+    G.goiMayChu('thuHoiQuyenT5Pro', {username: username}).then(function (x) {
+      if (x && x.ok) { U.toast(x.ghiChu || 'Đã thu hồi quyền.', 'ok'); G.t5pQuyenSo = null; G.t5pTaiQuyen(); }
+      else U.toast((x && x.error) || 'Không thu hồi được quyền T5-PRO.', 'err');
+    }).catch(function (e) { U.toast((e && e.message) || 'Lỗi thu hồi quyền T5-PRO.', 'err'); });
+  };
+  if (typeof document !== 'undefined' && !G.t5pQuyenEventBound) {
+    G.t5pQuyenEventBound = true;
+    document.addEventListener('click', function (e) {
+      var nut = e.target && e.target.closest ? e.target.closest('[data-t5p-thu]') : null;
+      if (nut) G.t5pThuQuyen(nut.getAttribute('data-t5p-thu'));
+    });
+  }
+  function veLai() {
+    if (!G.S || G.S.view !== 'tang5-pro' || !document.getElementById('main')) return;
+    G.render && G.render();
+  }
+  function veQuyenT5Pro() {
+    var so = G.t5pQuyenSo;
+    var o = U.sec('Cấp quyền xem T5-PRO', 'R01–R02 có quyền mặc định. Các quyền khác gắn với tài khoản, có hạn và có lý do.');
+    o += '<div class="card mb"><div class="grid g3">' +
+      '<label class="tiny">Tên đăng nhập<input id="t5p-quyen-ten" autocomplete="off" maxlength="80"></label>' +
+      '<label class="tiny">Lý do cấp<textarea id="t5p-quyen-lydo" maxlength="500"></textarea></label>' +
+      '<label class="tiny">Hết hạn<input id="t5p-quyen-han" type="datetime-local" required></label></div>' +
+      '<button class="btn btn-chinh mt" onclick="G.t5pCapQuyen()">Cấp quyền có hạn</button></div>';
+    if (!so) o += '<button class="btn" onclick="G.t5pTaiQuyen()">Tải sổ quyền từ máy chủ</button>';
+    else if (!so.ok) o += '<p class="note" style="color:#BE0E16">' + h(so.error || 'Không tải được sổ quyền.') + '</p>';
+    else {
+      o += '<p class="tiny dim mb">' + h(so.vi || '') + '</p>';
+      o += U.tbl(['Tài khoản','Vai khi cấp','Lý do','Người cấp','Hết hạn','Trạng thái',''],
+        (so.ds || []).map(function (q) {
+          return [h(q.username), h(q.role), h(q.lyDo), h(q.nguoiCap),
+            h(new Date(q.hetHan).toLocaleString('vi-VN')),
+            q.conHieuLuc ? 'ĐANG CẤP' : (q.thuHoiLuc ? 'ĐÃ THU HỒI' : 'HẾT HẠN'),
+            q.conHieuLuc ? '<button class="btn sm" data-t5p-thu="' +
+              h(q.username) + '">Thu hồi</button>' : '—'];
+        }));
+      o += '<p class="tiny dim mt">Thu hồi chặn lần xin khóa tiếp theo; không thể xóa nội dung đã giải mã trong phiên đang mở.</p>';
+    }
+    if (!so) setTimeout(function () { G.t5pTaiQuyen(); }, 0);
+    return o;
+  }
 })();
 
 })();

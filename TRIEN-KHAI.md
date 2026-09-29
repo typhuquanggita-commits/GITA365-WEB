@@ -1,6 +1,6 @@
 # GITA 365 — HƯỚNG DẪN TRIỂN KHAI (Cloudflare + GitHub)
 
-> Bản full 9.99.243 · sửa phiên/cấp khoá, hỗ trợ cấp các gói có khóa khi thiếu gói khác, tương thích PBKDF2 với Cloudflare Workers và giảm tải precache PWA.
+> Bản full 9.99.247 · T5-PRO/R5, 20 mẫu nghi thức, QR thanh toán và Studio MC nội bộ.
 > Đọc phần ⚠ BẢO MẬT trước tiên.
 
 ---
@@ -11,12 +11,21 @@
 
 - Repo GitHub là **công khai**. Kho nội dung `kho/*.enc` đã mã hoá — vô hại nếu để công khai
   vì **không có khoá thì không mở được**.
-- Nhưng nếu đưa **khoá** (7 khoá AES trong giấy phép) lên GitHub, bất kỳ ai cũng giải mã được
+- Nhưng nếu đưa **khoá** (8 khoá AES trong giấy phép) lên GitHub, bất kỳ ai cũng giải mã được
   **toàn bộ nội dung chuyên môn** của Học viện. Đó là mất tài sản, và không lấy lại được.
 - Khoá chỉ nằm **một chỗ duy nhất**: trong **secret của Cloudflare Worker** (`GITA_KHOA_KHO`).
   Máy khách xin khoá từ Worker sau khi đăng nhập, giải mã trong bộ nhớ, không lưu lại.
 - Worker chỉ cấp các gói có khóa tương ứng. Nếu thiếu khóa một gói, các gói còn khóa vẫn mở
   và ứng dụng nêu rõ gói chưa thể mở; không thể suy ra khóa thay thế từ tệp `.enc`.
+- T5-PRO nằm trong `nghe-cao`: R01–R02 nhận theo vai; nhân sự R03–R12 chỉ nhận khóa
+  khi quyền cá nhân còn hạn trong D1. Việc cấp/thu hồi ghi lý do và nhật ký máy chủ.
+  Thu hồi chặn các lượt xin khóa sau đó; không xóa được nội dung đã giải mã trong phiên đang mở.
+- QR và thông tin nhận tiền không được thêm dạng rõ vào Pages/bundle. R01–R02 cấu hình
+  trong màn **Quy trình tài chính**; D1 lưu cấu hình hiện hành và Worker chỉ trả cho phiên
+  R01–R04 hoặc R13–R14 qua API màn thanh toán. Phải áp dụng schema D1 trước khi
+  triển khai Worker/Pages; sau khi phát hành, Admin tải QR lên và lưu cấu hình.
+- Studio MC hiện xử lý ảnh tham chiếu/âm thanh cục bộ, tạo xem trước chuyển động 2.5D
+  và phối âm. Chưa có renderer 3D nội bộ hoặc xuất tệp phim; không gửi media tới dịch vụ ngoài.
 - Gói này **không** chứa khoá. File `.gitignore` cũng chặn sẵn `kho/khoa.json` và `giay-phep/`.
 
 ---
@@ -40,6 +49,10 @@ Cùng tên miền thì không có CORS, không có lượt gọi thăm dò trư�
 
 ## PHẦN 1 — GITHUB PAGES (phần tĩnh, công khai)
 
+**Thứ tự phát hành an toàn:** hoàn thành migration D1, đồng bộ secret khóa và triển khai
+Worker ở Phần 2 trước; chỉ phát hành Pages sau khi Worker đã sẵn sàng. Không phát hành
+riêng Pages mới vì màn T5-PRO mới cần API quyền và bảng `quyenT5Pro`.
+
 1. Đẩy thay đổi vào nhánh `main` của repo `GITA365-WEB`.
 2. GitHub Actions tự gom các tệp tĩnh cần thiết và phát hành; không cần `web-app.zip`
    hay nối lại repo với Cloudflare Pages.
@@ -57,11 +70,16 @@ cd may-chu
 # 1) Tạo cơ sở dữ liệu, dán database_id vào wrangler.toml
 npx wrangler d1 create gita365
 
-# 2) Dựng bảng
+# 2) Dựng/áp dụng bảng (bao gồm quyền T5-PRO và cấu hình QR trước Worker mới)
 npx wrangler d1 execute gita365 --file=csdl.sql --remote
 
 # 3) NẠP CÁC SECRET — tuyệt đối không đưa giá trị vào Git:
 bash nap-bi-mat.sh /duong/dan/toi/khoa.json
+#   Trước khi phát hành các gói .enc mới, cập nhật secret bằng đúng bộ
+#   khoa.json 8 khoá tương ứng; Pages và Worker phải được phát hành đồng bộ.
+#   Quy trình phát hành: áp dụng schema D1 trước, cập nhật secret khóa,
+#   sau đó triển khai Worker và Pages. Không triển khai Worker mới nếu bảng
+#   quyenT5Pro chưa được tạo.
 #   (hoặc: cat khoa.json | npx wrangler secret put GITA_KHOA_KHO)
 #   Nạp GITA_TIEU bằng giá trị ngẫu nhiên, lưu lại an toàn và KHÔNG đổi
 #   sau khi đã có tài khoản; mất secret này thì không thể xác thực mật khẩu.
@@ -85,7 +103,7 @@ Thấy **số khoá > 0** là xong. Đổi địa chỉ máy chủ đảo ngư�
 
 | Secret | Là gì | Lưu ý |
 |---|---|---|
-| `GITA_KHOA_KHO` | Nội dung `khoa.json` (7 khoá giải mã kho) | Chìa mở toàn bộ nội dung. Chỉ ở đây. |
+| `GITA_KHOA_KHO` | Nội dung `khoa.json` (8 khoá giải mã kho) | Chìa mở toàn bộ nội dung. Chỉ ở đây; phải khớp các gói `.enc` đang phát hành. |
 | `GITA_TIEU` | Tiêu băm mật khẩu | Sinh **một lần**, giữ mãi. Đổi = mọi mật khẩu hỏng. |
 | `GITA_TAO_ADMIN` | Mã khởi tạo Super Admin đầu tiên | Chỉ cần khi khởi tạo; xoá ngay sau khi tạo tài khoản. |
 | `GITA_KHOA_KY` | Khoá ký chứng cứ (HMAC) | Chuỗi ngẫu nhiên bất kỳ. |

@@ -197,6 +197,10 @@ G.vaiCo = function(vai, perm){
   if(!vai) return false;
   var r = (typeof vai === 'string') ? G.roleById(vai) : vai;
   if(!r) return false;
+  /* Màn nhận thanh toán chỉ dành cho quản trị/tài chính và khách hàng.
+     Đây là danh sách vai cố định, không mở rộng bằng quyền ghi đè chung. */
+  if(perm==='pay_view')
+    return ['R01','R02','R03','R04','R13','R14'].indexOf(r.id) >= 0;
   var ov = G.PHANQUYEN[r.id];
   if(ov){
     if(ov.cam.indexOf(perm) >= 0) return false;
@@ -207,6 +211,14 @@ G.vaiCo = function(vai, perm){
 };
 
 G.can = function(perm){
+  /* T5-PRO cấp theo tài khoản ở máy chủ, không theo bậc vai hay bảng
+     PHANQUYEN dùng chung. Chỉ nhận quyền cá nhân sau khi gói đã được máy
+     chủ cấp và giải mã trong phiên này. */
+  if(perm==='pro_gia_nghiep'){
+    var lvT5 = G.S && G.S.roleObj && G.S.roleObj.lv;
+    return lvT5 <= 2 || !!(G.KHO && G.KHO.daNap &&
+      G.KHO.daNap.indexOf('nghe-cao') >= 0);
+  }
   /* Quyền CRM cấp theo NGƯỜI (dòng quyenCRM ở máy chủ), không theo vai —
      nên một bộ phận được cấp bật crm_view qua G.S.crmMuc, dù bậc vai của
      họ nằm ngoài lv≤3 mặc định. Máy chủ vẫn gác mọi thao tác (mucCua ở
@@ -608,6 +620,7 @@ function vaoPhien(a){
      lại qua lượt đăng nhập sau là vai mới gõ "còn nữa" mở tiếp kho
      của vai cũ. */
   if (G.tlQuenNgu) G.tlQuenNgu();
+  if (G.xoaThongTinNhanThanhToan) G.xoaThongTinNhanThanhToan();
 
   G.S.acc = a; G.S.role = a.role; G.S.roleObj = G.roleById(a.role);
   G.S.crmMuc = a.crmMuc || null;   /* mức CRM được cấp — bật mục CRM cho bộ phận được cấp */
@@ -1180,6 +1193,9 @@ G.go = function(v){
   if(!G.manCoThat(v)) return;
   if(!G.allowed(v)){ U.toast(G.L('lock'),'err'); return; }
   if(G.isCanh && G.isCanh(v) && G.throttled && G.throttled()) return;
+  if(['thanh-toan','quy-trinh-tc'].indexOf(G.S.view) >= 0 &&
+      ['thanh-toan','quy-trinh-tc'].indexOf(v) < 0 &&
+      G.xoaThongTinNhanThanhToan) G.xoaThongTinNhanThanhToan();
   G.S.view = v;
   /* Con đường: mở bằng đường thường (menu) thì xoá trạng thái "vào từ
      phòng" còn sót; mở từ một phòng (cdMoTheoChang) thì giữ. Đặt ở G.go
@@ -1850,6 +1866,7 @@ window.addEventListener('hashchange', function(){
 
    Gõ thêm #dangnhap vào cuối địa chỉ là về được, dù đang kẹt ở đâu. */
 G.raNgoai = function(){
+  if(G.xoaThongTinNhanThanhToan) G.xoaThongTinNhanThanhToan();
   G.dangXuatMayChu();
   G.S.acc = null; G.S.role = null; G.S.roleObj = null; G.S.crmMuc = null; G.nkData = null; G.dpGiamSat = null;
   if(G.donKho) G.donKho();          /* nội dung đã giải mã không ở lại trong bộ nhớ */

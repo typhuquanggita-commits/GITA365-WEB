@@ -2060,6 +2060,8 @@ main{container-type:inline-size}
    Màu lấy từ biến đã có — không gõ mã màu thứ hai. */
 .xu-man{width:100%;height:auto;display:block;border-radius:var(--r-sm);background:#000;
   border:1px solid var(--line)}
+.xu-mc{border-left:3px solid var(--gita)}
+.xu-mc select{min-width:180px}
 .xu-tua{width:100%;margin:8px 0}
 .xu-thanh{height:6px;background:var(--nen-mo);border-radius:99px;overflow:hidden;margin:8px 0}
 .xu-thanh i{display:block;height:100%;width:0;background:var(--gita)}

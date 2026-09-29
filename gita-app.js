@@ -45,7 +45,7 @@ window.G = G;
    trong khi nội dung đổi là một cách nói dối không cố ý. */
 G.META = {
   name: 'GITA 365',
-  version: '9.99.243',
+  version: '9.99.247',
   tagline: 'Hệ Sinh Thái Gia Đình Thịnh Vượng',
   hotline: '08.5555.4688',
   site: 'truongnhatquang.com',
@@ -104,12 +104,11 @@ G.PERM = {
   crm_view:3,
   pro_approve:4, pro_report:4, pro_override:4, pro_assign:5, pro_coach:8, pro_assess:10,
   pro_view_all:4, pro_consult:11,
-  /* Dòng T5-PRO dừng ở Senior Coach. Sổ tay nâng cao ghi người đọc:
-     Coach cấp cao, Tư vấn Gia nghiệp, Giám đốc hệ. Coach thường cầm
-     nhà tầng 2-3 không cần đọc kịch bản từ chối một gia đình của dòng
-     ấy, và Giáo viên thì càng không — đọc một kịch bản nghề mà không
-     có case để dùng chỉ tạo ra cảm giác biết. */
-  pro_gia_nghiep:6,
+  /* Chỉ R01–R02 có mặc định. Nhân sự khác cần quyền cá nhân còn hạn
+     do máy chủ xác nhận cùng lúc cấp gói nghe-cao. */
+  pro_gia_nghiep:2,
+  /* Danh sách trắng cố định trong app.js; không cấp qua ghi đè quyền chung. */
+  pay_view:4,
   usr_self_data:15, usr_do_test:15, usr_referral:15,
 
   /* Ba vai cuối cùng bậc nhưng KHÁC việc. Nếu chỉ so bậc thì phụ huynh,
@@ -180,7 +179,8 @@ G.PERM_TEN = {
   pro_override:'Vượt quyết định chuyên môn', pro_assign:'Phân công đội ngũ',
   pro_coach:'Công cụ Coach',             pro_assess:'Chấm đánh giá',
   pro_view_all:'Xem toàn bộ hồ sơ nhà',  pro_consult:'Công cụ tư vấn',
-  pro_gia_nghiep:'Dòng gia nghiệp T5-PRO',
+  pro_gia_nghiep:'Chương trình VIP T5-PRO',
+  pay_view:'Thông tin nhận thanh toán',
   usr_self_data:'Dữ liệu của chính mình',usr_do_test:'Làm bài test',
   usr_referral:'Giới thiệu người quen',
   kh_gia_dinh:'Hồ sơ và nhịp sống nhà mình', kh_hanh_trinh:'Hành trình của con',
@@ -208,7 +208,7 @@ G.PERM_NHOM = [
   {id:'sys', t:'HỆ THỐNG',   c:'#185AB4', ds:['sys_config','sys_delete_user','sys_restore','sys_manage_user','sys_audit','sys_fraud','qt_trang','sua_noi_dung','tl_duyet','tl_xem_het']},
   {id:'fin', t:'TÀI CHÍNH',  c:'#0B7350', ds:['fin_view','fin_payout','fin_payroll','fin_create_order']},
   {id:'pro', t:'CHUYÊN MÔN', c:'#5140B4', ds:['pro_approve','pro_report','pro_override','pro_assign','pro_coach','pro_assess','pro_view_all','pro_consult','pro_gia_nghiep','dh_toan_he','nghe_chung','mc_duyet']},
-  {id:'kh',  t:'KHÁCH HÀNG', c:'#0B6675', ds:['usr_self_data','usr_do_test','usr_referral','kh_gia_dinh','kh_hanh_trinh','kh_qua_tang','tl_gui','mc_gui']},
+  {id:'kh',  t:'KHÁCH HÀNG',  c:'#0B6675', ds:['usr_self_data','usr_do_test','usr_referral','kh_gia_dinh','kh_hanh_trinh','kh_qua_tang','tl_gui','mc_gui']},
   {id:'ctv', t:'CỘNG TÁC',   c:'#BE0E16', ds:['ctv_lien_ket','ctv_hoa_hong']},
   {id:'out', t:'XUẤT RA NGOÀI', c:'#F61824', ds:['xuat_pdf','xuat_sheet']}
 ];
@@ -400,23 +400,12 @@ G.TAM_NHIN = [
      bảy vị trí này không hề mở thêm một màn quản trị nào. Giữ số cũ
      thì bài kiểm đỏ ở chỗ không có lỗi, và bộ kiểm đỏ oan vài lần là
      bộ kiểm bị tắt. */
-  /* Tách R05–R06 khỏi R07–R08 ở bản 9.55, và làm đúng việc ba lần trước
-     đã làm: sửa SỐ CÔNG BỐ, không nới dung sai.
-
-     Màn dòng T5-PRO khoá ở pro_gia_nghiep, dừng đúng Senior Coach — nên
-     R05 và R06 thấy nó, R07 và R08 thì không. Bốn vị trí này không còn
-     thấy như nhau, và gộp một con số thì phải nới dung sai để cả bốn
-     cùng lọt. Ghi hai con số thật thì canh được chặt hơn.
-
-     Phép thử vẫn là phép thử cũ: phần KHOÁ của bốn vị trí này có mở
-     thêm màn quản trị nào không. Không — không một màn tài chính, quản
-     trị hay điều hành nào mở thêm. Phần dày lên là phần NGHỀ, và nghề
-     thì họ vốn được thấy. Nên tỉ lệ nhích lên là con số thật đổi, không
-     phải hàng rào bị nới. */
-  {vai:['R05','R06'], pt:77,
-   ghi:'Khoá phần quản trị hệ thống, thêm tài chính và điều hành toàn hệ.'},
-  {vai:['R07','R08'], pt:76,
-   ghi:'Như R05–R06, và không mở màn của dòng gia nghiệp T5-PRO.'},
+  /* T5-PRO là quyền theo tài khoản, không mặc định theo chức danh.
+     Ma trận này đo mức mặc định; R01–R02 có sẵn, R03–R12 cần được cấp. */
+  {vai:['R05','R06','R07'], pt:77,
+   ghi:'Quyền T5-PRO cá nhân không tính vào mặc định của ma trận vai.'},
+  {vai:['R08'], pt:76,
+   ghi:'Quyền T5-PRO cá nhân không tính vào mặc định của ma trận vai.'},
   /* 73 chứ không còn 75. Hai màn mới ở 9.65 — Hành lang thành công và
      Rà soát lỗi hệ thống — khoá ở pro_coach, tức dừng đúng R08. Tử số
      của ba vị trí này đứng yên mà mẫu số tăng hai, nên tỉ lệ tụt.
@@ -679,6 +668,7 @@ G.NAV = [
        đơn mà bấm vào chỉ ra màn xin cấp phép: một mục chết. */
     {v:'diem-cham',   t:'Bản đồ điểm chạm cảm xúc',   h:'Chín khoảnh khắc quyết định họ ở lại', ic:'heart', perm:'nghe_chung', capMo:'nghe'},
     {v:'dong-hanh',   t:'Người đồng hành',             h:'Cố vấn luôn lắng nghe, có mặt mọi lúc',ic:'heart', star:1, capMo:'chung'},
+    {v:'thanh-toan',  t:'Thanh toán học phí',          h:'QR nhận chuyển khoản · thông tin do hệ thống xác thực', ic:'chart', perm:'pay_view', capMo:'chung'},
     {v:'wow',         t:'Chuỗi WOW',                   h:'Bảy khoảnh khắc đáng nhớ của hành trình',ic:'spark', capMo:'chung'}
    ]},
 
@@ -760,9 +750,8 @@ G.NAV = [
        bản của chính buổi gặp mình sắp dự. */
     {v:'so-tay-van-hanh', t:'Mười điều, và chỗ mỗi điều thật sự chặn', h:'Thứ tự ưu tiên · 10 điều lệ · 4 điều cấm khi lớn lên · 4 chỗ hệ gãy', ic:'compass', star:1, perm:'pro_coach', capMo:'nghe'},
     {v:'tang34',      t:'Tầng 3 và tầng 4 — việc của ai',  h:'Ranh giới Trợ lý với Coach · 5 nhịp G-I-T-S-A · 3 trụ đo · 14 dạng khó', ic:'compass', star:1, perm:'pro_consult', capMo:'nghe'},
-    /* Dòng T5-PRO: không phải tầng thứ sáu, nên nó không nằm cạnh năm
-       tầng ở nhóm hành trình — nó là một sách nghề, và nó khoá chặt
-       nhất trong mọi màn nghề. */
+    /* Chương trình VIP khởi nghiệp T5-PRO: đứng ngoài 10 cấp Tầng 5,
+       không đổi cấu trúc năm tầng; nội dung/entitlement ở gói NGHỀ CAO. */
     /* Bộ bản vẽ 13 tờ: đặc tả vận hành của cả hệ — ma trận 50 ô, bốn
        cổng, hai mươi tín hiệu đỏ, trần công suất từng vai. Khoá ở
        pro_coach: đây là bảng điều phối, và nhà mình đọc thì thấy
@@ -818,7 +807,7 @@ G.NAV = [
     {v:'hoat-dong',   t:'Đăng ký hoạt động — việc nào không ai nhận', h:'21 hoạt động · 3 mức tự động · 4 việc máy không được nhận · đường rơi của từng việc', ic:'grid', star:1, perm:'pro_coach', capMo:'nghe'},
     {v:'ban-coach',   t:'Bàn làm việc của Coach', h:'5 ngăn vét cạn · gói 8 ô đóng sẵn · trợ lý nhắc việc có hạn giờ · 4 lượt rà soát', ic:'pulse', star:1, perm:'pro_coach', capMo:'nghe'},
     {v:'ban-ve',      t:'Bộ bản vẽ — 50 ô, mỗi ô một tag', h:'4 nguyên tắc · 50 cấp độ · 4 cổng · 10 nhịp · 20 tín hiệu đỏ · bản đồ nâng cấp', ic:'map', star:1, perm:'pro_coach', capMo:'nghe'},
-    {v:'tang5-pro',   t:'Dòng T5-PRO — Gia đình Thịnh vượng', h:'24 tháng · 4 giai đoạn · đội 3 vai · 6 tiêu chí cửa vào · 5 kịch bản từ chối', ic:'vault', star:1, perm:'pro_gia_nghiep', capMo:'nghe'},
+    {v:'tang5-pro',   t:'Chương trình VIP T5-PRO', h:'Khởi nghiệp · hệ sinh thái doanh nghiệp · cửa tuyển chọn · giá 500 triệu–2 tỷ', ic:'vault', star:1, perm:'pro_gia_nghiep', capMo:'nghe'},
     {v:'nam-dau',     t:'Sổ tay năm đầu',              h:'12 tháng · 6 mốc kiểm · 8 kịch bản lần đầu', ic:'compass', star:1, perm:'nghe_chung', capMo:'nghe'},
     {v:'dao-tao-dh',  t:'Bốn mươi giờ đào tạo',        h:'12 buổi · 20 ca thi vai · 1 tiêu chí tuyệt đối', ic:'brain', perm:'nghe_chung', capMo:'nghe'},
     {v:'tinh-gon',    t:'Quy trình tinh gọn',          h:'7 loại lãng phí · 10 nguyên tắc cắt chi phí', ic:'lightning', perm:'nghe_chung', capMo:'nghe'},
@@ -1021,7 +1010,7 @@ G.NAV = [
     {v:'giam-sat', t:'Trần giám sát', h:'GITA-VIP dựng CÁI TRẦN trước, chưa dựng bộ giám sát — một cái cổng dựng sau một cái cửa đã chạy thì nó chỉ là một lời nhắc · sáu điều CẤM TUYỆT ĐỐI không lệnh nào mở được, kể cả lệnh R01 có chữ ký · ba ngăn phạm vi khác nhau ở CĂN CỨ PHÁP LÝ chứ không ở mức độ · lệnh uỷ quyền phải có hạn và tự thu hồi · sổ nối băm, sửa một dòng là vỡ mọi dòng sau', ic:'shield', star:1, perm:'nghe_chung', capMo:'chung'},
     {v:'supreme', t:'GITA Supreme · bản đồ', h:'Bản đồ ba quyển nghiên cứu của chủ hệ và CÁI TRẦN của chúng — ngăn đầu là BẪY TÊN GỌI: ba thang cùng mang chữ điểm chạm (1.000 tiến độ · 9 cảm xúc · 100.000 hệ thống), và một luật bị phạm thì có người cãi còn hai thang cùng tên thì không ai cãi · bốn chỗ va MỚI, không chép lại sáu điều cấm đã có · hai chỗ phép dò của chính tôi BẮT OAN vì tài liệu đang phê phán chính thứ bị dò · ma trận 28 năng lực · mười lớp điểm chạm · 45/100 phần đã có chữ', ic:'shield', star:1, perm:'nghe_chung', capMo:'chung'},
     {v:'bien-soan-noi-dung', t:'Biên soạn nội dung', h:'Khuôn 24 khối · máy đo · thang năm cổng · hiến pháp nội dung', ic:'book', star:1, perm:'qt_trang', capMo:'chung'},
-    {v:'studio', t:'GITA Studio · Xưởng dựng video', h:'Kịch bản · canvas 1080p · giọng người thật · đèn kiểm định · hộ chiếu', ic:'spark', star:1, perm:'qt_trang', capMo:'chung'},
+    {v:'studio', t:'GITA Studio · Xưởng dựng video', h:'Kịch bản · MC tham chiếu · chuyển động 2.5D · phối âm cục bộ', ic:'spark', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'tu-hoan-thien', t:'Vòng tự hoàn thiện · lấp kho có cấp phép', h:'Kho rỗng lúc tư vấn thì Bộ não SOẠN từ dữ liệu đã có, KHÔNG bịa — nhưng 入库 (đưa vào kho phục vụ khách) phải qua Bộ phận sản phẩm → Giám đốc → Super Admin · máy soạn không nhập, hai cửa tách hẳn · đủ ba chữ ký hay chưa TÍNH LÚC ĐỌC từ sổ, không cột đãDuyệt · ba cấp ba người khác nhau · sự chậm là có thật và được nói thẳng với khách', ic:'shield', star:1, perm:'nghe_chung', capMo:'chung'},
     {v:'quyen-nang-ai', t:'Quyền năng AI · Super Admin cấp', h:'Super Admin bật/thu MƯỜI chức năng cho AI xử lý công việc · mỗi chức năng TẮT mặc định, chỉ R01 bật, AI không tự bật · bật hay chưa tính LÚC ĐỌC từ sổ, không cột đang-bật · chức năng SOẠN đi qua chuỗi cấp phép ba cấp đã có (trỏ, không dựng cổng thứ hai) · chức năng ĐỌC thì nêu không kết luận · năm cửa chạy thật, năm cái khai chuaCoCua', ic:'shield', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'dieu-phoi', t:'Điều phối trợ lý AI · 100 siêu cấp', h:'Bộ não GITA365 cao nhất, điều phối toàn diện · 100 trợ lý siêu cấp đảm nhận từng cửa thật, mỗi trợ lý MỘT khoá sở hữu nên không xung đột · mọi trợ lý qua đúng cổng (Điều 13 · cấp quyền AI · ba chữ ký), TRỎ chứ không chép luật · tự hoàn thiện đi qua vòng nâng cấp có cổng · ×100 là hướng, không phải chỉ tiêu · sẵn sàng nối tuyến web app nhánh không trùng khoá', ic:'orbit', star:1, perm:'qt_trang', capMo:'chung'},
@@ -1409,7 +1398,8 @@ G.ITEM_EN = {
   'dien-thu':['Dry run — the two hardest sessions','2 cases x 20 turns · every turn traced to a store and a language filter · the easy line the rules forbid'],
   'hoat-dong':['Activity register — which work has no owner','21 activities · 3 automation levels · 4 things the machine may never take · a fall-through path for each'],
   'ban-ve':['The blueprint set — 50 cells, one tag each','4 reading principles · 50 levels · 4 gates · 10 beats · 20 red signals · an upgrade map'],
-  'tang5-pro':['The T5-PRO line — Prosperous Family','24 months · 4 phases · a 3-role team · 6 intake criteria · 5 refusal scripts'],
+  'tang5-pro':['T5-PRO VIP entrepreneurship program','Startup partnership · business ecosystem · eligibility gates · VND 500M–2B'],
+  'thanh-toan':['Tuition payment','Authenticated transfer QR · payment details served from D1 only on this screen'],
   'so-tay-van-hanh':['Ten rules, and where each one actually holds','Priority order · 10 charter points · 4 things forbidden at scale · 4 places the system breaks'],
   'tang34':['Tier 3 and tier 4 — whose job is which','Assistant/Coach boundary · the 5-beat G-I-T-S-A frame · 3 measures · 14 hard cases'],
   'coach-5-tang':['What the person walking with you must be able to do','5 coach tiers · 4 competencies each · a 10-step cycle · 1000 divided by the caps'],
@@ -1508,7 +1498,7 @@ G.ITEM_EN = {
   'supreme':['GITA Supreme · Map','Map of the owner\'s three research volumes and their CEILING — the first tab is the NAMING TRAP: three different scales all called touchpoints (1,000 progress · 9 emotional · 100,000 system), and a broken rule gets argued about while two scales sharing a name never do — they are simply read as one · four NEW conflicts, not a second copy of the six existing prohibitions · two places my own scan raised FALSE POSITIVES because the document was criticising the very thing being scanned for · 28-capability matrix · ten touchpoint layers · 45 of 100 parts actually written'],
   'giam-sat':['Monitoring Ceiling','GITA-VIP builds the CEILING first and no monitor yet — a gate built after a door is already running is only a reminder · six ABSOLUTE PROHIBITIONS no order can lift, not even a signed R01 order · three scopes that differ by LEGAL BASIS, not by degree · every authorisation must carry an expiry and revokes itself · hash-chained ledger where editing one row breaks every row after it'],
   'bien-soan-noi-dung':['Content Editor','24-block template · machine measures · five approval gates · content constitution'],
-  'studio':['GITA Studio — Video Workshop','Script from the sentence bank · 1080p canvas · real human voice · inspection lights · video passport'],
+  'studio':['GITA Studio — Video Workshop','Local script, presenter reference, 2.5D camera motion and sound mix · no third-party media processing'],
   'quyen-nang-ai':['AI Powers — Granted by Super Admin','Super Admin turns ten AI work capabilities on/off · each OFF by default · acting capabilities route through the existing three-level approval chain · read-only ones surface, never conclude'],
   'dieu-phoi':['AI Orchestration — 100 Super-Agents','The GITA365 genius brain sits highest and orchestrates all · 100 super-agents each own one real door, one ownership key each so they never conflict · every agent passes the real gates (Article 13 · AI grant · three signatures), pointing not copying · self-improvement runs through the gated upgrade ring · ×100 is a direction, not a target'],
   'khung-van-hanh':['Harness Engineering · V20','A layer standardizing how the brain orchestrates 100 agents — five pillars: context management · correct tool gate · constitution guard · conflict prevention · per-turn quality self-check · each pillar points to a real mechanism (no copied law), and a per-turn checker measures each (fails red on a bad turn) · V20 is measured, not a self-declared number · the checker never acts on its own'],
@@ -4507,14 +4497,13 @@ G.THUOC_CAP_PHEP = [
   'T34_AUDIT','T34_LECH','T34_LUAT',
   /* Dòng T5-PRO (T5P_*): sách nghề của một dòng có khách riêng —
      cửa vào, kịch bản từ chối, bốn loại phiên, bảy nghi thức, mười
-     hai điều đạo đức. Ở gói NGHỀ, và màn của nó còn khoá chặt hơn
-     mọi màn nghề khác: dừng ở Senior Coach. */
+     hai điều đạo đức. T5-PRO được cấp riêng theo tài khoản, không theo vai. */
   'T5P_LOI','T5P_BATRU','T5P_KHAC_T5','T5P_KHAC_LUAT','T5P_KHONGLA',
   'T5P_GIAIDOAN','T5P_TRINHTU','T5P_DOI','T5P_PHOI_DOI','T5P_DAODUC',
   'T5P_DAODUC_LUAT','T5P_NANGLUC','T5P_CUM','T5P_MUC','T5P_NANGLUC_LUAT',
   'T5P_SANGLOC','T5P_SANGLOC_LUAT','T5P_TUCHOI_LUAT','T5P_TUCHOI','T5P_SAUTUCHOI',
   'T5P_PHIEN','T5P_NGHITHUC','T5P_NGHITHUC_LUAT','T5P_KHUNGHOANG','T5P_KHUNGHOANG_LUAT',
-  'T5P_DICH','T5P_GIA','T5P_LECH','T5P_CHOCHU','T5P_LUAT',
+  'T5P_DICH','T5P_GIA','T5P_LECH','T5P_CHOCHU','T5P_QUYETDINH','T5P_R5','T5P_LUAT',
   /* Bộ bản vẽ 13 tờ (BV_*): đặc tả vận hành — ma trận 50 ô có tag,
      bốn cổng, mười nhịp, hai mươi tín hiệu đỏ, trần công suất từng
      vai, và bản đồ nâng cấp Web App. Ở gói NGHỀ: nhà mình đọc bảng
@@ -4690,10 +4679,10 @@ G.goiDuocCap = function () {
        "Kho báu vật" và "Sách gốc" trong trình đơn mà bấm vào chỉ ra màn
        xin cấp phép. */
     if (r.lv <= 12) ds.push(G.goiNghe(mt));
-    /* Gói NGHỀ CAO dừng ở bậc của Coach, không dừng ở 12. Con số ấy đọc
-       từ chính G.ROLES chứ không gõ ở đây — đổi bậc của Coach trong bảng
-       vai thì chỗ này đổi theo, và không có bản thứ hai để lệch. */
-    if (G.xkBacCoach && r.lv <= G.xkBacCoach()) ds.push(G.goiNgheCao(mt));
+    /* Xin gói NGHỀ CAO cho mọi vai đội ngũ; đây chỉ là danh sách xin.
+       Máy chủ chỉ trả khóa cho R01–R02 hoặc tài khoản có quyền T5-PRO
+       cá nhân còn hạn. */
+    if (r.lv <= 12) ds.push(G.goiNgheCao(mt));
     if (moTang)
       for (var i = 1; i <= tangToiDa; i++) ds.push(G.goiTang(mt, i));
   });
@@ -9619,26 +9608,11 @@ G.VIEWS['quy-trinh-tc'] = function(){
   var o = U.ph({eyebrow:'NHÓM 05 · QUẢN TRỊ', ic:'chart', grad:1, t:'Quy trình tài chính',
     lead:'Ba quy trình chạy suốt vòng đời một gia đình và một người dẫn dắt: tiền vào, tiền trả lại, và tiền trả cho người làm nghề. Cả ba đều có công thức công khai và mốc thời gian cam kết.'});
 
-  /* Thanh toán */
+  /* Thông tin nhận tiền lấy từ API đã xác thực; cấu hình không nằm trong
+     bundle tĩnh. Quản trị R01–R02 có thể cập nhật ngay ở màn này. */
   o += U.sec(T.quyTrinhThu.ten, T.quyTrinhThu.cot);
-  o += '<div class="card glow mb"><div class="row wrap" style="gap:22px;align-items:center">'+
-    '<div style="width:150px;flex:none;background:#fff;border-radius:16px;padding:10px;text-align:center">'+
-    '<img src="'+h(T.taiKhoan.qr)+'" alt="Mã QR chuyển khoản '+h(T.taiKhoan.chuTk)+' · '+h(T.taiKhoan.soTk)+'" '+
-    'style="width:100%;border-radius:10px" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'">'+
-    '<div style="display:none;color:#1B5CB8;font-size:12.5px;padding:24px 6px;line-height:1.5">Chưa thấy ảnh mã QR.<br>Dùng số tài khoản bên cạnh.</div></div>'+
-    '<div class="grow" style="min-width:230px">'+
-    '<div class="up muted">TÀI KHOẢN NHẬN</div>'+
-    '<b style="font-size:18px;display:block;margin:4px 0 2px">'+h(T.taiKhoan.chuTk)+'</b>'+
-    '<b class="mono" style="font-size:21px;color:var(--gold-ink);display:block">'+h(T.taiKhoan.soTk)+'</b>'+
-    '<p class="sm dim mt">'+h(T.taiKhoan.nganHang)+'</p>'+
-    '<div class="mt2" style="padding:11px 13px;border-radius:12px;background:var(--gita-mo-1);border-left:2px solid var(--gold)">'+
-    '<span class="tiny up" style="color:var(--gold-ink)">NỘI DUNG CHUYỂN KHOẢN</span>'+
-    '<p class="mono sm mt">'+h(T.noiDungCk.mau)+'</p>'+
-    '<p class="tiny muted mt">Ví dụ: '+h(T.noiDungCk.vd)+' — '+h(T.noiDungCk.vi)+'</p></div>'+
-    (T.taiKhoan.canQuetThu ? '<p class="tiny mt" style="color:var(--alert);line-height:1.6">'+
-      ic('shield','w-3 h-3')+' '+h(T.taiKhoan.canQuetThu)+'</p>' : '')+
-    '</div></div>'+
-    '<p class="tiny muted mt2">'+h(T.taiKhoan.luuY)+'</p></div>';
+  o += G.ttNhanThe ? G.ttNhanThe(true)
+    : U.empty('Chưa nạp cấu hình thanh toán', 'Tải lại trang để thử lại.', true);
 
   o += '<div class="grid g5 mb">' + T.quyTrinhThu.buoc.map(function(b){
     return '<div class="card pad-sm"><div class="row" style="gap:8px;margin-bottom:6px">'+
@@ -9696,6 +9670,213 @@ G.VIEWS['quy-trinh-tc'] = function(){
     '<p class="tiny muted mt">'+h(L.chuKy)+'</p></div>';
   return o;
 };
+})();
+
+})();
+
+/* ═════════ src/thanh-toan.js ═════════ */
+(function(){
+/* Thông tin nhận chuyển khoản chỉ được nạp theo phiên ở đúng màn cần dùng.
+   QR không nằm trong bundle, localStorage hay kho Pages công khai. */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.VIEWS = G.VIEWS || {};
+
+(function () {
+  var U = G.U, h = U.h;
+
+  G.TT_NHAN = null;
+  G.TT_NHAN_LOADED = false;
+  G.TT_NHAN_LOADING = null;
+  G.TT_NHAN_ERROR = '';
+  G.TT_NHAN_QR_MOI = '';
+  G.TT_NHAN_QR_LOI = '';
+  G.TT_NHAN_EPOCH = 0;
+
+  G.xoaThongTinNhanThanhToan = function () {
+    G.TT_NHAN_EPOCH++;
+    G.TT_NHAN = null;
+    G.TT_NHAN_LOADED = false;
+    G.TT_NHAN_LOADING = null;
+    G.TT_NHAN_ERROR = '';
+    G.TT_NHAN_QR_MOI = '';
+    G.TT_NHAN_QR_LOI = '';
+  };
+
+  G.napThongTinNhanThanhToan = function (force) {
+    if (G.TT_NHAN_LOADING) return G.TT_NHAN_LOADING;
+    if (G.TT_NHAN_LOADED && !force) return Promise.resolve(G.TT_NHAN);
+    if (!G.goiMayChu) {
+      G.TT_NHAN_ERROR = 'Chưa nối được máy chủ cấp phép.';
+      return Promise.reject(new Error(G.TT_NHAN_ERROR));
+    }
+
+    var view = G.S && G.S.view;
+    var epoch = G.TT_NHAN_EPOCH;
+    G.TT_NHAN_ERROR = '';
+    var request = G.goiMayChu('xemThongTinThanhToan', {});
+    G.TT_NHAN_LOADING = request.then(function (d) {
+      if (epoch !== G.TT_NHAN_EPOCH) return null;
+      G.TT_NHAN = d;
+      G.TT_NHAN_LOADED = true;
+      G.TT_NHAN_LOADING = null;
+      if (G.S && G.S.view === view && G.render) G.render();
+      return d;
+    }).catch(function (e) {
+      if (epoch !== G.TT_NHAN_EPOCH) return null;
+      G.TT_NHAN_ERROR = String(e && e.message || 'Không tải được thông tin thanh toán.');
+      G.TT_NHAN_LOADING = null;
+      console.warn('[GITA] Không tải được thông tin nhận thanh toán:', e);
+      if (G.S && G.S.view === view && G.render) G.render();
+      throw e;
+    });
+    return G.TT_NHAN_LOADING;
+  };
+
+  function duLieuMacDinh() {
+    var t = G.THANHTOAN || {};
+    return {
+      nganHang: (t.taiKhoan || {}).nganHang || '',
+      chuTk: (t.taiKhoan || {}).chuTk || '',
+      soTk: (t.taiKhoan || {}).soTk || '',
+      noiDungCk: (t.noiDungCk || {}).mau || ''
+    };
+  }
+
+  function taiKhoan() {
+    return G.TT_NHAN && G.TT_NHAN.configured && G.TT_NHAN.taiKhoan || null;
+  }
+
+  G.ttNhanThe = function (choPhepQuanTri) {
+    if (!G.TT_NHAN_LOADED && !G.TT_NHAN_LOADING)
+      G.napThongTinNhanThanhToan().catch(function () {});
+
+    var role = G.S && G.S.roleObj && G.S.roleObj.id || '';
+    var admin = !!choPhepQuanTri && (role === 'R01' || role === 'R02');
+    var data = taiKhoan();
+    var o = '<div class="card glow mb">';
+    if (data) {
+      o += '<div class="row wrap" style="gap:18px;align-items:center">' +
+        '<div style="width:170px;flex:none;background:#fff;border-radius:16px;padding:10px;text-align:center">' +
+        '<img src="' + h(data.qrDataUrl) + '" alt="QR nhận chuyển khoản" ' +
+        'style="width:100%;border-radius:10px">' +
+        '<div class="tiny muted mt">Quét bằng ứng dụng ngân hàng</div></div>' +
+        '<div class="grow" style="min-width:230px"><div class="tiny up muted">TÀI KHOẢN NHẬN</div>' +
+        '<b style="font-size:18px;display:block;margin:4px 0 2px">' + h(data.chuTk) + '</b>' +
+        '<b class="mono" style="font-size:21px;color:var(--gold-ink);display:block">' +
+        h(data.soTk) + '</b><p class="sm dim mt">' + h(data.nganHang) + '</p>' +
+        (data.noiDungCk ? '<div class="mt2"><span class="tiny up">NỘI DUNG CHUYỂN KHOẢN</span>' +
+          '<p class="mono sm mt">' + h(data.noiDungCk) + '</p></div>' : '') +
+        '</div></div>';
+    } else if (!G.TT_NHAN_LOADED && !G.TT_NHAN_ERROR) {
+      o += '<p class="sm">Đang tải thông tin nhận thanh toán…</p>';
+    } else if (G.TT_NHAN_ERROR) {
+      o += '<b class="sm" style="color:var(--bad)">Chưa tải được thông tin thanh toán</b>' +
+        '<p class="tiny mt">' + h(G.TT_NHAN_ERROR) + '</p>' +
+        '<button class="btn sm mt" onclick="G.thuLaiThongTinNhanThanhToan()">Thử lại</button>';
+    } else if (G.TT_NHAN && G.TT_NHAN.error) {
+      o += '<b class="sm" style="color:var(--bad)">Chưa mở được thông tin thanh toán</b>' +
+        '<p class="tiny mt">' + h(G.TT_NHAN.error) + '</p>';
+    } else {
+      o += '<b class="sm">Thông tin QR chưa được cấu hình</b>' +
+        '<p class="tiny muted mt">Super Admin hoặc Admin hệ thống cần lưu QR nhận tiền trong khu tài chính trước khi khách thanh toán.</p>';
+    }
+    o += '</div>';
+
+    if (admin) {
+      var d = data || duLieuMacDinh();
+      o += '<div class="card mb"><b class="sm">CÀI ĐẶT TÀI KHOẢN NHẬN · CHỈ R01–R02</b>' +
+        '<p class="tiny muted mt">Thông tin và ảnh QR được lưu trong D1, không đưa vào Pages hoặc mã nguồn. Tải lên ảnh QR ngân hàng do bạn cung cấp.</p>' +
+        '<div class="grid g2 mt">' +
+        '<label class="tiny">Ngân hàng<input id="tt-nh" class="input mt" maxlength="100" value="' + h(d.nganHang) + '"></label>' +
+        '<label class="tiny">Chủ tài khoản<input id="tt-chu" class="input mt" maxlength="100" value="' + h(d.chuTk) + '"></label>' +
+        '<label class="tiny">Số tài khoản<input id="tt-so" class="input mt" inputmode="numeric" maxlength="34" value="' + h(d.soTk) + '"></label>' +
+        '<label class="tiny">Nội dung chuyển khoản<input id="tt-noidung" class="input mt" maxlength="200" value="' + h(d.noiDungCk) + '"></label>' +
+        '<label class="tiny">Ảnh QR (JPEG/PNG, tối đa 384 KB)<input id="tt-qr" class="input mt" type="file" accept="image/jpeg,image/png" onchange="G.docAnhQRThanhToan(this)"></label>' +
+        '</div>' +
+        (G.TT_NHAN_QR_MOI ? '<img src="' + h(G.TT_NHAN_QR_MOI) + '" alt="Xem trước QR mới" style="width:180px;margin-top:12px;border-radius:12px">' : '') +
+        (G.TT_NHAN_QR_LOI ? '<p class="tiny mt" style="color:var(--bad)">' + h(G.TT_NHAN_QR_LOI) + '</p>' : '') +
+        '<div class="row mt" style="gap:8px"><button class="btn primary" onclick="G.luuTaiKhoanNhan()">Lưu an toàn</button>' +
+        (data ? '<span class="tiny muted">Đã cấu hình · ' + h(data.capLuc || '') + '</span>' : '') +
+        '</div></div>';
+    }
+    return o;
+  };
+
+  G.thuLaiThongTinNhanThanhToan = function () {
+    G.napThongTinNhanThanhToan(true).catch(function () {});
+  };
+
+  G.docAnhQRThanhToan = function (input) {
+    G.TT_NHAN_QR_LOI = '';
+    G.TT_NHAN_QR_MOI = '';
+    var file = input && input.files && input.files[0];
+    if (!file) return;
+    if (['image/jpeg', 'image/png'].indexOf(file.type) < 0 || file.size > 384000) {
+      G.TT_NHAN_QR_LOI = 'Chỉ nhận ảnh JPEG/PNG tối đa 384 KB.';
+      G.render && G.render();
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function () {
+      G.TT_NHAN_QR_MOI = String(reader.result || '');
+      G.render && G.render();
+    };
+    reader.onerror = function () {
+      G.TT_NHAN_QR_LOI = 'Không đọc được ảnh QR. Hãy chọn lại tệp.';
+      G.render && G.render();
+    };
+    reader.readAsDataURL(file);
+  };
+
+  G.luuTaiKhoanNhan = function () {
+    var lay = function (id) {
+      var x = document.getElementById(id);
+      return x ? String(x.value || '').trim() : '';
+    };
+    var d = taiKhoan() || {};
+    var qrDataUrl = G.TT_NHAN_QR_MOI || d.qrDataUrl || '';
+    var payload = {
+      nganHang: lay('tt-nh'), chuTk: lay('tt-chu'), soTk: lay('tt-so'),
+      noiDungCk: lay('tt-noidung'), qrDataUrl: qrDataUrl
+    };
+    if (!qrDataUrl) {
+      G.TT_NHAN_QR_LOI = 'Cần tải ảnh QR lên trước khi lưu.';
+      G.render && G.render();
+      return;
+    }
+    G.goiMayChu('capNhatThongTinThanhToan', payload).then(function (r) {
+      if (!r || !r.ok) {
+        G.TT_NHAN_QR_LOI = (r && r.error) || 'Máy chủ từ chối lưu thông tin thanh toán.';
+        G.render && G.render();
+        return;
+      }
+      G.TT_NHAN = {ok: true, configured: true, taiKhoan: {
+        nganHang: payload.nganHang, chuTk: payload.chuTk, soTk: payload.soTk,
+        noiDungCk: payload.noiDungCk, qrDataUrl: qrDataUrl, capLuc: r.capLuc
+      }};
+      G.TT_NHAN_LOADED = true;
+      G.TT_NHAN_QR_MOI = '';
+      G.TT_NHAN_QR_LOI = '';
+      G.U.toast('Đã lưu thông tin nhận thanh toán an toàn trong D1.', 'ok');
+      G.render && G.render();
+    }).catch(function (e) {
+      G.TT_NHAN_QR_LOI = String(e && e.message || 'Không kết nối được máy chủ để lưu.');
+      console.warn('[GITA] Không lưu được thông tin nhận thanh toán:', e);
+      G.render && G.render();
+    });
+  };
+
+  G.VIEWS['thanh-toan'] = function () {
+    if (!G.can('pay_view')) return U.lockCard();
+    var o = U.ph({eyebrow: 'HỒ SƠ GIA ĐÌNH · THANH TOÁN', ic: 'chart', grad: 1,
+      t: 'Thanh toán học phí',
+      lead: 'Quét QR bằng ứng dụng ngân hàng, kiểm tra tên người nhận và nội dung trước khi xác nhận.'});
+    o += G.ttNhanThe(false);
+    o += '<div class="card"><b class="sm">LƯU Ý AN TOÀN</b>' +
+      '<p class="tiny mt" style="line-height:1.7">Chỉ chuyển tiền tới thông tin đang hiển thị trong màn này. Không gửi mật khẩu, mã OTP hoặc thông tin đăng nhập. Thanh toán chỉ được ghi nhận sau khi kế toán đối chiếu giao dịch trên sao kê; màn này không tự xác nhận đã thu tiền.</p></div>';
+    return o;
+  };
 })();
 
 })();
@@ -15840,16 +16021,15 @@ G.VIEWS['hoc-phi'] = function(){
       '</div>';
   });
 
-  /* Quy trình thu — lấy thẳng từ G.THANHTOAN đã có sẵn trong kho */
+  /* Quy trình thu — giữ hướng dẫn, còn thông tin nhận tiền chỉ lấy từ D1 */
   var TT = G.THANHTOAN;
   if(TT){
     o += U.sec('THU TIỀN VÀO ĐÂU, GHI NỘI DUNG THẾ NÀO',
       'Tiền vào phải khớp được một gia đình, một tầng, một kỳ. Sai mẫu là phải dò tay, và dò tay là chỗ sinh sai sót.');
     o += '<div class="grid g2 mb" style="gap:10px">'+
-      '<div class="card pad-sm"><div class="tiny up muted mb">TÀI KHOẢN NHẬN</div>'+
-      '<p class="sm"><b>'+h(TT.taiKhoan.chuTk)+'</b></p>'+
-      '<p class="sm mono">'+h(TT.taiKhoan.soTk)+'</p>'+
-      '<p class="tiny muted">'+h(TT.taiKhoan.nganHang)+'</p></div>'+
+      '<div class="card pad-sm"><div class="tiny up muted mb">QR VÀ TÀI KHOẢN NHẬN</div>'+
+      '<p class="tiny">Không dùng thông tin sao chép từ tài liệu cũ. Mở mục '+
+      '<b>Thanh toán học phí</b> để xem cấu hình hiện hành từ máy chủ.</p></div>'+
       '<div class="card pad-sm"><div class="tiny up muted mb">MẪU NỘI DUNG CHUYỂN KHOẢN</div>'+
       '<p class="sm mono">'+h(TT.noiDungCk.mau)+'</p>'+
       '<p class="tiny" style="color:var(--gold-ink)">Ví dụ: '+h(TT.noiDungCk.vd)+'</p>'+
@@ -42119,9 +42299,10 @@ G.VIEWS = G.VIEWS || {};
 
    ══ CHỖ BẢN MẪU ĐÚNG VÀ KHÔNG ĐƯỢC "CẢI TIẾN" ══
 
-   **Giọng chỉ đến từ micro người thật hoặc tệp có sẵn.** Không một
-   dòng sinh giọng nào. Đó là luật C20 giữ nguyên, và nó là chỗ dễ bị
-   sửa nhất ở bản sau — nên nó có một phép đo riêng ở mục 103.
+   **Không gọi dịch vụ tạo giọng/ảnh/video bên ngoài.** Giọng đến từ
+   micro người thật hoặc tệp có sẵn. Hình tham chiếu, phối cảnh, màu phim
+   và nhạc được xử lý cục bộ; ảnh tĩnh không được quảng bá là MC 3D biết
+   nói hay biểu cảm thật.
    ═══════════════════════════════════════════════════════════════ */
 'use strict';
 var G = window.G || {}; window.G = G;
@@ -42148,7 +42329,23 @@ G.VIEWS = G.VIEWS || {};
     nguon: 'KS-04 · Triết lý Một Điều Nhỏ',
     canh: []
   };
+  var mcMacDinh = {
+    hinh: 'mc-gita-mau', sacThai: 'than-thien', mayQuay: 'dolly',
+    mauPhim: 'dien-anh', viTri: 'phai', nhacNen: '', amLuongNhac: 0.18,
+    amLuongGiong: 1
+  };
+  G.xuDA.mc = G.xuDA.mc || {};
+  Object.keys(mcMacDinh).forEach(function (k) {
+    if (G.xuDA.mc[k] == null) G.xuDA.mc[k] = mcMacDinh[k];
+  });
   G.xuVat = G.xuVat || {};       // mã → {ma,ten,loai,url,el,buffer}
+  if (typeof Image !== 'undefined' && !G.xuVat['mc-gita-mau']) {
+    var anhMC = new Image();
+    G.xuVat['mc-gita-mau'] = {ma: 'mc-gita-mau', ten: 'MC GITA · ảnh tham chiếu',
+      loai: 'hinh', el: anhMC, mau: true};
+    anhMC.onload = function () { veLai(); };
+    anhMC.src = 'assets/anh/gita-mc-tham-chieu.png';
+  }
   G.xuSoat = G.xuSoat || null;   // kết quả cửa soatNoiDung
   G.xuDangSoat = false;
   G.xuGiuLai = '';               // lời khai lúc bấm Dừng khẩn
@@ -42181,7 +42378,8 @@ G.VIEWS = G.VIEWS || {};
   function moiCanh(vai, giay, dem) {
     var x = lay(vai, dem);
     return {id: ma('c'), vai: vai, giay: giay,
-      loi: x.loi, chuMan: x.chu, hinh: x.hinh, vatHinh: '', vatTieng: ''};
+      loi: x.loi, chuMan: x.chu, hinh: x.hinh, vatHinh: '', vatTieng: '',
+      sacThai: 'than-thien'};
   }
 
   G.xuViet = function () {
@@ -42230,12 +42428,20 @@ G.VIEWS = G.VIEWS || {};
     if (!c) return;
     c[o] = (o === 'giay') ? Math.max(1, Math.min(60, +gt || 1)) : gt;
     if (o === 'loi') G.xuSoat = null;
-    if (o === 'giay' || o === 'vatHinh') G.xuVe(G.xuDongHo);
+    if (o === 'giay' || o === 'vatHinh' || o === 'sacThai') G.xuVe(G.xuDongHo);
     G.xuTomTat();
   };
   G.xuSuaO = function (o, gt) {
     G.xuDA[o] = gt;
     if (o === 'kho') G.xuCoManh();
+    veLai();
+  };
+  G.xuSuaMC = function (o, gt) {
+    if (['hinh', 'sacThai', 'mayQuay', 'mauPhim', 'viTri', 'nhacNen',
+      'amLuongNhac', 'amLuongGiong'].indexOf(o) < 0) return;
+    G.xuDA.mc[o] = (o === 'amLuongNhac' || o === 'amLuongGiong')
+      ? Math.max(0, Math.min(1, +gt || 0)) : gt;
+    G.xuVe(G.xuDongHo);
     veLai();
   };
 
@@ -42317,6 +42523,13 @@ G.VIEWS = G.VIEWS || {};
         : 'Chưa có giọng — video xuất ra sẽ im tiếng. Xưởng KHÔNG sinh giọng: luật C20 ' +
           'nói máy TRỘN, không SINH.'});
 
+    var mc = G.xuDA.mc || {}, anhMC = G.xuVat[mc.hinh];
+    var anhMCsanSang = anhMC && anhMC.loai === 'hinh' && anhMC.el &&
+      (anhMC.el.width || anhMC.el.naturalWidth);
+    o.push({tt: anhMCsanSang ? 'ok' : 'warn', t: 'Ảnh tham chiếu MC',
+      ref: 'ST-MC', n: anhMC ? 'Ảnh chỉ được dùng làm lớp tham chiếu cục bộ, không biến thành hoạt ảnh khuôn mặt.'
+        : 'Chưa chọn ảnh MC. Có thể dùng ảnh mẫu hoặc tệp ảnh chọn ngay trên thiết bị.'});
+
     o.push({tt: 'nguoi', t: 'Chất ấm — nghe có như người quen nói không', ref: 'LT_AM.WS-3',
       n: 'Một người nghe hết rồi ký tên, và người ấy không được là người dựng. Máy chấm ' +
         'được từ ngữ và nhịp câu; nó KHÔNG chấm được câu này, và câu trả lời của máy cho ' +
@@ -42326,15 +42539,17 @@ G.VIEWS = G.VIEWS || {};
       n: G.xuGiuLai});
     return o;
   }
-  function congMo() {
-    return !den().some(function (l) { return l.tt === 'bad'; });
-  }
-
   /* ══ VẼ 1080p ══ */
   G.xuDongHo = 0;
   function khung() {
     var k = KHO_HINH().filter(function (x) { return x.ma === G.xuDA.kho; })[0];
     return (k && k.r) || [1080, 1920];
+  }
+  function boLocMau(mau) {
+    return mau === 'am' ? 'sepia(.16) saturate(1.12)'
+      : mau === 'lanh' ? 'saturate(.86) hue-rotate(8deg)'
+        : mau === 'trang-den' ? 'grayscale(1) contrast(1.08)'
+          : mau === 'song-dong' ? 'saturate(1.18) contrast(1.04)' : 'contrast(1.05) saturate(1.04)';
   }
   G.xuCoManh = function () {
     var cv = document.getElementById('xu-man'); if (!cv) return;
@@ -42369,8 +42584,30 @@ G.VIEWS = G.VIEWS || {};
     var c = cur.c, p = (cur.b - cur.a) ? (giay - cur.a) / (cur.b - cur.a) : 0;
 
     var v = G.xuVat[c.vatHinh];
-    if (v && v.loai === 'hinh' && v.el) phu(ct, v.el, W, H, 1.06 + 0.08 * p);
+    var mc = G.xuDA.mc || {};
+    var mayQuay = mc.mayQuay || 'dolly';
+    var doLech = (giay - cur.a) * 0.7;
+    var tiLe = mayQuay === 'tinh' ? 1.03
+      : mayQuay === 'orbit' ? 1.12
+        : mayQuay === 'troi' ? 1.09 : 1.06 + 0.08 * p;
+    var panX = mayQuay === 'orbit' ? Math.sin(doLech) * W * 0.012
+      : mayQuay === 'troi' ? Math.sin(doLech * 0.45) * W * 0.008 : 0;
+    var panY = mayQuay === 'troi' ? Math.cos(doLech * 0.5) * H * 0.008 : 0;
+    ct.save();
+    if ('filter' in ct) ct.filter = boLocMau(mc.mauPhim);
+    if (v && v.loai === 'hinh' && v.el) phu(ct, v.el, W, H, tiLe, panX, panY);
     else nenDen(ct, W, H, cur.i, p);
+    ct.restore();
+
+    if (cur.i > 0 && p < 0.5) {
+      var truoc = G.xuVat[G.xuDA.canh[cur.i - 1].vatHinh];
+      if (truoc && truoc.loai === 'hinh' && truoc.el) {
+        ct.save(); ct.globalAlpha = 1 - p / 0.5;
+        phu(ct, truoc.el, W, H, tiLe, -panX, -panY);
+        ct.restore();
+      }
+    }
+    veMC(ct, mc, W, H, u, c.sacThai);
 
     var g = ct.createLinearGradient(0, H * 0.45, 0, H);
     g.addColorStop(0, 'rgba(6,8,12,0)'); g.addColorStop(1, 'rgba(6,8,12,.82)');
@@ -42383,6 +42620,7 @@ G.VIEWS = G.VIEWS || {};
       ct.globalAlpha = 1;
     }
     if (c.loi) karaoke(ct, c, giay - cur.a, W, H, u);
+    if (mc.mauPhim === 'dien-anh') veKhungDienAnh(ct, W, H);
 
     ct.fillStyle = 'rgba(255,255,255,.14)'; ct.fillRect(0, 0, W, 6 * u);
     ct.fillStyle = '#E8A33C'; ct.fillRect(0, 0, W * (giay / t), 6 * u);
@@ -42401,11 +42639,42 @@ G.VIEWS = G.VIEWS || {};
     g.addColorStop(1, '#0B0E15');
     ct.fillStyle = g; ct.fillRect(0, 0, W, H);
   }
-  function phu(ct, el, W, H, ti) {
+  function phu(ct, el, W, H, ti, panX, panY) {
     var iw = el.width || el.naturalWidth, ih = el.height || el.naturalHeight;
     if (!iw || !ih) return;
+    panX = +panX || 0; panY = +panY || 0;
     var r = Math.max(W / iw, H / ih) * ti, w = iw * r, hh = ih * r;
-    ct.drawImage(el, (W - w) / 2, (H - hh) / 2, w, hh);
+    ct.drawImage(el, (W - w) / 2 + panX, (H - hh) / 2 + panY, w, hh);
+  }
+  function veMC(ct, mc, W, H, u, sacThaiCanh) {
+    var v = G.xuVat[mc.hinh], el = v && v.el;
+    if (!el || v.loai !== 'hinh' || !(el.width || el.naturalWidth)) return;
+    var iw = el.width || el.naturalWidth, ih = el.height || el.naturalHeight;
+    var bw = W * 0.31, bh = H * 0.40, pad = 10 * u;
+    var x = mc.viTri === 'trai' ? W * 0.045 : W - bw - W * 0.045;
+    var y = H * 0.075;
+    ct.save();
+    ct.shadowColor = 'rgba(0,0,0,.55)'; ct.shadowBlur = 28 * u;
+    ct.fillStyle = 'rgba(7,18,39,.78)'; ct.fillRect(x, y, bw, bh);
+    ct.shadowBlur = 0;
+    if ('filter' in ct) ct.filter = boLocMau(mc.mauPhim);
+    var r = Math.min((bw - pad * 2) / iw, (bh - pad * 2) / ih);
+    var w = iw * r, h = ih * r;
+    ct.drawImage(el, x + (bw - w) / 2, y + (bh - h) / 2, w, h);
+    if ('filter' in ct) ct.filter = 'none';
+    ct.strokeStyle = 'rgba(255,255,255,.78)'; ct.lineWidth = 2 * u;
+    ct.strokeRect(x, y, bw, bh);
+    ct.fillStyle = 'rgba(5,14,28,.82)'; ct.fillRect(x, y + bh - 46 * u, bw, 46 * u);
+    ct.fillStyle = '#FFFFFF'; ct.textAlign = 'left';
+    ct.font = '700 ' + (22 * u) + 'px sans-serif';
+    ct.fillText('MC GITA · ' + String(sacThaiCanh || mc.sacThai || 'than-thien').replace(/-/g, ' ').toUpperCase(),
+      x + 12 * u, y + bh - 16 * u, bw - 24 * u);
+    ct.restore();
+  }
+  function veKhungDienAnh(ct, W, H) {
+    ct.fillStyle = 'rgba(0,0,0,.48)';
+    ct.fillRect(0, 0, W, H * 0.025);
+    ct.fillRect(0, H * 0.975, W, H * 0.025);
   }
   function xuong(ct, chu, x, y, rong, co, dam) {
     ct.font = dam + ' ' + co + 'px sans-serif';
@@ -42449,11 +42718,25 @@ G.VIEWS = G.VIEWS || {};
     (G.xuDA.canh || []).forEach(function (c) {
       var v = G.xuVat[c.vatTieng];
       if (v && v.buffer) {
-        var n = a.createBufferSource(); n.buffer = v.buffer;
-        n.connect(dich); n.start(t0 + at); nut.push(n);
+        var n = a.createBufferSource(), gain = a.createGain();
+        var pan = a.createStereoPanner ? a.createStereoPanner() : null;
+        n.buffer = v.buffer; gain.gain.value = G.xuDA.mc.amLuongGiong;
+        n.connect(gain);
+        if (pan) {
+          pan.pan.value = G.xuDA.mc.viTri === 'trai' ? -0.18 : 0.18;
+          gain.connect(pan); pan.connect(dich);
+        } else gain.connect(dich);
+        n.start(t0 + at); nut.push(n);
       }
       at += (+c.giay || 0);
     });
+    var nhac = G.xuVat[G.xuDA.mc.nhacNen];
+    if (nhac && nhac.buffer) {
+      var nen = a.createBufferSource(), am = a.createGain();
+      nen.buffer = nhac.buffer; nen.loop = true;
+      am.gain.value = G.xuDA.mc.amLuongNhac;
+      nen.connect(am); am.connect(dich); nen.start(t0); nut.push(nen);
+    }
   }
   function dungTieng() { nut.forEach(function (n) { try { n.stop(); } catch (e) {} }); nut = []; }
 
@@ -42517,7 +42800,7 @@ G.VIEWS = G.VIEWS || {};
         /* Tệp PHIM cần một địa chỉ để `<video src>` bám vào, và địa chỉ
            ấy là thứ bị cấm. Nói ra thay vì im: một tệp lặng lẽ bị bỏ
            qua thì người dùng tưởng mình đã gắn được. */
-        U.toast('Xưởng web nhận ảnh và tiếng. Tệp phim dựng ở tools/bo-phim.js.', 'ok');
+        U.toast('Studio hiện nhận ảnh và âm thanh cục bộ; chưa nhận hoặc kết xuất tệp phim.', 'err');
         het();
       }
     });
@@ -42552,41 +42835,6 @@ G.VIEWS = G.VIEWS || {};
     });
   };
 
-  /* ══ GỬI ĐỀ BÀI SANG XƯỞNG DỰNG ══
-
-     KHÔNG có một đường tải tệp nào trong tệp này, và đó KHÔNG phải một
-     chỗ thiếu — nó là luật của chủ hệ, canh cứng ở mục 8 và mục 18:
-     `src/` không được có `a.download`, không được có `createObjectURL`,
-     không được có `showSaveFilePicker`.
-
-     Bản mẫu xuất thẳng WebM bằng `MediaRecorder` rồi bấm một thẻ `<a
-     download>`. Bộ kiểm bắt ngay, và nó bắt ĐÚNG: một màn xuất tệp là
-     một đường vòng quanh mọi cổng khác, và nó không hỏi người bấm là ai.
-
-     Câu trả lời đúng đã nằm sẵn trong kho từ lâu — `tools/dung-phim.js`
-     và `tools/bo-phim.js` dựng phim ngoài trình duyệt, có ffmpeg, và
-     có luật C19 buộc dựng từ tấm ĐÃ PHÁT HÀNH. Xưởng web làm phần nó
-     làm tốt: viết kịch bản, xem thử ở đúng khổ, soát đèn. Rồi đề bài
-     đi qua MÁY CHỦ sang bộ dựng — không qua một tệp nằm trên máy ai đó.
-
-     Kéo theo, và đây là phần đáng giữ: đề bài đi qua cửa thì nó vào
-     nhật ký. Một tệp tải về thì không. */
-  G.xuGuiDeBai = function () {
-    if (!congMo()) { U.toast('Còn đèn đỏ — cổng gửi đóng.', 'err'); return; }
-    if (!G.goiMayChu) return;
-    G.goiMayChu('ghiDeBaiVideo', {
-      ten: G.xuDA.ten, kho: G.xuDA.kho, tang: G.xuDA.tang, nguon: G.xuDA.nguon,
-      dieuNho: G.xuDA.dieuNho, khuon: G.xuDA.khuon, giay: tong(),
-      canh: (G.xuDA.canh || []).map(function (c) {
-        return {vai: c.vai, giay: +c.giay || 0, loi: c.loi, chuMan: c.chuMan, hinh: c.hinh};
-      })
-    }).then(function (x) {
-      U.toast((x && x.ok)
-        ? 'Đã gửi đề bài ' + x.ma + ' — dựng bằng: node tools/dung-phim.js'
-        : String((x && x.vi) || 'Cửa đề bài từ chối.'), (x && x.ok) ? 'ok' : 'err');
-    }).catch(function (e) { U.toast(String(e && e.message || e), 'err'); });
-  };
-
   /* ══ MÀN ══ */
   function oChon(o, gt, ds) {
     return '<select onchange="G.xuSuaO(\'' + o + '\',this.value)">' + ds.map(function (x) {
@@ -42606,6 +42854,13 @@ G.VIEWS = G.VIEWS || {};
       '" oninput="G.xuSuaCanh(\'' + h(c.id) + '\',\'chuMan\',this.value)"></label>';
     o += '<label>Giây <input type="number" min="1" max="60" step="0.5" value="' +
       h(String(c.giay)) + '" oninput="G.xuSuaCanh(\'' + h(c.id) + '\',\'giay\',this.value)"></label>';
+    o += '<label>Chỉ đạo biểu cảm <select onchange="G.xuSuaCanh(\'' + h(c.id) +
+      '\',\'sacThai\',this.value)">' +
+      [['than-thien','Thân thiện'],['vui-tuoi','Vui tươi'],['dong-cam','Đồng cảm'],
+        ['suy-tu','Suy tư'],['nghiem-tuc','Nghiêm túc'],['khich-le','Khích lệ']]
+        .map(function (x) { return '<option value="' + x[0] + '"' +
+          ((c.sacThai || 'than-thien') === x[0] ? ' selected' : '') + '>' + x[1] + '</option>'; }).join('') +
+      '</select></label>';
     o += '<label>Hình <select onchange="G.xuSuaCanh(\'' + h(c.id) + '\',\'vatHinh\',this.value)">' +
       '<option value="">— nền ánh đèn —</option>' + vHinh.map(function (k) {
         return '<option value="' + h(k) + '"' + (k === c.vatHinh ? ' selected' : '') + '>' +
@@ -42634,21 +42889,18 @@ G.VIEWS = G.VIEWS || {};
   G.VIEWS['studio'] = function () {
     var o = '<div class="hd"><h2>' + ic('spark') + ' GITA Studio · Xưởng dựng video</h2>' +
       '<p class="sub">Kịch bản sinh tại chỗ từ Ngân khố câu, hình dựng bằng canvas 1080p, ' +
-      'giọng lấy từ micro người thật hoặc tệp có sẵn, video xuất thẳng trong trình duyệt. ' +
-      'Tệp nằm trong máy anh — không lượt tải lên nào.</p></div>';
+      'MC tham chiếu, chuyển động máy quay, màu phim và phối nhạc xử lý ngay trên thiết bị. ' +
+      'Ảnh, giọng và nhạc không tải lên máy chủ hay dịch vụ ngoài.</p></div>';
 
     /* Một chỗ chặn duy nhất, TRƯỚC mọi ngăn. Vai không có gói nghề thì
        kho không bao giờ nạp, và mọi ngăn sẽ dựng ra khung rỗng — mà
        một khung rỗng đọc ra là "chỗ này chưa làm xong", không đọc ra
        là "vai của bạn không mở được" (bài học 9.99.63). */
     if (!(G.XU_NGANKHO || []).length) {
-      return o + U.empty('Xưởng dựng video thuộc gói nghề',
-        'Màn này là công cụ sản xuất của Học viện: nó xuất tệp video, tệp phụ đề và hộ ' +
-        'chiếu video ra máy người dùng, nên nó chỉ mở cho người của Học viện đã đăng ' +
-        'nhập bằng tài khoản nghề. Gia đình xem video đã phát hành ở kênh, không dựng ' +
-        'video trong hệ — và đó là một quyết định về bảo mật, không phải một chỗ chưa ' +
-        'làm xong. Ngân khố câu, năm khuôn kịch bản và tám đèn kiểm định đều nằm trong ' +
-        'gói nghề, nên với vai này màn không có gì để dựng.');
+      return o + U.empty('Xưởng Studio dành cho tài khoản được cấp quyền',
+        'Màn sản xuất nội bộ chỉ mở khi phiên có gói nghề tương ứng. Nội dung dựng, hình ' +
+        'tham chiếu và âm thanh được xử lý tại thiết bị; quyền xem không đồng nghĩa với ' +
+        'quyền phát hành video.');
     }
 
     /* Bọc phần điều khiển trong .man-xu để nới vùng chạm ĐÚNG Ở ĐÂY,
@@ -42682,8 +42934,52 @@ G.VIEWS = G.VIEWS || {};
     o += '<p class="note">Bộ viết chạy ngay trong máy, không gọi mạng. Ngân khố câu nằm ' +
       'trong kho nghề nên người viết nội dung sửa được mà không phải sửa mã.</p></div>';
 
-    /* 2 · Màn xem thử */
-    o += '<div class="giay"><h3>2 · Xem thử</h3>' +
+    /* 2 · MC và đạo diễn hình ảnh — tài liệu tham chiếu chỉ xử lý tại máy. */
+    var hinhMC = Object.keys(G.xuVat).filter(function (k) {
+      return G.xuVat[k].loai === 'hinh';
+    });
+    var amNhac = Object.keys(G.xuVat).filter(function (k) {
+      return G.xuVat[k].loai === 'tieng';
+    });
+    var mc = G.xuDA.mc;
+    o += '<div class="giay xu-mc"><h3>2 · MC &amp; đạo diễn hình ảnh</h3>' +
+      '<div class="row"><label>Ảnh MC tham chiếu <select onchange="G.xuSuaMC(\'hinh\',this.value)">' +
+      '<option value="">— không chèn MC —</option>' + hinhMC.map(function (k) {
+        return '<option value="' + h(k) + '"' + (k === mc.hinh ? ' selected' : '') + '>' +
+          h(G.xuVat[k].ten) + '</option>';
+      }).join('') + '</select></label>' +
+      '<label>Vị trí MC <select onchange="G.xuSuaMC(\'viTri\',this.value)">' +
+      '<option value="phai"' + (mc.viTri === 'phai' ? ' selected' : '') + '>Phải</option>' +
+      '<option value="trai"' + (mc.viTri === 'trai' ? ' selected' : '') + '>Trái</option></select></label>' +
+      '<label>Sắc thái dẫn chuyện <select onchange="G.xuSuaMC(\'sacThai\',this.value)">' +
+      [['than-thien','Thân thiện'],['truyen-cam-hung','Truyền cảm hứng'],['binh-tinh','Bình tĩnh'],['nghiem-tuc','Nghiêm túc']]
+        .map(function (x) { return '<option value="' + x[0] + '"' +
+          (mc.sacThai === x[0] ? ' selected' : '') + '>' + x[1] + '</option>'; }).join('') +
+      '</select></label></div>' +
+      '<div class="row"><label>Chuyển động máy quay <select onchange="G.xuSuaMC(\'mayQuay\',this.value)">' +
+      [['dolly','Dolly-in nhẹ'],['orbit','Trôi vòng cung'],['troi','Trôi mềm'],['tinh','Khung tĩnh']]
+        .map(function (x) { return '<option value="' + x[0] + '"' +
+          (mc.mayQuay === x[0] ? ' selected' : '') + '>' + x[1] + '</option>'; }).join('') +
+      '</select></label><label>Màu phim <select onchange="G.xuSuaMC(\'mauPhim\',this.value)">' +
+      [['dien-anh','Điện ảnh'],['am','Ấm'],['lanh','Lạnh'],['song-dong','Sống động'],['trang-den','Trắng đen']]
+        .map(function (x) { return '<option value="' + x[0] + '"' +
+          (mc.mauPhim === x[0] ? ' selected' : '') + '>' + x[1] + '</option>'; }).join('') +
+      '</select></label><label>Nhạc nền cục bộ <select onchange="G.xuSuaMC(\'nhacNen\',this.value)">' +
+      '<option value="">— không nhạc —</option>' + amNhac.map(function (k) {
+        return '<option value="' + h(k) + '"' + (k === mc.nhacNen ? ' selected' : '') + '>' +
+          h(G.xuVat[k].ten) + '</option>';
+      }).join('') + '</select></label></div>' +
+      '<div class="row"><label>Âm lượng giọng <input type="range" min="0" max="1" step="0.05" value="' +
+      h(String(mc.amLuongGiong)) + '" onchange="G.xuSuaMC(\'amLuongGiong\',this.value)"></label>' +
+      '<label>Âm lượng nhạc <input type="range" min="0" max="0.6" step="0.02" value="' +
+      h(String(mc.amLuongNhac)) + '" onchange="G.xuSuaMC(\'amLuongNhac\',this.value)"></label></div>' +
+      '<p class="note">MC hiện là ảnh tĩnh trong khung giới thiệu; sắc thái từng cảnh chỉ là chỉ đạo nội dung, ' +
+      'không làm biến đổi nét mặt. Máy quay tác động lên cảnh nền. Giọng dùng micro hoặc tệp thu sẵn; ' +
+      'bộ dựng không tạo bản sao giọng AI. ' +
+      'Âm thanh stereo được đặt nhẹ theo vị trí MC; đây không phải âm thanh 4D/5D.</p></div>';
+
+    /* 3 · Màn xem thử */
+    o += '<div class="giay"><h3>3 · Xem thử</h3>' +
       '<canvas id="xu-man" class="xu-man" width="1080" height="1920"></canvas>';
     o += '<div class="row"><button class="btn btn-chinh" onclick="G.xuXem()">Xem thử</button>' +
       '<button class="btn" onclick="G.xuDung()">Tạm dừng</button>' +
@@ -42692,16 +42988,12 @@ G.VIEWS = G.VIEWS || {};
       '<span class="note" id="xu-gio">0.0 / ' + tong().toFixed(1) + 's</span></div>';
     o += '<input type="range" min="0" max="100" step="0.1" value="0" class="xu-tua" ' +
       'aria-label="Tua video" oninput="G.xuTua(this.value)">';
-    o += '<div class="row"><button class="btn btn-chinh" onclick="G.xuGuiDeBai()"' +
-      (congMo() ? '' : ' disabled') + '>' +
-      (congMo() ? 'Gửi đề bài dựng video' : 'Chưa đủ đèn để gửi') + '</button></div>';
-    o += '<p class="note" id="xu-tt">Xưởng <b>không xuất video ở trình duyệt</b> (khách không tải ' +
-      'dữ liệu — luật 9.99.94). Bấm gửi thì đề bài đi qua <b>cửa máy chủ</b> vào nhật ký, rồi ' +
-      'dựng bằng <code>node tools/dung-phim.js</code> từ tấm ĐÃ phát hành (luật C19), lời đọc là ' +
-      'tệp có sẵn (luật C20). "Xem thử" ở trên chạy tại chỗ để soi trước, không tạo tệp.</p></div>';
+    o += '<p class="note" id="xu-tt">Đây là bản xem trước 2.5D dựng tại thiết bị; chưa phải nhân vật 3D ' +
+      'biểu cảm thật, phim 4D/5D hay tệp video hoàn chỉnh. Hiện hệ thống chưa có renderer nội bộ ' +
+      'để kết xuất phim. Hình, giọng và nhạc không được gửi đi; không có nút xuất giả.</p></div>';
 
     /* 3 · Kịch bản */
-    o += '<div class="giay"><h3>3 · Kịch bản</h3>';
+    o += '<div class="giay"><h3>4 · Kịch bản</h3>';
     var a = 0;
     o += (G.xuDA.canh || []).map(function (c, i) {
       var s = veCanh(c, i, a); a += (+c.giay || 0); return s;
@@ -42711,7 +43003,7 @@ G.VIEWS = G.VIEWS || {};
       phut(tong()) + ' · đích ' + phut(+G.xuDA.dich || 0) + '</span></div></div>';
 
     /* 4 · Kho vật liệu */
-    o += '<div class="giay"><h3>4 · Kho hình &amp; tiếng</h3>' +
+    o += '<div class="giay"><h3>5 · Kho hình &amp; tiếng</h3>' +
       '<input type="file" multiple accept="image/*,video/*,audio/*" ' +
       'onchange="G.xuNhanTep(this.files)" aria-label="Chọn ảnh, video hoặc tiếng">';
     var ks = Object.keys(G.xuVat);
@@ -42721,7 +43013,7 @@ G.VIEWS = G.VIEWS || {};
       '</p></div>';
 
     /* 5 · Đèn */
-    o += '<div class="giay"><h3>5 · Đèn kiểm định</h3>' +
+    o += '<div class="giay"><h3>6 · Đèn kiểm định</h3>' +
       '<p class="note">Một đèn đỏ là cổng xuất đóng — cổng cứng, không có “xuất tạm” ' +
       '(LT_RM.RM-1). Hai đèn đầu <b>không đo ở đây</b>: chúng hỏi cửa <code>soatNoiDung</code>, ' +
       'vì hai bảng dấu hiệu lệch nhau thì cả hai đều xanh trên hai thứ khác nhau.</p>';
@@ -42732,11 +43024,10 @@ G.VIEWS = G.VIEWS || {};
     }).join('') + '</ul></div>';
 
     /* 6 · Xuất kèm */
-    o += '<div class="giay"><h3>6 · Xuất kèm</h3>' +
-      '<p class="note">Phụ đề (.srt) và <b>hộ chiếu video</b> do bộ dựng ở máy chủ sinh ra cùng ' +
-      'lúc dựng phim (<code>node tools/dung-phim.js</code>), <b>không dựng ở trình duyệt</b>: hộ ' +
-      'chiếu phải vào nhật ký thì mới truy được về sau, và một hộ chiếu dựng ở trình duyệt là ' +
-      'một tờ giấy tự ký. Gửi đề bài ở bước 2 là đủ — máy chủ lo phần còn lại.</p></div>';
+    o += '<div class="giay"><h3>7 · Xuất phim</h3>' +
+      '<p class="note">Kết xuất video, phụ đề và hộ chiếu phát hành chưa được nối với renderer ' +
+      'nội bộ. Không gửi ảnh/giọng lên dịch vụ ngoài; bản xem trước chỉ giúp kiểm tra kịch bản, ' +
+      'khung hình, chuyển động và phối âm.</p></div>';
 
     setTimeout(function () { G.xuCoManh(); }, 0);
     return o + '</div>';
@@ -54500,6 +54791,10 @@ G.vaiCo = function(vai, perm){
   if(!vai) return false;
   var r = (typeof vai === 'string') ? G.roleById(vai) : vai;
   if(!r) return false;
+  /* Màn nhận thanh toán chỉ dành cho quản trị/tài chính và khách hàng.
+     Đây là danh sách vai cố định, không mở rộng bằng quyền ghi đè chung. */
+  if(perm==='pay_view')
+    return ['R01','R02','R03','R04','R13','R14'].indexOf(r.id) >= 0;
   var ov = G.PHANQUYEN[r.id];
   if(ov){
     if(ov.cam.indexOf(perm) >= 0) return false;
@@ -54510,6 +54805,14 @@ G.vaiCo = function(vai, perm){
 };
 
 G.can = function(perm){
+  /* T5-PRO cấp theo tài khoản ở máy chủ, không theo bậc vai hay bảng
+     PHANQUYEN dùng chung. Chỉ nhận quyền cá nhân sau khi gói đã được máy
+     chủ cấp và giải mã trong phiên này. */
+  if(perm==='pro_gia_nghiep'){
+    var lvT5 = G.S && G.S.roleObj && G.S.roleObj.lv;
+    return lvT5 <= 2 || !!(G.KHO && G.KHO.daNap &&
+      G.KHO.daNap.indexOf('nghe-cao') >= 0);
+  }
   /* Quyền CRM cấp theo NGƯỜI (dòng quyenCRM ở máy chủ), không theo vai —
      nên một bộ phận được cấp bật crm_view qua G.S.crmMuc, dù bậc vai của
      họ nằm ngoài lv≤3 mặc định. Máy chủ vẫn gác mọi thao tác (mucCua ở
@@ -54911,6 +55214,7 @@ function vaoPhien(a){
      lại qua lượt đăng nhập sau là vai mới gõ "còn nữa" mở tiếp kho
      của vai cũ. */
   if (G.tlQuenNgu) G.tlQuenNgu();
+  if (G.xoaThongTinNhanThanhToan) G.xoaThongTinNhanThanhToan();
 
   G.S.acc = a; G.S.role = a.role; G.S.roleObj = G.roleById(a.role);
   G.S.crmMuc = a.crmMuc || null;   /* mức CRM được cấp — bật mục CRM cho bộ phận được cấp */
@@ -55483,6 +55787,9 @@ G.go = function(v){
   if(!G.manCoThat(v)) return;
   if(!G.allowed(v)){ U.toast(G.L('lock'),'err'); return; }
   if(G.isCanh && G.isCanh(v) && G.throttled && G.throttled()) return;
+  if(['thanh-toan','quy-trinh-tc'].indexOf(G.S.view) >= 0 &&
+      ['thanh-toan','quy-trinh-tc'].indexOf(v) < 0 &&
+      G.xoaThongTinNhanThanhToan) G.xoaThongTinNhanThanhToan();
   G.S.view = v;
   /* Con đường: mở bằng đường thường (menu) thì xoá trạng thái "vào từ
      phòng" còn sót; mở từ một phòng (cdMoTheoChang) thì giữ. Đặt ở G.go
@@ -56153,6 +56460,7 @@ window.addEventListener('hashchange', function(){
 
    Gõ thêm #dangnhap vào cuối địa chỉ là về được, dù đang kẹt ở đâu. */
 G.raNgoai = function(){
+  if(G.xoaThongTinNhanThanhToan) G.xoaThongTinNhanThanhToan();
   G.dangXuatMayChu();
   G.S.acc = null; G.S.role = null; G.S.roleObj = null; G.S.crmMuc = null; G.nkData = null; G.dpGiamSat = null;
   if(G.donKho) G.donKho();          /* nội dung đã giải mã không ở lại trong bộ nhớ */

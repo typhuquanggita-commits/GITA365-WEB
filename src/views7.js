@@ -487,26 +487,11 @@ G.VIEWS['quy-trinh-tc'] = function(){
   var o = U.ph({eyebrow:'NHÓM 05 · QUẢN TRỊ', ic:'chart', grad:1, t:'Quy trình tài chính',
     lead:'Ba quy trình chạy suốt vòng đời một gia đình và một người dẫn dắt: tiền vào, tiền trả lại, và tiền trả cho người làm nghề. Cả ba đều có công thức công khai và mốc thời gian cam kết.'});
 
-  /* Thanh toán */
+  /* Thông tin nhận tiền lấy từ API đã xác thực; cấu hình không nằm trong
+     bundle tĩnh. Quản trị R01–R02 có thể cập nhật ngay ở màn này. */
   o += U.sec(T.quyTrinhThu.ten, T.quyTrinhThu.cot);
-  o += '<div class="card glow mb"><div class="row wrap" style="gap:22px;align-items:center">'+
-    '<div style="width:150px;flex:none;background:#fff;border-radius:16px;padding:10px;text-align:center">'+
-    '<img src="'+h(T.taiKhoan.qr)+'" alt="Mã QR chuyển khoản '+h(T.taiKhoan.chuTk)+' · '+h(T.taiKhoan.soTk)+'" '+
-    'style="width:100%;border-radius:10px" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'">'+
-    '<div style="display:none;color:#1B5CB8;font-size:12.5px;padding:24px 6px;line-height:1.5">Chưa thấy ảnh mã QR.<br>Dùng số tài khoản bên cạnh.</div></div>'+
-    '<div class="grow" style="min-width:230px">'+
-    '<div class="up muted">TÀI KHOẢN NHẬN</div>'+
-    '<b style="font-size:18px;display:block;margin:4px 0 2px">'+h(T.taiKhoan.chuTk)+'</b>'+
-    '<b class="mono" style="font-size:21px;color:var(--gold-ink);display:block">'+h(T.taiKhoan.soTk)+'</b>'+
-    '<p class="sm dim mt">'+h(T.taiKhoan.nganHang)+'</p>'+
-    '<div class="mt2" style="padding:11px 13px;border-radius:12px;background:var(--gita-mo-1);border-left:2px solid var(--gold)">'+
-    '<span class="tiny up" style="color:var(--gold-ink)">NỘI DUNG CHUYỂN KHOẢN</span>'+
-    '<p class="mono sm mt">'+h(T.noiDungCk.mau)+'</p>'+
-    '<p class="tiny muted mt">Ví dụ: '+h(T.noiDungCk.vd)+' — '+h(T.noiDungCk.vi)+'</p></div>'+
-    (T.taiKhoan.canQuetThu ? '<p class="tiny mt" style="color:var(--alert);line-height:1.6">'+
-      ic('shield','w-3 h-3')+' '+h(T.taiKhoan.canQuetThu)+'</p>' : '')+
-    '</div></div>'+
-    '<p class="tiny muted mt2">'+h(T.taiKhoan.luuY)+'</p></div>';
+  o += G.ttNhanThe ? G.ttNhanThe(true)
+    : U.empty('Chưa nạp cấu hình thanh toán', 'Tải lại trang để thử lại.', true);
 
   o += '<div class="grid g5 mb">' + T.quyTrinhThu.buoc.map(function(b){
     return '<div class="card pad-sm"><div class="row" style="gap:8px;margin-bottom:6px">'+
