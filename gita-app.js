@@ -23641,6 +23641,36 @@ var G = window.G || {}; window.G = G;
 (function () {
   var U = G.U, h = U.h, ic = U.ic;
 
+  /* Mỗi cấu trúc là một cách DẪN VẤN ĐỀ của khách, không phải bài nói
+     thuộc lòng. Người tư vấn chọn theo chỗ khách đang mắc và vẫn phải dùng
+     sáu nhịp GITA ở dưới để hỏi đủ trước khi đề xuất. */
+  G.CHBH = [
+    {ma:'CT01',ten:'3 hồi',dung:'Khách cần thấy hành trình từ hoàn cảnh đến thay đổi.',nhip:'Thiết lập → xung đột → giải quyết',chot:'Vậy nhà mình đang đứng ở hồi nào?'},
+    {ma:'CT02',ten:'5 hồi',dung:'Vấn đề có nhiều lớp, cần đi chậm để khách nhìn rõ.',nhip:'Giới thiệu → tăng hành động → cao trào → giảm dần → kết thúc',chot:'Mình cùng chọn việc đầu tiên để hạ áp lực nhé.'},
+    {ma:'CT03',ten:'Hành trình anh hùng',dung:'Khách đang lưỡng lự trước một thay đổi lớn.',nhip:'Bình thường → lời gọi → lưỡng lự → hướng dẫn → thử thách → trở về',chot:'Anh chị muốn mang giá trị mới nào về cho gia đình?'},
+    {ma:'CT04',ten:'Pixar',dung:'Cần kể nhanh, gần gũi và có nhịp nguyên nhân–kết quả.',nhip:'Ngày xửa ngày xưa → mỗi ngày → một ngày → vì vậy → và rồi → cuối cùng',chot:'Nếu hôm nay là “một ngày”, điều gì cần đổi đầu tiên?'},
+    {ma:'CT05',ten:'PAS',dung:'Nỗi đau đã rõ, khách cần thấy cái giá của việc chần chừ.',nhip:'Vấn đề → khuếch đại hệ quả → giải pháp',chot:'Mình xử lý điều này ngay từ tuần này được không?'},
+    {ma:'CT06',ten:'BAB',dung:'Khách đã hình dung trạng thái mong muốn.',nhip:'Trước → sau → cây cầu',chot:'Cây cầu ngắn nhất từ hiện tại tới điều anh chị muốn là gì?'},
+    {ma:'CT07',ten:'AIDA',dung:'Mở đầu cuộc gặp hoặc nội dung cần dẫn tới hành động rõ.',nhip:'Chú ý → hứng thú → mong muốn → hành động',chot:'Anh chị muốn bắt đầu bằng lịch hẹn hay bài đánh giá?'},
+    {ma:'CT08',ten:'Star – Chain – Hook',dung:'Cần thu hút bằng một nhân vật rồi nối về đúng vấn đề.',nhip:'Nhân vật nổi bật → liên kết bài học → lời gọi',chot:'Câu chuyện này có chạm đúng điều nhà mình đang gặp không?'},
+    {ma:'CT09',ten:'Câu chuyện lồng ghép',dung:'Cần nhiều góc nhìn để khách tự nhận ra mô thức chung.',nhip:'Các chuyện nhỏ → thông điệp chung → giải quyết',chot:'Trong các mảnh chuyện đó, mảnh nào giống nhà mình nhất?'},
+    {ma:'CT10',ten:'Bắt đầu giữa câu chuyện',dung:'Cần gây chú ý khi tình huống đang cấp bách.',nhip:'Cao trào → quay lại nguyên nhân → trở về giải quyết',chot:'Điều gì đã đưa mình tới đúng khoảnh khắc này?'},
+    {ma:'CT11',ten:'Kim tự tháp Freytag',dung:'Cần kể một ca đầy đủ, có cao trào và sự hạ nhiệt.',nhip:'Giới thiệu → tăng dần → cao trào → giảm dần → kết',chot:'Sau cao trào, nhà mình cần giữ nếp nào để không lặp lại?'},
+    {ma:'CT12',ten:'Kim tự tháp ngược',dung:'Khách bận và cần biết điều quan trọng trước.',nhip:'Kết luận chính → thông tin hỗ trợ → chi tiết',chot:'Thông tin quan trọng nhất để mình quyết hôm nay là gì?'},
+    {ma:'CT13',ten:'SOAR',dung:'Cần biến trở ngại thành một ca hành động có kết quả.',nhip:'Hoàn cảnh → trở ngại → hành động → kết quả',chot:'Trở ngại thật sự đang chặn bước nào của nhà mình?'},
+    {ma:'CT14',ten:'CAR',dung:'Cần chứng minh giá trị qua một ví dụ ngắn, cụ thể.',nhip:'Bối cảnh → hành động → kết quả',chot:'Trong bối cảnh của mình, hành động nào là phù hợp nhất?'},
+    {ma:'CT15',ten:'PAR',dung:'Khách gọi tên được vấn đề và cần một đường xử lý trực diện.',nhip:'Vấn đề → hành động → kết quả',chot:'Mình thống nhất xử lý đúng một vấn đề trước nhé?'},
+    {ma:'CT16',ten:'Công thức Dale Carnegie',dung:'Cần kể một sự việc thật để làm rõ lợi ích.',nhip:'Sự việc → hành động → lợi ích',chot:'Lợi ích nào đáng để gia đình mình bắt đầu ngay?'},
+    {ma:'CT17',ten:'Golden Circle',dung:'Khách cần tin vào ý nghĩa trước khi nghe giải pháp.',nhip:'Vì sao → cách làm → điều nhận được',chot:'Lý do sâu nhất khiến anh chị muốn thay đổi là gì?'},
+    {ma:'CT18',ten:'Monomyth',dung:'Cần một hành trình nhân vật nhất quán, dễ đồng cảm.',nhip:'Khởi đầu → thử thách lớn → chuyển hoá → trở về',chot:'Thử thách lớn nhất mà mình cần đi qua là gì?'},
+    {ma:'CT19',ten:'Cấu trúc núi',dung:'Muốn xây dần cảm xúc trước khi đưa ra nút thắt chính.',nhip:'Leo dần → đỉnh điểm → hạ nhiệt → kết',chot:'Đỉnh áp lực hiện nay của gia đình nằm ở đâu?'},
+    {ma:'CT20',ten:'Khởi đầu sai lầm',dung:'Khách đang hiểu nhầm nguyên nhân hoặc giải pháp.',nhip:'Hiểu lầm → nhận ra → điều chỉnh → kết quả',chot:'Điều mình từng tin nhưng nay cần nhìn lại là gì?'},
+    {ma:'CT21',ten:'Tuần tự thời gian',dung:'Cần làm rõ quá trình, trách nhiệm và các mốc diễn ra.',nhip:'Đầu → giữa → cuối theo thời gian',chot:'Mốc nào là lúc mọi thứ bắt đầu lệch nhịp?'},
+    {ma:'CT22',ten:'4P',dung:'Cần mô tả cam kết có bằng chứng và lời mời rõ ràng.',nhip:'Cam kết → hình dung → chứng minh → thúc đẩy',chot:'Anh chị muốn xem bằng chứng hay bắt đầu kế hoạch trước?'},
+    {ma:'CT23',ten:'StoryBrand',dung:'Khách là nhân vật chính và cần một người dẫn đường có kế hoạch.',nhip:'Nhân vật → vấn đề → hướng dẫn → kế hoạch → gọi → hành động → thành công',chot:'Mình cùng chốt kế hoạch ba bước cho nhân vật chính là gia đình mình nhé?'},
+    {ma:'CT24',ten:'5C',dung:'Cần tạo đồng cảm bằng bối cảnh, nhân vật và hội thoại thật.',nhip:'Hoàn cảnh → tò mò → nhân vật → hội thoại → xung đột',chot:'Nếu nghe lại cuộc trò chuyện gần nhất, xung đột thật nằm ở câu nào?'}
+  ];
+
   function boDau(s) {
     return String(s || '').toLowerCase()
       .normalize('NFD').replace(/[̀-ͯ]/g, '')
@@ -23758,6 +23788,17 @@ var G = window.G || {}; window.G = G;
     /* Sáu nhịp */
     o += U.tbl(['Nhịp', 'Là gì'],
       (GI.nhip6 || []).map(function (n) { return [h(n.ma + ' · ' + n.ten), h(n.vi)]; }));
+
+    o += U.sec('24 cấu trúc chuyện dẫn dắt vấn đề khách hàng',
+      'Chọn cấu trúc theo điều khách đang cần nhìn ra — không dùng chuyện để ép mua. Mỗi cấu trúc kết bằng một câu hỏi để khách tự gọi tên bước tiếp theo.');
+    o += '<div class="card mb">' + G.CHBH.map(function (c) {
+      return '<details style="padding:10px 0;border-bottom:1px solid var(--gita-vien-2)">' +
+        '<summary style="cursor:pointer"><b>' + h(c.ma + ' · ' + c.ten) + '</b>' +
+          '<span class="tiny dim"> · ' + h(c.dung) + '</span></summary>' +
+        '<div class="sm mt" style="line-height:1.7"><b>Nhịp dẫn:</b> ' + h(c.nhip) + '</div>' +
+        '<div class="sm mt" style="line-height:1.7"><b>Câu hỏi chốt:</b> ' + h(c.chot) + '</div>' +
+      '</details>';
+    }).join('') + '</div>';
 
     /* Ranh giới AI */
     o += U.sec('Ranh giới của trợ lý AI', 'Bốn điều AI KHÔNG làm, dù làm được.');
