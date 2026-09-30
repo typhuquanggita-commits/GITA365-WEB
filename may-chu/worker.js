@@ -880,10 +880,26 @@ const CORS = {
   'Access-Control-Allow-Headers': 'Content-Type',
   'Access-Control-Max-Age': '86400'
 };
-const traJson = (o, ma) => new Response(JSON.stringify(o), {
-  status: ma || 200,
-  headers: {'Content-Type': 'application/json; charset=utf-8', ...CORS}
-});
+
+/* Khi có GITA_DIA_CHI_WEB, CORS chỉ cho phép nguồn đó thay vì '*'. */
+function corsTheoEnv(env) {
+  const origin = String(env.GITA_DIA_CHI_WEB || '').trim();
+  if (!origin) return CORS;
+  return {
+    'Access-Control-Allow-Origin': origin,
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Max-Age': '86400',
+    'Vary': 'Origin'
+  };
+}
+function traJson(o, ma, env) {
+  const headers = corsTheoEnv(env || {});
+  return new Response(JSON.stringify(o), {
+    status: ma || 200,
+    headers: {'Content-Type': 'application/json; charset=utf-8', ...headers}
+  });
+}
 
 /* ═══════════════ DỌN THEO LỊCH ═══════════════
 
@@ -982,7 +998,8 @@ export default {
   },
 
   async fetch(req, env) {
-    if (req.method === 'OPTIONS') return new Response(null, {status: 204, headers: CORS});
+    const cors = corsTheoEnv(env);
+    if (req.method === 'OPTIONS') return new Response(null, {status: 204, headers: cors});
 
     /* Trạng thái: máy chủ còn sống chưa, đã nạp khoá chưa. KHÔNG trả
        khoá nào, và không nói gì về số tài khoản. */
@@ -990,22 +1007,22 @@ export default {
       let n = 0;
       try { n = Object.keys(JSON.parse(env.GITA_KHOA_KHO || '{}')).length; } catch (e) {}
       return traJson({ok: true, ten: 'GITA 365 — máy chủ cấp phép',
-        daNapKhoa: n, luc: new Date().toISOString()});
+        daNapKhoa: n, luc: new Date().toISOString()}, 200, env);
     }
-    if (req.method !== 'POST') return traJson({ok: false, error: 'Yêu cầu không hợp lệ.'}, 405);
+    if (req.method !== 'POST') return traJson({ok: false, error: 'Yêu cầu không hợp lệ.'}, 405, env);
 
     let y;
     try { y = await req.json(); } catch (e) { y = {}; }
 
     try {
-      return traJson(await lam(String(y.fn || ''), y, env, env.CSDL));
+      return traJson(await lam(String(y.fn || ''), y, env, env.CSDL), 200, env);
     } catch (err) {
       /* KHÔNG ĐẨY LỜI LỖI CỦA MÁY RA CHO MÁY KHÁCH. Lời lỗi của cơ sở
          dữ liệu hay kể tên bảng, tên cột, có khi cả mảnh câu lệnh —
          đó là bản đồ cho người đi dò. Ghi đủ vào nhật ký máy chủ, trả
          ra một câu. */
       console.error('LOI', String(y.fn || ''), err && err.stack || err);
-      return traJson({ok: false, error: 'Máy chủ gặp trục trặc. Thử lại sau ít phút.'}, 500);
+      return traJson({ok: false, error: 'Máy chủ gặp trục trặc. Thử lại sau ít phút.'}, 500, env);
     }
   }
 };
