@@ -23,7 +23,7 @@ const SO_TANG = 5;
    máy khách tự biết bản của nó (G.META.version); cửa này chỉ nói "bản
    mới nhất Học viện đã phát hành là gì". Cập nhật số này mỗi lượt phát
    hành app mới. */
-const BAN_APP = '9.99.210';
+const BAN_APP = '9.99.247';
 
 const BAC = {R01:1,R02:2,R03:3,R04:4,R05:5,R06:6,R07:7,R08:8,
              R09:9,R10:10,R11:11,R12:12,R13:13,R14:14,R15:15};
