@@ -445,6 +445,7 @@ G.VIEWS = G.VIEWS || {};
         ct.restore();
       }
     }
+    if (G.xu3D && G.xu3D.khongGian === 'bang-dao-tao') veBangDaoTao(ct, c, W, H, u);
     veMC(ct, mc, W, H, u, c.sacThai);
 
     var g = ct.createLinearGradient(0, H * 0.45, 0, H);
@@ -508,6 +509,19 @@ G.VIEWS = G.VIEWS || {};
     ct.fillText((mc.vaiDan === 'trainer' ? 'TRAINER GITA' : 'MC GITA') + ' · ' +
       String(sacThaiCanh || mc.sacThai || 'than-thien').replace(/-/g, ' ').toUpperCase(),
       x + 12 * u, y + bh - 16 * u, bw - 24 * u);
+    ct.restore();
+  }
+  function veBangDaoTao(ct, c, W, H, u) {
+    var bw = W * 0.57, bh = H * 0.42, x = W * 0.07, y = H * 0.13;
+    ct.save();
+    ct.fillStyle = 'rgba(10,51,45,.92)'; ct.fillRect(x, y, bw, bh);
+    ct.strokeStyle = '#D8A94D'; ct.lineWidth = 6 * u; ct.strokeRect(x, y, bw, bh);
+    ct.fillStyle = 'rgba(255,250,234,.94)'; ct.textAlign = 'left';
+    ct.font = '700 ' + (32 * u) + 'px sans-serif'; ct.fillText('GITA 365', x + 34 * u, y + 62 * u);
+    ct.font = '600 ' + (25 * u) + 'px sans-serif';
+    xuong(ct, c.chuMan || 'Cùng học một điều nhỏ', x + 34 * u, y + 116 * u, bw - 68 * u, 28 * u, 600);
+    ct.strokeStyle = 'rgba(255,250,234,.56)'; ct.lineWidth = 2 * u;
+    for (var i = 0; i < 3; i++) ct.strokeRect(x + 34 * u, y + (190 + i * 54) * u, 22 * u, 22 * u);
     ct.restore();
   }
   function veKhungDienAnh(ct, W, H) {

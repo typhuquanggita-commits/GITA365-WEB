@@ -87,12 +87,72 @@ var G = window.G || {}; window.G = G;
       camera: 'wide-dolly', anhSang: 'warm-stage', phuDe: true, lipSync: 'recorded-audio'};
     G.render && G.render();
   };
+  G.xu3DNapMauGioiThieu = function () {
+    if (!G.xuDA) return;
+    var mau = [
+      ['Hook', 'Gia đình không cần làm nhiều hơn. Gia đình cần cùng đi đúng một hướng.', 6],
+      ['Giới thiệu GITA365', 'GITA365 là nơi cả nhà cùng nhìn lại, chọn một điều nhỏ, rồi làm đều mỗi ngày.', 6],
+      ['Trên bảng', 'Hôm nay, Trainer cùng bạn bắt đầu từ ba câu hỏi: gia đình đang ở đâu, cần điều gì, và cùng làm việc gì trước.', 7],
+      ['Ví dụ', 'Thay vì nhắc con hãy cố gắng, hãy hỏi: hôm nay điều gì khó nhất để bố mẹ cùng giúp?', 6],
+      ['Tình huống', 'Khi mọi người bận rộn, chỉ cần năm phút sau bữa tối để lắng nghe nhau là đủ để giữ nhịp.', 6],
+      ['Bài học', 'Một thay đổi nhỏ được lặp lại sẽ trở thành nền móng cho sự tin cậy trong nhà.', 5],
+      ['Lời mời gia đình', 'Mỗi gia đình đều mong được hiểu nhau hơn và có một hành trình bình an hơn.', 5],
+      ['Hoạt động cùng Trainer', 'Mời cả nhà đứng trước bảng, chọn một việc chung trong tuần này, và cùng nói lời cam kết.', 7]
+    ];
+    G.xuDA.ten = 'Video mẫu · Giới thiệu GITA365 cùng Trainer';
+    G.xuDA.dich = 48; G.xuDA.nguon = 'Video mẫu Studio · Giới thiệu GITA365';
+    G.xuDA.dieuNho = 'Cả nhà chọn một việc chung và thực hiện trong tuần này.';
+    G.xuDA.mc.vaiDan = 'trainer'; G.xuDA.mc.hinh = 'trainer-quang-mau';
+    if (!G.xuVat['trainer-quang-mau'] && typeof Image !== 'undefined') {
+      var anh = new Image(); G.xuVat['trainer-quang-mau'] = {ma: 'trainer-quang-mau',
+        ten: 'Trainer Quang · ảnh do chủ sở hữu cung cấp', loai: 'hinh', el: anh, mau: true};
+      anh.onload = function () { G.xuVe && G.xuVe(G.xuDongHo || 0); };
+      anh.src = 'assets/anh/trainer-quang.png';
+    }
+    G.xuDA.canh = mau.map(function (p, i) {
+      return {id: 'mau-gita-' + i, vai: 'mau-' + i, giay: p[2], loi: p[1], chuMan: p[0],
+        hinh: 'Trainer đứng bên bảng · chuyển động máy quay nhẹ · phụ đề', vatHinh: '',
+        vatTieng: '', sacThai: i === 0 || i === 7 ? 'truyen-cam-hung' : 'than-thien'};
+    });
+    G.xu3D.khongGian = 'bang-dao-tao'; G.xuSoat = null; G.xuDongHo = 0;
+    G.render && G.render();
+  };
+  G.xu3DDocMau = function () {
+    if (!window.speechSynthesis || !G.xuDA || !(G.xuDA.canh || []).length) {
+      if (U && U.toast) U.toast('Trình duyệt này chưa có giọng đọc mẫu.', 'err');
+      return;
+    }
+    window.speechSynthesis.cancel();
+    var text = G.xuDA.canh.map(function (c) { return c.loi; }).join(' ');
+    var u = new SpeechSynthesisUtterance(text); u.lang = 'vi-VN'; u.rate = .94; u.pitch = 1;
+    /* Giọng là giọng hệ điều hành đang dùng, không phải bản sao giọng của Trainer. */
+    window.speechSynthesis.speak(u);
+  };
+  G.xu3DDungDoc = function () { if (window.speechSynthesis) window.speechSynthesis.cancel(); };
+  G.xu3DNhacMoDau = function () {
+    var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+    var a = new AC(), now = a.currentTime;
+    [261.63, 329.63, 392].forEach(function (hz, i) {
+      var o = a.createOscillator(), g = a.createGain();
+      o.type = 'sine'; o.frequency.value = hz; g.gain.setValueAtTime(.0001, now + i * .14);
+      g.gain.exponentialRampToValueAtTime(.09, now + i * .14 + .03);
+      g.gain.exponentialRampToValueAtTime(.0001, now + i * .14 + .42);
+      o.connect(g); g.connect(a.destination); o.start(now + i * .14); o.stop(now + i * .14 + .45);
+    });
+  };
+  G.xu3DXemMau = function () {
+    G.xu3DNapMauGioiThieu(); G.xu3DNhacMoDau();
+    setTimeout(function () { if (G.xuXem) G.xuXem(); }, 20);
+  };
   G.xu3DPanel = function () {
     var k = G.xu3DKiem(), x = G.xu3D, tl = x.timeline;
     return '<div class="giay"><h3>3D · Người dẫn &amp; không gian đào tạo</h3>' +
       '<p class="note">Ưu tiên MC/Trainer đứng chia sẻ và đào tạo trên bảng. Sân khấu/hội trường chỉ dành cho video huấn luyện. Renderer WebGL chạy tại thiết bị. Không tải hình, mô hình hoặc giọng sang dịch vụ ngoài. ' +
       'Bản xem thử dưới đây là sân khấu 3D kỹ thuật; chỉ dùng nhân vật diễn xuất khi mô hình GLB đã được cấp phép, có rig và blendshape.</p>' +
       '<canvas id="xu-man-3d" class="xu-man" style="max-height:405px" aria-label="Xem thử sân khấu 3D"></canvas>' +
+      '<div class="row"><button class="btn btn-chinh" onclick="G.xu3DXemMau()">Xem video mẫu · Giới thiệu GITA365</button>' +
+      '<button class="btn" onclick="G.xu3DNapMauGioiThieu()">Nạp để biên tập</button>' +
+      '<button class="btn" onclick="G.xu3DDocMau()">Nghe lời đọc mẫu</button><button class="btn" onclick="G.xu3DDungDoc()">Dừng lời đọc</button></div>' +
       '<div class="row"><label>Không gian <select onchange="G.xu3DChon(\'khongGian\',this.value)">' +
       '<option value="bang-dao-tao"' + (x.khongGian === 'bang-dao-tao' ? ' selected' : '') + '>Bảng đào tạo · mặc định</option>' +
       '<option value="san-khau-huan-luyen"' + (x.khongGian === 'san-khau-huan-luyen' ? ' selected' : '') + '>Sân khấu · chỉ video huấn luyện</option>' +
@@ -108,7 +168,8 @@ var G = window.G || {}; window.G = G;
       '<label class="note"><input type="checkbox"' + (x.dongYGiong ? ' checked' : '') + ' onchange="G.xu3DChon(\'dongYGiong\',this.checked)"> Tôi có sự đồng ý rõ ràng để dùng giọng thu.</label>' +
       '<label class="note"><input type="checkbox"' + (x.daDuyetQuyen ? ' checked' : '') + ' onchange="G.xu3DChon(\'daDuyetQuyen\',this.checked)"> Tôi đã kiểm quyền sử dụng nhân vật, trang phục, cảnh và animation.</label>' +
       '<label class="note"><input type="checkbox"' + (x.daDuyetNoiDung ? ' checked' : '') + ' onchange="G.xu3DChon(\'daDuyetNoiDung\',this.checked)"> Tôi đã duyệt lời thoại; không giả mạo người thật không được phép.</label>' +
-      '<p class="note">' + (k.webgl ? 'WebGL sẵn sàng.' : 'Thiết bị không hỗ trợ WebGL: Studio giữ preview 2.5D.') +
+      '<p class="note">Nút xem mẫu dùng hiệu ứng mở đầu được tạo cục bộ; nhạc nền đầy đủ vẫn chọn từ tệp được cấp phép trong Kho hình &amp; tiếng. Giọng đọc mẫu là giọng hệ điều hành, không mô phỏng Trainer. ' +
+      (k.webgl ? 'WebGL sẵn sàng.' : 'Thiết bị không hỗ trợ WebGL: Studio giữ preview 2.5D.') +
       (k.thieu.length ? ' Còn thiếu hồ sơ/tệp cục bộ: ' + h(k.thieu.join(' · ')) + '.' : '') + '</p></div>';
   };
 })();
