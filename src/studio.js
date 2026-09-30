@@ -148,6 +148,8 @@ G.VIEWS = G.VIEWS || {};
     var d = G.xuDA;
     d.ten = ke.tieuDe; d.dich = ke.thoiLuong; d.nguon = ke.nguon;
     d.dieuNho = ke.cta; d.cta = ke.cta; d.keHoachVideo = ke;
+    if (G.xu3D) G.xu3D.khongGian = ke.dinhDang === 'Phân tích & hướng dẫn'
+      ? 'san-khau-huan-luyen' : 'bang-dao-tao';
     d.canh = ke.thanhPhan.map(function (p, i) {
       return {id: ma + '-' + p.ma, vai: p.ma, giay: p.giay, loi: loiMau(ke, p),
         chuMan: p.ten, hinh: p.canh, vatHinh: '', vatTieng: '',
@@ -354,6 +356,10 @@ G.VIEWS = G.VIEWS || {};
       n: coTieng ? coTieng + '/' + ds.length + ' cảnh có giọng.'
         : 'Chưa có giọng — video xuất ra sẽ im tiếng. Xưởng KHÔNG sinh giọng: luật C20 ' +
           'nói máy TRỘN, không SINH.'});
+    var baD = G.xu3DKiem ? G.xu3DKiem() : null;
+    if (baD) o.push({tt: baD.sanSang ? 'ok' : 'warn', t: 'Quyền nhân vật 3D & giọng thu',
+      ref: 'ST-3D', n: baD.sanSang ? 'Mô hình cục bộ, quyền sử dụng, lời thoại và sự đồng ý giọng đã đủ.'
+        : 'Chưa đủ điều kiện dùng nhân vật 3D diễn xuất; Studio chỉ xem sân khấu kỹ thuật/2.5D.'});
 
     var mc = G.xuDA.mc || {}, anhMC = G.xuVat[mc.hinh];
     var anhMCsanSang = anhMC && anhMC.loai === 'hinh' && anhMC.el &&
@@ -864,6 +870,8 @@ G.VIEWS = G.VIEWS || {};
     o += '<p class="note" id="xu-tt">Đây là bản xem trước 2.5D dựng tại thiết bị; chưa phải nhân vật 3D ' +
       'biểu cảm thật, phim 4D/5D hay tệp video hoàn chỉnh. Hiện hệ thống chưa có renderer nội bộ ' +
       'để kết xuất phim. Hình, giọng và nhạc không được gửi đi; không có nút xuất giả.</p></div>';
+
+    o += G.xu3DPanel ? G.xu3DPanel() : '';
 
     /* 3 · Kịch bản */
     o += '<div class="giay"><h3>4 · Kịch bản</h3>';
