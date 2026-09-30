@@ -304,56 +304,7 @@
 </div>
 
 <script src="src/i18n-marketing.js"></script>
-<script>
-(function(){
-  function render(){
-    document.querySelectorAll('[data-m]').forEach(function(el){
-      var k = el.getAttribute('data-m');
-      if(!k) return;
-      if(k === 'heroH1'){
-        el.innerHTML = G.M('heroH1a') + ' <em>' + G.M('heroH1b') + '</em> ' + G.M('heroH1c');
-        return;
-      }
-      var v = G.M(k);
-      if(v !== k) el.textContent = v;
-    });
-    document.documentElement.lang = G.MK_LANG === 'en' ? 'en' : 'vi';
-    var og = document.querySelector('meta[property="og:locale"]');
-    if(og) og.setAttribute('content', G.MK_LANG === 'en' ? 'en_US' : 'vi_VN');
-    document.querySelectorAll('.m-lang button').forEach(function(b){
-      b.classList.toggle('active', b.getAttribute('data-lang') === G.MK_LANG);
-    });
-  }
-  window.MK_RENDER = render;
-
-  document.querySelectorAll('.m-lang button').forEach(function(b){
-    b.addEventListener('click', function(){
-      G.setMkLang(b.getAttribute('data-lang'));
-    });
-  });
-
-  var menuBtn = document.querySelector('.m-menu-btn');
-  var navLinks = document.getElementById('navLinks');
-  if(menuBtn && navLinks){
-    menuBtn.addEventListener('click', function(){
-      var open = navLinks.classList.toggle('open');
-      menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-      menuBtn.textContent = open ? '✕' : '☰';
-    });
-  }
-
-  document.querySelectorAll('.m-faq-q').forEach(function(q){
-    q.addEventListener('click', function(){
-      var item = q.parentElement;
-      var wasOpen = item.classList.contains('open');
-      document.querySelectorAll('.m-faq-item').forEach(function(i){ i.classList.remove('open'); });
-      if(!wasOpen) item.classList.add('open');
-    });
-  });
-
-  render();
-})();
-</script>
+<script src="assets/marketing-shared.js"></script>
 
 </body>
 </html>

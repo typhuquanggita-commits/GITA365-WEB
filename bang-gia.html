@@ -89,7 +89,7 @@
       <div class="m-pricing-card">
         <h3 data-m="p3name">Lộ trình 365 ngày</h3>
         <p class="desc" data-m="p3desc">Hệ thống hoàn chỉnh: từ nền đến trao quyền.</p>
-        <div class="price" data-m="p3price">Liễn hệ</div>
+        <div class="price" data-m="p3price">Liên hệ</div>
         <ul>
           <li data-m="p3feature1">Tất cả lợi ích 90 ngày</li>
           <li data-m="p3feature2">Truy cập 1.000 kịch bản chuyên môn</li>
@@ -149,36 +149,7 @@
 </div>
 
 <script src="src/i18n-marketing.js"></script>
-<script>
-(function(){
-  function render(){
-    document.querySelectorAll('[data-m]').forEach(function(el){
-      var k = el.getAttribute('data-m');
-      if(!k) return;
-      var v = G.M(k);
-      if(v !== k) el.textContent = v;
-    });
-    document.documentElement.lang = G.MK_LANG === 'en' ? 'en' : 'vi';
-    document.querySelectorAll('.m-lang button').forEach(function(b){
-      b.classList.toggle('active', b.getAttribute('data-lang') === G.MK_LANG);
-    });
-  }
-  window.MK_RENDER = render;
-  document.querySelectorAll('.m-lang button').forEach(function(b){
-    b.addEventListener('click', function(){ G.setMkLang(b.getAttribute('data-lang')); });
-  });
-  var menuBtn = document.querySelector('.m-menu-btn');
-  var navLinks = document.getElementById('navLinks');
-  if(menuBtn && navLinks){
-    menuBtn.addEventListener('click', function(){
-      var open = navLinks.classList.toggle('open');
-      menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-      menuBtn.textContent = open ? '✕' : '☰';
-    });
-  }
-  render();
-})();
-</script>
+<script src="assets/marketing-shared.js"></script>
 
 </body>
 </html>
