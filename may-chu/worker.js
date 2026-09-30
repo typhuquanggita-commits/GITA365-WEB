@@ -116,6 +116,10 @@ import { dangKyKhoaMatBatDau, dangKyKhoaMatXong, dangNhapMatBatDau,
   xacThucLaiMatBatDau, xacThucLaiMat, nhatKyAnToan, congBuocMat } from './sinh-trac.js';
 import { crmTroLy, crmDieuPhoiAI } from './crm-ai.js';
 import { crmKpiCham, crmKpiTroLy } from './crm-kpi.js';
+import { crmPhanTichKhach, crmUuTienNangCao } from './crm-chuyen-sau.js';
+import { loTrinhCaNhan, khoaNoiDungTheoTang } from './lo-trinh-ca-nhan-hoa.js';
+import { hoiChatbot, lichSuChat } from './chatbot-thong-minh.js';
+import { guiBaoCaoNgay, tongHopBaoCao, dsBaoCaoNgay } from './bao-cao-hang-ngay.js';
 import { docNhatKyToanHe } from './nhat-ky.js';
 import { ghiButToan, docSoKeToan, ghiHoaDon, docHoaDon, ghiSoHoaDon,
   ghiToKhai, docToKhai, docBuongLaiKT, docBaoCaoTC,
@@ -298,7 +302,11 @@ const CAN_PHIEN = ['capKhoa', 'doiMatKhau', 'dongBo',
   'xacThucLaiMatBatDau', 'xacThucLaiMat', 'nhatKyAnToan',
   'dsPhongBan', 'chiTietPhongBan', 'ganPhongBan', 'baoCaoKpiPhongBan',
   'taoTaiKhoanNoiBo', 'capNhatTaiKhoan', 'dsTaiKhoan', 'offboardTaiKhoan',
-  'adminKhoiPhucMatKhau'];
+  'adminKhoiPhucMatKhau',
+  'crmPhanTichKhach', 'crmUuTienNangCao',
+  'loTrinhCaNhan', 'khoaNoiDungTheoTang',
+  'hoiChatbot', 'lichSuChat',
+  'guiBaoCaoNgay', 'tongHopBaoCao', 'dsBaoCaoNgay'];
 
 async function lam(fn, y, env, db) {
   if (fn === 'dangNhap')  return await dangNhap(y, env, db);
@@ -487,6 +495,23 @@ async function lam(fn, y, env, db) {
   if (fn === 'dsTaiKhoan')          return await dsTaiKhoan(y, env, db, hoSo);
   if (fn === 'offboardTaiKhoan')    return await offboardTaiKhoan(y, env, db, hoSo);
   if (fn === 'adminKhoiPhucMatKhau') return await adminKhoiPhucMatKhau(y, env, db, hoSo);
+
+  /* CRM chuyên sâu: phân tích, phân khúc, rủi ro, ưu tiên. */
+  if (fn === 'crmPhanTichKhach')    return await crmPhanTichKhach(y, env, db, hoSo);
+  if (fn === 'crmUuTienNangCao')    return await crmUuTienNangCao(y, env, db, hoSo);
+
+  /* Lộ trình cá nhân hóa 7/21/90/365 ngày + khóa nội dung theo tầng. */
+  if (fn === 'loTrinhCaNhan')       return await loTrinhCaNhan(y, env, db, hoSo);
+  if (fn === 'khoaNoiDungTheoTang') return await khoaNoiDungTheoTang(y, env, db, hoSo);
+
+  /* Chatbot thông minh theo cấp/tầng. */
+  if (fn === 'hoiChatbot')          return await hoiChatbot(y, env, db, hoSo);
+  if (fn === 'lichSuChat')          return await lichSuChat(y, env, db, hoSo);
+
+  /* Báo cáo hàng ngày + đánh giá chuẩn xác. */
+  if (fn === 'guiBaoCaoNgay')       return await guiBaoCaoNgay(y, env, db, hoSo);
+  if (fn === 'tongHopBaoCao')       return await tongHopBaoCao(y, env, db, hoSo);
+  if (fn === 'dsBaoCaoNgay')        return await dsBaoCaoNgay(y, env, db, hoSo);
 
   /* Kế toán – Thuế: sổ kép · hoá đơn · tờ khai · báo cáo (R01–R03). */
   if (fn === 'ghiButToan')          return await ghiButToan(y, env, db, hoSo);
