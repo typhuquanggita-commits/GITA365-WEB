@@ -89,6 +89,7 @@ import { capQuyenAI, thuHoiQuyenAI, soatQuyenAI, aiPhanLoai, aiSoanNhap,
 import { dieuPhoiTroLy, soatDieuPhoi, tuHoanThienTroLy, soatHoatDongAgent } from './dieu-phoi.js';
 import { soatKhungVanHanh, chamMotLuot } from './khung-van-hanh.js';
 import { lapKeHoachAgent, chayBuocAgent, dsWorkflowAgent } from './agent-team.js';
+import { dsPhongBan, chiTietPhongBan, ganPhongBan, baoCaoKpiPhongBan } from './phong-ban.js';
 import { doSucChua } from './suc-chua-toc-do.js';
 import { kiemBanMoi, docTinCongDong, ghiTinCongDong, guiChuyen,
   napTaiLieu, duyetTaiLieu, napTinhHuongKhach } from './cong-dong.js';
@@ -292,7 +293,8 @@ const CAN_PHIEN = ['capKhoa', 'doiMatKhau', 'dongBo',
   'docCanDoiPhatSinh', 'docCanDoiKeToan', 'docDoiChieuGTGT',
   'docLuuChuyenTien', 'docCongNoTuoi',
   'dangKyKhoaMatBatDau', 'dangKyKhoaMatXong', 'dsKhoaMat', 'xoaKhoaMat',
-  'xacThucLaiMatBatDau', 'xacThucLaiMat', 'nhatKyAnToan'];
+  'xacThucLaiMatBatDau', 'xacThucLaiMat', 'nhatKyAnToan',
+  'dsPhongBan', 'chiTietPhongBan', 'ganPhongBan', 'baoCaoKpiPhongBan'];
 
 async function lam(fn, y, env, db) {
   if (fn === 'dangNhap')  return await dangNhap(y, env, db);
@@ -468,6 +470,12 @@ async function lam(fn, y, env, db) {
 
   /* Nhật ký toàn hệ — một chỗ Super Admin/Admin đọc MỌI thao tác (R01–R02). */
   if (fn === 'docNhatKyToanHe')     return await docNhatKyToanHe(y, env, db, hoSo);
+
+  /* Hệ thống 14 phòng ban doanh nghiệp. */
+  if (fn === 'dsPhongBan')          return await dsPhongBan(y, env, db, hoSo);
+  if (fn === 'chiTietPhongBan')     return await chiTietPhongBan(y, env, db, hoSo);
+  if (fn === 'ganPhongBan')         return await ganPhongBan(y, env, db, hoSo);
+  if (fn === 'baoCaoKpiPhongBan')   return await baoCaoKpiPhongBan(y, env, db, hoSo);
 
   /* Kế toán – Thuế: sổ kép · hoá đơn · tờ khai · báo cáo (R01–R03). */
   if (fn === 'ghiButToan')          return await ghiButToan(y, env, db, hoSo);
