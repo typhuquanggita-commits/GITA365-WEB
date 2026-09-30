@@ -123,7 +123,7 @@ function cauHinh(soat) {
     if (a === origin) ok = true;
     if (a.includes('*')) {
       const host = a.replace(/^https:\/\//, '');
-      const regex = new RegExp('^' + host.replace(/\./g, '\\.').replace(/\*\./g, '[^/]*\\.').replace(/\*/g, '.*') + '$');
+      const regex = new RegExp('^' + host.replace(/[\\^$.*+?()[\]{}|]/g, '\\$&').replace(/\\\*\\\./g, '[^/]*\\.').replace(/\\\*/g, '.*') + '$');
       if (regex.test(origin.replace('https://', ''))) ok = true;
     }
   }
