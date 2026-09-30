@@ -29,12 +29,7 @@
 import { Kho } from './nen.js';
 import { ghiSoDen } from './giam-sat.js';
 import { ghiPhatSinh, soanBanNhap, CHUOI } from './tu-hoan-thien.js';
-
-function laR01(hoSo) { return String((hoSo || {}).role || '') === 'R01'; }
-function laNguoiNha(hoSo) {
-  return /^R(0[1-9]|1[0-2])$/.test(String((hoSo || {}).role || ''));
-}
-function ten(hoSo) { return String((hoSo || {}).u || ''); }
+import { laNguoiNha, laR01, tenNguoiDung as ten } from './vai-tro.js';
 
 /* ═══════════════ MƯỜI QUYỀN NĂNG AI ═══════════════
 

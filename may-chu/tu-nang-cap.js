@@ -26,6 +26,7 @@
 
 import { Kho } from './nen.js';
 import { ghiSoDen } from './giam-sat.js';
+import { laNguoiNha, laR01, tenNguoiDung as ten } from './vai-tro.js';
 
 /* ═══════════════ BẢY VÙNG KHÔNG TỰ NÂNG CẤP ═══════════════
 
@@ -129,21 +130,6 @@ const DAU_CAP = [
 ];
 
 export const CUA5 = ['C1', 'C2', 'C3', 'C4', 'C5'];
-
-function laR01(hoSo) { return String((hoSo || {}).role || '') === 'R01'; }
-
-/* Một phép soi vai, dùng ở mọi cửa. Năm bản chép của cùng một biểu thức
-   regex là năm chỗ để một bản trôi đi — và bản trôi thì không ai thấy,
-   vì bốn bản kia vẫn đúng. */
-function laNguoiNha(hoSo) {
-  return /^R(0[1-9]|1[0-2])$/.test(String((hoSo || {}).role || ''));
-}
-
-/* Hồ sơ phiên mang tên ô là `hoSo.u`, KHÔNG phải `hoSo.username` —
-   cái bẫy đã cắn kho này bốn lần (9.99.55 · 9.99.62 · 9.99.75). Gõ
-   nhầm thì JavaScript trả `undefined`, phép so luôn sai, và cổng
-   "người ký khác người đề xuất" mở với mọi người trong im lặng. */
-function ten(hoSo) { return String((hoSo || {}).u || ''); }
 
 /* ═══════════════ CỔNG VÙNG CẤM ═══════════════
 
