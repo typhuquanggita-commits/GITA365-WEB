@@ -90,6 +90,8 @@ import { dieuPhoiTroLy, soatDieuPhoi, tuHoanThienTroLy, soatHoatDongAgent } from
 import { soatKhungVanHanh, chamMotLuot } from './khung-van-hanh.js';
 import { lapKeHoachAgent, chayBuocAgent, dsWorkflowAgent } from './agent-team.js';
 import { dsPhongBan, chiTietPhongBan, ganPhongBan, baoCaoKpiPhongBan } from './phong-ban.js';
+import { taoTaiKhoanNoiBo, capNhatTaiKhoan, dsTaiKhoan, offboardTaiKhoan,
+  adminKhoiPhucMatKhau } from './quan-ly-tai-khoan.js';
 import { doSucChua } from './suc-chua-toc-do.js';
 import { kiemBanMoi, docTinCongDong, ghiTinCongDong, guiChuyen,
   napTaiLieu, duyetTaiLieu, napTinhHuongKhach } from './cong-dong.js';
@@ -294,7 +296,9 @@ const CAN_PHIEN = ['capKhoa', 'doiMatKhau', 'dongBo',
   'docLuuChuyenTien', 'docCongNoTuoi',
   'dangKyKhoaMatBatDau', 'dangKyKhoaMatXong', 'dsKhoaMat', 'xoaKhoaMat',
   'xacThucLaiMatBatDau', 'xacThucLaiMat', 'nhatKyAnToan',
-  'dsPhongBan', 'chiTietPhongBan', 'ganPhongBan', 'baoCaoKpiPhongBan'];
+  'dsPhongBan', 'chiTietPhongBan', 'ganPhongBan', 'baoCaoKpiPhongBan',
+  'taoTaiKhoanNoiBo', 'capNhatTaiKhoan', 'dsTaiKhoan', 'offboardTaiKhoan',
+  'adminKhoiPhucMatKhau'];
 
 async function lam(fn, y, env, db) {
   if (fn === 'dangNhap')  return await dangNhap(y, env, db);
@@ -476,6 +480,13 @@ async function lam(fn, y, env, db) {
   if (fn === 'chiTietPhongBan')     return await chiTietPhongBan(y, env, db, hoSo);
   if (fn === 'ganPhongBan')         return await ganPhongBan(y, env, db, hoSo);
   if (fn === 'baoCaoKpiPhongBan')   return await baoCaoKpiPhongBan(y, env, db, hoSo);
+
+  /* Quản lý tài khoản nội bộ (Super Admin/Admin). */
+  if (fn === 'taoTaiKhoanNoiBo')    return await taoTaiKhoanNoiBo(y, env, db, hoSo);
+  if (fn === 'capNhatTaiKhoan')     return await capNhatTaiKhoan(y, env, db, hoSo);
+  if (fn === 'dsTaiKhoan')          return await dsTaiKhoan(y, env, db, hoSo);
+  if (fn === 'offboardTaiKhoan')    return await offboardTaiKhoan(y, env, db, hoSo);
+  if (fn === 'adminKhoiPhucMatKhau') return await adminKhoiPhucMatKhau(y, env, db, hoSo);
 
   /* Kế toán – Thuế: sổ kép · hoá đơn · tờ khai · báo cáo (R01–R03). */
   if (fn === 'ghiButToan')          return await ghiButToan(y, env, db, hoSo);

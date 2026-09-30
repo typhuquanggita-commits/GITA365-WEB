@@ -62,7 +62,15 @@ CREATE TABLE IF NOT EXISTS users (
   maKhachHang   TEXT,
   boTro         TEXT,
   mustChangePw  INTEGER NOT NULL DEFAULT 0,
-  pwDoiLuc      TEXT
+  pwDoiLuc      TEXT,
+  phongBan      TEXT,
+  offboardedAt  TEXT,
+  offboardedBy  TEXT,
+  lyDoOffboard  TEXT,
+  CONSTRAINT ck_role_phan_cap CHECK (role IN (
+    'R01','R02','R03','R04','R05','R06','R07','R08',
+    'R09','R10','R11','R12','R13','R14','R15'
+  ))
 );
 
 -- Đăng nhập tra bằng tên đăng nhập HOẶC email, cả hai đều hạ chữ
@@ -80,6 +88,8 @@ CREATE INDEX        IF NOT EXISTS ix_users_email    ON users (lower(email));
 -- dữ liệu, cho ngày bộ đếm sai vì một lý do chưa ai nghĩ ra.
 CREATE UNIQUE INDEX IF NOT EXISTS ix_users_makh ON users (maKhachHang)
   WHERE maKhachHang IS NOT NULL AND maKhachHang <> '';
+CREATE INDEX IF NOT EXISTS ix_users_phongban ON users (phongBan) WHERE phongBan IS NOT NULL;
+CREATE INDEX IF NOT EXISTS ix_users_active   ON users (active, deletedAt);
 
 -- ─────────────────────────────────────────────────────────────
 --  HỌC VIÊN
