@@ -107,6 +107,7 @@ import { capQuyenCRM, thuHoiQuyenCRM, dsQuyenCRM, crmDanhSach, crmChiTiet,
   crmBangDieuKhien, crmUuTien, crmGhiKhach, crmQuanTri,
   crmGhiCoHoi, crmCoHoi, mucCrmCua } from './crm.js';
 import { tinhReadyVip, deXuatChamSocVip, dsVipCanCham } from './vip-care.js';
+import { lich365Ngay, sinhNoiDungKenh, duBaoLead, dsKenhVeTinh } from './satellite-engine.js';
 import { dangKyKhoaMatBatDau, dangKyKhoaMatXong, dangNhapMatBatDau,
   xacThucDangNhapMat, dsKhoaMat, xoaKhoaMat,
   xacThucLaiMatBatDau, xacThucLaiMat, nhatKyAnToan, congBuocMat } from './sinh-trac.js';
@@ -285,6 +286,7 @@ const CAN_PHIEN = ['capKhoa', 'doiMatKhau', 'dongBo',
   'crmBangDieuKhien', 'crmUuTien', 'crmGhiKhach', 'crmTroLy', 'crmDieuPhoiAI',
   'crmKpiCham', 'crmKpiTroLy', 'crmQuanTri', 'crmGhiCoHoi', 'crmCoHoi',
   'tinhReadyVip', 'deXuatChamSocVip', 'dsVipCanCham',
+  'lich365Ngay', 'sinhNoiDungKenh', 'duBaoLead', 'dsKenhVeTinh',
   'ghiButToan', 'docSoKeToan', 'ghiHoaDon', 'docHoaDon', 'ghiSoHoaDon',
   'ghiToKhai', 'docToKhai', 'docBuongLaiKT', 'docBaoCaoTC',
   'docCanDoiPhatSinh', 'docCanDoiKeToan', 'docDoiChieuGTGT',
@@ -444,6 +446,10 @@ async function lam(fn, y, env, db) {
   if (fn === 'tinhReadyVip')        return await tinhReadyVip(y, env, db, hoSo);
   if (fn === 'deXuatChamSocVip')    return await deXuatChamSocVip(y, env, db, hoSo);
   if (fn === 'dsVipCanCham')        return await dsVipCanCham(y, env, db, hoSo);
+  if (fn === 'lich365Ngay')         return await lich365Ngay(y, env, db, hoSo);
+  if (fn === 'sinhNoiDungKenh')     return await sinhNoiDungKenh(y, env, db, hoSo);
+  if (fn === 'duBaoLead')           return await duBaoLead(y, env, db, hoSo);
+  if (fn === 'dsKenhVeTinh')        return await dsKenhVeTinh(y, env, db, hoSo);
 
   /* Đăng KÝ / quản lý khoá mặt — cần phiên (thêm khoá cho tài khoản CỦA
      MÌNH). Đăng nhập bằng mặt thì đứng trước cổng phiên (ở trên). */
