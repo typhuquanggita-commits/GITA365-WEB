@@ -11,7 +11,7 @@ var KEY = 'gita365.v7';
 G.S = {
   role:null, acc:null, roleObj:null, crmMuc:null,
   view:'ban-do', open:['g1'], rtab:'labon', rightOpen:false, leftOpen:false, thuCot:false,
-  checks:{}, vision:{}, journal:{}, test:{}, bando:{}, nhatky:{}, baithi:{}, thoigian:{}, sathach:{}, khoahoc:{}, mtb:{}, famId:'F-001', kbShown:60,
+  checks:{}, vision:{}, journal:{}, test:{}, testOwner:null, bando:{}, nhatky:{}, baithi:{}, thoigian:{}, sathach:{}, khoahoc:{}, mtb:{}, famId:'F-001', kbShown:60,
   /* Danh sách mục đã từng thấy trong cột trái. Dùng để nhận ra lúc thăng
      hạng: tầng mở thêm thì tập mục mở rộng ra, và chênh lệch chính là
      phần vừa được cấp. Không có sổ này thì mục mới lặng lẽ xuất hiện
@@ -22,7 +22,7 @@ function save(){
   try{ localStorage.setItem(KEY, JSON.stringify({
     role:G.S.role, u:G.S.acc && G.S.acc.u, tuMayChu:!!(G.S.acc && G.S.acc.tuMayChu),
     crmMuc:G.S.crmMuc, view:G.S.view, open:G.S.open, rtab:G.S.rtab,
-    checks:G.S.checks, vision:G.S.vision, journal:G.S.journal, test:G.S.test, bando:G.S.bando, nhatky:G.S.nhatky, baithi:G.S.baithi, thoigian:G.S.thoigian, sathach:G.S.sathach, khoahoc:G.S.khoahoc,
+    checks:G.S.checks, vision:G.S.vision, journal:G.S.journal, test:G.S.test, testOwner:G.S.testOwner, bando:G.S.bando, nhatky:G.S.nhatky, baithi:G.S.baithi, thoigian:G.S.thoigian, sathach:G.S.sathach, khoahoc:G.S.khoahoc,
     rightOpen:G.S.rightOpen, thuCot:G.S.thuCot, mood:G.S.mood, daThay:G.S.daThay,
     /* Sổ việc và sổ chốt ngày. Thiếu hai dòng này thì mọi thứ người ta
        làm trên bảng công việc bay hết khi tải lại trang: sáng nhận việc,
@@ -67,6 +67,7 @@ function load(){
     G.S.bcVai = d.bcVai || null;
     G.S.bcBien = d.bcBien || {};
     G.S.test = d.test || {};
+    G.S.testOwner = d.testOwner || null;
     G.S.bando = d.bando || {};
     G.S.daThay = d.daThay || null;
     G.S.nhatky = d.nhatky || {};
@@ -610,6 +611,14 @@ function vaoPhien(a){
      khi người khác đăng nhập. Cùng luật với donKho() bên kho khoá. */
   if (G.S.viecCua && G.S.viecCua !== a.u) { G.S.viec = {}; G.S.chotNgay = {}; G.S.chotKhNgay = {}; G.S.caiTien = {}; G.S.mua = null; G.S.vet = []; }
   G.S.viecCua = a.u;
+  /* Kết quả khảo sát là hồ sơ cá nhân. Bản cũ từng chỉ lưu một sổ test
+     chung theo trình duyệt; đổi tài khoản trên máy dùng chung có thể nhìn
+     thấy kết quả của người trước. Không xác nhận đúng chủ sở hữu thì xoá,
+     thay vì đoán rằng đó là dữ liệu của người vừa đăng nhập. */
+  var chuTest = String(G.S.testOwner || '').toLowerCase();
+  var nguoiMoi = String(a.u || '').toLowerCase();
+  if (chuTest !== nguoiMoi) { G.S.test = {}; G.S.testDang = null; G.S.testOwner = nguoiMoi; }
+  G.S.chbhTheoHoSo = false;  /* đồng ý dùng hồ sơ để biên soạn chỉ có hiệu lực trong phiên này */
   /* Chỉ mục của trợ lý dựng theo ĐÚNG kho mà vai trước được cấp. Giữ
      lại qua lượt đăng nhập sau là để vai mới tra được kho của vai cũ —
      đúng lớp lỗi mà mục 40 của bộ kiểm canh với dữ liệu nghề. Khoá

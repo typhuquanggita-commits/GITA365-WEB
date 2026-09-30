@@ -480,7 +480,8 @@ on('[data-txong]', function(el){
   }
   var kq = G.chamTest(b, st.dap);
   st.diem = kq.diem; st.mien = kq.mien; st.nhom = kq.nhom; st.canhBao = kq.canhBao;
-  st.xong = true; st.luc = new Date().toLocaleString('vi-VN');
+  st.xong = true; st.luc = new Date().toLocaleString('vi-VN'); st.lucISO = new Date().toISOString();
+  G.S.testOwner = String((G.S.acc && G.S.acc.u) || '').toLowerCase();
   if(G.save) G.save();
   if(G.danhDau) G.danhDau('test', b.ma);
   if(G.secLog) G.secLog('Chấm bài test', b.ma+' · '+kq.diem+'/100 · nhóm '+kq.nhom.code, 'Ghi nhận');
