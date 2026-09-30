@@ -58,7 +58,7 @@ G.VIEWS = G.VIEWS || {};
     canh: []
   };
   var mcMacDinh = {
-    hinh: 'mc-gita-mau', sacThai: 'than-thien', mayQuay: 'dolly',
+    hinh: 'mc-gita-mau', vaiDan: 'mc', sacThai: 'than-thien', mayQuay: 'dolly',
     mauPhim: 'dien-anh', viTri: 'phai', nhacNen: '', amLuongNhac: 0.18,
     amLuongGiong: 1
   };
@@ -78,6 +78,90 @@ G.VIEWS = G.VIEWS || {};
   G.xuDangSoat = false;
   G.xuBanNhapAI = null;
   G.xuGiuLai = '';               // lời khai lúc bấm Dừng khẩn
+  G.xuDanhGiaPilot = G.xuDanhGiaPilot || {};
+
+  /* Pilot có chủ ý nhỏ: ba màn nền tảng, mỗi màn ba video 3p30. Các câu
+     chuyên môn vẫn đi qua Ngân khố câu khi dựng; danh sách này chỉ giữ
+     cấu trúc sản xuất, lịch thử và những dữ liệu cần đo. */
+  var CHUOI_PILOT = [
+    {ma: 'gioi-thieu', ten: 'Giới thiệu GITA 365', nguon: 'Màn Giới thiệu',
+      videos: [
+        ['GT-01', 'Giới thiệu', 'Vì sao gia đình cần một hệ điều hành chung', 'Chọn một việc cả nhà cùng thử tối nay.'],
+        ['GT-02', 'Phân tích & hướng dẫn', 'Đọc một màn GITA 365 để bắt đầu đúng', 'Mở màn này và chọn một điều nhỏ phù hợp gia đình.'],
+        ['GT-03', 'Tình huống & thực hành', 'Một buổi tối bận rộn vẫn có thể bắt đầu', 'Hỏi từng người một câu ngắn trước giờ nghỉ.']
+      ]},
+    {ma: 'hanh-trinh-5-tang', ten: 'Hành trình 5 tầng', nguon: 'Màn Hành trình 5 tầng',
+      videos: [
+        ['HT-01', 'Giới thiệu', 'Năm tầng giúp gia đình đi từng bước', 'Xác định tầng phù hợp với gia đình hôm nay.'],
+        ['HT-02', 'Phân tích & hướng dẫn', 'Cách chọn việc vừa sức ở tầng đang đứng', 'Chọn một việc nhỏ, rõ người làm và thời điểm làm.'],
+        ['HT-03', 'Tình huống & thực hành', 'Khi mọi người muốn thay đổi quá nhanh', 'Cùng thống nhất một bước trong bảy ngày tới.']
+      ]},
+    {ma: 'so-tay-gia-dinh', ten: 'Sổ tay gia đình', nguon: 'Màn Sổ tay gia đình',
+      videos: [
+        ['ST-01', 'Giới thiệu', 'Sổ tay biến điều mong muốn thành việc hằng ngày', 'Ghi một điều gia đình muốn giữ trong tuần này.'],
+        ['ST-02', 'Phân tích & hướng dẫn', 'Cách ghi một cam kết gia đình dễ thực hiện', 'Viết một cam kết có người làm và thời điểm cụ thể.'],
+        ['ST-03', 'Tình huống & thực hành', 'Khi cam kết bị bỏ quên giữa tuần', 'Họp gia đình năm phút để điều chỉnh cam kết.']
+      ]}
+  ];
+  var KHUNG_BAT_BUOC = [
+    ['hook', 'Hook', 15], ['phan-tich-man', 'Phân tích màn', 25],
+    ['huong-dan', 'Hướng dẫn thao tác', 30], ['vi-du', 'Ví dụ', 30],
+    ['tinh-huong', 'Tình huống gia đình', 30], ['bai-hoc', 'Bài học đúc kết', 30],
+    ['nguyen-vong', 'Nguyện vọng gia đình', 25], ['trainer-mc', 'Hoạt động Trainer/MC', 25]
+  ];
+
+  function keHoachVideo(thongTin, man) {
+    var ma = thongTin[0], dinhDang = thongTin[1], tieuDe = thongTin[2], cta = thongTin[3];
+    return {
+      ma: ma, man: man.ma, manTen: man.ten, dinhDang: dinhDang, tieuDe: tieuDe,
+      thoiLuong: 210, cta: cta, nguon: man.nguon,
+      thanhPhan: KHUNG_BAT_BUOC.map(function (p) {
+        return {ma: p[0], ten: p[1], giay: p[2],
+          canh: p[1] + ' · MC/Trainer đứng dẫn, chuyển động máy quay 2.5D nhẹ và phụ đề đồng bộ.'};
+      })
+    };
+  }
+  function tatCaVideoPilot() {
+    var ra = [];
+    CHUOI_PILOT.forEach(function (man) {
+      man.videos.forEach(function (v) { ra.push(keHoachVideo(v, man)); });
+    });
+    return ra;
+  }
+  function loiMau(keHoach, phan) {
+    var chu = keHoach.tieuDe;
+    var noi = {
+      hook: 'Nếu gia đình đang bận, hãy bắt đầu bằng một điều nhỏ thay vì cố sửa mọi thứ cùng lúc.',
+      'phan-tich-man': 'Màn này giúp cả nhà nhìn rõ bước đang đứng, để không chọn việc vượt quá sức hiện tại.',
+      'huong-dan': 'Cùng mở màn, chọn một mục phù hợp, rồi ghi rõ người làm và thời điểm thực hiện.',
+      'vi-du': 'Ví dụ, cả nhà dành năm phút sau bữa tối để mỗi người nói một điều mình cần được lắng nghe.',
+      'tinh-huong': 'Khi một người quên việc đã hẹn, Trainer mời gia đình điều chỉnh cách làm thay vì trách móc.',
+      'bai-hoc': 'Bài học là một cam kết nhỏ được làm đều có giá trị hơn một kế hoạch lớn bị bỏ dở.',
+      'nguyen-vong': 'Gia đình mong có thêm thời gian lắng nghe nhau và cùng giữ nhịp sinh hoạt ấm áp.',
+      'trainer-mc': 'MC hoặc Trainer mời mọi người đứng dậy, chọn một hành động trong tuần và nói lời cam kết ngắn.'
+    };
+    return chu + '. ' + (noi[phan.ma] || '');
+  }
+  G.xuNapVideoChuoi = function (ma) {
+    var ke = tatCaVideoPilot().filter(function (x) { return x.ma === ma; })[0];
+    if (!ke) return;
+    var d = G.xuDA;
+    d.ten = ke.tieuDe; d.dich = ke.thoiLuong; d.nguon = ke.nguon;
+    d.dieuNho = ke.cta; d.cta = ke.cta; d.keHoachVideo = ke;
+    if (G.xu3D) G.xu3D.khongGian = ke.dinhDang === 'Phân tích & hướng dẫn'
+      ? 'san-khau-huan-luyen' : 'bang-dao-tao';
+    d.canh = ke.thanhPhan.map(function (p, i) {
+      return {id: ma + '-' + p.ma, vai: p.ma, giay: p.giay, loi: loiMau(ke, p),
+        chuMan: p.ten, hinh: p.canh, vatHinh: '', vatTieng: '',
+        sacThai: i === 0 ? 'truyen-cam-hung' : 'than-thien'};
+    });
+    G.xuSoat = null; veLai();
+  };
+  G.xuCapNhatDanhGiaPilot = function (ma, o, gt) {
+    var d = G.xuDanhGiaPilot[ma] || {hoanThanh: 0, phanHoi: ''};
+    d[o] = o === 'hoanThanh' ? Math.max(0, Math.min(100, +gt || 0)) : String(gt || '');
+    G.xuDanhGiaPilot[ma] = d; veLai();
+  };
 
   function tong() {
     return (G.xuDA.canh || []).reduce(function (a, c) { return a + (+c.giay || 0); }, 0);
@@ -187,7 +271,7 @@ G.VIEWS = G.VIEWS || {};
     veLai();
   };
   G.xuSuaMC = function (o, gt) {
-    if (['hinh', 'sacThai', 'mayQuay', 'mauPhim', 'viTri', 'nhacNen',
+    if (['hinh', 'vaiDan', 'sacThai', 'mayQuay', 'mauPhim', 'viTri', 'nhacNen',
       'amLuongNhac', 'amLuongGiong'].indexOf(o) < 0) return;
     G.xuDA.mc[o] = (o === 'amLuongNhac' || o === 'amLuongGiong')
       ? Math.max(0, Math.min(1, +gt || 0)) : gt;
@@ -272,6 +356,10 @@ G.VIEWS = G.VIEWS || {};
       n: coTieng ? coTieng + '/' + ds.length + ' cảnh có giọng.'
         : 'Chưa có giọng — video xuất ra sẽ im tiếng. Xưởng KHÔNG sinh giọng: luật C20 ' +
           'nói máy TRỘN, không SINH.'});
+    var baD = G.xu3DKiem ? G.xu3DKiem() : null;
+    if (baD) o.push({tt: baD.sanSang ? 'ok' : 'warn', t: 'Quyền nhân vật 3D & giọng thu',
+      ref: 'ST-3D', n: baD.sanSang ? 'Mô hình cục bộ, quyền sử dụng, lời thoại và sự đồng ý giọng đã đủ.'
+        : 'Chưa đủ điều kiện dùng nhân vật 3D diễn xuất; Studio chỉ xem sân khấu kỹ thuật/2.5D.'});
 
     var mc = G.xuDA.mc || {}, anhMC = G.xuVat[mc.hinh];
     var anhMCsanSang = anhMC && anhMC.loai === 'hinh' && anhMC.el &&
@@ -357,6 +445,7 @@ G.VIEWS = G.VIEWS || {};
         ct.restore();
       }
     }
+    if (G.xu3D && G.xu3D.khongGian === 'bang-dao-tao') veBangDaoTao(ct, c, W, H, u);
     veMC(ct, mc, W, H, u, c.sacThai);
 
     var g = ct.createLinearGradient(0, H * 0.45, 0, H);
@@ -417,8 +506,22 @@ G.VIEWS = G.VIEWS || {};
     ct.fillStyle = 'rgba(5,14,28,.82)'; ct.fillRect(x, y + bh - 46 * u, bw, 46 * u);
     ct.fillStyle = '#FFFFFF'; ct.textAlign = 'left';
     ct.font = '700 ' + (22 * u) + 'px sans-serif';
-    ct.fillText('MC GITA · ' + String(sacThaiCanh || mc.sacThai || 'than-thien').replace(/-/g, ' ').toUpperCase(),
+    ct.fillText((mc.vaiDan === 'trainer' ? 'TRAINER GITA' : 'MC GITA') + ' · ' +
+      String(sacThaiCanh || mc.sacThai || 'than-thien').replace(/-/g, ' ').toUpperCase(),
       x + 12 * u, y + bh - 16 * u, bw - 24 * u);
+    ct.restore();
+  }
+  function veBangDaoTao(ct, c, W, H, u) {
+    var bw = W * 0.57, bh = H * 0.42, x = W * 0.07, y = H * 0.13;
+    ct.save();
+    ct.fillStyle = 'rgba(10,51,45,.92)'; ct.fillRect(x, y, bw, bh);
+    ct.strokeStyle = '#D8A94D'; ct.lineWidth = 6 * u; ct.strokeRect(x, y, bw, bh);
+    ct.fillStyle = 'rgba(255,250,234,.94)'; ct.textAlign = 'left';
+    ct.font = '700 ' + (32 * u) + 'px sans-serif'; ct.fillText('GITA 365', x + 34 * u, y + 62 * u);
+    ct.font = '600 ' + (25 * u) + 'px sans-serif';
+    xuong(ct, c.chuMan || 'Cùng học một điều nhỏ', x + 34 * u, y + 116 * u, bw - 68 * u, 28 * u, 600);
+    ct.strokeStyle = 'rgba(255,250,234,.56)'; ct.lineWidth = 2 * u;
+    for (var i = 0; i < 3; i++) ct.strokeRect(x + 34 * u, y + (190 + i * 54) * u, 22 * u, 22 * u);
     ct.restore();
   }
   function veKhungDienAnh(ct, W, H) {
@@ -659,6 +762,32 @@ G.VIEWS = G.VIEWS || {};
        theo (bài học "nới đúng chỗ" của cổng vào 9.99.80). */
     o += '<div class="man-xu">';
 
+    /* 0 · Chuỗi video — nạp một video là nạp đủ kịch bản, shot list,
+       thời lượng và CTA vào cùng G.xuDA mà Studio đang dựng. */
+    var videoPilot = tatCaVideoPilot();
+    o += '<div class="giay"><h3>0 · Chuỗi video thử nghiệm</h3>' +
+      '<p class="note">Ba màn ưu tiên × ba video 3 phút 30 giây = 10 phút 30 giây/màn. ' +
+      'Mỗi video có đủ 8 phần bắt buộc; chọn video để nạp kịch bản, cảnh quay, thời lượng và CTA vào Studio.</p>' +
+      '<div class="row"><label>Video thử nghiệm <select onchange="G.xuNapVideoChuoi(this.value)">' +
+      '<option value="">— chọn video để dựng —</option>' + videoPilot.map(function (v) {
+        return '<option value="' + h(v.ma) + '">' + h(v.manTen + ' · ' + v.ma + ' · ' + v.dinhDang) + '</option>';
+      }).join('') + '</select></label></div>';
+    if (G.xuDA.keHoachVideo) {
+      var ke = G.xuDA.keHoachVideo;
+      o += '<p class="note"><b>' + h(ke.ma + ' · ' + ke.dinhDang) + '</b> · ' +
+        h(ke.thoiLuong / 60 + ' phút') + ' · CTA: ' + h(ke.cta) + '</p>';
+    }
+    o += '<div class="row" style="flex-wrap:wrap">' + videoPilot.map(function (v) {
+      var dg = G.xuDanhGiaPilot[v.ma] || {hoanThanh: 0, phanHoi: ''};
+      return '<div class="note" style="max-width:300px"><b>' + h(v.ma + ' · ' + v.dinhDang) + '</b><br>' +
+        h(v.manTen) + '<br><label>Hoàn thành <input type="number" min="0" max="100" value="' +
+        h(String(dg.hoanThanh)) + '" onchange="G.xuCapNhatDanhGiaPilot(\'' + h(v.ma) +
+        '\',\'hoanThanh\',this.value)">%</label><label>Phản hồi gia đình <input type="text" value="' +
+        h(dg.phanHoi) + '" onchange="G.xuCapNhatDanhGiaPilot(\'' + h(v.ma) +
+        '\',\'phanHoi\',this.value)"></label></div>';
+    }).join('') + '</div><p class="note">Chỉ số thử nghiệm ở phiên làm việc này: tỷ lệ hoàn thành và phản hồi ngắn của gia đình. ' +
+      'Không tự gửi dữ liệu gia đình ra ngoài.</p></div>';
+
     /* 1 · Yêu cầu */
     o += '<div class="giay"><h3>1 · Yêu cầu</h3>';
     o += '<label>Chủ đề <input type="text" value="' + h(G.xuDA.ten) +
@@ -704,7 +833,10 @@ G.VIEWS = G.VIEWS || {};
     });
     var mc = G.xuDA.mc;
     o += '<div class="giay xu-mc"><h3>2 · MC &amp; đạo diễn hình ảnh</h3>' +
-      '<div class="row"><label>Ảnh MC tham chiếu <select onchange="G.xuSuaMC(\'hinh\',this.value)">' +
+      '<div class="row"><label>Người dẫn <select onchange="G.xuSuaMC(\'vaiDan\',this.value)">' +
+      '<option value="mc"' + (mc.vaiDan === 'mc' ? ' selected' : '') + '>MC đứng dẫn</option>' +
+      '<option value="trainer"' + (mc.vaiDan === 'trainer' ? ' selected' : '') + '>Trainer đứng đào tạo</option>' +
+      '</select></label><label>Ảnh tham chiếu MC/Trainer <select onchange="G.xuSuaMC(\'hinh\',this.value)">' +
       '<option value="">— không chèn MC —</option>' + hinhMC.map(function (k) {
         return '<option value="' + h(k) + '"' + (k === mc.hinh ? ' selected' : '') + '>' +
           h(G.xuVat[k].ten) + '</option>';
@@ -734,10 +866,10 @@ G.VIEWS = G.VIEWS || {};
       h(String(mc.amLuongGiong)) + '" onchange="G.xuSuaMC(\'amLuongGiong\',this.value)"></label>' +
       '<label>Âm lượng nhạc <input type="range" min="0" max="0.6" step="0.02" value="' +
       h(String(mc.amLuongNhac)) + '" onchange="G.xuSuaMC(\'amLuongNhac\',this.value)"></label></div>' +
-      '<p class="note">MC hiện là ảnh tĩnh trong khung giới thiệu; sắc thái từng cảnh chỉ là chỉ đạo nội dung, ' +
-      'không làm biến đổi nét mặt. Máy quay tác động lên cảnh nền. Giọng dùng micro hoặc tệp thu sẵn; ' +
-      'bộ dựng không tạo bản sao giọng AI. ' +
-      'Âm thanh stereo được đặt nhẹ theo vị trí MC; đây không phải âm thanh 4D/5D.</p></div>';
+      '<p class="note">MC/Trainer đứng dẫn bằng ảnh tham chiếu trong khung; chỉ đạo cảnh và chuyển động máy quay ' +
+      '2.5D tạo nhịp gần quay trực tiếp, nhưng không tuyên bố nhân vật 3D hoặc nét mặt chuyển động khi chưa có renderer. ' +
+      'Giọng chất lượng dùng micro hoặc tệp thu sẵn, khớp thời lượng từng cảnh và nghe thử trước kiểm duyệt; bộ dựng ' +
+      'không tạo bản sao giọng AI. Âm thanh stereo được đặt nhẹ theo vị trí người dẫn.</p></div>';
 
     /* 3 · Màn xem thử */
     o += '<div class="giay"><h3>3 · Xem thử</h3>' +
@@ -752,6 +884,8 @@ G.VIEWS = G.VIEWS || {};
     o += '<p class="note" id="xu-tt">Đây là bản xem trước 2.5D dựng tại thiết bị; chưa phải nhân vật 3D ' +
       'biểu cảm thật, phim 4D/5D hay tệp video hoàn chỉnh. Hiện hệ thống chưa có renderer nội bộ ' +
       'để kết xuất phim. Hình, giọng và nhạc không được gửi đi; không có nút xuất giả.</p></div>';
+
+    o += G.xu3DPanel ? G.xu3DPanel() : '';
 
     /* 3 · Kịch bản */
     o += '<div class="giay"><h3>4 · Kịch bản</h3>';
