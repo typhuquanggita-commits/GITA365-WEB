@@ -10365,7 +10365,8 @@ on('[data-txong]', function(el){
   }
   var kq = G.chamTest(b, st.dap);
   st.diem = kq.diem; st.mien = kq.mien; st.nhom = kq.nhom; st.canhBao = kq.canhBao;
-  st.xong = true; st.luc = new Date().toLocaleString('vi-VN');
+  st.xong = true; st.luc = new Date().toLocaleString('vi-VN'); st.lucISO = new Date().toISOString();
+  G.S.testOwner = String((G.S.acc && G.S.acc.u) || '').toLowerCase();
   if(G.save) G.save();
   if(G.danhDau) G.danhDau('test', b.ma);
   if(G.secLog) G.secLog('Chấm bài test', b.ma+' · '+kq.diem+'/100 · nhóm '+kq.nhom.code, 'Ghi nhận');
@@ -23671,6 +23672,39 @@ var G = window.G || {}; window.G = G;
     {ma:'CT24',ten:'5C',dung:'Cần tạo đồng cảm bằng bối cảnh, nhân vật và hội thoại thật.',nhip:'Hoàn cảnh → tò mò → nhân vật → hội thoại → xung đột',chot:'Nếu nghe lại cuộc trò chuyện gần nhất, xung đột thật nằm ở câu nào?'}
   ];
 
+  function testGanNhatCuaToi() {
+    var acc = G.S && G.S.acc;
+    if (!acc || String((G.S && G.S.testOwner) || '').toLowerCase() !== String(acc.u || '').toLowerCase()) return null;
+    var ds = Object.keys((G.S && G.S.test) || {}).map(function (ma, i) {
+      var kq = G.S.test[ma], b = (G.TEST750 || []).filter(function (x) { return x.ma === ma; })[0];
+      return kq && kq.xong && kq.mien && b ? { ma:ma, kq:kq, b:b, i:i } : null;
+    }).filter(Boolean);
+    ds.sort(function (a, b) { return String(b.kq.lucISO || b.i).localeCompare(String(a.kq.lucISO || a.i)); });
+    return ds[0] || null;
+  }
+
+  G.chbhHoSoCuaToi = testGanNhatCuaToi;
+  G.chbhVietTheoHoSo = function () {
+    var hs = testGanNhatCuaToi();
+    if (!hs) return '';
+    var ten = ((G.S.acc && G.S.acc.ten) || 'bạn').trim();
+    var mien = Object.keys(hs.kq.mien).filter(function (k) {
+      return typeof hs.kq.mien[k] === 'number';
+    }).sort(function (a, b) { return hs.kq.mien[a] - hs.kq.mien[b]; });
+    if (!mien.length) return '';
+    var m1 = mien[0], m2 = mien[1] || mien[0], d1 = hs.kq.mien[m1], d2 = hs.kq.mien[m2];
+    return '<div class="card mb" style="border-color:var(--gita-vien-1)">' +
+      '<p class="tiny up muted">BẢN NHÁP CÁ NHÂN HOÁ · KHÔNG PHẢI KẾT LUẬN</p>' +
+      '<h3 style="margin:7px 0 14px;font-size:20px">Đêm ' + h(ten) + ' quyết định không né tránh nữa</h3>' +
+      '<div class="sm" style="line-height:1.85">' +
+      '<p>Có những giai đoạn, điều làm người ta mệt nhất không phải là một việc quá lớn. Đó là cảm giác mỗi ngày đều cố gắng, nhưng đến cuối ngày vẫn không biết mình đang đi về đâu. Trong kết quả <b>' + h(hs.b.ten) + '</b>, miền <b>' + h(m1) + '</b> đang ở <b>' + d1 + '/100</b>; miền <b>' + h(m2) + '</b> ở <b>' + d2 + '/100</b>. Những con số này không nói ' + h(ten) + ' kém hay thiếu điều gì. Chúng chỉ gợi ra một nơi đang cần được lắng nghe trước khi bị ép phải thay đổi.</p>' +
+      '<p>Hãy hình dung một buổi tối bình thường. Mọi thứ đã yên, nhưng trong đầu nhân vật chính vẫn còn một câu hỏi chưa trả lời: “Mình đã cố rồi, vậy tại sao vẫn thấy mắc kẹt?” Câu hỏi ấy không cần một lời trách. Nó cần một khoảng dừng đủ thật để nhìn lại: có thể mình đang mang quá nhiều việc, đang kỳ vọng phải ổn ngay, hoặc đã lâu không gọi đúng tên điều đang làm mình mỏi.</p>' +
+      '<p>Điểm căng nhất của câu chuyện không nằm ở lúc nhân vật bỏ cuộc. Nó nằm ở khoảnh khắc nhân vật nhận ra: cứ tiếp tục chống đỡ một mình thì ngày mai sẽ giống hệt hôm nay. Và thay vì hứa một cuộc lột xác, nhân vật chọn một việc nhỏ nhưng không còn né tránh: nhìn thẳng vào <b>' + h(m1) + '</b>, gọi tên một tình huống cụ thể, rồi dành bảy ngày để quan sát và thử một nhịp mới.</p>' +
+      '<p>Sự thay đổi không đến bằng một câu nói hay. Nó đến khi có một việc đủ nhỏ để làm được, đủ rõ để đo lại, và có người đồng hành không vội phán xét. Sau bảy ngày, nhân vật chưa cần trở thành một con người khác. Chỉ cần có thể nói: “Tôi hiểu mình hơn tuần trước. Tôi biết bước tiếp theo là gì.” Đó là lúc câu chuyện bắt đầu có đường ra.</p>' +
+      '<p><b>Bước mở đầu đề nghị:</b> trong bảy ngày tới, ghi lại một lần mỗi ngày khi ' + h(m1) + ' trở nên khó nhất; không sửa ngay, chỉ ghi điều đã xảy ra, cảm xúc lúc đó và một việc nhỏ đã thử. Sau bảy ngày mới cùng đọc lại mô thức và chọn bước tiếp theo.</p>' +
+      '</div><p class="tiny muted mt" style="line-height:1.65">Câu chuyện này là tác phẩm hư cấu được biên soạn từ kết quả khảo sát trên tài khoản hiện tại; không khẳng định sự kiện, nguyên nhân hoặc chẩn đoán về anh chị.</p></div>';
+  };
+
   function boDau(s) {
     return String(s || '').toLowerCase()
       .normalize('NFD').replace(/[̀-ͯ]/g, '')
@@ -23800,6 +23834,20 @@ var G = window.G || {}; window.G = G;
       '</details>';
     }).join('') + '</div>';
 
+    var hs = testGanNhatCuaToi();
+    o += U.sec('Chuyện theo hồ sơ khảo sát của chính tôi',
+      'Chỉ đọc kết quả test đã hoàn thành trên tài khoản đang đăng nhập. Không tìm hồ sơ người khác, không gửi dữ liệu đi, và không biến kết quả khảo sát thành chẩn đoán.');
+    if (!hs) {
+      o += '<div class="card mb"><p class="sm">Chưa có kết quả test hoàn thành thuộc tài khoản này. Hoàn thành một bài ở Bộ test nhận diện rồi quay lại để biên soạn bản nháp sát hơn với điểm cần được chạm.</p></div>';
+    } else {
+      o += '<div class="card mb" style="border-color:var(--gita-vien-1)"><p class="sm" style="line-height:1.75">Sẵn sàng dùng kết quả <b>' +
+        h(hs.b.ten) + '</b> đã hoàn thành ' + h(hs.kq.luc || '') +
+        '. Bấm đồng ý để tạo một bản nháp trong phiên này; đồng ý không được lưu khi đăng xuất hoặc đổi tài khoản.</p>' +
+        '<button class="btn ' + (G.S.chbhTheoHoSo ? 'ghost' : 'pri') + ' sm" data-chbh-theo="1">' +
+        (G.S.chbhTheoHoSo ? 'Dừng dùng hồ sơ trong phiên này' : 'Đồng ý dùng kết quả test của tôi để biên soạn') + '</button></div>';
+      if (G.S.chbhTheoHoSo) o += G.chbhVietTheoHoSo();
+    }
+
     /* Ranh giới AI */
     o += U.sec('Ranh giới của trợ lý AI', 'Bốn điều AI KHÔNG làm, dù làm được.');
     o += '<div class="card mb">' + U.list(GI.ranhAI || [], 'var(--gita-do)') + '</div>';
@@ -23845,6 +23893,12 @@ var G = window.G || {}; window.G = G;
   document.addEventListener('click', function (e) {
     var b = e.target.closest && e.target.closest('[data-kbshien]');
     if (b) { G.S.kbsHien = (G.S.kbsHien || 60) + 60; G.render(); }
+    var theo = e.target.closest && e.target.closest('[data-chbh-theo]');
+    if (theo) {
+      G.S.chbhTheoHoSo = !G.S.chbhTheoHoSo;
+      if (G.S.chbhTheoHoSo && G.secLog) G.secLog('Dùng kết quả test để biên soạn chuyện', 'Chỉ dùng kết quả của tài khoản hiện tại trong phiên này.', 'Ghi nhận');
+      G.render();
+    }
   });
 })();
 
@@ -55051,7 +55105,7 @@ var KEY = 'gita365.v7';
 G.S = {
   role:null, acc:null, roleObj:null, crmMuc:null,
   view:'ban-do', open:['g1'], rtab:'labon', rightOpen:false, leftOpen:false, thuCot:false,
-  checks:{}, vision:{}, journal:{}, test:{}, bando:{}, nhatky:{}, baithi:{}, thoigian:{}, sathach:{}, khoahoc:{}, mtb:{}, famId:'F-001', kbShown:60,
+  checks:{}, vision:{}, journal:{}, test:{}, testOwner:null, bando:{}, nhatky:{}, baithi:{}, thoigian:{}, sathach:{}, khoahoc:{}, mtb:{}, famId:'F-001', kbShown:60,
   /* Danh sách mục đã từng thấy trong cột trái. Dùng để nhận ra lúc thăng
      hạng: tầng mở thêm thì tập mục mở rộng ra, và chênh lệch chính là
      phần vừa được cấp. Không có sổ này thì mục mới lặng lẽ xuất hiện
@@ -55062,7 +55116,7 @@ function save(){
   try{ localStorage.setItem(KEY, JSON.stringify({
     role:G.S.role, u:G.S.acc && G.S.acc.u, tuMayChu:!!(G.S.acc && G.S.acc.tuMayChu),
     crmMuc:G.S.crmMuc, view:G.S.view, open:G.S.open, rtab:G.S.rtab,
-    checks:G.S.checks, vision:G.S.vision, journal:G.S.journal, test:G.S.test, bando:G.S.bando, nhatky:G.S.nhatky, baithi:G.S.baithi, thoigian:G.S.thoigian, sathach:G.S.sathach, khoahoc:G.S.khoahoc,
+    checks:G.S.checks, vision:G.S.vision, journal:G.S.journal, test:G.S.test, testOwner:G.S.testOwner, bando:G.S.bando, nhatky:G.S.nhatky, baithi:G.S.baithi, thoigian:G.S.thoigian, sathach:G.S.sathach, khoahoc:G.S.khoahoc,
     rightOpen:G.S.rightOpen, thuCot:G.S.thuCot, mood:G.S.mood, daThay:G.S.daThay,
     /* Sổ việc và sổ chốt ngày. Thiếu hai dòng này thì mọi thứ người ta
        làm trên bảng công việc bay hết khi tải lại trang: sáng nhận việc,
@@ -55107,6 +55161,7 @@ function load(){
     G.S.bcVai = d.bcVai || null;
     G.S.bcBien = d.bcBien || {};
     G.S.test = d.test || {};
+    G.S.testOwner = d.testOwner || null;
     G.S.bando = d.bando || {};
     G.S.daThay = d.daThay || null;
     G.S.nhatky = d.nhatky || {};
@@ -55650,6 +55705,14 @@ function vaoPhien(a){
      khi người khác đăng nhập. Cùng luật với donKho() bên kho khoá. */
   if (G.S.viecCua && G.S.viecCua !== a.u) { G.S.viec = {}; G.S.chotNgay = {}; G.S.chotKhNgay = {}; G.S.caiTien = {}; G.S.mua = null; G.S.vet = []; }
   G.S.viecCua = a.u;
+  /* Kết quả khảo sát là hồ sơ cá nhân. Bản cũ từng chỉ lưu một sổ test
+     chung theo trình duyệt; đổi tài khoản trên máy dùng chung có thể nhìn
+     thấy kết quả của người trước. Không xác nhận đúng chủ sở hữu thì xoá,
+     thay vì đoán rằng đó là dữ liệu của người vừa đăng nhập. */
+  var chuTest = String(G.S.testOwner || '').toLowerCase();
+  var nguoiMoi = String(a.u || '').toLowerCase();
+  if (chuTest !== nguoiMoi) { G.S.test = {}; G.S.testDang = null; G.S.testOwner = nguoiMoi; }
+  G.S.chbhTheoHoSo = false;  /* đồng ý dùng hồ sơ để biên soạn chỉ có hiệu lực trong phiên này */
   /* Chỉ mục của trợ lý dựng theo ĐÚNG kho mà vai trước được cấp. Giữ
      lại qua lượt đăng nhập sau là để vai mới tra được kho của vai cũ —
      đúng lớp lỗi mà mục 40 của bộ kiểm canh với dữ liệu nghề. Khoá
