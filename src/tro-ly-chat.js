@@ -43,7 +43,8 @@ var chuPhien = null;
 
 function kiemTraPhien(){
   var a = G.S && G.S.acc;
-  var id = a && (a.uid || a.u);
+  var f = a && G.myFamily ? G.myFamily() : null;
+  var id = a && [a.uid || a.u || a.ten, G.S.role, f && f.tier].join('|');
   if(chuPhien !== id){
     chuPhien = id;
     G.CHAT = [];
@@ -141,7 +142,7 @@ G.chatHoi = function(cauHoi){
   if(G.kbChuoi && chay && !d.khan){
     d.chuoi = G.kbChuoi(kbCau, kbDa);
     if(d.chuoi && !laCauMoi && khach()){
-      d.tinhTiet = cauHoi;
+      d.tinhTiet = kbDa.slice(-3).join(' → ');
       d.loi = null;
       d.kbs = null;
       d.soan = null;
