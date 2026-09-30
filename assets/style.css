@@ -2665,6 +2665,7 @@ body.tln-khoa{ overflow:hidden }
 .tln-mini .tln-go{ display:none }
 .tln-mini .tln-dau{ cursor:pointer; border-bottom:none }
 .tln-mini .tln-duoi{ display:none }
+.tln-mini .tln-ten b{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
 .tln-mini .tln-nut[data-tln="to"],
 .tln-mini .tln-nut[data-tln="an"]{ display:none }
 .tln-mini .tln-panel::after{ content:"Chạm để tiếp tục trò chuyện";
