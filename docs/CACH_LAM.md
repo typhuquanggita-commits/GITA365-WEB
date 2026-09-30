@@ -25,7 +25,7 @@ node tools/phat-hanh.js --tag
 
 ```bash
 git add -A
-git commit -m "Phát hành GITA 365 9.99.248"
+git commit -m "Phát hành GITA 365"
 git push origin <nhánh-của-bạn>
 ```
 

@@ -18,7 +18,7 @@ Nếu cần bộ cài `.exe` / `.dmg` / `.AppImage`:
 
 ```bash
 python3 tools/dong-goi.py
-# Sinh GITA365-9.99.248-gioi-thieu.html
+# Sinh GITA365-<phiên-bản>-gioi-thieu.html
 ```
 
 Lưu ý: bản một tệp là bản **giới thiệu**, không kèm kho tri thức đầy đủ.
