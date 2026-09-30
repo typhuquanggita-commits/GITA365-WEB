@@ -4,7 +4,7 @@ GITA 365 — ĐÓNG GÓI BẢN MỘT TỆP (giới thiệu / xem thử)
 
 Dùng:
   python3 tools/dong-goi.py
-  python3 tools/dong-goi.py --ten "GITA365-9.99.248-gioi-thieu.html"
+  python3 tools/dong-goi.py --ten "GITA365-<phiên-bản>-gioi-thieu.html"
 
 Sinh một tệp HTML duy nhất chứa:
   · vỏ ứng dụng từ index.html

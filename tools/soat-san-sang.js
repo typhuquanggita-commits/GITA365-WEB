@@ -45,12 +45,21 @@ const metaVer = meta ? meta[1] : null;
 const swVerMatch = doc('sw.js').match(/CACHE\s*=\s*['"]gita365-v([^'"]+)['"]/);
 const swVer = swVerMatch ? swVerMatch[1].replace(/-/g, '.') : null;
 const trienKhaiVer = (doc('TRIEN-KHAI.md').match(/Bản full ([0-9.]+)/) || [])[1];
+const readmeVer = (doc('README.md').match(/GITA 365 · v([0-9.]+)/) || [])[1];
+const banAppVer = (doc('may-chu/cong-dong.js').match(/BAN_APP\s*=\s*['"]([^'"]+)['"]/) || [])[1];
 if (metaVer) ok('G.META.version = ' + metaVer); else fail('Không đọc được G.META.version');
 if (swVer) ok('sw.js cache = v' + swVer); else fail('Không đọc được sw.js CACHE');
 if (metaVer && swVer && metaVer === swVer) ok('Phiên bản khớp giữa META và sw.js');
 else if (metaVer && swVer) fail('Phiên bản KHÔNG khớp: META ' + metaVer + ' ≠ sw.js ' + swVer);
 if (trienKhaiVer && metaVer && trienKhaiVer === metaVer) ok('TRIEN-KHAI.md khớp phiên bản');
-else if (trienKhaiVer) warn('TRIEN-KHAI.md ghi ' + trienKhaiVer + ' khác ' + metaVer);
+else if (trienKhaiVer && metaVer) fail('TRIEN-KHAI.md ghi ' + trienKhaiVer + ' khác ' + metaVer);
+else fail('Không đọc được phiên bản trong TRIEN-KHAI.md');
+if (readmeVer && metaVer && readmeVer === metaVer) ok('README.md khớp phiên bản');
+else if (readmeVer && metaVer) fail('README.md ghi ' + readmeVer + ' khác ' + metaVer);
+else fail('Không đọc được phiên bản trong README.md');
+if (banAppVer && metaVer && banAppVer === metaVer) ok('may-chu/cong-dong.js khớp phiên bản');
+else if (banAppVer && metaVer) fail('may-chu/cong-dong.js ghi ' + banAppVer + ' khác ' + metaVer);
+else fail('Không đọc được BAN_APP trong may-chu/cong-dong.js');
 
 /* 2. Gộp mã */
 log('\n2. Gộp mã nguồn');
