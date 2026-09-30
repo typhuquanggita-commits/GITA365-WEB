@@ -142,6 +142,21 @@ export async function napTaiLieu(y, env, db, hoSo) {
   if (DUOI_CHO_PHEP.indexOf(duoi) < 0)
     return {ok: false, error: 'Chỉ nhận tài liệu và ảnh, không nhận tệp chạy được.'};
 
+  /* Kiểm tra magic bytes nếu có thể đọc được dữ liệu nhị phân */
+  let bytes;
+  try {
+    const bin = atob(dulieu);
+    bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  } catch (e) {
+    return {ok: false, error: 'Nội dung tệp không đọc được.'};
+  }
+  const mime = (await import('./an-toan.js')).doanMime(bytes);
+  if (mime === 'application/octet-stream' && DUOI_CHO_PHEP.indexOf(duoi) >= 0 && duoi !== 'txt')
+    return {ok: false, error: 'Tệp không nhận diện được định dạng nội dung.'};
+  if (!(await import('./an-toan.js')).hopLeMime(duoi, mime))
+    return {ok: false, error: 'Phần mở rộng tệp không khớp nội dung thật.'};
+
   /* Trần số tệp mỗi ngày cho một tài khoản — chặn một tài khoản bị chiếm
      đẩy hàng nghìn tệp vào R2. */
   const dauNgay = new Date().toISOString().slice(0, 10);
@@ -153,13 +168,11 @@ export async function napTaiLieu(y, env, db, hoSo) {
 
   const driveId = 'tailieu/' + id;
   if (env.HOSO) {
-    let bytes;
     try {
-      const bin = atob(dulieu);
-      bytes = new Uint8Array(bin.length);
-      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-    } catch (e) { return {ok: false, error: 'Nội dung tệp không đọc được.'}; }
-    await env.HOSO.put(driveId, bytes);
+      await env.HOSO.put(driveId, bytes);
+    } catch (e) {
+      return {ok: false, code: 'STORFAIL', error: 'Không lưu được tệp vào kho.'};
+    }
   }
 
   const luc = new Date().toISOString();
