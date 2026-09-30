@@ -13,10 +13,9 @@
       khớp (bẫy dò chữ #1 của kho), còn `\bngu\b` khớp vào "ngu|ồn"
       tức là bắt oan chính ô *Nguồn tri thức* đứng ngay bên trên.
 
-   2. **KHÔNG gọi thẳng bộ tạo chữ ngoài lãnh thổ từ trình duyệt.**
-      Chuỗi đi ra mang chủ đề, người xem và điều nhỏ của một gia đình.
-      Đường ra khỏi hệ đã có cổng ẩn danh từ 9.99.62; một lời `fetch`
-      trong mã trình duyệt đi vòng qua nó.
+   2. **Không gọi bộ tạo chữ từ trình duyệt.** XU-02 chỉ mở đường soạn
+      bản nháp qua Worker cho Super Admin, sau xác nhận gửi và cổng ẩn
+      danh; dữ liệu khách không được gửi và bản nháp không tự phát hành.
 
    3. **KHÔNG có `esc()` riêng.** `U.h()` đã có, và bản chép của bản
       mẫu sót dấu nháy đơn — mà lời đọc tiếng Việt đầy dấu nháy đơn.
@@ -77,6 +76,7 @@ G.VIEWS = G.VIEWS || {};
   }
   G.xuSoat = G.xuSoat || null;   // kết quả cửa soatNoiDung
   G.xuDangSoat = false;
+  G.xuBanNhapAI = null;
   G.xuGiuLai = '';               // lời khai lúc bấm Dừng khẩn
 
   function tong() {
@@ -143,6 +143,27 @@ G.VIEWS = G.VIEWS || {};
     d.canh = ds;
     G.xuSoat = null;
     veLai();
+  };
+
+  G.xuSoanDeBaiNgoai = function () {
+    var dongY = typeof document !== 'undefined' && document.getElementById('xuDongYAI');
+    if (!dongY || !dongY.checked) {
+      U.toast('Xác nhận trước khi gửi đề bài ra nhà cung cấp.', 'err'); return;
+    }
+    if (!G.goiMayChu || G.xuBanNhapAI && G.xuBanNhapAI.dang) return;
+    var d = G.xuDA;
+    var deBai = 'Chủ đề: ' + String(d.ten || '').trim() +
+      '\nNgười xem: ' + String(d.nguoiXem || '').trim() +
+      '\nTầng nội dung: ' + String(d.tang || '').trim() +
+      '\nĐiều nhỏ cần truyền đạt: ' + String(d.dieuNho || '').trim();
+    G.xuBanNhapAI = {dang: true, banNhap: ''}; veLai();
+    G.goiMayChu('soanDeBaiNgoai', {deBai: deBai}).then(function (x) {
+      G.xuBanNhapAI = x && x.ok ? x : {ok: false, error: x && x.error || 'Không tạo được bản nháp.'};
+      veLai();
+    }).catch(function (e) {
+      G.xuBanNhapAI = {ok: false, error: String(e && e.message || e)};
+      veLai();
+    });
   };
 
   G.xuThemCanh = function () {
@@ -660,6 +681,17 @@ G.VIEWS = G.VIEWS || {};
       '" oninput="G.xuSuaO(\'dieuNho\',this.value)"></label>';
     o += '<div class="row"><button class="btn btn-chinh" onclick="G.xuViet()">Viết kịch bản</button>' +
       '<button class="btn" onclick="G.xuGoiSoat()">Soát lời đọc</button></div>';
+    if (G.S && G.S.acc && G.S.acc.role === 'R01') {
+      o += '<label class="note"><input id="xuDongYAI" type="checkbox"> Tôi xác nhận đề bài không chứa thông tin nhận dạng ' +
+        'khách hàng và đồng ý gửi đề bài tới OpenAI để tạo bản nháp.</label>' +
+        '<button class="btn" onclick="G.xuSoanDeBaiNgoai()">' +
+        (G.xuBanNhapAI && G.xuBanNhapAI.dang ? 'Đang soạn…' : 'Soạn bản nháp AI · qua máy chủ') + '</button>';
+      if (G.xuBanNhapAI && G.xuBanNhapAI.ok)
+        o += '<div class="note"><b>' + h(G.xuBanNhapAI.nhac || 'Bản nháp cần người duyệt.') +
+          '</b><pre class="sm" style="white-space:pre-wrap">' + h(G.xuBanNhapAI.banNhap) + '</pre></div>';
+      else if (G.xuBanNhapAI && G.xuBanNhapAI.error)
+        o += '<p class="note">' + h(G.xuBanNhapAI.error) + '</p>';
+    }
     o += '<p class="note">Bộ viết chạy ngay trong máy, không gọi mạng. Ngân khố câu nằm ' +
       'trong kho nghề nên người viết nội dung sửa được mà không phải sửa mã.</p></div>';
 

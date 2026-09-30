@@ -24,10 +24,10 @@
    cửa `sinhGiong` rồi mới cấm gọi là muộn, nên cửa ấy KHÔNG TỒN TẠI,
    và mục 103 hỏi danh sách hàm xuất ra để canh.
 
-   Tương tự với `nhapDeBaiRaNgoai`: bản mẫu gọi thẳng một bộ tạo chữ
-   đặt ngoài lãnh thổ từ trình duyệt, mang theo chủ đề · người xem ·
-   điều nhỏ của một gia đình, không qua cổng ẩn danh. Đường ấy đã gỡ,
-   và câu hỏi có mở lại qua máy chủ hay không là mục chờ XU-02.
+   Tương tự với `nhapDeBaiRaNgoai`: bản mẫu từng gọi bộ tạo chữ ngoài
+   lãnh thổ từ trình duyệt. XU-02 hiện chỉ mở bản nháp qua Worker sau
+   xác nhận, quyền AI02, và cổng ẩn danh; không có dữ liệu khách hàng
+   được gửi và bản nháp không tự đi vào kho đã duyệt.
 
    ══ BA · HỘ CHIẾU KHÔNG DỰNG Ở MÀN HÌNH ══
 
@@ -39,24 +39,7 @@
    ═══════════════════════════════════════════════════════════════ */
 
 import { Kho } from './nen.js';
-
-/* Hồ sơ phiên mang tên ô là `hoSo.u` và `hoSo.role` — KHÔNG phải
-   `username`, KHÔNG phải `vai`. Cái bẫy đã cắn kho năm lần (9.99.55 ·
-   9.99.62 · 9.99.75 · 9.99.77). Gõ nhầm thì JavaScript trả `undefined`
-   và cổng đóng với mọi người trong im lặng. */
-function ten(hoSo) { return String((hoSo || {}).u || ''); }
-
-/* Cùng một phép soi vai với `tu-nang-cap.js`, viết lại ở đây vì hai
-   mô-đun không nhập lẫn nhau — và ghi ra rằng nó là BẢN THỨ HAI để
-   người sau biết có hai chỗ phải sửa cùng lúc.
-
-   Vì sao không gom: gom được thì phải có một mô-đun chung cho phép soi
-   vai, và dựng một mô-đun như thế là một lượt sửa đụng mười ba tệp
-   máy chủ. Đó là việc đáng làm, và nó là mục chờ XU-04 chứ không phải
-   một dòng vá kèm bản này. */
-function laNguoiNha(hoSo) {
-  return /^R(0[1-9]|1[0-2])$/.test(String((hoSo || {}).role || ''));
-}
+import { laNguoiNha, tenNguoiDung as ten } from './vai-tro.js';
 
 /* ═══════════════ CỬA DUY NHẤT ═══════════════
 

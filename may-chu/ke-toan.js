@@ -18,8 +18,7 @@
 
 import { Kho } from './nen.js';
 
-const BAC = {R01:1,R02:2,R03:3,R04:4,R05:5,R06:6,R07:7,R08:8,
-  R09:9,R10:10,R11:11,R12:12,R13:13,R14:14,R15:15};
+import { BAC } from './vai-tro.js';
 
 /* Cổng tài chính: R01–R03 (luật "tài chính chỉ R01–R03", 9.97). */
 function gac(hoSo){ return (BAC[hoSo && hoSo.role] || 99) <= 3; }

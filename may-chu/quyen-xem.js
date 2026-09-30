@@ -246,8 +246,7 @@ export async function xemKhachCao(y, env, db, hoSo) {
 
    MÁY CHỦ KHÔNG TỰ NÂNG. Phải có người bậc ≤ 3 bấm, cả hai điều kiện
    phải đúng, và thiếu cái nào thì từ chối kèm lý do rõ ràng. */
-const BAC = {R01:1,R02:2,R03:3,R04:4,R05:5,R06:6,R07:7,R08:8,
-             R09:9,R10:10,R11:11,R12:12,R13:13,R14:14,R15:15};
+import { BAC } from './vai-tro.js';
 const CUA_KPI = 80;
 
 export async function nangTang(y, env, db, hoSo) {

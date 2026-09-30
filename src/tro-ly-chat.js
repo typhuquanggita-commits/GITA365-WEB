@@ -514,7 +514,7 @@ function theDap(d){
   /* Chia hai rổ: mở được ngay và phải qua người thật */
   var mo = [], cho = [];
   d.nguon.forEach(function(n){
-    ((G.khachMoDuoc && !G.khachMoDuoc(n.loai, n.ma)) ? cho : mo).push(n);
+    ((!G.khachMoDuoc || !G.khachMoDuoc(n.loai, n.ma)) ? cho : mo).push(n);
   });
 
   /* ── KHÁCH: MỘT BƯỚC MỘT LÚC, KHÔNG LIST (9.99.225) ──

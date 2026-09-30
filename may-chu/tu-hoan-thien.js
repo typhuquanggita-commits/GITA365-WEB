@@ -31,15 +31,10 @@
 
 import { Kho } from './nen.js';
 import { ghiSoDen } from './giam-sat.js';
-
-function laR01(hoSo) { return String((hoSo || {}).role || '') === 'R01'; }
-function laNguoiNha(hoSo) {
-  return /^R(0[1-9]|1[0-2])$/.test(String((hoSo || {}).role || ''));
-}
+import { laNguoiNha, laR01, tenNguoiDung as ten } from './vai-tro.js';
 /* Hồ sơ phiên mang tên ô `hoSo.u`, KHÔNG `hoSo.username` — cái bẫy đã
    cắn kho bốn lần (9.99.55 · 9.99.62 · 9.99.75). Gõ nhầm thì cổng
    "người duyệt khác người soạn" mở với mọi người trong im lặng. */
-function ten(hoSo) { return String((hoSo || {}).u || ''); }
 function vaiCua(hoSo) { return String((hoSo || {}).role || ''); }
 
 /* ═══════════════ CHUỖI CẤP PHÉP 入库 ═══════════════

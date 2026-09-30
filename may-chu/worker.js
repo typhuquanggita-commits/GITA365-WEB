@@ -85,7 +85,7 @@ import { deXuatNangCap, soiLuatNangCap, kyNangCap, mocChayThu, batNangCap,
 import { ghiPhatSinh, soanBanNhap, duyetCap, nhapKho, traBoSung,
   soatTuHoanThien } from './tu-hoan-thien.js';
 import { capQuyenAI, thuHoiQuyenAI, soatQuyenAI, aiPhanLoai, aiSoanNhap,
-  aiTongHopGiamSat } from './quyen-nang-ai.js';
+  soanDeBaiNgoai, aiTongHopGiamSat } from './quyen-nang-ai.js';
 import { dieuPhoiTroLy, soatDieuPhoi, tuHoanThienTroLy, soatHoatDongAgent } from './dieu-phoi.js';
 import { soatKhungVanHanh, chamMotLuot } from './khung-van-hanh.js';
 import { lapKeHoachAgent, chayBuocAgent, dsWorkflowAgent } from './agent-team.js';
@@ -146,8 +146,7 @@ const TUYEN = [
 const SO_TANG = 5;
 
 /* Bậc vai — bản chép của G.ROLES. Càng nhỏ càng nhiều quyền. */
-const BAC = {R01:1,R02:2,R03:3,R04:4,R05:5,R06:6,R07:7,R08:8,
-             R09:9,R10:10,R11:11,R12:12,R13:13,R14:14,R15:15};
+import { BAC } from './vai-tro.js';
 const tuyen_   = ma => TUYEN.find(t => t.ma === ma) || null;
 const goiNghe_ = ma => { const t = tuyen_(ma); return t ? (t.goiCu ? 'nghe' : ma.toLowerCase() + '-nghe') : ''; };
 const goiNgheCao_ = ma => { const t = tuyen_(ma); return t ? (t.goiCu ? 'nghe-cao' : ma.toLowerCase() + '-nghe-cao') : ''; };
@@ -305,7 +304,7 @@ const CAN_PHIEN = ['capKhoa', 'doiMatKhau', 'dongBo',
   'adminKhoiPhucMatKhau',
   'crmPhanTichKhach', 'crmUuTienNangCao',
   'loTrinhCaNhan', 'khoaNoiDungTheoTang',
-  'hoiChatbot', 'lichSuChat',
+  'hoiChatbot', 'lichSuChat', 'soanDeBaiNgoai',
   'guiBaoCaoNgay', 'tongHopBaoCao', 'dsBaoCaoNgay'];
 
 async function lam(fn, y, env, db) {
@@ -483,7 +482,7 @@ async function lam(fn, y, env, db) {
   /* Nhật ký toàn hệ — một chỗ Super Admin/Admin đọc MỌI thao tác (R01–R02). */
   if (fn === 'docNhatKyToanHe')     return await docNhatKyToanHe(y, env, db, hoSo);
 
-  /* Hệ thống 14 phòng ban doanh nghiệp. */
+  /* Hệ thống 13 phòng ban doanh nghiệp. */
   if (fn === 'dsPhongBan')          return await dsPhongBan(y, env, db, hoSo);
   if (fn === 'chiTietPhongBan')     return await chiTietPhongBan(y, env, db, hoSo);
   if (fn === 'ganPhongBan')         return await ganPhongBan(y, env, db, hoSo);
@@ -658,6 +657,7 @@ async function lam(fn, y, env, db) {
   if (fn === 'soatQuyenAI')       return await soatQuyenAI(y, env, db, hoSo);
   if (fn === 'aiPhanLoai')        return await aiPhanLoai(y, env, db, hoSo);
   if (fn === 'aiSoanNhap')        return await aiSoanNhap(y, env, db, hoSo);
+  if (fn === 'soanDeBaiNgoai')    return await soanDeBaiNgoai(y, env, db, hoSo);
   if (fn === 'aiTongHopGiamSat')  return await aiTongHopGiamSat(y, env, db, hoSo);
   if (fn === 'soDiRa')            return await soDiRa(y, env, db, hoSo);
   if (fn === 'soatNoiDung')       return await soatNoiDung(y, env, db, hoSo);

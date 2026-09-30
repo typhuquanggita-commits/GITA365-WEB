@@ -24,12 +24,11 @@
      lịch sử: khôi phục được, và tranh chấp về sau đọc lại được.
    ═══════════════════════════════════════════════════════════════ */
 
-function laR01(hoSo) { return String((hoSo || {}).role || '') === 'R01'; }
+import { laR01, tenNguoiDung as ten } from './vai-tro.js';
 function laR01R02(hoSo) {
   var r = String((hoSo || {}).role || '');
   return r === 'R01' || r === 'R02';
 }
-function ten(hoSo) { return String((hoSo || {}).u || ''); }
 function gonLyDo(s) { return String(s == null ? '' : s).trim(); }
 
 async function ghiAudit(db, viec, boiAi, chiTiet) {

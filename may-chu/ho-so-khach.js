@@ -30,8 +30,7 @@
 import { Kho, tokenMoi } from './nen.js';
 import { dungLichThu } from './tai-chinh.js';
 
-const BAC = {R01:1,R02:2,R03:3,R04:4,R05:5,R06:6,R07:7,R08:8,
-             R09:9,R10:10,R11:11,R12:12,R13:13,R14:14,R15:15};
+import { BAC } from './vai-tro.js';
 
 /* Vai đọc được tệp khách hàng. Quản lý (R01–R04), tuyến Coach
    (R05–R07) và Tư vấn (R11). KHÔNG có Giáo viên R08, Mentor R09,

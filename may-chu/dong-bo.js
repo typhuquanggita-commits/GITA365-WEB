@@ -36,8 +36,7 @@ const NHOM = ['checks', 'journal', 'vision', 'test', 'mood', 'thuvien',
   'minhchung', 'bando', 'chuyen', 'nhatky', 'baithi', 'thoigian',
   'sathach', 'khoahoc', 'tgdoc'];
 
-const BAC = {R01:1,R02:2,R03:3,R04:4,R05:5,R06:6,R07:7,R08:8,
-             R09:9,R10:10,R11:11,R12:12,R13:13,R14:14,R15:15};
+import { BAC } from './vai-tro.js';
 
 const CUM_NGHE = ['khothem', 'xinthem', 'ca', 'tainguyen'];
 const CUM_QUAN_TRI = ['sapxep', 'noidung', 'phanquyen'];

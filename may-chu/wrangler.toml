@@ -139,6 +139,14 @@ bucket_name = "gita365-hoso"
 # Không khai GITA_KIEU_VE thì mặc định `gita` — dạng riêng, dành cho ai
 # tự dựng một lớp trung gian.
 #
+# ── SOẠN BẢN NHÁP VĂN BẢN NGOÀI (XU-02 · TẮT SẴN) ──
+# Chỉ Super Admin gọi được, chỉ sau khi quyền AI02 được bật và qua cổng
+# soatRaNhaCungCap (PII bị chặn). Gửi duy nhất đề bài đã nhập; không gửi
+# hồ sơ khách hay khoá học. Kết quả chỉ là bản nháp, không tự lưu/phát hành.
+# Cổng cố định OpenAI API; không cấu hình URL tùy ý để tránh SSRF.
+#    npx wrangler secret put GITA_AI_KHOA
+#    npx wrangler secret put GITA_AI_MAU
+#
 # LƯU Ý MỘT CHỖ HAY BỊ HỎI: mô hình NGÔN NGỮ (loại đang chạy trợ lý
 # này) ĐỌC được ảnh nhưng KHÔNG sinh ra ảnh. Ảnh người như ảnh chụp là
 # việc của mô hình KHUẾCH TÁN, một loại máy khác. Không có công tắc nào

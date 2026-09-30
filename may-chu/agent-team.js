@@ -14,10 +14,7 @@
 import { Kho } from './nen.js';
 import { chamMotLuot } from './khung-van-hanh.js';
 import { aiCoQuyen } from './quyen-nang-ai.js';
-
-function laNguoiNha(hoSo) {
-  return /^R(0[1-9]|1[0-2])$/.test(String((hoSo || {}).role || ''));
-}
+import { laNguoiNha } from './vai-tro.js';
 
 /* Các workflow teamwork đã định nghĩa. Mỗi workflow là một chuỗi bước,
    mỗi bước chỉ định Agent/cửa, input lấy từ đâu, output ghi vào đâu. */

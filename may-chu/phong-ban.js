@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════
    GITA 365 — HỆ THỐNG PHÒNG BAN DOANH NGHIỆP
 
-   14 phòng ban theo tiêu chuẩn Nhật Bản + Mỹ:
+   13 phòng ban theo tiêu chuẩn Nhật Bản + Mỹ:
      1. Giám đốc
      2. Phòng Tài chính
      3. Phòng Nghiên cứu & Phát triển
@@ -21,9 +21,7 @@
    ═══════════════════════════════════════════════════════════════ */
 
 import { Kho, kiemMatKhau, bamMoi, muoiMoi } from './nen.js';
-
-const BAC = {R01:1,R02:2,R03:3,R04:4,R05:5,R06:6,R07:7,R08:8,
-  R09:9,R10:10,R11:11,R12:12,R13:13,R14:14,R15:15};
+import { bacVai, laNguoiNha } from './vai-tro.js';
 
 export const PHONG_BAN = [
   { ma: 'GD', ten: 'Giám đốc', truongPhong: 'R03',
@@ -106,10 +104,6 @@ export const PHONG_BAN = [
     huongDan: 'Báo cáo trực tiếp Super Admin; độc lập với các phòng ban khác.' }
 ];
 
-function laNguoiNha(hoSo) {
-  return /^R(0[1-9]|1[0-2])$/.test(String((hoSo || {}).role || ''));
-}
-
 /** Liệt kê phòng ban và KPI. */
 export async function dsPhongBan(y, env, db, hoSo) {
   if (!laNguoiNha(hoSo)) return { ok: false, code: 'NOPERM' };
@@ -127,7 +121,7 @@ export async function chiTietPhongBan(y, env, db, hoSo) {
 
 /** Gán nhân sự vào phòng ban (chỉ R01/R02). */
 export async function ganPhongBan(y, env, db, hoSo) {
-  if ((BAC[hoSo.role] || 99) > 2) return { ok: false, code: 'NOPERM',
+  if (bacVai(hoSo) > 2) return { ok: false, code: 'NOPERM',
     error: 'Chỉ Super Admin/Admin gán phòng ban.' };
   const username = String(y.username || '').trim().toLowerCase();
   const maPB = String(y.maPB || '').trim().toUpperCase();
@@ -141,12 +135,13 @@ export async function ganPhongBan(y, env, db, hoSo) {
   return { ok: true, username, maPB };
 }
 
-/** Báo cáo KPI tổng hợp (demo). */
+/** Báo cáo KPI tổng hợp; không giả lập số đo khi chưa có nguồn dữ liệu. */
 export async function baoCaoKpiPhongBan(y, env, db, hoSo) {
-  if ((BAC[hoSo.role] || 99) > 3) return { ok: false, code: 'NOPERM' };
+  if (bacVai(hoSo) > 3) return { ok: false, code: 'NOPERM' };
   const ketQua = PHONG_BAN.map(pb => ({
     ma: pb.ma, ten: pb.ten, kpi: pb.kpi,
-    tienDo: pb.ma === 'TT' ? 100 : Math.floor(70 + Math.random() * 25)
+    tienDo: null, trangThai: 'chua-co-nguon-do'
   }));
-  return { ok: true, ds: ketQua };
+  return { ok: true, ds: ketQua,
+    ghiChu: 'Các KPI hiện là mục tiêu; chưa có nguồn số liệu xác thực để báo tiến độ.' };
 }

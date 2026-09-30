@@ -60,7 +60,9 @@ riêng Pages mới vì màn T5-PRO mới cần API quyền và bảng `quyenT5Pr
    `main`). URL production phải là `https://gita365.pages.dev`.
 2. Trong **GitHub → Settings → Secrets and variables → Actions**, tạo hai
    repository secrets: `CLOUDFLARE_API_TOKEN` (quyền **Cloudflare Pages: Edit**
-   và **Workers Scripts: Edit**) và `CLOUDFLARE_ACCOUNT_ID`.
+   và **Workers Scripts: Edit**) và `CLOUDFLARE_ACCOUNT_ID` (đúng 32 ký tự hex).
+   Dán token nguyên văn, không thêm dấu nháy, khoảng trắng hay xuống dòng cuối.
+   Workflow xác minh token trước khi gọi Wrangler và không in giá trị bí mật.
 3. Đẩy thay đổi vào nhánh `main` của repo `GITA365-WEB`. Workflow
    **Deploy GITA365 to Cloudflare** tự dựng lại `gita-app.js` và `gita-nghe.js`
    từ `src/`, chỉ đóng gói tệp public, rồi phát hành lên Pages. Không phát hành
@@ -70,7 +72,18 @@ riêng Pages mới vì màn T5-PRO mới cần API quyền và bảng `quyenT5Pr
 
 > Mỗi thay đổi frontend trong `src/` được đưa vào bundle trong chính pipeline;
 > không cần chạy hoặc commit thủ công `node tools/gop-src.js`. Thay đổi dưới
-> `may-chu/` kích hoạt thêm job phát hành Worker.
+> `may-chu/` kích hoạt Worker trước; health check phải xác nhận Worker phản hồi
+> và đã nạp keyset thì workflow mới phát hành Pages.
+
+### Xử lý lỗi xác thực Cloudflare
+
+Nếu Actions báo `Headers.append: ... is an invalid header value`, GitHub đã che
+giá trị thực vì đây thường là secret. Kiểm tra lại hai secret trên mà không đưa
+chúng vào log; nếu token có xuống dòng/khoảng trắng, hãy tạo secret mới. Nếu token
+hợp lệ nhưng không đủ quyền, tạo API Token mới có `Cloudflare Pages: Edit` và
+`Workers Scripts: Edit`, rồi cập nhật `CLOUDFLARE_API_TOKEN`. Đảm bảo
+`CLOUDFLARE_ACCOUNT_ID` lấy từ đúng tài khoản Cloudflare của dự án. Không đưa
+token vào tệp, lệnh shell có echo, issue hoặc tin nhắn.
 
 ## PHẦN 2 — CLOUDFLARE WORKER (máy chủ, có khoá)
 

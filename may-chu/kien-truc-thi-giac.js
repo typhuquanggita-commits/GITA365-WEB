@@ -38,8 +38,7 @@ import * as BoNao from './bo-nao.js';
 import * as LuatGD from './luat-giao-dien.js';
 import { Kho, tokenMoi } from './nen.js';
 
-const BAC = {R01:1,R02:2,R03:3,R04:4,R05:5,R06:6,R07:7,R08:8,
-             R09:9,R10:10,R11:11,R12:12,R13:13,R14:14,R15:15};
+import { BAC } from './vai-tro.js';
 
 /* ══ BẢN CHÉP TỐI THIỂU CỦA RANH GIỚI TẦNG ══
 
@@ -2080,15 +2079,40 @@ export async function guiDeBaiRaNgoai(y, env, db, hoSo) {
        Authorization: Bearer <GITA_KHOA_VE>
        {"id", "deBai", "kho", "loaiHinh", "tang"}
 
-     Nhận về, chấp NHẬN CẢ BA DẠNG — vì chủ hệ chưa chọn nhà cung cấp,
-     và ép một dạng là ép luôn cả lựa chọn ấy:
+     Nhận về, chấp NHẬN HAI DẠNG:
        · thân là ảnh (Content-Type: image/*)
        · JSON {"anh": "data:image/png;base64,..."}
-       · JSON {"url": "https://..."} — tải tiếp một nhịp
+     Không tải URL do nhà cung cấp trả về — URL ấy có thể trỏ vào mạng
+     nội bộ của Worker (SSRF).
 
      Ảnh về KHÔNG tự phát hành. Nó gắn vào bản ghi ở đúng bậc bản ghi
      đang đứng, và đi tiếp bằng chính thang duyệt cũ — luật C12. */
   const NHAN_TOI_DA = 12 * 1024 * 1024;
+  async function docThanGioiHan(response, gioiHan) {
+    const doDai = Number(response.headers.get('content-length'));
+    if (Number.isFinite(doDai) && doDai > gioiHan) return null;
+    if (!response.body || !response.body.getReader) {
+      const a = new Uint8Array(await response.arrayBuffer());
+      return a.length <= gioiHan ? a : null;
+    }
+    const reader = response.body.getReader();
+    const cacMieng = [];
+    let tong = 0;
+    while (true) {
+      const buoc = await reader.read();
+      if (buoc.done) break;
+      tong += buoc.value.length;
+      if (tong > gioiHan) {
+        reader.cancel();
+        return null;
+      }
+      cacMieng.push(buoc.value);
+    }
+    const than = new Uint8Array(tong);
+    let viTri = 0;
+    for (const mieng of cacMieng) { than.set(mieng, viTri); viTri += mieng.length; }
+    return than;
+  }
 
   /* ══ BỘ CHUYỂN ĐỔI THEO NHÀ CUNG CẤP (9.99.40) ══
 
@@ -2138,9 +2162,11 @@ export async function guiDeBaiRaNgoai(y, env, db, hoSo) {
     try {
       r = await fetch(cong, {
         method: 'POST',
+        redirect: 'error',
         headers: {'Authorization': 'Bearer ' + khoa,
                   'Content-Type': 'application/json'},
-        body: JSON.stringify(kieuCong.than(idRa, guiDi2))
+        body: JSON.stringify(kieuCong.than(idRa, guiDi2)),
+        signal: AbortSignal.timeout(30000)
       });
     } catch (e) {
       return {ok: false, code: 'CONGKHONGTRALOI',
@@ -2150,14 +2176,22 @@ export async function guiDeBaiRaNgoai(y, env, db, hoSo) {
       error: 'Cổng ngoài trả về ' + r.status + '. Đề bài đã vào sổ đi ra, ' +
              'nên gọi lại được mà không phải dựng lại.'};
 
-    const kieu = String(r.headers.get('content-type') || '');
+    const kieu = String(r.headers.get('content-type') || '').toLowerCase();
     let than = null, duoi = 'png';
     if (/^image\//.test(kieu)) {
-      than = new Uint8Array(await r.arrayBuffer());
+      if (!/^image\/(png|jpeg|webp)(?:;|$)/.test(kieu))
+        return {ok: false, code: 'DINHDANGANHLA',
+          error: 'Chỉ nhận ảnh PNG, JPEG hoặc WebP.'};
+      than = await docThanGioiHan(r, NHAN_TOI_DA);
+      if (!than) return {ok: false, code: 'ANHQUANANG',
+        error: 'Ảnh phản hồi vượt giới hạn 12 MB.'};
       duoi = kieu.indexOf('jpeg') >= 0 ? 'jpg' : (kieu.indexOf('webp') >= 0 ? 'webp' : 'png');
     } else {
       let j = null;
-      try { j = await r.json(); } catch (e) { j = null; }
+      try {
+        const jsonThan = await docThanGioiHan(r, Math.ceil(NHAN_TOI_DA * 4 / 3) + 65536);
+        if (jsonThan) j = JSON.parse(new TextDecoder().decode(jsonThan));
+      } catch (e) { j = null; }
       if (!j) return {ok: false, code: 'CONGTRALOIRAC',
         error: 'Cổng ngoài trả về thứ không phải ảnh và cũng không phải JSON.'};
       /* Dạng OpenAI: {data:[{b64_json}]} hoặc {data:[{url}]}. Gom về
@@ -2171,20 +2205,19 @@ export async function guiDeBaiRaNgoai(y, env, db, hoSo) {
       }
       if (j.anh && /^data:image\/([a-z]+);base64,/.test(String(j.anh))) {
         const m2 = /^data:image\/([a-z]+);base64,(.*)$/s.exec(String(j.anh));
+        if (!m2 || !/^(png|jpeg|webp)$/.test(m2[1]) ||
+            m2[2].length > Math.ceil(NHAN_TOI_DA * 4 / 3) + 4)
+          return {ok: false, code: 'DINHDANGANHLA',
+            error: 'Ảnh base64 không hợp lệ hoặc vượt giới hạn 12 MB.'};
         duoi = m2[1] === 'jpeg' ? 'jpg' : m2[1];
-        const b = atob(m2[2]);
+        let b;
+        try { b = atob(m2[2]); }
+        catch (e) { return {ok: false, code: 'DINHDANGANHLA', error: 'Ảnh base64 không đọc được.'}; }
         than = new Uint8Array(b.length);
         for (let i2 = 0; i2 < b.length; i2++) than[i2] = b.charCodeAt(i2);
       } else if (j.url) {
-        let r2;
-        try { r2 = await fetch(String(j.url)); }
-        catch (e) { return {ok: false, code: 'KHONGTAIDUOC',
-          error: 'Cổng trả về một đường dẫn mà không tải được: ' + e.message}; }
-        if (!r2.ok) return {ok: false, code: 'KHONGTAIDUOC',
-          error: 'Tải ảnh từ đường dẫn cổng trả về: ' + r2.status};
-        than = new Uint8Array(await r2.arrayBuffer());
-        const k2 = String(r2.headers.get('content-type') || '');
-        duoi = k2.indexOf('jpeg') >= 0 ? 'jpg' : (k2.indexOf('webp') >= 0 ? 'webp' : 'png');
+        return {ok: false, code: 'URL_KHONG_AN_TOAN',
+          error: 'Cổng trả URL; Worker không tải URL do bên ngoài cung cấp vì lý do an toàn mạng.'};
       } else {
         return {ok: false, code: 'CONGTHIEUANH',
           error: 'Cổng trả JSON nhưng không có trường "anh" (data URI) hay "url".'};

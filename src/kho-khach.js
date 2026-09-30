@@ -152,9 +152,9 @@ G.khachMoDuoc = function(loai, ma){
        · khoá THỨ HẠNG trong kho        → không mã nhà, vì thứ hạng là của kho */
   if(G.KHACH_THEM[khoaTL(loai, ma)]) return true;
   var b = bangHang()[loai];
-  if(!b) return true;                       /* kho lạ thì không tự dựng rào */
+  if(!b) return false;                     /* kho chưa lập quyền thì không mở cho khách */
   var r = b.bang[String(loai) + '·' + String(ma)];
-  if(r == null) return true;
+  if(r == null) return false;
   return r < Math.ceil(b.tong * G.TRAN_KHACH);
 };
 
