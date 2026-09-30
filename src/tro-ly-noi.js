@@ -121,9 +121,7 @@ var G = window.G || {}; window.G = G;
     var p = document.getElementById('tlnPanel'); if (p) p.hidden = true;
     document.body.classList.remove('tln-khoa');
   }
-  /* THU GỌN THẬT (khác đóng hẳn): giữ nguyên cuộc chat, chỉ ẩn thân panel,
-     còn lại một thanh tiêu đề nhỏ. Bấm lại nút này, hoặc bấm vào chính
-     thanh tiêu đề, để mở thân panel ra lại — không mất gì cả. */
+  /* Thu gọn giữ nguyên cuộc chat trong thẻ nhỏ; chạm vào thẻ để mở lại. */
   function thuGon() {
     var el = document.getElementById('tln'); if (!el || !el.classList.contains('tln-open')) return;
     var mini = el.classList.toggle('tln-mini');
@@ -196,9 +194,8 @@ var G = window.G || {}; window.G = G;
       setTimeout(napGoiy, 0);
       return;
     }
-    /* Đang thu gọn (chỉ còn thanh tiêu đề) → bấm vào chính thanh đó để mở
-       thân panel ra lại, khỏi phải mò đúng nút. */
-    if (e.target.closest && e.target.closest('#tln.tln-mini .tln-dau')) {
+    /* Chạm vào thẻ đang thu gọn để mở lại nguyên cuộc trò chuyện. */
+    if (e.target.closest && e.target.closest('#tln.tln-mini .tln-panel')) {
       thuGon();
       return;
     }

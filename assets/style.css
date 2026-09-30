@@ -2604,10 +2604,9 @@ button.nha-o-nen:hover .nha-ic{transform:scale(1.06)}
    Kích thước ô nhỏ đặt bằng biến để chỉnh một chỗ. Nút tròn nằm TRÊN thanh
    dưới đáy trên điện thoại (thanh cao ~ 56px + vùng an toàn) — chồng lên nó
    là che mất một ô điều hướng. */
-:root{ --tln-rong:300px; --tln-cao:440px; --tln-thu:56px; }
+:root{ --tln-rong:300px; --tln-cao:440px; --tln-thu:56px; --tln-mini-rong:152px; --tln-mini-cao:114px; }
 #tln{ font-size:14.5px; }
-/* --tln-thu = bề ngang ô thu gọn ≈ 1,5cm (56px ở 96dpi). Chủ hệ: thu về
-   một ô thanh tiêu đề nhỏ; phóng to để chat; phóng full kín màn hình. */
+/* Ô thu gọn còn khoảng 4 × 3 cm ở 96dpi; phóng to để chat, hoặc phóng full màn hình. */
 /* ẨN HẲN: giấu cả nút tròn lẫn ô, chỉ chừa một vạch nhỏ nép mép phải để
    gọi trợ lý về — "ẩn khi cần để không làm mất nội dung". */
 .tln-he{ display:none }
@@ -2657,17 +2656,20 @@ button.nha-o-nen:hover .nha-ic{transform:scale(1.06)}
 .tln-to .tln-dau{ padding-top:calc(10px + var(--sat)) }
 body.tln-khoa{ overflow:hidden }
 
-/* THU GỌN THẬT — chỉ còn thanh tiêu đề nhỏ ≈ 1,5cm, thân chat/gợi ý/ô gõ
-   ẩn hết (không dỡ DOM, chỉ ẩn — mở lại là còn nguyên cuộc chat). Trước
-   bản này nút "Thu gọn" đóng hẳn panel giống hệt nút "Ẩn trợ lý", trái
-   với đúng lời hứa trên tooltip — nhà mình bấm nhầm là mất cả ô, phải mở
-   lại từ đầu. Bấm vào chính thanh tiêu đề khi đang thu gọn để mở lại. */
-.tln-mini .tln-panel{ height:var(--tln-thu); min-height:var(--tln-thu) }
+/* THU GỌN — giữ một thẻ 4 × 3 cm để không che nội dung; chạm vào thẻ để
+   mở lại nguyên cuộc trò chuyện. */
+.tln-mini .tln-panel{ width:var(--tln-mini-rong); height:var(--tln-mini-cao);
+  min-height:var(--tln-mini-cao); cursor:pointer }
 .tln-mini .tln-cuon,
 .tln-mini .tln-goiy,
 .tln-mini .tln-go{ display:none }
 .tln-mini .tln-dau{ cursor:pointer; border-bottom:none }
 .tln-mini .tln-duoi{ display:none }
+.tln-mini .tln-nut[data-tln="to"],
+.tln-mini .tln-nut[data-tln="an"]{ display:none }
+.tln-mini .tln-panel::after{ content:"Chạm để tiếp tục trò chuyện";
+  display:grid; flex:1; place-items:center; padding:8px;
+  color:var(--ink-3); font-size:12px; text-align:center }
 
 .tln-dau{ display:flex; align-items:center; gap:8px; flex:none;
   padding:10px 12px; border-bottom:1px solid var(--gita-vien-2); background:var(--bg-2) }
@@ -2788,6 +2790,7 @@ body.tln-khoa{ overflow:hidden }
 @media(max-width:640px){
   .tln-panel{ right:calc(10px + var(--sar)); left:calc(10px + var(--sal));
     bottom:calc(10px + var(--sab)); width:auto; height:min(72dvh,540px); max-width:none }
+  .tln-mini .tln-panel{ right:calc(10px + var(--sar)); left:auto }
   .tln-to .tln-panel{ inset:0 }
 }
 
