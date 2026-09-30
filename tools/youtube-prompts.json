@@ -1,0 +1,81 @@
+{
+  "meta": {
+    "ten": "GITA 365 — Bộ 8 prompt YouTube Agent",
+    "phienBan": "1.0",
+    "nguon": "Tích hợp 8 workflow YouTube vào hệ thống BP_VAI4/KHOI/VONG",
+    "luat": [
+      "Mỗi prompt là một KHOI trong BP_KHOI, không chép nguyên văn vào src/.",
+      "Prompt chỉ ghép lúc chạy từ kho đã mở — giống nguyên tắc của bo-prompt.js.",
+      "Khối nào ĐÒI khối nào phải khai rõ để máy kiểm tra tính toàn vẹn.",
+      "Không đưa nội dung kho ra ngoài; prompt gốc giữ trong nghe.enc / nen.enc."
+    ]
+  },
+  "BP_YT_VAI4": [
+    {
+      "ma": "YT-A",
+      "ten": "YouTube Strategist",
+      "dungKhi": "Cần lập kế hoạch kênh trước khi quay video đầu tiên.",
+      "danODau": "Màn Bộ prompt · ngăn Dựng · vai A",
+      "nhietDo": 0.72,
+      "y": "Bạn là chiến lược gia YouTube hàng đầu. Xây kế hoạch ra mắt kênh [NICHE] cho [TARGET AUDIENCE], bao gồm định vị, UVP, trụ cột nội dung, lịch đăng, định dạng video, phong cách thumbnail, công thức tiêu đề, giọng thương hiệu, chiến lược kiếm tiền và lộ trình đạt [1,000 / 10,000] subscribers. Đề xuất 15 video đầu tiên theo thứ tự xuất bản, giải thích vì sao video này đứng sau video kia, chỉ ra sai lầm lớn nhất cần tránh, và tinh chỉnh chiến lược trước khi xuất bản.",
+      "dungCho": ["YT-BP"]
+    },
+    {
+      "ma": "YT-B",
+      "ten": "YouTube Researcher",
+      "dungKhi": "Cần tìm ý tưởng video có khả năng viral cao.",
+      "danODau": "Màn Bộ prompt · ngăn Dựng · vai B",
+      "nhietDo": 0.68,
+      "y": "Bạn là nhà nghiên cứu YouTube xuất sắc. Sinh 20 ý tưởng video tiềm năng cho kênh [NICHE] nhắm [TARGET AUDIENCE]. Ưu tiên ý tưởng CTR cao, giữ chân tốt, evergreen, có cơ hội kiếm tiền. Mỗi ý tưởng gồm: tiêu đề, 5 biến thể tiêu đề, hook dừng cuộn, khái niệm thumbnail, độ dài đề xuất, cảm xúc mục tiêu, độ khó sản xuất, và lý do sẽ vượt trội hơn video cùng chủ đề. Xếp hạng và chọn ý tưởng tốt nhất để xuất bản trước.",
+      "dungCho": ["YT-RE"]
+    },
+    {
+      "ma": "YT-C",
+      "ten": "Head Writer",
+      "dungKhi": "Cần viết kịch bản video giữ chân cao.",
+      "danODau": "Màn Bộ prompt · ngăn Dựng · vai C",
+      "nhietDo": 0.75,
+      "y": "Bạn là trưởng biên kịch của kênh YouTube hàng đầu. Viết kịch bản hoàn chỉnh [VIDEO LENGTH] phút cho chủ đề [VIDEO IDEA], phong cách [TONE]. Mở đầu bằng hook mạnh, duy trì tò mò suốt video, chen pattern interrupt mỗi 60–90 giây. Bao gồm timestamp, lời dẫn chính xác, chỉ dẫn cảnh quay, gợi ý B-roll, text trên màn hình, chuyển cảnh, và call-to-action mạnh. Rà soát đoạn yếu, cải thiện, chỉ xuất bản bản tối ưu.",
+      "dungCho": ["YT-SC"]
+    },
+    {
+      "ma": "YT-D",
+      "ten": "Seedance Prompt Engineer",
+      "dungKhi": "Cần chuyển kịch bản thành prompt AI video Seedance 2.5.",
+      "danODau": "Màn Bộ prompt · ngăn Dựng · vai D",
+      "nhietDo": 0.65,
+      "y": "Bạn là đạo diễn điện ảnh và kỹ sư prompt Seedance 2.5. Chuyển [SCRIPT OR STORYBOARD] thành các prompt sản xuất. Giữ nhất quán nhân vật, môi trường, phong cách thị giác. Sử dụng [VISUAL STYLE], [ASPECT RATIO], [RESOLUTION]. Với mỗi cảnh, xác định chủ thể, hành động, môi trường, chuyển động máy, khung hình, ánh sáng, bố cục, tâm trạng, chi tiết điện ảnh. Thêm negative prompt và xuất một prompt Seedance 2.5 tối ưu cho từng cảnh theo thứ tự.",
+      "dungCho": ["YT-SD"]
+    }
+  ],
+  "BP_YT_KHOI": [
+    { "ma": "YT-BP", "ten": "Channel Blueprint Prompt", "layTuKho": "BP_YT_VAI4", "dungCho": ["YT-A"], "mota": "Prompt chiến lược kênh" },
+    { "ma": "YT-RE", "ten": "Viral Video Research Prompt", "layTuKho": "BP_YT_VAI4", "dungCho": ["YT-B"], "mota": "Prompt nghiên cứu ý tưởng" },
+    { "ma": "YT-SC", "ten": "High-Retention Script Prompt", "layTuKho": "BP_YT_VAI4", "dungCho": ["YT-C"], "mota": "Prompt kịch bản giữ chân" },
+    { "ma": "YT-SD", "ten": "Seedance 2.5 Cinematic Prompt", "layTuKho": "BP_YT_VAI4", "dungCho": ["YT-D"], "mota": "Prompt AI video Seedance" },
+    { "ma": "YT-SB", "ten": "Storyboard & Production Planner Prompt", "layTuKho": "BP_YT_VAI4", "dungCho": ["YT-D"], "mota": "Prompt storyboard sản xuất" },
+    { "ma": "YT-VD", "ten": "AI Voice Director Prompt", "layTuKho": "BP_YT_VAI4", "dungCho": ["YT-C"], "mota": "Prompt lồng tiếng AI" },
+    { "ma": "YT-TN", "ten": "Thumbnail & Publishing Prompt", "layTuKho": "BP_YT_VAI4", "dungCho": ["YT-B", "YT-A"], "mota": "Prompt thumbnail & xuất bản" },
+    { "ma": "YT-RA", "ten": "Retention & Growth Audit Prompt", "layTuKho": "BP_YT_VAI4", "dungCho": ["YT-C"], "mota": "Prompt audit giữ chân" }
+  ],
+  "BP_YT_VONG": [
+    { "so": 1, "buoc": "Channel Blueprint", "vai": "YT-A", "may": false, "y": "Xác định định vị, UVP, lộ trình subscriber và 15 video đầu tiên." },
+    { "so": 2, "buoc": "Viral Research", "vai": "YT-B", "may": true, "y": "Máy gợi ý 20 ý tưởng; người chọn ý tưởng phù hợp chiến lược." },
+    { "so": 3, "buoc": "High-Retention Script", "vai": "YT-C", "may": true, "y": "Máy viết kịch bản; người duyệt và chỉnh giọng điệu." },
+    { "so": 4, "buoc": "Seedance Cinematic", "vai": "YT-D", "may": true, "y": "Máy sinh prompt Seedance cho từng cảnh; nhà cung cấp khác vai C." },
+    { "so": 5, "buoc": "Storyboard & Production", "vai": "YT-D", "may": true, "y": "Máy lập storyboard, shot list, timeline sản xuất." },
+    { "so": 6, "buoc": "Voice & Publish", "vai": "YT-C", "may": true, "y": "Máy tinh chỉnh lời thoại, đề xuất thumbnail, tiêu đề, mô tả SEO." },
+    { "so": 7, "buoc": "Retention Audit", "vai": "YT-C", "may": true, "y": "Máy dự đoán điểm rớt, đề xuất cải tiến; người quyết định xuất bản." }
+  ],
+  "BP_YT_NOI": [
+    { "vai": "YT-A", "man": "bo-prompt", "cua": "dung", "daCo": "BP_YT_KHOI.YT-BP" },
+    { "vai": "YT-B", "man": "tro-ly-soan", "cua": "ghi-de", "daCo": "BP_YT_KHOI.YT-RE" },
+    { "vai": "YT-C", "man": "tro-ly-soan", "cua": "ghi-de", "daCo": "BP_YT_KHOI.YT-SC" },
+    { "vai": "YT-D", "man": "tro-ly-soan", "cua": "ghi-de", "daCo": "BP_YT_KHOI.YT-SD" }
+  ],
+  "BP_YT_LUAT": {
+    "dungLucChay": "Các prompt YouTube chỉ ghép khi kho nghề đã mở.",
+    "viNguyHonMoiBanChepKhac": "Chép nguyên văn prompt YouTube vào src/ tạo bản thứ hai và dễ lệch chiến lược.",
+    "khoiTroVaoKhoThat": "BP_YT_VAI4 và BP_YT_KHOI phải nằm trong nghe.enc hoặc nen.enc."
+  }
+}
