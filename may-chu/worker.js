@@ -88,6 +88,10 @@ import { capQuyenAI, thuHoiQuyenAI, soatQuyenAI, aiPhanLoai, aiSoanNhap,
   aiTongHopGiamSat } from './quyen-nang-ai.js';
 import { dieuPhoiTroLy, soatDieuPhoi, tuHoanThienTroLy, soatHoatDongAgent } from './dieu-phoi.js';
 import { soatKhungVanHanh, chamMotLuot } from './khung-van-hanh.js';
+import { lapKeHoachAgent, chayBuocAgent, dsWorkflowAgent } from './agent-team.js';
+import { dsPhongBan, chiTietPhongBan, ganPhongBan, baoCaoKpiPhongBan } from './phong-ban.js';
+import { taoTaiKhoanNoiBo, capNhatTaiKhoan, dsTaiKhoan, offboardTaiKhoan,
+  adminKhoiPhucMatKhau } from './quan-ly-tai-khoan.js';
 import { doSucChua } from './suc-chua-toc-do.js';
 import { kiemBanMoi, docTinCongDong, ghiTinCongDong, guiChuyen,
   napTaiLieu, duyetTaiLieu, napTinhHuongKhach } from './cong-dong.js';
@@ -105,11 +109,17 @@ import { ghiChi, duyetChi, huyChi, soChi, chotKet, dsChotKet,
 import { capQuyenCRM, thuHoiQuyenCRM, dsQuyenCRM, crmDanhSach, crmChiTiet,
   crmBangDieuKhien, crmUuTien, crmGhiKhach, crmQuanTri,
   crmGhiCoHoi, crmCoHoi, mucCrmCua } from './crm.js';
+import { tinhReadyVip, deXuatChamSocVip, dsVipCanCham } from './vip-care.js';
+import { lich365Ngay, sinhNoiDungKenh, duBaoLead, dsKenhVeTinh } from './satellite-engine.js';
 import { dangKyKhoaMatBatDau, dangKyKhoaMatXong, dangNhapMatBatDau,
   xacThucDangNhapMat, dsKhoaMat, xoaKhoaMat,
   xacThucLaiMatBatDau, xacThucLaiMat, nhatKyAnToan, congBuocMat } from './sinh-trac.js';
 import { crmTroLy, crmDieuPhoiAI } from './crm-ai.js';
 import { crmKpiCham, crmKpiTroLy } from './crm-kpi.js';
+import { crmPhanTichKhach, crmUuTienNangCao } from './crm-chuyen-sau.js';
+import { loTrinhCaNhan, khoaNoiDungTheoTang } from './lo-trinh-ca-nhan-hoa.js';
+import { hoiChatbot, lichSuChat } from './chatbot-thong-minh.js';
+import { guiBaoCaoNgay, tongHopBaoCao, dsBaoCaoNgay } from './bao-cao-hang-ngay.js';
 import { docNhatKyToanHe } from './nhat-ky.js';
 import { ghiButToan, docSoKeToan, ghiHoaDon, docHoaDon, ghiSoHoaDon,
   ghiToKhai, docToKhai, docBuongLaiKT, docBaoCaoTC,
@@ -266,6 +276,7 @@ const CAN_PHIEN = ['capKhoa', 'doiMatKhau', 'dongBo',
   'capQuyenAI', 'thuHoiQuyenAI', 'soatQuyenAI', 'aiPhanLoai', 'aiSoanNhap', 'aiTongHopGiamSat',
   'dieuPhoiTroLy', 'soatDieuPhoi', 'tuHoanThienTroLy', 'soatHoatDongAgent',
   'soatKhungVanHanh', 'chamMotLuot',
+  'lapKeHoachAgent', 'chayBuocAgent', 'dsWorkflowAgent',
   'doSucChua',
   'luuNhanVat', 'docNhanVat',
   'xoaTroLy', 'xoaThanhTra', 'ghiBaoCaoThanhTra', 'docBaoCaoThanhTra',
@@ -281,12 +292,21 @@ const CAN_PHIEN = ['capKhoa', 'doiMatKhau', 'dongBo',
   'capQuyenCRM', 'thuHoiQuyenCRM', 'dsQuyenCRM', 'crmDanhSach', 'crmChiTiet',
   'crmBangDieuKhien', 'crmUuTien', 'crmGhiKhach', 'crmTroLy', 'crmDieuPhoiAI',
   'crmKpiCham', 'crmKpiTroLy', 'crmQuanTri', 'crmGhiCoHoi', 'crmCoHoi',
+  'tinhReadyVip', 'deXuatChamSocVip', 'dsVipCanCham',
+  'lich365Ngay', 'sinhNoiDungKenh', 'duBaoLead', 'dsKenhVeTinh',
   'ghiButToan', 'docSoKeToan', 'ghiHoaDon', 'docHoaDon', 'ghiSoHoaDon',
   'ghiToKhai', 'docToKhai', 'docBuongLaiKT', 'docBaoCaoTC',
   'docCanDoiPhatSinh', 'docCanDoiKeToan', 'docDoiChieuGTGT',
   'docLuuChuyenTien', 'docCongNoTuoi',
   'dangKyKhoaMatBatDau', 'dangKyKhoaMatXong', 'dsKhoaMat', 'xoaKhoaMat',
-  'xacThucLaiMatBatDau', 'xacThucLaiMat', 'nhatKyAnToan'];
+  'xacThucLaiMatBatDau', 'xacThucLaiMat', 'nhatKyAnToan',
+  'dsPhongBan', 'chiTietPhongBan', 'ganPhongBan', 'baoCaoKpiPhongBan',
+  'taoTaiKhoanNoiBo', 'capNhatTaiKhoan', 'dsTaiKhoan', 'offboardTaiKhoan',
+  'adminKhoiPhucMatKhau',
+  'crmPhanTichKhach', 'crmUuTienNangCao',
+  'loTrinhCaNhan', 'khoaNoiDungTheoTang',
+  'hoiChatbot', 'lichSuChat',
+  'guiBaoCaoNgay', 'tongHopBaoCao', 'dsBaoCaoNgay'];
 
 async function lam(fn, y, env, db) {
   if (fn === 'dangNhap')  return await dangNhap(y, env, db);
@@ -437,6 +457,13 @@ async function lam(fn, y, env, db) {
   if (fn === 'crmGhiKhach')         return await crmGhiKhach(y, env, db, hoSo);
   if (fn === 'crmGhiCoHoi')         return await crmGhiCoHoi(y, env, db, hoSo);
   if (fn === 'crmCoHoi')            return await crmCoHoi(y, env, db, hoSo);
+  if (fn === 'tinhReadyVip')        return await tinhReadyVip(y, env, db, hoSo);
+  if (fn === 'deXuatChamSocVip')    return await deXuatChamSocVip(y, env, db, hoSo);
+  if (fn === 'dsVipCanCham')        return await dsVipCanCham(y, env, db, hoSo);
+  if (fn === 'lich365Ngay')         return await lich365Ngay(y, env, db, hoSo);
+  if (fn === 'sinhNoiDungKenh')     return await sinhNoiDungKenh(y, env, db, hoSo);
+  if (fn === 'duBaoLead')           return await duBaoLead(y, env, db, hoSo);
+  if (fn === 'dsKenhVeTinh')        return await dsKenhVeTinh(y, env, db, hoSo);
 
   /* Đăng KÝ / quản lý khoá mặt — cần phiên (thêm khoá cho tài khoản CỦA
      MÌNH). Đăng nhập bằng mặt thì đứng trước cổng phiên (ở trên). */
@@ -455,6 +482,36 @@ async function lam(fn, y, env, db) {
 
   /* Nhật ký toàn hệ — một chỗ Super Admin/Admin đọc MỌI thao tác (R01–R02). */
   if (fn === 'docNhatKyToanHe')     return await docNhatKyToanHe(y, env, db, hoSo);
+
+  /* Hệ thống 14 phòng ban doanh nghiệp. */
+  if (fn === 'dsPhongBan')          return await dsPhongBan(y, env, db, hoSo);
+  if (fn === 'chiTietPhongBan')     return await chiTietPhongBan(y, env, db, hoSo);
+  if (fn === 'ganPhongBan')         return await ganPhongBan(y, env, db, hoSo);
+  if (fn === 'baoCaoKpiPhongBan')   return await baoCaoKpiPhongBan(y, env, db, hoSo);
+
+  /* Quản lý tài khoản nội bộ (Super Admin/Admin). */
+  if (fn === 'taoTaiKhoanNoiBo')    return await taoTaiKhoanNoiBo(y, env, db, hoSo);
+  if (fn === 'capNhatTaiKhoan')     return await capNhatTaiKhoan(y, env, db, hoSo);
+  if (fn === 'dsTaiKhoan')          return await dsTaiKhoan(y, env, db, hoSo);
+  if (fn === 'offboardTaiKhoan')    return await offboardTaiKhoan(y, env, db, hoSo);
+  if (fn === 'adminKhoiPhucMatKhau') return await adminKhoiPhucMatKhau(y, env, db, hoSo);
+
+  /* CRM chuyên sâu: phân tích, phân khúc, rủi ro, ưu tiên. */
+  if (fn === 'crmPhanTichKhach')    return await crmPhanTichKhach(y, env, db, hoSo);
+  if (fn === 'crmUuTienNangCao')    return await crmUuTienNangCao(y, env, db, hoSo);
+
+  /* Lộ trình cá nhân hóa 7/21/90/365 ngày + khóa nội dung theo tầng. */
+  if (fn === 'loTrinhCaNhan')       return await loTrinhCaNhan(y, env, db, hoSo);
+  if (fn === 'khoaNoiDungTheoTang') return await khoaNoiDungTheoTang(y, env, db, hoSo);
+
+  /* Chatbot thông minh theo cấp/tầng. */
+  if (fn === 'hoiChatbot')          return await hoiChatbot(y, env, db, hoSo);
+  if (fn === 'lichSuChat')          return await lichSuChat(y, env, db, hoSo);
+
+  /* Báo cáo hàng ngày + đánh giá chuẩn xác. */
+  if (fn === 'guiBaoCaoNgay')       return await guiBaoCaoNgay(y, env, db, hoSo);
+  if (fn === 'tongHopBaoCao')       return await tongHopBaoCao(y, env, db, hoSo);
+  if (fn === 'dsBaoCaoNgay')        return await dsBaoCaoNgay(y, env, db, hoSo);
 
   /* Kế toán – Thuế: sổ kép · hoá đơn · tờ khai · báo cáo (R01–R03). */
   if (fn === 'ghiButToan')          return await ghiButToan(y, env, db, hoSo);
@@ -563,6 +620,9 @@ async function lam(fn, y, env, db) {
   if (fn === 'soatHoatDongAgent')  return await soatHoatDongAgent(y, env, db, hoSo);
   if (fn === 'soatKhungVanHanh')  return await soatKhungVanHanh(y, env, db, hoSo);
   if (fn === 'chamMotLuot')       return await chamMotLuot(y, env, db, hoSo, CAN_PHIEN);
+  if (fn === 'lapKeHoachAgent')   return await lapKeHoachAgent(y, env, db, hoSo);
+  if (fn === 'chayBuocAgent')     return await chayBuocAgent(y, env, db, hoSo, CAN_PHIEN);
+  if (fn === 'dsWorkflowAgent')   return await dsWorkflowAgent(y, env, db, hoSo);
   if (fn === 'doSucChua')         return await doSucChua(y, env, db, hoSo);
   if (fn === 'luuNhanVat')        return await luuNhanVat(y, env, db, hoSo);
   if (fn === 'docNhanVat')        return await docNhanVat(y, env, db, hoSo);
@@ -880,10 +940,26 @@ const CORS = {
   'Access-Control-Allow-Headers': 'Content-Type',
   'Access-Control-Max-Age': '86400'
 };
-const traJson = (o, ma) => new Response(JSON.stringify(o), {
-  status: ma || 200,
-  headers: {'Content-Type': 'application/json; charset=utf-8', ...CORS}
-});
+
+/* Khi có GITA_DIA_CHI_WEB, CORS chỉ cho phép nguồn đó thay vì '*'. */
+function corsTheoEnv(env) {
+  const origin = String(env.GITA_DIA_CHI_WEB || '').trim();
+  if (!origin) return CORS;
+  return {
+    'Access-Control-Allow-Origin': origin,
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Max-Age': '86400',
+    'Vary': 'Origin'
+  };
+}
+function traJson(o, ma, env) {
+  const headers = corsTheoEnv(env || {});
+  return new Response(JSON.stringify(o), {
+    status: ma || 200,
+    headers: {'Content-Type': 'application/json; charset=utf-8', ...headers}
+  });
+}
 
 /* ═══════════════ DỌN THEO LỊCH ═══════════════
 
@@ -982,7 +1058,8 @@ export default {
   },
 
   async fetch(req, env) {
-    if (req.method === 'OPTIONS') return new Response(null, {status: 204, headers: CORS});
+    const cors = corsTheoEnv(env);
+    if (req.method === 'OPTIONS') return new Response(null, {status: 204, headers: cors});
 
     /* Trạng thái: máy chủ còn sống chưa, đã nạp khoá chưa. KHÔNG trả
        khoá nào, và không nói gì về số tài khoản. */
@@ -990,22 +1067,22 @@ export default {
       let n = 0;
       try { n = Object.keys(JSON.parse(env.GITA_KHOA_KHO || '{}')).length; } catch (e) {}
       return traJson({ok: true, ten: 'GITA 365 — máy chủ cấp phép',
-        daNapKhoa: n, luc: new Date().toISOString()});
+        daNapKhoa: n, luc: new Date().toISOString()}, 200, env);
     }
-    if (req.method !== 'POST') return traJson({ok: false, error: 'Yêu cầu không hợp lệ.'}, 405);
+    if (req.method !== 'POST') return traJson({ok: false, error: 'Yêu cầu không hợp lệ.'}, 405, env);
 
     let y;
     try { y = await req.json(); } catch (e) { y = {}; }
 
     try {
-      return traJson(await lam(String(y.fn || ''), y, env, env.CSDL));
+      return traJson(await lam(String(y.fn || ''), y, env, env.CSDL), 200, env);
     } catch (err) {
       /* KHÔNG ĐẨY LỜI LỖI CỦA MÁY RA CHO MÁY KHÁCH. Lời lỗi của cơ sở
          dữ liệu hay kể tên bảng, tên cột, có khi cả mảnh câu lệnh —
          đó là bản đồ cho người đi dò. Ghi đủ vào nhật ký máy chủ, trả
          ra một câu. */
       console.error('LOI', String(y.fn || ''), err && err.stack || err);
-      return traJson({ok: false, error: 'Máy chủ gặp trục trặc. Thử lại sau ít phút.'}, 500);
+      return traJson({ok: false, error: 'Máy chủ gặp trục trặc. Thử lại sau ít phút.'}, 500, env);
     }
   }
 };

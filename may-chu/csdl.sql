@@ -62,7 +62,15 @@ CREATE TABLE IF NOT EXISTS users (
   maKhachHang   TEXT,
   boTro         TEXT,
   mustChangePw  INTEGER NOT NULL DEFAULT 0,
-  pwDoiLuc      TEXT
+  pwDoiLuc      TEXT,
+  phongBan      TEXT,
+  offboardedAt  TEXT,
+  offboardedBy  TEXT,
+  lyDoOffboard  TEXT,
+  CONSTRAINT ck_role_phan_cap CHECK (role IN (
+    'R01','R02','R03','R04','R05','R06','R07','R08',
+    'R09','R10','R11','R12','R13','R14','R15'
+  ))
 );
 
 -- Đăng nhập tra bằng tên đăng nhập HOẶC email, cả hai đều hạ chữ
@@ -80,6 +88,8 @@ CREATE INDEX        IF NOT EXISTS ix_users_email    ON users (lower(email));
 -- dữ liệu, cho ngày bộ đếm sai vì một lý do chưa ai nghĩ ra.
 CREATE UNIQUE INDEX IF NOT EXISTS ix_users_makh ON users (maKhachHang)
   WHERE maKhachHang IS NOT NULL AND maKhachHang <> '';
+CREATE INDEX IF NOT EXISTS ix_users_phongban ON users (phongBan) WHERE phongBan IS NOT NULL;
+CREATE INDEX IF NOT EXISTS ix_users_active   ON users (active, deletedAt);
 
 -- ─────────────────────────────────────────────────────────────
 --  HỌC VIÊN
@@ -321,6 +331,50 @@ CREATE INDEX IF NOT EXISTS ix_hsk_tuvan ON hoSoKhach (tuVan, trangThai);
 -- tra được. MỘT PHẦN, vì phần lớn nhà không có ai bảo trợ.
 CREATE INDEX IF NOT EXISTS ix_hsk_botro ON hoSoKhach (boTro)
   WHERE boTro IS NOT NULL AND boTro <> '';
+
+-- Lịch sử tầng của học viên — một dòng mỗi lần lên tầng.
+CREATE TABLE IF NOT EXISTS nguoiHocTang (
+  id           TEXT PRIMARY KEY,
+  maHocVien    TEXT NOT NULL,
+  maKhachHang  TEXT NOT NULL,
+  uidPhuHuynh  TEXT NOT NULL,
+  hoTen        TEXT,
+  tang         INTEGER NOT NULL DEFAULT 1,
+  vaoLuc       TEXT,
+  lenTangLuc   TEXT,
+  boiAi        TEXT
+);
+CREATE INDEX IF NOT EXISTS ix_nht_mhv ON nguoiHocTang (maHocVien);
+CREATE INDEX IF NOT EXISTS ix_nht_mkh ON nguoiHocTang (maKhachHang);
+
+-- Bài học đã hoàn thành (học viên × bài × ngày).
+CREATE TABLE IF NOT EXISTS baiHocHoanThanh (
+  id          TEXT PRIMARY KEY,
+  maHocVien   TEXT NOT NULL,
+  maBai       TEXT NOT NULL,
+  tenBai      TEXT,
+  ngay        TEXT NOT NULL,
+  ketQua      TEXT,
+  boiAi       TEXT
+);
+CREATE INDEX IF NOT EXISTS ix_bhh_mhv ON baiHocHoanThanh (maHocVien);
+CREATE INDEX IF NOT EXISTS ix_bhh_ngay ON baiHocHoanThanh (ngay);
+
+-- Báo cáo hàng ngày của khách hàng (KPI, cảm xúc, bài học).
+CREATE TABLE IF NOT EXISTS baoCaoNgay (
+  id            TEXT PRIMARY KEY,
+  uid           TEXT NOT NULL,
+  maKhachHang   TEXT NOT NULL,
+  ngay          TEXT NOT NULL,
+  baiHoc        INTEGER NOT NULL DEFAULT 0,
+  phutHoc       INTEGER NOT NULL DEFAULT 0,
+  camXuc        TEXT,
+  kpi           REAL NOT NULL DEFAULT 0,
+  ghiChu        TEXT,
+  guiLuc        TEXT,
+  UNIQUE (maKhachHang, ngay)
+);
+CREATE INDEX IF NOT EXISTS ix_bcn_makh ON baoCaoNgay (maKhachHang, ngay);
 
 -- Mỗi lần đổi tầng một dòng. Không sửa cột tang rồi thôi: câu "nhà này
 -- lên tầng ba lúc nào, ai duyệt, KPI bao nhiêu" là câu người làm nghề

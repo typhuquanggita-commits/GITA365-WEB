@@ -43,6 +43,13 @@ jobs:
           test ! -e _site/tools
           printf 'Prepared Cloudflare Pages artifact: %s files\n' "$(find _site -type f | wc -l)"
 
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: _site
+          path: _site
+          retention-days: 1
+
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
@@ -52,6 +59,7 @@ jobs:
 
   worker:
     name: Deploy API worker
+    needs: pages
     if: github.event_name == 'workflow_dispatch' || contains(join(github.event.commits.*.modified, ' '), 'may-chu/') || contains(join(github.event.commits.*.added, ' '), 'may-chu/') || contains(join(github.event.commits.*.removed, ' '), 'may-chu/')
     runs-on: ubuntu-latest
     steps:
@@ -65,3 +73,32 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: may-chu
           command: deploy
+
+      - name: Verify Worker health
+        run: |
+          set -eu
+          sleep 10
+          curl -sf "https://gita365.typhuquanggita.workers.dev/?fn=status" -X POST \
+            -H "Content-Type: application/json" -d '{}' || true
+
+  github-pages:
+    name: Mirror to GitHub Pages artifact
+    needs: pages
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - name: Download Pages artifact
+        uses: actions/download-artifact@v4.1.3
+        with:
+          name: _site
+          path: _site
+
+      - name: Upload to GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy GitHub Pages
+        uses: actions/deploy-pages@v4
