@@ -39,6 +39,19 @@ G.CHAT = G.CHAT || [];
    thế. Trạng thái phiên và kho dữ liệu là hai thứ khác nhau; để lẫn một
    chỗ thì mọi phép đo về kho đều phải học cách bỏ qua ngoại lệ. */
 var kbDa = [], kbCau = '';
+var chuPhien = null;
+
+function kiemTraPhien(){
+  var a = G.S && G.S.acc;
+  var id = a && (a.uid || a.u);
+  if(chuPhien !== id){
+    chuPhien = id;
+    G.CHAT = [];
+    kbDa = [];
+    kbCau = '';
+    if(G.tlQuenNgu) G.tlQuenNgu();
+  }
+}
 
 function khach(){ return !!(G.LA_KHACH && G.LA_KHACH()); }
 function tenToi(){ return (G.S.acc && G.S.acc.ten) || 'Anh chị'; }
@@ -93,6 +106,7 @@ function goiY(){
 G.chatHoi = function(cauHoi){
   cauHoi = String(cauHoi || '').trim();
   if(!cauHoi) return;
+  kiemTraPhien();
   G.CHAT.push({ai:'toi', loi:cauHoi, luc:new Date()});
   /* CÂU HỎI MỚI hay CÂU TRẢ LỜI cho vòng đang hỏi?
      Một câu dài, hoặc có dấu hỏi, là một câu hỏi MỚI — mở lại chuỗi từ
@@ -104,7 +118,11 @@ G.chatHoi = function(cauHoi){
      đi trả lời theo câu hỏi thứ NHẤT — lưới an toàn không bao giờ nhìn
      thấy chữ "tự tử". Đường ấy không được phép hỏng, nên nay lưới an
      toàn soi CHÍNH câu vừa gõ, mọi lượt, không có ngoại lệ. */
-  var laCauMoi = /[?？]/.test(cauHoi) || cauHoi.split(/\s+/).length >= 5;
+  var coVong = !!kbCau && !!(G.CHAT.slice(0, -1).filter(function(m){
+    return m.ai === 'trolY' && m.dap && m.dap.chuoi;
+  }).length);
+  var laCauMoi = !coVong || /[?？]/.test(cauHoi) ||
+    /^(chuyển chủ đề|chuyện khác|học phí|giá|đăng nhập|làm sao|tôi muốn hỏi|mình muốn hỏi)/i.test(cauHoi);
   if(G.aiCoKhan && G.aiCoKhan(cauHoi)) laCauMoi = true;
   if(laCauMoi){ kbCau = cauHoi; kbDa = []; }
   else kbDa.push(cauHoi);
@@ -122,6 +140,16 @@ G.chatHoi = function(cauHoi){
     ((G.KB_LUAT || {}).chayChoAi || []).indexOf(G.S.role) >= 0;
   if(G.kbChuoi && chay && !d.khan){
     d.chuoi = G.kbChuoi(kbCau, kbDa);
+    if(d.chuoi && !laCauMoi && khach()){
+      d.tinhTiet = cauHoi;
+      d.loi = null;
+      d.kbs = null;
+      d.soan = null;
+      d.viec = null;
+      d.nguon = [];
+      d.chuaCo = false;
+      d.chot = '';
+    }
     if(G.kbNghiepVu) d.nghiepVu = G.kbNghiepVu(kbCau);
     if(G.gnMoDau && d.chuoi){
       d.mo = G.gnMoDau(d.chuoi.vong.ma);
@@ -210,7 +238,11 @@ function hienDan(id){
 
 /* Xoá cuộc trò chuyện: tăng luot để mọi nhịp còn treo tự bỏ, không đẩy
    một đoạn cũ vào một khung vừa dọn sạch. */
-G.chatXoa = function(){ luot++; G.CHAT = []; kbDa = []; kbCau = ''; ve(); };
+G.chatXoa = function(){
+  luot++; G.CHAT = []; kbDa = []; kbCau = '';
+  if(G.tlQuenNgu) G.tlQuenNgu();
+  ve();
+};
 
 /* ═══════════ VẼ MỘT BÓNG NÓI ═══════════ */
 /* Giờ của một lượt. Hai chữ số, không kèm ngày — ngày đã có vạch riêng
@@ -390,10 +422,13 @@ function theDap(d){
         ' · '+c.soTrong+' chuyện khớp</span>' : '')+'</div>';
 
     /* Khúc của vòng này — đọc THẲNG từ trường kho khai. */
-    if(c.khuc)
+    if(khach() && d.tinhTiet)
+      o += '<p class="kb-khuc">Em ghi nhận thêm: “'+h(d.tinhTiet.slice(0, 180))+
+        '”. Mình làm rõ chuyện này trước khi chọn bước tiếp theo.</p>';
+    else if(c.khuc && !khach())
       o += '<p class="kb-khuc">'+h(c.khuc)+'</p>'+
         '<p class="kb-doctu tiny dim">Đọc từ '+h(c.docTu)+' · '+h(c.tinhHuong.th)+'</p>';
-    else if(c.thieuKhuc)
+    else if(c.thieuKhuc && !khach())
       o += '<p class="kb-khuc kb-thieu">Kho chưa có khúc này cho chuyện ấy ('+h(c.docTu)+
         '). Em không bịa cho tròn.</p>';
     else if(!c.khoanhDuoc)
@@ -527,7 +562,7 @@ function theDap(d){
      xong bốn nhịp của một việc rồi vẫn in câu ấy là tự cãi mình ngay
      trong một lượt trả lời — người đọc sẽ tin câu sau và bỏ qua câu
      trước, tức là bỏ qua đúng phần dùng được. */
-  if(!mo.length && !cho.length && !d.viec)
+  if(!mo.length && !cho.length && !d.viec && !d.chuoi)
     o += '<p class="ai-loi">Em chưa tìm được gì khớp. Anh chị kể cụ thể hơn một chút được không?</p>';
   /* NÓI RA CÁI KHÔNG ĐƯA. Giấu con số này thì nhà mình tưởng kho chỉ có
      bấy nhiêu; nói ra thì họ biết còn đường phía trước, và biết đường ấy
@@ -585,6 +620,7 @@ function bongTroLy(m){
 /* live=true (từ ve): bóng chưa tới mốc _hien hiện "đang soạn". Không có
    live (bản dựng đầy đủ, ô nổi lúc mở): hiện đủ, không gõ lại lịch sử. */
 function cuonChat(live){
+  kiemTraPhien();
   var bay = Date.now();
   return '<div class="cs-vach">Hôm nay</div>' +
     '<div class="ch-luot ch-troly"><div class="ch-anh ch-anh-ai">'+ic('spark','w-4 h-4')+'</div>'+
