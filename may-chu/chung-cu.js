@@ -54,8 +54,7 @@ const TRAN_NOIDUNG = 4000;
    Trần = Coach trở lên (lv ≤ 7), khớp hệ hoa hồng lân cận
    (ganChungCuHoaHong lv≤7 · traHoaHong R01–R03): staff ghi/xác nhận/soi
    chứng cứ, khách và đại sứ không. */
-const BAC_CC = {R01:1,R02:2,R03:3,R04:4,R05:5,R06:6,R07:7,R08:8,
-  R09:9,R10:10,R11:11,R12:12,R13:13,R14:14,R15:15};
+import { BAC as BAC_CC } from './vai-tro.js';
 function laNgheCC(hoSo) { return (BAC_CC[(hoSo || {}).role] || 99) <= 7; }
 const CHAN_CC = {ok: false, code: 'NOPERM',
   error: 'Chứng cứ hoa hồng chỉ mở từ Coach trở lên (R01–R07). ' +

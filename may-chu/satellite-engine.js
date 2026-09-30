@@ -12,9 +12,9 @@
    ═══════════════════════════════════════════════════════════════ */
 
 import { Kho } from './nen.js';
+import { laNguoiNha } from './vai-tro.js';
 
-const BAC = {R01:1,R02:2,R03:3,R04:4,R05:5,R06:6,R07:7,R08:8,
-  R09:9,R10:10,R11:11,R12:12,R13:13,R14:14,R15:15};
+import { BAC } from './vai-tro.js';
 
 /* 52 tuần × 1 video + 2 blog + 3 social posts */
 const KENH = [
@@ -24,10 +24,6 @@ const KENH = [
   { ma: 'facebook', ten: 'Facebook', tanSuat: '3 bài/tuần' },
   { ma: 'zalo', ten: 'Zalo OA', tanSuat: '3 bài/tuần' }
 ];
-
-function laNguoiNha(hoSo) {
-  return /^R(0[1-9]|1[0-2])$/.test(String((hoSo || {}).role || ''));
-}
 
 /** Sinh lịch 365 ngày từ chủ đề năm. */
 export async function lich365Ngay(y, env, db, hoSo) {

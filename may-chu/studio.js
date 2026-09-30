@@ -24,10 +24,10 @@
    cửa `sinhGiong` rồi mới cấm gọi là muộn, nên cửa ấy KHÔNG TỒN TẠI,
    và mục 103 hỏi danh sách hàm xuất ra để canh.
 
-   Tương tự với `nhapDeBaiRaNgoai`: bản mẫu gọi thẳng một bộ tạo chữ
-   đặt ngoài lãnh thổ từ trình duyệt, mang theo chủ đề · người xem ·
-   điều nhỏ của một gia đình, không qua cổng ẩn danh. Đường ấy đã gỡ,
-   và câu hỏi có mở lại qua máy chủ hay không là mục chờ XU-02.
+   Tương tự với `nhapDeBaiRaNgoai`: bản mẫu từng gọi bộ tạo chữ ngoài
+   lãnh thổ từ trình duyệt. XU-02 hiện chỉ mở bản nháp qua Worker sau
+   xác nhận, quyền AI02, và cổng ẩn danh; không có dữ liệu khách hàng
+   được gửi và bản nháp không tự đi vào kho đã duyệt.
 
    ══ BA · HỘ CHIẾU KHÔNG DỰNG Ở MÀN HÌNH ══
 

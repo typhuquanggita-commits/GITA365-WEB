@@ -14,8 +14,7 @@ import { guiThu, CHAN_THU } from './thu.js';
 
 const RE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const RE_TK    = /^[a-z0-9_.]{3,50}$/;
-const BAC = {R01:1,R02:2,R03:3,R04:4,R05:5,R06:6,R07:7,R08:8,
-  R09:9,R10:10,R11:11,R12:12,R13:13,R14:14,R15:15};
+import { BAC } from './vai-tro.js';
 
 function duocQuanLy(hoSo, muc) { return (BAC[hoSo.role] || 99) <= muc; }
 

@@ -12,28 +12,39 @@
    ═══════════════════════════════════════════════════════════════ */
 
 import { Kho } from './nen.js';
-
-const BAC = {R01:1,R02:2,R03:3,R04:4,R05:5,R06:6,R07:7,R08:8,
-  R09:9,R10:10,R11:11,R12:12,R13:13,R14:14,R15:15};
+import { bacVai } from './vai-tro.js';
 
 const MOC = [7, 21, 90, 365];
 
 function ngayTruoc(n) {
   return new Date(Date.now() - n * 864e5).toISOString().slice(0, 10);
 }
+function ngayCong(ngay, soNgay) {
+  return new Date(Date.parse(ngay + 'T00:00:00Z') + soNgay * 864e5)
+    .toISOString().slice(0, 10);
+}
 
 /** Trả về lộ trình cá nhân hóa cho một học viên theo cấp/tầng. */
 export async function loTrinhCaNhan(y, env, db, hoSo) {
+  y = y || {};
   const maHV = String(y.maHocVien || '').trim();
   const maKH = String(y.maKH || '').trim();
   if (!maHV && !maKH) return { ok: false, error: 'Cần mã học viên hoặc mã khách hàng.' };
 
-  let hv = null;
-  if (maHV) {
-    hv = await db.prepare('SELECT * FROM nguoiHocTang WHERE maHocVien=?').bind(maHV).first();
-  } else {
-    hv = await db.prepare('SELECT * FROM nguoiHocTang WHERE maKhachHang=?').bind(maKH).first();
+  let sql = 'SELECT * FROM nguoiHocTang WHERE 1=1';
+  const bind = [];
+  if (maHV) { sql += ' AND maHocVien=?'; bind.push(maHV); }
+  if (maKH) { sql += ' AND maKhachHang=?'; bind.push(maKH); }
+  if (bacVai(hoSo) > 4) {
+    sql += ' AND uidPhuHuynh=?';
+    bind.push((hoSo || {}).uid || '');
   }
+  sql += ' ORDER BY vaoLuc DESC LIMIT 2';
+  const ketQua = await db.prepare(sql).bind(...bind).all();
+  const dsHocVien = ketQua.results || [];
+  if (!maHV && dsHocVien.length > 1)
+    return { ok: false, code: 'CAN_MAHV', error: 'Hồ sơ có nhiều học viên; cần mã học viên để xem đúng lộ trình.' };
+  const hv = dsHocVien[0] || null;
   if (!hv) return { ok: false, error: 'Không tìm thấy học viên.' };
 
   const capDuocXem = Math.min(5, Math.max(1, Number(hv.tang || 1)));
@@ -43,21 +54,27 @@ export async function loTrinhCaNhan(y, env, db, hoSo) {
     'SELECT COUNT(*) n, MAX(ngay) ngayCuoi FROM baiHocHoanThanh WHERE maHocVien=?'
   ).bind(hv.maHocVien).first();
 
-  const hoanThanh7 = await db.prepare(
-    'SELECT COUNT(*) n FROM baiHocHoanThanh WHERE maHocVien=? AND ngay >= ?'
-  ).bind(hv.maHocVien, ngayTruoc(7)).first();
-
-  const ngayDaThamGia = hv.vaoLuc
-    ? Math.max(1, Math.floor((Date.now() - new Date(hv.vaoLuc).getTime()) / 864e5))
-    : 1;
+  const homNay = ngayTruoc(0);
+  const dauNgay = String(hv.vaoLuc || homNay).slice(0, 10);
+  const ngayDau = Number.isFinite(Date.parse(dauNgay + 'T00:00:00Z')) ? dauNgay : homNay;
+  const ngayDaThamGia = Math.max(1,
+    Math.floor((Date.parse(homNay + 'T00:00:00Z') - Date.parse(ngayDau + 'T00:00:00Z')) / 864e5) + 1);
+  const baiTheoMoc = await Promise.all(MOC.map(async function (moc) {
+    const cuoiMoc = ngayCong(ngayDau, moc - 1);
+    const denNgay = cuoiMoc < homNay ? cuoiMoc : homNay;
+    if (denNgay < ngayDau) return 0;
+    const r = await db.prepare(
+      'SELECT COUNT(*) n FROM baiHocHoanThanh WHERE maHocVien=? AND ngay>=? AND ngay<=?'
+    ).bind(hv.maHocVien, ngayDau, denNgay).first();
+    return Number((r && r.n) || 0);
+  }));
 
   /* Tính tiến độ từng mốc. */
-  const tienDo = MOC.map(m => ({
+  const tienDo = MOC.map((m, i) => ({
     moc: m,
     dat: ngayDaThamGia >= m,
     ngayConLai: Math.max(0, m - ngayDaThamGia),
-    hoanThanh: m <= 7 ? (hoanThanh7 && hoanThanh7.n) || 0 :
-      Math.round(((hoanThanh && hoanThanh.n) || 0) * Math.min(1, m / 365))
+    hoanThanh: baiTheoMoc[i]
   }));
 
   /* Nội dung đề xuất theo tầng + mốc. */
@@ -105,14 +122,23 @@ function hanhDongMoc(moc, dat, tongBai) {
 
 /** Kiểm tra khóa nội dung theo tầng — frontend dùng để ẩn/hiện bài học. */
 export async function khoaNoiDungTheoTang(y, env, db, hoSo) {
-  const tangYeuCau = Math.min(5, Math.max(1, Number(y.tang || 1)));
+  y = y || {};
+  const tangYeuCau = Number(y.tang || 1);
+  if (!Number.isInteger(tangYeuCau) || tangYeuCau < 1 || tangYeuCau > 5)
+    return { ok: false, error: 'Tầng yêu cầu không hợp lệ.' };
   const maHV = String(y.maHocVien || '').trim();
   let tangHienTai = 1;
   if (maHV) {
-    const hv = await db.prepare('SELECT tang FROM nguoiHocTang WHERE maHocVien=?').bind(maHV).first();
+    let sql = 'SELECT tang FROM nguoiHocTang WHERE maHocVien=?';
+    const bind = [maHV];
+    if (bacVai(hoSo) > 4) { sql += ' AND uidPhuHuynh=?'; bind.push((hoSo || {}).uid || ''); }
+    const hv = await db.prepare(sql).bind(...bind).first();
+    if (!hv) return { ok: false, code: 'NOPERM', error: 'Không có quyền xem cấp nội dung của học viên này.' };
     tangHienTai = hv ? Math.min(5, Math.max(1, Number(hv.tang || 1))) : 1;
+  } else if (bacVai(hoSo) > 4) {
+    return { ok: false, code: 'NOPERM', error: 'Cần mã học viên thuộc hồ sơ của bạn.' };
   }
-  const moDuoc = tangHienTai >= tangYeuCau || (BAC[hoSo.role] || 99) <= 4;
+  const moDuoc = tangHienTai >= tangYeuCau || bacVai(hoSo) <= 4;
   return { ok: true, tangYeuCau, tangHienTai, moDuoc,
     lyDo: moDuoc ? '' : 'Nội dung này dành cho Tầng ' + tangYeuCau + '. Bạn đang ở Tầng ' + tangHienTai + '.' };
 }

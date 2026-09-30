@@ -10,23 +10,43 @@
    ═══════════════════════════════════════════════════════════════ */
 
 import { Kho, tokenMoi } from './nen.js';
-
-const BAC = {R01:1,R02:2,R03:3,R04:4,R05:5,R06:6,R07:7,R08:8,
-  R09:9,R10:10,R11:11,R12:12,R13:13,R14:14,R15:15};
+import { bacVai } from './vai-tro.js';
 
 function homNay() { return new Date().toISOString().slice(0, 10); }
+function ngayHopLe(ngay) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(ngay)) return false;
+  const d = new Date(ngay + 'T00:00:00Z');
+  return Number.isFinite(d.getTime()) && d.toISOString().slice(0, 10) === ngay;
+}
+
+async function hoSoDuocTruyCap(db, maKH, hoSo) {
+  const khach = await db.prepare(
+    'SELECT uidPhuHuynh, maHocVien FROM hoSoKhach WHERE maKhachHang=?'
+  ).bind(maKH).first();
+  if (!khach || (bacVai(hoSo) > 4 && khach.uidPhuHuynh !== hoSo.uid)) return null;
+  return khach;
+}
 
 /** Gửi báo cáo hàng ngày. */
 export async function guiBaoCaoNgay(y, env, db, hoSo) {
+  y = y || {};
   const uid = hoSo.uid;
   const maKH = String(y.maKH || '').trim();
   const ngay = String(y.ngay || '').trim() || homNay();
-  const baiHoc = Number(y.baiHoc) || 0;
-  const phutHoc = Number(y.phutHoc) || 0;
-  const camXuc = String(y.camXuc || '').trim();
-  const kpi = Number(y.kpi) || 0;
+  const baiHoc = Number(y.baiHoc);
+  const phutHoc = Number(y.phutHoc);
+  const camXuc = String(y.camXuc || '').trim().slice(0, 80);
+  const kpi = Number(y.kpi);
   const ghiChu = String(y.ghiChu || '').trim().slice(0, 1000);
   if (!maKH) return { ok: false, error: 'Thiếu mã khách hàng.' };
+  const khach = await hoSoDuocTruyCap(db, maKH, hoSo);
+  if (!khach) return { ok: false, code: 'NOPERM', error: 'Không có quyền gửi báo cáo cho hồ sơ này.' };
+  if (!ngayHopLe(ngay) || ngay > homNay())
+    return { ok: false, error: 'Ngày báo cáo không hợp lệ.' };
+  if (!Number.isInteger(baiHoc) || baiHoc < 0 || baiHoc > 50 ||
+      !Number.isInteger(phutHoc) || phutHoc < 0 || phutHoc > 1440 ||
+      !Number.isFinite(kpi) || kpi < 0 || kpi > 100)
+    return { ok: false, error: 'Bài học, thời lượng hoặc KPI nằm ngoài giới hạn hợp lệ.' };
 
   const id = 'BC-' + tokenMoi().slice(0, 16);
   await db.prepare(
@@ -36,14 +56,14 @@ export async function guiBaoCaoNgay(y, env, db, hoSo) {
     'camXuc=excluded.camXuc, kpi=excluded.kpi, ghiChu=excluded.ghiChu, guiLuc=excluded.guiLuc'
   ).bind(id, uid, maKH, ngay, baiHoc, phutHoc, camXuc, kpi, ghiChu, new Date().toISOString()).run();
 
-  const danhGia = await danhGiaBaoCao(db, maKH, ngay, { baiHoc, phutHoc, camXuc, kpi });
+  const danhGia = await danhGiaBaoCao(db, khach.maHocVien, ngay, { baiHoc, phutHoc, camXuc, kpi });
   await Kho.ghiNhatKy(db, { uid, username: hoSo.u, viec: 'BAOCAO_NGAY_GUI',
     doiTuong: maKH, chiTiet: 'ngay=' + ngay + '|diem=' + danhGia.diem });
 
   return { ok: true, maKH, ngay, danhGia };
 }
 
-async function danhGiaBaoCao(db, maKH, ngay, baoCao) {
+async function danhGiaBaoCao(db, maHocVien, ngay, baoCao) {
   let diem = 0;
   const chiTiet = [];
 
@@ -70,7 +90,9 @@ async function danhGiaBaoCao(db, maKH, ngay, baoCao) {
   else { diem += 10; chiTiet.push({ tieuChi: 'camXuc', diem: 10, nhanXet: 'Cảm xúc trung tính' }); }
 
   /* Kiểm chứng chéo với dữ liệu thực. */
-  const ht = await db.prepare('SELECT COUNT(*) n FROM baiHocHoanThanh WHERE maKhachHang=? AND ngay=?').bind(maKH, ngay).first();
+  const ht = maHocVien ? await db.prepare(
+    'SELECT COUNT(*) n FROM baiHocHoanThanh WHERE maHocVien=? AND ngay=?'
+  ).bind(maHocVien, ngay).first() : null;
   const baiThuc = (ht && ht.n) || 0;
   const batThuong = baiThuc < baoCao.baiHoc;
 
@@ -84,12 +106,17 @@ async function danhGiaBaoCao(db, maKH, ngay, baoCao) {
 
 /** Tổng hợp báo cáo theo khoảng ngày. */
 export async function tongHopBaoCao(y, env, db, hoSo) {
+  y = y || {};
   const maKH = String(y.maKH || '').trim();
   const ngayKetThuc = String(y.ngayKetThuc || '').trim() || homNay();
   const soNgay = Math.min(365, Math.max(7, Number(y.soNgay) || 30));
   if (!maKH) return { ok: false, error: 'Thiếu mã khách hàng.' };
+  if (!(await hoSoDuocTruyCap(db, maKH, hoSo)))
+    return { ok: false, code: 'NOPERM', error: 'Không có quyền xem báo cáo của hồ sơ này.' };
+  if (!ngayHopLe(ngayKetThuc) || ngayKetThuc > homNay())
+    return { ok: false, error: 'Ngày kết thúc không hợp lệ.' };
 
-  const dau = new Date(new Date(ngayKetThuc).getTime() - (soNgay - 1) * 864e5).toISOString().slice(0, 10);
+  const dau = new Date(Date.parse(ngayKetThuc + 'T00:00:00Z') - (soNgay - 1) * 864e5).toISOString().slice(0, 10);
   const rs = await db.prepare(
     'SELECT COUNT(*) soNgayGui, COALESCE(AVG(kpi),0) kpiTrungBinh, ' +
     'COALESCE(SUM(baiHoc),0) tongBai, COALESCE(SUM(phutHoc),0) tongPhut ' +
@@ -111,13 +138,11 @@ export async function tongHopBaoCao(y, env, db, hoSo) {
 
 /** Danh sách báo cáo gần đây (R01–R04 hoặc chính chủ). */
 export async function dsBaoCaoNgay(y, env, db, hoSo) {
+  y = y || {};
   const maKH = String(y.maKH || '').trim();
   const limit = Math.min(100, Math.max(1, Number(y.limit) || 30));
   if (!maKH) return { ok: false, error: 'Thiếu mã khách hàng.' };
-  if ((BAC[hoSo.role] || 99) > 4) {
-    const hsk = await db.prepare('SELECT uidPhuHuynh FROM hoSoKhach WHERE maKhachHang=?').bind(maKH).first();
-    if (!hsk || hsk.uidPhuHuynh !== hoSo.uid) return { ok: false, code: 'NOPERM' };
-  }
+  if (!(await hoSoDuocTruyCap(db, maKH, hoSo))) return { ok: false, code: 'NOPERM' };
   const rs = await db.prepare(
     'SELECT ngay, baiHoc, phutHoc, camXuc, kpi, ghiChu, guiLuc FROM baoCaoNgay WHERE maKhachHang=? ORDER BY ngay DESC LIMIT ?'
   ).bind(maKH, limit).all();

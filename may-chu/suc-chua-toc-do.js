@@ -21,9 +21,7 @@
    (9.99.57).
    ═══════════════════════════════════════════════════════════════ */
 
-function laNguoiNha(hoSo) {
-  return /^R(0[1-9]|1[0-2])$/.test(String((hoSo || {}).role || ''));
-}
+import { laNguoiNha } from './vai-tro.js';
 
 /* Bảng nóng — đường tra chạy mỗi ngày. Tên CỐ ĐỊNH trong mã (không phải
    dữ liệu người dùng) nên nội suy vào câu đếm là an toàn. */

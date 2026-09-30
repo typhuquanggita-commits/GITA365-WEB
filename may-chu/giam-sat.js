@@ -28,6 +28,7 @@
    ═══════════════════════════════════════════════════════════════ */
 
 import { Kho } from './nen.js';
+import { laR01 } from './vai-tro.js';
 
 /* ═══════════════ SÁU ĐIỀU KHÔNG LỆNH NÀO MỞ ĐƯỢC ═══════════════
 
@@ -70,10 +71,8 @@ export const VAI_NGAN = {
   TRE: /^R14$/
 };
 
-const BAC = { R01: 1, R02: 2, R03: 3, R04: 4, R05: 5, R06: 6, R07: 7, R08: 8,
-  R09: 9, R10: 10, R11: 11, R12: 12, R13: 13, R14: 14, R15: 15 };
+import { BAC } from './vai-tro.js';
 
-function laR01(hoSo) { return String((hoSo || {}).role || '') === 'R01'; }
 function xemDuoc(hoSo) { return /^R0[1-3]$/.test(String((hoSo || {}).role || '')); }
 
 /* ═══════════════ CỔNG TRẦN ═══════════════

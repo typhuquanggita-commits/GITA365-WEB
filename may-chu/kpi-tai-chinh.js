@@ -29,8 +29,7 @@ import { dungKy, soatChot, baoCaoKeToan } from './bao-cao.js';
 import { doiSoat } from './tai-chinh.js';
 import { quyenCua } from './chi-tieu.js';
 
-const BAC = {R01:1,R02:2,R03:3,R04:4,R05:5,R06:6,R07:7,R08:8,
-             R09:9,R10:10,R11:11,R12:12,R13:13,R14:14,R15:15};
+import { BAC } from './vai-tro.js';
 
 const NGAY_TREO = 3;        /* phiếu / khoản chi chờ duyệt quá bao nhiêu ngày */
 const NGAY_PHIEU_KHONG_TIEN = 7;

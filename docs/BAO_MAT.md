@@ -20,6 +20,10 @@ Repo này là công khai. Các tệp `kho/*.enc` đã mã hoá, vô hại nếu 
 - `GITA_TAO_ADMIN` — mã tạo Super Admin đầu tiên. Xoá ngay sau khi dùng.
 - `GITA_KHOA_KY` — khoá ký chứng cứ (HMAC).
 - `GITA_KHOA_THU` — khoá gửi thư qua Resend (nếu dùng email).
+- `GITA_AI_KHOA` — API key OpenAI cho soạn bản nháp XU-02 (tùy chọn, tắt nếu thiếu).
+- `GITA_AI_MAU` — tên model OpenAI dùng cho XU-02 (tùy chọn).
+
+XU-02 chỉ gửi đề bài người dùng nhập sau xác nhận, chỉ Super Admin gọi và quyền AI02 phải bật. Cổng ẩn danh từ chối đề bài có dấu hiệu dữ liệu cá nhân; không gửi hồ sơ khách hoặc nội dung kho, không lưu/phát hành đầu ra tự động. Nhà cung cấp vẫn nhận được đề bài đã qua cổng, vì vậy chỉ bật khi đã đánh giá điều khoản và quyền riêng tư của tài khoản OpenAI.
 
 ## Cấm
 

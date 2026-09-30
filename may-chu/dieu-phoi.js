@@ -24,10 +24,7 @@
 
 import { Kho } from './nen.js';
 import { deXuatNangCap } from './tu-nang-cap.js';
-
-function laNguoiNha(hoSo) {
-  return /^R(0[1-9]|1[0-2])$/.test(String((hoSo || {}).role || ''));
-}
+import { laNguoiNha } from './vai-tro.js';
 /* Tầng thanh tra & Super Admin = R01–R02 (khớp thanh-tra.js laR01R02). */
 function laThanhTra(hoSo) {
   var r = String((hoSo || {}).role || '');

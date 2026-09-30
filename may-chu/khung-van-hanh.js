@@ -25,10 +25,7 @@
    ═══════════════════════════════════════════════════════════════ */
 
 import { Kho } from './nen.js';
-
-function laNguoiNha(hoSo) {
-  return /^R(0[1-9]|1[0-2])$/.test(String((hoSo || {}).role || ''));
-}
+import { laNguoiNha } from './vai-tro.js';
 
 /* Năm mã trụ — bản tóm ở máy chủ để soatKhungVanHanh trả về; nội dung
    đầy đủ nằm ở kho G.HE_TRU phía màn. KHÔNG phải bản chép của một bảng

@@ -32,6 +32,7 @@
 
 import { Kho } from './nen.js';
 import * as BoNao from './bo-nao.js';
+import { laR01 } from './vai-tro.js';
 
 /* ═══════════════ GIÁ KHỞI ĐẦU ═══════════════
 
@@ -56,7 +57,6 @@ export const GIA_KHOI_DAU = {1: 0, 2: 500000, 3: 10000000, 4: 30000000, 5: 50000
    không ai đọc ra bên bán đã hứa giao những gì. */
 export const O_KHUNG = ['ten', 'gom', 'khong', 'nhip', 'hoan'];
 
-function laR01(hoSo) { return String((hoSo || {}).role || '') === 'R01'; }
 function xemDuoc(hoSo) { return /^R0[1-3]$/.test(String((hoSo || {}).role || '')); }
 
 /* Giá là Vùng Đỏ — trỏ sang Bộ não, không khai lại danh sách. */

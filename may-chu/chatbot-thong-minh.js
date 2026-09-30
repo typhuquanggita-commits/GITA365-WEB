@@ -10,10 +10,8 @@
      - Ghi nhật ký mọi tương tác
    ═══════════════════════════════════════════════════════════════ */
 
-import { Kho, tokenMoi } from './nen.js';
-
-const BAC = {R01:1,R02:2,R03:3,R04:4,R05:5,R06:6,R07:7,R08:8,
-  R09:9,R10:10,R11:11,R12:12,R13:13,R14:14,R15:15};
+import { Kho } from './nen.js';
+import { bacVai } from './vai-tro.js';
 
 const HAN_CHAT = {
   R01: 9999, R02: 9999, R03: 500, R04: 300, R05: 200,
@@ -48,32 +46,47 @@ function phatHienNguyCap(cau) {
 
 function traLoiMau(y, tang, role) {
   const map = {
-    tai_chinh: 'Về học phí và thanh toán, bạn có thể xem bảng giá theo tầng hiện tại hoặc nhờ tư vấn viên gọi lại trong 24 giờ.',
+    tai_chinh: 'Về học phí và thanh toán, bạn có thể xem bảng giá trong ứng dụng. Trợ lý chưa gửi yêu cầu này cho nhân viên.',
     nang_tang: 'Nâng tầng cần đạt KPI và được coach xác nhận. Bạn muốn xem điều kiện lên Tầng ' + Math.min(5, tang + 1) + '?',
     hoc_tap: 'Bạn đang ở Tầng ' + tang + '. Tôi có thể gợi ý bài học phù hợp hoặc kết nối với coach.',
     ky_thuat: 'Bạn mô tả thêm lỗi gặp phải (màn hình nào, thông báo gì) để bộ phận kỹ thuật hỗ trợ nhanh nhất.',
-    cham_soc: 'Tôi đã ghi nhận. Tư vấn/coach sẽ liên hệ bạn trong thời gian sớm nhất.',
-    phap_ly: 'Các vấn đề về đồng ý dữ liệu, hợp đồng và rút lui cần được xử lý theo quy trình pháp lý của GITA. Bạn muốn gửi yêu cầu cụ thể?',
+    cham_soc: 'Tôi chưa chuyển tin nhắn này cho nhân viên. Hãy gửi yêu cầu qua kênh chăm sóc khách hàng trong ứng dụng.',
+    phap_ly: 'Tôi không thể đưa ra kết luận pháp lý. Hãy gửi yêu cầu qua kênh hỗ trợ chính thức để được người có trách nhiệm xem xét.',
     tong_quat: 'Cảm ơn bạn. Tôi là trợ lý GITA365. Bạn cần hỗ trợ về học tập, tài chính, kỹ thuật hay chăm sóc?'
   };
   return map[y] || map.tong_quat;
 }
 
-function duocTraLoi(y, tang, role) {
-  if ((BAC[role] || 99) <= 4) return true;
-  const canTang = {
-    tai_chinh: 1, nang_tang: 1, hoc_tap: 1, ky_thuat: 1, cham_soc: 1, phap_ly: 1, tong_quat: 1
-  };
-  return tang >= canTang[y];
+async function layTangKhach(db, uid, maKH) {
+  if (maKH) {
+    return await db.prepare(
+      'SELECT tang FROM hoSoKhach WHERE uidPhuHuynh=? AND maKhachHang=?'
+    ).bind(uid, maKH).first();
+  }
+  const rs = await db.prepare(
+    'SELECT maKhachHang, tang FROM hoSoKhach WHERE uidPhuHuynh=? ORDER BY vaoLuc DESC LIMIT 2'
+  ).bind(uid).all();
+  const ds = rs.results || [];
+  return ds.length === 1 ? ds[0] : null;
 }
 
 /** Gửi câu hỏi tới chatbot. */
 export async function hoiChatbot(y, env, db, hoSo) {
-  const cau = String((y || {}).cau || '').trim();
+  y = y || {};
+  const cau = String(y.cau || '').trim();
   if (!cau) return { ok: false, error: 'Chưa nhập câu hỏi.' };
-  const tang = Math.min(5, Math.max(1, Number(y.tang || hoSo.tier || 1)));
-  const role = hoSo.role || 'R13';
-  const uid = hoSo.uid || 'khach';
+  if (cau.length > 2000) return { ok: false, error: 'Câu hỏi tối đa 2.000 ký tự.' };
+  const role = String((hoSo || {}).role || '');
+  const uid = String((hoSo || {}).uid || '');
+  const bac = bacVai(hoSo);
+  if (!uid || bac > 15) return { ok: false, code: 'NOPERM', error: 'Phiên đăng nhập không hợp lệ.' };
+  let tang = 5;
+  if (bac > 12) {
+    const khach = await layTangKhach(db, uid, String(y.maKH || '').trim());
+    if (!khach) return { ok: false, code: 'NOPERM',
+      error: 'Không có hồ sơ khách hàng thuộc phiên này hoặc cần chọn mã khách hàng.' };
+    tang = Math.min(5, Math.max(1, Number(khach.tang || 1)));
+  }
 
   /* Giới hạn số câu hỏi/ngày theo vai trò. */
   const gioiHan = gioiHanChat(role);
@@ -85,26 +98,27 @@ export async function hoiChatbot(y, env, db, hoSo) {
 
   const yDinh = phanLoaiY(cau);
   const nguyCap = phatHienNguyCap(cau);
-  const mo = duocTraLoi(yDinh, tang, role);
-  const traLoi = mo ? traLoiMau(yDinh, tang, role) :
-    'Nội dung này vượt quyền truy cập hiện tại của bạn. Vui lòng nhờ tư vấn hoặc nâng tầng để mở khóa.';
+  const traLoi = traLoiMau(yDinh, tang, role);
 
   await Kho.ghiNhatKy(db, { uid, username: hoSo.u || uid,
     viec: 'CHATBOT_HOI', doiTuong: uid,
     chiTiet: 'y=' + yDinh + '|tang=' + tang + '|nguyCap=' + (nguyCap ? 1 : 0) });
 
   return { ok: true,
-    yDinh, traLoi, nguyCap,
-    canhBao: nguyCap ? 'Phát hiện tín hiệu nguy cấp. Hệ thống đã thông báo cho đội chăm sóc can thiệp ngay.' : '',
+    yDinh, traLoi, nguyCap, phamVi: 'huong_dan_chung_khong_co_noi_dung_khoa_hoc',
+    canhBao: nguyCap ? 'Tin nhắn có thể cho thấy nguy cơ cần được người thật hỗ trợ. Chatbot chưa gửi cảnh báo cho nhân viên. ' +
+      'Nếu có nguy hiểm tức thời, hãy liên hệ dịch vụ khẩn cấp tại địa phương hoặc người đáng tin cậy ngay.' : '',
     goiY: ['Học phí như thế nào?', 'Điều kiện nâng tầng?', 'Cách đăng nhập lại?', 'Kết nối tư vấn']
   };
 }
 
 /** Lấy lịch sử chat của chính mình (7 ngày gần nhất). */
 export async function lichSuChat(y, env, db, hoSo) {
-  const uid = hoSo.uid;
+  const uid = (hoSo || {}).uid;
+  if (!uid) return { ok: false, code: 'NOPERM' };
+  const tuLuc = new Date(Date.now() - 7 * 864e5).toISOString();
   const rs = await db.prepare(
-    "SELECT luc, viec, chiTiet FROM audit WHERE uid=? AND viec='CHATBOT_HOI' ORDER BY luc DESC LIMIT 50"
-  ).bind(uid).all();
+    "SELECT luc, viec, chiTiet FROM audit WHERE uid=? AND viec='CHATBOT_HOI' AND luc>=? ORDER BY luc DESC LIMIT 50"
+  ).bind(uid, tuLuc).all();
   return { ok: true, ds: (rs.results || []).map(r => ({ luc: r.luc, chiTiet: r.chiTiet })) };
 }
