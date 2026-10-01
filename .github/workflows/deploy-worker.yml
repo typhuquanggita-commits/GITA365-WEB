@@ -45,4 +45,11 @@ jobs:
         run: |
           set -eu
           curl -fsS --max-time 15 https://gita365.typhuquanggita.workers.dev/ -o /tmp/worker-health.json
-          node -e "const s=require('/tmp/worker-health.json'); if (!s.ok || !Number.isFinite(s.daNapKhoa) || s.daNapKhoa < 1) process.exit(1)"
+          node <<'NODE'
+          const s = require('/tmp/worker-health.json');
+          if (!s.ok) throw new Error('Worker health endpoint did not report ok.');
+          if (!s.khoaSanSang || !Number.isFinite(s.daNapKhoa) || s.daNapKhoa < 1)
+            throw new Error('Worker is deployed but GITA_KHOA_KHO is missing or invalid.');
+          if (!s.csdlSanSang)
+            throw new Error('Worker is deployed but its D1 database is unavailable or not initialized.');
+          NODE

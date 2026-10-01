@@ -1066,8 +1066,14 @@ export default {
     if (req.method === 'GET') {
       let n = 0;
       try { n = Object.keys(JSON.parse(env.GITA_KHOA_KHO || '{}')).length; } catch (e) {}
+      let csdlSanSang = false;
+      try {
+       await env.CSDL.prepare('SELECT 1').first();
+       csdlSanSang = true;
+      } catch (e) {}
       return traJson({ok: true, ten: 'GITA 365 — máy chủ cấp phép',
-        daNapKhoa: n, luc: new Date().toISOString()}, 200, env);
+       daNapKhoa: n, khoaSanSang: n > 0, csdlSanSang,
+       luc: new Date().toISOString()}, 200, env);
     }
     if (req.method !== 'POST') return traJson({ok: false, error: 'Yêu cầu không hợp lệ.'}, 405, env);
 

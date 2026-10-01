@@ -10,6 +10,9 @@ Mặc định trong `cau-hinh.js`:
 G.API_CAP_PHEP = 'https://gita365.typhuquanggita.workers.dev';
 ```
 
+Worker chỉ chấp nhận yêu cầu từ `https://gita365-web.pages.dev`. Liên kết kích
+hoạt tài khoản cũng quay về Pages này; `gita.edu.vn` không tham gia luồng này.
+
 Có thể ghi đè trên từng máy qua màn **Quản trị trang → Nối máy chủ**.
 
 ## Chức năng chính
