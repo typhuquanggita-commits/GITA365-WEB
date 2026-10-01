@@ -56,22 +56,19 @@ Pages cho tên miền này và Worker cho route `/api/*` để hai đầu cùng 
 Worker ở Phần 2 trước; chỉ phát hành Pages sau khi Worker đã sẵn sàng. Không phát hành
 riêng Pages mới vì màn T5-PRO mới cần API quyền và bảng `quyenT5Pro`.
 
-1. Trong Cloudflare, tạo Pages project tên **`gita365`** (production branch:
-   `main`). URL production phải là `https://gita365.pages.dev`.
+1. Trong Cloudflare, tạo Pages project tên **`gita365-web`** (production branch:
+   `main`). URL production phải là `https://gita365-web.pages.dev`.
 2. Trong **GitHub → Settings → Secrets and variables → Actions**, tạo hai
    repository secrets: `CLOUDFLARE_API_TOKEN` (quyền **Cloudflare Pages: Edit**
    và **Workers Scripts: Edit**) và `CLOUDFLARE_ACCOUNT_ID` (đúng 32 ký tự hex).
    Dán token nguyên văn, không thêm dấu nháy, khoảng trắng hay xuống dòng cuối.
    Workflow xác minh token trước khi gọi Wrangler và không in giá trị bí mật.
-3. Kết nối project Pages `gita365` trực tiếp với repository GitHub, chọn
-   production branch `main`, build command
-   `node tools/gop-src.js && node tools/build-pages.js`, và output `_site`.
-   Cloudflare tự phát hành mỗi lần có thay đổi trên `main`. Lệnh build chỉ
-   đóng gói tệp public, không phát hành `may-chu/`, `tools/`, `kho-goc/` hoặc
-   bất kỳ khóa nào.
-4. GitHub Actions **Validate GITA365 Pages release** chỉ kiểm tra bundle và
-   public artifact; nó không cần Cloudflare token và không thể chặn Pages.
-   Kiểm tra `https://gita365.pages.dev/` sau khi Cloudflare báo deploy thành công.
+3. GitHub Actions **Validate GITA365 Pages release** tự dựng và phát hành
+   project `gita365-web` mỗi lần có thay đổi trên `main`, dùng hai secret ở
+   bước 2. Lệnh build chỉ đóng gói tệp public, không phát hành `may-chu/`,
+   `tools/`, `kho-goc/` hoặc bất kỳ khóa nào.
+4. Kiểm tra `https://gita365-web.pages.dev/` sau khi workflow báo deploy thành
+   công. Pages này không liên kết với `gita.edu.vn`.
 
 > Mỗi thay đổi frontend trong `src/` được đưa vào bundle trong chính pipeline;
 > không cần chạy hoặc commit thủ công `node tools/gop-src.js`. Thay đổi dưới

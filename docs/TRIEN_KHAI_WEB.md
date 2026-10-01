@@ -11,24 +11,27 @@ Tài liệu rút gọn. Chi tiết đầy đủ xem `TRIEN-KHAI.md` ở thư m�
 
 ## Triển khai Pages
 
-Cloudflare Pages Git Integration theo dõi `main` và tự triển khai tới
-`https://gita365.pages.dev/`. GitHub Actions chỉ kiểm tra build và tạo artifact
-tham khảo; Pages không dùng GitHub secret Cloudflare.
+Workflow GitHub **Validate GITA365 Pages release** tự triển khai mọi lần đẩy lên
+`main` tới `https://gita365-web.pages.dev/`. Đây là Pages project `gita365-web`;
+nó không dùng hoặc cấu hình tên miền `gita.edu.vn`.
 
-Trong Cloudflare Dashboard:
+Trong GitHub → **Settings → Secrets and variables → Actions**, tạo:
 
-1. **Workers & Pages → Create application → Pages → Connect to Git**.
-2. Chọn repository `typhuquanggita-commits/GITA365-WEB`, project `gita365`,
-   production branch `main`.
-3. Đặt build command `node tools/gop-src.js && node tools/build-pages.js`.
-4. Đặt build output directory `_site`.
+1. `CLOUDFLARE_API_TOKEN`: token của đúng tài khoản Cloudflare, có quyền
+   **Cloudflare Pages: Edit**.
+2. `CLOUDFLARE_ACCOUNT_ID`: Account ID 32 ký tự hexadecimal của tài khoản chứa
+   project `gita365-web`.
+
+Không ghi các giá trị này vào mã nguồn. Sau khi đã có hai secret, mỗi lần push
+lên `main` sẽ build và triển khai tự động; pull request chỉ kiểm tra artifact.
 
 Lệnh build chỉ đưa các tệp public vào `_site`: HTML, bundles, cấu hình client,
 assets và kho `.enc`. Nó từ chối nếu `may-chu`, `tools`, `kho-goc` hoặc
 `kho/khoa.json` lọt vào output.
 
-GitHub Actions sẽ dựng lại bundles và kiểm tra đúng public artifact, nhưng
-không gọi Cloudflare Pages và không cần `CLOUDFLARE_API_TOKEN`.
+GitHub Actions dựng lại bundles, kiểm tra artifact rồi triển khai đúng artifact
+đó. Chỉ dữ liệu public được đưa lên Pages; `may-chu`, `tools`, `kho-goc` và
+`kho/khoa.json` vẫn bị loại trừ.
 
 ## Triển khai Worker
 
