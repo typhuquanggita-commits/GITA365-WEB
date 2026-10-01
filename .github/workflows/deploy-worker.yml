@@ -1,0 +1,48 @@
+name: Deploy GITA365 API Worker
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gita365-worker-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  worker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate Worker credentials
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -eu
+          node <<'NODE'
+          const token = process.env.CLOUDFLARE_API_TOKEN || '';
+          const account = process.env.CLOUDFLARE_ACCOUNT_ID || '';
+          if (!token || /[\u0000-\u0020\u007f]/.test(token)) {
+            throw new Error('CLOUDFLARE_API_TOKEN is missing or contains whitespace/control characters.');
+          }
+          if (!/^[a-f0-9]{32}$/i.test(account)) {
+            throw new Error('CLOUDFLARE_ACCOUNT_ID must be the 32-character hexadecimal account ID.');
+          }
+          NODE
+
+      - name: Deploy Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: may-chu
+          command: deploy
+
+      - name: Verify Worker health
+        run: |
+          set -eu
+          curl -fsS --max-time 15 https://gita365.typhuquanggita.workers.dev/ -o /tmp/worker-health.json
+          node -e "const s=require('/tmp/worker-health.json'); if (!s.ok || !Number.isFinite(s.daNapKhoa) || s.daNapKhoa < 1) process.exit(1)"

@@ -63,12 +63,15 @@ riêng Pages mới vì màn T5-PRO mới cần API quyền và bảng `quyenT5Pr
    và **Workers Scripts: Edit**) và `CLOUDFLARE_ACCOUNT_ID` (đúng 32 ký tự hex).
    Dán token nguyên văn, không thêm dấu nháy, khoảng trắng hay xuống dòng cuối.
    Workflow xác minh token trước khi gọi Wrangler và không in giá trị bí mật.
-3. Đẩy thay đổi vào nhánh `main` của repo `GITA365-WEB`. Workflow
-   **Deploy GITA365 to Cloudflare** tự dựng lại `gita-app.js` và `gita-nghe.js`
-   từ `src/`, chỉ đóng gói tệp public, rồi phát hành lên Pages. Không phát hành
-   `may-chu/`, `tools/`, `kho-goc/` hoặc bất kỳ khóa nào.
-4. Mở **Actions → Deploy GITA365 to Cloudflare** và đợi job **Deploy static
-   application** thành công. Kiểm tra `https://gita365.pages.dev/`.
+3. Kết nối project Pages `gita365` trực tiếp với repository GitHub, chọn
+   production branch `main`, build command
+   `node tools/gop-src.js && node tools/build-pages.js`, và output `_site`.
+   Cloudflare tự phát hành mỗi lần có thay đổi trên `main`. Lệnh build chỉ
+   đóng gói tệp public, không phát hành `may-chu/`, `tools/`, `kho-goc/` hoặc
+   bất kỳ khóa nào.
+4. GitHub Actions **Validate GITA365 Pages release** chỉ kiểm tra bundle và
+   public artifact; nó không cần Cloudflare token và không thể chặn Pages.
+   Kiểm tra `https://gita365.pages.dev/` sau khi Cloudflare báo deploy thành công.
 
 > Mỗi thay đổi frontend trong `src/` được đưa vào bundle trong chính pipeline;
 > không cần chạy hoặc commit thủ công `node tools/gop-src.js`. Thay đổi dưới
@@ -113,8 +116,9 @@ bash nap-bi-mat.sh /duong/dan/toi/khoa.json
 
 # 4) (Tên miền) xác thực gita.edu.vn ở nhà gửi thư — SPF/DKIM (xem wrangler.toml)
 
-# 5) Đưa Worker lên lần đầu. Những thay đổi may-chu/ tiếp theo
-#    được GitHub Actions triển khai tự động sau khi đã có hai secrets ở Phần 1.
+# 5) Đưa Worker lên lần đầu. Các thay đổi Worker tiếp theo dùng workflow
+#    GitHub **Deploy GITA365 API Worker** và chỉ chạy thủ công sau khi
+#    hạ tầng/secret Worker đã sẵn sàng; nó không chặn Pages.
 npx wrangler deploy
 ```
 
