@@ -88,6 +88,12 @@ hợp lệ nhưng không đủ quyền, tạo API Token mới có `Cloudflare Pa
 `CLOUDFLARE_ACCOUNT_ID` lấy từ đúng tài khoản Cloudflare của dự án. Không đưa
 token vào tệp, lệnh shell có echo, issue hoặc tin nhắn.
 
+Nếu job **Deploy API worker** báo `CLOUDFLARE_ACCOUNT_ID must be the 32-character hexadecimal Cloudflare account ID`,
+workflow đã dừng trước khi gọi Cloudflare. Lấy **Account ID** của tài khoản
+Cloudflare chứa dự án, không phải `database_id` của D1 hay ID của Worker, rồi
+cập nhật secret `CLOUDFLARE_ACCOUNT_ID` trong GitHub Actions. Sau đó chạy lại
+workflow; không cần thay đổi mã nguồn.
+
 ## PHẦN 2 — CLOUDFLARE WORKER (máy chủ, có khoá)
 
 Mở terminal trong thư mục `may-chu/` rồi làm 5 việc (đã ghi sẵn trong `wrangler.toml`):
