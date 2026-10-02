@@ -1061,18 +1061,36 @@ export default {
     const cors = corsTheoEnv(env);
     if (req.method === 'OPTIONS') return new Response(null, {status: 204, headers: cors});
 
-    /* Trạng thái: máy chủ còn sống chưa, đã nạp khoá chưa. KHÔNG trả
-       khoá nào, và không nói gì về số tài khoản. */
+    /* Trạng thái: máy chủ còn sống chưa, đã nạp khoá chưa, D1 còn kết
+       nối không. KHÔNG trả khoá nào, và không nói gì về số tài khoản. */
     if (req.method === 'GET') {
       let n = 0;
       try { n = Object.keys(JSON.parse(env.GITA_KHOA_KHO || '{}')).length; } catch (e) {}
+      let csdl = false, phienDb = false;
+      try {
+        if (env.CSDL) {
+          csdl = true;
+          await env.CSDL.prepare('SELECT 1 as one').first();
+          phienDb = true;
+        }
+      } catch (e) {
+        console.error('HEALTH_D1_LOI', e && e.message || e);
+      }
       return traJson({ok: true, ten: 'GITA 365 — máy chủ cấp phép',
-        daNapKhoa: n, luc: new Date().toISOString()}, 200, env);
+        daNapKhoa: n, luc: new Date().toISOString(), csdl, phienDb}, 200, env);
     }
     if (req.method !== 'POST') return traJson({ok: false, error: 'Yêu cầu không hợp lệ.'}, 405, env);
 
     let y;
-    try { y = await req.json(); } catch (e) { y = {}; }
+    try { y = await req.json(); } catch (e) {
+      console.error('JSON_PARSE_LOI', e && e.message || e);
+      return traJson({ok: false, code: 'BADJSON', error: 'Dữ liệu gửi lên không đúng định dạng JSON.'}, 400, env);
+    }
+
+    if (!env.CSDL) {
+      console.error('THIEU_CSDL_BINDING', 'env.CSDL không tồn tại');
+      return traJson({ok: false, code: 'SERVER', error: 'Máy chủ chưa kết nối cơ sở dữ liệu.'}, 500, env);
+    }
 
     try {
       return traJson(await lam(String(y.fn || ''), y, env, env.CSDL), 200, env);
@@ -1082,7 +1100,7 @@ export default {
          đó là bản đồ cho người đi dò. Ghi đủ vào nhật ký máy chủ, trả
          ra một câu. */
       console.error('LOI', String(y.fn || ''), err && err.stack || err);
-      return traJson({ok: false, error: 'Máy chủ gặp trục trặc. Thử lại sau ít phút.'}, 500, env);
+      return traJson({ok: false, code: 'SERVER', error: 'Máy chủ gặp trục trặc. Thử lại sau ít phút.'}, 500, env);
     }
   }
 };

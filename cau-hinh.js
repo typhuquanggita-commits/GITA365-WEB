@@ -22,11 +22,19 @@ var G = window.G || {}; window.G = G;
    để máy đối chiếu hai chỗ. */
 G.API_CAP_PHEP = G.API_CAP_PHEP || 'https://gita365.typhuquanggita.workers.dev';
 
+function hopLeMayChu(url){
+  return /^https:\/\/[a-zA-Z0-9][-a-zA-Z0-9.]*[a-zA-Z0-9](:\d+)?(\/[^\s]*)?$/.test(String(url || '').trim());
+}
+
 /* Không phải ai cũng sửa được tệp này — bản cài trên máy Windows nằm trong
    thư mục chương trình. Nên Super Admin còn một đường thứ hai: vào màn
    "Nối máy chủ" trong ứng dụng, dán địa chỉ, bấm thử. Địa chỉ dán ở đó
    được ghi vào máy này và thắng giá trị đặt trong tệp. */
 try {
   var _dat = localStorage.getItem('gita365_may_chu');
-  if (_dat && /^https:\/\//.test(_dat)) G.API_CAP_PHEP = _dat;
+  if (_dat && hopLeMayChu(_dat)) G.API_CAP_PHEP = _dat.trim();
 } catch (e) {}
+
+/* Nếu giá trị mặc định không hợp lệ thì để trống để ứng dụng chạy chế độ mẫu
+   thay vì gọi đi đâu không rõ. */
+if (!hopLeMayChu(G.API_CAP_PHEP)) G.API_CAP_PHEP = '';
