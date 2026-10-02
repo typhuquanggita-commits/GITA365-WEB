@@ -42686,6 +42686,17 @@ G.VIEWS = G.VIEWS || {};
   G.xuDanhGiaPilot = G.xuDanhGiaPilot || {};
   G.xuVongDoi = G.xuVongDoi || { projectId: '', status: '', rights: {},
     render: {}, qc: {}, passport: null, dang: false, events: [] };
+  /* V20 is a delivery manifest; Pages never claims to render the final MP4. */
+  var V20_MAC_DINH = {
+    phienBan: 'V20', profile: 'cinematic-hd', tiLe: '9:16', rong: 1080, cao: 1920,
+    fps: 30, thoiLuongToiDa: 300, kenh: 'social', nganSachRender: 0,
+    template: 'trainer-cinematic'
+  };
+  G.xuV20 = G.xuV20 || {};
+  Object.keys(V20_MAC_DINH).forEach(function (k) {
+    if (G.xuV20[k] == null) G.xuV20[k] = V20_MAC_DINH[k];
+  });
+  var V20_KHO = {'9:16': [1080, 1920], '16:9': [1920, 1080], '1:1': [1080, 1080]};
 
   /* Pilot có chủ ý nhỏ: ba màn nền tảng, mỗi màn ba video 3p30. Các câu
      chuyên môn vẫn đi qua Ngân khố câu khi dựng; danh sách này chỉ giữ
@@ -42986,8 +42997,20 @@ G.VIEWS = G.VIEWS || {};
   }
   function duAnGui() {
     return {title: G.xuDA.ten, scenes: (G.xuDA.canh || []).map(function (c) {
-      return {id: c.id, giay: c.giay, loi: c.loi, chuMan: c.chuMan, sacThai: c.sacThai};
-    }), kho: G.xuDA.kho, tang: G.xuDA.tang, nguon: G.xuDA.nguon, dieuNho: G.xuDA.dieuNho};
+      return {id: c.id, giay: c.giay, loi: c.loi, chuMan: c.chuMan, sacThai: c.sacThai,
+        shot: c.shot || 'medium', lens: c.lens || '50mm', transition: c.transition || 'cut',
+        camera: c.camera || (G.xuDA.mc || {}).mayQuay || 'dolly',
+        tracks: ['visual', 'character', 'camera', 'voice', 'music', 'caption', 'transition']};
+    }), kho: G.xuDA.kho, tang: G.xuDA.tang, nguon: G.xuDA.nguon, dieuNho: G.xuDA.dieuNho,
+    v20: {delivery: {
+      phienBan: G.xuV20.phienBan, profile: G.xuV20.profile, tiLe: G.xuV20.tiLe,
+      rong: +G.xuV20.rong, cao: +G.xuV20.cao, fps: +G.xuV20.fps,
+      thoiLuongToiDa: +G.xuV20.thoiLuongToiDa, kenh: G.xuV20.kenh,
+      nganSachRender: +G.xuV20.nganSachRender, template: G.xuV20.template
+    }, threeD: (G.xu3D && G.xu3D.thuVien || []).map(function (a) {
+      return {ma: a.ma, dinhDang: a.dinhDang, giayPhep: a.giayPhep, duongDan: a.duongDan,
+        yeuCau: a.yeuCau || []};
+    }), tracks: ['visual', 'character', 'camera', 'voice', 'music', 'caption', 'transition']}};
   }
   function goiStudio(fn, data) {
     if (!G.goiMayChu) { U.toast('Cần nối máy chủ để ghi sổ sản xuất.', 'err'); return; }
@@ -43010,15 +43033,28 @@ G.VIEWS = G.VIEWS || {};
   G.xuCapNhatQuyen = function (o, v) {
     G.xuVongDoi.rights[o] = !!v; veLai();
   };
+  G.xuSuaV20 = function (o, v) {
+    if (o === 'tiLe' && V20_KHO[v]) {
+      G.xuV20.tiLe = v; G.xuV20.rong = V20_KHO[v][0]; G.xuV20.cao = V20_KHO[v][1];
+      G.xuDA.kho = v;
+    } else G.xuV20[o] = v;
+    veLai();
+  };
+  G.xuCapNhatQC20 = function (o, v) {
+    G.xuVongDoi.qc.v20 = G.xuVongDoi.qc.v20 || {};
+    G.xuVongDoi.qc.v20[o] = !!v; veLai();
+  };
   G.xuChuyenCong = function (to) {
     var q = G.xuVongDoi, lights = den();
     var render = q.render;
     if (to === 'rendered') {
       render = {renderer: 'renderer-tách biệt', outputHash: String(render.outputHash || '').trim(),
-        duration: tong(), sceneCount: (G.xuDA.canh || []).length};
+        thumbnailHash: String(render.thumbnailHash || '').trim(), jobId: String(render.jobId || '').trim(),
+        duration: tong(), sceneCount: (G.xuDA.canh || []).length, v20: duAnGui().v20.delivery};
     }
     var qc = q.qc;
-    if (to === 'qcPassed') qc = {approved: !!qc.approved, reviewer: String(qc.reviewer || '').trim(), lights: lights};
+    if (to === 'qcPassed') qc = {approved: !!qc.approved, reviewer: String(qc.reviewer || '').trim(),
+      lights: lights, v20: qc.v20 || {}};
     goiStudio('chuyenTrangThaiStudio', {projectId: q.projectId, to: to, project: duAnGui(),
       rights: q.rights, render: render, qc: qc, contentChecked: !!(G.xuSoat && G.xuSoat.ok &&
         !(G.xuSoat.cam || []).some(function (x) { return !x.canhBao; }))});
@@ -43372,6 +43408,16 @@ G.VIEWS = G.VIEWS || {};
         return '<option value="' + h(k) + '"' + (k === c.vatHinh ? ' selected' : '') + '>' +
           h(G.xuVat[k].ten) + '</option>';
       }).join('') + '</select></label></div>';
+    o += '<div class="row"><label>Cỡ cảnh <select onchange="G.xuSuaCanh(\'' + h(c.id) +
+      '\',\'shot\',this.value)">' + ['wide', 'medium', 'close-up', 'detail'].map(function (x) {
+       return '<option' + ((c.shot || 'medium') === x ? ' selected' : '') + '>' + h(x) + '</option>';
+      }).join('') + '</select></label><label>Ống kính <select onchange="G.xuSuaCanh(\'' + h(c.id) +
+      '\',\'lens\',this.value)">' + ['24mm', '35mm', '50mm', '85mm'].map(function (x) {
+       return '<option' + ((c.lens || '50mm') === x ? ' selected' : '') + '>' + x + '</option>';
+      }).join('') + '</select></label><label>Chuyển cảnh <select onchange="G.xuSuaCanh(\'' + h(c.id) +
+      '\',\'transition\',this.value)">' + ['cut', 'dissolve', 'fade', 'match-cut'].map(function (x) {
+       return '<option' + ((c.transition || 'cut') === x ? ' selected' : '') + '>' + x + '</option>';
+      }).join('') + '</select></label></div>';
     o += '<div class="row"><label>Giọng <select onchange="G.xuSuaCanh(\'' + h(c.id) +
       '\',\'vatTieng\',this.value)"><option value="">— chưa có giọng —</option>' +
       vTieng.map(function (k) {
@@ -43463,6 +43509,25 @@ G.VIEWS = G.VIEWS || {};
       '" oninput="G.xuSuaO(\'dieuNho\',this.value)"></label>';
     o += '<div class="row"><button class="btn btn-chinh" onclick="G.xuViet()">Viết kịch bản</button>' +
       '<button class="btn" onclick="G.xuGoiSoat()">Soát lời đọc</button></div>';
+    o += '<div class="giay"><h3>1.1 · Chuẩn phát hành V20</h3>' +
+      '<p class="note">Manifest V20 là hợp đồng bàn giao cho renderer tách biệt; Pages chỉ xem thử, không kết xuất MP4.</p>' +
+      '<div class="row"><label>Template <select onchange="G.xuSuaV20(\'template\',this.value)">' +
+      [['trainer-cinematic','Trainer cinematic'],['mc-story','MC dẫn chuyện'],['case-study','Case study'],
+       ['testimonial','Testimonial'],['cta','CTA']].map(function (x) {
+         return '<option value="' + x[0] + '"' + (G.xuV20.template === x[0] ? ' selected' : '') + '>' + x[1] + '</option>';
+       }).join('') + '</select></label><label>Tỷ lệ <select onchange="G.xuSuaV20(\'tiLe\',this.value)">' +
+      Object.keys(V20_KHO).map(function (x) {
+       return '<option' + (G.xuV20.tiLe === x ? ' selected' : '') + '>' + x + '</option>';
+      }).join('') + '</select></label><label>FPS <select onchange="G.xuSuaV20(\'fps\',this.value)">' +
+      [24, 25, 30, 60].map(function (x) {
+       return '<option' + (+G.xuV20.fps === x ? ' selected' : '') + '>' + x + '</option>';
+      }).join('') + '</select></label></div><div class="row"><label>Kênh <select onchange="G.xuSuaV20(\'kenh\',this.value)">' +
+      ['social', 'website', 'event', 'training'].map(function (x) {
+       return '<option' + (G.xuV20.kenh === x ? ' selected' : '') + '>' + h(x) + '</option>';
+      }).join('') + '</select></label><label>Ngân sách render tối đa <input type="number" min="0" step="1" value="' +
+      h(String(G.xuV20.nganSachRender)) + '" oninput="G.xuSuaV20(\'nganSachRender\',this.value)"></label>' +
+      '<span class="note">' + h(G.xuV20.rong + '×' + G.xuV20.cao + ' · ' + G.xuV20.fps + ' fps · tối đa ' +
+      G.xuV20.thoiLuongToiDa + ' giây') + '</span></div></div>';
     if (G.S && G.S.acc && G.S.acc.role === 'R01') {
       o += '<label class="note"><input id="xuDongYAI" type="checkbox"> Tôi xác nhận đề bài không chứa thông tin nhận dạng ' +
         'khách hàng và đồng ý gửi đề bài tới OpenAI để tạo bản nháp.</label>' +
@@ -43603,6 +43668,10 @@ G.VIEWS = G.VIEWS || {};
       if (vd.status === 'rightsApproved') {
         o += '<label>Checksum tệp render từ dịch vụ tách biệt <input value="' +
           h((vd.render || {}).outputHash || '') + '" oninput="G.xuVongDoi.render.outputHash=this.value"></label>' +
+          '<label>Mã job renderer <input value="' + h((vd.render || {}).jobId || '') +
+          '" oninput="G.xuVongDoi.render.jobId=this.value"></label><label>Checksum thumbnail <input value="' +
+          h((vd.render || {}).thumbnailHash || '') +
+          '" oninput="G.xuVongDoi.render.thumbnailHash=this.value"></label>' +
           '<p class="note">Chỉ ghi nhận manifest/checksum từ renderer; không đính kèm hoặc giả vờ xuất MP4 tại đây.</p>';
       }
       if (vd.status === 'rendered') {
@@ -43611,6 +43680,12 @@ G.VIEWS = G.VIEWS || {};
           ' onchange="G.xuVongDoi.qc.approved=this.checked"> Tôi xác nhận QC đã nghe/xem toàn bộ bản render.</label>' +
           '<label>Người duyệt QC độc lập <input value="' + h(q.reviewer || '') +
           '" oninput="G.xuVongDoi.qc.reviewer=this.value"></label>';
+        o += '<p class="note">QC V20 (người duyệt xác nhận trực tiếp trên bản render):</p><div class="row">' +
+          [['assetRights','Quyền asset'],['audio','Âm thanh/loudness'],['captions','Phụ đề/timing'],
+            ['safeArea','Safe-area'],['flicker','Nháy sáng'],['brand','Thương hiệu'],['accessibility','Khả năng tiếp cận']]
+            .map(function (x) { return '<label class="note"><input type="checkbox"' +
+              ((q.v20 || {})[x[0]] ? ' checked' : '') + ' onchange="G.xuCapNhatQC20(\'' + x[0] +
+              '\',this.checked)"> ' + x[1] + '</label>'; }).join('') + '</div>';
       }
       if (next) o += '<button class="btn btn-chinh" onclick="G.xuChuyenCong(\'' + next + '\')">' +
         (vd.dang ? 'Đang ghi…' : nhan[next]) + '</button>';

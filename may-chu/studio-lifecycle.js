@@ -11,6 +11,8 @@ const TIEP = {
 const text = value => String(value || '').trim();
 const now = () => new Date().toISOString();
 const id = () => crypto.randomUUID().replace(/-/g, '');
+const V20_RATIOS = {'9:16': [1080, 1920], '16:9': [1920, 1080], '1:1': [1080, 1080]};
+const V20_QC = ['assetRights', 'audio', 'captions', 'safeArea', 'flicker', 'brand', 'accessibility'];
 
 function stable(value) {
   if (Array.isArray(value)) return '[' + value.map(stable).join(',') + ']';
@@ -46,12 +48,26 @@ async function get(db, projectId) {
   return await db.prepare('SELECT * FROM studioProject WHERE id=?').bind(text(projectId)).first();
 }
 function bad(message) { return {ok: false, error: message}; }
+function v20Delivery(project) {
+  const d = project && project.v20 && project.v20.delivery;
+  const expected = d && V20_RATIOS[text(d.tiLe)];
+  if (!d || text(d.phienBan) !== 'V20' || !expected ||
+      Number(d.rong) !== expected[0] || Number(d.cao) !== expected[1] ||
+      ![24, 25, 30, 60].includes(Number(d.fps)) ||
+      !(Number(d.thoiLuongToiDa) >= 30 && Number(d.thoiLuongToiDa) <= 300) ||
+      !text(d.kenh) || !text(d.template) || Number(d.nganSachRender) < 0) return null;
+  return d;
+}
 
 export async function taoStudioProject(y, env, db, hoSo) {
   if (!canUse(hoSo)) return bad('Studio chỉ mở cho nhân sự được cấp quyền.');
-  const project = y.project || {}, title = text(project.ten || y.title);
+  const project = y.project || {}, title = text(project.title || project.ten || y.title);
   if (title.length < 3) return bad('Dự án cần tên ít nhất 3 ký tự.');
-  const projectId = id(), luc = now(), snapshot = {title, scenes: Array.isArray(project.canh) ? project.canh : []};
+  const projectId = id(), luc = now(), snapshot = {
+    title, scenes: Array.isArray(project.scenes) ? project.scenes : [], kho: text(project.kho),
+    tang: text(project.tang), nguon: text(project.nguon), dieuNho: text(project.dieuNho),
+    v20: project.v20 || {}
+  };
   await db.prepare('INSERT INTO studioProject (id,version,status,title,projectJson,rightsJson,renderJson,qcJson,createdBy,createdAt,updatedAt) VALUES (?,?,?,?,?,?,?,?,?,?,?)')
     .bind(projectId, 1, 'draft', title, JSON.stringify(snapshot), '{}', '{}', '{}', hoSo.uid, luc, luc).run();
   await event(db, projectId, 1, '', 'draft', hoSo, snapshot, 'Tạo dự án Studio');
@@ -82,16 +98,19 @@ export async function chuyenTrangThaiStudio(y, env, db, hoSo) {
   const render = y.render || JSON.parse(row.renderJson || '{}');
   const qc = y.qc || JSON.parse(row.qcJson || '{}');
   const scenes = Array.isArray(project.scenes) ? project.scenes : [];
-  if (next === 'scriptApproved' && (!text(project.title || row.title) || !scenes.length || !y.contentChecked))
-    return bad('Duyệt kịch bản cần cảnh, tên dự án và kết quả soát nội dung đạt.');
+  if (next === 'scriptApproved' && (!text(project.title || row.title) || !scenes.length || !v20Delivery(project) || !y.contentChecked))
+    return bad('Duyệt kịch bản V20 cần cảnh, chuẩn bàn giao hợp lệ, tên dự án và kết quả soát nội dung đạt.');
   if (next === 'rightsApproved' && (!rights.imageConsent || !rights.voiceConsent || !rights.musicRights || !text(rights.attestedBy)))
     return bad('Duyệt quyền cần xác nhận ảnh, giọng, nhạc và người chịu trách nhiệm.');
-  if (next === 'rendered' && (!text(render.renderer) || !text(render.outputHash) || !(Number(render.duration) >= 30) || !Number(render.sceneCount)))
-    return bad('Ghi nhận render cần renderer, checksum đầu ra, thời lượng và số cảnh.');
+  if (next === 'rendered' && (!text(render.renderer) || !text(render.outputHash) || !text(render.thumbnailHash) ||
+      !text(render.jobId) || !v20Delivery(project) || !(Number(render.duration) >= 30) ||
+      Number(render.duration) > Number(v20Delivery(project).thoiLuongToiDa) || !Number(render.sceneCount)))
+    return bad('Ghi nhận render V20 cần job renderer, checksum MP4/thumbnail, thời lượng, số cảnh và manifest V20 hợp lệ.');
   if (next === 'qcPassed') {
     if (row.createdBy === hoSo.uid) return bad('Người tạo dự án không thể tự duyệt QC.');
-    if (!qc.approved || !text(qc.reviewer) || (qc.lights || []).some(x => x && x.tt === 'bad'))
-      return bad('QC cần người duyệt độc lập, không có đèn đỏ và xác nhận đạt.');
+    if (!qc.approved || !text(qc.reviewer) || (qc.lights || []).some(x => x && x.tt === 'bad') ||
+        V20_QC.some(key => !qc.v20 || qc.v20[key] !== true))
+      return bad('QC V20 cần người duyệt độc lập, đủ các hạng mục bắt buộc, không có đèn đỏ và xác nhận đạt.');
   }
   if (next === 'published' && roleOf(hoSo) !== 'R01') return bad('Chỉ R01 được phát hành video.');
   if (next === 'published' && !env.GITA_KHOA_KY) return bad('Máy chủ chưa nạp khoá ký hộ chiếu video.');
