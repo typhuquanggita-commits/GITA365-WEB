@@ -33,6 +33,39 @@ GitHub Actions dựng lại bundles, kiểm tra artifact rồi triển khai đú
 đó. Chỉ dữ liệu public được đưa lên Pages; `may-chu`, `tools`, `kho-goc` và
 `kho/khoa.json` vẫn bị loại trừ.
 
+## Chuỗi phát hành và giám sát
+
+Luồng frontend là: Pull Request → build bundle → kiểm tra `_site`/private path
+→ review → merge `main` → Cloudflare Pages Git Integration phát hành. Không đặt
+Cloudflare API token cho luồng Pages.
+
+Workflow **Monitor Cloudflare production** kiểm tra Pages và Worker mỗi giờ,
+hoặc có thể chạy thủ công. Nó thất bại khi Pages không trả trang HTML hoặc khi
+Worker/D1/keyset không sẵn sàng, để GitHub Actions gửi cảnh báo cho người quản
+lý workflow.
+
+Trước khi phát hành Worker, workflow **Deploy GITA365 API Worker** yêu cầu xác
+nhận migration D1 đã áp dụng và backup/rollback đã kiểm tra. Bảo vệ environment
+`cloudflare-worker-production` bằng required reviewers trong GitHub Settings →
+Environments; đây là cổng phê duyệt bắt buộc trước khi workflow có thể dùng
+secret và deploy.
+
+### Cloudflare Workers Builds
+
+Hai service `gita365` và `gita365-web` không dùng Cloudflare Workers Builds.
+Trong Cloudflare Dashboard, mở từng service → **Settings → Builds** và ngắt
+Git integration/tắt automatic builds. Giữ Pages project `gita365-web` kết nối
+GitHub; Worker chỉ phát hành bởi workflow thủ công ở trên. Việc này loại bỏ các
+check Workers Builds thất bại mà không trộn frontend với API.
+
+### Cache và rollback
+
+HTML, service worker, bundle và cấu hình client dùng `no-cache`; chỉ font tĩnh
+trong `assets/fonts/` dùng cache immutable. Với asset mới, chỉ dùng cache dài
+hạn khi tên tệp đổi theo nội dung. Để rollback Pages, chọn deployment production
+trước trong Cloudflare Pages và rollback; với Worker, phục hồi schema/backup đã
+xác nhận rồi redeploy commit/tag đã biết tốt.
+
 ## Triển khai Worker
 
 Worker được triển khai riêng bằng workflow GitHub **Deploy GITA365 API Worker**

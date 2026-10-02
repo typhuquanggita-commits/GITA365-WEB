@@ -1,0 +1,37 @@
+name: Monitor Cloudflare production
+
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-production-monitor
+  cancel-in-progress: false
+
+jobs:
+  health:
+    name: Check Pages and Worker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Cloudflare Pages
+        run: |
+          set -eu
+          curl -fsSIL --max-time 20 https://gita365-web.pages.dev/ -o /tmp/pages-headers.txt
+          grep -qi '^HTTP/.* 200' /tmp/pages-headers.txt
+          curl -fsSL --max-time 20 https://gita365-web.pages.dev/ -o /tmp/pages.html
+          grep -qi '<html' /tmp/pages.html
+
+      - name: Check API Worker readiness
+        run: |
+          set -eu
+          curl -fsS --max-time 20 https://gita365.typhuquanggita.workers.dev/ -o /tmp/worker-health.json
+          node <<'NODE'
+          const s = require('/tmp/worker-health.json');
+          if (!s.ok || !s.khoaSanSang || !s.csdlSanSang || !Number.isFinite(s.daNapKhoa) || s.daNapKhoa < 1) {
+            throw new Error('Worker health, D1, or keyset is not ready.');
+          }
+          NODE

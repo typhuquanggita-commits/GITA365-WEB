@@ -2,6 +2,17 @@ name: Deploy GITA365 API Worker
 
 on:
   workflow_dispatch:
+    inputs:
+      migration_applied:
+        description: D1 migration for this release has been applied and verified
+        required: true
+        type: boolean
+        default: false
+      backup_verified:
+        description: A recoverable D1/R2 backup or rollback plan has been verified
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -13,8 +24,18 @@ concurrency:
 jobs:
   worker:
     runs-on: ubuntu-latest
+    environment: cloudflare-worker-production
     steps:
       - uses: actions/checkout@v4
+
+      - name: Confirm release prerequisites
+        env:
+          MIGRATION_APPLIED: ${{ inputs.migration_applied }}
+          BACKUP_VERIFIED: ${{ inputs.backup_verified }}
+        run: |
+          set -eu
+          test "$MIGRATION_APPLIED" = true
+          test "$BACKUP_VERIFIED" = true
 
       - name: Validate Worker credentials
         env:

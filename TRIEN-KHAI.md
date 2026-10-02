@@ -72,6 +72,17 @@ riêng Pages mới vì màn T5-PRO mới cần API quyền và bảng `quyenT5Pr
 > command trên. Thay đổi dưới `may-chu/` dùng workflow Worker chạy thủ công sau
 > khi migration D1, R2 và secret đã sẵn sàng.
 
+GitHub Actions kiểm tra bundle, phiên bản, CSP, header và private path trước khi
+merge; workflow **Monitor Cloudflare production** kiểm tra Pages cùng Worker/D1/
+keyset mỗi giờ. Bất cứ lỗi nào tạo một workflow failure để người quản lý nhận
+cảnh báo. Chỉ font tĩnh trong `assets/fonts/` được cache immutable; HTML, service
+worker, bundle và client configuration luôn `no-cache`.
+
+Cloudflare Workers Builds không dùng cho `gita365` hoặc `gita365-web`: ngắt Git
+integration/automatic builds tại **Workers → service → Settings → Builds**. Chỉ
+Pages project `gita365-web` giữ Git integration. Điều này tránh hai Workers
+Build checks sai mà vẫn để Pages phát hành tự động.
+
 ## PHẦN 2 — CLOUDFLARE WORKER (máy chủ, có khoá)
 
 Mở terminal trong thư mục `may-chu/` rồi làm 5 việc (đã ghi sẵn trong `wrangler.toml`):
@@ -102,9 +113,17 @@ bash nap-bi-mat.sh /duong/dan/toi/khoa.json
 
 # 5) Đưa Worker lên lần đầu. Các thay đổi Worker tiếp theo dùng workflow
 #    GitHub **Deploy GITA365 API Worker** và chỉ chạy thủ công sau khi
-#    hạ tầng/secret Worker đã sẵn sàng; nó không chặn Pages.
+#    migration/backup đã xác nhận, hạ tầng/secret Worker đã sẵn sàng; nó
+#    không chặn Pages.
 npx wrangler deploy
 ```
+
+Thiết lập GitHub Environment `cloudflare-worker-production` với required
+reviewers trước khi chạy workflow Worker. Workflow yêu cầu hai xác nhận:
+migration D1 cho bản phát hành đã áp dụng và backup/rollback đã kiểm tra; sau đó
+mới truy cập secret/deploy và health-check. Rollback Pages dùng deployment trước
+trong Cloudflare Pages; rollback Worker phục hồi schema/backup đã xác nhận rồi
+deploy lại commit/tag tốt gần nhất.
 
 ## PHẦN 3 — NỐI HAI ĐẦU
 
