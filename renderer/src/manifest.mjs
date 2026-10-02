@@ -26,6 +26,14 @@ export function validateManifest(manifest) {
       !text(asset.giayPhep) || !text(asset.duongDan) || /^(https?:|file:)/i.test(asset.duongDan) ||
       !asset.pbr || !asset.shadow))
     throw new Error('Mỗi asset 3D phải là GLB có quyền, kho riêng, PBR và shadow.');
+  const voices = project.voiceAssets || [];
+  const voiceKeys = new Set(['voiceId', 'provider', 'locale', 'tier', 'audioHash']);
+  if (!Array.isArray(voices) || voices.some(voice => !voice || !text(voice.voiceId) ||
+      !/^[a-f0-9]{64}$/i.test(text(voice.audioHash)) ||
+      !['licensed', 'verifiedPrivate'].includes(text(voice.tier)) ||
+      !text(voice.provider) || !text(voice.locale) ||
+      Object.keys(voice).some(key => !voiceKeys.has(key))))
+    throw new Error('Manifest chỉ nhận provenance giọng đã duyệt và checksum audio, không nhận tệp hoặc đường dẫn audio.');
   const forbidden = ['hosoApp', 'khachHangId', 'customerId', 'email', 'phone', 'transcript'];
   const foundForbidden = (value, key = '') => {
     if (forbidden.includes(key)) return true;
@@ -34,5 +42,5 @@ export function validateManifest(manifest) {
       ([childKey, child]) => foundForbidden(child, childKey));
   };
   if (foundForbidden(manifest)) throw new Error('Manifest renderer không được chứa dữ liệu hồ sơ hoặc liên hệ khách.');
-  return {project, delivery, scenes, duration};
+  return {project, delivery, scenes, duration, voices};
 }

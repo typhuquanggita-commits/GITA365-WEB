@@ -54,6 +54,26 @@ nội dung tiếp thị đã được người thật duyệt. Không dùng khan
 so sánh tuyệt đối hoặc lời hứa không có bằng chứng. Luồng tiếp thị vẫn phải
 qua các cửa QC hiện có trước khi phát hành.
 
+## Kho giọng hai tầng
+
+`studioVoice` là danh mục metadata-only: không lưu mẫu giọng, MP3/WAV, URL
+media hoặc API key. Tầng `licensed` ghi giọng tổng hợp được cấp phép; tầng
+`verifiedPrivate` chỉ dùng khi hồ sơ có consent đã xác minh, người xác nhận,
+phạm vi dùng và checksum mẫu. R01/R02 quản trị danh mục; chỉ giọng
+`approved` mới được gắn vào dự án.
+
+Mỗi giọng được duyệt cần `voiceId`, nhà cung cấp, locale, phong cách, phạm vi
+dùng, tham chiếu giấy phép, người đánh giá, chi phí/phút và kết quả nghe mù cho
+bốn ngữ cảnh: đào tạo, tư vấn, kể chuyện, gia đình. Bắt đầu danh mục bằng
+Azure Speech cho `vi-VN` và English; Google Cloud TTS chỉ được thêm sau cùng
+bài thử English. Azure Professional Voice hoặc ElevenLabs Professional Voice
+Clone chỉ dùng qua luồng xác minh chính chủ của nhà cung cấp.
+
+Renderer private nhận `voiceAssets` gồm provenance và SHA-256 audio, không
+nhận tệp/URL audio. Synthesis (nếu được duyệt) chạy ngoài Pages/Worker, dùng
+secret manager của renderer; MP3 và MP4 được QC độc lập trước khi Studio phát
+hành.
+
 ## Video hành trình khách hàng
 
 Video hành trình dùng để ghi nhận và khích lệ thay đổi của chính khách hàng:

@@ -42864,6 +42864,8 @@ G.VIEWS = G.VIEWS || {};
   G.xuVongDoi = G.xuVongDoi || { projectId: '', status: '', rights: {},
     render: {}, qc: {}, passport: null, dang: false, events: [] };
   G.xuAgentNoiBo = G.xuAgentNoiBo || {dang: false, plan: null, error: ''};
+  G.xuKhoGiong = G.xuKhoGiong || {dang: false, loaded: false, voices: [], error: ''};
+  G.xuDA.voiceIds = Array.isArray(G.xuDA.voiceIds) ? G.xuDA.voiceIds : [];
   /* V20 is a delivery manifest; Pages never claims to render the final MP4. */
   var V20_MAC_DINH = {
     phienBan: 'V20', profile: 'cinematic-hd', tiLe: '9:16', rong: 1080, cao: 1920,
@@ -43307,6 +43309,7 @@ G.VIEWS = G.VIEWS || {};
       includeVoice: !!G.xuHanhTrinhVideo.includeVoice, includeImage: !!G.xuHanhTrinhVideo.includeImage,
       signals: G.xuHanhTrinhVideo.signals || []
     } : null,
+    voiceIds: (G.xuDA.voiceIds || []).slice(0, 12),
     studioProjectId: G.xuVongDoi.projectId || '',
     v20: {delivery: {
       phienBan: G.xuV20.phienBan, profile: G.xuV20.profile, tiLe: G.xuV20.tiLe,
@@ -43336,6 +43339,23 @@ G.VIEWS = G.VIEWS || {};
     });
   }
   G.xuTaoDuAn = function () { goiStudio('taoStudioProject', {project: duAnGui()}); };
+  G.xuTaiKhoGiong = function () {
+    var k = G.xuKhoGiong;
+    if (!G.goiMayChu || k.dang) return;
+    k.dang = true; k.error = ''; veLai();
+    G.goiMayChu('docKhoGiongStudio', {}).then(function (r) {
+      k.dang = false;
+      if (!r || !r.ok) { k.error = (r && r.error) || 'Không đọc được kho giọng.'; veLai(); return; }
+      k.voices = r.voices || []; k.loaded = true; veLai();
+    }).catch(function (e) { k.dang = false; k.error = String(e && e.message || e); veLai(); });
+  };
+  G.xuChonGiongStudio = function (voiceId, checked) {
+    var current = G.xuDA.voiceIds || [];
+    G.xuDA.voiceIds = checked
+      ? current.indexOf(voiceId) >= 0 ? current : current.concat([voiceId]).slice(0, 12)
+      : current.filter(function (id) { return id !== voiceId; });
+    veLai();
+  };
   G.xuCapNhatQuyen = function (o, v) {
     G.xuVongDoi.rights[o] = !!v; veLai();
   };
@@ -43822,6 +43842,22 @@ G.VIEWS = G.VIEWS || {};
       return '<li><b>' + h(b.agent) + '</b> · ' + h(b.output) + ' · ' +
         (b.duoc ? 'sẵn sàng' : 'cần bật quyền ' + h(b.canQuyen || '')) + '</li>';
     }).join('') + '</ol>';
+    o += '</div>';
+
+    var kg = G.xuKhoGiong;
+    o += '<div class="giay"><h3>0.05 · Kho giọng Studio</h3>' +
+      '<p class="note">Chỉ hiển thị giọng đã duyệt. Studio không nhận MP3/WAV, URL media hoặc khoá nhà cung cấp; ' +
+      'renderer riêng gắn checksum audio sau khi tổng hợp hợp lệ.</p>' +
+      '<button class="btn" onclick="G.xuTaiKhoGiong()">' + (kg.dang ? 'Đang tải…' : 'Tải kho giọng đã duyệt') + '</button>';
+    if (kg.error) o += '<p class="note">' + h(kg.error) + '</p>';
+    if (kg.loaded && !kg.voices.length) o += '<p class="note">Chưa có giọng nào được duyệt qua nghe mù.</p>';
+    if (kg.voices.length) o += '<div class="note">' + kg.voices.map(function (v) {
+      var selected = (G.xuDA.voiceIds || []).indexOf(v.id) >= 0;
+      return '<label style="display:block;margin:.45rem 0"><input type="checkbox"' + (selected ? ' checked' : '') +
+        ' onchange="G.xuChonGiongStudio(\'' + h(v.id) + '\',this.checked)"> <b>' + h(v.voiceId) +
+        '</b> · ' + h(v.locale) + ' · ' + h(v.provider) + ' · ' + h(v.tier) +
+        (v.style ? ' · ' + h(v.style) : '') + '</label>';
+    }).join('') + '</div>';
     o += '</div>';
 
     /* 0 · Danh mục video theo vai — card là brief, không phải lời tuyên bố

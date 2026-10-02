@@ -76,7 +76,7 @@ import { docLuatGiaoDien } from './luat-giao-dien.js';
 import { capLenhGiamSat, thuLenhGiamSat, docLenhGiamSat, soatSoDen,
   docTranGiamSat } from './giam-sat.js';
 import { ghiHoChieuVideo } from './studio.js';
-import { taoStudioProject, docStudioProject, chuyenTrangThaiStudio } from './studio-lifecycle.js';
+import { taoStudioProject, docStudioProject, chuyenTrangThaiStudio, docKhoGiongStudio, ghiKhoGiongStudio } from './studio-lifecycle.js';
 import { baoDongCuuHe, dongBangHe, moBangHe, truyHoiHe, soatCuuHe, dangBang,
   AN_TOAN_KHI_BANG } from './cuu-he.js';
 import { docHomNay, tickNhip, boViecHomNay, batCheDoBao, ghiGhimCon, docGhimCon,
@@ -271,7 +271,7 @@ const CAN_PHIEN = ['capKhoa', 'doiMatKhau', 'dongBo',
   'ghiLuotPrompt', 'docVongChay',
   'docBangGia', 'doiGia', 'soDoiGia', 'docLuatGiaoDien',
   'capLenhGiamSat', 'thuLenhGiamSat', 'docLenhGiamSat', 'soatSoDen', 'docTranGiamSat',
-  'ghiHoChieuVideo', 'taoStudioProject', 'docStudioProject', 'chuyenTrangThaiStudio',
+  'ghiHoChieuVideo', 'taoStudioProject', 'docStudioProject', 'chuyenTrangThaiStudio', 'docKhoGiongStudio', 'ghiKhoGiongStudio',
   'soatCuuHe',
   'ghiPhatSinh', 'soanBanNhap', 'duyetCap', 'nhapKho', 'traBoSung', 'soatTuHoanThien',
   'capQuyenAI', 'thuHoiQuyenAI', 'soatQuyenAI', 'aiPhanLoai', 'aiSoanNhap', 'aiTongHopGiamSat',
@@ -640,6 +640,8 @@ async function lam(fn, y, env, db) {
   if (fn === 'taoStudioProject') return await taoStudioProject(y, env, db, hoSo);
   if (fn === 'docStudioProject') return await docStudioProject(y, env, db, hoSo);
   if (fn === 'chuyenTrangThaiStudio') return await chuyenTrangThaiStudio(y, env, db, hoSo);
+  if (fn === 'docKhoGiongStudio') return await docKhoGiongStudio(y, env, db, hoSo);
+  if (fn === 'ghiKhoGiongStudio') return await ghiKhoGiongStudio(y, env, db, hoSo);
   if (fn === 'tickNhip')          return await tickNhip(y, env, db, hoSo);
   if (fn === 'boViecHomNay')      return await boViecHomNay(y, env, db, hoSo);
   if (fn === 'batCheDoBao')       return await batCheDoBao(y, env, db, hoSo);

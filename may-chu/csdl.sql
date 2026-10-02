@@ -59,6 +59,22 @@ CREATE TABLE IF NOT EXISTS studioPassport (
 );
 CREATE UNIQUE INDEX IF NOT EXISTS ix_studioPassport_project ON studioPassport (projectId, version);
 
+-- Kho giọng Studio chỉ giữ hồ sơ quyền, đánh giá và checksum; không lưu mẫu
+-- giọng, audio tổng hợp, khoá API hoặc đường dẫn tới kho media riêng.
+CREATE TABLE IF NOT EXISTS studioVoice (
+  id TEXT PRIMARY KEY, tier TEXT NOT NULL, provider TEXT NOT NULL, voiceId TEXT NOT NULL,
+  locale TEXT NOT NULL, style TEXT NOT NULL DEFAULT '', allowedUse TEXT NOT NULL,
+  licenseRef TEXT NOT NULL, consentJson TEXT NOT NULL DEFAULT '{}',
+  sampleHash TEXT NOT NULL DEFAULT '', reviewJson TEXT NOT NULL DEFAULT '{}',
+  status TEXT NOT NULL DEFAULT 'candidate', reviewedBy TEXT NOT NULL DEFAULT '',
+  reviewedAt TEXT NOT NULL DEFAULT '', createdBy TEXT NOT NULL,
+  createdAt TEXT NOT NULL, updatedAt TEXT NOT NULL,
+  UNIQUE(provider, voiceId),
+  CHECK (tier IN ('licensed', 'verifiedPrivate')),
+  CHECK (status IN ('candidate', 'approved', 'retired'))
+);
+CREATE INDEX IF NOT EXISTS ix_studioVoice_catalog ON studioVoice (status, locale, tier, updatedAt);
+
 -- Sổ vận hành R01/R02: sự cố, phát hành, cải tiến. Không đưa secret/dữ liệu khách vào.
 CREATE TABLE IF NOT EXISTS operationsLedger (
   id TEXT PRIMARY KEY, kind TEXT NOT NULL, status TEXT NOT NULL, title TEXT NOT NULL,

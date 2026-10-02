@@ -82,7 +82,10 @@ const result = {
   ok: true, jobId, projectId: checked.project.studioProjectId, output: outputLocation, duration: checked.duration,
   thumbnail: thumbnailLocation, mp4Sha256: await checksum(outputLocation),
   thumbnailSha256: await checksum(thumbnailLocation), manifestSha256: createHash('sha256').update(manifestBytes).digest('hex'),
-  sceneCount: checked.scenes.length,
+  sceneCount: checked.scenes.length, voices: checked.voices.map(voice => ({
+    voiceId: voice.voiceId, provider: voice.provider, locale: voice.locale,
+    tier: voice.tier, audioHash: voice.audioHash
+  })),
   delivery: checked.delivery, presenter: presenter ? {role: presenterAttestation.role, verified: true} : null
 };
 await writeFile(resolve(outputDir, 'result.json'), JSON.stringify(result, null, 2));
