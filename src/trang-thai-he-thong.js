@@ -41,7 +41,8 @@ var G = window.G || {}; window.G = G;
        detail:workerOk ? 'Worker trả lời, D1 sẵn sàng và bộ khóa đã nạp.' : (r && r.ok ? 'Worker trả lời nhưng D1 hoặc bộ khóa chưa sẵn sàng.' : 'Chưa gọi được Worker.'),
        action:'server', label:'Hướng dẫn xử lý'},
       {name:'Sao lưu & khôi phục', ok:false, detail:'Không tự suy đoán tình trạng sao lưu. Chỉ đánh dấu bình thường sau khi người phụ trách diễn tập khôi phục.', action:'backup', label:'Mở SOP sao lưu'},
-      {name:'Video riêng tư', ok:false, detail:'Render chỉ chạy trên máy nội bộ với Docker và dữ liệu được cấp quyền; không gửi media khách lên dịch vụ render ngoài.', action:'video', label:'Mở SOP video'}
+      {name:'Video riêng tư', ok:false, detail:'Render chỉ chạy trên máy nội bộ với Docker và dữ liệu được cấp quyền; không gửi media khách lên dịch vụ render ngoài.', action:'video', label:'Mở SOP video'},
+      {name:'Sổ điều hành', ok:true, detail:'Ghi sự cố, phát hành và cải tiến có chủ việc, duyệt, bằng chứng và đường lùi.', action:'operations', label:'Mở sổ điều hành'}
     ];
     box.innerHTML = '<div class="row wrap" style="gap:12px">'+rows.map(card).join('')+'</div>'+
       '<div class="card mt2"><b class="sm">'+ic('shield','w-4 h-4')+' Việc tiếp theo</b><p class="sm dim mt">'+
@@ -74,6 +75,7 @@ var G = window.G || {}; window.G = G;
     if(a==='tt-check') G.kiemTrangThaiHeThong();
     if(a==='tt-server') go('noi-may-chu');
     if(a==='tt-video') go('studio');
+    if(a==='tt-operations') go('so-dieu-hanh');
     if(a==='tt-network') U.toast('Kiểm tra Wi‑Fi/4G, rồi bấm “Kiểm tra ngay” lại. Không thay đổi dữ liệu khi đang mất mạng.','err');
     if(a==='tt-backup') U.toast('Mở docs/TRIEN_KHAI_WEB.md: làm backup/rollback có người xác nhận trước Worker deploy.','ok');
   });

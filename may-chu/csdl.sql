@@ -59,6 +59,17 @@ CREATE TABLE IF NOT EXISTS studioPassport (
 );
 CREATE UNIQUE INDEX IF NOT EXISTS ix_studioPassport_project ON studioPassport (projectId, version);
 
+-- Sổ vận hành R01/R02: sự cố, phát hành, cải tiến. Không đưa secret/dữ liệu khách vào.
+CREATE TABLE IF NOT EXISTS operationsLedger (
+  id TEXT PRIMARY KEY, kind TEXT NOT NULL, status TEXT NOT NULL, title TEXT NOT NULL,
+  owner TEXT NOT NULL, reviewer TEXT NOT NULL DEFAULT '', ref TEXT NOT NULL DEFAULT '',
+  rollbackRef TEXT NOT NULL DEFAULT '', evidence TEXT NOT NULL DEFAULT '',
+  createdBy TEXT NOT NULL, createdAt TEXT NOT NULL, updatedAt TEXT NOT NULL, closedAt TEXT NOT NULL DEFAULT '',
+  CHECK (kind IN ('suCo','phatHanh','caiTien')),
+  CHECK (status IN ('moi','dangLam','choDuyet','dong'))
+);
+CREATE INDEX IF NOT EXISTS ix_operationsLedger_status ON operationsLedger (status, updatedAt);
+
 -- ─────────────────────────────────────────────────────────────
 --  NGƯỜI DÙNG
 --

@@ -81,6 +81,12 @@ Màn chỉ dùng ba trạng thái:
 người duyệt. Lịch sử hiển thị chỉ nằm ở trình duyệt hiện tại để nhắc việc; sự cố
 và quyết định rollback cần ghi trong issue/nội bộ do R01/R02 quản lý.
 
+Màn **Quản trị trang → Sổ điều hành** là sổ chung trong D1 cho sự cố, phát
+hành và cải tiến. Mỗi dòng cần người chịu trách nhiệm; khi chờ duyệt hoặc đóng,
+cần người duyệt và kết quả/bằng chứng. Chỉ ghi mã PR/commit, deployment hoặc
+SOP rollback — tuyệt đối không ghi token, secret, dữ liệu khách hay media. Áp
+dụng `may-chu/csdl.sql` trước khi dùng phiên bản Worker có sổ này.
+
 ### Phát hành web
 
 1. Tạo PR, chờ build và review xanh.
