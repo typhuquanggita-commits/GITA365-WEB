@@ -43022,6 +43022,7 @@ G.VIEWS = G.VIEWS || {};
         camera: c.camera || (G.xuDA.mc || {}).mayQuay || 'dolly',
         tracks: ['visual', 'character', 'camera', 'voice', 'music', 'caption', 'transition']};
     }), kho: G.xuDA.kho, tang: G.xuDA.tang, nguon: G.xuDA.nguon, dieuNho: G.xuDA.dieuNho,
+    studioProjectId: G.xuVongDoi.projectId || '',
     v20: {delivery: {
       phienBan: G.xuV20.phienBan, profile: G.xuV20.profile, tiLe: G.xuV20.tiLe,
       rong: +G.xuV20.rong, cao: +G.xuV20.cao, fps: +G.xuV20.fps,
@@ -43064,13 +43065,46 @@ G.VIEWS = G.VIEWS || {};
     G.xuVongDoi.qc.v20 = G.xuVongDoi.qc.v20 || {};
     G.xuVongDoi.qc.v20[o] = !!v; veLai();
   };
+  G.xuTaiManifestRender = function () {
+    var q = G.xuVongDoi;
+    if (!q.projectId || q.status !== 'rightsApproved') {
+      U.toast('Chỉ xuất manifest sau khi dự án đã duyệt quyền.', 'err'); return;
+    }
+    var a = document.createElement('a');
+    a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(duAnGui(), null, 2));
+    a.download = 'gita-v20-' + q.projectId + '-manifest.json'; a.click();
+  };
+  G.xuNhapKetQuaRender = function (files) {
+    var f = files && files[0], q = G.xuVongDoi;
+    if (!f || !q.projectId || q.status !== 'rightsApproved') return;
+    if (f.size > 65536) { U.toast('Tệp kết quả renderer quá lớn.', 'err'); return; }
+    var reader = new FileReader();
+    reader.onload = function () {
+      try {
+        var r = JSON.parse(String(reader.result || ''));
+        var hex = /^[a-f0-9]{64}$/i;
+        if (!r.ok || r.projectId !== q.projectId || !/^[A-Za-z0-9_-]{1,128}$/.test(String(r.jobId || '')) ||
+            !hex.test(String(r.mp4Sha256 || '')) || !hex.test(String(r.thumbnailSha256 || '')) ||
+            !hex.test(String(r.manifestSha256 || '')) || !(+r.duration >= 30) || !(+r.sceneCount > 0)) {
+          throw new Error('Kết quả không thuộc dự án hoặc thiếu checksum hợp lệ.');
+        }
+        q.render = {renderer: 'renderer-cuc-bo', jobId: r.jobId, outputHash: r.mp4Sha256,
+          thumbnailHash: r.thumbnailSha256, manifestHash: r.manifestSha256, projectId: r.projectId,
+          duration: +r.duration, sceneCount: +r.sceneCount};
+        U.toast('Đã nạp metadata render cục bộ; chưa tự phát hành.', 'ok'); veLai();
+      } catch (e) { U.toast(String(e && e.message || e), 'err'); }
+    };
+    reader.readAsText(f);
+  };
   G.xuChuyenCong = function (to) {
     var q = G.xuVongDoi, lights = den();
     var render = q.render;
     if (to === 'rendered') {
       render = {renderer: 'renderer-tách biệt', outputHash: String(render.outputHash || '').trim(),
         thumbnailHash: String(render.thumbnailHash || '').trim(), jobId: String(render.jobId || '').trim(),
-        duration: tong(), sceneCount: (G.xuDA.canh || []).length, v20: duAnGui().v20.delivery};
+        manifestHash: String(render.manifestHash || '').trim(), projectId: String(render.projectId || q.projectId || '').trim(),
+        duration: Number(render.duration) || tong(), sceneCount: Number(render.sceneCount) || (G.xuDA.canh || []).length,
+        v20: duAnGui().v20.delivery};
     }
     var qc = q.qc;
     if (to === 'qcPassed') qc = {approved: !!qc.approved, reviewer: String(qc.reviewer || '').trim(),
@@ -43686,13 +43720,13 @@ G.VIEWS = G.VIEWS || {};
           '" oninput="G.xuVongDoi.rights.attestedBy=this.value"></label>';
       }
       if (vd.status === 'rightsApproved') {
-        o += '<label>Checksum tệp render từ dịch vụ tách biệt <input value="' +
-          h((vd.render || {}).outputHash || '') + '" oninput="G.xuVongDoi.render.outputHash=this.value"></label>' +
-          '<label>Mã job renderer <input value="' + h((vd.render || {}).jobId || '') +
-          '" oninput="G.xuVongDoi.render.jobId=this.value"></label><label>Checksum thumbnail <input value="' +
-          h((vd.render || {}).thumbnailHash || '') +
-          '" oninput="G.xuVongDoi.render.thumbnailHash=this.value"></label>' +
-          '<p class="note">Chỉ ghi nhận manifest/checksum từ renderer; không đính kèm hoặc giả vờ xuất MP4 tại đây.</p>';
+        o += '<div class="row"><button class="btn" onclick="G.xuTaiManifestRender()">Tải manifest cho renderer cục bộ</button>' +
+          '<label class="btn">Nạp result.json từ renderer <input type="file" accept="application/json,.json" ' +
+          'style="display:none" onchange="G.xuNhapKetQuaRender(this.files)"></label></div>' +
+          '<p class="note">Luồng 0 đồng: chạy container trên máy nội bộ, rồi nạp <code>result.json</code> tại đây. ' +
+          'Không gửi video, asset hoặc API key qua Pages/Worker.</p>';
+        if ((vd.render || {}).jobId) o += '<p class="note">Job ' + h(vd.render.jobId) +
+          ' · MP4 SHA-256 ' + h(String(vd.render.outputHash).slice(0, 16)) + '…</p>';
       }
       if (vd.status === 'rendered') {
         var q = vd.qc || {};
