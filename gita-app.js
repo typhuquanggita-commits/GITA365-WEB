@@ -42750,6 +42750,16 @@ G.VIEWS = G.VIEWS || {};
     khung: 'three-act', nguon: '', chuyenGia: '', mucDich: 'giao-duc', doiTuong: 'noi-bo',
     cta: 'Chọn một bước phù hợp và thực hiện cùng người phụ trách.', marketingApproved: false, pilotOnly: true
   };
+  G.xuHanhTrinhVideo = G.xuHanhTrinhVideo || {
+    mode: 'milestone', consent: false, reviewedBy: '', shareScope: 'private',
+    includeVoice: false, includeImage: false, signals: null
+  };
+  var HANH_TRINH_MAU = [
+    ['welcome', 'Chào hành trình', 'Thiết lập một bước nhỏ, an toàn và tự nguyện.', 'Bắt đầu bằng một việc phù hợp hôm nay.'],
+    ['milestone', 'Ghi nhận mốc thay đổi', 'Nhìn lại dấu vết của chính khách hàng, không so sánh với bất kỳ ai.', 'Chọn một việc để giữ nhịp trong tuần tới.'],
+    ['reset', 'Điều chỉnh nhịp', 'Ghi nhận tuần khó mà không phán xét; tìm một điều kiện để bắt đầu lại.', 'Chọn bước nhỏ nhất có thể làm trong 24 giờ.'],
+    ['reflection', 'Tổng kết hành trình', 'Phản tư về điều đã thử, điều có ích và điều cần điều chỉnh.', 'Hẹn một buổi trao đổi với người phụ trách nếu cần.']
+  ];
 
   /* Pilot có chủ ý nhỏ: ba màn nền tảng, mỗi màn ba video 3p30. Các câu
      chuyên môn vẫn đi qua Ngân khố câu khi dựng; danh sách này chỉ giữ
@@ -42839,6 +42849,38 @@ G.VIEWS = G.VIEWS || {};
         sacThai: i === 0 ? 'truyen-cam-hung' : 'than-thien'};
     });
     G.xuSoat = null; veLai();
+  };
+  G.xuNapVideoHanhTrinh = function (mode) {
+    var x = HANH_TRINH_MAU.filter(function (p) { return p[0] === mode; })[0] || HANH_TRINH_MAU[1];
+    var htr = G.xuHanhTrinhVideo;
+    htr.mode = x[0];
+    /* Chỉ đọc tín hiệu trên thiết bị của chính người dùng. Không lấy tên,
+       hồ sơ, nhật ký, ảnh hoặc giọng để tạo brief. */
+    var t = G.tbSoTuan ? G.tbSoTuan() : {ds: []};
+    htr.signals = (t.ds || []).map(function (s) {
+      return {ma: s.ma, nay: s.nay, truoc: s.truoc, donVi: s.donVi};
+    });
+    var d = G.xuDA;
+    d.ten = x[1]; d.dich = 210; d.nguon = 'Dữ liệu tiến bộ do chính khách hàng ghi trên thiết bị';
+    d.dieuNho = x[3]; d.keHoachVideo = {ma: 'HT-' + x[0], tieuDe: x[1], thoiLuong: 210,
+      cta: x[3], nguon: d.nguon, dinhDang: 'Chăm sóc hành trình'};
+    d.canh = [
+      ['mo', 'Mở đầu', x[2], 25],
+      ['nhin-lai', 'Nhìn lại dấu vết', 'Đặt tuần này cạnh tuần trước của chính mình; không xếp hạng và không so sánh.', 35],
+      ['ghi-nhan', 'Ghi nhận nỗ lực', 'Ghi nhận điều đã làm được và nói rõ tuần khó cũng là dữ liệu để điều chỉnh.', 30],
+      ['goi-y', 'Bước tiếp theo', x[3], 45],
+      ['coach', 'Kết nối người đồng hành', 'Nếu cần hỗ trợ, khách hàng có thể chủ động đặt lịch với Coach hoặc Tư vấn phụ trách.', 35],
+      ['ket', 'Khép lại', 'Hành trình là của chính bạn; GITA365 chỉ giúp nhìn rõ bước kế tiếp.', 40]
+    ].map(function (p, i) {
+      return {id: 'ht-' + x[0] + '-' + i, vai: p[0], chuMan: p[1], loi: p[2], giay: p[3],
+        hinh: 'Video hành trình riêng tư · không dùng dữ liệu nhận dạng', vatHinh: '', vatTieng: '',
+        sacThai: i === 2 ? 'khich-le' : 'than-thien'};
+    });
+    G.xuSoat = null; veLai();
+  };
+  G.xuSuaHanhTrinhVideo = function (o, v) {
+    G.xuHanhTrinhVideo[o] = o === 'consent' || o === 'includeVoice' || o === 'includeImage' ? !!v : v;
+    veLai();
   };
   G.xuSuaKeHoachVideo = function (o, v) {
     G.xuKeHoachVideo[o] = v; veLai();
@@ -43102,6 +43144,12 @@ G.VIEWS = G.VIEWS || {};
     bienSoan: {khung: G.xuKeHoachVideo.khung, mucDich: G.xuKeHoachVideo.mucDich,
       doiTuong: G.xuKeHoachVideo.doiTuong, nguon: G.xuKeHoachVideo.nguon,
       chuyenGia: G.xuKeHoachVideo.chuyenGia, marketingApproved: !!G.xuKeHoachVideo.marketingApproved},
+    journey: G.xuHanhTrinhVideo.mode ? {
+      mode: G.xuHanhTrinhVideo.mode, consent: !!G.xuHanhTrinhVideo.consent,
+      reviewedBy: G.xuHanhTrinhVideo.reviewedBy, shareScope: G.xuHanhTrinhVideo.shareScope,
+      includeVoice: !!G.xuHanhTrinhVideo.includeVoice, includeImage: !!G.xuHanhTrinhVideo.includeImage,
+      signals: G.xuHanhTrinhVideo.signals || []
+    } : null,
     studioProjectId: G.xuVongDoi.projectId || '',
     v20: {delivery: {
       phienBan: G.xuV20.phienBan, profile: G.xuV20.profile, tiLe: G.xuV20.tiLe,
@@ -43656,6 +43704,27 @@ G.VIEWS = G.VIEWS || {};
       allMan.map(function (m) { return '<li><button class="btn" onclick="G.xuNapVideoMan(\'' + h(m.ma) + '\')">' +
         h(m.ten) + '</button> · ' + h(m.nhom) + (m.perm ? ' · quyền ' + h(m.perm) : '') + '</li>'; }).join('') +
       '</ol></details></div>';
+
+    var ht = G.xuHanhTrinhVideo;
+    o += '<div class="giay"><h3>0.2 · Video hành trình khách hàng</h3>' +
+      '<p class="note">Video ghi nhận thay đổi chỉ nhìn tín hiệu do chính khách hàng ghi trên thiết bị. ' +
+      'Không so sánh khách hàng, không tự tạo hồ sơ, không dùng dữ liệu nhận dạng hoặc tự gửi video đi.</p>' +
+      '<div class="row">' + HANH_TRINH_MAU.map(function (x) {
+        return '<button class="btn" onclick="G.xuNapVideoHanhTrinh(\'' + x[0] + '\')">' + h(x[1]) + '</button>';
+      }).join('') + '</div>' +
+      '<label class="note"><input type="checkbox"' + (ht.consent ? ' checked' : '') +
+      ' onchange="G.xuSuaHanhTrinhVideo(\'consent\',this.checked)"> Khách hàng đã đồng ý tạo video hành trình riêng tư từ các tín hiệu tiến bộ của chính mình.</label>' +
+      '<div class="row"><label>Phạm vi chia sẻ <select onchange="G.xuSuaHanhTrinhVideo(\'shareScope\',this.value)">' +
+      [['private','Chỉ khách hàng'],['coach','Khách hàng và Coach phụ trách'],['family','Gia đình đã được đồng ý']].map(function (x) {
+        return '<option value="' + x[0] + '"' + (ht.shareScope === x[0] ? ' selected' : '') + '>' + x[1] + '</option>';
+      }).join('') + '</select></label><label>Người rà nội dung <input value="' + h(ht.reviewedBy) +
+      '" oninput="G.xuSuaHanhTrinhVideo(\'reviewedBy\',this.value)"></label></div>' +
+      '<label class="note"><input type="checkbox"' + (ht.includeVoice ? ' checked' : '') +
+      ' onchange="G.xuSuaHanhTrinhVideo(\'includeVoice\',this.checked)"> Có đồng ý riêng nếu dùng giọng khách hàng.</label>' +
+      '<label class="note"><input type="checkbox"' + (ht.includeImage ? ' checked' : '') +
+      ' onchange="G.xuSuaHanhTrinhVideo(\'includeImage\',this.checked)"> Có đồng ý riêng nếu dùng hình/video khách hàng.</label>' +
+      '<p class="note">Không có đồng ý hình/giọng thì video chỉ dùng MC/Trainer được cấp quyền và đồ hoạ V20. ' +
+      'Khách hàng luôn có quyền không tham gia hoặc yêu cầu gỡ video.</p></div>';
 
     /* 0 · Chuỗi video — nạp một video là nạp đủ kịch bản, shot list,
        thời lượng và CTA vào cùng G.xuDA mà Studio đang dựng. */

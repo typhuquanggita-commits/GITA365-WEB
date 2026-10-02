@@ -53,3 +53,17 @@ hướng dẫn, còn PAS, BAB, AIDA, Star–Chain–Hook, 4P và StoryBrand ch�
 nội dung tiếp thị đã được người thật duyệt. Không dùng khan hiếm, gây áp lực,
 so sánh tuyệt đối hoặc lời hứa không có bằng chứng. Luồng tiếp thị vẫn phải
 qua các cửa QC hiện có trước khi phát hành.
+
+## Video hành trình khách hàng
+
+Video hành trình dùng để ghi nhận và khích lệ thay đổi của chính khách hàng:
+chào hành trình, ghi nhận mốc, điều chỉnh nhịp hoặc tổng kết. Nó chỉ đọc các
+tín hiệu tiến bộ do khách hàng tự ghi ở thiết bị, so với chính họ ở kỳ trước;
+không xếp hạng, so sánh giữa khách hàng hoặc suy đoán tình trạng cá nhân.
+
+Trước duyệt kịch bản, Studio yêu cầu sự đồng ý rõ ràng, phạm vi chia sẻ
+(`private`, Coach phụ trách hoặc gia đình đã đồng ý) và tên người rà nội dung.
+Không có đồng ý riêng thì không dùng ảnh, video hoặc giọng khách hàng. Manifest
+bị chặn nếu mang các trường nhận dạng/hồ sơ hoặc xếp hạng. Khách hàng có quyền
+từ chối, dừng tham gia hoặc yêu cầu gỡ bản video; các lựa chọn đó không làm
+giảm quyền được Coach/Tư vấn hỗ trợ.

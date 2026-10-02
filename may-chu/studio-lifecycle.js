@@ -59,6 +59,18 @@ function v20Delivery(project) {
       !text(d.kenh) || !text(d.template) || Number(d.nganSachRender) < 0) return null;
   return d;
 }
+function journeyOk(project) {
+  const j = project && project.journey;
+  if (!j) return true;
+  const allowed = ['private', 'coach', 'family'];
+  if (!j.consent || !text(j.reviewedBy) || !allowed.includes(text(j.shareScope)) ||
+      !Array.isArray(j.signals)) return false;
+  /* Video hành trình là bản ghi động viên, không được mang dữ liệu nhận dạng
+     hoặc so sánh/điểm xếp hạng từ hệ thống. */
+  const serial = stable(j).toLowerCase();
+  if (/(email|phone|dien.?thoai|khachhangid|customerid|hosoapp|xep.?hang|ranking)/.test(serial)) return false;
+  return true;
+}
 
 export async function taoStudioProject(y, env, db, hoSo) {
   if (!canUse(hoSo)) return bad('Studio chỉ mở cho nhân sự được cấp quyền.');
@@ -67,7 +79,7 @@ export async function taoStudioProject(y, env, db, hoSo) {
   const projectId = id(), luc = now(), snapshot = {
     title, scenes: Array.isArray(project.scenes) ? project.scenes : [], kho: text(project.kho),
     tang: text(project.tang), nguon: text(project.nguon), dieuNho: text(project.dieuNho),
-    v20: project.v20 || {}
+    v20: project.v20 || {}, bienSoan: project.bienSoan || {}, journey: project.journey || null
   };
   await db.prepare('INSERT INTO studioProject (id,version,status,title,projectJson,rightsJson,renderJson,qcJson,createdBy,createdAt,updatedAt) VALUES (?,?,?,?,?,?,?,?,?,?,?)')
     .bind(projectId, 1, 'draft', title, JSON.stringify(snapshot), '{}', '{}', '{}', hoSo.uid, luc, luc).run();
@@ -104,6 +116,8 @@ export async function chuyenTrangThaiStudio(y, env, db, hoSo) {
       text(bienSoan.nguon).length < 4 || text(bienSoan.chuyenGia).length < 3 ||
       (text(bienSoan.mucDich) === 'tiep-thi' && bienSoan.marketingApproved !== true) || !y.contentChecked))
     return bad('Duyệt kịch bản V20 cần cảnh, nguồn, chuyên gia duyệt, chuẩn bàn giao, soát nội dung đạt; nội dung tiếp thị còn cần duyệt người thật.');
+  if (next === 'scriptApproved' && !journeyOk(project))
+    return bad('Video hành trình cần đồng ý rõ ràng, người rà nội dung, phạm vi chia sẻ hợp lệ và không chứa dữ liệu nhận dạng/xếp hạng.');
   if (next === 'rightsApproved' && (!rights.imageConsent || !rights.voiceConsent || !rights.musicRights || !text(rights.attestedBy)))
     return bad('Duyệt quyền cần xác nhận ảnh, giọng, nhạc và người chịu trách nhiệm.');
   if (next === 'rendered' && (!text(render.renderer) || !SHA256.test(text(render.outputHash)) ||
