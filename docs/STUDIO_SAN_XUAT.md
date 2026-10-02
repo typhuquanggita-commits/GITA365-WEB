@@ -39,3 +39,17 @@ thiểu: thời gian render, chi phí render, số vòng sửa subtitle, lỗi Q
 hồi đội biên tập. Chỉ renderer/GPU tách biệt được phép chạy FFmpeg, Video2X,
 VideoLingo hoặc LongCat sau khi có quyền sử dụng, đánh giá license và duyệt
 người thật.
+
+## Hệ thống video theo vai
+
+Studio lập backlog theo toàn bộ màn trong điều hướng GITA và bắt đầu bằng đợt
+10 màn phục vụ trực tiếp onboarding, công việc, Coach, Tư vấn và chăm sóc
+khách. Mỗi brief dài 4 phút, có bối cảnh, tình huống, chỉ dẫn, bằng chứng và
+bước tiếp theo tự nguyện; brief không phải video đã hoàn thành.
+
+Mỗi video phải khai nguồn đã kiểm và chuyên gia duyệt trước `scriptApproved`.
+Các khung chuyện được chọn theo mục đích: cấu trúc giáo dục/coach ưu tiên cho
+hướng dẫn, còn PAS, BAB, AIDA, Star–Chain–Hook, 4P và StoryBrand chỉ mở cho
+nội dung tiếp thị đã được người thật duyệt. Không dùng khan hiếm, gây áp lực,
+so sánh tuyệt đối hoặc lời hứa không có bằng chứng. Luồng tiếp thị vẫn phải
+qua các cửa QC hiện có trước khi phát hành.

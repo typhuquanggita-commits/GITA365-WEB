@@ -99,8 +99,11 @@ export async function chuyenTrangThaiStudio(y, env, db, hoSo) {
   const render = y.render || JSON.parse(row.renderJson || '{}');
   const qc = y.qc || JSON.parse(row.qcJson || '{}');
   const scenes = Array.isArray(project.scenes) ? project.scenes : [];
-  if (next === 'scriptApproved' && (!text(project.title || row.title) || !scenes.length || !v20Delivery(project) || !y.contentChecked))
-    return bad('Duyệt kịch bản V20 cần cảnh, chuẩn bàn giao hợp lệ, tên dự án và kết quả soát nội dung đạt.');
+  const bienSoan = project.bienSoan || {};
+  if (next === 'scriptApproved' && (!text(project.title || row.title) || !scenes.length || !v20Delivery(project) ||
+      text(bienSoan.nguon).length < 4 || text(bienSoan.chuyenGia).length < 3 ||
+      (text(bienSoan.mucDich) === 'tiep-thi' && bienSoan.marketingApproved !== true) || !y.contentChecked))
+    return bad('Duyệt kịch bản V20 cần cảnh, nguồn, chuyên gia duyệt, chuẩn bàn giao, soát nội dung đạt; nội dung tiếp thị còn cần duyệt người thật.');
   if (next === 'rightsApproved' && (!rights.imageConsent || !rights.voiceConsent || !rights.musicRights || !text(rights.attestedBy)))
     return bad('Duyệt quyền cần xác nhận ảnh, giọng, nhạc và người chịu trách nhiệm.');
   if (next === 'rendered' && (!text(render.renderer) || !SHA256.test(text(render.outputHash)) ||
