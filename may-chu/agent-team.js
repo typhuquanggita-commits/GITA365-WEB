@@ -38,6 +38,13 @@ const WORKFLOW = {
     { buoc: 2, agent: 'AI02', cua: 'aiSoanNhap', input: 'baiVietBlog', output: 'emailSequence', canQuyen: 'AI02' },
     { buoc: 3, agent: 'AI02', cua: 'aiSoanNhap', input: 'baiVietBlog', output: 'socialPosts', canQuyen: 'AI02' },
     { buoc: 4, agent: 'AI05', cua: 'aiTongHopGiamSat', input: 'ketQuaKenh', output: 'baoCaoKenh', canQuyen: null }
+  ],
+  'gita-noi-dung-coach-video': [
+    { buoc: 1, agent: 'ND-KT', cua: 'soatNoiDung', input: 'briefDaAnDanh', output: 'khungNoiDung', canQuyen: null },
+    { buoc: 2, agent: 'ND-ST', cua: 'soanBanNhap', input: 'khungNoiDung', output: 'banNhapStaging', canQuyen: 'AI02' },
+    { buoc: 3, agent: 'COACH-QA', cua: 'soatNoiDung', input: 'banNhapStaging', output: 'phieuCoach', canQuyen: null },
+    { buoc: 4, agent: 'VIDEO-BRIEF', cua: 'soatNoiDung', input: 'phieuCoach', output: 'kichBanV20', canQuyen: null },
+    { buoc: 5, agent: 'VIDEO-QC', cua: 'chuyenTrangThaiStudio', input: 'kichBanV20', output: 'hoChieuVideo', canQuyen: null }
   ]
 };
 

@@ -1,0 +1,76 @@
+name: Deploy GITA365 API Worker
+
+on:
+  workflow_dispatch:
+    inputs:
+      migration_applied:
+        description: D1 migration for this release has been applied and verified
+        required: true
+        type: boolean
+        default: false
+      backup_verified:
+        description: A recoverable D1/R2 backup or rollback plan has been verified
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gita365-worker-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  worker:
+    runs-on: ubuntu-latest
+    environment: cloudflare-worker-production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Confirm release prerequisites
+        env:
+          MIGRATION_APPLIED: ${{ inputs.migration_applied }}
+          BACKUP_VERIFIED: ${{ inputs.backup_verified }}
+        run: |
+          set -eu
+          test "$MIGRATION_APPLIED" = true
+          test "$BACKUP_VERIFIED" = true
+
+      - name: Validate Worker credentials
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -eu
+          node <<'NODE'
+          const token = process.env.CLOUDFLARE_API_TOKEN || '';
+          const account = process.env.CLOUDFLARE_ACCOUNT_ID || '';
+          if (!token || /[\u0000-\u0020\u007f]/.test(token)) {
+            throw new Error('CLOUDFLARE_API_TOKEN is missing or contains whitespace/control characters.');
+          }
+          if (!/^[a-f0-9]{32}$/i.test(account)) {
+            throw new Error('CLOUDFLARE_ACCOUNT_ID must be the 32-character hexadecimal account ID.');
+          }
+          NODE
+
+      - name: Deploy Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: may-chu
+          command: deploy
+
+      - name: Verify Worker health
+        run: |
+          set -eu
+          curl -fsS --max-time 15 https://gita365.typhuquanggita.workers.dev/ -o /tmp/worker-health.json
+          node <<'NODE'
+          const s = require('/tmp/worker-health.json');
+          if (!s.ok) throw new Error('Worker health endpoint did not report ok.');
+          if (!s.khoaSanSang || !Number.isFinite(s.daNapKhoa) || s.daNapKhoa < 1)
+            throw new Error('Worker is deployed but GITA_KHOA_KHO is missing or invalid.');
+          if (!s.csdlSanSang)
+            throw new Error('Worker is deployed but its D1 database is unavailable or not initialized.');
+          NODE

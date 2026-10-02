@@ -1,95 +1,21 @@
-name: Deploy GITA365 to Cloudflare
+name: Validate GITA365 Pages release
 
 on:
   push:
     branches: [main]
-  workflow_dispatch:
+  pull_request:
+    branches: [main]
 
 permissions:
   contents: read
 
 concurrency:
-  group: cloudflare-${{ github.workflow }}-${{ github.ref }}
+  group: pages-release-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  worker:
-    name: Deploy API worker
-    runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' || contains(join(github.event.commits.*.modified, ' '), 'may-chu/') || contains(join(github.event.commits.*.added, ' '), 'may-chu/') || contains(join(github.event.commits.*.removed, ' '), 'may-chu/')
-    steps:
-      - name: Check out application
-        uses: actions/checkout@v4
-
-      - name: Validate Cloudflare credentials and API token
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: |
-          set -eu
-          node <<'NODE'
-          const token = process.env.CLOUDFLARE_API_TOKEN || '';
-          const account = process.env.CLOUDFLARE_ACCOUNT_ID || '';
-          if (!token) {
-            console.error('Missing GitHub Actions secret CLOUDFLARE_API_TOKEN.');
-            process.exit(1);
-          }
-          if (/[\u0000-\u0020\u007f]/.test(token)) {
-            console.error('CLOUDFLARE_API_TOKEN contains whitespace/control characters. Recreate the secret without quotes or a trailing newline.');
-            process.exit(1);
-          }
-          if (!/^[a-f0-9]{32}$/i.test(account)) {
-            console.error('CLOUDFLARE_ACCOUNT_ID must be the 32-character hexadecimal Cloudflare account ID.');
-            process.exit(1);
-          }
-          NODE
-          node <<'NODE'
-          (async () => {
-            try {
-              const response = await fetch('https://api.cloudflare.com/client/v4/user/tokens/verify', {
-                headers: { Authorization: 'Bearer ' + process.env.CLOUDFLARE_API_TOKEN }
-              });
-              const body = await response.json();
-              if (!response.ok || !body.success || !body.result || body.result.status !== 'active') {
-                console.error('Cloudflare rejected or deactivated CLOUDFLARE_API_TOKEN. Replace it in GitHub Actions secrets and verify Pages:Edit and Workers Scripts:Edit permissions.');
-                process.exitCode = 1;
-                return;
-              }
-              console.log('Cloudflare API token is active.');
-            } catch (_) {
-              console.error('Could not verify the Cloudflare API token. Check GitHub runner network access and the Actions secret.');
-              process.exitCode = 1;
-            }
-          })();
-          NODE
-
-      - name: Deploy Cloudflare Worker
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: may-chu
-          command: deploy
-
-      - name: Verify Worker health
-        run: |
-          set -eu
-          for attempt in 1 2 3 4 5; do
-            if curl -fsS --max-time 10 "https://gita365.typhuquanggita.workers.dev/" -o /tmp/worker-health.json; then
-              break
-            fi
-            if [ "$attempt" = 5 ]; then
-              echo "Worker health endpoint failed after deployment."
-              exit 1
-            fi
-            sleep 5
-          done
-          node -e "const s=require('/tmp/worker-health.json'); if (!s.ok || !Number.isFinite(s.daNapKhoa) || s.daNapKhoa < 1) { console.error('Worker responded but its status/required keyset is unhealthy.'); process.exit(1); } console.log('Worker healthy; keyset loaded.');"
-
-  pages:
-    name: Deploy static application
-    needs: worker
-    if: always() && (needs.worker.result == 'success' || needs.worker.result == 'skipped')
+  public:
+    name: Build public Pages artifact
     runs-on: ubuntu-latest
     steps:
       - name: Check out application
@@ -104,19 +30,13 @@ jobs:
       - name: Assemble public Pages artifact
         run: |
           set -eu
-          mkdir -p _site
-          find . -maxdepth 1 -type f -name '*.html' -exec cp {} _site/ \;
-          cp gita-app.js gita-nghe.js cau-hinh.js sw.js manifest.webmanifest \
-            _headers _redirects robots.txt sitemap.xml _site/
-          cp -R assets kho _site/
-          touch _site/.nojekyll
-          test -s _site/index.html
-          test -s _site/gita-app.js
-          test -s _site/gita-nghe.js
-          test -d _site/kho
+          node tools/build-pages.js
           test ! -e _site/may-chu
           test ! -e _site/tools
-          printf 'Prepared Cloudflare Pages artifact: %s files\n' "$(find _site -type f | wc -l)"
+          test ! -e _site/kho/khoa.json
+
+      - name: Run release readiness checks
+        run: node tools/soat-san-sang.js
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -125,73 +45,6 @@ jobs:
           path: _site
           retention-days: 1
 
-      - name: Validate Cloudflare credentials and API token
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: |
-          set -eu
-          node <<'NODE'
-          const token = process.env.CLOUDFLARE_API_TOKEN || '';
-          const account = process.env.CLOUDFLARE_ACCOUNT_ID || '';
-          if (!token) {
-            console.error('Missing GitHub Actions secret CLOUDFLARE_API_TOKEN.');
-            process.exit(1);
-          }
-          if (/[\u0000-\u0020\u007f]/.test(token)) {
-            console.error('CLOUDFLARE_API_TOKEN contains whitespace/control characters. Recreate the secret without quotes or a trailing newline.');
-            process.exit(1);
-          }
-          if (!/^[a-f0-9]{32}$/i.test(account)) {
-            console.error('CLOUDFLARE_ACCOUNT_ID must be the 32-character hexadecimal Cloudflare account ID.');
-            process.exit(1);
-          }
-          NODE
-          node <<'NODE'
-          (async () => {
-            try {
-              const response = await fetch('https://api.cloudflare.com/client/v4/user/tokens/verify', {
-                headers: { Authorization: 'Bearer ' + process.env.CLOUDFLARE_API_TOKEN }
-              });
-              const body = await response.json();
-              if (!response.ok || !body.success || !body.result || body.result.status !== 'active') {
-                console.error('Cloudflare rejected or deactivated CLOUDFLARE_API_TOKEN. Replace it in GitHub Actions secrets and verify Pages:Edit and Workers Scripts:Edit permissions.');
-                process.exitCode = 1;
-                return;
-              }
-              console.log('Cloudflare API token is active.');
-            } catch (_) {
-              console.error('Could not verify the Cloudflare API token. Check GitHub runner network access and the Actions secret.');
-              process.exitCode = 1;
-            }
-          })();
-          NODE
-
-      - name: Deploy to Cloudflare Pages
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy _site --project-name=gita365 --branch=main
-
-  github-pages:
-    name: Mirror to GitHub Pages artifact
-    needs: pages
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    steps:
-      - name: Download Pages artifact
-        uses: actions/download-artifact@v4.1.3
-        with:
-          name: _site
-          path: _site
-
-      - name: Upload to GitHub Pages
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: _site
-
-      - name: Deploy GitHub Pages
-        uses: actions/deploy-pages@v4
+      # Cloudflare Pages deploys this repository through its Git integration.
+      # Keeping this workflow credential-free means a malformed Actions secret
+      # cannot block a public Pages release; Worker deployment remains manual.

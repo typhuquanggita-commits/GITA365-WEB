@@ -16,6 +16,8 @@
   Cache-Control: no-cache
 /cau-hinh.js
   Cache-Control: no-cache
+/assets/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
 /kho/*
   Cache-Control: private, no-store
   X-Robots-Tag: noindex, nofollow

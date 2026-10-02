@@ -9,7 +9,8 @@ Dùng:
 
 Lưu ý:
   · Không tự động triển khai Cloudflare — để tránh vô tình phát hành giữa chừng.
-  · Sau khi tool báo sẵn sàng, người làm push nhánh main hoặc tạo PR merge.
+  · Merge vào main sẽ để Cloudflare Pages Git Integration phát hành phần web.
+  · Worker luôn cần workflow thủ công sau khi xác nhận migration và backup.
   · Các secrets và khoá giải mã KHÔNG nằm trong repo; xem TRIEN-KHAI.md.
 */
 
@@ -105,8 +106,8 @@ function main() {
   console.log('   git add -A && git commit -m "' + `Phát hành GITA 365 ${version}"`);
   if (doTag) console.log(`   git push origin ${branch} --tags`);
   else console.log(`   git push origin ${branch}`);
-  console.log('   # Sau đó: Actions → "Deploy GITA365 to Cloudflare" sẽ chạy trên nhánh main.');
-  console.log('   # Hoặc: tạo Pull Request merge nhánh này vào main.\n');
+  console.log('   # Tạo Pull Request, review và merge vào main để Cloudflare Pages tự phát hành.');
+  console.log('   # Với Worker: chạy "Deploy GITA365 API Worker" thủ công sau migration/backup.\n');
 
   console.log(`✓ Sẵn sàng phát hành GITA 365 ${version}.`);
 }

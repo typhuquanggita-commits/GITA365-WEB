@@ -964,6 +964,8 @@ G.NAV = [
    t:'QUẢN TRỊ TRANG', s:'Ai được vào, vào tới đâu, và ai đã làm gì.',
    essence:'Nơi cấp quyền, mở và khoá tài khoản. Mọi thao tác ở đây đều vào nhật ký kèm tên người làm.',
    items:[
+    {v:'trang-thai-he-thong', t:'Trạng thái hệ thống', h:'Web · Worker · dữ liệu · khóa · sao lưu · video — ba trạng thái và một bước xử lý', ic:'pulse', perm:'qt_trang', capMo:'quantri', star:1},
+    {v:'so-dieu-hanh', t:'Sổ điều hành', h:'Sự cố · phát hành · cải tiến — một chủ việc, bằng chứng, duyệt và đường lùi', ic:'orbit', perm:'qt_trang', capMo:'quantri', star:1},
     {v:'noi-may-chu', t:'Nối máy chủ',                 h:'Dán địa chỉ · gọi thử · sáu bước dựng', ic:'orbit', perm:'qt_trang', capMo:'chung', star:1},
     /* Khoá khuôn mặt — an ninh tài khoản CỦA MỖI NGƯỜI, nên KHÔNG khoá ở
        qt_trang: ai đăng nhập cũng tự bật/gỡ khuôn mặt cho tài khoản mình.
@@ -10365,7 +10367,8 @@ on('[data-txong]', function(el){
   }
   var kq = G.chamTest(b, st.dap);
   st.diem = kq.diem; st.mien = kq.mien; st.nhom = kq.nhom; st.canhBao = kq.canhBao;
-  st.xong = true; st.luc = new Date().toLocaleString('vi-VN');
+  st.xong = true; st.luc = new Date().toLocaleString('vi-VN'); st.lucISO = new Date().toISOString();
+  G.S.testOwner = String((G.S.acc && G.S.acc.u) || '').toLowerCase();
   if(G.save) G.save();
   if(G.danhDau) G.danhDau('test', b.ma);
   if(G.secLog) G.secLog('Chấm bài test', b.ma+' · '+kq.diem+'/100 · nhóm '+kq.nhom.code, 'Ghi nhận');
@@ -17010,7 +17013,9 @@ G.thuMayChu = function(){
     .then(function(r){ return r.json(); })
     .then(function(d){
       if(!d || !d.ok) return {ok:false, ly:'Máy chủ trả về nội dung không đọc được.'};
-      return {ok:true, ten:d.ten || '', soKhoa:Number(d.daNapKhoa) || 0, luc:d.luc || ''};
+      return {ok:true, ten:d.ten || '', soKhoa:Number(d.daNapKhoa) || 0,
+        khoaSanSang: d.khoaSanSang === true, csdlSanSang: d.csdlSanSang === true,
+        luc:d.luc || ''};
     })
     .catch(function(e){
       return {ok:false, ly:'Không gọi được máy chủ: ' + (e && e.message || e) +
@@ -17297,6 +17302,159 @@ document.addEventListener('click', function(e){
   }
 });
 
+})();
+
+})();
+
+/* ═════════ src/trang-thai-he-thong.js ═════════ */
+(function(){
+/* Bảng vận hành một màn: chỉ hiện sự thật đo được, không tự sửa hay tự deploy. */
+'use strict';
+var G = window.G || {}; window.G = G;
+(function(){
+  var U = G.U, h = U.h, ic = U.ic, KHO = 'gita365_lich_su_trang_thai';
+  G.VIEWS = G.VIEWS || {};
+
+  function role(){ return String((G.S && G.S.acc && G.S.acc.role) || ''); }
+  function allowed(){ return role() === 'R01' || role() === 'R02'; }
+  function read(){
+    try { var x = JSON.parse(localStorage.getItem(KHO) || '[]'); return Array.isArray(x) ? x.slice(0, 12) : []; }
+    catch(e){ return []; }
+  }
+  function save(x){
+    try { localStorage.setItem(KHO, JSON.stringify([x].concat(read()).slice(0, 12))); } catch(e){}
+  }
+  function state(ok, stop){
+    return stop ? {t:'Dừng an toàn', c:'var(--gita-do)', i:'lock'} :
+      ok ? {t:'Bình thường', c:'var(--ok)', i:'check'} :
+      {t:'Cần xử lý', c:'var(--warn)', i:'alert'};
+  }
+  function card(x){
+    var s = state(x.ok, x.stop);
+    return '<div class="card" style="flex:1;min-width:240px;border-color:'+s.c+'">'+
+      '<div class="row" style="gap:8px"><span style="color:'+s.c+'">'+ic(s.i,'w-4 h-4')+'</span><b>'+h(x.name)+'</b></div>'+
+      '<p class="sm mt" style="color:'+s.c+'"><b>'+s.t+'</b></p>'+
+      '<p class="sm dim mt">'+h(x.detail)+'</p>'+
+      (x.action ? '<button class="btn ghost sm mt" data-act="tt-'+h(x.action)+'">'+h(x.label || 'Xem một bước tiếp theo')+'</button>' : '')+
+      '</div>';
+  }
+  function go(view){ if(G.go) G.go(view); else if(G.S){ G.S.view=view; G.render(); } }
+  function renderResult(r){
+    var box = document.getElementById('ttKq');
+    if(!box) return;
+    var workerOk = !!(r && r.ok && r.khoaSanSang && r.csdlSanSang && r.soKhoa > 0);
+    var now = new Date().toLocaleString('vi-VN');
+    save({luc:now, ketQua:workerOk ? 'Bình thường' : 'Cần xử lý'});
+    var rows = [
+      {name:'Web GITA365', ok:navigator.onLine, detail:navigator.onLine ? 'Thiết bị đang có kết nối mạng.' : 'Thiết bị đang ngoại tuyến; chỉ dùng phần đã có trên máy.', action:'network', label:'Hướng dẫn kết nối'},
+      {name:'Worker & dữ liệu', ok:workerOk, stop:!!(r && r.ok && !r.csdlSanSang),
+       detail:workerOk ? 'Worker trả lời, D1 sẵn sàng và bộ khóa đã nạp.' : (r && r.ok ? 'Worker trả lời nhưng D1 hoặc bộ khóa chưa sẵn sàng.' : 'Chưa gọi được Worker.'),
+       action:'server', label:'Hướng dẫn xử lý'},
+      {name:'Sao lưu & khôi phục', ok:false, detail:'Không tự suy đoán tình trạng sao lưu. Chỉ đánh dấu bình thường sau khi người phụ trách diễn tập khôi phục.', action:'backup', label:'Mở SOP sao lưu'},
+      {name:'Video riêng tư', ok:false, detail:'Render chỉ chạy trên máy nội bộ với Docker và dữ liệu được cấp quyền; không gửi media khách lên dịch vụ render ngoài.', action:'video', label:'Mở SOP video'},
+      {name:'Sổ điều hành', ok:true, detail:'Ghi sự cố, phát hành và cải tiến có chủ việc, duyệt, bằng chứng và đường lùi.', action:'operations', label:'Mở sổ điều hành'}
+    ];
+    box.innerHTML = '<div class="row wrap" style="gap:12px">'+rows.map(card).join('')+'</div>'+
+      '<div class="card mt2"><b class="sm">'+ic('shield','w-4 h-4')+' Việc tiếp theo</b><p class="sm dim mt">'+
+      (workerOk ? 'Kiểm tra bản sao lưu/khôi phục theo lịch; hệ không tự tạo xác nhận thay con người.' :
+      'Không phát hành Worker hoặc sửa dữ liệu. Mở hướng dẫn Worker, xử lý từng bước, rồi bấm kiểm tra lại.')+
+      '</p></div>';
+  }
+  G.kiemTrangThaiHeThong = function(){
+    var box = document.getElementById('ttKq');
+    if(box) box.innerHTML = '<p class="sm dim">Đang kiểm tra Worker, dữ liệu và bộ khóa…</p>';
+    if(!G.thuMayChu) return renderResult(null);
+    G.thuMayChu().then(renderResult);
+  };
+  G.VIEWS['trang-thai-he-thong'] = function(){
+    if(!allowed()) return U.lockCard('Bảng vận hành chỉ dành cho Super Admin và Admin hệ thống.');
+    var hist = read();
+    var o = U.ph({eyebrow:'VẬN HÀNH NỘI BỘ · R01 – R02',ic:'pulse',grad:1,
+      t:'Trạng thái hệ thống',lead:'Một màn kiểm tra đơn giản: chỉ ba trạng thái, không log kỹ thuật và không tự thay đổi dữ liệu hay phát hành.'});
+    o += '<div class="card"><button class="btn pri" data-act="tt-check">'+ic('pulse','w-4 h-4')+'Kiểm tra ngay</button>'+
+      '<p class="sm dim mt">Bình thường = tín hiệu đo được đạt. Cần xử lý = làm đúng một bước được hướng dẫn. Dừng an toàn = không phát hành hoặc thay đổi dữ liệu.</p></div>'+
+      '<div id="ttKq" class="mt2"><p class="sm dim">Chưa kiểm tra trong phiên này.</p></div>'+
+      '<div class="card mt2"><b class="sm">Lịch sử kiểm tra trên thiết bị này</b><p class="tiny muted mt">Chỉ để nhắc việc, không thay thế nhật ký máy chủ hoặc chứng cứ sao lưu.</p>'+
+      (hist.length ? '<ul class="sm mt">'+hist.map(function(x){ return '<li>'+h(x.luc)+' · '+h(x.ketQua)+'</li>'; }).join('')+'</ul>' : '<p class="sm dim mt">Chưa có lượt kiểm tra.</p>')+'</div>'+
+      '<div class="card mt2"><b class="sm">Giới hạn vận hành trung thực</b><p class="sm dim mt">GITA365 tự chủ tối đa nhưng vẫn cần Cloudflare cho web/API và người phụ trách cho backup, migration, quyền, duyệt nội dung và rollback. Hệ không cam kết “100%” hoặc tự chữa dữ liệu.</p></div>';
+    return o;
+  };
+  document.addEventListener('click', function(e){
+    var b=e.target.closest && e.target.closest('[data-act]'); if(!b) return;
+    var a=b.getAttribute('data-act');
+    if(a==='tt-check') G.kiemTrangThaiHeThong();
+    if(a==='tt-server') go('noi-may-chu');
+    if(a==='tt-video') go('studio');
+    if(a==='tt-operations') go('so-dieu-hanh');
+    if(a==='tt-network') U.toast('Kiểm tra Wi‑Fi/4G, rồi bấm “Kiểm tra ngay” lại. Không thay đổi dữ liệu khi đang mất mạng.','err');
+    if(a==='tt-backup') U.toast('Mở docs/TRIEN_KHAI_WEB.md: làm backup/rollback có người xác nhận trước Worker deploy.','ok');
+  });
+})();
+
+})();
+
+/* ═════════ src/so-dieu-hanh.js ═════════ */
+(function(){
+/* Sổ điều hành R01/R02: biến sự cố và thay đổi thành việc có chủ, duyệt, bằng chứng. */
+'use strict';
+var G = window.G || {}; window.G = G;
+(function(){
+  var U=G.U, h=U.h, ic=U.ic; G.VIEWS=G.VIEWS||{};
+  var KIND={suCo:'Sự cố',phatHanh:'Phát hành',caiTien:'Cải tiến'};
+  var STATUS={moi:'Mới',dangLam:'Đang làm',choDuyet:'Chờ duyệt',dong:'Đã đóng'};
+  function ok(){ var r=(G.S&&G.S.acc&&G.S.acc.role)||''; return r==='R01'||r==='R02'; }
+  function load(){
+    var box=document.getElementById('sdhList'); if(box) box.innerHTML='<p class="sm dim">Đang đọc sổ vận hành…</p>';
+    G.goiMayChu('docSoVanHanh').then(function(d){
+      if(!box) return;
+      if(!d.ok){ box.innerHTML='<p class="sm" style="color:var(--gita-do-ink)">'+h(d.error||'Không đọc được sổ.')+'</p>'; return; }
+      draw(d.items||[]);
+    });
+  }
+  function draw(items){
+    var box=document.getElementById('sdhList'); if(!box)return;
+    if(!items.length){box.innerHTML='<p class="sm dim">Chưa có việc điều hành. Chỉ ghi việc có người chịu trách nhiệm.</p>';return;}
+    box.innerHTML=items.map(function(x){
+      var c=x.status==='dong'?'var(--ok)':x.kind==='suCo'?'var(--gita-do)':'var(--gita)';
+      return '<div class="card mt" style="border-left:3px solid '+c+'"><div class="row wrap" style="gap:8px"><b style="flex:1">'+h(x.title)+'</b>'+
+        U.chip(KIND[x.kind]||x.kind,c)+U.chip(STATUS[x.status]||x.status,c)+'</div>'+
+        '<p class="sm dim mt">Chủ việc: <b>'+h(x.owner)+'</b> · tạo '+h(String(x.createdAt||'').slice(0,16).replace('T',' '))+'</p>'+
+        (x.ref?'<p class="tiny muted mt">Tham chiếu: '+h(x.ref)+'</p>':'')+
+        (x.rollbackRef?'<p class="tiny muted mt">Lùi: '+h(x.rollbackRef)+'</p>':'')+
+        (x.evidence?'<p class="sm mt">Kết quả: '+h(x.evidence)+'</p>':'')+
+        (x.status!=='dong'?'<button class="btn ghost sm mt" data-act="sdh-update" data-id="'+h(x.id)+'">Cập nhật / duyệt</button>':'')+'</div>';
+    }).join('');
+  }
+  function val(id){var e=document.getElementById(id);return e?String(e.value||'').trim():'';}
+  G.VIEWS['so-dieu-hanh']=function(){
+    if(!ok()) return U.lockCard('Sổ điều hành chỉ dành cho Super Admin và Admin hệ thống.');
+    var o=U.ph({eyebrow:'VẬN HÀNH NỘI BỘ · R01 – R02',ic:'orbit',grad:1,t:'Sổ điều hành',
+      lead:'Mọi sự cố, phát hành và cải tiến có một chủ việc, bằng chứng, người duyệt và đường lùi. Sổ không tự deploy, migration hoặc sửa dữ liệu.'});
+    o+='<div class="card"><div class="row wrap" style="gap:10px"><label>Loại <select id="sdhKind"><option value="suCo">Sự cố</option><option value="phatHanh">Phát hành</option><option value="caiTien">Cải tiến</option></select></label>'+
+      '<label style="flex:2;min-width:220px">Việc cần làm <input id="sdhTitle" maxlength="160" placeholder="Mô tả ngắn, rõ kết quả cần đạt"></label>'+
+      '<label>Người chịu trách nhiệm <input id="sdhOwner" maxlength="80" placeholder="Tên hoặc vai"></label></div>'+
+      '<div class="row wrap mt" style="gap:10px"><label style="flex:1;min-width:220px">PR / commit / link tham chiếu <input id="sdhRef" maxlength="240" placeholder="Không nhập secret hoặc dữ liệu khách"></label>'+
+      '<label style="flex:1;min-width:220px">Đường lùi / rollback <input id="sdhRollback" maxlength="240" placeholder="Commit, deployment hoặc SOP"></label>'+
+      '<button class="btn pri" data-act="sdh-create">'+ic('plus','w-4 h-4')+'Ghi việc</button></div>'+
+      '<p class="tiny muted mt">Không ghi token, secret, media hoặc dữ liệu khách vào sổ.</p></div><div id="sdhList" class="mt2"><p class="sm dim">Kết nối Worker để đọc sổ chung.</p></div>';
+    setTimeout(load,0); return o;
+  };
+  document.addEventListener('click',function(e){
+    var b=e.target.closest&&e.target.closest('[data-act]');if(!b)return;var a=b.getAttribute('data-act');
+    if(a==='sdh-create'){
+      G.goiMayChu('ghiSoVanHanh',{kind:val('sdhKind'),title:val('sdhTitle'),owner:val('sdhOwner'),ref:val('sdhRef'),rollbackRef:val('sdhRollback')}).then(function(d){
+        U.toast(d.ok?'Đã ghi việc điều hành.':'Không ghi được: '+(d.error||''),d.ok?'ok':'err');if(d.ok)load();
+      });
+    }
+    if(a==='sdh-update'){
+      var status=prompt('Trạng thái: moi, dangLam, choDuyet, dong','dangLam');if(!status)return;
+      var reviewer=prompt('Người duyệt / xác nhận','');if(reviewer===null)return;
+      var evidence=prompt('Bằng chứng hoặc kết quả (ít nhất 10 ký tự khi chờ duyệt/đóng)','');if(evidence===null)return;
+      G.goiMayChu('capNhatSoVanHanh',{id:b.getAttribute('data-id'),status:status,reviewer:reviewer,evidence:evidence}).then(function(d){
+        U.toast(d.ok?'Đã cập nhật.':'Không cập nhật được: '+(d.error||''),d.ok?'ok':'err');if(d.ok)load();
+      });
+    }
+  });
 })();
 
 })();
@@ -23641,6 +23799,69 @@ var G = window.G || {}; window.G = G;
 (function () {
   var U = G.U, h = U.h, ic = U.ic;
 
+  /* Mỗi cấu trúc là một cách DẪN VẤN ĐỀ của khách, không phải bài nói
+     thuộc lòng. Người tư vấn chọn theo chỗ khách đang mắc và vẫn phải dùng
+     sáu nhịp GITA ở dưới để hỏi đủ trước khi đề xuất. */
+  G.CHBH = [
+    {ma:'CT01',ten:'3 hồi',dung:'Khách cần thấy hành trình từ hoàn cảnh đến thay đổi.',nhip:'Thiết lập → xung đột → giải quyết',chot:'Vậy nhà mình đang đứng ở hồi nào?'},
+    {ma:'CT02',ten:'5 hồi',dung:'Vấn đề có nhiều lớp, cần đi chậm để khách nhìn rõ.',nhip:'Giới thiệu → tăng hành động → cao trào → giảm dần → kết thúc',chot:'Mình cùng chọn việc đầu tiên để hạ áp lực nhé.'},
+    {ma:'CT03',ten:'Hành trình anh hùng',dung:'Khách đang lưỡng lự trước một thay đổi lớn.',nhip:'Bình thường → lời gọi → lưỡng lự → hướng dẫn → thử thách → trở về',chot:'Anh chị muốn mang giá trị mới nào về cho gia đình?'},
+    {ma:'CT04',ten:'Pixar',dung:'Cần kể nhanh, gần gũi và có nhịp nguyên nhân–kết quả.',nhip:'Ngày xửa ngày xưa → mỗi ngày → một ngày → vì vậy → và rồi → cuối cùng',chot:'Nếu hôm nay là “một ngày”, điều gì cần đổi đầu tiên?'},
+    {ma:'CT05',ten:'PAS',dung:'Nỗi đau đã rõ, khách cần thấy cái giá của việc chần chừ.',nhip:'Vấn đề → khuếch đại hệ quả → giải pháp',chot:'Mình xử lý điều này ngay từ tuần này được không?'},
+    {ma:'CT06',ten:'BAB',dung:'Khách đã hình dung trạng thái mong muốn.',nhip:'Trước → sau → cây cầu',chot:'Cây cầu ngắn nhất từ hiện tại tới điều anh chị muốn là gì?'},
+    {ma:'CT07',ten:'AIDA',dung:'Mở đầu cuộc gặp hoặc nội dung cần dẫn tới hành động rõ.',nhip:'Chú ý → hứng thú → mong muốn → hành động',chot:'Anh chị muốn bắt đầu bằng lịch hẹn hay bài đánh giá?'},
+    {ma:'CT08',ten:'Star – Chain – Hook',dung:'Cần thu hút bằng một nhân vật rồi nối về đúng vấn đề.',nhip:'Nhân vật nổi bật → liên kết bài học → lời gọi',chot:'Câu chuyện này có chạm đúng điều nhà mình đang gặp không?'},
+    {ma:'CT09',ten:'Câu chuyện lồng ghép',dung:'Cần nhiều góc nhìn để khách tự nhận ra mô thức chung.',nhip:'Các chuyện nhỏ → thông điệp chung → giải quyết',chot:'Trong các mảnh chuyện đó, mảnh nào giống nhà mình nhất?'},
+    {ma:'CT10',ten:'Bắt đầu giữa câu chuyện',dung:'Cần gây chú ý khi tình huống đang cấp bách.',nhip:'Cao trào → quay lại nguyên nhân → trở về giải quyết',chot:'Điều gì đã đưa mình tới đúng khoảnh khắc này?'},
+    {ma:'CT11',ten:'Kim tự tháp Freytag',dung:'Cần kể một ca đầy đủ, có cao trào và sự hạ nhiệt.',nhip:'Giới thiệu → tăng dần → cao trào → giảm dần → kết',chot:'Sau cao trào, nhà mình cần giữ nếp nào để không lặp lại?'},
+    {ma:'CT12',ten:'Kim tự tháp ngược',dung:'Khách bận và cần biết điều quan trọng trước.',nhip:'Kết luận chính → thông tin hỗ trợ → chi tiết',chot:'Thông tin quan trọng nhất để mình quyết hôm nay là gì?'},
+    {ma:'CT13',ten:'SOAR',dung:'Cần biến trở ngại thành một ca hành động có kết quả.',nhip:'Hoàn cảnh → trở ngại → hành động → kết quả',chot:'Trở ngại thật sự đang chặn bước nào của nhà mình?'},
+    {ma:'CT14',ten:'CAR',dung:'Cần chứng minh giá trị qua một ví dụ ngắn, cụ thể.',nhip:'Bối cảnh → hành động → kết quả',chot:'Trong bối cảnh của mình, hành động nào là phù hợp nhất?'},
+    {ma:'CT15',ten:'PAR',dung:'Khách gọi tên được vấn đề và cần một đường xử lý trực diện.',nhip:'Vấn đề → hành động → kết quả',chot:'Mình thống nhất xử lý đúng một vấn đề trước nhé?'},
+    {ma:'CT16',ten:'Công thức Dale Carnegie',dung:'Cần kể một sự việc thật để làm rõ lợi ích.',nhip:'Sự việc → hành động → lợi ích',chot:'Lợi ích nào đáng để gia đình mình bắt đầu ngay?'},
+    {ma:'CT17',ten:'Golden Circle',dung:'Khách cần tin vào ý nghĩa trước khi nghe giải pháp.',nhip:'Vì sao → cách làm → điều nhận được',chot:'Lý do sâu nhất khiến anh chị muốn thay đổi là gì?'},
+    {ma:'CT18',ten:'Monomyth',dung:'Cần một hành trình nhân vật nhất quán, dễ đồng cảm.',nhip:'Khởi đầu → thử thách lớn → chuyển hoá → trở về',chot:'Thử thách lớn nhất mà mình cần đi qua là gì?'},
+    {ma:'CT19',ten:'Cấu trúc núi',dung:'Muốn xây dần cảm xúc trước khi đưa ra nút thắt chính.',nhip:'Leo dần → đỉnh điểm → hạ nhiệt → kết',chot:'Đỉnh áp lực hiện nay của gia đình nằm ở đâu?'},
+    {ma:'CT20',ten:'Khởi đầu sai lầm',dung:'Khách đang hiểu nhầm nguyên nhân hoặc giải pháp.',nhip:'Hiểu lầm → nhận ra → điều chỉnh → kết quả',chot:'Điều mình từng tin nhưng nay cần nhìn lại là gì?'},
+    {ma:'CT21',ten:'Tuần tự thời gian',dung:'Cần làm rõ quá trình, trách nhiệm và các mốc diễn ra.',nhip:'Đầu → giữa → cuối theo thời gian',chot:'Mốc nào là lúc mọi thứ bắt đầu lệch nhịp?'},
+    {ma:'CT22',ten:'4P',dung:'Cần mô tả cam kết có bằng chứng và lời mời rõ ràng.',nhip:'Cam kết → hình dung → chứng minh → thúc đẩy',chot:'Anh chị muốn xem bằng chứng hay bắt đầu kế hoạch trước?'},
+    {ma:'CT23',ten:'StoryBrand',dung:'Khách là nhân vật chính và cần một người dẫn đường có kế hoạch.',nhip:'Nhân vật → vấn đề → hướng dẫn → kế hoạch → gọi → hành động → thành công',chot:'Mình cùng chốt kế hoạch ba bước cho nhân vật chính là gia đình mình nhé?'},
+    {ma:'CT24',ten:'5C',dung:'Cần tạo đồng cảm bằng bối cảnh, nhân vật và hội thoại thật.',nhip:'Hoàn cảnh → tò mò → nhân vật → hội thoại → xung đột',chot:'Nếu nghe lại cuộc trò chuyện gần nhất, xung đột thật nằm ở câu nào?'}
+  ];
+
+  function testGanNhatCuaToi() {
+    var acc = G.S && G.S.acc;
+    if (!acc || String((G.S && G.S.testOwner) || '').toLowerCase() !== String(acc.u || '').toLowerCase()) return null;
+    var ds = Object.keys((G.S && G.S.test) || {}).map(function (ma, i) {
+      var kq = G.S.test[ma], b = (G.TEST750 || []).filter(function (x) { return x.ma === ma; })[0];
+      return kq && kq.xong && kq.mien && b ? { ma:ma, kq:kq, b:b, i:i } : null;
+    }).filter(Boolean);
+    ds.sort(function (a, b) { return String(b.kq.lucISO || b.i).localeCompare(String(a.kq.lucISO || a.i)); });
+    return ds[0] || null;
+  }
+
+  G.chbhHoSoCuaToi = testGanNhatCuaToi;
+  G.chbhVietTheoHoSo = function () {
+    var hs = testGanNhatCuaToi();
+    if (!hs) return '';
+    var ten = ((G.S.acc && G.S.acc.ten) || 'bạn').trim();
+    var mien = Object.keys(hs.kq.mien).filter(function (k) {
+      return typeof hs.kq.mien[k] === 'number';
+    }).sort(function (a, b) { return hs.kq.mien[a] - hs.kq.mien[b]; });
+    if (!mien.length) return '';
+    var m1 = mien[0], m2 = mien[1] || mien[0], d1 = hs.kq.mien[m1], d2 = hs.kq.mien[m2];
+    return '<div class="card mb" style="border-color:var(--gita-vien-1)">' +
+      '<p class="tiny up muted">BẢN NHÁP CÁ NHÂN HOÁ · KHÔNG PHẢI KẾT LUẬN</p>' +
+      '<h3 style="margin:7px 0 14px;font-size:20px">Đêm ' + h(ten) + ' quyết định không né tránh nữa</h3>' +
+      '<div class="sm" style="line-height:1.85">' +
+      '<p>Có những giai đoạn, điều làm người ta mệt nhất không phải là một việc quá lớn. Đó là cảm giác mỗi ngày đều cố gắng, nhưng đến cuối ngày vẫn không biết mình đang đi về đâu. Trong kết quả <b>' + h(hs.b.ten) + '</b>, miền <b>' + h(m1) + '</b> đang ở <b>' + d1 + '/100</b>; miền <b>' + h(m2) + '</b> ở <b>' + d2 + '/100</b>. Những con số này không nói ' + h(ten) + ' kém hay thiếu điều gì. Chúng chỉ gợi ra một nơi đang cần được lắng nghe trước khi bị ép phải thay đổi.</p>' +
+      '<p>Hãy hình dung một buổi tối bình thường. Mọi thứ đã yên, nhưng trong đầu nhân vật chính vẫn còn một câu hỏi chưa trả lời: “Mình đã cố rồi, vậy tại sao vẫn thấy mắc kẹt?” Câu hỏi ấy không cần một lời trách. Nó cần một khoảng dừng đủ thật để nhìn lại: có thể mình đang mang quá nhiều việc, đang kỳ vọng phải ổn ngay, hoặc đã lâu không gọi đúng tên điều đang làm mình mỏi.</p>' +
+      '<p>Điểm căng nhất của câu chuyện không nằm ở lúc nhân vật bỏ cuộc. Nó nằm ở khoảnh khắc nhân vật nhận ra: cứ tiếp tục chống đỡ một mình thì ngày mai sẽ giống hệt hôm nay. Và thay vì hứa một cuộc lột xác, nhân vật chọn một việc nhỏ nhưng không còn né tránh: nhìn thẳng vào <b>' + h(m1) + '</b>, gọi tên một tình huống cụ thể, rồi dành bảy ngày để quan sát và thử một nhịp mới.</p>' +
+      '<p>Sự thay đổi không đến bằng một câu nói hay. Nó đến khi có một việc đủ nhỏ để làm được, đủ rõ để đo lại, và có người đồng hành không vội phán xét. Sau bảy ngày, nhân vật chưa cần trở thành một con người khác. Chỉ cần có thể nói: “Tôi hiểu mình hơn tuần trước. Tôi biết bước tiếp theo là gì.” Đó là lúc câu chuyện bắt đầu có đường ra.</p>' +
+      '<p><b>Bước mở đầu đề nghị:</b> trong bảy ngày tới, ghi lại một lần mỗi ngày khi ' + h(m1) + ' trở nên khó nhất; không sửa ngay, chỉ ghi điều đã xảy ra, cảm xúc lúc đó và một việc nhỏ đã thử. Sau bảy ngày mới cùng đọc lại mô thức và chọn bước tiếp theo.</p>' +
+      '</div><p class="tiny muted mt" style="line-height:1.65">Câu chuyện này là tác phẩm hư cấu được biên soạn từ kết quả khảo sát trên tài khoản hiện tại; không khẳng định sự kiện, nguyên nhân hoặc chẩn đoán về anh chị.</p></div>';
+  };
+
   function boDau(s) {
     return String(s || '').toLowerCase()
       .normalize('NFD').replace(/[̀-ͯ]/g, '')
@@ -23759,6 +23980,31 @@ var G = window.G || {}; window.G = G;
     o += U.tbl(['Nhịp', 'Là gì'],
       (GI.nhip6 || []).map(function (n) { return [h(n.ma + ' · ' + n.ten), h(n.vi)]; }));
 
+    o += U.sec('24 cấu trúc chuyện dẫn dắt vấn đề khách hàng',
+      'Chọn cấu trúc theo điều khách đang cần nhìn ra — không dùng chuyện để ép mua. Mỗi cấu trúc kết bằng một câu hỏi để khách tự gọi tên bước tiếp theo.');
+    o += '<div class="card mb">' + G.CHBH.map(function (c) {
+      return '<details style="padding:10px 0;border-bottom:1px solid var(--gita-vien-2)">' +
+        '<summary style="cursor:pointer"><b>' + h(c.ma + ' · ' + c.ten) + '</b>' +
+          '<span class="tiny dim"> · ' + h(c.dung) + '</span></summary>' +
+        '<div class="sm mt" style="line-height:1.7"><b>Nhịp dẫn:</b> ' + h(c.nhip) + '</div>' +
+        '<div class="sm mt" style="line-height:1.7"><b>Câu hỏi chốt:</b> ' + h(c.chot) + '</div>' +
+      '</details>';
+    }).join('') + '</div>';
+
+    var hs = testGanNhatCuaToi();
+    o += U.sec('Chuyện theo hồ sơ khảo sát của chính tôi',
+      'Chỉ đọc kết quả test đã hoàn thành trên tài khoản đang đăng nhập. Không tìm hồ sơ người khác, không gửi dữ liệu đi, và không biến kết quả khảo sát thành chẩn đoán.');
+    if (!hs) {
+      o += '<div class="card mb"><p class="sm">Chưa có kết quả test hoàn thành thuộc tài khoản này. Hoàn thành một bài ở Bộ test nhận diện rồi quay lại để biên soạn bản nháp sát hơn với điểm cần được chạm.</p></div>';
+    } else {
+      o += '<div class="card mb" style="border-color:var(--gita-vien-1)"><p class="sm" style="line-height:1.75">Sẵn sàng dùng kết quả <b>' +
+        h(hs.b.ten) + '</b> đã hoàn thành ' + h(hs.kq.luc || '') +
+        '. Bấm đồng ý để tạo một bản nháp trong phiên này; đồng ý không được lưu khi đăng xuất hoặc đổi tài khoản.</p>' +
+        '<button class="btn ' + (G.S.chbhTheoHoSo ? 'ghost' : 'pri') + ' sm" data-chbh-theo="1">' +
+        (G.S.chbhTheoHoSo ? 'Dừng dùng hồ sơ trong phiên này' : 'Đồng ý dùng kết quả test của tôi để biên soạn') + '</button></div>';
+      if (G.S.chbhTheoHoSo) o += G.chbhVietTheoHoSo();
+    }
+
     /* Ranh giới AI */
     o += U.sec('Ranh giới của trợ lý AI', 'Bốn điều AI KHÔNG làm, dù làm được.');
     o += '<div class="card mb">' + U.list(GI.ranhAI || [], 'var(--gita-do)') + '</div>';
@@ -23804,6 +24050,12 @@ var G = window.G || {}; window.G = G;
   document.addEventListener('click', function (e) {
     var b = e.target.closest && e.target.closest('[data-kbshien]');
     if (b) { G.S.kbsHien = (G.S.kbsHien || 60) + 60; G.render(); }
+    var theo = e.target.closest && e.target.closest('[data-chbh-theo]');
+    if (theo) {
+      G.S.chbhTheoHoSo = !G.S.chbhTheoHoSo;
+      if (G.S.chbhTheoHoSo && G.secLog) G.secLog('Dùng kết quả test để biên soạn chuyện', 'Chỉ dùng kết quả của tài khoản hiện tại trong phiên này.', 'Ghi nhận');
+      G.render();
+    }
   });
 })();
 
@@ -42337,12 +42589,13 @@ var G = window.G || {}; window.G = G;
   var THU_VIEN_3D = [
     {ma: 'trainer-san-khau', ten: 'Trainer sân khấu', loai: 'nhan-vat',
       dinhDang: 'GLB', yeuCau: ['rig xương', 'blendshape khuôn mặt', 'walk', 'gesture', 'idle'],
-      giayPhep: '', duongDan: ''},
+      giayPhep: '', duongDan: '', pbr: false, shadow: false},
     {ma: 'mc-truyen-hinh', ten: 'MC dẫn chương trình', loai: 'nhan-vat',
       dinhDang: 'GLB', yeuCau: ['rig xương', 'blendshape khuôn mặt', 'talk', 'gesture', 'idle'],
-      giayPhep: '', duongDan: ''},
+      giayPhep: '', duongDan: '', pbr: false, shadow: false},
     {ma: 'hoi-truong-500', ten: 'Hội trường 500 người', loai: 'boi-canh',
-      dinhDang: 'GLB', yeuCau: ['sân khấu', 'ánh sáng', 'khán giả'], giayPhep: '', duongDan: ''}
+      dinhDang: 'GLB', yeuCau: ['sân khấu', 'ánh sáng', 'khán giả'],
+      giayPhep: '', duongDan: '', pbr: false, shadow: false}
   ];
   G.xu3D = G.xu3D || {
     cheDo: 'webgl', nhanVat: 'trainer-san-khau', boiCanh: 'hoi-truong-500',
@@ -42394,7 +42647,9 @@ var G = window.G || {}; window.G = G;
     return true;
   }
   G.xu3DKiem = function () {
-    var x = G.xu3D, thieu = x.thuVien.filter(function (a) { return !a.giayPhep || !a.duongDan; });
+    var x = G.xu3D, thieu = x.thuVien.filter(function (a) {
+      return !a.giayPhep || !a.duongDan || !a.pbr || !a.shadow;
+    });
     return {
       webgl: coWebGL(), sanSang: !thieu.length && x.dongYGiong && x.daDuyetQuyen && x.daDuyetNoiDung,
       thieu: thieu.map(function (a) { return a.ten; })
@@ -42408,6 +42663,12 @@ var G = window.G || {}; window.G = G;
     if (o === 'dongYGiong' || o === 'daDuyetQuyen' || o === 'daDuyetNoiDung') G.xu3D[o] = !!v;
     else if (Object.prototype.hasOwnProperty.call(G.xu3D.timeline, o)) G.xu3D.timeline[o] = v;
     else G.xu3D[o] = v;
+    G.render && G.render();
+  };
+  G.xu3DSuaTaiSan = function (ma, o, v) {
+    var a = G.xu3D.thuVien.filter(function (x) { return x.ma === ma; })[0];
+    if (!a) return;
+    a[o] = o === 'pbr' || o === 'shadow' ? !!v : String(v || '').trim();
     G.render && G.render();
   };
   G.xu3DTaiDemo = function () {
@@ -42498,6 +42759,17 @@ var G = window.G || {}; window.G = G;
       '<label class="note"><input type="checkbox"' + (x.dongYGiong ? ' checked' : '') + ' onchange="G.xu3DChon(\'dongYGiong\',this.checked)"> Tôi có sự đồng ý rõ ràng để dùng giọng thu.</label>' +
       '<label class="note"><input type="checkbox"' + (x.daDuyetQuyen ? ' checked' : '') + ' onchange="G.xu3DChon(\'daDuyetQuyen\',this.checked)"> Tôi đã kiểm quyền sử dụng nhân vật, trang phục, cảnh và animation.</label>' +
       '<label class="note"><input type="checkbox"' + (x.daDuyetNoiDung ? ' checked' : '') + ' onchange="G.xu3DChon(\'daDuyetNoiDung\',this.checked)"> Tôi đã duyệt lời thoại; không giả mạo người thật không được phép.</label>' +
+      '<div class="note"><b>Manifest asset 3D V20</b> — khai báo để renderer riêng kiểm tra, không tải GLB lên Pages.' +
+      x.thuVien.map(function (a) {
+        return '<div class="row"><span>' + h(a.ten + ' · ' + a.dinhDang) + '</span><label>Hồ sơ quyền <input value="' +
+          h(a.giayPhep) + '" oninput="G.xu3DSuaTaiSan(\'' + h(a.ma) + '\',\'giayPhep\',this.value)"></label>' +
+          '<label>Mã/tệp kho riêng <input value="' + h(a.duongDan) +
+          '" oninput="G.xu3DSuaTaiSan(\'' + h(a.ma) + '\',\'duongDan\',this.value)"></label>' +
+          '<label><input type="checkbox"' + (a.pbr ? ' checked' : '') +
+          ' onchange="G.xu3DSuaTaiSan(\'' + h(a.ma) + '\',\'pbr\',this.checked)"> PBR</label>' +
+          '<label><input type="checkbox"' + (a.shadow ? ' checked' : '') +
+          ' onchange="G.xu3DSuaTaiSan(\'' + h(a.ma) + '\',\'shadow\',this.checked)"> shadow</label></div>';
+      }).join('') + '</div>' +
       '<p class="note">Nút xem mẫu dùng hiệu ứng mở đầu được tạo cục bộ; nhạc nền đầy đủ vẫn chọn từ tệp được cấp phép trong Kho hình &amp; tiếng. Giọng đọc mẫu là giọng hệ điều hành, không mô phỏng Trainer. ' +
       (k.webgl ? 'WebGL sẵn sàng.' : 'Thiết bị không hỗ trợ WebGL: Studio giữ preview 2.5D.') +
       (k.thieu.length ? ' Còn thiếu hồ sơ/tệp cục bộ: ' + h(k.thieu.join(' · ')) + '.' : '') + '</p></div>';
@@ -42589,6 +42861,64 @@ G.VIEWS = G.VIEWS || {};
   G.xuBanNhapAI = null;
   G.xuGiuLai = '';               // lời khai lúc bấm Dừng khẩn
   G.xuDanhGiaPilot = G.xuDanhGiaPilot || {};
+  G.xuVongDoi = G.xuVongDoi || { projectId: '', status: '', rights: {},
+    render: {}, qc: {}, passport: null, dang: false, events: [] };
+  G.xuAgentNoiBo = G.xuAgentNoiBo || {dang: false, plan: null, error: ''};
+  G.xuKhoGiong = G.xuKhoGiong || {dang: false, loaded: false, voices: [], error: ''};
+  G.xuDA.voiceIds = Array.isArray(G.xuDA.voiceIds) ? G.xuDA.voiceIds : [];
+  /* V20 is a delivery manifest; Pages never claims to render the final MP4. */
+  var V20_MAC_DINH = {
+    phienBan: 'V20', profile: 'cinematic-hd', tiLe: '9:16', rong: 1080, cao: 1920,
+    fps: 30, thoiLuongToiDa: 300, kenh: 'social', nganSachRender: 0,
+    template: 'trainer-cinematic'
+  };
+  G.xuV20 = G.xuV20 || {};
+  Object.keys(V20_MAC_DINH).forEach(function (k) {
+    if (G.xuV20[k] == null) G.xuV20[k] = V20_MAC_DINH[k];
+  });
+  var V20_KHO = {'9:16': [1080, 1920], '16:9': [1920, 1080], '1:1': [1080, 1080]};
+  var KHUNG_CHUYEN = [
+    ['three-act', '3 hồi', 'Thiết lập · đối đầu · giải quyết', 'giao-duc'],
+    ['five-act', '5 hồi', 'Giới thiệu · gia tăng · cao trào · giảm dần · kết', 'giao-duc'],
+    ['hero', 'Hành trình anh hùng', 'Bình thường · lời gọi · thử thách · trở về', 'giao-duc'],
+    ['pixar', 'Pixar', 'Ngày xửa ngày xưa · mỗi ngày · cho tới một ngày · vì vậy · cuối cùng', 'giao-duc'],
+    ['pas', 'PAS', 'Vấn đề · hệ quả · giải pháp', 'can-duyet-tiep-thi'],
+    ['bab', 'BAB', 'Trước · sau · cầu nối', 'can-duyet-tiep-thi'],
+    ['aida', 'AIDA', 'Chú ý · hứng thú · mong muốn · hành động', 'can-duyet-tiep-thi'],
+    ['star-chain-hook', 'Star – Chain – Hook', 'Câu chuyện · kết nối · lời mời', 'can-duyet-tiep-thi'],
+    ['nested', 'Nested Loops', 'Các câu chuyện lồng · thông điệp · khép vòng', 'giao-duc'],
+    ['in-medias-res', 'In Medias Res', 'Vào cao trào · quay lại nguyên nhân · giải quyết', 'giao-duc'],
+    ['freytag', 'Freytag', 'Giới thiệu · tăng · cao trào · giảm · kết', 'giao-duc'],
+    ['inverted', 'Kim tự tháp ngược', 'Thông tin chính · bối cảnh · chi tiết', 'giao-duc'],
+    ['soar', 'SOAR', 'Hoàn cảnh · trở ngại · hành động · kết quả', 'giao-duc'],
+    ['car', 'CAR', 'Bối cảnh · hành động · kết quả', 'giao-duc'],
+    ['par', 'PAR', 'Vấn đề · hành động · kết quả', 'giao-duc'],
+    ['carnegie', 'Magic Formula', 'Sự kiện · hành động · lợi ích', 'giao-duc'],
+    ['golden-circle', 'Golden Circle', 'Tại sao · cách làm · điều làm', 'giao-duc'],
+    ['monomyth', 'Monomyth', 'Khởi đầu · thử thách · chuyển hoá · trở về', 'giao-duc'],
+    ['mountain', 'Mountain', 'Leo dốc · đỉnh · hạ nhiệt · kết', 'giao-duc'],
+    ['false-start', 'False Start', 'Hiểu nhầm · điều chỉnh · hướng đúng', 'giao-duc'],
+    ['chronological', 'Tuần tự thời gian', 'Đầu · giữa · kết theo mốc', 'giao-duc'],
+    ['four-p', '4P', 'Cam kết có điều kiện · hình dung · bằng chứng · bước tiếp', 'can-duyet-tiep-thi'],
+    ['storybrand', 'StoryBrand', 'Nhân vật · vấn đề · hướng dẫn · kế hoạch · hành động', 'can-duyet-tiep-thi'],
+    ['five-c', '5C', 'Hoàn cảnh · tò mò · nhân vật · hội thoại · xung đột', 'giao-duc']
+  ];
+  var PILOT_MAN = ['gioi-thieu', 'ngoi-nha', 'bang-viec', 'hom-nay', 'lo-trinh',
+    'nhiem-vu', 'coach-deck', 'tuvan-deck', 'xu-ly-ca', 'van-hanh-cham-soc'];
+  G.xuKeHoachVideo = G.xuKeHoachVideo || {
+    khung: 'three-act', nguon: '', chuyenGia: '', mucDich: 'giao-duc', doiTuong: 'noi-bo',
+    cta: 'Chọn một bước phù hợp và thực hiện cùng người phụ trách.', marketingApproved: false, pilotOnly: true
+  };
+  G.xuHanhTrinhVideo = G.xuHanhTrinhVideo || {
+    mode: 'milestone', consent: false, reviewedBy: '', shareScope: 'private',
+    includeVoice: false, includeImage: false, signals: null
+  };
+  var HANH_TRINH_MAU = [
+    ['welcome', 'Chào hành trình', 'Thiết lập một bước nhỏ, an toàn và tự nguyện.', 'Bắt đầu bằng một việc phù hợp hôm nay.'],
+    ['milestone', 'Ghi nhận mốc thay đổi', 'Nhìn lại dấu vết của chính khách hàng, không so sánh với bất kỳ ai.', 'Chọn một việc để giữ nhịp trong tuần tới.'],
+    ['reset', 'Điều chỉnh nhịp', 'Ghi nhận tuần khó mà không phán xét; tìm một điều kiện để bắt đầu lại.', 'Chọn bước nhỏ nhất có thể làm trong 24 giờ.'],
+    ['reflection', 'Tổng kết hành trình', 'Phản tư về điều đã thử, điều có ích và điều cần điều chỉnh.', 'Hẹn một buổi trao đổi với người phụ trách nếu cần.']
+  ];
 
   /* Pilot có chủ ý nhỏ: ba màn nền tảng, mỗi màn ba video 3p30. Các câu
      chuyên môn vẫn đi qua Ngân khố câu khi dựng; danh sách này chỉ giữ
@@ -42631,6 +42961,34 @@ G.VIEWS = G.VIEWS || {};
       })
     };
   }
+  function dsManVideo() {
+    var all = [];
+    (G.NAV || []).forEach(function (group) {
+      (group.items || []).forEach(function (item) {
+        all.push({ma: item.v, ten: item.t, moTa: item.h, nhom: group.t,
+          phamVi: item.capMo || 'chung', perm: item.perm || ''});
+      });
+    });
+    return all;
+  }
+  function khungChuyen(ma) {
+    return KHUNG_CHUYEN.filter(function (x) { return x[0] === ma; })[0] || KHUNG_CHUYEN[0];
+  }
+  function keHoachMan(man) {
+    var x = G.xuKeHoachVideo, k = khungChuyen(x.khung);
+    return {ma: 'MAN-' + man.ma, man: man.ma, manTen: man.ten, dinhDang: man.nhom,
+      tieuDe: man.ten, thoiLuong: 240, cta: x.cta, nguon: x.nguon, chuyenGia: x.chuyenGia,
+      khung: k[0], khungTen: k[1], mucDich: x.mucDich, doiTuong: x.doiTuong,
+      phamVi: man.phamVi, perm: man.perm, thanhPhan: [
+        {ma: 'hook', ten: 'Mở đúng ngữ cảnh', giay: 25, canh: k[2]},
+        {ma: 'van-de', ten: 'Tình huống và nhu cầu', giay: 35, canh: man.moTa},
+        {ma: 'giai-phap', ten: 'Giải pháp có điều kiện', giay: 45, canh: 'Chỉ dẫn trên màn ' + man.ten},
+        {ma: 'huong-dan', ten: 'Thao tác từng bước', giay: 55, canh: 'Thực hành cùng MC/Trainer'},
+        {ma: 'minh-chung', ten: 'Bằng chứng và giới hạn', giay: 25, canh: 'Nguồn và điều kiện áp dụng'},
+        {ma: 'coach', ten: 'Câu hỏi Coach', giay: 25, canh: 'Dừng lại, tự đánh giá và chọn bước phù hợp'},
+        {ma: 'cta', ten: 'Bước tiếp theo tự nguyện', giay: 30, canh: x.cta}
+      ]};
+  }
   function tatCaVideoPilot() {
     var ra = [];
     CHUOI_PILOT.forEach(function (man) {
@@ -42638,6 +42996,54 @@ G.VIEWS = G.VIEWS || {};
     });
     return ra;
   }
+  G.xuNapVideoMan = function (ma) {
+    var man = dsManVideo().filter(function (x) { return x.ma === ma; })[0];
+    if (!man) return;
+    var ke = keHoachMan(man), d = G.xuDA;
+    d.ten = ke.tieuDe; d.dich = ke.thoiLuong; d.nguon = ke.nguon; d.dieuNho = ke.cta;
+    d.keHoachVideo = ke;
+    d.canh = ke.thanhPhan.map(function (p, i) {
+      return {id: ke.ma + '-' + p.ma, vai: p.ma, giay: p.giay,
+        loi: p.ten + '. ' + p.canh, chuMan: p.ten, hinh: p.canh, vatHinh: '', vatTieng: '',
+        sacThai: i === 0 ? 'truyen-cam-hung' : 'than-thien'};
+    });
+    G.xuSoat = null; veLai();
+  };
+  G.xuNapVideoHanhTrinh = function (mode) {
+    var x = HANH_TRINH_MAU.filter(function (p) { return p[0] === mode; })[0] || HANH_TRINH_MAU[1];
+    var htr = G.xuHanhTrinhVideo;
+    htr.mode = x[0];
+    /* Chỉ đọc tín hiệu trên thiết bị của chính người dùng. Không lấy tên,
+       hồ sơ, nhật ký, ảnh hoặc giọng để tạo brief. */
+    var t = G.tbSoTuan ? G.tbSoTuan() : {ds: []};
+    htr.signals = (t.ds || []).map(function (s) {
+      return {ma: s.ma, nay: s.nay, truoc: s.truoc, donVi: s.donVi};
+    });
+    var d = G.xuDA;
+    d.ten = x[1]; d.dich = 210; d.nguon = 'Dữ liệu tiến bộ do chính khách hàng ghi trên thiết bị';
+    d.dieuNho = x[3]; d.keHoachVideo = {ma: 'HT-' + x[0], tieuDe: x[1], thoiLuong: 210,
+      cta: x[3], nguon: d.nguon, dinhDang: 'Chăm sóc hành trình'};
+    d.canh = [
+      ['mo', 'Mở đầu', x[2], 25],
+      ['nhin-lai', 'Nhìn lại dấu vết', 'Đặt tuần này cạnh tuần trước của chính mình; không xếp hạng và không so sánh.', 35],
+      ['ghi-nhan', 'Ghi nhận nỗ lực', 'Ghi nhận điều đã làm được và nói rõ tuần khó cũng là dữ liệu để điều chỉnh.', 30],
+      ['goi-y', 'Bước tiếp theo', x[3], 45],
+      ['coach', 'Kết nối người đồng hành', 'Nếu cần hỗ trợ, khách hàng có thể chủ động đặt lịch với Coach hoặc Tư vấn phụ trách.', 35],
+      ['ket', 'Khép lại', 'Hành trình là của chính bạn; GITA365 chỉ giúp nhìn rõ bước kế tiếp.', 40]
+    ].map(function (p, i) {
+      return {id: 'ht-' + x[0] + '-' + i, vai: p[0], chuMan: p[1], loi: p[2], giay: p[3],
+        hinh: 'Video hành trình riêng tư · không dùng dữ liệu nhận dạng', vatHinh: '', vatTieng: '',
+        sacThai: i === 2 ? 'khich-le' : 'than-thien'};
+    });
+    G.xuSoat = null; veLai();
+  };
+  G.xuSuaHanhTrinhVideo = function (o, v) {
+    G.xuHanhTrinhVideo[o] = o === 'consent' || o === 'includeVoice' || o === 'includeImage' ? !!v : v;
+    veLai();
+  };
+  G.xuSuaKeHoachVideo = function (o, v) {
+    G.xuKeHoachVideo[o] = v; veLai();
+  };
   function loiMau(keHoach, phan) {
     var chu = keHoach.tieuDe;
     var noi = {
@@ -42887,6 +43293,150 @@ G.VIEWS = G.VIEWS || {};
       n: G.xuGiuLai});
     return o;
   }
+  function duAnGui() {
+    return {title: G.xuDA.ten, scenes: (G.xuDA.canh || []).map(function (c) {
+      return {id: c.id, giay: c.giay, loi: c.loi, chuMan: c.chuMan, sacThai: c.sacThai,
+        shot: c.shot || 'medium', lens: c.lens || '50mm', transition: c.transition || 'cut',
+        camera: c.camera || (G.xuDA.mc || {}).mayQuay || 'dolly',
+        tracks: ['visual', 'character', 'camera', 'voice', 'music', 'caption', 'transition']};
+    }), kho: G.xuDA.kho, tang: G.xuDA.tang, nguon: G.xuDA.nguon, dieuNho: G.xuDA.dieuNho,
+    bienSoan: {khung: G.xuKeHoachVideo.khung, mucDich: G.xuKeHoachVideo.mucDich,
+      doiTuong: G.xuKeHoachVideo.doiTuong, nguon: G.xuKeHoachVideo.nguon,
+      chuyenGia: G.xuKeHoachVideo.chuyenGia, marketingApproved: !!G.xuKeHoachVideo.marketingApproved},
+    journey: G.xuHanhTrinhVideo.mode ? {
+      mode: G.xuHanhTrinhVideo.mode, consent: !!G.xuHanhTrinhVideo.consent,
+      reviewedBy: G.xuHanhTrinhVideo.reviewedBy, shareScope: G.xuHanhTrinhVideo.shareScope,
+      includeVoice: !!G.xuHanhTrinhVideo.includeVoice, includeImage: !!G.xuHanhTrinhVideo.includeImage,
+      signals: G.xuHanhTrinhVideo.signals || []
+    } : null,
+    voiceIds: (G.xuDA.voiceIds || []).slice(0, 12),
+    studioProjectId: G.xuVongDoi.projectId || '',
+    v20: {delivery: {
+      phienBan: G.xuV20.phienBan, profile: G.xuV20.profile, tiLe: G.xuV20.tiLe,
+      rong: +G.xuV20.rong, cao: +G.xuV20.cao, fps: +G.xuV20.fps,
+      thoiLuongToiDa: +G.xuV20.thoiLuongToiDa, kenh: G.xuV20.kenh,
+      nganSachRender: +G.xuV20.nganSachRender, template: G.xuV20.template
+    }, threeD: (G.xu3D && G.xu3D.thuVien || []).map(function (a) {
+      return {ma: a.ma, dinhDang: a.dinhDang, giayPhep: a.giayPhep, duongDan: a.duongDan,
+        yeuCau: a.yeuCau || [], pbr: !!a.pbr, shadow: !!a.shadow};
+    }), tracks: ['visual', 'character', 'camera', 'voice', 'music', 'caption', 'transition']}};
+  }
+  function goiStudio(fn, data) {
+    if (!G.goiMayChu) { U.toast('Cần nối máy chủ để ghi sổ sản xuất.', 'err'); return; }
+    if (G.xuVongDoi.dang) return;
+    G.xuVongDoi.dang = true; veLai();
+    G.goiMayChu(fn, data).then(function (r) {
+      G.xuVongDoi.dang = false;
+      if (!r || !r.ok) { U.toast((r && r.error) || 'Máy chủ từ chối.', 'err'); veLai(); return; }
+      if (r.project) {
+        G.xuVongDoi.projectId = r.project.id; G.xuVongDoi.status = r.project.status;
+      }
+      if (r.status) G.xuVongDoi.status = r.status;
+      if (r.passport) G.xuVongDoi.passport = r.passport;
+      U.toast('Đã ghi cổng sản xuất.', 'ok'); veLai();
+    }).catch(function (e) {
+      G.xuVongDoi.dang = false; U.toast(String(e && e.message || e), 'err'); veLai();
+    });
+  }
+  G.xuTaoDuAn = function () { goiStudio('taoStudioProject', {project: duAnGui()}); };
+  G.xuTaiKhoGiong = function () {
+    var k = G.xuKhoGiong;
+    if (!G.goiMayChu || k.dang) return;
+    k.dang = true; k.error = ''; veLai();
+    G.goiMayChu('docKhoGiongStudio', {}).then(function (r) {
+      k.dang = false;
+      if (!r || !r.ok) { k.error = (r && r.error) || 'Không đọc được kho giọng.'; veLai(); return; }
+      k.voices = r.voices || []; k.loaded = true; veLai();
+    }).catch(function (e) { k.dang = false; k.error = String(e && e.message || e); veLai(); });
+  };
+  G.xuChonGiongStudio = function (voiceId, checked) {
+    var current = G.xuDA.voiceIds || [];
+    G.xuDA.voiceIds = checked
+      ? current.indexOf(voiceId) >= 0 ? current : current.concat([voiceId]).slice(0, 12)
+      : current.filter(function (id) { return id !== voiceId; });
+    veLai();
+  };
+  G.xuCapNhatQuyen = function (o, v) {
+    G.xuVongDoi.rights[o] = !!v; veLai();
+  };
+  G.xuSuaV20 = function (o, v) {
+    if (o === 'tiLe' && V20_KHO[v]) {
+      G.xuV20.tiLe = v; G.xuV20.rong = V20_KHO[v][0]; G.xuV20.cao = V20_KHO[v][1];
+      G.xuDA.kho = v;
+    } else G.xuV20[o] = v;
+    veLai();
+  };
+  G.xuCapNhatQC20 = function (o, v) {
+    G.xuVongDoi.qc.v20 = G.xuVongDoi.qc.v20 || {};
+    G.xuVongDoi.qc.v20[o] = !!v; veLai();
+  };
+  G.xuLapKeHoachNoiDung = function () {
+    if (!G.goiMayChu || G.xuAgentNoiBo.dang) return;
+    G.xuAgentNoiBo.dang = true; G.xuAgentNoiBo.error = ''; veLai();
+    G.goiMayChu('lapKeHoachAgent', {workflow: 'gita-noi-dung-coach-video'}).then(function (r) {
+      G.xuAgentNoiBo.dang = false;
+      if (!r || !r.ok) G.xuAgentNoiBo.error = (r && r.error) || 'Không lập được kế hoạch Agent.';
+      else G.xuAgentNoiBo.plan = r;
+      veLai();
+    }).catch(function (e) {
+      G.xuAgentNoiBo.dang = false; G.xuAgentNoiBo.error = String(e && e.message || e); veLai();
+    });
+  };
+  G.xuTaiManifestRender = function () {
+    var q = G.xuVongDoi;
+    if (!q.projectId || q.status !== 'rightsApproved') {
+      U.toast('Chỉ xuất manifest sau khi dự án đã duyệt quyền.', 'err'); return;
+    }
+    var a = document.createElement('a');
+    a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(duAnGui(), null, 2));
+    a.download = 'gita-v20-' + q.projectId + '-manifest.json'; a.click();
+  };
+  G.xuNhapKetQuaRender = function (files) {
+    var f = files && files[0], q = G.xuVongDoi;
+    if (!f || !q.projectId || q.status !== 'rightsApproved') return;
+    if (f.size > 65536) { U.toast('Tệp kết quả renderer quá lớn.', 'err'); return; }
+    var reader = new FileReader();
+    reader.onload = function () {
+      try {
+        var r = JSON.parse(String(reader.result || ''));
+        var hex = /^[a-f0-9]{64}$/i;
+        if (!r.ok || r.projectId !== q.projectId || !/^[A-Za-z0-9_-]{1,128}$/.test(String(r.jobId || '')) ||
+            !hex.test(String(r.mp4Sha256 || '')) || !hex.test(String(r.thumbnailSha256 || '')) ||
+            !hex.test(String(r.manifestSha256 || '')) || !(+r.duration >= 30) || !(+r.sceneCount > 0)) {
+          throw new Error('Kết quả không thuộc dự án hoặc thiếu checksum hợp lệ.');
+        }
+        q.render = {renderer: 'renderer-cuc-bo', jobId: r.jobId, outputHash: r.mp4Sha256,
+          thumbnailHash: r.thumbnailSha256, manifestHash: r.manifestSha256, projectId: r.projectId,
+          duration: +r.duration, sceneCount: +r.sceneCount};
+        U.toast('Đã nạp metadata render cục bộ; chưa tự phát hành.', 'ok'); veLai();
+      } catch (e) { U.toast(String(e && e.message || e), 'err'); }
+    };
+    reader.readAsText(f);
+  };
+  G.xuChuyenCong = function (to) {
+    var q = G.xuVongDoi, lights = den();
+    var render = q.render;
+    if (to === 'rendered') {
+      render = {renderer: 'renderer-tách biệt', outputHash: String(render.outputHash || '').trim(),
+        thumbnailHash: String(render.thumbnailHash || '').trim(), jobId: String(render.jobId || '').trim(),
+        manifestHash: String(render.manifestHash || '').trim(), projectId: String(render.projectId || q.projectId || '').trim(),
+        duration: Number(render.duration) || tong(), sceneCount: Number(render.sceneCount) || (G.xuDA.canh || []).length,
+        v20: duAnGui().v20.delivery};
+    }
+    var qc = q.qc;
+    if (to === 'qcPassed') qc = {approved: !!qc.approved, reviewer: String(qc.reviewer || '').trim(),
+      lights: lights, v20: qc.v20 || {}};
+    goiStudio('chuyenTrangThaiStudio', {projectId: q.projectId, to: to, project: duAnGui(),
+      rights: q.rights, render: render, qc: qc, contentChecked: !!(G.xuSoat && G.xuSoat.ok &&
+        !(G.xuSoat.cam || []).some(function (x) { return !x.canhBao; }))});
+  };
+  G.xuTaiHoChieu = function () {
+    var p = G.xuVongDoi.passport;
+    if (!p) return;
+    var a = document.createElement('a');
+    a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(p, null, 2));
+    a.download = 'ho-chieu-video-' + p.id + '.json'; a.click();
+  };
   /* ══ VẼ 1080p ══ */
   G.xuDongHo = 0;
   function khung() {
@@ -43229,6 +43779,16 @@ G.VIEWS = G.VIEWS || {};
         return '<option value="' + h(k) + '"' + (k === c.vatHinh ? ' selected' : '') + '>' +
           h(G.xuVat[k].ten) + '</option>';
       }).join('') + '</select></label></div>';
+    o += '<div class="row"><label>Cỡ cảnh <select onchange="G.xuSuaCanh(\'' + h(c.id) +
+      '\',\'shot\',this.value)">' + ['wide', 'medium', 'close-up', 'detail'].map(function (x) {
+       return '<option' + ((c.shot || 'medium') === x ? ' selected' : '') + '>' + h(x) + '</option>';
+      }).join('') + '</select></label><label>Ống kính <select onchange="G.xuSuaCanh(\'' + h(c.id) +
+      '\',\'lens\',this.value)">' + ['24mm', '35mm', '50mm', '85mm'].map(function (x) {
+       return '<option' + ((c.lens || '50mm') === x ? ' selected' : '') + '>' + x + '</option>';
+      }).join('') + '</select></label><label>Chuyển cảnh <select onchange="G.xuSuaCanh(\'' + h(c.id) +
+      '\',\'transition\',this.value)">' + ['cut', 'dissolve', 'fade', 'match-cut'].map(function (x) {
+       return '<option' + ((c.transition || 'cut') === x ? ' selected' : '') + '>' + x + '</option>';
+      }).join('') + '</select></label></div>';
     o += '<div class="row"><label>Giọng <select onchange="G.xuSuaCanh(\'' + h(c.id) +
       '\',\'vatTieng\',this.value)"><option value="">— chưa có giọng —</option>' +
       vTieng.map(function (k) {
@@ -43271,6 +43831,93 @@ G.VIEWS = G.VIEWS || {};
        trên màn chạm, mà nới `input` toàn cục thì trăm ô ở màn khác nở
        theo (bài học "nới đúng chỗ" của cổng vào 9.99.80). */
     o += '<div class="man-xu">';
+    var an = G.xuAgentNoiBo;
+    o += '<div class="giay"><h3>0 · Agent nội bộ · Nội dung, Coach &amp; Video</h3>' +
+      '<p class="note">Agent chỉ lập chuỗi công việc và bản nháp có dẫn nguồn; người có thẩm quyền duyệt nội dung, ' +
+      'quyền MC/Trainer thật, QC và phát hành. Không tự tư vấn khách hoặc tự xuất bản.</p>' +
+      '<button class="btn btn-chinh" onclick="G.xuLapKeHoachNoiDung()">' +
+      (an.dang ? 'Đang kiểm quyền…' : 'Lập kế hoạch sản xuất nội dung') + '</button>';
+    if (an.error) o += '<p class="note">' + h(an.error) + '</p>';
+    if (an.plan) o += '<ol class="note">' + (an.plan.plan || []).map(function (b) {
+      return '<li><b>' + h(b.agent) + '</b> · ' + h(b.output) + ' · ' +
+        (b.duoc ? 'sẵn sàng' : 'cần bật quyền ' + h(b.canQuyen || '')) + '</li>';
+    }).join('') + '</ol>';
+    o += '</div>';
+
+    var kg = G.xuKhoGiong;
+    o += '<div class="giay"><h3>0.05 · Kho giọng Studio</h3>' +
+      '<p class="note">Chỉ hiển thị giọng đã duyệt. Studio không nhận MP3/WAV, URL media hoặc khoá nhà cung cấp; ' +
+      'renderer riêng gắn checksum audio sau khi tổng hợp hợp lệ.</p>' +
+      '<button class="btn" onclick="G.xuTaiKhoGiong()">' + (kg.dang ? 'Đang tải…' : 'Tải kho giọng đã duyệt') + '</button>';
+    if (kg.error) o += '<p class="note">' + h(kg.error) + '</p>';
+    if (kg.loaded && !kg.voices.length) o += '<p class="note">Chưa có giọng nào được duyệt qua nghe mù.</p>';
+    if (kg.voices.length) o += '<div class="note">' + kg.voices.map(function (v) {
+      var selected = (G.xuDA.voiceIds || []).indexOf(v.id) >= 0;
+      return '<label style="display:block;margin:.45rem 0"><input type="checkbox"' + (selected ? ' checked' : '') +
+        ' onchange="G.xuChonGiongStudio(\'' + h(v.id) + '\',this.checked)"> <b>' + h(v.voiceId) +
+        '</b> · ' + h(v.locale) + ' · ' + h(v.provider) + ' · ' + h(v.tier) +
+        (v.style ? ' · ' + h(v.style) : '') + '</label>';
+    }).join('') + '</div>';
+    o += '</div>';
+
+    /* 0 · Danh mục video theo vai — card là brief, không phải lời tuyên bố
+       đã có 224 video. Mỗi video vẫn cần nguồn, chuyên gia và đủ cổng. */
+    var ks = G.xuKeHoachVideo, kh = khungChuyen(ks.khung), allMan = dsManVideo();
+    var pilotMan = allMan.filter(function (x) { return PILOT_MAN.indexOf(x.ma) >= 0; });
+    o += '<div class="giay"><h3>0.1 · Hệ thống video theo vai</h3>' +
+      '<p class="note">' + allMan.length + ' màn được lập backlog; đợt đầu chỉ chạy ' + pilotMan.length +
+      ' màn có tác động trực tiếp tới onboarding, công việc, Coach, Tư vấn và chăm sóc khách. Card chỉ tạo brief 4 phút; ' +
+      'không thay thế nguồn/chuyên gia hoặc tự phát hành.</p>' +
+      '<div class="row"><label>Khung kể chuyện <select onchange="G.xuSuaKeHoachVideo(\'khung\',this.value)">' +
+      KHUNG_CHUYEN.map(function (x) {
+        return '<option value="' + x[0] + '"' + (ks.khung === x[0] ? ' selected' : '') + '>' + h(x[1]) + '</option>';
+      }).join('') + '</select></label><label>Mục đích <select onchange="G.xuSuaKeHoachVideo(\'mucDich\',this.value)">' +
+      [['giao-duc','Hướng dẫn/giáo dục'],['cham-soc','Chăm sóc khách hàng'],['tu-van','Tư vấn có người phụ trách'],
+        ['tiep-thi','Tiếp thị đã duyệt']].map(function (x) {
+          return '<option value="' + x[0] + '"' + (ks.mucDich === x[0] ? ' selected' : '') + '>' + x[1] + '</option>';
+        }).join('') + '</select></label><label>Đối tượng <select onchange="G.xuSuaKeHoachVideo(\'doiTuong\',this.value)">' +
+      [['noi-bo','Nội bộ'],['gia-dinh','Gia đình'],['hoc-vien','Học viên'],['khach','Khách cần tư vấn']].map(function (x) {
+        return '<option value="' + x[0] + '"' + (ks.doiTuong === x[0] ? ' selected' : '') + '>' + x[1] + '</option>';
+      }).join('') + '</select></label></div>' +
+      '<div class="row"><label>Nguồn đã kiểm <input value="' + h(ks.nguon) +
+      '" oninput="G.xuSuaKeHoachVideo(\'nguon\',this.value)"></label><label>Chuyên gia duyệt <input value="' +
+      h(ks.chuyenGia) + '" oninput="G.xuSuaKeHoachVideo(\'chuyenGia\',this.value)"></label>' +
+      '<label>CTA tự nguyện <input value="' + h(ks.cta) +
+      '" oninput="G.xuSuaKeHoachVideo(\'cta\',this.value)"></label></div>' +
+      (ks.mucDich === 'tiep-thi' ? '<label class="note"><input type="checkbox"' +
+        (ks.marketingApproved ? ' checked' : '') +
+        ' onchange="G.xuSuaKeHoachVideo(\'marketingApproved\',this.checked)"> Tôi xác nhận nội dung tiếp thị đã qua duyệt người thật; không dùng khan hiếm, gây áp lực hoặc tuyên bố thiếu bằng chứng.</label>' : '') +
+      '<p class="note">Khung đang chọn: <b>' + h(kh[1]) + '</b> · ' + h(kh[2]) +
+      (kh[3] === 'can-duyet-tiep-thi' ? '. Khung này chỉ dùng sau duyệt tiếp thị, không dùng để gây áp lực.' : '.') + '</p>' +
+      '<div class="row" style="flex-wrap:wrap">' + pilotMan.map(function (m) {
+        return '<button class="btn" onclick="G.xuNapVideoMan(\'' + h(m.ma) + '\')">' +
+          h(m.ten + ' · ' + m.nhom) + '</button>';
+      }).join('') + '</div>' +
+      '<details class="note"><summary>Xem backlog ' + allMan.length + ' màn</summary><ol>' +
+      allMan.map(function (m) { return '<li><button class="btn" onclick="G.xuNapVideoMan(\'' + h(m.ma) + '\')">' +
+        h(m.ten) + '</button> · ' + h(m.nhom) + (m.perm ? ' · quyền ' + h(m.perm) : '') + '</li>'; }).join('') +
+      '</ol></details></div>';
+
+    var ht = G.xuHanhTrinhVideo;
+    o += '<div class="giay"><h3>0.2 · Video hành trình khách hàng</h3>' +
+      '<p class="note">Video ghi nhận thay đổi chỉ nhìn tín hiệu do chính khách hàng ghi trên thiết bị. ' +
+      'Không so sánh khách hàng, không tự tạo hồ sơ, không dùng dữ liệu nhận dạng hoặc tự gửi video đi.</p>' +
+      '<div class="row">' + HANH_TRINH_MAU.map(function (x) {
+        return '<button class="btn" onclick="G.xuNapVideoHanhTrinh(\'' + x[0] + '\')">' + h(x[1]) + '</button>';
+      }).join('') + '</div>' +
+      '<label class="note"><input type="checkbox"' + (ht.consent ? ' checked' : '') +
+      ' onchange="G.xuSuaHanhTrinhVideo(\'consent\',this.checked)"> Khách hàng đã đồng ý tạo video hành trình riêng tư từ các tín hiệu tiến bộ của chính mình.</label>' +
+      '<div class="row"><label>Phạm vi chia sẻ <select onchange="G.xuSuaHanhTrinhVideo(\'shareScope\',this.value)">' +
+      [['private','Chỉ khách hàng'],['coach','Khách hàng và Coach phụ trách'],['family','Gia đình đã được đồng ý']].map(function (x) {
+        return '<option value="' + x[0] + '"' + (ht.shareScope === x[0] ? ' selected' : '') + '>' + x[1] + '</option>';
+      }).join('') + '</select></label><label>Người rà nội dung <input value="' + h(ht.reviewedBy) +
+      '" oninput="G.xuSuaHanhTrinhVideo(\'reviewedBy\',this.value)"></label></div>' +
+      '<label class="note"><input type="checkbox"' + (ht.includeVoice ? ' checked' : '') +
+      ' onchange="G.xuSuaHanhTrinhVideo(\'includeVoice\',this.checked)"> Có đồng ý riêng nếu dùng giọng khách hàng.</label>' +
+      '<label class="note"><input type="checkbox"' + (ht.includeImage ? ' checked' : '') +
+      ' onchange="G.xuSuaHanhTrinhVideo(\'includeImage\',this.checked)"> Có đồng ý riêng nếu dùng hình/video khách hàng.</label>' +
+      '<p class="note">Không có đồng ý hình/giọng thì video chỉ dùng MC/Trainer được cấp quyền và đồ hoạ V20. ' +
+      'Khách hàng luôn có quyền không tham gia hoặc yêu cầu gỡ video.</p></div>';
 
     /* 0 · Chuỗi video — nạp một video là nạp đủ kịch bản, shot list,
        thời lượng và CTA vào cùng G.xuDA mà Studio đang dựng. */
@@ -43320,6 +43967,25 @@ G.VIEWS = G.VIEWS || {};
       '" oninput="G.xuSuaO(\'dieuNho\',this.value)"></label>';
     o += '<div class="row"><button class="btn btn-chinh" onclick="G.xuViet()">Viết kịch bản</button>' +
       '<button class="btn" onclick="G.xuGoiSoat()">Soát lời đọc</button></div>';
+    o += '<div class="giay"><h3>1.1 · Chuẩn phát hành V20</h3>' +
+      '<p class="note">Manifest V20 là hợp đồng bàn giao cho renderer tách biệt; Pages chỉ xem thử, không kết xuất MP4.</p>' +
+      '<div class="row"><label>Template <select onchange="G.xuSuaV20(\'template\',this.value)">' +
+      [['trainer-cinematic','Trainer cinematic'],['mc-story','MC dẫn chuyện'],['case-study','Case study'],
+       ['testimonial','Testimonial'],['cta','CTA']].map(function (x) {
+         return '<option value="' + x[0] + '"' + (G.xuV20.template === x[0] ? ' selected' : '') + '>' + x[1] + '</option>';
+       }).join('') + '</select></label><label>Tỷ lệ <select onchange="G.xuSuaV20(\'tiLe\',this.value)">' +
+      Object.keys(V20_KHO).map(function (x) {
+       return '<option' + (G.xuV20.tiLe === x ? ' selected' : '') + '>' + x + '</option>';
+      }).join('') + '</select></label><label>FPS <select onchange="G.xuSuaV20(\'fps\',this.value)">' +
+      [24, 25, 30, 60].map(function (x) {
+       return '<option' + (+G.xuV20.fps === x ? ' selected' : '') + '>' + x + '</option>';
+      }).join('') + '</select></label></div><div class="row"><label>Kênh <select onchange="G.xuSuaV20(\'kenh\',this.value)">' +
+      ['social', 'website', 'event', 'training'].map(function (x) {
+       return '<option' + (G.xuV20.kenh === x ? ' selected' : '') + '>' + h(x) + '</option>';
+      }).join('') + '</select></label><label>Ngân sách render tối đa <input type="number" min="0" step="1" value="' +
+      h(String(G.xuV20.nganSachRender)) + '" oninput="G.xuSuaV20(\'nganSachRender\',this.value)"></label>' +
+      '<span class="note">' + h(G.xuV20.rong + '×' + G.xuV20.cao + ' · ' + G.xuV20.fps + ' fps · tối đa ' +
+      G.xuV20.thoiLuongToiDa + ' giây') + '</span></div></div>';
     if (G.S && G.S.acc && G.S.acc.role === 'R01') {
       o += '<label class="note"><input id="xuDongYAI" type="checkbox"> Tôi xác nhận đề bài không chứa thông tin nhận dạng ' +
         'khách hàng và đồng ý gửi đề bài tới OpenAI để tạo bản nháp.</label>' +
@@ -43428,11 +44094,62 @@ G.VIEWS = G.VIEWS || {};
         '<span>' + h(l.n) + '</span></li>';
     }).join('') + '</ul></div>';
 
-    /* 6 · Xuất kèm */
-    o += '<div class="giay"><h3>7 · Xuất phim</h3>' +
-      '<p class="note">Kết xuất video, phụ đề và hộ chiếu phát hành chưa được nối với renderer ' +
-      'nội bộ. Không gửi ảnh/giọng lên dịch vụ ngoài; bản xem trước chỉ giúp kiểm tra kịch bản, ' +
-      'khung hình, chuyển động và phối âm.</p></div>';
+    /* 7 · Sổ sản xuất. Renderer phải là dịch vụ tách biệt, không phải Pages/Worker. */
+    var vd = G.xuVongDoi, next = {
+      draft: 'scriptApproved', scriptApproved: 'rightsApproved', rightsApproved: 'rendered',
+      rendered: 'qcPassed', qcPassed: 'published'
+    }[vd.status || ''];
+    var nhan = {
+      scriptApproved: 'Duyệt kịch bản', rightsApproved: 'Duyệt quyền sử dụng',
+      rendered: 'Ghi nhận render tách biệt', qcPassed: 'Duyệt QC độc lập', published: 'Phát hành · R01'
+    };
+    o += '<div class="giay"><h3>7 · Sổ sản xuất &amp; phát hành</h3>' +
+      '<p class="note">Pages chỉ biên tập/xem thử. Render MP4, FFmpeg, localization, upscale và AI video ' +
+      'phải chạy ở dịch vụ/container tách biệt sau khi đã được cấp quyền; Studio không tải blob media lên Worker.</p>';
+    if (!vd.projectId) {
+      o += '<button class="btn btn-chinh" onclick="G.xuTaoDuAn()">' +
+        (vd.dang ? 'Đang tạo…' : 'Tạo dự án trong sổ sản xuất') + '</button>';
+    } else {
+      o += '<p class="note"><b>Mã dự án:</b> ' + h(vd.projectId) + ' · <b>Trạng thái:</b> ' +
+        h(vd.status || 'draft') + '</p>';
+      if (vd.status === 'scriptApproved') {
+        var r = vd.rights || {};
+        o += '<label class="note"><input type="checkbox"' + (r.imageConsent ? ' checked' : '') +
+          ' onchange="G.xuCapNhatQuyen(\'imageConsent\',this.checked)"> Có quyền dùng hình/nhân vật.</label>' +
+          '<label class="note"><input type="checkbox"' + (r.voiceConsent ? ' checked' : '') +
+          ' onchange="G.xuCapNhatQuyen(\'voiceConsent\',this.checked)"> Có đồng ý rõ ràng cho giọng thu.</label>' +
+          '<label class="note"><input type="checkbox"' + (r.musicRights ? ' checked' : '') +
+          ' onchange="G.xuCapNhatQuyen(\'musicRights\',this.checked)"> Có quyền dùng nhạc/hiệu ứng.</label>' +
+          '<label>Người xác nhận quyền <input value="' + h(r.attestedBy || '') +
+          '" oninput="G.xuVongDoi.rights.attestedBy=this.value"></label>';
+      }
+      if (vd.status === 'rightsApproved') {
+        o += '<div class="row"><button class="btn" onclick="G.xuTaiManifestRender()">Tải manifest cho renderer cục bộ</button>' +
+          '<label class="btn">Nạp result.json từ renderer <input type="file" accept="application/json,.json" ' +
+          'style="display:none" onchange="G.xuNhapKetQuaRender(this.files)"></label></div>' +
+          '<p class="note">Luồng 0 đồng: chạy container trên máy nội bộ, rồi nạp <code>result.json</code> tại đây. ' +
+          'Không gửi video, asset hoặc API key qua Pages/Worker.</p>';
+        if ((vd.render || {}).jobId) o += '<p class="note">Job ' + h(vd.render.jobId) +
+          ' · MP4 SHA-256 ' + h(String(vd.render.outputHash).slice(0, 16)) + '…</p>';
+      }
+      if (vd.status === 'rendered') {
+        var q = vd.qc || {};
+        o += '<label class="note"><input type="checkbox"' + (q.approved ? ' checked' : '') +
+          ' onchange="G.xuVongDoi.qc.approved=this.checked"> Tôi xác nhận QC đã nghe/xem toàn bộ bản render.</label>' +
+          '<label>Người duyệt QC độc lập <input value="' + h(q.reviewer || '') +
+          '" oninput="G.xuVongDoi.qc.reviewer=this.value"></label>';
+        o += '<p class="note">QC V20 (người duyệt xác nhận trực tiếp trên bản render):</p><div class="row">' +
+          [['assetRights','Quyền asset'],['audio','Âm thanh/loudness'],['captions','Phụ đề/timing'],
+            ['safeArea','Safe-area'],['flicker','Nháy sáng'],['brand','Thương hiệu'],['accessibility','Khả năng tiếp cận']]
+            .map(function (x) { return '<label class="note"><input type="checkbox"' +
+              ((q.v20 || {})[x[0]] ? ' checked' : '') + ' onchange="G.xuCapNhatQC20(\'' + x[0] +
+              '\',this.checked)"> ' + x[1] + '</label>'; }).join('') + '</div>';
+      }
+      if (next) o += '<button class="btn btn-chinh" onclick="G.xuChuyenCong(\'' + next + '\')">' +
+        (vd.dang ? 'Đang ghi…' : nhan[next]) + '</button>';
+      if (vd.passport) o += '<button class="btn" onclick="G.xuTaiHoChieu()">Tải hộ chiếu phát hành đã ký</button>';
+    }
+    o += '</div>';
 
     setTimeout(function () { G.xuCoManh(); }, 0);
     return o + '</div>';
@@ -55010,7 +55727,7 @@ var KEY = 'gita365.v7';
 G.S = {
   role:null, acc:null, roleObj:null, crmMuc:null,
   view:'ban-do', open:['g1'], rtab:'labon', rightOpen:false, leftOpen:false, thuCot:false,
-  checks:{}, vision:{}, journal:{}, test:{}, bando:{}, nhatky:{}, baithi:{}, thoigian:{}, sathach:{}, khoahoc:{}, mtb:{}, famId:'F-001', kbShown:60,
+  checks:{}, vision:{}, journal:{}, test:{}, testOwner:null, bando:{}, nhatky:{}, baithi:{}, thoigian:{}, sathach:{}, khoahoc:{}, mtb:{}, famId:'F-001', kbShown:60,
   /* Danh sách mục đã từng thấy trong cột trái. Dùng để nhận ra lúc thăng
      hạng: tầng mở thêm thì tập mục mở rộng ra, và chênh lệch chính là
      phần vừa được cấp. Không có sổ này thì mục mới lặng lẽ xuất hiện
@@ -55021,7 +55738,7 @@ function save(){
   try{ localStorage.setItem(KEY, JSON.stringify({
     role:G.S.role, u:G.S.acc && G.S.acc.u, tuMayChu:!!(G.S.acc && G.S.acc.tuMayChu),
     crmMuc:G.S.crmMuc, view:G.S.view, open:G.S.open, rtab:G.S.rtab,
-    checks:G.S.checks, vision:G.S.vision, journal:G.S.journal, test:G.S.test, bando:G.S.bando, nhatky:G.S.nhatky, baithi:G.S.baithi, thoigian:G.S.thoigian, sathach:G.S.sathach, khoahoc:G.S.khoahoc,
+    checks:G.S.checks, vision:G.S.vision, journal:G.S.journal, test:G.S.test, testOwner:G.S.testOwner, bando:G.S.bando, nhatky:G.S.nhatky, baithi:G.S.baithi, thoigian:G.S.thoigian, sathach:G.S.sathach, khoahoc:G.S.khoahoc,
     rightOpen:G.S.rightOpen, thuCot:G.S.thuCot, mood:G.S.mood, daThay:G.S.daThay,
     /* Sổ việc và sổ chốt ngày. Thiếu hai dòng này thì mọi thứ người ta
        làm trên bảng công việc bay hết khi tải lại trang: sáng nhận việc,
@@ -55066,6 +55783,7 @@ function load(){
     G.S.bcVai = d.bcVai || null;
     G.S.bcBien = d.bcBien || {};
     G.S.test = d.test || {};
+    G.S.testOwner = d.testOwner || null;
     G.S.bando = d.bando || {};
     G.S.daThay = d.daThay || null;
     G.S.nhatky = d.nhatky || {};
@@ -55609,6 +56327,14 @@ function vaoPhien(a){
      khi người khác đăng nhập. Cùng luật với donKho() bên kho khoá. */
   if (G.S.viecCua && G.S.viecCua !== a.u) { G.S.viec = {}; G.S.chotNgay = {}; G.S.chotKhNgay = {}; G.S.caiTien = {}; G.S.mua = null; G.S.vet = []; }
   G.S.viecCua = a.u;
+  /* Kết quả khảo sát là hồ sơ cá nhân. Bản cũ từng chỉ lưu một sổ test
+     chung theo trình duyệt; đổi tài khoản trên máy dùng chung có thể nhìn
+     thấy kết quả của người trước. Không xác nhận đúng chủ sở hữu thì xoá,
+     thay vì đoán rằng đó là dữ liệu của người vừa đăng nhập. */
+  var chuTest = String(G.S.testOwner || '').toLowerCase();
+  var nguoiMoi = String(a.u || '').toLowerCase();
+  if (chuTest !== nguoiMoi) { G.S.test = {}; G.S.testDang = null; G.S.testOwner = nguoiMoi; }
+  G.S.chbhTheoHoSo = false;  /* đồng ý dùng hồ sơ để biên soạn chỉ có hiệu lực trong phiên này */
   /* Chỉ mục của trợ lý dựng theo ĐÚNG kho mà vai trước được cấp. Giữ
      lại qua lượt đăng nhập sau là để vai mới tra được kho của vai cũ —
      đúng lớp lỗi mà mục 40 của bộ kiểm canh với dữ liệu nghề. Khoá

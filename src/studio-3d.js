@@ -7,12 +7,13 @@ var G = window.G || {}; window.G = G;
   var THU_VIEN_3D = [
     {ma: 'trainer-san-khau', ten: 'Trainer sân khấu', loai: 'nhan-vat',
       dinhDang: 'GLB', yeuCau: ['rig xương', 'blendshape khuôn mặt', 'walk', 'gesture', 'idle'],
-      giayPhep: '', duongDan: ''},
+      giayPhep: '', duongDan: '', pbr: false, shadow: false},
     {ma: 'mc-truyen-hinh', ten: 'MC dẫn chương trình', loai: 'nhan-vat',
       dinhDang: 'GLB', yeuCau: ['rig xương', 'blendshape khuôn mặt', 'talk', 'gesture', 'idle'],
-      giayPhep: '', duongDan: ''},
+      giayPhep: '', duongDan: '', pbr: false, shadow: false},
     {ma: 'hoi-truong-500', ten: 'Hội trường 500 người', loai: 'boi-canh',
-      dinhDang: 'GLB', yeuCau: ['sân khấu', 'ánh sáng', 'khán giả'], giayPhep: '', duongDan: ''}
+      dinhDang: 'GLB', yeuCau: ['sân khấu', 'ánh sáng', 'khán giả'],
+      giayPhep: '', duongDan: '', pbr: false, shadow: false}
   ];
   G.xu3D = G.xu3D || {
     cheDo: 'webgl', nhanVat: 'trainer-san-khau', boiCanh: 'hoi-truong-500',
@@ -64,7 +65,9 @@ var G = window.G || {}; window.G = G;
     return true;
   }
   G.xu3DKiem = function () {
-    var x = G.xu3D, thieu = x.thuVien.filter(function (a) { return !a.giayPhep || !a.duongDan; });
+    var x = G.xu3D, thieu = x.thuVien.filter(function (a) {
+      return !a.giayPhep || !a.duongDan || !a.pbr || !a.shadow;
+    });
     return {
       webgl: coWebGL(), sanSang: !thieu.length && x.dongYGiong && x.daDuyetQuyen && x.daDuyetNoiDung,
       thieu: thieu.map(function (a) { return a.ten; })
@@ -78,6 +81,12 @@ var G = window.G || {}; window.G = G;
     if (o === 'dongYGiong' || o === 'daDuyetQuyen' || o === 'daDuyetNoiDung') G.xu3D[o] = !!v;
     else if (Object.prototype.hasOwnProperty.call(G.xu3D.timeline, o)) G.xu3D.timeline[o] = v;
     else G.xu3D[o] = v;
+    G.render && G.render();
+  };
+  G.xu3DSuaTaiSan = function (ma, o, v) {
+    var a = G.xu3D.thuVien.filter(function (x) { return x.ma === ma; })[0];
+    if (!a) return;
+    a[o] = o === 'pbr' || o === 'shadow' ? !!v : String(v || '').trim();
     G.render && G.render();
   };
   G.xu3DTaiDemo = function () {
@@ -168,6 +177,17 @@ var G = window.G || {}; window.G = G;
       '<label class="note"><input type="checkbox"' + (x.dongYGiong ? ' checked' : '') + ' onchange="G.xu3DChon(\'dongYGiong\',this.checked)"> Tôi có sự đồng ý rõ ràng để dùng giọng thu.</label>' +
       '<label class="note"><input type="checkbox"' + (x.daDuyetQuyen ? ' checked' : '') + ' onchange="G.xu3DChon(\'daDuyetQuyen\',this.checked)"> Tôi đã kiểm quyền sử dụng nhân vật, trang phục, cảnh và animation.</label>' +
       '<label class="note"><input type="checkbox"' + (x.daDuyetNoiDung ? ' checked' : '') + ' onchange="G.xu3DChon(\'daDuyetNoiDung\',this.checked)"> Tôi đã duyệt lời thoại; không giả mạo người thật không được phép.</label>' +
+      '<div class="note"><b>Manifest asset 3D V20</b> — khai báo để renderer riêng kiểm tra, không tải GLB lên Pages.' +
+      x.thuVien.map(function (a) {
+        return '<div class="row"><span>' + h(a.ten + ' · ' + a.dinhDang) + '</span><label>Hồ sơ quyền <input value="' +
+          h(a.giayPhep) + '" oninput="G.xu3DSuaTaiSan(\'' + h(a.ma) + '\',\'giayPhep\',this.value)"></label>' +
+          '<label>Mã/tệp kho riêng <input value="' + h(a.duongDan) +
+          '" oninput="G.xu3DSuaTaiSan(\'' + h(a.ma) + '\',\'duongDan\',this.value)"></label>' +
+          '<label><input type="checkbox"' + (a.pbr ? ' checked' : '') +
+          ' onchange="G.xu3DSuaTaiSan(\'' + h(a.ma) + '\',\'pbr\',this.checked)"> PBR</label>' +
+          '<label><input type="checkbox"' + (a.shadow ? ' checked' : '') +
+          ' onchange="G.xu3DSuaTaiSan(\'' + h(a.ma) + '\',\'shadow\',this.checked)"> shadow</label></div>';
+      }).join('') + '</div>' +
       '<p class="note">Nút xem mẫu dùng hiệu ứng mở đầu được tạo cục bộ; nhạc nền đầy đủ vẫn chọn từ tệp được cấp phép trong Kho hình &amp; tiếng. Giọng đọc mẫu là giọng hệ điều hành, không mô phỏng Trainer. ' +
       (k.webgl ? 'WebGL sẵn sàng.' : 'Thiết bị không hỗ trợ WebGL: Studio giữ preview 2.5D.') +
       (k.thieu.length ? ' Còn thiếu hồ sơ/tệp cục bộ: ' + h(k.thieu.join(' · ')) + '.' : '') + '</p></div>';

@@ -38,6 +38,54 @@
 
 PRAGMA foreign_keys = ON;
 
+-- Studio lưu metadata, quyền và chuỗi duyệt; video/giọng/ảnh gốc không vào D1.
+CREATE TABLE IF NOT EXISTS studioProject (
+  id TEXT PRIMARY KEY, version INTEGER NOT NULL DEFAULT 1, status TEXT NOT NULL,
+  title TEXT NOT NULL, projectJson TEXT NOT NULL, rightsJson TEXT NOT NULL DEFAULT '{}',
+  renderJson TEXT NOT NULL DEFAULT '{}', qcJson TEXT NOT NULL DEFAULT '{}',
+  createdBy TEXT NOT NULL, passportId TEXT, createdAt TEXT NOT NULL, updatedAt TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_studioProject_status ON studioProject (status, updatedAt);
+CREATE TABLE IF NOT EXISTS studioEvent (
+  id TEXT PRIMARY KEY, projectId TEXT NOT NULL, version INTEGER NOT NULL,
+  fromStatus TEXT, toStatus TEXT NOT NULL, actorId TEXT NOT NULL, actorRole TEXT NOT NULL,
+  payloadHash TEXT NOT NULL, reason TEXT, createdAt TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_studioEvent_project ON studioEvent (projectId, version, createdAt);
+CREATE TABLE IF NOT EXISTS studioPassport (
+  id TEXT PRIMARY KEY, projectId TEXT NOT NULL, version INTEGER NOT NULL,
+  manifestJson TEXT NOT NULL, manifestHash TEXT NOT NULL, signature TEXT NOT NULL,
+  issuedBy TEXT NOT NULL, issuedAt TEXT NOT NULL
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_studioPassport_project ON studioPassport (projectId, version);
+
+-- Kho giọng Studio chỉ giữ hồ sơ quyền, đánh giá và checksum; không lưu mẫu
+-- giọng, audio tổng hợp, khoá API hoặc đường dẫn tới kho media riêng.
+CREATE TABLE IF NOT EXISTS studioVoice (
+  id TEXT PRIMARY KEY, tier TEXT NOT NULL, provider TEXT NOT NULL, voiceId TEXT NOT NULL,
+  locale TEXT NOT NULL, style TEXT NOT NULL DEFAULT '', allowedUse TEXT NOT NULL,
+  licenseRef TEXT NOT NULL, consentJson TEXT NOT NULL DEFAULT '{}',
+  sampleHash TEXT NOT NULL DEFAULT '', reviewJson TEXT NOT NULL DEFAULT '{}',
+  status TEXT NOT NULL DEFAULT 'candidate', reviewedBy TEXT NOT NULL DEFAULT '',
+  reviewedAt TEXT NOT NULL DEFAULT '', createdBy TEXT NOT NULL,
+  createdAt TEXT NOT NULL, updatedAt TEXT NOT NULL,
+  UNIQUE(provider, voiceId),
+  CHECK (tier IN ('licensed', 'verifiedPrivate')),
+  CHECK (status IN ('candidate', 'approved', 'retired'))
+);
+CREATE INDEX IF NOT EXISTS ix_studioVoice_catalog ON studioVoice (status, locale, tier, updatedAt);
+
+-- Sổ vận hành R01/R02: sự cố, phát hành, cải tiến. Không đưa secret/dữ liệu khách vào.
+CREATE TABLE IF NOT EXISTS operationsLedger (
+  id TEXT PRIMARY KEY, kind TEXT NOT NULL, status TEXT NOT NULL, title TEXT NOT NULL,
+  owner TEXT NOT NULL, reviewer TEXT NOT NULL DEFAULT '', ref TEXT NOT NULL DEFAULT '',
+  rollbackRef TEXT NOT NULL DEFAULT '', evidence TEXT NOT NULL DEFAULT '',
+  createdBy TEXT NOT NULL, createdAt TEXT NOT NULL, updatedAt TEXT NOT NULL, closedAt TEXT NOT NULL DEFAULT '',
+  CHECK (kind IN ('suCo','phatHanh','caiTien')),
+  CHECK (status IN ('moi','dangLam','choDuyet','dong'))
+);
+CREATE INDEX IF NOT EXISTS ix_operationsLedger_status ON operationsLedger (status, updatedAt);
+
 -- ─────────────────────────────────────────────────────────────
 --  NGƯỜI DÙNG
 --

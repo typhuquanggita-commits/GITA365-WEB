@@ -76,6 +76,7 @@ import { docLuatGiaoDien } from './luat-giao-dien.js';
 import { capLenhGiamSat, thuLenhGiamSat, docLenhGiamSat, soatSoDen,
   docTranGiamSat } from './giam-sat.js';
 import { ghiHoChieuVideo } from './studio.js';
+import { taoStudioProject, docStudioProject, chuyenTrangThaiStudio, docKhoGiongStudio, ghiKhoGiongStudio } from './studio-lifecycle.js';
 import { baoDongCuuHe, dongBangHe, moBangHe, truyHoiHe, soatCuuHe, dangBang,
   AN_TOAN_KHI_BANG } from './cuu-he.js';
 import { docHomNay, tickNhip, boViecHomNay, batCheDoBao, ghiGhimCon, docGhimCon,
@@ -97,6 +98,7 @@ import { kiemBanMoi, docTinCongDong, ghiTinCongDong, guiChuyen,
   napTaiLieu, duyetTaiLieu, napTinhHuongKhach } from './cong-dong.js';
 import { luuNhanVat, docNhanVat } from './nhan-vat.js';
 import { xoaTroLy, xoaThanhTra, ghiBaoCaoThanhTra, docBaoCaoThanhTra } from './thanh-tra.js';
+import { docSoVanHanh, ghiSoVanHanh, capNhatSoVanHanh } from './van-hanh-noi-bo.js';
 import { soatNoiDung, mauBaiHoc, napBai, nopBai, kyBai, soKyBai, baiTreo,
   capQuyenNoiDung, thuHoiQuyenNoiDung, dsQuyenNoiDung,
   docBuoi, xuatChuanNghe, soatMienDich,
@@ -269,7 +271,7 @@ const CAN_PHIEN = ['capKhoa', 'doiMatKhau', 'dongBo',
   'ghiLuotPrompt', 'docVongChay',
   'docBangGia', 'doiGia', 'soDoiGia', 'docLuatGiaoDien',
   'capLenhGiamSat', 'thuLenhGiamSat', 'docLenhGiamSat', 'soatSoDen', 'docTranGiamSat',
-  'ghiHoChieuVideo',
+  'ghiHoChieuVideo', 'taoStudioProject', 'docStudioProject', 'chuyenTrangThaiStudio', 'docKhoGiongStudio', 'ghiKhoGiongStudio',
   'soatCuuHe',
   'ghiPhatSinh', 'soanBanNhap', 'duyetCap', 'nhapKho', 'traBoSung', 'soatTuHoanThien',
   'capQuyenAI', 'thuHoiQuyenAI', 'soatQuyenAI', 'aiPhanLoai', 'aiSoanNhap', 'aiTongHopGiamSat',
@@ -279,6 +281,7 @@ const CAN_PHIEN = ['capKhoa', 'doiMatKhau', 'dongBo',
   'doSucChua',
   'luuNhanVat', 'docNhanVat',
   'xoaTroLy', 'xoaThanhTra', 'ghiBaoCaoThanhTra', 'docBaoCaoThanhTra',
+  'docSoVanHanh', 'ghiSoVanHanh', 'capNhatSoVanHanh',
   'docHomNay', 'tickNhip', 'boViecHomNay', 'batCheDoBao',
   'ghiGhimCon', 'docGhimCon', 'datDongYAnhCon', 'chiaSeCoAnhCon',
   'deXuatNangCap', 'soiLuatNangCap', 'kyNangCap', 'mocChayThu', 'batNangCap',
@@ -612,6 +615,9 @@ async function lam(fn, y, env, db) {
   if (fn === 'docLenhGiamSat')    return await docLenhGiamSat(y, env, db, hoSo);
   if (fn === 'soatSoDen')         return await soatSoDen(y, env, db, hoSo);
   if (fn === 'docTranGiamSat')    return await docTranGiamSat(y, env, db, hoSo);
+  if (fn === 'docSoVanHanh')      return await docSoVanHanh(y, env, db, hoSo);
+  if (fn === 'ghiSoVanHanh')      return await ghiSoVanHanh(y, env, db, hoSo);
+  if (fn === 'capNhatSoVanHanh')  return await capNhatSoVanHanh(y, env, db, hoSo);
   if (fn === 'soatCuuHe')  return await soatCuuHe(y, env, db, hoSo);
   if (fn === 'dieuPhoiTroLy')     return await dieuPhoiTroLy(y, env, db, hoSo, CAN_PHIEN);
   if (fn === 'soatDieuPhoi')      return await soatDieuPhoi(y, env, db, hoSo);
@@ -631,6 +637,11 @@ async function lam(fn, y, env, db) {
   if (fn === 'docBaoCaoThanhTra') return await docBaoCaoThanhTra(y, env, db, hoSo);
   if (fn === 'docHomNay')         return await docHomNay(y, env, db, hoSo);
   if (fn === 'ghiHoChieuVideo')   return await ghiHoChieuVideo(y, env, db, hoSo);
+  if (fn === 'taoStudioProject') return await taoStudioProject(y, env, db, hoSo);
+  if (fn === 'docStudioProject') return await docStudioProject(y, env, db, hoSo);
+  if (fn === 'chuyenTrangThaiStudio') return await chuyenTrangThaiStudio(y, env, db, hoSo);
+  if (fn === 'docKhoGiongStudio') return await docKhoGiongStudio(y, env, db, hoSo);
+  if (fn === 'ghiKhoGiongStudio') return await ghiKhoGiongStudio(y, env, db, hoSo);
   if (fn === 'tickNhip')          return await tickNhip(y, env, db, hoSo);
   if (fn === 'boViecHomNay')      return await boViecHomNay(y, env, db, hoSo);
   if (fn === 'batCheDoBao')       return await batCheDoBao(y, env, db, hoSo);
@@ -1066,8 +1077,14 @@ export default {
     if (req.method === 'GET') {
       let n = 0;
       try { n = Object.keys(JSON.parse(env.GITA_KHOA_KHO || '{}')).length; } catch (e) {}
+      let csdlSanSang = false;
+      try {
+       await env.CSDL.prepare('SELECT 1').first();
+       csdlSanSang = true;
+      } catch (e) {}
       return traJson({ok: true, ten: 'GITA 365 — máy chủ cấp phép',
-        daNapKhoa: n, luc: new Date().toISOString()}, 200, env);
+       daNapKhoa: n, khoaSanSang: n > 0, csdlSanSang,
+       luc: new Date().toISOString()}, 200, env);
     }
     if (req.method !== 'POST') return traJson({ok: false, error: 'Yêu cầu không hợp lệ.'}, 405, env);
 

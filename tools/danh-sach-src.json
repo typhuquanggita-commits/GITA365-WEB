@@ -50,6 +50,8 @@
     "src/theo-doi-tai-nguyen.js",
     "src/kho-tong.js",
     "src/noi-may-chu.js",
+    "src/trang-thai-he-thong.js",
+    "src/so-dieu-hanh.js",
     "src/kho-khach.js",
     "src/quy-trinh-xu-ly.js",
     "src/do-kho.js",
