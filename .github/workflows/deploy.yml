@@ -39,10 +39,6 @@ jobs:
           path: _site
           retention-days: 1
 
-      - name: Deploy production Pages
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy _site --project-name=gita365-web --branch=main
+      # Cloudflare Pages deploys this repository through its Git integration.
+      # Keeping this workflow credential-free means a malformed Actions secret
+      # cannot block a public Pages release; Worker deployment remains manual.

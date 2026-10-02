@@ -11,19 +11,19 @@ Tài liệu rút gọn. Chi tiết đầy đủ xem `TRIEN-KHAI.md` ở thư m�
 
 ## Triển khai Pages
 
-Workflow GitHub **Validate GITA365 Pages release** tự triển khai mọi lần đẩy lên
-`main` tới `https://gita365-web.pages.dev/`. Đây là Pages project `gita365-web`;
-nó không dùng hoặc cấu hình tên miền `gita.edu.vn`.
+Cloudflare Pages Git Integration tự triển khai mỗi lần đẩy lên `main` tới
+`https://gita365-web.pages.dev/`. Đây là Pages project `gita365-web`; nó không
+dùng hoặc cấu hình tên miền `gita.edu.vn`.
 
-Trong GitHub → **Settings → Secrets and variables → Actions**, tạo:
+Trong Cloudflare Pages → **Settings → Builds & deployments**, kiểm tra:
 
-1. `CLOUDFLARE_API_TOKEN`: token của đúng tài khoản Cloudflare, có quyền
-   **Cloudflare Pages: Edit**.
-2. `CLOUDFLARE_ACCOUNT_ID`: Account ID 32 ký tự hexadecimal của tài khoản chứa
-   project `gita365-web`.
+1. Production branch: `main`.
+2. Build command: `node tools/gop-src.js && node tools/build-pages.js`.
+3. Build output directory: `_site`.
 
-Không ghi các giá trị này vào mã nguồn. Sau khi đã có hai secret, mỗi lần push
-lên `main` sẽ build và triển khai tự động; pull request chỉ kiểm tra artifact.
+GitHub Actions **Validate GITA365 Pages release** chỉ dựng và kiểm tra artifact
+công khai cho push/PR; không giữ Cloudflare credential. Cloudflare nhận commit
+trực tiếp từ GitHub và triển khai artifact của chính nó.
 
 Lệnh build chỉ đưa các tệp public vào `_site`: HTML, bundles, cấu hình client,
 assets và kho `.enc`. Nó từ chối nếu `may-chu`, `tools`, `kho-goc` hoặc
@@ -37,7 +37,7 @@ GitHub Actions dựng lại bundles, kiểm tra artifact rồi triển khai đú
 
 Worker được triển khai riêng bằng workflow GitHub **Deploy GITA365 API Worker**
 chỉ khi D1/R2/secret đã sẵn sàng. Lỗi Worker không chặn Cloudflare Pages.
-Workflow này vẫn dùng `CLOUDFLARE_API_TOKEN` có quyền Workers Scripts Edit và
+Workflow này dùng `CLOUDFLARE_API_TOKEN` có quyền Workers Scripts Edit và
 `CLOUDFLARE_ACCOUNT_ID`; các secret đó không được dùng cho frontend.
 
 ```bash

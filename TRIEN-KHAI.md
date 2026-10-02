@@ -35,7 +35,7 @@
 ```
    Trình duyệt khách
         │
-        ├──►  Cloudflare Pages   →  https://gita365.pages.dev
+        ├──►  Cloudflare Pages   →  https://gita365-web.pages.dev
         │                            phần tĩnh: index.html · gita-app.js · assets · kho/*.enc
         │                            (lấy từ artifact được GitHub Actions dựng — CÔNG KHAI, KHÔNG khoá)
         │
@@ -43,7 +43,7 @@
                                      (mã ở may-chu/ — khoá nằm trong SECRET, không ở repo)
 ```
 
-Hiện phần tĩnh chạy tại `gita365.pages.dev` và API tại
+Hiện phần tĩnh chạy tại `gita365-web.pages.dev` và API tại
 `gita365.typhuquanggita.workers.dev`. Ứng dụng đã đặt sẵn đúng địa chỉ API
 trong `cau-hinh.js`. Khi đưa `gita.edu.vn` vào Cloudflare, có thể cấu hình
 Pages cho tên miền này và Worker cho route `/api/*` để hai đầu cùng một origin.
@@ -58,38 +58,19 @@ riêng Pages mới vì màn T5-PRO mới cần API quyền và bảng `quyenT5Pr
 
 1. Trong Cloudflare, tạo Pages project tên **`gita365-web`** (production branch:
    `main`). URL production phải là `https://gita365-web.pages.dev`.
-2. Trong **GitHub → Settings → Secrets and variables → Actions**, tạo hai
-   repository secrets: `CLOUDFLARE_API_TOKEN` (quyền **Cloudflare Pages: Edit**
-   và **Workers Scripts: Edit**) và `CLOUDFLARE_ACCOUNT_ID` (đúng 32 ký tự hex).
-   Dán token nguyên văn, không thêm dấu nháy, khoảng trắng hay xuống dòng cuối.
-   Workflow xác minh token trước khi gọi Wrangler và không in giá trị bí mật.
-3. GitHub Actions **Validate GITA365 Pages release** tự dựng và phát hành
-   project `gita365-web` mỗi lần có thay đổi trên `main`, dùng hai secret ở
-   bước 2. Lệnh build chỉ đóng gói tệp public, không phát hành `may-chu/`,
-   `tools/`, `kho-goc/` hoặc bất kỳ khóa nào.
-4. Kiểm tra `https://gita365-web.pages.dev/` sau khi workflow báo deploy thành
-   công. Pages này không liên kết với `gita.edu.vn`.
+2. Trong Cloudflare Pages → **Settings → Builds & deployments**, đặt production
+   branch `main`, build command `node tools/gop-src.js && node tools/build-pages.js`
+   và output `_site`.
+3. Cloudflare Pages Git Integration tự phát hành project `gita365-web` sau mỗi
+   thay đổi trên `main`. GitHub Actions **Validate GITA365 Pages release** chỉ
+   dựng/kiểm tra artifact công khai, nên không cần Pages token hoặc Account ID.
+   Lệnh build không phát hành `may-chu/`, `tools/`, `kho-goc/` hoặc bất kỳ khóa nào.
+4. Kiểm tra `https://gita365-web.pages.dev/` sau khi Cloudflare Pages báo deploy
+   thành công. Pages này không liên kết với `gita.edu.vn`.
 
-> Mỗi thay đổi frontend trong `src/` được đưa vào bundle trong chính pipeline;
-> không cần chạy hoặc commit thủ công `node tools/gop-src.js`. Thay đổi dưới
-> `may-chu/` kích hoạt Worker trước; health check phải xác nhận Worker phản hồi
-> và đã nạp keyset thì workflow mới phát hành Pages.
-
-### Xử lý lỗi xác thực Cloudflare
-
-Nếu Actions báo `Headers.append: ... is an invalid header value`, GitHub đã che
-giá trị thực vì đây thường là secret. Kiểm tra lại hai secret trên mà không đưa
-chúng vào log; nếu token có xuống dòng/khoảng trắng, hãy tạo secret mới. Nếu token
-hợp lệ nhưng không đủ quyền, tạo API Token mới có `Cloudflare Pages: Edit` và
-`Workers Scripts: Edit`, rồi cập nhật `CLOUDFLARE_API_TOKEN`. Đảm bảo
-`CLOUDFLARE_ACCOUNT_ID` lấy từ đúng tài khoản Cloudflare của dự án. Không đưa
-token vào tệp, lệnh shell có echo, issue hoặc tin nhắn.
-
-Nếu job **Deploy API worker** báo `CLOUDFLARE_ACCOUNT_ID must be the 32-character hexadecimal Cloudflare account ID`,
-workflow đã dừng trước khi gọi Cloudflare. Lấy **Account ID** của tài khoản
-Cloudflare chứa dự án, không phải `database_id` của D1 hay ID của Worker, rồi
-cập nhật secret `CLOUDFLARE_ACCOUNT_ID` trong GitHub Actions. Sau đó chạy lại
-workflow; không cần thay đổi mã nguồn.
+> Mỗi thay đổi frontend trong `src/` được Cloudflare dựng lại từ nguồn theo build
+> command trên. Thay đổi dưới `may-chu/` dùng workflow Worker chạy thủ công sau
+> khi migration D1, R2 và secret đã sẵn sàng.
 
 ## PHẦN 2 — CLOUDFLARE WORKER (máy chủ, có khoá)
 
