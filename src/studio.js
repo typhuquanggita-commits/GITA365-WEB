@@ -81,6 +81,7 @@ G.VIEWS = G.VIEWS || {};
   G.xuDanhGiaPilot = G.xuDanhGiaPilot || {};
   G.xuVongDoi = G.xuVongDoi || { projectId: '', status: '', rights: {},
     render: {}, qc: {}, passport: null, dang: false, events: [] };
+  G.xuAgentNoiBo = G.xuAgentNoiBo || {dang: false, plan: null, error: ''};
   /* V20 is a delivery manifest; Pages never claims to render the final MP4. */
   var V20_MAC_DINH = {
     phienBan: 'V20', profile: 'cinematic-hd', tiLe: '9:16', rong: 1080, cao: 1920,
@@ -439,6 +440,18 @@ G.VIEWS = G.VIEWS || {};
   G.xuCapNhatQC20 = function (o, v) {
     G.xuVongDoi.qc.v20 = G.xuVongDoi.qc.v20 || {};
     G.xuVongDoi.qc.v20[o] = !!v; veLai();
+  };
+  G.xuLapKeHoachNoiDung = function () {
+    if (!G.goiMayChu || G.xuAgentNoiBo.dang) return;
+    G.xuAgentNoiBo.dang = true; G.xuAgentNoiBo.error = ''; veLai();
+    G.goiMayChu('lapKeHoachAgent', {workflow: 'gita-noi-dung-coach-video'}).then(function (r) {
+      G.xuAgentNoiBo.dang = false;
+      if (!r || !r.ok) G.xuAgentNoiBo.error = (r && r.error) || 'Không lập được kế hoạch Agent.';
+      else G.xuAgentNoiBo.plan = r;
+      veLai();
+    }).catch(function (e) {
+      G.xuAgentNoiBo.dang = false; G.xuAgentNoiBo.error = String(e && e.message || e); veLai();
+    });
   };
   G.xuTaiManifestRender = function () {
     var q = G.xuVongDoi;
@@ -889,6 +902,18 @@ G.VIEWS = G.VIEWS || {};
        trên màn chạm, mà nới `input` toàn cục thì trăm ô ở màn khác nở
        theo (bài học "nới đúng chỗ" của cổng vào 9.99.80). */
     o += '<div class="man-xu">';
+    var an = G.xuAgentNoiBo;
+    o += '<div class="giay"><h3>0 · Agent nội bộ · Nội dung, Coach &amp; Video</h3>' +
+      '<p class="note">Agent chỉ lập chuỗi công việc và bản nháp có dẫn nguồn; người có thẩm quyền duyệt nội dung, ' +
+      'quyền MC/Trainer thật, QC và phát hành. Không tự tư vấn khách hoặc tự xuất bản.</p>' +
+      '<button class="btn btn-chinh" onclick="G.xuLapKeHoachNoiDung()">' +
+      (an.dang ? 'Đang kiểm quyền…' : 'Lập kế hoạch sản xuất nội dung') + '</button>';
+    if (an.error) o += '<p class="note">' + h(an.error) + '</p>';
+    if (an.plan) o += '<ol class="note">' + (an.plan.plan || []).map(function (b) {
+      return '<li><b>' + h(b.agent) + '</b> · ' + h(b.output) + ' · ' +
+        (b.duoc ? 'sẵn sàng' : 'cần bật quyền ' + h(b.canQuyen || '')) + '</li>';
+    }).join('') + '</ol>';
+    o += '</div>';
 
     /* 0 · Chuỗi video — nạp một video là nạp đủ kịch bản, shot list,
        thời lượng và CTA vào cùng G.xuDA mà Studio đang dựng. */

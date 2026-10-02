@@ -48,3 +48,40 @@ hay secret renderer, và không mở endpoint mới trên Worker.
 Chỉ cân nhắc GPU/hạ tầng trả phí khi pilot đo được thời gian CPU không đáp ứng
 SLA đã chốt. Khi đó phải đặt trần chi phí/job, số job đồng thời và thời lượng,
 vẫn giữ asset/video trong kho riêng và giữ bước QC độc lập.
+
+## MC hoặc Trainer người thật
+
+Đặt video do chủ hệ cung cấp trong thư mục job private, cùng tệp xác nhận
+quyền (không commit hai tệp này):
+
+```json
+{
+  "role": "trainer",
+  "identityConsent": true,
+  "videoConsent": true,
+  "attestedBy": "người xác nhận"
+}
+```
+
+Sau đó chạy:
+
+```sh
+docker run --rm --read-only --tmpfs /tmp --network none \
+  -v "$PWD/jobs:/jobs:ro" -v gita-render-output:/output \
+  gita-studio-renderer --manifest /jobs/<job-id>/manifest.json \
+  --presenter /jobs/<job-id>/trainer.mp4 \
+  --presenter-attestation /jobs/<job-id>/trainer-rights.json
+```
+
+Renderer ghép video thật dạng picture-in-picture vào bản V20 và lấy âm thanh
+từ bản quay được cấp quyền. Đây không phải avatar, lip-sync, clone giọng hay
+biến ảnh thành người nói. Dự án vẫn phải qua quyền sử dụng, QC độc lập và R01
+trước phát hành.
+
+## Agent nội bộ cho nội dung, coach và tư vấn
+
+Workflow `gita-noi-dung-coach-video` có sẵn qua cửa `lapKeHoachAgent`. Nó tạo
+thứ tự công việc: kiểm khung nội dung → bản nháp staging → rà chất lượng coach
+→ kịch bản V20 → sổ Studio. Agent chỉ lập kế hoạch và tạo bản nháp có dẫn
+nguồn; không tự nhập kho, không tư vấn khách theo dữ liệu hồ sơ, không tự xuất
+bản video. Bản nháp nội dung tiếp tục dùng chuỗi duyệt ba người hiện có.
