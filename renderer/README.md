@@ -35,3 +35,16 @@ Container chạy bằng UID `10001`, không chạy root. Orchestrator phải c�
 ghi cho UID này trên volume output (Kubernetes: `fsGroup: 10001`; Docker bind
 mount: tạo thư mục output với owner UID `10001`) hoặc dùng named volume như ví
 dụ. Không nới quyền `777` để chữa lỗi mount.
+
+## Chế độ 0 đồng
+
+Mặc định container chạy CPU trên máy nội bộ đã có Docker: không có GPU cloud,
+hàng đợi SaaS, API render, storage ngoài hoặc máy chủ chạy thường trực. Trong
+Studio, sau `rightsApproved`, tải manifest xuống, render tại máy nội bộ, rồi
+nạp `result.json` vào cùng dự án để ghi checksum qua phiên đăng nhập hiện có.
+Đây là orchestrator thủ công có kiểm soát: không cần service account, webhook
+hay secret renderer, và không mở endpoint mới trên Worker.
+
+Chỉ cân nhắc GPU/hạ tầng trả phí khi pilot đo được thời gian CPU không đáp ứng
+SLA đã chốt. Khi đó phải đặt trần chi phí/job, số job đồng thời và thời lượng,
+vẫn giữ asset/video trong kho riêng và giữ bước QC độc lập.

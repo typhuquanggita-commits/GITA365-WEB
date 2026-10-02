@@ -14,6 +14,8 @@ export function validateManifest(manifest) {
     throw new Error('Manifest V20 bàn giao không hợp lệ.');
   if (!Array.isArray(scenes) || !scenes.length)
     throw new Error('Manifest phải có ít nhất một cảnh.');
+  if (!/^[a-zA-Z0-9_-]{16,128}$/.test(text(project.studioProjectId)))
+    throw new Error('Manifest phải có mã dự án Studio hợp lệ.');
   const duration = scenes.reduce((total, scene) => total + Number(scene.giay || 0), 0);
   if (!(duration >= 30) || duration > Number(delivery.thoiLuongToiDa))
     throw new Error('Tổng thời lượng không thuộc giới hạn V20.');

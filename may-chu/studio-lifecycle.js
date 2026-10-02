@@ -13,6 +13,7 @@ const now = () => new Date().toISOString();
 const id = () => crypto.randomUUID().replace(/-/g, '');
 const V20_RATIOS = {'9:16': [1080, 1920], '16:9': [1920, 1080], '1:1': [1080, 1080]};
 const V20_QC = ['assetRights', 'audio', 'captions', 'safeArea', 'flicker', 'brand', 'accessibility'];
+const SHA256 = /^[a-f0-9]{64}$/i;
 
 function stable(value) {
   if (Array.isArray(value)) return '[' + value.map(stable).join(',') + ']';
@@ -102,10 +103,12 @@ export async function chuyenTrangThaiStudio(y, env, db, hoSo) {
     return bad('Duyệt kịch bản V20 cần cảnh, chuẩn bàn giao hợp lệ, tên dự án và kết quả soát nội dung đạt.');
   if (next === 'rightsApproved' && (!rights.imageConsent || !rights.voiceConsent || !rights.musicRights || !text(rights.attestedBy)))
     return bad('Duyệt quyền cần xác nhận ảnh, giọng, nhạc và người chịu trách nhiệm.');
-  if (next === 'rendered' && (!text(render.renderer) || !text(render.outputHash) || !text(render.thumbnailHash) ||
-      !text(render.jobId) || !v20Delivery(project) || !(Number(render.duration) >= 30) ||
+  if (next === 'rendered' && (!text(render.renderer) || !SHA256.test(text(render.outputHash)) ||
+      !SHA256.test(text(render.thumbnailHash)) || !SHA256.test(text(render.manifestHash)) ||
+      text(render.projectId) !== row.id || !/^[A-Za-z0-9_-]{1,128}$/.test(text(render.jobId)) ||
+      !v20Delivery(project) || !(Number(render.duration) >= 30) ||
       Number(render.duration) > Number(v20Delivery(project).thoiLuongToiDa) || !Number(render.sceneCount)))
-    return bad('Ghi nhận render V20 cần job renderer, checksum MP4/thumbnail, thời lượng, số cảnh và manifest V20 hợp lệ.');
+    return bad('Ghi nhận render V20 cần project/job đúng, checksum manifest/MP4/thumbnail, thời lượng, số cảnh và manifest V20 hợp lệ.');
   if (next === 'qcPassed') {
     if (row.createdBy === hoSo.uid) return bad('Người tạo dự án không thể tự duyệt QC.');
     if (!qc.approved || !text(qc.reviewer) || (qc.lights || []).some(x => x && x.tt === 'bad') ||

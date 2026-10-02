@@ -23,7 +23,8 @@ if (process.env.RENDERER_PRODUCTION === 'true' && !process.env.REMOTION_LICENSE_
   throw new Error('Môi trường production cần REMOTION_LICENSE_KEY sau khi xác nhận giấy phép Remotion.');
 
 const manifestPath = await inside(inputRoot, manifestArg);
-const checked = validateManifest(JSON.parse(await readFile(manifestPath, 'utf8')));
+const manifestBytes = await readFile(manifestPath);
+const checked = validateManifest(JSON.parse(manifestBytes.toString('utf8')));
 const jobId = basename(dirname(manifestPath)).replace(/[^a-zA-Z0-9_-]/g, '');
 if (!jobId) throw new Error('Không xác định được mã job.');
 const outputDir = resolve(outputRoot, jobId);
@@ -45,9 +46,10 @@ const thumbnailLocation = resolve(outputDir, 'thumbnail.png');
 await renderStill({composition, serveUrl, output: thumbnailLocation, frame: 0, inputProps: checked.project, browserExecutable});
 const checksum = async file => createHash('sha256').update(await readFile(file)).digest('hex');
 const result = {
-  ok: true, jobId, output: outputLocation, duration: checked.duration,
+  ok: true, jobId, projectId: checked.project.studioProjectId, output: outputLocation, duration: checked.duration,
   thumbnail: thumbnailLocation, mp4Sha256: await checksum(outputLocation),
-  thumbnailSha256: await checksum(thumbnailLocation), sceneCount: checked.scenes.length,
+  thumbnailSha256: await checksum(thumbnailLocation), manifestSha256: createHash('sha256').update(manifestBytes).digest('hex'),
+  sceneCount: checked.scenes.length,
   delivery: checked.delivery
 };
 await writeFile(resolve(outputDir, 'result.json'), JSON.stringify(result, null, 2));
