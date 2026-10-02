@@ -94,7 +94,9 @@ G.thuMayChu = function(){
     .then(function(r){ return r.json(); })
     .then(function(d){
       if(!d || !d.ok) return {ok:false, ly:'Máy chủ trả về nội dung không đọc được.'};
-      return {ok:true, ten:d.ten || '', soKhoa:Number(d.daNapKhoa) || 0, luc:d.luc || ''};
+      return {ok:true, ten:d.ten || '', soKhoa:Number(d.daNapKhoa) || 0,
+        khoaSanSang: d.khoaSanSang === true, csdlSanSang: d.csdlSanSang === true,
+        luc:d.luc || ''};
     })
     .catch(function(e){
       return {ok:false, ly:'Không gọi được máy chủ: ' + (e && e.message || e) +

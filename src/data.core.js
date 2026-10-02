@@ -937,6 +937,7 @@ G.NAV = [
    t:'QUẢN TRỊ TRANG', s:'Ai được vào, vào tới đâu, và ai đã làm gì.',
    essence:'Nơi cấp quyền, mở và khoá tài khoản. Mọi thao tác ở đây đều vào nhật ký kèm tên người làm.',
    items:[
+    {v:'trang-thai-he-thong', t:'Trạng thái hệ thống', h:'Web · Worker · dữ liệu · khóa · sao lưu · video — ba trạng thái và một bước xử lý', ic:'pulse', perm:'qt_trang', capMo:'quantri', star:1},
     {v:'noi-may-chu', t:'Nối máy chủ',                 h:'Dán địa chỉ · gọi thử · sáu bước dựng', ic:'orbit', perm:'qt_trang', capMo:'chung', star:1},
     /* Khoá khuôn mặt — an ninh tài khoản CỦA MỖI NGƯỜI, nên KHÔNG khoá ở
        qt_trang: ai đăng nhập cũng tự bật/gỡ khuôn mặt cho tài khoản mình.

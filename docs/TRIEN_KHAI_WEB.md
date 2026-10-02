@@ -66,6 +66,46 @@ hạn khi tên tệp đổi theo nội dung. Để rollback Pages, chọn deploy
 trước trong Cloudflare Pages và rollback; với Worker, phục hồi schema/backup đã
 xác nhận rồi redeploy commit/tag đã biết tốt.
 
+## SOP cho người vận hành không chuyên
+
+Màn **Quản trị trang → Trạng thái hệ thống** là điểm bắt đầu duy nhất cho R01/R02.
+Màn chỉ dùng ba trạng thái:
+
+| Trạng thái | Việc cần làm |
+|---|---|
+| Bình thường | Ghi nhận lượt kiểm tra; tiếp tục công việc. |
+| Cần xử lý | Bấm nút hướng dẫn ngay trên thẻ, xử lý một việc rồi kiểm tra lại. |
+| Dừng an toàn | Không phát hành Worker, không chạy migration và không sửa dữ liệu cho đến khi khôi phục xong. |
+
+Đây là màn hỗ trợ quyết định, không thay thế nhật ký Worker, bản sao lưu hoặc
+người duyệt. Lịch sử hiển thị chỉ nằm ở trình duyệt hiện tại để nhắc việc; sự cố
+và quyết định rollback cần ghi trong issue/nội bộ do R01/R02 quản lý.
+
+### Phát hành web
+
+1. Tạo PR, chờ build và review xanh.
+2. Merge vào `main`; Cloudflare Pages Git Integration tự phát hành.
+3. Mở **Trạng thái hệ thống** và bấm **Kiểm tra ngay**.
+4. Nếu web lỗi, rollback deployment production trước trong Cloudflare Pages; không
+   cần triển khai Worker để rollback giao diện.
+
+### Phát hành Worker, dữ liệu và khôi phục
+
+1. Sao lưu/kiểm tra phương án khôi phục D1/R2, ghi người xác nhận.
+2. Áp dụng migration D1 và kiểm tra kết quả.
+3. Chạy workflow **Deploy GITA365 API Worker**, xác nhận hai điều kiện và chờ
+   required reviewer của environment.
+4. Health check phải xanh cho Worker, D1 và keyset. Nếu không xanh, dừng an toàn,
+   phục hồi schema/backup đã xác nhận và deploy lại commit/tag tốt gần nhất.
+
+### Video và dữ liệu riêng tư
+
+Renderer Docker chạy tại máy nội bộ, network tắt và dữ liệu media không đi qua
+Cloudflare Worker hoặc dịch vụ render ngoài. Chỉ render manifest đã được duyệt,
+có quyền sử dụng/đồng ý cần thiết; xem `renderer/README.md`. Không dùng SaaS hằng
+ngày không đồng nghĩa hệ không có phụ thuộc: Pages/Worker, DNS, thiết bị nội bộ,
+backup và người duyệt vẫn là các thành phần phải theo dõi.
+
 ## Triển khai Worker
 
 Worker được triển khai riêng bằng workflow GitHub **Deploy GITA365 API Worker**
