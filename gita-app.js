@@ -42718,6 +42718,38 @@ G.VIEWS = G.VIEWS || {};
     if (G.xuV20[k] == null) G.xuV20[k] = V20_MAC_DINH[k];
   });
   var V20_KHO = {'9:16': [1080, 1920], '16:9': [1920, 1080], '1:1': [1080, 1080]};
+  var KHUNG_CHUYEN = [
+    ['three-act', '3 hồi', 'Thiết lập · đối đầu · giải quyết', 'giao-duc'],
+    ['five-act', '5 hồi', 'Giới thiệu · gia tăng · cao trào · giảm dần · kết', 'giao-duc'],
+    ['hero', 'Hành trình anh hùng', 'Bình thường · lời gọi · thử thách · trở về', 'giao-duc'],
+    ['pixar', 'Pixar', 'Ngày xửa ngày xưa · mỗi ngày · cho tới một ngày · vì vậy · cuối cùng', 'giao-duc'],
+    ['pas', 'PAS', 'Vấn đề · hệ quả · giải pháp', 'can-duyet-tiep-thi'],
+    ['bab', 'BAB', 'Trước · sau · cầu nối', 'can-duyet-tiep-thi'],
+    ['aida', 'AIDA', 'Chú ý · hứng thú · mong muốn · hành động', 'can-duyet-tiep-thi'],
+    ['star-chain-hook', 'Star – Chain – Hook', 'Câu chuyện · kết nối · lời mời', 'can-duyet-tiep-thi'],
+    ['nested', 'Nested Loops', 'Các câu chuyện lồng · thông điệp · khép vòng', 'giao-duc'],
+    ['in-medias-res', 'In Medias Res', 'Vào cao trào · quay lại nguyên nhân · giải quyết', 'giao-duc'],
+    ['freytag', 'Freytag', 'Giới thiệu · tăng · cao trào · giảm · kết', 'giao-duc'],
+    ['inverted', 'Kim tự tháp ngược', 'Thông tin chính · bối cảnh · chi tiết', 'giao-duc'],
+    ['soar', 'SOAR', 'Hoàn cảnh · trở ngại · hành động · kết quả', 'giao-duc'],
+    ['car', 'CAR', 'Bối cảnh · hành động · kết quả', 'giao-duc'],
+    ['par', 'PAR', 'Vấn đề · hành động · kết quả', 'giao-duc'],
+    ['carnegie', 'Magic Formula', 'Sự kiện · hành động · lợi ích', 'giao-duc'],
+    ['golden-circle', 'Golden Circle', 'Tại sao · cách làm · điều làm', 'giao-duc'],
+    ['monomyth', 'Monomyth', 'Khởi đầu · thử thách · chuyển hoá · trở về', 'giao-duc'],
+    ['mountain', 'Mountain', 'Leo dốc · đỉnh · hạ nhiệt · kết', 'giao-duc'],
+    ['false-start', 'False Start', 'Hiểu nhầm · điều chỉnh · hướng đúng', 'giao-duc'],
+    ['chronological', 'Tuần tự thời gian', 'Đầu · giữa · kết theo mốc', 'giao-duc'],
+    ['four-p', '4P', 'Cam kết có điều kiện · hình dung · bằng chứng · bước tiếp', 'can-duyet-tiep-thi'],
+    ['storybrand', 'StoryBrand', 'Nhân vật · vấn đề · hướng dẫn · kế hoạch · hành động', 'can-duyet-tiep-thi'],
+    ['five-c', '5C', 'Hoàn cảnh · tò mò · nhân vật · hội thoại · xung đột', 'giao-duc']
+  ];
+  var PILOT_MAN = ['gioi-thieu', 'ngoi-nha', 'bang-viec', 'hom-nay', 'lo-trinh',
+    'nhiem-vu', 'coach-deck', 'tuvan-deck', 'xu-ly-ca', 'van-hanh-cham-soc'];
+  G.xuKeHoachVideo = G.xuKeHoachVideo || {
+    khung: 'three-act', nguon: '', chuyenGia: '', mucDich: 'giao-duc', doiTuong: 'noi-bo',
+    cta: 'Chọn một bước phù hợp và thực hiện cùng người phụ trách.', marketingApproved: false, pilotOnly: true
+  };
 
   /* Pilot có chủ ý nhỏ: ba màn nền tảng, mỗi màn ba video 3p30. Các câu
      chuyên môn vẫn đi qua Ngân khố câu khi dựng; danh sách này chỉ giữ
@@ -42760,6 +42792,34 @@ G.VIEWS = G.VIEWS || {};
       })
     };
   }
+  function dsManVideo() {
+    var all = [];
+    (G.NAV || []).forEach(function (group) {
+      (group.items || []).forEach(function (item) {
+        all.push({ma: item.v, ten: item.t, moTa: item.h, nhom: group.t,
+          phamVi: item.capMo || 'chung', perm: item.perm || ''});
+      });
+    });
+    return all;
+  }
+  function khungChuyen(ma) {
+    return KHUNG_CHUYEN.filter(function (x) { return x[0] === ma; })[0] || KHUNG_CHUYEN[0];
+  }
+  function keHoachMan(man) {
+    var x = G.xuKeHoachVideo, k = khungChuyen(x.khung);
+    return {ma: 'MAN-' + man.ma, man: man.ma, manTen: man.ten, dinhDang: man.nhom,
+      tieuDe: man.ten, thoiLuong: 240, cta: x.cta, nguon: x.nguon, chuyenGia: x.chuyenGia,
+      khung: k[0], khungTen: k[1], mucDich: x.mucDich, doiTuong: x.doiTuong,
+      phamVi: man.phamVi, perm: man.perm, thanhPhan: [
+        {ma: 'hook', ten: 'Mở đúng ngữ cảnh', giay: 25, canh: k[2]},
+        {ma: 'van-de', ten: 'Tình huống và nhu cầu', giay: 35, canh: man.moTa},
+        {ma: 'giai-phap', ten: 'Giải pháp có điều kiện', giay: 45, canh: 'Chỉ dẫn trên màn ' + man.ten},
+        {ma: 'huong-dan', ten: 'Thao tác từng bước', giay: 55, canh: 'Thực hành cùng MC/Trainer'},
+        {ma: 'minh-chung', ten: 'Bằng chứng và giới hạn', giay: 25, canh: 'Nguồn và điều kiện áp dụng'},
+        {ma: 'coach', ten: 'Câu hỏi Coach', giay: 25, canh: 'Dừng lại, tự đánh giá và chọn bước phù hợp'},
+        {ma: 'cta', ten: 'Bước tiếp theo tự nguyện', giay: 30, canh: x.cta}
+      ]};
+  }
   function tatCaVideoPilot() {
     var ra = [];
     CHUOI_PILOT.forEach(function (man) {
@@ -42767,6 +42827,22 @@ G.VIEWS = G.VIEWS || {};
     });
     return ra;
   }
+  G.xuNapVideoMan = function (ma) {
+    var man = dsManVideo().filter(function (x) { return x.ma === ma; })[0];
+    if (!man) return;
+    var ke = keHoachMan(man), d = G.xuDA;
+    d.ten = ke.tieuDe; d.dich = ke.thoiLuong; d.nguon = ke.nguon; d.dieuNho = ke.cta;
+    d.keHoachVideo = ke;
+    d.canh = ke.thanhPhan.map(function (p, i) {
+      return {id: ke.ma + '-' + p.ma, vai: p.ma, giay: p.giay,
+        loi: p.ten + '. ' + p.canh, chuMan: p.ten, hinh: p.canh, vatHinh: '', vatTieng: '',
+        sacThai: i === 0 ? 'truyen-cam-hung' : 'than-thien'};
+    });
+    G.xuSoat = null; veLai();
+  };
+  G.xuSuaKeHoachVideo = function (o, v) {
+    G.xuKeHoachVideo[o] = v; veLai();
+  };
   function loiMau(keHoach, phan) {
     var chu = keHoach.tieuDe;
     var noi = {
@@ -43023,6 +43099,9 @@ G.VIEWS = G.VIEWS || {};
         camera: c.camera || (G.xuDA.mc || {}).mayQuay || 'dolly',
         tracks: ['visual', 'character', 'camera', 'voice', 'music', 'caption', 'transition']};
     }), kho: G.xuDA.kho, tang: G.xuDA.tang, nguon: G.xuDA.nguon, dieuNho: G.xuDA.dieuNho,
+    bienSoan: {khung: G.xuKeHoachVideo.khung, mucDich: G.xuKeHoachVideo.mucDich,
+      doiTuong: G.xuKeHoachVideo.doiTuong, nguon: G.xuKeHoachVideo.nguon,
+      chuyenGia: G.xuKeHoachVideo.chuyenGia, marketingApproved: !!G.xuKeHoachVideo.marketingApproved},
     studioProjectId: G.xuVongDoi.projectId || '',
     v20: {delivery: {
       phienBan: G.xuV20.phienBan, profile: G.xuV20.profile, tiLe: G.xuV20.tiLe,
@@ -43539,6 +43618,44 @@ G.VIEWS = G.VIEWS || {};
         (b.duoc ? 'sẵn sàng' : 'cần bật quyền ' + h(b.canQuyen || '')) + '</li>';
     }).join('') + '</ol>';
     o += '</div>';
+
+    /* 0 · Danh mục video theo vai — card là brief, không phải lời tuyên bố
+       đã có 224 video. Mỗi video vẫn cần nguồn, chuyên gia và đủ cổng. */
+    var ks = G.xuKeHoachVideo, kh = khungChuyen(ks.khung), allMan = dsManVideo();
+    var pilotMan = allMan.filter(function (x) { return PILOT_MAN.indexOf(x.ma) >= 0; });
+    o += '<div class="giay"><h3>0.1 · Hệ thống video theo vai</h3>' +
+      '<p class="note">' + allMan.length + ' màn được lập backlog; đợt đầu chỉ chạy ' + pilotMan.length +
+      ' màn có tác động trực tiếp tới onboarding, công việc, Coach, Tư vấn và chăm sóc khách. Card chỉ tạo brief 4 phút; ' +
+      'không thay thế nguồn/chuyên gia hoặc tự phát hành.</p>' +
+      '<div class="row"><label>Khung kể chuyện <select onchange="G.xuSuaKeHoachVideo(\'khung\',this.value)">' +
+      KHUNG_CHUYEN.map(function (x) {
+        return '<option value="' + x[0] + '"' + (ks.khung === x[0] ? ' selected' : '') + '>' + h(x[1]) + '</option>';
+      }).join('') + '</select></label><label>Mục đích <select onchange="G.xuSuaKeHoachVideo(\'mucDich\',this.value)">' +
+      [['giao-duc','Hướng dẫn/giáo dục'],['cham-soc','Chăm sóc khách hàng'],['tu-van','Tư vấn có người phụ trách'],
+        ['tiep-thi','Tiếp thị đã duyệt']].map(function (x) {
+          return '<option value="' + x[0] + '"' + (ks.mucDich === x[0] ? ' selected' : '') + '>' + x[1] + '</option>';
+        }).join('') + '</select></label><label>Đối tượng <select onchange="G.xuSuaKeHoachVideo(\'doiTuong\',this.value)">' +
+      [['noi-bo','Nội bộ'],['gia-dinh','Gia đình'],['hoc-vien','Học viên'],['khach','Khách cần tư vấn']].map(function (x) {
+        return '<option value="' + x[0] + '"' + (ks.doiTuong === x[0] ? ' selected' : '') + '>' + x[1] + '</option>';
+      }).join('') + '</select></label></div>' +
+      '<div class="row"><label>Nguồn đã kiểm <input value="' + h(ks.nguon) +
+      '" oninput="G.xuSuaKeHoachVideo(\'nguon\',this.value)"></label><label>Chuyên gia duyệt <input value="' +
+      h(ks.chuyenGia) + '" oninput="G.xuSuaKeHoachVideo(\'chuyenGia\',this.value)"></label>' +
+      '<label>CTA tự nguyện <input value="' + h(ks.cta) +
+      '" oninput="G.xuSuaKeHoachVideo(\'cta\',this.value)"></label></div>' +
+      (ks.mucDich === 'tiep-thi' ? '<label class="note"><input type="checkbox"' +
+        (ks.marketingApproved ? ' checked' : '') +
+        ' onchange="G.xuSuaKeHoachVideo(\'marketingApproved\',this.checked)"> Tôi xác nhận nội dung tiếp thị đã qua duyệt người thật; không dùng khan hiếm, gây áp lực hoặc tuyên bố thiếu bằng chứng.</label>' : '') +
+      '<p class="note">Khung đang chọn: <b>' + h(kh[1]) + '</b> · ' + h(kh[2]) +
+      (kh[3] === 'can-duyet-tiep-thi' ? '. Khung này chỉ dùng sau duyệt tiếp thị, không dùng để gây áp lực.' : '.') + '</p>' +
+      '<div class="row" style="flex-wrap:wrap">' + pilotMan.map(function (m) {
+        return '<button class="btn" onclick="G.xuNapVideoMan(\'' + h(m.ma) + '\')">' +
+          h(m.ten + ' · ' + m.nhom) + '</button>';
+      }).join('') + '</div>' +
+      '<details class="note"><summary>Xem backlog ' + allMan.length + ' màn</summary><ol>' +
+      allMan.map(function (m) { return '<li><button class="btn" onclick="G.xuNapVideoMan(\'' + h(m.ma) + '\')">' +
+        h(m.ten) + '</button> · ' + h(m.nhom) + (m.perm ? ' · quyền ' + h(m.perm) : '') + '</li>'; }).join('') +
+      '</ol></details></div>';
 
     /* 0 · Chuỗi video — nạp một video là nạp đủ kịch bản, shot list,
        thời lượng và CTA vào cùng G.xuDA mà Studio đang dựng. */
