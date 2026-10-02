@@ -16952,7 +16952,7 @@ G.datMayChu = function(url){
     G.API_CAP_PHEP = '';
     return {ok:true, xoa:true};
   }
-  if(!/^https:\/\/[^\s]+$/i.test(url))
+  if(!/^https:\/\/[a-zA-Z0-9][-a-zA-Z0-9.]*[a-zA-Z0-9](:\d+)?(\/[^\s]*)?$/i.test(url))
     return {ok:false, ly:'Địa chỉ máy chủ phải là một đường dẫn https — dạng '+
       'https://gita365.<tên-tài-khoản>.workers.dev (Cloudflare Worker của Học viện).'};
   try{ localStorage.setItem(KHO, url); }catch(e){ return {ok:false, ly:'Trình duyệt không cho ghi.'}; }
@@ -17006,16 +17006,30 @@ G.tuChoiCachSua = function(ma){
 G.thuMayChu = function(){
   var url = G.API_CAP_PHEP;
   if(!url) return Promise.resolve({ok:false, ly:'Chưa có địa chỉ máy chủ.'});
-  return fetch(url, {method:'GET'})
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if(!d || !d.ok) return {ok:false, ly:'Máy chủ trả về nội dung không đọc được.'};
-      return {ok:true, ten:d.ten || '', soKhoa:Number(d.daNapKhoa) || 0, luc:d.luc || ''};
-    })
-    .catch(function(e){
-      return {ok:false, ly:'Không gọi được máy chủ: ' + (e && e.message || e) +
-        '. Kiểm lại phần "Ai có quyền truy cập" đã đặt là Anyone chưa.'};
-    });
+  var timeoutMs = 15000;
+  function motLan(){
+    var ctrl = new AbortController();
+    var t = setTimeout(function(){ ctrl.abort('timeout'); }, timeoutMs);
+    return fetch(url, {method:'GET', signal: ctrl.signal})
+      .then(function(r){
+        clearTimeout(t);
+        if(!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function(d){
+        if(!d || !d.ok) return {ok:false, ly:'Máy chủ trả về nội dung không đọc được.'};
+        return {ok:true, ten:d.ten || '', soKhoa:Number(d.daNapKhoa) || 0, luc:d.luc || '',
+          csdl:d.csdl === true, phienDb:d.phienDb === true};
+      })
+      .catch(function(e){
+        clearTimeout(t);
+        throw e;
+      });
+  }
+  return motLan().catch(function(e){
+    return {ok:false, ly:'Không gọi được máy chủ: ' + (e && e.message || e) +
+      '. Kiểm tra mạng, địa chỉ Worker, và CSP connect-src trong index.html.'};
+  });
 };
 
 /* Xác nhận quyền vào Drive. Máy chủ thử thật: mở từng thư mục, tạo một tệp
@@ -17038,20 +17052,35 @@ G.thuMayChu = function(){
    Bốn chỗ cũ chưa chuyển sang: chúng đang chạy đúng, và đổi cả bốn
    trong một lượt là bốn chỗ có thể hỏng cùng lúc mà không phép đo nào
    phủ hết. Chuyển dần khi có việc chạm vào từng chỗ. */
-G.goiMayChu = function(fn, than){
+G.goiMayChu = function(fn, than, opt){
+  opt = opt || {};
   if(!G.API_CAP_PHEP)
-    return Promise.resolve({ok:false, error:'Chưa nối máy chủ. Vào Quản trị trang → Nối máy chủ.'});
+    return Promise.resolve({ok:false, code:'NOCONF', error:'Chưa nối máy chủ. Vào Quản trị trang → Nối máy chủ.'});
   var body = Object.assign({}, than || {}, {
     fn: fn,
     u: (G.S && G.S.acc && G.S.acc.u) || '',
     token: G.PHIEN_TOKEN || ''
   });
-  return fetch(G.API_CAP_PHEP, {
-    method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
-    body: JSON.stringify(body)
-  }).then(function(r){ return r.json(); })
-    .then(function(d){
-      if(!d) return {ok:false, error:'Máy chủ trả về nội dung không đọc được.'};
+  var url = G.API_CAP_PHEP;
+  var attempts = Math.max(1, Math.min(3, Number(opt.retry) || (G.GOI_MC_RETRY != null ? G.GOI_MC_RETRY : 1)));
+  var timeoutMs = Math.max(3000, Number(opt.timeout) || (G.GOI_MC_TIMEOUT != null ? G.GOI_MC_TIMEOUT : 20000));
+
+  function motLan(){
+    var ctrl = new AbortController();
+    var t = setTimeout(function(){ ctrl.abort('timeout'); }, timeoutMs);
+    return fetch(url, {
+      method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify(body), signal: ctrl.signal
+    }).then(function(r){
+      clearTimeout(t);
+      if(!r.ok){
+        var httpErr = new Error('HTTP ' + r.status);
+        httpErr.status = r.status;
+        throw httpErr;
+      }
+      return r.json();
+    }).then(function(d){
+      if(!d) return {ok:false, code:'BADRESP', error:'Máy chủ trả về nội dung không đọc được.'};
       if(G.nhanPhanHoiMayChu) G.nhanPhanHoiMayChu(d, body.token);
       /* Phiên hết hạn nói RÕ là hết hạn, không lẫn vào "không có quyền":
          hai câu ấy dẫn tới hai việc khác nhau — đăng nhập lại, hay đi
@@ -17060,11 +17089,39 @@ G.goiMayChu = function(fn, than){
         return {ok:false, code:'AUTH', error:'Phiên đã hết hạn. Đăng nhập lại rồi thử lại.'};
       }
       return d;
-    })
-    .catch(function(e){
-      return {ok:false, error:'Không gọi được máy chủ: ' + doanViSao(e)};
+    }).catch(function(e){
+      clearTimeout(t);
+      throw e;
     });
+  }
+
+  function thuLaiLanThu(n){
+    return motLan().catch(function(e){
+      if(n <= 1) return {ok:false, code: phanLoiLoi(e), error: moTaLoi(e, url, timeoutMs)};
+      return new Promise(function(resolve){
+        setTimeout(function(){ resolve(thuLaiLanThu(n - 1)); }, 800);
+      });
+    });
+  }
+  return thuLaiLanThu(attempts);
 };
+
+function phanLoiLoi(e){
+  var msg = String((e && e.message) || e || '');
+  if(/abort|timeout/i.test(msg)) return 'TIMEOUT';
+  if(/failed to fetch|networkerror|load failed|net::err/i.test(msg)) return 'NETWORK';
+  if(e && e.status >= 500) return 'SERVER';
+  if(e && e.status >= 400) return 'CLIENT';
+  return 'NETWORK';
+}
+
+function moTaLoi(e, url, timeoutMs){
+  var msg = String((e && e.message) || e || '');
+  if(/abort|timeout/i.test(msg))
+    return 'Máy chủ không trả lời trong ' + (timeoutMs / 1000) + ' giây. Có thể mạng chậm hoặc Worker đang khởi động lại.';
+  if(e && e.status) return 'Máy chủ trả lỗi HTTP ' + e.status + '. Kiểm tra Worker log trên Cloudflare.';
+  return 'Không gọi được máy chủ: ' + doanViSao(e);
+}
 
 /* ══ MỘT LƯỢT BỊ CSP CHẶN TRÔNG Y HỆT MỘT LƯỢT MẤT MẠNG ══
 
@@ -17247,20 +17304,19 @@ document.addEventListener('click', function(e){
     var uu = du ? String(du.value||'').trim() : '', mm = dmk ? String(dmk.value||'') : '';
     if(!uu || !mm){ U.toast('Nhập tên đăng nhập và mật khẩu.','err'); return; }
     if(dbox) dbox.innerHTML = '<p class="sm dim">Đang đăng nhập máy chủ…</p>';
-    fetch(G.API_CAP_PHEP, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body: JSON.stringify({fn:'dangNhap', u:uu, mk:mm})})
-      .then(function(r){ return r.json(); })
+    G.goiMayChu('dangNhap', {u:uu, mk:mm}, {retry:2, timeout:15000})
       .then(function(d){
         if(d && d.ok && d.token){
           U.toast('Đăng nhập máy chủ thành công — đang mở kho…','ok');
           G.vaoBangPhienMayChu(d);   /* lưu token thật → capKhoa chạy → kho mở */
         } else if(dbox){
+          var huongDan = '';
+          if(d && d.code === 'NETWORK') huongDan = '<br><span class="tiny muted">Kiểm tra mạng, địa chỉ Worker, và CSP connect-src.</span>';
           dbox.innerHTML = '<div class="card pad-sm" style="border-color:var(--gita-do)">'+
             '<p class="sm" style="color:var(--gita-do-ink)">'+ic('x','w-3 h-3')+' '+
-            U.h((d && d.error) || 'Đăng nhập không thành công.')+'</p></div>';
+            U.h((d && d.error) || 'Đăng nhập không thành công.')+huongDan+'</p></div>';
         }
-      })
-      .catch(function(){ if(dbox) dbox.innerHTML = '<p class="sm" style="color:var(--gita-do-ink)">Không gọi được máy chủ.</p>'; });
+      });
   }
   else if(a === 'mc-taoadmin'){
     var akey = document.getElementById('mcAdKey'), au = document.getElementById('mcAdU'), amk = document.getElementById('mcAdMk'), aten = document.getElementById('mcAdTen');
@@ -17268,15 +17324,12 @@ document.addEventListener('click', function(e){
     var ask = akey ? String(akey.value||'') : '', auu = au ? String(au.value||'').trim() : '', amm = amk ? String(amk.value||'') : '', at = aten ? String(aten.value||'').trim() : '';
     if(!ask || !auu || !amm){ U.toast('Nhập secret khởi tạo, tên đăng nhập và mật khẩu.','err'); return; }
     if(abox) abox.innerHTML = '<p class="sm dim">Đang tạo Super Admin…</p>';
-    fetch(G.API_CAP_PHEP, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body: JSON.stringify({fn:'taoAdminDau', setupKey:ask, tenMoi:auu, mk:amm, hoTen:at})})
-      .then(function(r){ return r.json(); })
+    G.goiMayChu('taoAdminDau', {setupKey:ask, tenMoi:auu, mk:amm, hoTen:at}, {retry:1, timeout:20000})
       .then(function(d){
         if(abox) abox.innerHTML = '<div class="card pad-sm" style="border-color:'+((d&&d.ok)?'var(--ok)':'var(--gita-do)')+'">'+
           '<p class="sm">'+ic((d&&d.ok)?'check':'x','w-3 h-3')+' '+U.h((d&&(d.msg||d.error))||'Không rõ kết quả.')+'</p></div>';
         if(d && d.ok){ if(akey) akey.value = ''; if(amk) amk.value = ''; var dd = document.getElementById('mcDnU'); if(dd) dd.value = auu; U.toast('Đã tạo Super Admin. Xoá secret GITA_TAO_ADMIN ở Cloudflare rồi đăng nhập máy chủ.','ok'); }
-      })
-      .catch(function(){ if(abox) abox.innerHTML = '<p class="sm" style="color:var(--gita-do-ink)">Không gọi được máy chủ.</p>'; });
+      });
   }
   else if(a === 'mc-thu'){
     if(kq) kq.innerHTML = '<p class="sm dim">Đang gọi máy chủ…</p>';
