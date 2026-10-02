@@ -38,6 +38,27 @@
 
 PRAGMA foreign_keys = ON;
 
+-- Studio lưu metadata, quyền và chuỗi duyệt; video/giọng/ảnh gốc không vào D1.
+CREATE TABLE IF NOT EXISTS studioProject (
+  id TEXT PRIMARY KEY, version INTEGER NOT NULL DEFAULT 1, status TEXT NOT NULL,
+  title TEXT NOT NULL, projectJson TEXT NOT NULL, rightsJson TEXT NOT NULL DEFAULT '{}',
+  renderJson TEXT NOT NULL DEFAULT '{}', qcJson TEXT NOT NULL DEFAULT '{}',
+  createdBy TEXT NOT NULL, passportId TEXT, createdAt TEXT NOT NULL, updatedAt TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_studioProject_status ON studioProject (status, updatedAt);
+CREATE TABLE IF NOT EXISTS studioEvent (
+  id TEXT PRIMARY KEY, projectId TEXT NOT NULL, version INTEGER NOT NULL,
+  fromStatus TEXT, toStatus TEXT NOT NULL, actorId TEXT NOT NULL, actorRole TEXT NOT NULL,
+  payloadHash TEXT NOT NULL, reason TEXT, createdAt TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_studioEvent_project ON studioEvent (projectId, version, createdAt);
+CREATE TABLE IF NOT EXISTS studioPassport (
+  id TEXT PRIMARY KEY, projectId TEXT NOT NULL, version INTEGER NOT NULL,
+  manifestJson TEXT NOT NULL, manifestHash TEXT NOT NULL, signature TEXT NOT NULL,
+  issuedBy TEXT NOT NULL, issuedAt TEXT NOT NULL
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_studioPassport_project ON studioPassport (projectId, version);
+
 -- ─────────────────────────────────────────────────────────────
 --  NGƯỜI DÙNG
 --

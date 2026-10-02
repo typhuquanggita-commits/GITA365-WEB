@@ -1,0 +1,114 @@
+/* Studio production ledger. Rendering stays outside the Worker; this module
+   stores only reviewed metadata, approvals, and a signed publication record. */
+'use strict';
+import { laNguoiNha, roleOf, tenNguoiDung } from './vai-tro.js';
+
+const TRANG_THAI = ['draft', 'scriptApproved', 'rightsApproved', 'rendered', 'qcPassed', 'published'];
+const TIEP = {
+  draft: 'scriptApproved', scriptApproved: 'rightsApproved',
+  rightsApproved: 'rendered', rendered: 'qcPassed', qcPassed: 'published'
+};
+const text = value => String(value || '').trim();
+const now = () => new Date().toISOString();
+const id = () => crypto.randomUUID().replace(/-/g, '');
+
+function stable(value) {
+  if (Array.isArray(value)) return '[' + value.map(stable).join(',') + ']';
+  if (value && typeof value === 'object') {
+    return '{' + Object.keys(value).sort().map(k => JSON.stringify(k) + ':' + stable(value[k])).join(',') + '}';
+  }
+  return JSON.stringify(value == null ? null : value);
+}
+async function sha(value) {
+  const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(stable(value)));
+  return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, '0')).join('');
+}
+async function hmac(secret, value) {
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), {name: 'HMAC', hash: 'SHA-256'}, false, ['sign']);
+  const b = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(stable(value)));
+  return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, '0')).join('');
+}
+function canUse(hoSo) { return laNguoiNha(hoSo); }
+function canManage(row, hoSo) { return row.createdBy === hoSo.uid || roleOf(hoSo) === 'R01'; }
+function from(row) {
+  return {
+    id: row.id, version: row.version, status: row.status, title: row.title,
+    project: JSON.parse(row.projectJson || '{}'), rights: JSON.parse(row.rightsJson || '{}'),
+    render: JSON.parse(row.renderJson || '{}'), qc: JSON.parse(row.qcJson || '{}'),
+    passportId: row.passportId || '', createdAt: row.createdAt, updatedAt: row.updatedAt
+  };
+}
+async function event(db, projectId, version, fromStatus, toStatus, hoSo, payload, reason) {
+  await db.prepare('INSERT INTO studioEvent (id,projectId,version,fromStatus,toStatus,actorId,actorRole,payloadHash,reason,createdAt) VALUES (?,?,?,?,?,?,?,?,?,?)')
+    .bind(id(), projectId, version, fromStatus, toStatus, hoSo.uid, roleOf(hoSo), await sha(payload), text(reason).slice(0, 500), now()).run();
+}
+async function get(db, projectId) {
+  return await db.prepare('SELECT * FROM studioProject WHERE id=?').bind(text(projectId)).first();
+}
+function bad(message) { return {ok: false, error: message}; }
+
+export async function taoStudioProject(y, env, db, hoSo) {
+  if (!canUse(hoSo)) return bad('Studio chỉ mở cho nhân sự được cấp quyền.');
+  const project = y.project || {}, title = text(project.ten || y.title);
+  if (title.length < 3) return bad('Dự án cần tên ít nhất 3 ký tự.');
+  const projectId = id(), luc = now(), snapshot = {title, scenes: Array.isArray(project.canh) ? project.canh : []};
+  await db.prepare('INSERT INTO studioProject (id,version,status,title,projectJson,rightsJson,renderJson,qcJson,createdBy,createdAt,updatedAt) VALUES (?,?,?,?,?,?,?,?,?,?,?)')
+    .bind(projectId, 1, 'draft', title, JSON.stringify(snapshot), '{}', '{}', '{}', hoSo.uid, luc, luc).run();
+  await event(db, projectId, 1, '', 'draft', hoSo, snapshot, 'Tạo dự án Studio');
+  return {ok: true, project: {id: projectId, version: 1, status: 'draft', title, project: snapshot}};
+}
+
+export async function docStudioProject(y, env, db, hoSo) {
+  if (!canUse(hoSo)) return bad('Studio chỉ mở cho nhân sự được cấp quyền.');
+  const row = await get(db, y.projectId);
+  if (!row || !canManage(row, hoSo)) return bad('Không tìm thấy dự án Studio.');
+  const events = await db.prepare('SELECT fromStatus,toStatus,actorRole,reason,createdAt FROM studioEvent WHERE projectId=? ORDER BY createdAt ASC')
+    .bind(row.id).all();
+  return {ok: true, project: from(row), events: (events.results || [])};
+}
+
+export async function chuyenTrangThaiStudio(y, env, db, hoSo) {
+  if (!canUse(hoSo)) return bad('Studio chỉ mở cho nhân sự được cấp quyền.');
+  const row = await get(db, y.projectId);
+  if (!row || !canManage(row, hoSo)) return bad('Không tìm thấy dự án Studio.');
+  const next = text(y.to);
+  if (TIEP[row.status] !== next) return bad('Không thể bỏ qua cổng sản xuất.');
+  /* Kịch bản được đóng băng ngay khi qua cổng đầu. Mọi sửa đổi sau đó phải
+     quay về bản nháp mới, không thể âm thầm đổi nội dung đã được duyệt. */
+  const project = row.status === 'draft'
+    ? (y.project || JSON.parse(row.projectJson || '{}'))
+    : JSON.parse(row.projectJson || '{}');
+  const rights = y.rights || JSON.parse(row.rightsJson || '{}');
+  const render = y.render || JSON.parse(row.renderJson || '{}');
+  const qc = y.qc || JSON.parse(row.qcJson || '{}');
+  const scenes = Array.isArray(project.scenes) ? project.scenes : [];
+  if (next === 'scriptApproved' && (!text(project.title || row.title) || !scenes.length || !y.contentChecked))
+    return bad('Duyệt kịch bản cần cảnh, tên dự án và kết quả soát nội dung đạt.');
+  if (next === 'rightsApproved' && (!rights.imageConsent || !rights.voiceConsent || !rights.musicRights || !text(rights.attestedBy)))
+    return bad('Duyệt quyền cần xác nhận ảnh, giọng, nhạc và người chịu trách nhiệm.');
+  if (next === 'rendered' && (!text(render.renderer) || !text(render.outputHash) || !(Number(render.duration) >= 30) || !Number(render.sceneCount)))
+    return bad('Ghi nhận render cần renderer, checksum đầu ra, thời lượng và số cảnh.');
+  if (next === 'qcPassed') {
+    if (row.createdBy === hoSo.uid) return bad('Người tạo dự án không thể tự duyệt QC.');
+    if (!qc.approved || !text(qc.reviewer) || (qc.lights || []).some(x => x && x.tt === 'bad'))
+      return bad('QC cần người duyệt độc lập, không có đèn đỏ và xác nhận đạt.');
+  }
+  if (next === 'published' && roleOf(hoSo) !== 'R01') return bad('Chỉ R01 được phát hành video.');
+  if (next === 'published' && !env.GITA_KHOA_KY) return bad('Máy chủ chưa nạp khoá ký hộ chiếu video.');
+  const luc = now();
+  const update = await db.prepare('UPDATE studioProject SET status=?,title=?,projectJson=?,rightsJson=?,renderJson=?,qcJson=?,updatedAt=? WHERE id=? AND status=?')
+    .bind(next, text(project.title || row.title), JSON.stringify(project), JSON.stringify(rights), JSON.stringify(render), JSON.stringify(qc), luc, row.id, row.status).run();
+  if (!update.meta.changes) return bad('Dự án vừa được thay đổi; hãy tải lại trước khi tiếp tục.');
+  await event(db, row.id, row.version, row.status, next, hoSo, {project, rights, render, qc}, y.reason);
+  let passport = null;
+  if (next === 'published') {
+    passport = {id: id(), projectId: row.id, version: row.version, title: text(project.title || row.title),
+      publishedAt: luc, publishedBy: tenNguoiDung(hoSo), manifestHash: await sha({project, rights, render, qc})};
+    const signature = await hmac(env.GITA_KHOA_KY, passport);
+    await db.prepare('INSERT INTO studioPassport (id,projectId,version,manifestJson,manifestHash,signature,issuedBy,issuedAt) VALUES (?,?,?,?,?,?,?,?)')
+      .bind(passport.id, row.id, row.version, JSON.stringify({project, rights, render, qc}), passport.manifestHash, signature, hoSo.uid, luc).run();
+    await db.prepare('UPDATE studioProject SET passportId=? WHERE id=?').bind(passport.id, row.id).run();
+    passport.signature = signature;
+  }
+  return {ok: true, status: next, passport};
+}

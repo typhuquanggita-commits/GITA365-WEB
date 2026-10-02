@@ -79,6 +79,8 @@ G.VIEWS = G.VIEWS || {};
   G.xuBanNhapAI = null;
   G.xuGiuLai = '';               // lời khai lúc bấm Dừng khẩn
   G.xuDanhGiaPilot = G.xuDanhGiaPilot || {};
+  G.xuVongDoi = G.xuVongDoi || { projectId: '', status: '', rights: {},
+    render: {}, qc: {}, passport: null, dang: false, events: [] };
 
   /* Pilot có chủ ý nhỏ: ba màn nền tảng, mỗi màn ba video 3p30. Các câu
      chuyên môn vẫn đi qua Ngân khố câu khi dựng; danh sách này chỉ giữ
@@ -377,6 +379,52 @@ G.VIEWS = G.VIEWS || {};
       n: G.xuGiuLai});
     return o;
   }
+  function duAnGui() {
+    return {title: G.xuDA.ten, scenes: (G.xuDA.canh || []).map(function (c) {
+      return {id: c.id, giay: c.giay, loi: c.loi, chuMan: c.chuMan, sacThai: c.sacThai};
+    }), kho: G.xuDA.kho, tang: G.xuDA.tang, nguon: G.xuDA.nguon, dieuNho: G.xuDA.dieuNho};
+  }
+  function goiStudio(fn, data) {
+    if (!G.goiMayChu) { U.toast('Cần nối máy chủ để ghi sổ sản xuất.', 'err'); return; }
+    if (G.xuVongDoi.dang) return;
+    G.xuVongDoi.dang = true; veLai();
+    G.goiMayChu(fn, data).then(function (r) {
+      G.xuVongDoi.dang = false;
+      if (!r || !r.ok) { U.toast((r && r.error) || 'Máy chủ từ chối.', 'err'); veLai(); return; }
+      if (r.project) {
+        G.xuVongDoi.projectId = r.project.id; G.xuVongDoi.status = r.project.status;
+      }
+      if (r.status) G.xuVongDoi.status = r.status;
+      if (r.passport) G.xuVongDoi.passport = r.passport;
+      U.toast('Đã ghi cổng sản xuất.', 'ok'); veLai();
+    }).catch(function (e) {
+      G.xuVongDoi.dang = false; U.toast(String(e && e.message || e), 'err'); veLai();
+    });
+  }
+  G.xuTaoDuAn = function () { goiStudio('taoStudioProject', {project: duAnGui()}); };
+  G.xuCapNhatQuyen = function (o, v) {
+    G.xuVongDoi.rights[o] = !!v; veLai();
+  };
+  G.xuChuyenCong = function (to) {
+    var q = G.xuVongDoi, lights = den();
+    var render = q.render;
+    if (to === 'rendered') {
+      render = {renderer: 'renderer-tách biệt', outputHash: String(render.outputHash || '').trim(),
+        duration: tong(), sceneCount: (G.xuDA.canh || []).length};
+    }
+    var qc = q.qc;
+    if (to === 'qcPassed') qc = {approved: !!qc.approved, reviewer: String(qc.reviewer || '').trim(), lights: lights};
+    goiStudio('chuyenTrangThaiStudio', {projectId: q.projectId, to: to, project: duAnGui(),
+      rights: q.rights, render: render, qc: qc, contentChecked: !!(G.xuSoat && G.xuSoat.ok &&
+        !(G.xuSoat.cam || []).some(function (x) { return !x.canhBao; }))});
+  };
+  G.xuTaiHoChieu = function () {
+    var p = G.xuVongDoi.passport;
+    if (!p) return;
+    var a = document.createElement('a');
+    a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(p, null, 2));
+    a.download = 'ho-chieu-video-' + p.id + '.json'; a.click();
+  };
   /* ══ VẼ 1080p ══ */
   G.xuDongHo = 0;
   function khung() {
@@ -918,11 +966,52 @@ G.VIEWS = G.VIEWS || {};
         '<span>' + h(l.n) + '</span></li>';
     }).join('') + '</ul></div>';
 
-    /* 6 · Xuất kèm */
-    o += '<div class="giay"><h3>7 · Xuất phim</h3>' +
-      '<p class="note">Kết xuất video, phụ đề và hộ chiếu phát hành chưa được nối với renderer ' +
-      'nội bộ. Không gửi ảnh/giọng lên dịch vụ ngoài; bản xem trước chỉ giúp kiểm tra kịch bản, ' +
-      'khung hình, chuyển động và phối âm.</p></div>';
+    /* 7 · Sổ sản xuất. Renderer phải là dịch vụ tách biệt, không phải Pages/Worker. */
+    var vd = G.xuVongDoi, next = {
+      draft: 'scriptApproved', scriptApproved: 'rightsApproved', rightsApproved: 'rendered',
+      rendered: 'qcPassed', qcPassed: 'published'
+    }[vd.status || ''];
+    var nhan = {
+      scriptApproved: 'Duyệt kịch bản', rightsApproved: 'Duyệt quyền sử dụng',
+      rendered: 'Ghi nhận render tách biệt', qcPassed: 'Duyệt QC độc lập', published: 'Phát hành · R01'
+    };
+    o += '<div class="giay"><h3>7 · Sổ sản xuất &amp; phát hành</h3>' +
+      '<p class="note">Pages chỉ biên tập/xem thử. Render MP4, FFmpeg, localization, upscale và AI video ' +
+      'phải chạy ở dịch vụ/container tách biệt sau khi đã được cấp quyền; Studio không tải blob media lên Worker.</p>';
+    if (!vd.projectId) {
+      o += '<button class="btn btn-chinh" onclick="G.xuTaoDuAn()">' +
+        (vd.dang ? 'Đang tạo…' : 'Tạo dự án trong sổ sản xuất') + '</button>';
+    } else {
+      o += '<p class="note"><b>Mã dự án:</b> ' + h(vd.projectId) + ' · <b>Trạng thái:</b> ' +
+        h(vd.status || 'draft') + '</p>';
+      if (vd.status === 'scriptApproved') {
+        var r = vd.rights || {};
+        o += '<label class="note"><input type="checkbox"' + (r.imageConsent ? ' checked' : '') +
+          ' onchange="G.xuCapNhatQuyen(\'imageConsent\',this.checked)"> Có quyền dùng hình/nhân vật.</label>' +
+          '<label class="note"><input type="checkbox"' + (r.voiceConsent ? ' checked' : '') +
+          ' onchange="G.xuCapNhatQuyen(\'voiceConsent\',this.checked)"> Có đồng ý rõ ràng cho giọng thu.</label>' +
+          '<label class="note"><input type="checkbox"' + (r.musicRights ? ' checked' : '') +
+          ' onchange="G.xuCapNhatQuyen(\'musicRights\',this.checked)"> Có quyền dùng nhạc/hiệu ứng.</label>' +
+          '<label>Người xác nhận quyền <input value="' + h(r.attestedBy || '') +
+          '" oninput="G.xuVongDoi.rights.attestedBy=this.value"></label>';
+      }
+      if (vd.status === 'rightsApproved') {
+        o += '<label>Checksum tệp render từ dịch vụ tách biệt <input value="' +
+          h((vd.render || {}).outputHash || '') + '" oninput="G.xuVongDoi.render.outputHash=this.value"></label>' +
+          '<p class="note">Chỉ ghi nhận manifest/checksum từ renderer; không đính kèm hoặc giả vờ xuất MP4 tại đây.</p>';
+      }
+      if (vd.status === 'rendered') {
+        var q = vd.qc || {};
+        o += '<label class="note"><input type="checkbox"' + (q.approved ? ' checked' : '') +
+          ' onchange="G.xuVongDoi.qc.approved=this.checked"> Tôi xác nhận QC đã nghe/xem toàn bộ bản render.</label>' +
+          '<label>Người duyệt QC độc lập <input value="' + h(q.reviewer || '') +
+          '" oninput="G.xuVongDoi.qc.reviewer=this.value"></label>';
+      }
+      if (next) o += '<button class="btn btn-chinh" onclick="G.xuChuyenCong(\'' + next + '\')">' +
+        (vd.dang ? 'Đang ghi…' : nhan[next]) + '</button>';
+      if (vd.passport) o += '<button class="btn" onclick="G.xuTaiHoChieu()">Tải hộ chiếu phát hành đã ký</button>';
+    }
+    o += '</div>';
 
     setTimeout(function () { G.xuCoManh(); }, 0);
     return o + '</div>';
