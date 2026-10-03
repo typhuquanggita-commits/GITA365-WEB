@@ -29,7 +29,7 @@ const worker = doc('may-chu/worker.js');
 const G = { VIEWS: {}, U: { h: s => String(s), ic: () => '' } };
 const ctx = { window: { G }, G, console, localStorage: { getItem: () => null, setItem() {} } };
 vm.createContext(ctx);
-for (const f of ['src/dieu-phoi.js', 'src/he-16.js', 'src/bo-nao-da-tri.js', 'src/la-chan-30.js']) vm.runInContext(doc(f), ctx, { filename: f });
+for (const f of ['src/dieu-phoi.js', 'src/he-16.js', 'src/bo-nao-da-tri.js', 'src/la-chan-30.js', 'src/bo-may-tap-doan.js']) vm.runInContext(doc(f), ctx, { filename: f });
 
 const loi = [];
 let ok = 0;
@@ -128,6 +128,20 @@ BK.forEach(b => {
   else { dat(b.tro.length > 0, `${b.ma}: thiếu con trỏ`); b.tro.forEach(x => kiemTro(x, b.ma)); }
 });
 dat(BK.some(b => b.khongDoDuoc), 'Hậu cần: phải ghi thật ít nhất một tầng repo không đo được');
+/* Bộ máy tập đoàn: mỗi ban có sứ mệnh + ít nhất một con trỏ SỐNG; cây
+   giá trị năm tầng trỏ vào cơ chế thật; ban nào còn thiếu phải ghi ra. */
+const TD = G.TD_BAN;
+dat(TD.length === 10, `Bộ máy cần 10 ban, có ${TD.length}`);
+dat(new Set(TD.map(b => b.ma)).size === 10, 'Mã ban trùng');
+TD.forEach(b => {
+  dat(!!b.menh && b.tro.length > 0, `${b.ma}: thiếu sứ mệnh hoặc con trỏ`);
+  b.tro.forEach(x => kiemTro(x, b.ma));
+});
+dat(TD.some(b => b.thieu), 'Bộ máy: phải ghi thật ít nhất một ban còn thiếu');
+G.TD_CAY_GT.forEach(t => {
+  dat(!!t.tang && !!t.ten, `Cây giá trị ${t.tang || '?'}: thiếu tên`);
+  t.tro.forEach(x => kiemTro(x, 'Cây giá trị ' + t.tang));
+});
 
 console.log(`  ✓ ${ok} phép đo đạt · ${HE.length} hệ · ${G.H16_SOP.length} SOP · ${G.DP_TRO_LY.length} trợ lý · ${G.TT_KHO.length} nguyên lý · ${LC.length} tầng lá chắn`);
 console.log(`  · Tự chủ: AI làm ${tc.aiLamPhan}% cửa · AI tự chạy trọn (TC4) ${tc.tuChayTron}% · ` +

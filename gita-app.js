@@ -1019,6 +1019,7 @@ G.NAV = [
     {v:'he-16', t:'16 hệ thống GITA365 · kiện toàn sâu', h:'Bản đồ 16 hệ trỏ vào thứ đang chạy thật, đo chứ không khai · thang tự chủ AI TC0–TC5 theo trần hiến pháp · Agent 8 năng lực (vai · nghiệp vụ · SOP · KPI · teamwork · tự nâng cấp · tự bảo vệ · hiến pháp) · không gian 1000 chiến lược có mã + ICE · chu kỳ R&D 6 tháng so mốc nền · khuôn giải pháp chung · lược đồ mã · kho repo GitHub đã phán quyết', ic:'grid', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'bo-nao-da-tri', t:'Bộ não đa trí · kho trí tuệ · tảng băng giá trị', h:'Claude · DeepSeek · ChatGPT · Grok · Gemini cùng Workers AI, định tuyến rẻ trước, đệm 0 token, ngân sách ngày, mọi lượt qua cổng Điều 13 · kho nguyên lý từ sách kinh điển có nguồn và giới hạn · tảng băng 10% nổi / 90% chìm với hành trình gắn bó có đạo đức · đề xuất tự tối ưu từ điểm chấm thật', ic:'orbit', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'la-chan-30', t:'Lá chắn 30 tầng · 15 bảo mật + 15 phòng vệ', h:'Mỗi tầng trỏ vào mã đang chạy và được CI đo trên mỗi PR · HTTPS/CSP/CORS · băm mật khẩu · OTP · passkey · phân quyền · mã hoá đầu cuối · chữ ký HMAC · chống SSRF · soát bí mật · cổng Điều 13 · chặn nhịp · trần ngân sách · ngăn khoang · đóng băng · sao lưu · tự chữa · nhật ký · quyền dữ liệu theo luật · ghi thật chỗ còn trống', ic:'shield', perm:'qt_trang', capMo:'chung'},
+    {v:'bo-may-tap-doan', t:'Bộ máy tập đoàn tinh gọn · cây giá trị · cây tiền', h:'10 ban/hệ thống trỏ vào mã thật (CI đo mỗi PR) · thanh tra · sản xuất nội dung · kho tài liệu · giải pháp khách hàng · coach · giáo dục · luật sư · dự án · bộ não · lá chắn · cây giá trị 5 tầng · cây tiền: 90% hài lòng · 90% tái dùng+nâng cấp · 20% tầng 5 — tính lúc đọc từ D1, không ô nhập tay', ic:'grid', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'khung-van-hanh', t:'Khung vận hành · V20', h:'Harness Engineering — tầng chuẩn hoá cách Bộ não điều phối 100 trợ lý · năm trụ: quản lý ngữ cảnh · gọi đúng cổng công cụ · gác Hiến pháp · chống hai trợ lý cùng ra tay · tự kiểm chất lượng mỗi lượt · mỗi trụ TRỎ vào cơ chế thật (không chép luật), bộ chấm mỗi lượt đo được từng trụ (phá-thử-đỏ-được) · V20 là đo được, không phải con số tự khai · bộ chấm KHÔNG tự ra tay', ic:'shield', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'suc-chua-toc-do', t:'Sức chứa & Tốc độ', h:'Bộ não chạy nhanh và chứa nhiều trên Cloudflare bằng NĂM TRỤ (việc nặng ở máy khách · chỉ mục đường tra nóng · bộ nhớ đệm ở biên · Workers tự co giãn · R2 cho tệp lớn), không bằng một con số · "1TB" là dung lượng, đạt bằng R2 (hàng TB) + chia mảnh D1, không phải mức của bộ não · sức chứa ĐO ĐƯỢC lúc gọi (cửa doSucChua), không tự khai · nói ra cả trần Cloudflare lẫn đường vượt trần', ic:'vault', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'thanh-tra-soi', t:'Mười tổ thanh tra soi', h:'Mười thanh tra ĐỘC LẬP chuyên phá các điểm chưa tốt, mười CẤP × 100 bậc = 1000 bậc tiêu chuẩn liền mạch · mỗi tổ NEO vào một phép soi CÓ THẬT trong mã nguồn (soatRaNgoai · truyHoiHe · capDuyetTheoTien · nhaCuaMinh · xuatDuLieuNha · danhDauXoa · dieuPhoiTroLy · a11yNhan · lapTheVungManh · kiemPhien), không phải một dòng khẩu hiệu — mục 114 đối chiếu tên ấy tồn tại trong tệp, trỏ vào cái tên bịa thì đỏ · cấp cao = hậu quả nặng hơn khi hỏng, cấp 10 là rò dữ liệu một đứa trẻ ra ngoài', ic:'shield', star:1, perm:'qt_trang', capMo:'chung'},
@@ -1533,6 +1534,7 @@ G.ITEM_EN = {
 'he-16':['16 GITA365 Systems — Deep Build-out','16-system map pointing at what really runs, measured not claimed · AI autonomy ladder TC0–TC5 capped by the constitution · 8-capability agents (role · expertise · SOP · KPI · teamwork · self-upgrade · self-protection · constitution) · 1000 coded strategies with ICE · 6-month R&D cycle against a baseline · one solution template · code schemes · GitHub repo verdicts'],
 'bo-nao-da-tri':['Multi-AI Brain · Wisdom Store · Value Iceberg','Claude · DeepSeek · ChatGPT · Grok · Gemini plus Workers AI, cheapest-first routing, 0-token cache, daily budgets, every call through the Article 13 gate · principles distilled from classic books with sources and limits · 10% visible / 90% hidden value with an ethical loyalty journey · self-optimisation proposals from real ratings'],
 'la-chan-30':['30-Layer Shield · 15 Security + 15 Defence','Every layer points at running code and is measured by CI on every PR · HTTPS/CSP/CORS · password hashing · OTP · passkeys · roles · end-to-end encryption · HMAC signatures · anti-SSRF · secret scanning · Article 13 gate · rate limits · budget ceilings · compartments · freeze · backups · self-heal · audit log · legal data rights · honest list of remaining gaps'],
+'bo-may-tap-doan':['Lean Conglomerate Machine · Value Tree · Money Tree','10 divisions pointing at running code (CI-measured every PR) · inspectorate · content production · document warehouse · customer solutions · coaches · education · legal · projects · brain · shield · 5-layer value tree · money tree: 90% happy · 90% renewal+upgrade · 20% tier-5 — computed at read time from D1, no manual input cells'],
   'goi-nghe':['Professional Kits by Department','Each role a full kit: mission · professional standard · certification · tools'],
   'assessment':['Tier-1 Assessment','6 domains · 10-step protocol · DCI reliability · care direction — the consultant/assessor diagnostic'],
   'nhan-su-tt':['Loyal staff profile','5 levels · 7 metrics · 5 rules'],
@@ -54200,7 +54202,8 @@ G.H16_HE = [
     ke: 'Mỗi cấp một "thẻ kết quả" đo được (trước/sau) nối với phim cầu nối.' },
   { ma: 'H05', ten: 'Tài chính', ic: 'grid',
     troVao: ['v:phong-tai-chinh', 'v:tai-chinh-ceo', 'v:ke-toan-thue', 'v:thanh-toan', 'v:bang-gia', 'v:chi-phi',
-      'f:ghiPhieuThu', 'f:doiChieuNganHang', 'f:bangLuong', 'f:baoCaoKeToan', 'f:soatChot', 'd:docs/CHI_PHI.md'],
+      'f:ghiPhieuThu', 'f:doiChieuNganHang', 'f:bangLuong', 'f:baoCaoKeToan', 'f:soatChot', 'd:docs/CHI_PHI.md',
+      'v:bo-may-tap-doan', 'f:docKpiCayTien', 'd:docs/BO_MAY_TAP_DOAN.md'],
     trong: 'Chưa có phép thử tự động "nợ = có" cho bút toán khi đổi mã.',
     ke: 'Bất biến kế toán kép (mẫu Beancount/TigerBeetle) thành phép thử CI trên D1 giả.' },
   { ma: 'H06', ten: 'Marketing', ic: 'spark',
@@ -55574,6 +55577,154 @@ G.VIEWS['la-chan-30'] = function () {
   }).join('') + '</div>';
   return o;
 };
+})();
+
+})();
+
+/* ═════════ src/bo-may-tap-doan.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — BỘ MÁY TẬP ĐOÀN TINH GỌN · CÂY GIÁ TRỊ · CÂY TIỀN
+
+   Chủ hệ: một bộ máy vận hành cấp tập đoàn công nghệ nhưng TINH GỌN —
+   mỗi ban là một "cửa sổ" trỏ vào hệ thống THẬT đang chạy, không dựng
+   lại. Ba phần:
+
+   1. BỘ MÁY — 10 ban/hệ thống. Mỗi ban có sứ mệnh + con trỏ vào mã
+      thật (CI đo trong tools/do-16-he.js) + chỗ còn thiếu ghi thật.
+   2. CÂY GIÁ TRỊ — gốc (Hiến pháp) → thân (16 hệ) → cành (10 ban) →
+      lá (trải nghiệm khách) → quả (KPI cây tiền). Cây chỉ sống khi
+      mỗi tầng trỏ vào cơ chế thật.
+   3. CÂY TIỀN — ba đích (90% hài lòng · 90% tái dùng+nâng cấp · 20%
+      tầng 5) tính LÚC ĐỌC từ D1 qua cửa docKpiCayTien. Không có ô
+      nhập tay: một con số tự khai chỉ để có người chạy cho đủ.
+
+   "Tập đoàn tinh gọn" nghĩa là: một người vẫn điều hành được — vì mỗi
+   ban đã có SOP, cổng, khoá sở hữu (dieu-phoi) và bộ não V20 gánh
+   phần lặp; người chỉ quyết ở chốt chặn.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.VIEWS = G.VIEWS || {};
+
+/* ══ 10 BAN / HỆ THỐNG — mỗi ban: sứ mệnh · trỏ vào mã thật · thiếu gì ══ */
+G.TD_BAN = [
+  { ma: 'B01', ten: 'Ban Thanh tra', ic: 'shield',
+    menh: 'Soi mọi cửa theo chu kỳ, cảnh báo có thời hạn, sổ thanh tra không xoá được.',
+    tro: ['v:thanh-tra', 'v:giam-sat', 'm:may-chu/csdl.sql#thanhTraSo'],
+    thieu: '' },
+  { ma: 'B02', ten: 'Ban Sản xuất nội dung', ic: 'spark',
+    menh: 'Sản xuất nội dung theo dây chuyền có kỳ hạn: bài → duyệt → đăng → đo lại.',
+    tro: ['v:xuong-phim', 'm:may-chu/csdl.sql#baiNoiDung', 'm:may-chu/csdl.sql#kyNoiDung'],
+    thieu: 'Chưa có lịch sản xuất tự xếp theo kỳ — hiện xếp tay.' },
+  { ma: 'B03', ten: 'Ban Kho tài liệu', ic: 'vault',
+    menh: 'Tài liệu vào kho qua cửa duyệt, có phiên bản, không đường tắt.',
+    tro: ['v:kho-tai-lieu', 'v:duyet-tai-lieu', 'm:may-chu/csdl.sql#tailieu'],
+    thieu: '' },
+  { ma: 'B04', ten: 'Hệ Giải pháp khách hàng', ic: 'compass',
+    menh: 'Mỗi vấn đề của khách có một giải pháp đã duyệt trong kho — hỏi một lần, dùng mãi.',
+    tro: ['v:ban-tu-van', 'v:bo-nao-da-tri', 'm:may-chu/csdl.sql#khoGiaiPhapDaTri'],
+    thieu: '' },
+  { ma: 'B05', ten: 'Hệ Chuyên gia Coach', ic: 'users',
+    menh: 'Coach đồng hành theo bàn làm việc 5 ngăn; máy nhắc việc có hạn giờ.',
+    tro: ['v:ban-coach', 'v:diem-cham-1000', 'v:chuoi-wow'],
+    thieu: '' },
+  { ma: 'B06', ten: 'Hệ Chuyên gia Giáo dục', ic: 'book',
+    menh: 'Lộ trình học và 10 điểm về đích — 100 tiêu chí đo được, không chấm cảm tính.',
+    tro: ['v:lo-trinh', 'v:kpi-100'],
+    thieu: '' },
+  { ma: 'B07', ten: 'Hệ Luật sư — Pháp lý', ic: 'lock',
+    menh: 'Rà soát pháp lý đối chiếu hàm đang chạy; bằng chứng điện tử đọc từ nhật ký thật.',
+    tro: ['v:ra-soat-phap-ly', 'v:bang-chung', 'v:ky-ket'],
+    thieu: 'Chưa có luật sư thật ký kết luận tuân thủ — mã chỉ thực thi quy trình.' },
+  { ma: 'B08', ten: 'Hệ Dự án', ic: 'grid',
+    menh: 'Việc lớn chạy theo tuyến nhiều chặng có chốt chặn — hệ dừng chờ người sau mỗi chặng.',
+    tro: ['v:bang-viec', 'f:taoTuyenDaTri', 'f:chayChangDaTri'],
+    thieu: 'Chưa có biểu đồ Gantt/nguồn lực — hiện quản trị qua bảng công việc + tuyến chốt chặn.' },
+  { ma: 'B09', ten: 'Bộ não V20', ic: 'orbit',
+    menh: 'Định tuyến 5 bộ não AI, kho giải pháp 0 token, vòng nhà khoa học mỗi đêm.',
+    tro: ['v:bo-nao-da-tri', 'm:may-chu/bo-nao-da-tri.js#doChacDinhTuyen', 'm:may-chu/bo-nao-da-tri.js#coVanDaTri'],
+    thieu: '' },
+  { ma: 'B10', ten: 'Lá chắn & 12 tầng hậu cần', ic: 'shield',
+    menh: '30 tầng bảo mật/phòng vệ + 12 tầng bếp — mọi tầng đo bằng CI mỗi PR.',
+    tro: ['v:la-chan-30', 't:tools/do-16-he.js'],
+    thieu: '' }
+];
+
+/* ══ CÂY GIÁ TRỊ — năm tầng, mỗi tầng trỏ vào cơ chế thật ══ */
+G.TD_CAY_GT = [
+  { tang: 'Gốc', ten: 'Hiến pháp 13 điều · hàng rào bất khả sửa', tro: ['v:bo-nao', 'v:hanh-lang'] },
+  { tang: 'Thân', ten: '16 hệ thống vận hành có SOP và trần tự chủ', tro: ['v:he-16', 'v:dieu-phoi'] },
+  { tang: 'Cành', ten: '10 ban/hệ thống của bộ máy tập đoàn', tro: [] },
+  { tang: 'Lá', ten: 'Trải nghiệm khách: chuỗi WOW · 1000 điểm chạm', tro: ['v:chuoi-wow', 'v:diem-cham-1000'] },
+  { tang: 'Quả', ten: 'Cây tiền: hài lòng · tái dùng · tầng 5 — đo từ D1', tro: ['f:docKpiCayTien'] }
+];
+
+(function () {
+  var U = G.U, h = U.h, ic = U.ic;
+  function nut(on, nd, k) { return '<button class="btn ' + (k || 'ghost') + ' sm" onclick="' + on + '">' + nd + '</button>'; }
+  function veTro(ds) {
+    return (ds || []).map(function (x) {
+      var k = (G.h16DoTro || function () { return {}; })(x);
+      return '<code>' + h(x) + '</code>' + (k.noi === 'may' ? (k.song ? ' ✓' : ' ✗') : '');
+    }).join(' · ');
+  }
+
+  G.tdKpiTai = function () {
+    if (!G.goiMayChu || G.tdKpiDangTai) return;
+    G.tdKpiDangTai = true;
+    G.goiMayChu('docKpiCayTien', {}).then(function (x) {
+      G.tdKpiDangTai = false; G.tdKpi = x || { ok: false, error: 'Không có phản hồi.' };
+      if (G.S && G.S.view === 'bo-may-tap-doan' && G.render) G.render();
+    });
+  };
+
+  G.VIEWS['bo-may-tap-doan'] = function () {
+    var o = '<div class="hd"><h2>' + ic('grid') + ' Bộ máy tập đoàn tinh gọn</h2>' +
+      '<p class="sub">Mười ban/hệ thống — mỗi ban TRỎ vào hệ thống thật đang chạy (CI đo mỗi PR), ' +
+      'chỗ còn thiếu ghi thật. Tinh gọn nghĩa là một người điều hành được: mỗi ban đã có SOP, cổng và ' +
+      'khoá sở hữu; bộ não V20 gánh phần lặp, người chỉ quyết ở chốt chặn.</p></div>';
+
+    /* ── NGĂN 1 · MƯỜI BAN ── */
+    o += '<div class="card mt"><b>Bộ máy — 10 ban / hệ thống</b><table class="tbl sm mt">' +
+      '<tr><th>Mã</th><th>Ban</th><th>Sứ mệnh</th><th>Trỏ vào mã thật</th><th>Còn thiếu (ghi thật)</th></tr>' +
+      G.TD_BAN.map(function (b) {
+        return '<tr><td class="mono">' + h(b.ma) + '</td><td><b>' + h(b.ten) + '</b></td><td class="tiny">' + h(b.menh) + '</td>' +
+          '<td class="mono tiny">' + veTro(b.tro) + '</td>' +
+          '<td class="tiny muted">' + (b.thieu ? h(b.thieu) : '—') + '</td></tr>';
+      }).join('') + '</table></div>';
+
+    /* ── NGĂN 2 · CÂY GIÁ TRỊ ── */
+    o += '<div class="card mt"><b>Cây giá trị</b><div class="tiny muted mt">Cây chỉ sống khi mỗi tầng trỏ vào cơ chế thật — ' +
+      'tầng nào không trỏ được là tầng chưa có.</div><table class="tbl sm mt"><tr><th>Tầng</th><th>Là gì</th><th>Trỏ vào</th></tr>' +
+      G.TD_CAY_GT.map(function (t) {
+        return '<tr><td><b>' + h(t.tang) + '</b></td><td class="tiny">' + h(t.ten) + '</td><td class="mono tiny">' +
+          (t.tro.length ? veTro(t.tro) : '<span class="muted">chính bảng bên trên</span>') + '</td></tr>';
+      }).join('') + '</table></div>';
+
+    /* ── NGĂN 3 · CÂY TIỀN — KPI đo từ D1 lúc đọc ── */
+    var k = G.tdKpi;
+    if (!k) { if (G.goiMayChu) G.tdKpiTai(); o += '<div class="card mt tiny muted">Đang đọc cây tiền từ máy chủ… ' + nut('G.tdKpiTai()', 'Tải lại') + '</div>'; }
+    else if (!k.ok) o += '<div class="card mt" style="color:var(--gita-do)">' + h(k.error || 'Không đọc được KPI.') + '</div>';
+    else {
+      o += '<div class="card mt"><b>Cây tiền — ba đích, đo từ dữ liệu thật</b>' +
+        '<div class="tiny muted mt">Không có ô nhập tay: mọi chỉ số tính lúc đọc từ D1 (' +
+        (k.tong ? 'đang có <b>' + k.tong + '</b> khách · ' + k.dangHoc + ' đang học · ' + k.tang5 + ' đạt tầng 5' : h(k.ghiChu || '')) + ').</div>';
+      if (k.kpi) o += '<div class="hvh-tru mt">' + k.kpi.map(function (x) {
+        return '<div class="hvh-tru-o"><div class="hvh-tru-dau"><b>' + h(x.ten) + '</b>' +
+          '<span class="hvh-do" style="color:' + (x.dat ? 'var(--ok)' : 'var(--gita-sau)') + '">' + x.giaTri + '% / đích ' + x.dich + '%' +
+          (x.dat ? ' ✓' : ' · thiếu ' + x.conThieu + ' điểm %') + '</span></div>' +
+          '<p class="hvh-meta">Công thức: ' + h(x.congThuc) + ' · nguồn: <code>' + h(x.nguon) + '</code>' +
+          (x.proxy ? ' · <b>proxy</b> (chưa khảo sát trực tiếp)' : '') + '</p></div>';
+      }).join('') + '</div>';
+      (k.khoangTrong || []).forEach(function (g) {
+        o += '<div class="tiny mt" style="color:var(--gita-sau)"><b>Chỗ trống:</b> ' + h(g) + '</div>';
+      });
+      o += '</div>';
+    }
+    o += '<p class="note hvh-note">Đích 90% · 90% · 20% là do chủ hệ đặt; máy chỉ đo và báo thật, kể cả khi xấu.</p>';
+    return o;
+  };
 })();
 
 })();
