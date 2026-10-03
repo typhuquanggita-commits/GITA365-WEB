@@ -8,7 +8,7 @@
 - **Ba đích 90% · 90% · 20% do chủ hệ đặt; máy chỉ đo và báo thật, kể cả khi xấu.** Không có ô nhập tay nào cho KPI — một con số tự khai chỉ để có người chạy cho đủ (bẫy SUP-01).
 - **"Hài lòng" hiện là proxy** (khách không hoàn tiền, không bị CRM ghi "rời", hồ sơ không "nghỉ"). Khách im lặng bỏ đi chưa chắc bị ghi — chỗ trống này được ghi ngay trong kết quả cửa, và việc cần làm là thêm khảo sát CSAT sau mỗi mốc lên tầng.
 
-## Mười ban / hệ thống
+## Mười sáu ban / hệ thống
 
 | Mã | Ban | Trỏ vào |
 |---|---|---|
@@ -22,6 +22,12 @@
 | B08 | Dự án | `bang-viec` + tuyến chốt chặn của bộ não V20 |
 | B09 | Bộ não V20 | `bo-nao-da-tri` (định tuyến, cố vấn, kho 0 token) |
 | B10 | Lá chắn & hậu cần | `la-chan-30` (30 tầng + 12 tầng bếp) |
+| B11 | Tài chính — Kế toán | `phong-tai-chinh` · `ke-toan-thue` · `ghiPhieuThu` |
+| B12 | Marketing — Truyền thông | `noi-dung-tiep-thi` · `bien-soan-noi-dung` |
+| B13 | Nhân sự | `bangLuong` · roster 100 trợ lý |
+| B14 | Chăm sóc khách hàng | `crm` · `crmKhach` · `soCham` |
+| B15 | Nghiên cứu & X10 | `cai-tien` · `ban-do-chien-luoc` |
+| B16 | Đối tác & Thuê ngoài | `ket-noi` · `phimGuiViec` |
 
 Chỗ còn thiếu được ghi thật ngay trên màn: lịch sản xuất nội dung chưa tự xếp theo kỳ (B02); chưa có luật sư thật ký kết luận tuân thủ (B07); chưa có Gantt/nguồn lực cho dự án (B08).
 
@@ -38,3 +44,5 @@ Gốc: Hiến pháp 13 điều → Thân: 16 hệ có SOP → Cành: 10 ban → 
 | Khách đạt tầng 5 | 20% | khách ở tầng ≥ 5 / tổng | `hoSoKhach.tang` |
 
 Kho trống thì cửa báo thật "chưa có dữ liệu" thay vì bịa số.
+
+Sơ đồ vận hành tổng thể đầy đủ (vòng đời yêu cầu · vòng đêm · CI/CD · cây tiền): [SO_DO_VAN_HANH_TONG_THE.md](SO_DO_VAN_HANH_TONG_THE.md).

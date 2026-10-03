@@ -131,8 +131,8 @@ dat(BK.some(b => b.khongDoDuoc), 'Hậu cần: phải ghi thật ít nhất mộ
 /* Bộ máy tập đoàn: mỗi ban có sứ mệnh + ít nhất một con trỏ SỐNG; cây
    giá trị năm tầng trỏ vào cơ chế thật; ban nào còn thiếu phải ghi ra. */
 const TD = G.TD_BAN;
-dat(TD.length === 10, `Bộ máy cần 10 ban, có ${TD.length}`);
-dat(new Set(TD.map(b => b.ma)).size === 10, 'Mã ban trùng');
+dat(TD.length === 16, `Bộ máy cần 16 ban, có ${TD.length}`);
+dat(new Set(TD.map(b => b.ma)).size === 16, 'Mã ban trùng');
 TD.forEach(b => {
   dat(!!b.menh && b.tro.length > 0, `${b.ma}: thiếu sứ mệnh hoặc con trỏ`);
   b.tro.forEach(x => kiemTro(x, b.ma));

@@ -32,7 +32,7 @@ G.VIEWS = G.VIEWS || {};
 G.H16_HE = [
   { ma: 'H01', ten: 'Quản trị', ic: 'shield',
     troVao: ['v:phan-quyen', 'v:tang-quyen', 'v:vong-doi-tk', 'v:cap-tai-khoan', 'g:ROLES', 'g:PERM', 'g:TIERS',
-      'f:capQuyenXem', 'f:capQuyenTaiChinh', 'd:docs/TAI_KHOAN.md'],
+      'f:capQuyenXem', 'f:capQuyenTaiChinh', 'd:docs/TAI_KHOAN.md', 'd:docs/SO_DO_VAN_HANH_TONG_THE.md'],
     trong: 'Quyền khai ở nhiều mô-đun; chưa có phép thử "ai làm được gì" chạy tự động ở CI.',
     ke: 'Ma trận vai × quyền xuất thành bảng kiểm CI; mẫu ABAC theo CASL (chỉ học mẫu).' },
   { ma: 'H02', ten: 'Dữ liệu · thông tin', ic: 'grid',

@@ -5,9 +5,9 @@
    mỗi ban là một "cửa sổ" trỏ vào hệ thống THẬT đang chạy, không dựng
    lại. Ba phần:
 
-   1. BỘ MÁY — 10 ban/hệ thống. Mỗi ban có sứ mệnh + con trỏ vào mã
+   1. BỘ MÁY — 16 ban/hệ thống. Mỗi ban có sứ mệnh + con trỏ vào mã
       thật (CI đo trong tools/do-16-he.js) + chỗ còn thiếu ghi thật.
-   2. CÂY GIÁ TRỊ — gốc (Hiến pháp) → thân (16 hệ) → cành (10 ban) →
+   2. CÂY GIÁ TRỊ — gốc (Hiến pháp) → thân (16 hệ) → cành (16 ban) →
       lá (trải nghiệm khách) → quả (KPI cây tiền). Cây chỉ sống khi
       mỗi tầng trỏ vào cơ chế thật.
    3. CÂY TIỀN — ba đích (90% hài lòng · 90% tái dùng+nâng cấp · 20%
@@ -22,7 +22,7 @@
 var G = window.G || {}; window.G = G;
 G.VIEWS = G.VIEWS || {};
 
-/* ══ 10 BAN / HỆ THỐNG — mỗi ban: sứ mệnh · trỏ vào mã thật · thiếu gì ══ */
+/* ══ 16 BAN / HỆ THỐNG — mỗi ban: sứ mệnh · trỏ vào mã thật · thiếu gì ══ */
 G.TD_BAN = [
   { ma: 'B01', ten: 'Ban Thanh tra', ic: 'shield',
     menh: 'Soi mọi cửa theo chu kỳ, cảnh báo có thời hạn, sổ thanh tra không xoá được.',
@@ -63,6 +63,30 @@ G.TD_BAN = [
   { ma: 'B10', ten: 'Lá chắn & 12 tầng hậu cần', ic: 'shield',
     menh: '30 tầng bảo mật/phòng vệ + 12 tầng bếp — mọi tầng đo bằng CI mỗi PR.',
     tro: ['v:la-chan-30', 't:tools/do-16-he.js'],
+    thieu: '' },
+  { ma: 'B11', ten: 'Ban Tài chính — Kế toán', ic: 'chart',
+    menh: 'Thu chi có phiếu có duyệt, bảng lương máy đọc, bảy con số CEO mỗi tuần.',
+    tro: ['v:phong-tai-chinh', 'v:ke-toan-thue', 'f:ghiPhieuThu'],
+    thieu: '' },
+  { ma: 'B12', ten: 'Ban Marketing — Truyền thông', ic: 'spark',
+    menh: 'Nội dung tiếp thị qua cổng soát đạo đức; biên soạn có kỳ, đo lại sau đăng.',
+    tro: ['v:noi-dung-tiep-thi', 'v:bien-soan-noi-dung', 'f:soatTiepThi'],
+    thieu: 'Chưa quy kết được kênh nào đem khách thật mà không theo dõi cá nhân.' },
+  { ma: 'B13', ten: 'Ban Nhân sự', ic: 'users',
+    menh: 'Lương tính từ hệ số có sổ, mỗi kỳ một vết; roster 100 trợ lý có vai.',
+    tro: ['f:bangLuong', 'm:may-chu/csdl.sql#bangLuong', 'g:DP_TRO_LY'],
+    thieu: 'Chưa có màn tuyển dụng/hồ sơ nhân sự riêng — hiện qua bảng lương + roster.' },
+  { ma: 'B14', ten: 'Ban Chăm sóc khách hàng', ic: 'chat',
+    menh: 'CRM theo giai đoạn, hẹn chạm tiếp; mỗi lần chạm vào sổ có căn cứ, có người duyệt.',
+    tro: ['v:crm', 'm:may-chu/csdl.sql#crmKhach', 'm:may-chu/csdl.sql#soCham'],
+    thieu: '' },
+  { ma: 'B15', ten: 'Ban Nghiên cứu & X10', ic: 'spark',
+    menh: 'Cải tiến có mốc nền, sổ thí nghiệm gắn mã chiến lược, so tỉ số mỗi chu kỳ.',
+    tro: ['v:cai-tien', 'v:ban-do-chien-luoc', 'g:H16_RD'],
+    thieu: '' },
+  { ma: 'B16', ten: 'Ban Đối tác & Thuê ngoài', ic: 'orbit',
+    menh: 'Mọi việc ra ngoài qua cổng ẩn danh Điều 13; mỗi nhà cung cấp một khoang riêng.',
+    tro: ['v:ket-noi', 'f:phimGuiViec', 'f:guiDeBaiRaNgoai'],
     thieu: '' }
 ];
 
@@ -70,7 +94,7 @@ G.TD_BAN = [
 G.TD_CAY_GT = [
   { tang: 'Gốc', ten: 'Hiến pháp 13 điều · hàng rào bất khả sửa', tro: ['v:bo-nao', 'v:hanh-lang'] },
   { tang: 'Thân', ten: '16 hệ thống vận hành có SOP và trần tự chủ', tro: ['v:he-16', 'v:dieu-phoi'] },
-  { tang: 'Cành', ten: '10 ban/hệ thống của bộ máy tập đoàn', tro: [] },
+  { tang: 'Cành', ten: '16 ban/hệ thống của bộ máy tập đoàn', tro: [] },
   { tang: 'Lá', ten: 'Trải nghiệm khách: chuỗi WOW · 1000 điểm chạm', tro: ['v:chuoi-wow', 'v:diem-cham-1000'] },
   { tang: 'Quả', ten: 'Cây tiền: hài lòng · tái dùng · tầng 5 — đo từ D1', tro: ['f:docKpiCayTien'] }
 ];
@@ -96,12 +120,12 @@ G.TD_CAY_GT = [
 
   G.VIEWS['bo-may-tap-doan'] = function () {
     var o = '<div class="hd"><h2>' + ic('grid') + ' Bộ máy tập đoàn tinh gọn</h2>' +
-      '<p class="sub">Mười ban/hệ thống — mỗi ban TRỎ vào hệ thống thật đang chạy (CI đo mỗi PR), ' +
+      '<p class="sub">Mười sáu ban/hệ thống — mỗi ban TRỎ vào hệ thống thật đang chạy (CI đo mỗi PR), ' +
       'chỗ còn thiếu ghi thật. Tinh gọn nghĩa là một người điều hành được: mỗi ban đã có SOP, cổng và ' +
       'khoá sở hữu; bộ não V20 gánh phần lặp, người chỉ quyết ở chốt chặn.</p></div>';
 
     /* ── NGĂN 1 · MƯỜI BAN ── */
-    o += '<div class="card mt"><b>Bộ máy — 10 ban / hệ thống</b><table class="tbl sm mt">' +
+    o += '<div class="card mt"><b>Bộ máy — 16 ban / hệ thống</b><table class="tbl sm mt">' +
       '<tr><th>Mã</th><th>Ban</th><th>Sứ mệnh</th><th>Trỏ vào mã thật</th><th>Còn thiếu (ghi thật)</th></tr>' +
       G.TD_BAN.map(function (b) {
         return '<tr><td class="mono">' + h(b.ma) + '</td><td><b>' + h(b.ten) + '</b></td><td class="tiny">' + h(b.menh) + '</td>' +
