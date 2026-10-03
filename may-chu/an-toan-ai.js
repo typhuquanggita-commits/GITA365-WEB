@@ -39,7 +39,7 @@ import { soatRaNgoai } from './bo-nao.js';
 /* Nhà cung cấp NGOÀI lãnh thổ — gửi nội dung tới đây là xử lý dữ liệu
    xuyên biên giới. Cloudflare Workers AI (cf-workers-ai) chạy TRONG vùng
    nên khác loại, nhưng cổng vẫn sàng nó để phòng thủ nhiều lớp. */
-export const NHA_NGOAI = ['gemini', 'groq', 'openrouter', 'together', 'hf', 'openai', 'anthropic'];
+export const NHA_NGOAI = ['gemini', 'groq', 'openrouter', 'together', 'hf', 'openai', 'anthropic', 'fal'];
 export const NHA_TRONG = ['cf-workers-ai'];
 
 /* Host thật của các nhà cung cấp ngoài — mục 121 dò các host này trong
@@ -47,7 +47,7 @@ export const NHA_TRONG = ['cf-workers-ai'];
    (tên ngắn "hf"/"together" bắt oan chữ thường). */
 export const HOST_NGOAI = [
   'generativelanguage.googleapis.com', 'api.groq.com', 'openrouter.ai',
-  'api.together.xyz', 'api-inference.huggingface.co', 'api.openai.com', 'api.anthropic.com'
+  'api.together.xyz', 'api-inference.huggingface.co', 'api.openai.com', 'api.anthropic.com', 'queue.fal.run'
 ];
 
 /* Dựng CHUỖI ĐÃ GHÉP XONG rồi mới soi (luật 9.99.62: soi chuỗi đã dựng,

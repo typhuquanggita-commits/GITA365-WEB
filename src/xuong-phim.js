@@ -15,11 +15,13 @@
      4 · Nạp các clip vào đây: máy xếp đúng thứ tự, đè phụ đề, logo, số
          tập, khung tin nhắn, trộn nhạc nền, rồi xuất một tệp phim 9:16.
 
-   ── VÌ SAO KHÔNG TỰ GỌI MÁY TẠO VIDEO ──
-   Luật của xưởng (src/studio.js, may-chu/studio.js · C20): ứng dụng
-   KHÔNG gọi dịch vụ sinh giọng/ảnh/video bên ngoài. Xưởng này giữ đúng
-   luật ấy: nó chỉ SOẠN chữ (prompt, phụ đề) và LẮP các clip người dùng
-   tự mang vào. Không một byte nào rời máy.
+   ── HAI CÁCH LÀM ──
+   · Tự tay (bốn bước trên): xưởng chỉ SOẠN chữ và LẮP clip người dùng
+     mang vào — không một byte nào rời máy (đúng luật C20 của xưởng cũ).
+   · Tự động A-Z (src/xuong-phim-tu-dong.js, 9.99.251): theo yêu cầu chủ
+     hệ, Super Admin dán kịch bản, máy chủ gọi fal.ai bằng khoá của chủ
+     hệ (may-chu/phim-ai.js) để phân cảnh, vẽ, quay, đọc thoại; xưởng
+     tải kết quả về rồi tự lắp và xuất. Đây là ngoại lệ có chủ ý của C20.
 
    ── KHÔNG `URL.createObjectURL` ──
    Clip đọc bằng FileReader thành địa chỉ data: (CSP media-src có data:),
@@ -148,6 +150,11 @@ G.VIEWS = G.VIEWS || {};
 
   /* ══ SOẠN PROMPT ══ */
   function nvTrongCanh(c) {
+    if (c.nhanVat && c.nhanVat.length) {
+      var ds = c.nhanVat.map(function (x) { return String(x).toLowerCase(); });
+      var co = G.xpDA.nhanVat.filter(function (n) { return n.ten && ds.indexOf(n.ten.toLowerCase()) >= 0; });
+      if (co.length) return co;
+    }
     var chu = (c.hanhDong + ' ' + c.thoai.map(function (t) { return t.ai; }).join(' ') + ' ' +
       c.tinNhan.map(function (t) { return t.ai; }).join(' ')).toLowerCase();
     return G.xpDA.nhanVat.filter(function (n) { return n.ten && chu.indexOf(n.ten.toLowerCase()) >= 0; });
@@ -163,10 +170,10 @@ G.VIEWS = G.VIEWS || {};
     var anh = 'Vertical 9:16 frame. ' + G.xpDA.phongCach + '. ' + goc + '. ' +
       (ai ? 'Characters: ' + ai + '. ' : '') +
       (bc.prompt || bc.ten ? 'Setting: ' + (bc.prompt || bc.ten) + '. ' : '') +
-      'Scene (Vietnamese description, translate faithfully): ' + c.hanhDong + '. ' +
+      (c.hinh ? c.hinh + ' ' : 'Scene (Vietnamese description, translate faithfully): ' + c.hanhDong + '. ') +
       (c.tinNhan.length ? 'Close-up of a smartphone screen showing a chat conversation. ' : '') +
       'Consistent character appearance, realistic skin texture, no text, no subtitles, no watermark, no logo.';
-    var vid = goc + ', ' + may + '. ' + (ai ? ai + '. ' : '') + c.hanhDong + '.' + noi +
+    var vid = goc + ', ' + may + '. ' + (ai ? ai + '. ' : '') + (c.chuyenDong || c.hanhDong) + '.' + noi +
       ' Smooth natural motion, cinematic lighting, vertical 9:16, ' + (+c.giay || 5) +
       ' seconds. No text on screen, no subtitles, no watermark.';
     var am = 'blurry, distorted face, extra fingers, deformed hands, text, subtitles, watermark, logo, cartoon, low quality';
@@ -182,13 +189,20 @@ G.VIEWS = G.VIEWS || {};
   }
   function thoiLuongCanh(c) {
     var v = c.clip && G.xpVat[c.clip];
-    if (G.xpDA.theoClip && v && v.loai === 'phim' && v.el && v.el.duration) return v.el.duration;
-    return +c.giay || 5;
+    var can = 0;
+    c.thoai.forEach(function (x) { if (x.am && G.xpVat[x.am] && x.den) can = Math.max(can, x.den + 0.4); });
+    if (G.xpDA.theoClip && v && v.loai === 'phim' && v.el && v.el.duration) return Math.max(v.el.duration, can);
+    return Math.max(+c.giay || 5, can);
   }
   G.xpDongPhuDe = function () {
     var ds = [], t0 = 0;
     G.xpDA.canh.forEach(function (c) {
       var d = thoiLuongCanh(c), tong = 0;
+      var coMoc = c.thoai.length && c.thoai.every(function (x) { return x.am && G.xpVat[x.am] && x.den > x.tu; });
+      if (coMoc) {
+        c.thoai.forEach(function (x) { ds.push({tu: t0 + x.tu, den: t0 + Math.min(d, x.den + 0.15), chu: x.loi, ai: x.ai, canh: c.id}); });
+        t0 += d; return;
+      }
       c.thoai.forEach(function (t) { tong += t.loi.length + 8; });
       var t = t0 + 0.2;
       c.thoai.forEach(function (x) {
@@ -385,9 +399,14 @@ G.VIEWS = G.VIEWS || {};
     if (chay.ghi && chay.ghi.state === 'recording') chay.ghi.stop();
     dungPhat();
   };
+  function tatGiong() {
+    (chay && chay.giong || []).forEach(function (s) { try { s.stop(); } catch (e) {} });
+    if (chay) chay.giong = [];
+  }
   function dungPhat() {
     if (!chay) return;
     cancelAnimationFrame(chay.raf);
+    tatGiong();
     G.xpDA.canh.forEach(function (c) { var v = G.xpVat[c.clip]; if (v && v.loai === 'phim') try { v.el.pause(); } catch (e) {} });
     if (chay.nhac) try { chay.nhac.stop(); } catch (e) {}
   }
@@ -399,7 +418,7 @@ G.VIEWS = G.VIEWS || {};
     var x = cv.getContext('2d'), a = ac(); a.resume();
     phuDeDem = G.xpDongPhuDe();
     var dich = xuat ? a.createMediaStreamDestination() : null;
-    chay = {i: -1, t0: 0, batDau: 0, dung: false, raf: 0};
+    chay = {i: -1, t0: 0, batDau: 0, dung: false, raf: 0, giong: []};
     if (G.xpDA.nhac && G.xpVat[G.xpDA.nhac]) {
       var src = a.createBufferSource(), g = a.createGain();
       src.buffer = G.xpVat[G.xpDA.nhac].buffer; src.loop = true;
@@ -426,6 +445,15 @@ G.VIEWS = G.VIEWS || {};
         try { noiTieng(v.el, dich); } catch (e) {}
         v.el.currentTime = 0; var p = v.el.play(); if (p && p.catch) p.catch(function () {});
       }
+      tatGiong();
+      (c ? c.thoai : []).forEach(function (x) {
+        var gv = x.am && G.xpVat[x.am];
+        if (!gv || gv.loai !== 'giong') return;
+        var s = a.createBufferSource(), g = a.createGain();
+        s.buffer = gv.buffer; g.gain.value = +G.xpDA.amLuongGiong >= 0 ? +G.xpDA.amLuongGiong : 1;
+        s.connect(g); g.connect(a.destination); if (dich) g.connect(dich);
+        s.start(a.currentTime + Math.max(0, +x.tu || 0)); chay.giong.push(s);
+      });
     }
     var tPhimTruoc = 0;
     function nhip() {
@@ -485,14 +513,24 @@ G.VIEWS = G.VIEWS || {};
     var duoi = mp4 ? '.mp4' : '.webm', mo = mp4 ? 'video/mp4' : 'video/webm';
     var loai = {}; loai[mo] = [duoi];
     window.showSaveFilePicker({suggestedName: tenTep() + duoi, types: [{description: 'Phim', accept: loai}]})
-      .then(function (fh) {
-        U.toast('Đang xuất theo thời gian thực (' + Math.round(tongGiay()) + ' giây). Giữ tab này mở và hiện trên màn hình.', 'ok');
-        G.xpPhat(true, function (bl) {
-          fh.createWritable().then(function (w) { return w.write(bl).then(function () { return w.close(); }); })
-            .then(function () { U.toast('Đã xuất xong ' + fh.name, 'ok'); })
-            .catch(function (e) { U.toast('Không ghi được tệp: ' + (e && e.message), 'err'); });
-        });
-      }).catch(function (e) { if (e && e.name !== 'AbortError') U.toast('Không mở được hộp lưu: ' + (e.message || e), 'err'); });
+      .then(function (fh) { G.xpXuatVao(fh); })
+      .catch(function (e) { if (e && e.name !== 'AbortError') U.toast('Không mở được hộp lưu: ' + (e.message || e), 'err'); });
+  };
+  /* Hỏi chỗ lưu (cần cú bấm) — dùng cho làm phim tự động: hỏi lúc bắt đầu, ghi lúc xong */
+  G.xpChonNoiLuu = function () {
+    if (!duocLuu()) return Promise.reject(new Error('KHONG_LUU'));
+    var mp4 = window.MediaRecorder && MediaRecorder.isTypeSupported('video/mp4');
+    var duoi = mp4 ? '.mp4' : '.webm', mo = mp4 ? 'video/mp4' : 'video/webm';
+    var loai = {}; loai[mo] = [duoi];
+    return window.showSaveFilePicker({suggestedName: tenTep() + duoi, types: [{description: 'Phim', accept: loai}]});
+  };
+  G.xpXuatVao = function (fh, xongFn) {
+    U.toast('Đang xuất theo thời gian thực (' + Math.round(tongGiay()) + ' giây). Giữ tab này mở và hiện trên màn hình.', 'ok');
+    G.xpPhat(true, function (bl) {
+      fh.createWritable().then(function (w) { return w.write(bl).then(function () { return w.close(); }); })
+        .then(function () { U.toast('Đã xuất xong ' + fh.name, 'ok'); if (xongFn) xongFn(true); })
+        .catch(function (e) { U.toast('Không ghi được tệp: ' + (e && e.message), 'err'); if (xongFn) xongFn(false); });
+    });
   };
   G.xpChep = function (i, loai) {
     var c = G.xpDA.canh[i]; if (!c) return;
@@ -503,6 +541,11 @@ G.VIEWS = G.VIEWS || {};
   };
 
   /* ══ SỬA DỮ LIỆU ══ */
+  G.xpLuu = function () { luuDuAn(); };
+  G.xpVeLai = function () { veLai(); };
+  G.xpMa = ma;
+  G.xpTongGiay = function () { return tongGiay(); };
+  G.xpDangChay = function () { return !!(chay && !chay.dung); };
   function veLai() { phuDeDem = null; if (G.S && G.S.view === 'xuong-phim' && G.render) G.render(); }
   G.xpSua = function (k, v) { G.xpDA[k] = v; phuDeDem = null; luuDuAn(); };
   G.xpSuaDS = function (ds, id, k, v) {
@@ -545,6 +588,7 @@ G.VIEWS = G.VIEWS || {};
       '<p class="sub">Viết kịch bản → máy soạn prompt cho từng cảnh → bạn tạo clip bằng công cụ video AI → nạp clip vào đây ' +
       '→ máy lắp phụ đề, logo, số tập, nhạc và xuất thành phim. Clip, ảnh và nhạc xử lý ngay trên máy, không tải lên đâu.</p></div>';
     o += '<div class="man-xu">';
+    if (G.xpTuDongView) o += G.xpTuDongView();
 
     /* Hướng dẫn nhanh */
     o += '<details class="giay"' + (da.anHuongDan ? '' : ' open') + ' ontoggle="G.xpSua(\'anHuongDan\',!this.open)"><summary><b>Cách làm một tập phim (đọc một lần)</b></summary>' +

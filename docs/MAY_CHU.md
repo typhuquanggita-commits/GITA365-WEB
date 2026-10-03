@@ -63,6 +63,17 @@ Quyền truy cập "Bất kỳ ai" là bắt buộc để Worker gọi được 
 - Secret `GITA_CAU_NOI_GMAIL`, `GITA_KHOA_CAU_NOI`: cầu nối Gmail. Secret `GITA_KHOA_THU`: khoá API Resend.
 - Khi không có đường gửi nào, các thư bắt buộc (OTP, kích hoạt) báo lỗi rõ ràng thay vì im lặng.
 
+## Xưởng phim tự động A-Z (fal.ai)
+
+Mô-đun `may-chu/phim-ai.js` cho phép Super Admin (R01) dán kịch bản và để hệ thống tự làm phim dọc 9:16: phân cảnh (LLM), vẽ chân dung nhân vật, vẽ khung mở đầu giữ đúng gương mặt, quay clip (Kling 2.1 image-to-video), đọc thoại tiếng Việt (MiniMax), rồi trình duyệt tự lắp phụ đề, logo, nhạc và xuất MP4.
+
+- Secret `GITA_KHOA_FAL`: khoá API fal.ai của chủ hệ. Đặt ở GitHub secret cùng tên rồi chạy workflow deploy, hoặc `npx wrangler secret put GITA_KHOA_FAL` trong `may-chu/`.
+- Cửa: `phimTrangThai`, `phimGuiViec` (gửi một việc vào hàng đợi `queue.fal.run`), `phimXemViec` (hỏi tối đa 12 việc/lượt). Model theo danh sách trắng; mọi chuỗi đi ra qua `soatRaNhaCungCap` (provider `fal`).
+- Hạn mức mỗi ngày: llm 40 · ảnh 300 · ảnh-giữ-mặt 400 · clip 200 · giọng 800. Đặt thêm hạn mức chi tiêu ở fal.ai/dashboard/billing.
+- Chi phí tham khảo (giá fal.ai): ảnh 0,039 USD; clip 5 giây 0,28 USD; giọng 0,1 USD/1.000 ký tự. Một tập 3 phút (~36 cảnh) khoảng 12 USD.
+- Kết quả tải thẳng từ `*.fal.media` về trình duyệt (CSP `connect-src` đã mở các host này).
+- Đây là ngoại lệ có chủ ý của luật C20 theo yêu cầu chủ hệ; xưởng cũ (`src/studio.js`) vẫn giữ C20.
+
 ## Chức năng chính
 
 - Đăng nhập / đăng xuất / kiểm phiên

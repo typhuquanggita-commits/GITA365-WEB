@@ -103,6 +103,7 @@
     "src/studio-3d.js",
     "src/studio.js",
     "src/xuong-phim.js",
+    "src/xuong-phim-tu-dong.js",
     "src/thu-phong.js",
     "src/thanh-duoi.js",
     "src/bo-nao.js",

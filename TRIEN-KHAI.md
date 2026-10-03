@@ -1,6 +1,6 @@
 # GITA 365 — HƯỚNG DẪN TRIỂN KHAI (Cloudflare + GitHub)
 
-> Bản full 9.99.250 · T5-PRO/R5, 20 mẫu nghi thức, QR thanh toán và Studio MC nội bộ, Xưởng phim ngắn AI (phim dọc 9:16).
+> Bản full 9.99.251 · T5-PRO/R5, 20 mẫu nghi thức, QR thanh toán và Studio MC nội bộ, Xưởng phim ngắn AI (phim dọc 9:16, làm tự động A-Z từ kịch bản).
 > Đọc phần ⚠ BẢO MẬT trước tiên.
 
 ---

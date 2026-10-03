@@ -9,7 +9,7 @@
      CSP chỉ cho gọi ra đúng máy chủ cấp phép Cloudflare Worker, không nơi nào khác.
      frame-ancestors không đặt được bằng thẻ meta; nó nằm ở _headers, cần máy chủ
      đặt được tiêu đề (Cloudflare). Xem docs/TEN_MIEN.md. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://*.workers.dev https://*.pages.dev; media-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://*.workers.dev https://*.pages.dev https://fal.media https://*.fal.media https://storage.googleapis.com; media-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
 <!-- connect-src PHẢI kèm origin của máy chủ cấp phép. Thiếu nó thì trình
      duyệt chặn sạch mọi lượt gọi — bản web trông y như chưa nối máy chủ,
      kho trống, đăng nhập không được. Từ 9.99.226 mở sẵn MỌI hình triển

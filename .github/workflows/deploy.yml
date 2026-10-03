@@ -93,6 +93,24 @@ jobs:
           npx --yes wrangler@4 secret bulk "$f"
           rm -f "$f"
 
+      # Khoá fal.ai cho "Xưởng phim tự động A-Z" (chỉ Super Admin dùng).
+      - name: Nạp khoá fal.ai vào Worker (nếu có)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          GITA_KHOA_FAL: ${{ secrets.GITA_KHOA_FAL }}
+        working-directory: may-chu
+        run: |
+          set -eu
+          if [ -z "${GITA_KHOA_FAL:-}" ]; then
+            echo "Chưa có GITA_KHOA_FAL ở GitHub secrets — bỏ qua."
+            exit 0
+          fi
+          f="$RUNNER_TEMP/bi-mat-fal.json"
+          node -e "require('fs').writeFileSync(process.argv[1], JSON.stringify({GITA_KHOA_FAL: process.env.GITA_KHOA_FAL}))" "$f"
+          npx --yes wrangler@4 secret bulk "$f"
+          rm -f "$f"
+
       - name: Verify Worker health
         run: |
           set -eu

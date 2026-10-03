@@ -141,6 +141,11 @@ bucket_name = "gita365-hoso"
 # lại mật khẩu, báo doanh thu…) đi qua Gmail trước; hỏng thì thử Resend.
 #    npx wrangler secret put GITA_CAU_NOI_GMAIL   # URL .../exec của Apps Script
 #    npx wrangler secret put GITA_KHOA_CAU_NOI    # trùng thuộc tính KHOA ở Apps Script
+# ── XƯỞNG PHIM TỰ ĐỘNG A-Z (9.99.251, may-chu/phim-ai.js) ──
+# Khoá API fal.ai của chủ hệ (fal.ai/dashboard/keys). Thiếu thì ba cửa
+# phimGuiViec/phimXemViec/phimTrangThai báo "chưa có khoá"; chỉ R01 dùng.
+# Đặt ở GitHub secret GITA_KHOA_FAL thì workflow deploy tự nạp, hoặc:
+#    npx wrangler secret put GITA_KHOA_FAL
 # ── CỬA ĐI RA NGOÀI (tuỳ chọn — TẮT SẴN) ──
 # Chủ hệ chốt ở 9.99.11: được phép nối một bộ tạo ảnh bên ngoài.
 # Thiếu MỘT trong hai thì cửa ĐÓNG, và máy chủ nói rõ là đóng chứ không
