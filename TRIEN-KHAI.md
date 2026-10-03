@@ -1,6 +1,6 @@
 # GITA 365 — HƯỚNG DẪN TRIỂN KHAI (Cloudflare + GitHub)
 
-> Bản full 9.99.252 · T5-PRO/R5, 20 mẫu nghi thức, QR thanh toán và Studio MC nội bộ, Xưởng phim ngắn AI (phim dọc 9:16, làm tự động A-Z từ kịch bản, bộ phim 10 tập × 5 phút theo vấn đề khảo sát của khách).
+> Bản full 9.99.254 · T5-PRO/R5, 20 mẫu nghi thức, QR thanh toán và Studio MC nội bộ, Xưởng phim ngắn AI (phim dọc 9:16, làm tự động A-Z từ kịch bản, bộ phim 10 tập × 5 phút theo vấn đề khảo sát của khách; mặc định chạy chế độ 0 đồng bằng Workers AI miễn phí).
 > Đọc phần ⚠ BẢO MẬT trước tiên.
 
 ---
@@ -118,13 +118,12 @@ bash nap-bi-mat.sh /duong/dan/toi/khoa.json
 #   Trước khi tạo Super Admin đầu tiên, nạp thêm GITA_TAO_ADMIN bằng một
 #   secret ngẫu nhiên dùng một lần; xoá secret này ngay sau khi tạo xong.
 
-# 4) (Gửi thư) Chưa có tên miền riêng → dựng CẦU NỐI GMAIL theo
-#    docs/MAY_CHU.md ("Dựng cầu nối Gmail"), rồi:
-#      npx wrangler secret put GITA_CAU_NOI_GMAIL
-#      npx wrangler secret put GITA_KHOA_CAU_NOI
-#    Thư đi từ typhuquanggita@gmail.com (~100 người nhận/ngày).
-#    Khi có tên miền: điền GITA_THU_GUI_TU + GITA_KHOA_THU (Resend) và
-#    xác thực SPF/DKIM — Resend thành đường dự phòng/mở rộng.
+# 4) (Gửi thư) Thư cho CHỦ HỆ (mã bảo mật, quản trị, doanh thu) đi qua
+#    HỘP THƯ GITHUB — chỉ cần GitHub: tạo khoá GITA_GH_KHOA_THU theo
+#    docs/MAY_CHU.md ("Bật hộp thư GitHub"), nạp vào GitHub secret rồi
+#    chạy lại workflow deploy (hoặc: npx wrangler secret put GITA_GH_KHOA_THU).
+#    Thư cho KHÁCH: cần tên miền (Cloudflare) + GITA_THU_GUI_TU/GITA_KHOA_THU,
+#    hoặc cầu nối Gmail (GITA_CAU_NOI_GMAIL + GITA_KHOA_CAU_NOI, ~100/ngày).
 
 # 5) Đưa Worker lên lần đầu. Những thay đổi may-chu/ tiếp theo
 #    được GitHub Actions triển khai tự động sau khi đã có hai secrets ở Phần 1.
@@ -147,9 +146,10 @@ Thấy **số khoá > 0** là xong. Đổi địa chỉ máy chủ đảo ngư�
 | `GITA_TAO_ADMIN` | Mã khởi tạo Super Admin đầu tiên | Chỉ cần khi khởi tạo; xoá ngay sau khi tạo tài khoản. |
 | `GITA_KHOA_KY` | Khoá ký chứng cứ (HMAC) | Chuỗi ngẫu nhiên bất kỳ. |
 | `GITA_KHOA_THU` | Khoá gửi thư (Resend) | Chỉ cần nếu gửi qua Resend (cần tên miền đã xác minh). |
-| `GITA_CAU_NOI_GMAIL` / `GITA_KHOA_CAU_NOI` | URL + khoá cầu nối Gmail (Apps Script) | Đường gửi thư chính hiện nay, từ typhuquanggita@gmail.com. |
+| `GITA_GH_KHOA_THU` | Khoá GitHub (fine-grained, chỉ kho `gita365-hop-thu`, Contents: Read and write) | Đường gửi thư cho chủ hệ về typhuquanggita@gmail.com. |
+| `GITA_CAU_NOI_GMAIL` / `GITA_KHOA_CAU_NOI` | URL + khoá cầu nối Gmail (Apps Script) | Tuỳ chọn: thư cho khách khi chưa có tên miền. |
 
-Tuỳ chọn (mặc định TẮT): `GITA_KHOA_NGANHANG`, `GITA_KHOA_VE`/`GITA_CONG_VE` (bộ tạo ảnh ngoài).
+Tuỳ chọn (mặc định TẮT): `GITA_KHOA_NGANHANG`, `GITA_KHOA_VE`/`GITA_CONG_VE` (bộ tạo ảnh ngoài), `GITA_PHIM_TRAN_TRA_PHI` (biến, cần Workers Paid).
 
 ---
 
