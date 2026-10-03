@@ -144,7 +144,13 @@ async function dungBang(db) {
       'nguoiDe TEXT, nguoiDuyet TEXT, luc INTEGER, lucSoat INTEGER, dung INTEGER DEFAULT 0)'),
     db.prepare('CREATE TABLE IF NOT EXISTS mauDaTriThay (ncc TEXT, model TEXT, lanDau INTEGER, PRIMARY KEY (ncc, model))'),
     db.prepare('CREATE TABLE IF NOT EXISTS nhipDaTri (viec TEXT PRIMARY KEY, luc INTEGER)'),
-    db.prepare('CREATE TABLE IF NOT EXISTS vongKhoaHocDaTri (luc INTEGER PRIMARY KEY, soPhatHien INTEGER, baoCao TEXT)')
+    db.prepare('CREATE TABLE IF NOT EXISTS vongKhoaHocDaTri (luc INTEGER PRIMARY KEY, soPhatHien INTEGER, baoCao TEXT)'),
+    /* V20: đếm lượt bị lọc TRƯỚC token (đo được, không khai) · lỗi lặp
+       từng nhà cung cấp (điểm chạm cố vấn) · tuyến nhiều chặng có chốt. */
+    db.prepare('CREATE TABLE IF NOT EXISTS soLocDaTri (ngay TEXT, cua TEXT, luot INTEGER DEFAULT 0, PRIMARY KEY (ngay, cua))'),
+    db.prepare('CREATE TABLE IF NOT EXISTS loiNccDaTri (ngay TEXT, ncc TEXT, soLan INTEGER DEFAULT 0, PRIMARY KEY (ngay, ncc))'),
+    db.prepare('CREATE TABLE IF NOT EXISTS tuyenDaTri (ma TEXT PRIMARY KEY, ten TEXT, cacChang TEXT, dangO INTEGER DEFAULT 0, ' +
+      'ketQua TEXT, trangThai TEXT DEFAULT \'dangChay\', luc INTEGER, lucSua INTEGER)')
   ]);
   daDung = true;
 }
@@ -278,6 +284,8 @@ async function goiLeoBac(env, db, hoSo, ds, loai, cau, triThuc, tuy) {
       return { n, r, text, thu };
     } catch (e) {
       thu.push(n.ma + ': ' + String(e && e.message || e).slice(0, 60));
+      const cv = await coVanDaTri(env, db, 'loiLap', { ncc: n.ma });
+      if (cv.khuyen.length) thu.push('cố vấn: ' + cv.khuyen[0]);
     }
   }
   return { thu };
@@ -330,6 +338,66 @@ async function canHan(db, hoSo) {
   return dem > han;
 }
 
+/* ══ V20 · bốn cơ chế học từ bốn hệ tham chiếu (đo được, 0 token thêm) ══
+   1. Lọc trước token CÓ ĐẾM (quy trình Zalo Agent): mọi lượt dừng trước
+      khi tốn token được ghi vào soLocDaTri — bộ lọc tồn tại từ trước,
+      V20 làm nó ĐO ĐƯỢC thay vì âm thầm.
+   2. Định tuyến có độ chắc (fork layer sharp/split): hai ứng viên đầu
+      ngang nhau theo điểm chấm thật → hệ nói "chưa chắc", gợi ý hội
+      đồng; chỉ đo, KHÔNG đổi thứ tự định tuyến.
+   3. Cố vấn theo điểm chạm (advisor on-call): im ở lượt thường, chỉ lên
+      tiếng trước khi lưu kế hoạch · khi lỗi lặp · trước khi chốt. Cố
+      vấn CHỈ khuyên — cùng luật bộ chấm V20: không tự ra tay.
+   4. Tuyến nhiều chặng có chốt chặn (pipeline 5 khâu): việc lớn đi qua
+      nhiều chặng, hệ DỪNG sau mỗi chặng chờ người đọc; kết quả chặng
+      trước làm ngữ cảnh chặng sau (vòng lặp quay lại). */
+
+async function ghiLoc(db, cua) {
+  await db.prepare('INSERT INTO soLocDaTri (ngay, cua, luot) VALUES (?, ?, 1) ' +
+    'ON CONFLICT(ngay, cua) DO UPDATE SET luot = luot + 1').bind(homNay(), cua).run();
+}
+
+export const NGUONG_CHAC = { luot: 3, chenh: 0.15 };
+export async function doChacDinhTuyen(db, loai, ds) {
+  if (!ds || ds.length < 2) return { doChac: null, chac: true };
+  const dg = (await db.prepare('SELECT ncc, tot, xau FROM danhGiaDaTri WHERE loai = ?').bind(loai).all()).results || [];
+  const diem = {};
+  dg.forEach(r => { if (r.tot + r.xau >= NGUONG_CHAC.luot) diem[r.ncc] = (r.tot + 1) / (r.tot + r.xau + 2); });
+  const coSoLieu = ds.map(n => diem[n.ma]).filter(x => x !== undefined).sort((a, b) => b - a);
+  if (coSoLieu.length < 2) return { doChac: null, chac: true, thieu: 'chưa đủ điểm chấm để đo độ chắc' };
+  const chenh = Math.round((coSoLieu[0] - coSoLieu[1]) * 100) / 100;
+  return { doChac: chenh, chac: chenh >= NGUONG_CHAC.chenh, goiYHoiDong: chenh < NGUONG_CHAC.chenh };
+}
+
+const NGUONG_LOI_LAP = 3;
+export async function coVanDaTri(env, db, diem, du) {
+  const khuyen = [];
+  if (diem === 'truocKeHoach' && du) {
+    const tl = String(du.traLoi || '');
+    if (tl.length < 80) khuyen.push('Giải pháp ngắn dưới 80 ký tự — kho khó dùng lại được.');
+    if (/[0-9]+\s?(%|triệu|tỷ|usd|đồng)/i.test(tl) && !/nguồn|theo\s|báo cáo|số liệu/i.test(tl))
+      khuyen.push('Có con số mà chưa ghi nguồn — người duyệt nên hỏi lại căn cứ.');
+    if (du.loai === 'chienLuoc' && !du.hoiDong)
+      khuyen.push('Việc chiến lược cấp hệ: nên hỏi hội đồng 3 trí tuệ trước khi chốt.');
+  }
+  if (diem === 'truocKhiXong' && du && du.loai === 'chienLuoc' && !/hoi-dong/i.test(String(du.goc || '')))
+    khuyen.push('Bản chiến lược này chưa qua hội đồng — cân nhắc đối chiếu 3 trí tuệ trước khi duyệt.');
+  if (diem === 'loiLap' && du && du.ncc) {
+    await dungBang(db);
+    const ngay = homNay();
+    await db.prepare('INSERT INTO loiNccDaTri (ngay, ncc, soLan) VALUES (?, ?, 1) ' +
+      'ON CONFLICT(ngay, ncc) DO UPDATE SET soLan = soLan + 1').bind(ngay, du.ncc).run();
+    const r = await db.prepare('SELECT soLan FROM loiNccDaTri WHERE ngay = ? AND ncc = ?').bind(ngay, du.ncc).first();
+    if (r && r.soLan >= NGUONG_LOI_LAP) {
+      khuyen.push(du.ncc + ' đã lỗi ' + r.soLan + ' lần hôm nay — nên kiểm tra khoá/mô hình hoặc tạm ưu tiên nhà khác.');
+      if (r.soLan === NGUONG_LOI_LAP)
+        await Kho.ghiNhatKy(db, { uid: MAY.uid, username: MAY.u, viec: 'DA_TRI_LOI_LAP', doiTuong: du.ncc,
+          chiTiet: 'lỗi ' + r.soLan + ' lần trong ngày' });
+    }
+  }
+  return { diem, khuyen };
+}
+
 /* ═══════════════ CỬA: HỎI BỘ NÃO ĐA TRÍ ═══════════════ */
 export async function hoiDaTri(y, env, db, hoSo) {
   if (!laNguoiNha(hoSo)) return { ok: false, code: 'NOPERM', error: 'Mở cho R01–R12.' };
@@ -338,12 +406,12 @@ export async function hoiDaTri(y, env, db, hoSo) {
   const v = kiemVao(y, hoSo);
   if (v.loi) return v.loi;
   await dungBang(db);
-  if (await canHan(db, hoSo)) return { ok: false, code: 'VUOT_HAN', error: 'Đã hết lượt hỏi trong ngày.' };
+  if (await canHan(db, hoSo)) { await ghiLoc(db, 'han-ngay'); return { ok: false, code: 'VUOT_HAN', error: 'Đã hết lượt hỏi trong ngày.' }; }
 
   /* Sàng TRƯỚC cả bộ nhớ đệm: một chuỗi bẩn không được thành khoá đệm,
      cũng không được đi tới bất kỳ đâu (Điều 13). */
   const sang = await soatRaNhaCungCap({ provider: 'cf-workers-ai', cau: v.cau, triThuc: v.triThuc }, env, db, hoSo);
-  if (!sang.cho) return { ok: false, code: sang.code, ngo: sang.ngo, error: sang.vi };
+  if (!sang.cho) { await ghiLoc(db, 'dieu13'); return { ok: false, code: sang.code, ngo: sang.ngo, error: sang.vi }; }
 
   const khoa = await bam(v.loai + '|' + chuan(v.cau) + '|' + chuan(v.triThuc));
   const tuBac = Number((y || {}).tuBac) || 0;
@@ -354,6 +422,7 @@ export async function hoiDaTri(y, env, db, hoSo) {
     if (gp) {
       await db.prepare('UPDATE khoGiaiPhapDaTri SET dung = dung + 1 WHERE ma = ?').bind(gp.ma).run();
       await ghiToken(db, 'kho', 0, 0);
+      await ghiLoc(db, 'kho');
       return { ok: true, traLoi: gp.giaiPhap, ncc: 'kho', tenNcc: 'Kho giải pháp', bac: 0, tuKho: true, maGP: gp.ma,
         phienBan: gp.phienBan, khop: Math.round(gp.diem * 100), cauGoc: gp.cauHoi, token: 0,
         canSoat: canSoat(Object.assign({ trangThai: 'duyet' }, gp)), canDuyet: false };
@@ -365,15 +434,17 @@ export async function hoiDaTri(y, env, db, hoSo) {
     if (d) {
       await db.prepare('UPDATE triNhoDaTri SET dung = dung + 1 WHERE khoa = ?').bind(khoa).run();
       await ghiToken(db, 'dem', 0, 0);
+      await ghiLoc(db, 'dem');
       return { ok: true, traLoi: d.traLoi, ncc: d.ncc, bac: 0, tuDem: true, khoa, token: 0, canDuyet: true };
     }
   }
 
   const ds = await ungVien(env, db, v.l, tuBac, hoSo);
-  if (!ds.length) return { ok: false, code: 'KHONG_NCC',
+  if (!ds.length) { await ghiLoc(db, 'khong-ncc'); return { ok: false, code: 'KHONG_NCC',
     error: tietKiem(env) ? 'Chế độ tiết kiệm: chỉ còn Workers AI, và nó chưa được nối.' :
-      'Chưa có nhà cung cấp nào sẵn sàng ở bậc này (thiếu khoá, hết ngân sách ngày, hoặc vượt quyền).' };
+      'Chưa có nhà cung cấp nào sẵn sàng ở bậc này (thiếu khoá, hết ngân sách ngày, hoặc vượt quyền).' }; }
 
+  const dinhTuyen = await doChacDinhTuyen(db, v.loai, ds);
   const k = await goiLeoBac(env, db, hoSo, ds, v.loai, v.cau, v.triThuc);
   if (k.chan) return k.chan;
   if (k.n) {
@@ -382,10 +453,11 @@ export async function hoiDaTri(y, env, db, hoSo) {
       .bind(khoa, v.loai, n.ma, text, Date.now(), Date.now() + v.l.nho * 86400e3).run();
     await Kho.ghiNhatKy(db, { uid: hoSo.uid, username: ten(hoSo), viec: 'DA_TRI',
       doiTuong: n.ma, chiTiet: v.loai + ' · bậc ' + n.bac + ' · token ' + (r.vao + r.ra) });
-    return { ok: true, traLoi: text, ncc: n.ma, tenNcc: n.ten, model: r.model, bac: n.bac, khoa,
+    return { ok: true, traLoi: text, ncc: n.ma, tenNcc: n.ten, model: r.model, bac: n.bac, khoa, dinhTuyen,
       token: r.vao + r.ra, daThu: k.thu, coTheLenBac: n.bac < (laR01(hoSo) ? v.l.den : Math.min(v.l.den, 3)),
       canDuyet: true, nhac: 'Bản nháp AI — người phụ trách kiểm chứng trước khi dùng.' };
   }
+  await ghiLoc(db, 'ai-loi');
   return { ok: false, code: 'AI_LOI', daThu: k.thu, error: 'Mọi nhà cung cấp ở bậc này đều lỗi; thử lại sau.' };
 }
 
@@ -449,7 +521,9 @@ export async function soDaTri(y, env, db, hoSo) {
   const dg = (await db.prepare('SELECT loai, ncc, tot, xau FROM danhGiaDaTri').all()).results || [];
   const kho = (await db.prepare('SELECT trangThai, lucSoat, luc, dung FROM khoGiaiPhapDaTri').all()).results || [];
   const nhip = await db.prepare('SELECT luc FROM nhipDaTri WHERE viec = ?').bind('canhMau').first();
-  return { ok: true, bat: moBat(env), tietKiem: tietKiem(env), tranTai: Math.round(tranTai(env) * 100),
+  const loc = (await db.prepare('SELECT cua, luot FROM soLocDaTri WHERE ngay = ?').bind(ngay).all()).results || [];
+  const loiNcc = (await db.prepare('SELECT ncc, soLan FROM loiNccDaTri WHERE ngay = ?').bind(ngay).all()).results || [];
+  return { ok: true, bat: moBat(env), tietKiem: tietKiem(env), tranTai: Math.round(tranTai(env) * 100), loc, loiNcc,
     ncc: NCC.map(n => ({ ma: n.ma, ten: n.ten, bac: n.bac, sanSang: sanSang(n, env), model: mauCua(n, env) || null,
       nganNgay: nganCua(n, env), nganGoc: nganGoc(n, env), bien: n.khoa || 'binding AI', bienMau: n.bienMau })),
     loai: Object.keys(LOAI).map(k => Object.assign({ ma: k }, LOAI[k], { khuon: KHUON[k] })),
@@ -478,7 +552,8 @@ export async function luuGiaiPhap(y, env, db, hoSo) {
     .bind(ma, loai, cau, tuKhoa(cau), gp, String((y || {}).ncc || '').slice(0, 30), duyet ? 'duyet' : 'nhap',
       ten(hoSo), duyet ? ten(hoSo) : null, now, now).run();
   await Kho.ghiNhatKy(db, { uid: hoSo.uid, username: ten(hoSo), viec: 'DA_TRI_LUU_KHO', doiTuong: ma, chiTiet: loai + (duyet ? ' · duyệt' : ' · nháp') });
-  return { ok: true, ma, trangThai: duyet ? 'duyet' : 'nhap' };
+  const cv = await coVanDaTri(env, db, 'truocKeHoach', { loai, cau, traLoi: gp, hoiDong: !!(y || {}).hoiDong });
+  return { ok: true, ma, trangThai: duyet ? 'duyet' : 'nhap', coVan: cv.khuyen };
 }
 
 /* ═══════════════ CỬA: DUYỆT GIẢI PHÁP (R01) ═══════════════ */
@@ -503,7 +578,8 @@ export async function duyetGiaiPhap(y, env, db, hoSo) {
   }
   await Kho.ghiNhatKy(db, { uid: hoSo.uid, username: ten(hoSo), viec: 'DA_TRI_DUYET_KHO', doiTuong: r.goc || ma,
     chiTiet: (y || {}).dongY ? 'đồng ý' : 'bỏ' });
-  return { ok: true };
+  const cv = (y || {}).dongY ? await coVanDaTri(env, db, 'truocKhiXong', { loai: r.loai, goc: r.goc }) : { khuyen: [] };
+  return { ok: true, coVan: cv.khuyen };
 }
 
 /* ═══════════════ CỬA: DANH SÁCH KHO GIẢI PHÁP ═══════════════ */
@@ -733,4 +809,80 @@ export async function docVongKhoaHoc(y, env, db, hoSo) {
   const ds = (await db.prepare('SELECT luc, soPhatHien, baoCao FROM vongKhoaHocDaTri ORDER BY luc DESC LIMIT 7').all()).results || [];
   return { ok: true, moiNhat: ds[0] ? JSON.parse(ds[0].baoCao) : null,
     xuHuong: ds.map(r => ({ luc: r.luc, n: r.soPhatHien })) };
+}
+/* ═══════════════ V20 · TUYẾN NHIỀU CHẶNG CÓ CHỐT CHẶN (R01) ═══════════
+   Một việc lớn (nghiên cứu đối thủ → kế hoạch → soạn → đo lường) đi qua
+   nhiều chặng; mỗi chặng có đề · kết quả · chốt chặn. Hệ DỪNG sau mỗi
+   chặng chờ người đọc — không tự chạy trọn một mạch. Kết quả chặng
+   trước làm ngữ cảnh chặng sau: vòng lặp quay lại, nhưng qua tay người. */
+export const HAN_CHANG = 7;
+export async function taoTuyenDaTri(y, env, db, hoSo) {
+  if (!laR01(hoSo)) return { ok: false, code: 'NOPERM', error: 'Tuyến chốt chặn chỉ mở cho Super Admin.' };
+  const tenT = String((y || {}).ten || '').trim();
+  const chang = Array.isArray((y || {}).chang) ? (y || {}).chang : [];
+  if (tenT.length < 3 || tenT.length > 120) return { ok: false, code: 'SAI', error: 'Tên tuyến phải từ 3 đến 120 ký tự.' };
+  if (chang.length < 2 || chang.length > HAN_CHANG) return { ok: false, code: 'SAI', error: 'Tuyến cần từ 2 đến ' + HAN_CHANG + ' chặng.' };
+  const sach = [];
+  for (const c of chang) {
+    const loai = String((c || {}).loai || ''), de = String((c || {}).de || '').trim();
+    if (!LOAI[loai]) return { ok: false, code: 'SAI', error: 'Chặng có loại việc không hợp lệ: ' + loai };
+    if (de.length < 4 || de.length > 2000) return { ok: false, code: 'SAI', error: 'Đề mỗi chặng phải từ 4 đến 2000 ký tự.' };
+    sach.push({ loai, de });
+  }
+  await dungBang(db);
+  const ma = 'TY-' + (await bam(tenT + '|' + Date.now())).slice(0, 8).toUpperCase();
+  const now = Date.now();
+  await db.prepare('INSERT INTO tuyenDaTri (ma, ten, cacChang, dangO, ketQua, trangThai, luc, lucSua) VALUES (?,?,?,0,?,\'dangChay\',?,?)')
+    .bind(ma, tenT, JSON.stringify(sach), '[]', now, now).run();
+  await Kho.ghiNhatKy(db, { uid: hoSo.uid, username: ten(hoSo), viec: 'DA_TRI_TUYEN_TAO', doiTuong: ma, chiTiet: sach.length + ' chặng' });
+  return { ok: true, ma, soChang: sach.length };
+}
+
+export async function chayChangDaTri(y, env, db, hoSo) {
+  if (!laR01(hoSo)) return { ok: false, code: 'NOPERM', error: 'Tuyến chốt chặn chỉ mở cho Super Admin.' };
+  if (!moBat(env)) return { ok: false, code: 'CUADONG', error: 'Bộ não đa trí đang tắt.' };
+  await dungBang(db);
+  const ma = String((y || {}).ma || '');
+  const r = await db.prepare('SELECT * FROM tuyenDaTri WHERE ma = ?').bind(ma).first();
+  if (!r) return { ok: false, code: 'KHONG_CO', error: 'Không có tuyến này.' };
+  if (r.trangThai === 'xong') return { ok: false, code: 'DA_XONG', error: 'Tuyến đã chạy xong — đọc lại kết quả.' };
+  if (await canHan(db, hoSo)) return { ok: false, code: 'VUOT_HAN', error: 'Đã hết lượt hỏi trong ngày.' };
+  const chang = JSON.parse(r.cacChang), ket = JSON.parse(r.ketQua || '[]');
+  const i = r.dangO, c = chang[i];
+  /* Kết quả chặng trước làm ngữ cảnh — vòng lặp đo lường quay lại. */
+  const nguCanh = ket.map(k2 => 'Chặng ' + (k2.chang + 1) + ' (' + k2.loai + '): ' + String(k2.traLoi).slice(0, 1200))
+    .join('\n---\n').slice(0, 4000);
+  const cau = c.de + (nguCanh ? '\n\nKết quả các chặng trước (chỉ là ngữ cảnh):\n' + nguCanh : '');
+  const sang = await soatRaNhaCungCap({ provider: 'cf-workers-ai', cau, triThuc: '' }, env, db, hoSo);
+  if (!sang.cho) return { ok: false, code: sang.code, ngo: sang.ngo, error: sang.vi };
+  const ds = await ungVien(env, db, LOAI[c.loai], 0, hoSo);
+  if (!ds.length) return { ok: false, code: 'KHONG_NCC', error: 'Chưa có nhà cung cấp nào sẵn sàng cho chặng này.' };
+  const k = await goiLeoBac(env, db, hoSo, ds, c.loai, cau, '');
+  if (k.chan) return k.chan;
+  if (!k.n) return { ok: false, code: 'AI_LOI', daThu: k.thu, error: 'Mọi nhà cung cấp đều lỗi ở chặng này; thử lại sau.' };
+  ket.push({ chang: i, loai: c.loai, de: c.de, traLoi: k.text, ncc: k.n.ma, model: k.r.model, token: k.r.vao + k.r.ra, luc: Date.now() });
+  const xong = i + 1 >= chang.length;
+  await db.prepare('UPDATE tuyenDaTri SET dangO = ?, ketQua = ?, trangThai = ?, lucSua = ? WHERE ma = ?')
+    .bind(i + 1, JSON.stringify(ket), xong ? 'xong' : 'dangChay', Date.now(), ma).run();
+  await Kho.ghiNhatKy(db, { uid: hoSo.uid, username: ten(hoSo), viec: 'DA_TRI_TUYEN_CHANG', doiTuong: ma,
+    chiTiet: 'chặng ' + (i + 1) + '/' + chang.length + ' · ' + k.n.ma + ' · token ' + (k.r.vao + k.r.ra) });
+  return { ok: true, ma, chang: i, soChang: chang.length, traLoi: k.text, ncc: k.n.ma, tenNcc: k.n.ten,
+    token: k.r.vao + k.r.ra, xong,
+    chotChan: xong ? 'Tuyến đã xong — đọc lại toàn bộ các chặng trước khi dùng.' :
+      'Chốt chặn ' + (i + 1) + ': đọc và kiểm chứng kết quả này TRƯỚC khi chạy chặng ' + (i + 2) + '.' };
+}
+
+export async function docTuyenDaTri(y, env, db, hoSo) {
+  if (!laR01(hoSo)) return { ok: false, code: 'NOPERM', error: 'Chỉ Super Admin.' };
+  await dungBang(db);
+  const ma = String((y || {}).ma || '');
+  if (ma) {
+    const r = await db.prepare('SELECT * FROM tuyenDaTri WHERE ma = ?').bind(ma).first();
+    if (!r) return { ok: false, code: 'KHONG_CO', error: 'Không có tuyến này.' };
+    return { ok: true, tuyen: { ma: r.ma, ten: r.ten, cacChang: JSON.parse(r.cacChang), dangO: r.dangO,
+      ketQua: JSON.parse(r.ketQua || '[]'), trangThai: r.trangThai, luc: r.luc, lucSua: r.lucSua } };
+  }
+  const ds = (await db.prepare('SELECT ma, ten, cacChang, dangO, trangThai, lucSua FROM tuyenDaTri ORDER BY lucSua DESC LIMIT 30').all()).results || [];
+  return { ok: true, ds: ds.map(r => ({ ma: r.ma, ten: r.ten, soChang: JSON.parse(r.cacChang).length,
+    dangO: r.dangO, trangThai: r.trangThai, lucSua: r.lucSua })) };
 }

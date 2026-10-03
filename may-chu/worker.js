@@ -92,7 +92,8 @@ import { capQuyenAI, thuHoiQuyenAI, soatQuyenAI, aiPhanLoai, aiSoanNhap,
   soanDeBaiNgoai, aiTongHopGiamSat } from './quyen-nang-ai.js';
 import { phimTrangThai, phimGuiViec, phimXemViec, phimTinhHuong } from './phim-ai.js';
 import { hoiDaTri, hoiDongDaTri, chamDaTri, soDaTri, luuGiaiPhap, duyetGiaiPhap, dsGiaiPhap, boSungGiaiPhap,
-  canhMauDaTri, canhMauTuDong, thuMauDaTri, vongKhoaHocTuDong, docVongKhoaHoc } from './bo-nao-da-tri.js';
+  canhMauDaTri, canhMauTuDong, thuMauDaTri, vongKhoaHocTuDong, docVongKhoaHoc,
+  taoTuyenDaTri, chayChangDaTri, docTuyenDaTri } from './bo-nao-da-tri.js';
 import { dieuPhoiTroLy, soatDieuPhoi, tuHoanThienTroLy, soatHoatDongAgent } from './dieu-phoi.js';
 import { soatKhungVanHanh, chamMotLuot } from './khung-van-hanh.js';
 import { lapKeHoachAgent, chayBuocAgent, dsWorkflowAgent } from './agent-team.js';
@@ -314,6 +315,7 @@ const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau'
   'hoiChatbot', 'lichSuChat', 'soanDeBaiNgoai',
   'hoiDaTri', 'hoiDongDaTri', 'chamDaTri', 'soDaTri',
   'luuGiaiPhap', 'duyetGiaiPhap', 'dsGiaiPhap', 'boSungGiaiPhap', 'canhMauDaTri', 'thuMauDaTri', 'docVongKhoaHoc',
+  'taoTuyenDaTri', 'chayChangDaTri', 'docTuyenDaTri',
   'phimTrangThai', 'phimGuiViec', 'phimXemViec', 'phimTinhHuong',
   'guiBaoCaoNgay', 'tongHopBaoCao', 'dsBaoCaoNgay'];
 
@@ -686,6 +688,9 @@ async function lam(fn, y, env, db) {
   if (fn === 'canhMauDaTri')      return await canhMauDaTri(y, env, db, hoSo);
   if (fn === 'thuMauDaTri')       return await thuMauDaTri(y, env, db, hoSo);
   if (fn === 'docVongKhoaHoc')    return await docVongKhoaHoc(y, env, db, hoSo);
+  if (fn === 'taoTuyenDaTri')     return await taoTuyenDaTri(y, env, db, hoSo);
+  if (fn === 'chayChangDaTri')    return await chayChangDaTri(y, env, db, hoSo);
+  if (fn === 'docTuyenDaTri')     return await docTuyenDaTri(y, env, db, hoSo);
   if (fn === 'phimTrangThai')     return await phimTrangThai(y, env, db, hoSo);
   if (fn === 'phimGuiViec')       return await phimGuiViec(y, env, db, hoSo);
   if (fn === 'phimXemViec')       return await phimXemViec(y, env, db, hoSo);

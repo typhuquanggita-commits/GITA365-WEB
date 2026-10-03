@@ -145,3 +145,7 @@ Hàm `ghiSo` trong `may-chu/an-toan-ai.js` từng ghi vào cột `audit.boiAi`, 
 ## Vòng nhà khoa học · tự điều chỉnh có biên
 
 Mỗi đêm (0 token), bộ não tự soát theo khuôn quan sát → giả thuyết → phép thử → đề xuất; chỉ tự làm một việc đảo được: xếp nhà cung cấp kém xuống cuối (GITA_TU_DIEU_CHINH="0" để tắt). Chi tiết và lá chắn 30 tầng: [LA_CHAN_30_TANG.md](LA_CHAN_30_TANG.md).
+
+## V20 · bốn cơ chế học từ bốn hệ tham chiếu
+
+Lọc trước token có đếm · định tuyến có độ chắc (sharp/split) · cố vấn theo ba điểm chạm · tuyến nhiều chặng có chốt chặn. Chi tiết: [BO_NAO_V20.md](BO_NAO_V20.md).

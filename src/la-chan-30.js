@@ -89,6 +89,24 @@ G.LC_TANG = [
     tro: ['d:.github/workflows/kiem-tra.yml', 'm:may-chu/bo-nao-da-tri.js#vongKhoaHoc', 'f:docVongKhoaHoc'], gioiHan: 'Vòng chỉ đọc số đo đã có — chỉ số chưa đo thì không thấy.' }
 ];
 
+/* 12 tầng hậu cần (bài học "bếp không chỉ có mặt tiền"): một hệ thống
+   thật gồm cả chục tầng dưới giao diện. Mỗi tầng TRỎ vào mã/cấu hình
+   thật; tầng nào repo không đo được thì GHI THẬT, không giả vờ đo. */
+G.LC_HERCULES = [
+  { ma: 'BK01', ten: 'Giao diện (frontend)', tro: ['t:gita-app.js'] },
+  { ma: 'BK02', ten: 'API & logic máy chủ', tro: ['t:may-chu/worker.js'] },
+  { ma: 'BK03', ten: 'Cơ sở dữ liệu & lưu trữ', tro: ['t:may-chu/csdl.sql'] },
+  { ma: 'BK04', ten: 'Đăng nhập & phân quyền', tro: ['f:kiemPhien'] },
+  { ma: 'BK05', ten: 'Hosting & triển khai', tro: ['m:may-chu/wrangler.toml#name = "gita365"'] },
+  { ma: 'BK06', ten: 'Điện toán đám mây', tro: ['t:may-chu/wrangler.toml'] },
+  { ma: 'BK07', ten: 'CI/CD & quản lý phiên bản', tro: ['t:.github/workflows/kiem-tra.yml'] },
+  { ma: 'BK08', ten: 'Bảo mật & quyền trên dữ liệu', tro: ['v:la-chan-30'] },
+  { ma: 'BK09', ten: 'Chặn nhịp (rate limiting)', tro: ['m:may-chu/ve-chi-phi.js#HAN_PHUT'] },
+  { ma: 'BK10', ten: 'Bộ đệm & CDN', tro: ['m:_headers#Cache-Control'] },
+  { ma: 'BK11', ten: 'Cân bằng tải & co giãn', tro: [], khongDoDuoc: 'Cloudflare lo ở tầng mạng toàn cầu — repo không đo được; bận rộn nhất vẫn là hạn mức Worker, đã có trần tải 50% canh.' },
+  { ma: 'BK12', ten: 'Bắt lỗi & nhật ký', tro: ['f:soatSoDen'] }
+];
+
 /* Chỗ trống THẬT — ghi ra thay vì khai đã có. */
 G.LC_KHOANG_TRONG = [
   { ten: 'Kiểm thử xâm nhập độc lập', vi: 'Chưa có bên thứ ba kiểm. Không công cụ tĩnh nào thay được.', viec: 'Thuê/mời kiểm thử trước khi vượt 200.000 tài khoản.' },
@@ -119,6 +137,14 @@ G.VIEWS['la-chan-30'] = function () {
           d.kq.map(function (x) { return h(x.tro) + (x.noi === 'may' ? (x.song ? ' ✓' : ' ✗') : ''); }).join('<br>') + '</td><td class="tiny muted">' + h(t.gioiHan) + '</td></tr>';
       }).join('') + '</table></div>';
   });
+  o += '<div class="card mt"><b>12 tầng hậu cần dưới giao diện</b><div class="tiny muted mt">Bài học "bếp không chỉ có mặt tiền": hệ thống thật gồm cả chục tầng bên dưới. ' +
+    'Mỗi tầng trỏ vào mã thật; tầng repo không đo được thì ghi thật, không giả vờ đo.</div>' +
+    '<table class="tbl sm mt"><tr><th>Mã</th><th>Tầng</th><th>Trỏ vào / ghi thật</th></tr>' +
+    G.LC_HERCULES.map(function (b) {
+      return '<tr><td class="mono">' + h(b.ma) + '</td><td><b>' + h(b.ten) + '</b></td><td class="mono tiny">' +
+        (b.khongDoDuoc ? '<span style="color:var(--gita-sau)">không đo được từ repo:</span> <span class="tiny muted">' + h(b.khongDoDuoc) + '</span>' :
+          b.tro.map(function (x) { var k = (G.h16DoTro || function () { return {}; })(x); return h(x) + (k.noi === 'may' ? (k.song ? ' ✓' : ' ✗') : ''); }).join('<br>')) + '</td></tr>';
+    }).join('') + '</table></div>';
   o += '<div class="card mt" style="border-color:var(--gita-sau)"><b>Chỗ còn trống — ghi thật</b>' + G.LC_KHOANG_TRONG.map(function (k) {
     return '<div class="sm mt"><b>' + h(k.ten) + ':</b> ' + h(k.vi) + ' <span class="tiny muted">→ ' + h(k.viec) + '</span></div>';
   }).join('') + '</div>';

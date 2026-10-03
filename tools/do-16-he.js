@@ -118,6 +118,16 @@ LC.forEach(t => {
   t.tro.forEach(x => kiemTro(x, t.ma));
 });
 dat(G.LC_KHOANG_TRONG.length > 0 && G.LC_KHOANG_TRONG.every(k => k.ten && k.vi && k.viec), 'Lá chắn: chỗ trống phải ghi đủ tên · vì sao · việc cần làm');
+/* 12 tầng hậu cần: mỗi tầng hoặc trỏ vào mã thật sống, hoặc ghi thật là
+   không đo được từ repo — không có tầng nào "khai suông". */
+const BK = G.LC_HERCULES;
+dat(BK.length === 12, `Hậu cần cần 12 tầng, có ${BK.length}`);
+dat(new Set(BK.map(b => b.ma)).size === 12, 'Mã tầng hậu cần trùng');
+BK.forEach(b => {
+  if (b.khongDoDuoc) dat(b.khongDoDuoc.length > 20, `${b.ma}: tầng không đo được phải ghi rõ vì sao`);
+  else { dat(b.tro.length > 0, `${b.ma}: thiếu con trỏ`); b.tro.forEach(x => kiemTro(x, b.ma)); }
+});
+dat(BK.some(b => b.khongDoDuoc), 'Hậu cần: phải ghi thật ít nhất một tầng repo không đo được');
 
 console.log(`  ✓ ${ok} phép đo đạt · ${HE.length} hệ · ${G.H16_SOP.length} SOP · ${G.DP_TRO_LY.length} trợ lý · ${G.TT_KHO.length} nguyên lý · ${LC.length} tầng lá chắn`);
 console.log(`  · Tự chủ: AI làm ${tc.aiLamPhan}% cửa · AI tự chạy trọn (TC4) ${tc.tuChayTron}% · ` +

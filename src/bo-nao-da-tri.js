@@ -211,6 +211,7 @@ var NGAN = [
   { ma: 'kho', ten: 'Kho giải pháp', ic: 'vault' },
   { ma: 'tinhtuy', ten: 'Tinh túy 5 bộ não', ic: 'shield' },
   { ma: 'khoahoc', ten: 'Vòng nhà khoa học', ic: 'book' },
+  { ma: 'tuyen', ten: 'Tuyến chốt chặn', ic: 'list' },
   { ma: 'tri', ten: 'Kho trí tuệ', ic: 'book' },
   { ma: 'bang', ten: 'Tảng băng giá trị', ic: 'grid' },
   { ma: 'toiuu', ten: 'Tối ưu token', ic: 'lightning' }
@@ -261,6 +262,7 @@ G.dtKhoTai = function () {
 };
 function sauViec(x, okMsg) {
   U.toast(x && x.ok ? okMsg : ((x && x.error) || 'Không làm được.'), x && x.ok ? 'ok' : 'err');
+  if (x && x.ok && x.coVan && x.coVan.length) U.toast('Cố vấn: ' + x.coVan.join(' · '), 'err');
   G.dtKho = null; G.dtSo = null; veLai();
 }
 G.dtLuuKho = function () {
@@ -320,6 +322,8 @@ function veNao() {
       '<span class="chip" style="color:var(--gita-do)">Đang tắt — đặt GITA_DA_TRI_BAT = 1</span>') +
       (so.tietKiem ? ' <span class="chip">Chế độ tiết kiệm</span>' : '') +
       ' <span class="chip">Trần tải ' + (so.tranTai || 50) + '% ngân sách</span>' +
+      (so.loc && so.loc.length ? ' <span class="chip" title="' + h(so.loc.map(function (x) { return x.cua + ': ' + x.luot; }).join(' · ')) + '">Lọc trước token hôm nay: ' +
+        so.loc.reduce(function (s2, x) { return s2 + x.luot; }, 0) + ' lượt (0 token)</span>' : '') +
       (so.kho ? ' <span class="chip">Kho: ' + so.kho.duyet + ' giải pháp · ' + so.kho.nhap + ' chờ duyệt' + (so.kho.canSoat ? ' · ' + so.kho.canSoat + ' quá hạn soát' : '') + '</span>' : '') +
       '<table class="tbl sm mt"><tr><th>Bậc</th><th>Nhà cung cấp</th><th>Mô hình</th><th>Sẵn sàng</th><th>Ngân sách token/ngày (hiệu lực / gốc)</th><th>Cấu hình</th></tr>' +
       '<tr><td>0</td><td>Kho giải pháp + bộ nhớ đệm D1</td><td>—</td><td style="color:var(--ok)">luôn</td><td>0 token</td><td>—</td></tr>' +
@@ -356,7 +360,10 @@ function veNao() {
     nut('G.dtHoi(0,false,true)', 'Hỏi mới (bỏ qua kho)') + '</div></div>';
   else if (k && k.ok) o += '<div class="card mt"><div class="row" style="gap:6px;flex-wrap:wrap"><b>' + h(k.tenNcc || k.ncc) + '</b>' +
     '<span class="chip">bậc ' + k.bac + '</span>' + (k.tuDem ? '<span class="chip" style="color:var(--ok)">từ bộ đệm · 0 token</span>' : '<span class="chip">' + k.token + ' token</span>') +
-    (k.model ? '<span class="chip mono">' + h(k.model) + '</span>' : '') + '</div>' +
+    (k.model ? '<span class="chip mono">' + h(k.model) + '</span>' : '') +
+    (k.dinhTuyen && k.dinhTuyen.doChac !== null && k.dinhTuyen.doChac !== undefined ?
+      '<span class="chip"' + (k.dinhTuyen.chac ? '' : ' style="color:var(--gita-sau)"') + '>định tuyến ' +
+      (k.dinhTuyen.chac ? 'chắc · chênh ' + k.dinhTuyen.doChac : 'chưa chắc — nên hỏi hội đồng') + '</span>' : '') + '</div>' +
     '<div class="sm mt" style="white-space:pre-wrap">' + h(k.traLoi) + '</div><div class="tiny muted mt">' + h(k.nhac || 'Bản nháp — người phụ trách kiểm chứng.') + '</div>' +
     '<div class="row mt" style="gap:8px">' + (k.daCham ? '<span class="tiny muted">Đã chấm.</span>' : nut('G.dtCham(true)', 'Tốt') + nut('G.dtCham(false)', 'Chưa tốt')) +
     (k.chamTot && !k.daLuu ? nut('G.dtLuuKho()', ic('vault', 'w-4 h-4') + 'Lưu vào kho giải pháp', 'pri') : '') +
@@ -454,6 +461,72 @@ function veKhoaHoc() {
   }).join('');
 }
 
+/* ── V20 · Tuyến nhiều chặng có chốt chặn (R01): hệ dừng sau mỗi chặng ── */
+G.dtTuyen = G.dtTuyen || null;
+G.dtTuyenChi = G.dtTuyenChi || null;
+G.dtTuyenTai = function () {
+  if (!G.goiMayChu || G.dtTuyenDangTai) return;
+  G.dtTuyenDangTai = true;
+  G.goiMayChu('docTuyenDaTri', {}).then(function (x) { G.dtTuyenDangTai = false; G.dtTuyen = x || { ok: false, error: 'Không có phản hồi.' }; veLai(); });
+};
+G.dtTaoTuyen = function () {
+  var ten = giaTri('dt-ty-ten').trim();
+  var dong = giaTri('dt-ty-chang').split('\n').map(function (s) { return s.trim(); }).filter(Boolean);
+  var chang = [], sai = '';
+  dong.forEach(function (s) { var p = s.split('|'); if (p.length < 2 || !p[0].trim() || !p[1].trim()) sai = s; else chang.push({ loai: p[0].trim(), de: p.slice(1).join('|').trim() }); });
+  if (sai) { U.toast('Dòng sai khuôn "loai | đề": ' + sai, 'err'); return; }
+  G.goiMayChu('taoTuyenDaTri', { ten: ten, chang: chang }).then(function (x) {
+    U.toast(x && x.ok ? 'Đã tạo tuyến ' + x.ma + ' · ' + x.soChang + ' chặng.' : ((x && x.error) || 'Không tạo được.'), x && x.ok ? 'ok' : 'err');
+    G.dtTuyen = null; G.dtTuyenChi = null; G.dtTuyenTai();
+  });
+};
+G.dtChayChang = function (ma) {
+  if (G.dtChangDangChay) return;
+  G.dtChangDangChay = true; veLai();
+  G.goiMayChu('chayChangDaTri', { ma: ma }).then(function (x) {
+    G.dtChangDangChay = false;
+    if (x && x.ok) { U.toast(x.chotChan, 'ok'); G.dtTuyen = null; G.dtXemTuyen(ma); }
+    else U.toast((x && x.error) || 'Không chạy được.', 'err');
+    veLai();
+  });
+};
+G.dtXemTuyen = function (ma) {
+  G.goiMayChu('docTuyenDaTri', { ma: ma }).then(function (x) { G.dtTuyenChi = x || { ok: false }; veLai(); });
+};
+function veTuyen() {
+  var t = G.dtTuyen, o = '';
+  if (!t) { if (G.goiMayChu) G.dtTuyenTai(); return chuaNoi(); }
+  if (!t.ok) return '<div class="card mt" style="color:var(--gita-do)">' + h(t.error || 'Không đọc được.') + '</div>';
+  o += '<div class="card mt"><b>Tuyến nhiều chặng có chốt chặn</b><div class="tiny muted mt">Một việc lớn đi qua nhiều chặng; hệ <b>dừng sau mỗi chặng</b> ' +
+    'chờ Super Admin đọc và kiểm chứng — không tự chạy trọn một mạch. Kết quả chặng trước làm ngữ cảnh chặng sau (vòng lặp đo lường quay lại). Chỉ Super Admin tạo và chạy.</div>' +
+    '<div class="tiny muted mt">Khuôn mỗi dòng: <code>loai | đề chặng</code> · loai ∈ phanLoai · tomTat · soan · phanTich · chienLuoc · 2–7 chặng.</div>' +
+    '<input id="dt-ty-ten" class="mt" style="width:100%" placeholder="Tên tuyến (vd: Ra mắt gói học mới)">' +
+    '<textarea id="dt-ty-chang" rows="4" class="mt" style="width:100%" placeholder="phanTich | Phân tích ba đối thủ chính&#10;soan | Soạn thông điệp giới thiệu"></textarea>' +
+    '<div class="row mt">' + nut('G.dtTaoTuyen()', 'Tạo tuyến', 'pri') + '</div></div>';
+  (t.ds || []).forEach(function (r) {
+    o += '<div class="card mt"><div class="row" style="gap:6px;flex-wrap:wrap"><span class="chip mono">' + h(r.ma) + '</span><b>' + h(r.ten) + '</b>' +
+      '<span class="chip">' + r.dangO + '/' + r.soChang + ' chặng</span>' +
+      (r.trangThai === 'xong' ? '<span class="chip" style="color:var(--ok)">đã xong</span>' : '<span class="chip">đang chạy</span>') + '</div>' +
+      '<div class="row mt" style="gap:8px">' + nut('G.dtXemTuyen(\'' + h(r.ma) + '\')', 'Xem') +
+      (r.trangThai !== 'xong' ? nut('G.dtChayChang(\'' + h(r.ma) + '\')', G.dtChangDangChay ? 'Đang chạy…' : 'Chạy chặng kế', 'pri') : '') + '</div></div>';
+  });
+  if (t.ds && !t.ds.length) o += '<div class="card mt tiny muted">Chưa có tuyến nào.</div>';
+  var c2 = G.dtTuyenChi;
+  if (c2 && c2.ok && c2.tuyen) {
+    var ty = c2.tuyen;
+    o += '<div class="card mt" style="border-color:var(--gita-sau)"><b>' + h(ty.ten) + '</b> <span class="chip mono">' + h(ty.ma) + '</span>';
+    ty.cacChang.forEach(function (ch, i) {
+      var kq = (ty.ketQua || []).filter(function (x) { return x.chang === i; })[0];
+      o += '<div class="mt"><span class="chip">' + (i + 1) + '</span> <b>' + h(ch.loai) + '</b> <span class="tiny">' + h(ch.de) + '</span>' +
+        (kq ? '<div class="tiny muted">' + h(kq.ncc) + ' · ' + kq.token + ' token · ' + new Date(kq.luc).toLocaleString('vi-VN') + '</div>' +
+          '<div class="sm" style="white-space:pre-wrap">' + h(kq.traLoi) + '</div>' :
+          '<div class="tiny muted">— chưa chạy (chốt chặn đang chờ)</div>') + '</div>';
+    });
+    o += '</div>';
+  }
+  return o;
+}
+
 function veTri() {
   var tat = G.ttTatCa(), kq = G.dtTim ? G.ttTim(G.dtTim) : tat;
   var o = '<div class="card mt"><b>Kho trí tuệ — đếm thật: ' + tat.length + ' nguyên lý/tư liệu</b>' +
@@ -535,7 +608,7 @@ G.VIEWS['bo-nao-da-tri'] = function () {
   o += '<div class="row" style="gap:6px;flex-wrap:wrap">' + NGAN.map(function (x) {
     return '<button class="btn ' + (G.dtNgan === x.ma ? 'pri' : 'ghost') + '" onclick="G.dtMoNgan(\'' + x.ma + '\')">' + ic(x.ic, 'w-4 h-4') + h(x.ten) + '</button>';
   }).join('') + '</div>';
-  var f = { nao: veNao, kho: veKho, tinhtuy: veTinhTuy, khoahoc: veKhoaHoc, tri: veTri, bang: veBang, toiuu: veToiUu }[G.dtNgan] || veNao;
+  var f = { nao: veNao, kho: veKho, tinhtuy: veTinhTuy, khoahoc: veKhoaHoc, tuyen: veTuyen, tri: veTri, bang: veBang, toiuu: veToiUu }[G.dtNgan] || veNao;
   return o + f();
 };
 })();

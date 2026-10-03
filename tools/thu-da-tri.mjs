@@ -8,7 +8,8 @@ import fs from 'node:fs';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 const ROOT = process.argv[2] || fileURLToPath(new URL('..', import.meta.url)).replace(/[\\/]$/, '');
 const { hoiDaTri, hoiDongDaTri, chamDaTri, soDaTri, luuGiaiPhap, duyetGiaiPhap, dsGiaiPhap, boSungGiaiPhap,
-  canhMauDaTri, canhMauTuDong, thuMauDaTri, vongKhoaHocTuDong, docVongKhoaHoc, tuKhoa, KHUON } = await import(pathToFileURL(ROOT + '/may-chu/bo-nao-da-tri.js').href);
+  canhMauDaTri, canhMauTuDong, thuMauDaTri, vongKhoaHocTuDong, docVongKhoaHoc, tuKhoa, KHUON,
+  doChacDinhTuyen, coVanDaTri, taoTuyenDaTri, chayChangDaTri, docTuyenDaTri, HAN_CHANG } = await import(pathToFileURL(ROOT + '/may-chu/bo-nao-da-tri.js').href);
 
 const sq = new DatabaseSync(':memory:');
 sq.exec(fs.readFileSync(ROOT + '/may-chu/csdl.sql', 'utf8'));
@@ -195,6 +196,62 @@ const tdc = await hoiDaTri({ loai: 'tomTat', cau: 'Tóm tắt cách lập kế h
 kiem('tự điều chỉnh: nhà bị chê > 70%/≥10 lượt xếp cuối hàng', tdc.ok && tdc.ncc !== 'cf-workers-ai');
 const tdc0 = await hoiDaTri({ loai: 'tomTat', cau: 'Tóm tắt cách lập kế hoạch tháng cho gia đình' }, Object.assign({}, env, { GITA_TU_DIEU_CHINH: '0' }), db, r05);
 kiem('GITA_TU_DIEU_CHINH="0" → đảo lại, rẻ nhất trước', tdc0.ok && tdc0.ncc === 'cf-workers-ai');
+
+/* ── V20 · ĐỊNH TUYẾN CÓ ĐỘ CHẮC (sharp / split) ── */
+const dtNull = await doChacDinhTuyen(db, 'soan', [{ ma: 'cf-workers-ai' }, { ma: 'deepseek' }]);
+kiem('định tuyến: chưa đủ điểm chấm → không khai độ chắc (null)', dtNull.doChac === null && dtNull.chac === true);
+sq.prepare("INSERT OR REPLACE INTO danhGiaDaTri (loai, ncc, tot, xau) VALUES ('phanTich', 'deepseek', 5, 4)").run();
+sq.prepare("INSERT OR REPLACE INTO danhGiaDaTri (loai, ncc, tot, xau) VALUES ('phanTich', 'openai', 5, 5)").run();
+const dtSplit = await doChacDinhTuyen(db, 'phanTich', [{ ma: 'deepseek' }, { ma: 'openai' }]);
+kiem('định tuyến: hai ứng viên ngang nhau → chưa chắc, gợi ý hội đồng', dtSplit.chac === false && dtSplit.goiYHoiDong === true);
+sq.prepare("INSERT OR REPLACE INTO danhGiaDaTri (loai, ncc, tot, xau) VALUES ('chienLuoc', 'deepseek', 10, 0)").run();
+sq.prepare("INSERT OR REPLACE INTO danhGiaDaTri (loai, ncc, tot, xau) VALUES ('chienLuoc', 'openai', 0, 10)").run();
+const dtSharp = await doChacDinhTuyen(db, 'chienLuoc', [{ ma: 'deepseek' }, { ma: 'openai' }]);
+kiem('định tuyến: một ứng viên vượt trội → chắc (sharp)', dtSharp.chac === true && dtSharp.doChac >= 0.15);
+const dtRes = await hoiDaTri({ loai: 'phanTich', cau: 'Phân tích độ chắc khi hai nhà ngang nhau' }, env, db, r05);
+kiem('câu trả lời mang theo độ chắc định tuyến', dtRes.ok && dtRes.dinhTuyen && dtRes.dinhTuyen.goiYHoiDong === true);
+
+/* ── V20 · CỐ VẤN THEO ĐIỂM CHẠM (advisor on-call) ── */
+const cv0 = await coVanDaTri(env, db, 'truocKeHoach', { loai: 'soan', cau: 'Quy trình chào đón học viên mới',
+  traLoi: 'B1 chào đón và giới thiệu cô chủ nhiệm · B2 gửi tài liệu hướng dẫn cho phụ huynh · B3 hẹn lịch tư vấn đầu khoá · B4 theo dõi tuần đầu' });
+kiem('cố vấn im ở lượt bình thường (không khuyên gì)', cv0.khuyen.length === 0);
+const luCl = await luuGiaiPhap({ loai: 'chienLuoc', cau: 'Chiến lược ba năm tới cho toàn hệ GITA', traLoi: 'ngắn' }, env, db, r05);
+kiem('trước khi lưu kế hoạch: cố vấn nhắc quá ngắn + nên hỏi hội đồng', luCl.ok && luCl.coVan.length === 2);
+const duCl = await duyetGiaiPhap({ ma: luCl.ma, dongY: true }, env, db, r01);
+kiem('trước khi chốt: chiến lược chưa qua hội đồng → cố vấn nhắc', duCl.ok && duCl.coVan.length === 1 && /hội đồng/.test(duCl.coVan[0]));
+hong = new Set(['api.deepseek.com']);
+const ll1 = await hoiDaTri({ loai: 'phanTich', cau: 'Phân tích lỗi lặp lần thứ nhất' }, env, db, r05);
+const ll2 = await hoiDaTri({ loai: 'phanTich', cau: 'Phân tích lỗi lặp lần thứ hai' }, env, db, r05);
+const ll3 = await hoiDaTri({ loai: 'phanTich', cau: 'Phân tích lỗi lặp lần thứ ba' }, env, db, r05);
+hong = new Set();
+kiem('lỗi lặp ≥ 3 lần/ngày → cố vấn lên tiếng trong vết thử', ll1.ok && ll3.ok && ll3.daThu.some(s => /cố vấn:/.test(s)));
+kiem('lỗi lặp có vết DA_TRI_LOI_LAP trong sổ', sq.prepare("SELECT COUNT(*) n FROM audit WHERE viec = 'DA_TRI_LOI_LAP'").get().n === 1);
+
+/* ── V20 · TUYẾN NHIỀU CHẶNG CÓ CHỐT CHẶN ── */
+kiem('tuyến: R05 không tạo được', (await taoTuyenDaTri({ ten: 'Tuyến thử nghiệm', chang: [{ loai: 'soan', de: 'a bc' }, { loai: 'soan', de: 'd ef' }] }, env, db, r05)).code === 'NOPERM');
+kiem('tuyến: loại việc lạ bị từ chối', (await taoTuyenDaTri({ ten: 'Tuyến thử nghiệm', chang: [{ loai: 'la', de: 'a bc' }, { loai: 'soan', de: 'd ef' }] }, env, db, r01)).code === 'SAI');
+kiem('tuyến: 1 chặng bị từ chối (cần 2–' + HAN_CHANG + ')', (await taoTuyenDaTri({ ten: 'Tuyến thử nghiệm', chang: [{ loai: 'soan', de: 'a bc' }] }, env, db, r01)).code === 'SAI');
+const ty = await taoTuyenDaTri({ ten: 'Ra mắt gói học mới', chang: [
+  { loai: 'phanTich', de: 'Phân tích ba đối thủ giáo dục gia đình' },
+  { loai: 'soan', de: 'Soạn thông điệp giới thiệu gói học' }] }, env, db, r01);
+kiem('R01 tạo tuyến 2 chặng', ty.ok && /^TY-/.test(ty.ma) && ty.soChang === 2);
+kiem('chạy chặng: cửa tắt khi bộ não tắt', (await chayChangDaTri({ ma: ty.ma }, {}, db, r01)).code === 'CUADONG');
+let n3 = goi.length + cfGoi;
+const c1 = await chayChangDaTri({ ma: ty.ma }, env, db, r01);
+kiem('chặng 1 chạy xong, hệ DỪNG chờ chốt (chưa xong tuyến)', c1.ok && c1.chang === 0 && c1.xong === false && /chặng 2/.test(c1.chotChan) && goi.length + cfGoi === n3 + 1);
+const c2 = await chayChangDaTri({ ma: ty.ma }, env, db, r01);
+kiem('chặng 2 xong → tuyến xong, nhắc đọc lại toàn bộ', c2.ok && c2.xong === true);
+kiem('tuyến xong thì không chạy thêm', (await chayChangDaTri({ ma: ty.ma }, env, db, r01)).code === 'DA_XONG');
+const dty = await docTuyenDaTri({ ma: ty.ma }, env, db, r01);
+kiem('đọc tuyến: đủ 2 chốt chặn, chặng sau nhận ngữ cảnh chặng trước', dty.ok && dty.tuyen.ketQua.length === 2 &&
+  dty.tuyen.trangThai === 'xong' && dty.tuyen.ketQua[1].traLoi.length > 0);
+const lty = await docTuyenDaTri({}, env, db, r01);
+kiem('danh sách tuyến: thấy tuyến vừa xong', lty.ok && lty.ds.some(x => x.ma === ty.ma && x.dangO === 2 && x.trangThai === 'xong'));
+
+/* ── V20 · LỌC TRƯỚC TOKEN CÓ ĐẾM ── */
+const soV20 = await soDaTri({}, env, db, r05);
+kiem('sổ đếm lượt lọc trước token (đệm · kho · điều 13...)', soV20.ok && Array.isArray(soV20.loc) &&
+  soV20.loc.some(x => x.cua === 'dem' && x.luot > 0) && soV20.loc.some(x => x.cua === 'kho' && x.luot > 0));
 
 console.log(`\n${dat} đạt · ${truot} sai`);
 process.exit(truot ? 1 : 0);
