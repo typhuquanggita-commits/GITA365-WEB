@@ -119,6 +119,42 @@ jobs:
           npx --yes wrangler@4 secret bulk "$f"
           rm -f "$f"
 
+      # Hộp thư GitHub: Worker nhờ kho riêng tư gita365-hop-thu mở issue →
+      # GitHub gửi email về hòm chủ hệ. Khoá là fine-grained token chỉ cho kho đó.
+      - name: Nạp khoá hộp thư GitHub vào Worker (nếu có)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          GITA_GH_KHOA_THU: ${{ secrets.GITA_GH_KHOA_THU }}
+        working-directory: may-chu
+        run: |
+          set -eu
+          if [ -z "${GITA_GH_KHOA_THU:-}" ]; then
+            echo "Chưa có GITA_GH_KHOA_THU ở GitHub secrets — bỏ qua."
+            exit 0
+          fi
+          f="$RUNNER_TEMP/bi-mat-gh-thu.json"
+          node -e "require('fs').writeFileSync(process.argv[1], JSON.stringify({GITA_GH_KHOA_THU: process.env.GITA_GH_KHOA_THU.trim()}))" "$f"
+          npx --yes wrangler@4 secret bulk "$f"
+          rm -f "$f"
+
+      - name: Nạp khoá xưởng quay khớp môi vào Worker (nếu có)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          GITA_KHOA_XUONG_QUAY: ${{ secrets.GITA_KHOA_XUONG_QUAY }}
+        working-directory: may-chu
+        run: |
+          set -eu
+          if [ -z "${GITA_KHOA_XUONG_QUAY:-}" ]; then
+            echo "Chưa có GITA_KHOA_XUONG_QUAY ở GitHub secrets — bỏ qua."
+            exit 0
+          fi
+          f="$RUNNER_TEMP/bi-mat-quay.json"
+          node -e "require('fs').writeFileSync(process.argv[1], JSON.stringify({GITA_KHOA_XUONG_QUAY: process.env.GITA_KHOA_XUONG_QUAY.trim()}))" "$f"
+          npx --yes wrangler@4 secret bulk "$f"
+          rm -f "$f"
+
       - name: Verify Worker health
         run: |
           set -eu

@@ -20,19 +20,33 @@ var G = window.G || {}; window.G = G;
 
 (function () {
   var U = G.U, h = U.h;
-  var GIA = {anh: 0.039, video5: 0.28, video10: 0.56, da5: 0.35, da10: 0.70, khopMoi: 0.07, kyTu: 0.0001, llm: 0.05};
+  var GIA = {anh: 0.039, video5: 0.28, video10: 0.56, da5: 0.35, da10: 0.70, khopMoi: 0.07, kyTu: 0.0001, llm: 0.05,
+    anhPro: 0.15, bt5: 0.56, bt10: 1.12};
   G.xpTdGia = GIA;
+  /* 9.99.254 — hạng Bom tấn: Nano Banana Pro + Kling 3 Pro (chỉ khi không ở chế độ 0 đồng) */
+  function la0dBat() { return !!(G.xp0d && G.xp0d.bat()); }
+  function laBomTan(cl) { return cl === 'bomTan' && !la0dBat(); }
+  /* Bom tấn Cloudflare (0 đồng): mặc định ở chế độ 0đ, trừ khi chọn "Tiêu chuẩn".
+     Bật chỉ dẫn đạo diễn bom tấn cho kịch bản + ảnh khung lớn có màu điện ảnh. */
+  function laBomTanCF(cl) { return la0dBat() ? cl !== 'thuong' : cl === 'bomTan'; }
+  G.xpTdLoaiAnh = function (sua, cl) {
+    var bt = laBomTanCF(cl === undefined ? (G.xpDA || {}).chatLuong : cl);
+    return sua ? (bt ? 'anhSuaPro' : 'anhSua') : (bt ? 'anhPro' : 'anh');
+  };
+  G.xpTdLaBomTan = laBomTan;
+  G.xpTdLaBomTanCF = laBomTanCF;
   var NAM = ['Deep_Voice_Man', 'Elegant_Man', 'Patient_Man', 'Determined_Man', 'Casual_Guy', 'Young_Knight', 'Decent_Boy', 'Imposing_Manner'];
   var NU = ['Wise_Woman', 'Calm_Woman', 'Lively_Girl', 'Lovely_Girl', 'Sweet_Girl_2', 'Inspirational_girl', 'Exuberant_Girl', 'Abbess', 'Friendly_Person'];
   var BUOC = [
     ['phanCanh', 'Phân cảnh kịch bản'], ['giong', 'Đọc thoại'], ['chanDung', 'Vẽ chân dung nhân vật'],
     ['khungDau', 'Vẽ khung mở đầu từng cảnh'], ['quay', 'Quay clip từng cảnh'], ['khopMoi', 'Khớp khẩu hình với giọng'],
-    ['tai', 'Tải clip về máy'], ['xuat', 'Xuất phim']
+        ['khopMoi0d', 'Khớp môi AI (máy GitHub miễn phí)'],
+        ['tai', 'Tải clip về máy'], ['xuat', 'Xuất phim']
   ];
-  var LOI_DUNG_HAN = ['CHUA_CO_KHOA', 'NOPERM', 'VUOT_HAN', 'AUTH', 'DIEU13', 'NHALA'];
+  var LOI_DUNG_HAN = ['CHUA_CO_KHOA', 'NOPERM', 'VUOT_HAN', 'AUTH', 'DIEU13', 'NHALA', 'CHE_DO_0_DONG', 'CHUA_CO_AI'];
   var CAM_XUC = ['happy', 'sad', 'angry', 'fearful', 'disgusted', 'surprised', 'neutral'];
 
-  var dangChay = false, dungLai = false, fhLuu = null, khoaMan = null, trangThai = null;
+  var dangChay = false, dungLai = false, fhLuu = null, khoaMan = null, trangThai = null, hoiLuc = 0;
 
   function TD() {
     var da = G.xpDA;
@@ -107,13 +121,17 @@ var G = window.G || {}; window.G = G;
   }
   function ngu(ms) { return new Promise(function (ok) { setTimeout(ok, ms); }); }
   function usd(n) { return (Math.round(n * 100) / 100).toFixed(2).replace('.', ',') + ' USD'; }
+  /* 9.99.253 — chế độ 0 đồng (mặc định): Workers AI miễn phí + giọng đọc trong máy */
+  function che0d() { return !!(G.xp0d && G.xp0d.bat()); }
+  G.xpTdChe0d = che0d;
 
   /* ══ ƯỚC TÍNH CHI PHÍ ══ */
   G.xpTdUocTinh = function (da) {
     da = da || G.xpDA;
-    var kyTu = 0, video = 0, khop = 0, dienAnh = da.chatLuong === 'dienAnh';
+    var kyTu = 0, video = 0, khop = 0, dienAnh = da.chatLuong === 'dienAnh', bt = laBomTan(da.chatLuong);
     da.canh.forEach(function (c) {
-      video += +c.giay > 5 ? (dienAnh ? GIA.da10 : GIA.video10) : (dienAnh ? GIA.da5 : GIA.video5);
+      var dai = +c.giay > 5;
+      video += bt ? (dai ? GIA.bt10 : GIA.bt5) : dai ? (dienAnh ? GIA.da10 : GIA.video10) : (dienAnh ? GIA.da5 : GIA.video5);
       c.thoai.forEach(function (x) { kyTu += String(x.loi || '').length; });
       if (da.khopMoi && c.thoai.length === 1) khop += GIA.khopMoi;
     });
@@ -121,8 +139,10 @@ var G = window.G || {}; window.G = G;
     var giong = coGiong ? kyTu * GIA.kyTu : 0;
     var nvMoi = da.nhanVat.filter(function (n) { return !n.anhUrl; }).length;
     var giay = 0; da.canh.forEach(function (c) { giay += +c.giay || 5; });
-    return {nv: da.nhanVat.length, canh: da.canh.length, giay: giay,
-      tien: GIA.llm + (nvMoi + da.canh.length) * GIA.anh + video + giong + (coGiong ? khop : 0)};
+    var la0d = che0d(), neuron = la0d && G.xp0d ? G.xp0d.uocNeuron(nvMoi + da.canh.length, 0, laBomTanCF(da.chatLuong)) : 0;
+    return {nv: da.nhanVat.length, canh: da.canh.length, giay: giay, che0d: la0d, neuron: neuron,
+      ngay: la0d && G.xp0d ? G.xp0d.soNgay(neuron) : 0,
+      tien: la0d ? 0 : GIA.llm + (nvMoi + da.canh.length) * (bt ? GIA.anhPro : GIA.anh) + video + giong + (coGiong ? khop : 0)};
   };
 
   /* ══ ĐỌC KẾT QUẢ PHÂN CẢNH ══ */
@@ -180,6 +200,7 @@ var G = window.G || {}; window.G = G;
   function chayLo(ds, gioiHan, nhan, kho) {
     return new Promise(function (ok, hong) {
       var td = kho || TD(), cho = [], dang = [], xong = 0, hongDem = 0, tong = ds.length, ketThuc = false;
+      var la0d = che0d(), choDen = 0;
       var luuKho = function () { if (kho && kho.luu) kho.luu(); else luu(); };
       var ghiKho = function (chu) { ghi(chu, kho); };
       if (!td.viec) td.viec = {};
@@ -189,6 +210,7 @@ var G = window.G || {}; window.G = G;
         if (s && s.kq) {
           try { v.xong(s.kq); xong++; return; } catch (e) { delete s.kq; }
         }
+        if (s && s.xem && la0d) { delete s.xem; delete s.lay; }
         if (s && s.xem) { dang.push(v); return; }
         if (s) { s.lan = 0; delete s.loi; }
         cho.push(v);
@@ -206,35 +228,68 @@ var G = window.G || {}; window.G = G;
         s.loi = chu; hongDem++; xong++; ghiKho(nhan + ' · bỏ qua một việc: ' + chu);
         if (v.hong) try { v.hong(chu); } catch (e) {}
       }
+      function loiGui(v, x) {
+        /* Chữ do AI viết bị cổng Điều 13 ngờ oan → chèn dấu phẩy rồi gửi lại (tối đa 3 lần) */
+        if (x.code === 'DIEU13' && v.tuSua && (v.lanSua || 0) < 3) {
+          var moi = suaNgoDV(v.dauVao, x.ngo);
+          if (JSON.stringify(moi) !== JSON.stringify(v.dauVao)) {
+            v.lanSua = (v.lanSua || 0) + 1; v.dauVao = moi; bo(v); cho.unshift(v);
+            ghiKho(nhan + ' · tách cụm giống họ tên (' + (x.ngo || []).map(function (n) { return n.thay; }).join(' · ') + ') rồi gửi lại.');
+            return;
+          }
+        }
+        if (x.code === 'DIEU13' && v.tuSua) { thatBai(v, 'cổng Điều 13 chặn: ' + (x.ngo || []).map(function (n) { return n.thay; }).join(' · ')); return; }
+        if (LOI_DUNG_HAN.indexOf(x.code) >= 0 || /HTTP 40[123]/.test(x.error || '')) { het(x); return; }
+        thatBai(v, x.error || 'không gửi được');
+      }
+      /* Chế độ 0 đồng: làm xong ngay trong một lượt gọi, không phải hỏi lại */
+      function gui0d(v) {
+        G.xp0d.lam(v.loai, v.dauVao).then(function (x) {
+          v.dangGui = false;
+          if (ketThuc) return;
+          if (x.ok) {
+            try { v.xong(x.kq); } catch (e) { thatBai(v, String(e && e.message || e)); return; }
+            var s = td.viec[v.khoa] || {}; s.loai = v.loai; s.kq = x.kq; delete s.xem; delete s.lay;
+            td.viec[v.khoa] = s; bo(v); xong++; luuKho(); bao(); return;
+          }
+          if (x.code === 'HET_MIEN_PHI') {
+            bo(v); cho.unshift(v);
+            var mai = Date.parse(x.mai || '') || (Date.now() + 3600000);
+            if (mai + 120000 > choDen) {
+              choDen = mai + 120000;
+              ghiKho(nhan + ' · hết phần miễn phí hôm nay — máy tự làm tiếp lúc ' + new Date(choDen).toTimeString().slice(0, 5) + '. Không tốn đồng nào.');
+            }
+            return;
+          }
+          loiGui(v, x);
+        });
+      }
       function gui() {
+        if (choDen > Date.now()) return;
         while (!dungLai && dang.length < gioiHan && cho.length) {
           var v = cho.shift(); dang.push(v); v.dangGui = true;
+          if (la0d) { gui0d(v); continue; }
           (function (v) {
             goi('phimGuiViec', Object.assign({loai: v.loai}, v.dauVao)).then(function (x) {
               v.dangGui = false;
               if (x.ok) { var s = td.viec[v.khoa] || {}; s.loai = v.loai; s.xem = x.xem; s.lay = x.lay; td.viec[v.khoa] = s; luuKho(); return; }
-              /* Chữ do AI viết bị cổng Điều 13 ngờ oan → chèn dấu phẩy rồi gửi lại (tối đa 3 lần) */
-              if (x.code === 'DIEU13' && v.tuSua && (v.lanSua || 0) < 3) {
-                var moi = suaNgoDV(v.dauVao, x.ngo);
-                if (JSON.stringify(moi) !== JSON.stringify(v.dauVao)) {
-                  v.lanSua = (v.lanSua || 0) + 1; v.dauVao = moi; bo(v); cho.unshift(v);
-                  ghiKho(nhan + ' · tách cụm giống họ tên (' + (x.ngo || []).map(function (n) { return n.thay; }).join(' · ') + ') rồi gửi lại.');
-                  return;
-                }
-              }
-              if (x.code === 'DIEU13' && v.tuSua) { thatBai(v, 'cổng Điều 13 chặn: ' + (x.ngo || []).map(function (n) { return n.thay; }).join(' · ')); return; }
-              if (LOI_DUNG_HAN.indexOf(x.code) >= 0 || /HTTP 40[123]/.test(x.error || '')) { het(x); return; }
-              thatBai(v, x.error || 'không gửi được');
+              loiGui(v, x);
             });
           })(v);
         }
       }
       var nhipHoi = 5000;
+      function baoCho() {
+        var con = Math.max(0, choDen - Date.now()), gio = Math.floor(con / 3600000), phut = Math.ceil((con % 3600000) / 60000);
+        hienTienDo(nhan + ': đã dùng hết phần MIỄN PHÍ hôm nay. Máy tự làm tiếp lúc ' + new Date(choDen).toTimeString().slice(0, 5) +
+          ' (còn ' + (gio ? gio + ' giờ ' : '') + phut + ' phút). Giữ máy bật và tab này mở — không tốn đồng nào.', kho);
+      }
       function vong() {
         if (ketThuc) return;
         if (dungLai) { het({code: 'DUNG', error: 'Đã dừng theo yêu cầu.'}); return; }
         if (xong >= tong) { het(); return; }
         gui(); bao();
+        if (choDen > Date.now()) baoCho();
         var hoi = dang.filter(function (v) { return !v.dangGui && td.viec[v.khoa] && td.viec[v.khoa].xem; }).slice(0, 12);
         if (!hoi.length) { setTimeout(vong, 1500); return; }
         goi('phimXemViec', {ds: hoi.map(function (v) { var s = td.viec[v.khoa]; return {loai: v.loai, xem: s.xem, lay: s.lay}; })})
@@ -267,6 +322,7 @@ var G = window.G || {}; window.G = G;
   /* ══ TẢI KẾT QUẢ VỀ BỘ NHỚ TAB ══ */
   var ctxGiai = null;
   function taiBlob(url) {
+    if (G.xp0d && G.xp0d.laIdb(url)) return G.xp0d.doc(url);
     return fetch(url, {credentials: 'omit', cache: 'no-store'}).then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status); return r.blob();
     });
@@ -317,9 +373,12 @@ var G = window.G || {}; window.G = G;
   function buocPhanCanh() {
     var td = TD(), da = G.xpDA;
     if (td.phanCanhXong) return Promise.resolve();
-    td.viec = {}; td.ngo = null;
+    td.viec = {}; td.ngo = null; td.quay = {};
     var laTap = !!(da.boMa && G.xpBoKinh);
     var dv = laTap ? {che: 'tap', kinh: G.xpBoKinh(), soTap: da.boTap} : {kichBan: da.kichBan};
+    var cl = laTap && G.xpBoChatLieu ? G.xpBoChatLieu() : '';
+    if (cl) dv.chatLieu = cl;
+    if (laBomTanCF(da.chatLuong)) dv.bomTan = true;
     ghi(laTap ? 'AI viết kịch bản phân cảnh tập ' + da.boTap + ' (khoảng 5 phút)…' : 'Bắt đầu phân cảnh kịch bản (' + da.kichBan.length + ' ký tự)…');
     return chayLo([{khoa: 'llm', loai: 'llm', dauVao: dv, tuSua: laTap, xong: function (kq) {
       G.xpTdApDung(docJSON(kq.chu), da);
@@ -358,7 +417,7 @@ var G = window.G || {}; window.G = G;
   function buocChanDung() {
     var da = G.xpDA;
     var ds = da.nhanVat.filter(function (n) { return !n.anhUrl; }).map(function (n) {
-      return {khoa: 'cd-' + n.id, loai: 'anh', tuSua: true, dauVao: {khung: '9:16', prompt:
+      return {khoa: 'cd-' + n.id, loai: G.xpTdLoaiAnh(false), tuSua: true, dauVao: {khung: '9:16', prompt:
         'Vertical 9:16 character reference portrait, ' + da.phongCach + '. ' + (n.prompt || n.moTa) +
         ', upper body, natural neutral expression, looking at camera, plain light grey studio background, sharp focus on the face, no text, no watermark.'},
         xong: function (kq) { n.anhUrl = kq.url; }};
@@ -373,12 +432,12 @@ var G = window.G || {}; window.G = G;
       var p = G.xpPrompt(c), co = p.nv.filter(function (n) { return n.sheetUrl || n.anhUrl; }).slice(0, 3);
       var bc = da.boiCanh.filter(function (b) { return b.id === c.boiCanh; })[0];
       var dv = {khung: '9:16', prompt: p.anh};
-      var loai = 'anh', refs = co.map(function (n) { return n.sheetUrl || n.anhUrl; }), ta = co.map(function (n, i) {
+      var loai = G.xpTdLoaiAnh(false), refs = co.map(function (n) { return n.sheetUrl || n.anhUrl; }), ta = co.map(function (n, i) {
         return 'image ' + (i + 1) + ' is the character reference of ' + n.ten;
       });
       if (bc && bc.plateUrl) { refs.push(bc.plateUrl); ta.push('image ' + refs.length + ' is the location "' + bc.ten + '" (keep its architecture, furniture, colors and lighting)'); }
       if (refs.length) {
-        loai = 'anhSua';
+        loai = G.xpTdLoaiAnh(true);
         dv.anhThamChieu = refs;
         dv.prompt = p.anh + ' Reference images: ' + ta.join('; ') +
           '. Keep each character\'s face, hairstyle, distinguishing marks and outfit exactly as in the references, placed naturally in the scene. ' +
@@ -390,14 +449,17 @@ var G = window.G || {}; window.G = G;
     return chayLo(ds, 6, 'Khung mở đầu');
   }
   function buocQuay() {
-    var dienAnh = G.xpDA.chatLuong === 'dienAnh';
+    var dienAnh = G.xpDA.chatLuong === 'dienAnh', bt = laBomTan(G.xpDA.chatLuong);
     var ds = G.xpDA.canh.filter(function (c) { return c.anhUrl; }).map(function (c) {
-      var p = G.xpPrompt(c);
-      return {khoa: 'q-' + c.id, loai: dienAnh ? 'videoDienAnh' : 'video', tuSua: true,
-        dauVao: {prompt: p.video, anh: c.anhUrl, giay: +c.giay > 5 ? '10' : '5', am: p.am},
+      var p = G.xpPrompt(c), dv = {prompt: p.video, anh: c.anhUrl, giay: +c.giay > 5 ? '10' : '5', am: p.am};
+      if (bt) dv.nhanVat = p.nv.filter(function (n) { return n.anhUrl; }).slice(0, 3).map(function (n) {
+        return {ten: n.ten, mat: n.anhUrl, thamChieu: n.sheetUrl ? [n.sheetUrl] : [n.anhUrl]};
+      });
+      return {khoa: 'q-' + c.id, loai: bt ? 'videoBomTan' : dienAnh ? 'videoDienAnh' : 'video', tuSua: true,
+        dauVao: dv,
         xong: function (kq) { if (!c.khopMoi) c.videoUrl = kq.url; c.videoQuay = kq.url; }};
     });
-    ghi('Quay ' + ds.length + ' clip' + (dienAnh ? ' chất lượng điện ảnh' : '') + ' (mỗi clip 1–5 phút, chạy song song).');
+    ghi('Quay ' + ds.length + ' clip' + (bt ? ' hạng BOM TẤN (Kling 3 Pro)' : dienAnh ? ' chất lượng điện ảnh' : '') + ' (mỗi clip 1–5 phút, chạy song song).');
     return chayLo(ds, 6, 'Quay clip');
   }
   /* Khớp khẩu hình: cảnh có đúng MỘT câu thoại đã đọc (2 giây trở lên, vừa trong clip) */
@@ -419,12 +481,121 @@ var G = window.G || {}; window.G = G;
     ghi('Khớp khẩu hình ' + ds.length + ' cảnh có lời thoại.');
     return chayLo(ds, 6, 'Khớp khẩu hình');
   }
+  /* ══ KHỚP MÔI 0 ĐỒNG — máy CPU miễn phí của GitHub Actions (SadTalker)
+     quay khuôn mặt trong khung cảnh nói theo đúng tiếng thoại. Chỉ cảnh
+     có MỘT người nói (2–15 giây); tiếng vẫn phát từ giọng trong máy nên
+     clip trả về không kèm âm thanh và bắt đầu đúng từ giây 0 của cảnh. ══ */
+  var KM0 = {toiThieu: 2, toiDa: 15, hoi: 30000};
+  function apiGoc() { return String(G.API_CAP_PHEP || 'https://gita365.typhuquanggita.workers.dev').replace(/\/+$/, ''); }
+  function canhKhopMoi0d(c) {
+    if (!c.anhUrl || c.videoUrl) return 0;
+    var noi = c.thoai.filter(function (x) { return x.amUrl && x.amMs && x.den; });
+    if (!noi.length) return 0;
+    var ai = {}; noi.forEach(function (x) { ai[String(x.ai || '').toLowerCase()] = 1; });
+    if (Object.keys(ai).length !== 1) return 0;
+    var p = G.xpPrompt ? G.xpPrompt(c) : {nv: []};
+    if ((p.nv || []).length > 1) return 0;
+    var d = Math.max(+c.giay || 5, Math.max.apply(null, noi.map(function (x) { return +x.den; })) + 0.4);
+    return d >= KM0.toiThieu && d <= KM0.toiDa ? d : 0;
+  }
+  G.xpTdCanhKhopMoi0d = canhKhopMoi0d;
+  function blobB64(bl) {
+    return new Promise(function (ok, hong) {
+      var fr = new FileReader();
+      fr.onload = function () { ok(String(fr.result).replace(/^data:[^,]*,/, '')); };
+      fr.onerror = function () { hong(new Error('không đọc được tệp')); };
+      fr.readAsDataURL(bl);
+    });
+  }
+  function wavTu(buf) {
+    var d = buf.getChannelData(0), n = d.length, ab = new ArrayBuffer(44 + n * 2), v = new DataView(ab);
+    function s(o, t) { for (var i = 0; i < t.length; i++) v.setUint8(o + i, t.charCodeAt(i)); }
+    s(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); s(8, 'WAVE'); s(12, 'fmt ');
+    v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+    v.setUint32(24, buf.sampleRate, true); v.setUint32(28, buf.sampleRate * 2, true);
+    v.setUint16(32, 2, true); v.setUint16(34, 16, true); s(36, 'data'); v.setUint32(40, n * 2, true);
+    for (var i = 0; i < n; i++) { var x = Math.max(-1, Math.min(1, d[i])); v.setInt16(44 + i * 2, x < 0 ? x * 0x8000 : x * 0x7FFF, true); }
+    return new Blob([ab], {type: 'audio/wav'});
+  }
+  G.xpTdWavTu = wavTu;
+  /* Trộn các câu thoại của cảnh vào một dải tiếng 16 kHz dài đúng bằng cảnh */
+  function amCanhWav(c, giay) {
+    var tan = 16000, oc = new OfflineAudioContext(1, Math.ceil(giay * tan), tan);
+    var noi = c.thoai.filter(function (x) { return x.amUrl && x.amMs && x.den; });
+    return Promise.all(noi.map(function (x) {
+      return taiBlob(x.amUrl).then(function (bl) { return bl.arrayBuffer(); })
+        .then(function (b) { return oc.decodeAudioData(b); })
+        .then(function (ab) { var s = oc.createBufferSource(); s.buffer = ab; s.connect(oc.destination); s.start(Math.max(0, +x.tu || 0)); });
+    })).then(function () { return oc.startRendering(); }).then(wavTu);
+  }
+  function buocKhopMoi0d() {
+    var da = G.xpDA, td = TD();
+    if (da.khopMoi0d === false || td.coGiong === false) return Promise.resolve();
+    if (!td.quay) td.quay = {};
+    var ds = da.canh.filter(function (c) { var q = td.quay[c.id]; return q ? !q.xong && !q.loi : canhKhopMoi0d(c); });
+    if (!ds.length) return Promise.resolve();
+    var chan = null;
+    var gui = ds.filter(function (c) { return !td.quay[c.id]; }).map(function (c) {
+      return function () {
+        if (chan) return Promise.resolve();
+        var giay = canhKhopMoi0d(c);
+        return Promise.all([taiBlob(c.anhUrl).then(blobB64), amCanhWav(c, giay).then(blobB64)]).then(function (v) {
+          return goi('quayKhopMoi', {anh: v[0], am: v[1]});
+        }).then(function (x) {
+          if (x.ok) { td.quay[c.id] = {ma: x.ma}; luu(); return; }
+          if (x.code === 'CHUA_CO_XUONG' || x.code === 'CHUA_CO_R2' || x.code === 'NOPERM' || x.code === 'DAY') chan = x;
+          else ghi('Khớp môi: bỏ qua 1 cảnh (' + (x.error || 'lỗi') + ').');
+        }, function (e) { ghi('Khớp môi: bỏ qua 1 cảnh (' + ((e && e.message) || e) + ').'); });
+      };
+    });
+    ghi('Khớp môi 0 đồng: ' + ds.length + ' cảnh một người nói → xưởng quay GitHub (máy miễn phí, mỗi cảnh 10–30 phút, nhiều máy chạy song song).');
+    var t0 = Date.now();
+    return chayLan(gui, 2).then(function () {
+      if (chan) { ghi('Khớp môi tạm bỏ qua: ' + (chan.error || '') + ' Phim vẫn làm bằng ảnh tĩnh chuyển động.'); return; }
+      function vong() {
+        if (dungLai) throw {code: 'DUNG', error: 'Đã dừng.'};
+        var cho = da.canh.filter(function (c) { var q = td.quay[c.id]; return q && q.ma && !q.xong && !q.loi; });
+        if (!cho.length) return;
+        if (Date.now() - t0 > 8 * 3600e3) { ghi('Khớp môi quá 8 giờ chưa xong — dùng ảnh tĩnh cho các cảnh còn lại.'); return; }
+        return goi('quayXem', {ds: cho.map(function (c) { return td.quay[c.id].ma; })}).then(function (x) {
+          if (x && x.ok) {
+            var dang = 0, truoc = 0;
+            (x.ds || []).forEach(function (r, i) {
+              var c = cho[i], q = c && td.quay[c.id];
+              if (!q || r.ma !== q.ma) return;
+              if (r.trangThai === 'xong' && r.url) {
+                q.xong = true; c.videoUrl = apiGoc() + r.url; c.khopMoi0d = true;
+                if (c.clip && G.xpVat[c.clip]) { delete G.xpVat[c.clip]; c.clip = ''; }
+              }
+              else if (r.trangThai === 'loi' || r.trangThai === 'mat') { q.loi = r.loi || 'mất việc'; }
+              else if (r.trangThai === 'dang') dang++;
+              else truoc = Math.max(truoc, +r.truoc || 0);
+            });
+            luu();
+            var xong = da.canh.filter(function (c) { return td.quay[c.id] && td.quay[c.id].xong; }).length;
+            var tong = Object.keys(td.quay).length;
+            hienTienDo('Khớp môi: xong ' + xong + '/' + tong + ' · đang quay ' + dang + ' · máy GitHub đang chạy ' + (+x.mayDangChay || 0) +
+              (x.mayDangChay ? '' : ' (máy tự bật trong vòng ~10 phút)'));
+          }
+          return ngu(KM0.hoi).then(vong);
+        });
+      }
+      return vong();
+    }).then(function () {
+      var hong = Object.keys(td.quay).filter(function (k) { return td.quay[k].loi; }).length;
+      if (hong) ghi('Khớp môi: ' + hong + ' cảnh không quay được (thường do khung không thấy rõ mặt) — dùng ảnh tĩnh chuyển động.');
+    });
+  }
   function buocTai() {
     var viec = [], loiDem = 0;
     G.xpDA.canh.forEach(function (c, i) {
       var ten = 'canh-' + (i < 9 ? '0' : '') + (i + 1);
       if (!(c.clip && G.xpVat[c.clip])) {
-        if (c.videoUrl) viec.push(function () { return taiPhim(c.videoUrl, ten + '.mp4').then(function (id) { c.clip = id; }, function () { loiDem++; }); });
+        if (c.videoUrl) viec.push(function () { return taiPhim(c.videoUrl, ten + '.mp4').then(function (id) { c.clip = id; }, function () {
+          /* Clip khớp môi 0 đồng chỉ giữ 7 ngày trên máy chủ — mất thì quay về ảnh tĩnh của cảnh */
+          if (c.khopMoi0d && c.anhUrl) return taiAnh(c.anhUrl, ten + '.jpg').then(function (id) { c.clip = id; }, function () { loiDem++; });
+          loiDem++;
+        }); });
         else if (c.anhUrl) viec.push(function () { return taiAnh(c.anhUrl, ten + '.jpg').then(function (id) { c.clip = id; }, function () { loiDem++; }); });
       }
       c.thoai.forEach(function (x, j) {
@@ -461,9 +632,12 @@ var G = window.G || {}; window.G = G;
     if (td.daDuyet) return true;
     var u = G.xpTdUocTinh();
     var dong = 'Kịch bản đã được chia thành ' + u.canh + ' cảnh (khoảng ' + Math.round(u.giay) + ' giây phim), ' + u.nv + ' nhân vật.\n\n' +
-      'Chi phí ước tính trên tài khoản fal.ai: khoảng ' + usd(u.tien) + '.\n\nBấm OK để làm tiếp, Cancel để xem lại cảnh trước.';
-    if (!window.confirm(dong)) { td.buoc = 'choDuyet'; luu(); ghi('Đang chờ bạn duyệt chi phí — xem các cảnh bên dưới rồi bấm "Làm tiếp".'); return false; }
-    td.daDuyet = true; td.uocTinh = u.tien; luu();
+      (u.che0d ? 'Chi phí: 0 ĐỒNG (Workers AI miễn phí + giọng đọc trong máy). Cần khoảng ' + u.ngay + ' ngày phần miễn phí; ' +
+        'hết phần trong ngày máy tự chờ đến 07:00 sáng rồi làm tiếp.'
+        : 'Chi phí ước tính trên tài khoản fal.ai: khoảng ' + usd(u.tien) + '.') +
+      '\n\nBấm OK để làm tiếp, Cancel để xem lại cảnh trước.';
+    if (!window.confirm(dong)) { td.buoc = 'choDuyet'; luu(); ghi('Đang chờ bạn duyệt — xem các cảnh bên dưới rồi bấm "Làm tiếp".'); return false; }
+    td.daDuyet = true; td.uocTinh = u.che0d ? 0 : u.tien; luu();
     return true;
   }
 
@@ -490,8 +664,11 @@ var G = window.G || {}; window.G = G;
     buoc('giong', buocGiong);
     buoc('chanDung', buocChanDung);
     buoc('khungDau', buocKhungDau);
-    buoc('quay', buocQuay);
-    buoc('khopMoi', buocKhopMoi);
+    /* 0 đồng: không quay video/khớp môi trả phí — ảnh tĩnh + Ken Burns khi xuất */
+    if (!che0d()) {
+      buoc('quay', buocQuay);
+      buoc('khopMoi', buocKhopMoi);
+    } else buoc('khopMoi0d', buocKhopMoi0d);
     buoc('tai', buocTai);
     buoc('xuat', buocXuat);
     return p.catch(function (e) {
@@ -523,12 +700,16 @@ var G = window.G || {}; window.G = G;
     }
     td.loi = ''; td.ngo = null;
     /* Hỏi chỗ lưu NGAY lúc bấm — hộp lưu cần cú bấm của người dùng */
-    G.xpChonNoiLuu().then(function (fh) { fhLuu = fh; chay(); }, function (e) {
-      if (e && e.name === 'AbortError') { U.toast('Bạn chưa chọn nơi lưu phim — máy vẫn làm, xong sẽ hỏi lại.', 'ok'); fhLuu = null; chay(); }
+    /* Hỏi lại trạng thái máy chủ (chế độ 0 đồng) trước khi chạy; lỗi thì vẫn chạy 0 đồng cho an toàn */
+    function chayMoi() {
+      G.xpTdLamMoiTrangThai().then(function () { chay(); });
+    }
+    G.xpChonNoiLuu().then(function (fh) { fhLuu = fh; chayMoi(); }, function (e) {
+      if (e && e.name === 'AbortError') { U.toast('Bạn chưa chọn nơi lưu phim — máy vẫn làm, xong sẽ hỏi lại.', 'ok'); fhLuu = null; chayMoi(); }
     });
   };
   G.xpTdDung = function () {
-    if (dangChay || (G.xpBoDangChay && G.xpBoDangChay())) { dungLai = true; ghi('Đang dừng — việc đang chạy ở fal.ai vẫn được giữ, bấm "Làm tiếp" để nhận.'); }
+    if (dangChay || (G.xpBoDangChay && G.xpBoDangChay())) { dungLai = true; ghi(che0d() ? 'Đang dừng — phần đã làm được giữ lại, bấm "Làm tiếp" để chạy tiếp.' : 'Đang dừng — việc đang chạy ở fal.ai vẫn được giữ, bấm "Làm tiếp" để nhận.'); }
   };
   G.xpTdDungLai = function (b) { if (b !== undefined) dungLai = !!b; return dungLai; };
   /* Cho bộ phim gọi: chạy trọn một tập đang mở trong G.xpDA, ghi vào fh; trả true nếu xong */
@@ -564,12 +745,24 @@ var G = window.G || {}; window.G = G;
     if (G.xpVeLai) G.xpVeLai();
   };
   G.xpTdGiong = function (b) { TD().coGiong = !!b; luu(); };
-  G.xpTdTuyChon = function (k, v) { G.xpDA[k] = v; if (k === 'chatLuong' && v === 'dienAnh' && G.xpDA.khung === '720x1280') G.xpDA.khung = '1080x1920'; luu(); if (G.xpVeLai) G.xpVeLai(); };
+  G.xpTdTuyChon = function (k, v) { G.xpDA[k] = v; if (k === 'chatLuong' && v !== 'thuong' && G.xpDA.khung === '720x1280') G.xpDA.khung = '1080x1920'; luu(); if (G.xpVeLai) G.xpVeLai(); };
 
+  /* Hỏi lại trạng thái máy chủ trước mỗi lượt chạy; lỗi thì giữ nguyên (mặc định 0 đồng cho an toàn) */
+  G.xpTdLamMoiTrangThai = function () {
+    if (!G.goiMayChu) return Promise.resolve();
+    return goi('phimTrangThai', {}).then(function (x) {
+      if (x && x.ok) { trangThai = x; if (G.xp0d) G.xp0d.trangThai = x; }
+    }, function () {});
+  };
   function hoiTrangThai() {
-    if (trangThai || !laR01() || !G.goiMayChu) return;
-    trangThai = {dangHoi: true};
-    goi('phimTrangThai', {}).then(function (x) { trangThai = x; if (G.xpVeLai && !dangChay) G.xpVeLai(); });
+    /* Trạng thái lỗi (mất mạng…) thì hỏi lại, tối đa 30 giây một lần */
+    if ((trangThai && (trangThai.ok || trangThai.dangHoi || Date.now() - hoiLuc < 30000)) || !laR01() || !G.goiMayChu) return;
+    hoiLuc = Date.now();
+    trangThai = Object.assign({}, trangThai || {}, {dangHoi: true});
+    goi('phimTrangThai', {}).then(function (x) {
+      if (trangThai && trangThai.ok && !(x && x.ok)) { delete trangThai.dangHoi; return; }
+      trangThai = x; if (G.xp0d) G.xp0d.trangThai = x; if (G.xpVeLai && !dangChay) G.xpVeLai();
+    }, function (e) { trangThai = {ok: false, error: String(e && e.message || e)}; });
   }
 
   /* ══ BẢNG TRÊN MÀN XƯỞNG PHIM ══ */
@@ -577,21 +770,38 @@ var G = window.G || {}; window.G = G;
     var da = G.xpDA, td = TD(), o = '';
     o += '<div class="giay" style="border:2px solid var(--chinh,#c58b2a)"><h3>🎬 Làm phim tự động từ A đến Z</h3>';
     if (!laR01()) {
-      return o + '<p class="note">Chỉ Super Admin dùng được: máy tự vẽ, quay và đọc thoại bằng tài khoản fal.ai của chủ hệ (có tốn phí).</p></div>';
+      return o + '<p class="note">Chỉ Super Admin dùng được: máy tự vẽ, dựng và đọc thoại ở chế độ 0 đồng (không tốn phí).</p></div>';
     }
     hoiTrangThai();
-    if (trangThai && trangThai.ok && !trangThai.coKhoa) {
+    var la0d = che0d(), mp = trangThai && trangThai.mienPhi;
+    if (la0d) {
+      o += '<p class="note" style="color:#0a6b2c"><b>💚 Chế độ 0 ĐỒNG đang bật</b> — không dùng dịch vụ trả phí nào. ' +
+        (mp ? 'Phần miễn phí hôm nay còn khoảng <b>' + h(String(mp.conLai)) + '/' + h(String(mp.tran)) + '</b> đơn vị (đặt lại lúc 07:00 sáng).' : '') + '</p>';
+      if (trangThai && trangThai.ok && mp && !mp.coAI) {
+        o += '<p class="note" style="color:#b00"><b>Máy chủ chưa bật Workers AI.</b> Cần triển khai lại máy chủ (GitHub Actions "Triển khai máy chủ").</p>';
+      }
+    } else if (trangThai && trangThai.ok && !trangThai.coKhoa) {
       o += '<p class="note" style="color:#b00"><b>Máy chủ chưa có khoá fal.ai.</b> Làm theo tệp hướng dẫn "HUONG-DAN-XUONG-PHIM-TU-DONG" trên màn hình máy tính ' +
         '(tạo tài khoản fal.ai, nạp tiền, lấy khoá rồi gửi cho kỹ thuật nạp vào máy chủ).</p>';
     }
-    o += '<p class="note">Bạn chỉ cần <b>dán kịch bản</b> (viết tự nhiên cũng được) rồi bấm nút. Máy tự chia cảnh, tạo nhân vật, vẽ, quay, đọc thoại tiếng Việt, ' +
-      'gắn phụ đề, logo, số tập và lưu thành tệp MP4. Tập 3 phút mất khoảng 30–60 phút và khoảng 10–15 USD. Giữ máy tính bật và tab này mở.</p>';
+    o += la0d
+      ? '<p class="note">Bạn chỉ cần <b>dán kịch bản</b> (viết tự nhiên cũng được) rồi bấm nút. Máy tự chia cảnh, tạo nhân vật, vẽ từng cảnh, ' +
+        'cho máy quay chuyển động trên ảnh, đọc thoại tiếng Việt ngay trong máy, gắn phụ đề, logo, số tập và lưu thành tệp MP4. ' +
+        '<b>Chi phí: 0 đồng.</b> Mỗi ngày làm được khoảng 1–2 tập (Bom tấn Cloudflare chậm hơn Tiêu chuẩn vì ảnh lớn hơn); hết phần miễn phí máy tự chờ đến 07:00 sáng rồi làm tiếp. Giữ máy tính bật và tab này mở.</p>'
+      : '<p class="note">Bạn chỉ cần <b>dán kịch bản</b> (viết tự nhiên cũng được) rồi bấm nút. Máy tự chia cảnh, tạo nhân vật, vẽ, quay, đọc thoại tiếng Việt, ' +
+        'gắn phụ đề, logo, số tập và lưu thành tệp MP4. Tập 3 phút mất khoảng 30–60 phút và khoảng 10–15 USD (hạng Bom tấn khoảng 25–40 USD). Giữ máy tính bật và tab này mở.</p>';
     o += '<textarea rows="8" style="width:100%;box-sizing:border-box" placeholder="Dán kịch bản vào đây…" oninput="G.xpSua(\'kichBan\',this.value)"' + (dangChay ? ' disabled' : '') + '>' + h(da.kichBan || '') + '</textarea>';
     o += '<div class="row"><label><input type="checkbox"' + (td.coGiong !== false ? ' checked' : '') + ' onchange="G.xpTdGiong(this.checked)"> Đọc thoại bằng giọng AI tiếng Việt</label>' +
+      (la0d ?
+      '<label><input type="checkbox"' + (da.khopMoi0d !== false ? ' checked' : '') + ' onchange="G.xpTdTuyChon(\'khopMoi0d\',this.checked)"> 🗣️ Khớp môi AI (0 đồng, máy GitHub)</label>' +
+      '<label>Chất lượng <select onchange="G.xpTdTuyChon(\'chatLuong\',this.value)">' +
+      '<option value="bomTan"' + (da.chatLuong !== 'thuong' ? ' selected' : '') + '>🎥 Bom tấn Cloudflare (0 đồng)</option>' +
+      '<option value="thuong"' + (da.chatLuong === 'thuong' ? ' selected' : '') + '>Tiêu chuẩn (nhanh hơn, 0 đồng)</option></select></label>' :
       '<label><input type="checkbox"' + (da.khopMoi ? ' checked' : '') + ' onchange="G.xpTdTuyChon(\'khopMoi\',this.checked)"> Khớp khẩu hình với giọng</label>' +
       '<label>Chất lượng <select onchange="G.xpTdTuyChon(\'chatLuong\',this.value)">' +
-      '<option value="thuong"' + (da.chatLuong !== 'dienAnh' ? ' selected' : '') + '>Tiêu chuẩn (Kling 2.1)</option>' +
-      '<option value="dienAnh"' + (da.chatLuong === 'dienAnh' ? ' selected' : '') + '>Điện ảnh (Kling 2.5 Pro)</option></select></label>' +
+      '<option value="thuong"' + (da.chatLuong === 'thuong' || !da.chatLuong ? ' selected' : '') + '>Tiêu chuẩn (Kling 2.1)</option>' +
+      '<option value="dienAnh"' + (da.chatLuong === 'dienAnh' ? ' selected' : '') + '>Điện ảnh (Kling 2.5 Pro)</option>' +
+      '<option value="bomTan"' + (da.chatLuong === 'bomTan' ? ' selected' : '') + '>🎥 Bom tấn (Kling 3 Pro + Nano Banana Pro)</option></select></label>') +
       '<label>Tập số <input type="number" min="1" value="' + h(String(da.tap || 1)) + '" oninput="G.xpSua(\'tap\',this.value)" style="width:70px"></label>' +
       '<label>Chữ logo <input value="' + h(String(da.logo || '')) + '" oninput="G.xpSua(\'logo\',this.value)" style="width:120px"></label></div>';
     var dangDo = td.buoc && td.buoc !== 'xong' && !dangChay;
@@ -608,12 +818,15 @@ var G = window.G || {}; window.G = G;
         '. Hệ thống không gửi thông tin nhận dạng ra ngoài.</p><button class="btn" onclick="G.xpTdRutTen()">Đổi thành tên gọi ngắn (ví dụ "Nguyễn Văn An" → "An")</button>';
     }
     if (td.buoc) {
-      var i = BUOC.map(function (b) { return b[0]; }).indexOf(td.buoc === 'choDuyet' ? 'giong' : td.buoc);
-      o += '<ol class="note" style="padding-left:22px">' + BUOC.map(function (b, j) {
+      var cacBuoc = la0d ? BUOC.filter(function (b) { return b[0] !== 'quay' && b[0] !== 'khopMoi' && (b[0] !== 'khopMoi0d' || da.khopMoi0d !== false); })
+        : BUOC.filter(function (b) { return b[0] !== 'khopMoi0d'; });
+      var i = cacBuoc.map(function (b) { return b[0]; }).indexOf(td.buoc === 'choDuyet' ? 'giong' : td.buoc);
+      o += '<ol class="note" style="padding-left:22px">' + cacBuoc.map(function (b, j) {
         var dau = td.buoc === 'xong' || j < i ? '✓ ' : (j === i ? (dangChay ? '⏳ ' : '• ') : '');
         return '<li>' + dau + h(b[1]) + '</li>';
       }).join('') + '</ol>';
       if (td.uocTinh) o += '<p class="note">Chi phí đã duyệt: khoảng ' + usd(td.uocTinh) + '.</p>';
+      else if (la0d && td.daDuyet) o += '<p class="note">Chi phí: 0 đồng.</p>';
     }
     o += '<p class="note" id="xp-td-tt"><b>' + h(td.loi ? 'Lỗi: ' + td.loi : '') + '</b></p>';
     o += '<pre class="note" id="xp-td-nk" style="white-space:pre-wrap;max-height:180px;overflow:auto">' + h(td.nhatKy.slice(-8).join('\n')) + '</pre>';

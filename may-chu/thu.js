@@ -17,10 +17,11 @@
 
    ── CHỖ ĐỔI NHÀ CUNG CẤP CHỈ CÓ MỘT ──
 
-   HIỆN NAY (chưa có tên miền riêng) đường gửi chính là CẦU NỐI GMAIL
-   (guiQuaGmail_, ở dưới) — chấp nhận hạn mức ~100 người nhận/ngày cho
-   tới khi có tên miền; Resend là đường dự phòng/mở rộng. Thứ tự thử
-   nằm ở duongGuiThu.
+   HIỆN NAY (chưa có tên miền riêng): thư tới HÒM CHỦ HỆ đi qua HỘP THƯ
+   GITHUB (guiQuaGithub_ — GitHub gửi email thông báo, không giới hạn
+   ngày, chỉ dùng GitHub + Cloudflare); thư tới khách đi CẦU NỐI GMAIL
+   (guiQuaGmail_) nếu đã cài, ~100 người nhận/ngày; Resend là dự
+   phòng/mở rộng khi có tên miền. Thứ tự thử nằm ở duongGuiThu.
 
    Hàm guiQuaResend_ ở dưới là toàn bộ phần dính tới nhà cung cấp. Đổi
    sang Mailgun, SendGrid hay Amazon SES là viết một hàm cùng chữ ký và
@@ -100,9 +101,56 @@ async function guiQuaGmail_(env, tepThu) {
   return true;
 }
 
-/* Các đường gửi đã cấu hình đủ, theo thứ tự ưu tiên. */
-export function duongGuiThu(env) {
+/* ── HỘP THƯ GITHUB (chỉ thư gửi CHỦ HỆ) ──
+   Chủ hệ chỉ dùng GitHub + Cloudflare, chưa có tên miền riêng nên
+   Cloudflare chưa gửi thư được. Đường này nhờ GitHub gửi thay: Worker
+   bắn sự kiện repository_dispatch vào kho RIÊNG TƯ GITA_GH_HOP_THU
+   (vd "typhuquanggita-commits/gita365-hop-thu"); workflow trong kho ấy
+   mở một issue bằng github-actions[bot] → GitHub gửi email thông báo
+   tới hòm thư của tài khoản chủ hệ (typhuquanggita@gmail.com).
+   Khoá GITA_GH_KHOA_THU là fine-grained token CHỈ cho kho đó, quyền
+   Contents: Read and write. Chỉ dùng khi người nhận là hòm chủ hệ
+   (GITA_THU_TRA_LOI / GITA_THU_DOANH_THU / GITA_MAIL_CUU) — không bao giờ gửi tới khách qua đường này. */
+export function laHomChuHe(env, den) {
+  const d = String(den || '').trim().toLowerCase();
+  if (!d) return false;
+  return [env.GITA_THU_TRA_LOI, env.GITA_THU_DOANH_THU, env.GITA_MAIL_CUU].join(',').split(',')
+    .map(s => s.trim().toLowerCase()).filter(Boolean).includes(d);
+}
+
+async function guiQuaGithub_(env, tepThu) {
+  const kho = String(env.GITA_GH_HOP_THU || '').trim();
+  if (!/^[A-Za-z0-9][\w.-]*\/[A-Za-z0-9][\w.-]*$/.test(kho)) throw new Error('GITA_GH_HOP_THU sai dạng chủ/kho.');
+  const r = await fetch('https://api.github.com/repos/' + kho + '/dispatches', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ' + env.GITA_GH_KHOA_THU,
+      'Accept': 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+      'User-Agent': 'gita365-worker',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      event_type: 'thu',
+      client_payload: {
+        tieuDe: sachChoThu(tepThu.tieuDe, 200),
+        than: String(tepThu.than || '').slice(0, 60000)
+      }
+    })
+  });
+  if (r.status !== 204 && !r.ok) {
+    const t = await r.text().catch(() => '');
+    throw new Error('GitHub từ chối (' + r.status + '): ' + t.slice(0, 200));
+  }
+  return true;
+}
+
+/* Các đường gửi đã cấu hình đủ, theo thứ tự ưu tiên. Có den thì bỏ
+   những đường không được phép gửi tới địa chỉ ấy. */
+export function duongGuiThu(env, den) {
   const ds = [];
+  if (env.GITA_GH_KHOA_THU && env.GITA_GH_HOP_THU && (den === undefined || laHomChuHe(env, den)))
+    ds.push({ten: 'github', gui: guiQuaGithub_});
   if (env.GITA_CAU_NOI_GMAIL && env.GITA_KHOA_CAU_NOI) ds.push({ten: 'gmail', gui: guiQuaGmail_});
   if (env.GITA_KHOA_THU && env.GITA_THU_GUI_TU) ds.push({ten: 'resend', gui: guiQuaResend_});
   return ds;
@@ -122,10 +170,10 @@ export async function guiThu(env, {den, tieuDe, than, batBuoc}) {
      triển và trong bộ thử, env.GHI_THU nhận lá thư để soi được nội dung
      mà không gửi đi thật. */
   if (env.GHI_THU) { env.GHI_THU.push({den, tieuDe, than}); return true; }
-  const ds = duongGuiThu(env);
+  const ds = duongGuiThu(env, den);
   if (!ds.length) {
-    if (batBuoc) throw new Error('Máy chủ chưa cấu hình đường gửi thư ' +
-      '(cầu nối Gmail GITA_CAU_NOI_GMAIL + GITA_KHOA_CAU_NOI, hoặc Resend).');
+    if (batBuoc) throw new Error('Máy chủ chưa cấu hình đường gửi thư tới địa chỉ này ' +
+      '(hộp thư GitHub GITA_GH_KHOA_THU cho hòm chủ hệ; cầu nối Gmail GITA_CAU_NOI_GMAIL + GITA_KHOA_CAU_NOI, hoặc Resend cho mọi người).');
     return false;
   }
   /* Đường đầu hỏng (hết hạn mức ngày, Google trục trặc…) thì thử đường sau. */
@@ -149,9 +197,9 @@ export const CHAN_THU = '\n\nCần người thật: 08.5555.4688 · typhuquanggi
 export async function thuGuiThu(y, env, db, hoSo) {
   if (!hoSo || hoSo.role !== 'R01')
     return {ok: false, code: 'CHIR01', error: 'Chỉ Super Admin được gửi thư thử.'};
-  const den = String(env.GITA_THU_TRA_LOI || '').trim();
+  const den = String(env.GITA_THU_TRA_LOI || '').split(',')[0].trim();
   if (!den) return {ok: false, error: 'Máy chủ chưa đặt GITA_THU_TRA_LOI (hòm thư chủ hệ).'};
-  const duong = duongGuiThu(env).map(d => d.ten);
+  const duong = duongGuiThu(env, den).map(d => d.ten);
   try {
     await guiThu(env, {den, batBuoc: true,
       tieuDe: 'GITA 365 — thư thử từ máy chủ',

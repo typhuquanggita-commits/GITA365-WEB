@@ -69,6 +69,33 @@ kiem('R01 → ok, gửi tới hòm chủ hệ', kq.ok === true && kq.den === 'ty
 const kq2 = await thuGuiThu({}, {GITA_THU_TRA_LOI: 'typhuquanggita@gmail.com'}, null, {role: 'R01'});
 kiem('R01 không đường → ok:false có lời', kq2.ok === false && /chưa cấu hình/.test(kq2.error));
 
+// 8. Hộp thư GitHub — chỉ cho hòm chủ hệ, đứng trước Gmail
+const envGh = {...envGmail, GITA_GH_KHOA_THU: 'github_pat_x', GITA_GH_HOP_THU: 'typhuquanggita-commits/gita365-hop-thu',
+  GITA_THU_DOANH_THU: 'typhuquanggita@gmail.com'};
+kiem('gh: hòm chủ hệ → github trước gmail', duongGuiThu(envGh, 'TyPhuQuangGita@gmail.com ').map(d => d.ten).join() === 'github,gmail');
+kiem('gh: người lạ → không github', duongGuiThu(envGh, 'khach@vi-du.test').map(d => d.ten).join() === 'gmail');
+kiem('gh: thiếu khoá → không github', duongGuiThu({...envGh, GITA_GH_KHOA_THU: ''}, 'typhuquanggita@gmail.com').map(d => d.ten).join() === 'gmail');
+goi.length = 0;
+traLoi = () => new Response(null, {status: 204});
+kiem('gh: gửi ok', await guiThu(envGh, {den: 'typhuquanggita@gmail.com', tieuDe: 'Mã\nbảo mật', than: 'Mã: 654321', batBuoc: true}) === true);
+const g0 = goi[0] || {opt: {headers: {}}};
+const bodyGh = JSON.parse(g0.opt.body || '{}');
+kiem('gh: đúng URL dispatches', g0.url === 'https://api.github.com/repos/typhuquanggita-commits/gita365-hop-thu/dispatches');
+kiem('gh: header Bearer + UA', g0.opt.headers.Authorization === 'Bearer github_pat_x' && !!g0.opt.headers['User-Agent']);
+kiem('gh: payload sạch', bodyGh.event_type === 'thu' && bodyGh.client_payload.tieuDe === 'Mã bảo mật' && bodyGh.client_payload.than === 'Mã: 654321');
+kiem('gh: một lượt gọi', goi.length === 1);
+goi.length = 0;
+traLoi = (url) => url.startsWith('https://api.github.com') ? new Response('Bad credentials', {status: 401}) : new Response('{"ok":true}', {status: 200});
+kiem('gh hỏng → rơi sang gmail', await guiThu(envGh, {den: 'typhuquanggita@gmail.com', tieuDe: 'x', than: 'y', batBuoc: true}) === true &&
+  goi.length === 2 && goi[1].url === URL_GS);
+goi.length = 0;
+kiem('gh: khách không đi github', await guiThu(envGh, {...thu, batBuoc: true}) === true && goi.length === 1 && goi[0].url === URL_GS);
+let loiKho = null;
+try { await guiThu({GITA_GH_KHOA_THU: 'x', GITA_GH_HOP_THU: '../x', GITA_THU_TRA_LOI: 'a@b.c'}, {den: 'a@b.c', tieuDe: 't', than: 'b', batBuoc: true}); } catch (e) { loiKho = e; }
+kiem('gh: tên kho sai dạng → lỗi', loiKho && /sai dạng/.test(loiKho.message));
+const kq3 = await thuGuiThu({}, {GITA_THU_TRA_LOI: 'typhuquanggita@gmail.com', GITA_GH_KHOA_THU: 'k', GITA_GH_HOP_THU: 'a/b'}, null, {role: 'R01'});
+kiem('thuGuiThu báo đường github', Array.isArray(kq3.duong) && kq3.duong.includes('github'));
+
 console.error = tatLog;
 console.log(`thu-gui-thu: ${dat} đạt, ${hong} hỏng`);
 process.exit(hong ? 1 : 0);

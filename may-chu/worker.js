@@ -49,6 +49,8 @@ import { soNgay, chotTuan, soatChot, tongHop, baoCaoKeToan, boSoKhaiThue,
   dsChot } from './bao-cao.js';
 import { tongNgayDoanhThu } from './bao-doanh-thu.js';
 import { thuGuiThu } from './thu.js';
+import { phucVuTaiNguyen } from './tai-nguyen.js';
+import { quayKhopMoi, quayXem, xuLyMayQuay, phucVuPhimQuay, donQuay } from './xuong-quay.js';
 import { chamKpiTaiChinh } from './kpi-tai-chinh.js';
 import { dangTinTaiChinh, bangTinTaiChinh,
   xuLyTinTaiChinh } from './tin-tai-chinh.js';
@@ -90,7 +92,8 @@ import { ghiPhatSinh, soanBanNhap, duyetCap, nhapKho, traBoSung,
   soatTuHoanThien } from './tu-hoan-thien.js';
 import { capQuyenAI, thuHoiQuyenAI, soatQuyenAI, aiPhanLoai, aiSoanNhap,
   soanDeBaiNgoai, aiTongHopGiamSat } from './quyen-nang-ai.js';
-import { phimTrangThai, phimGuiViec, phimXemViec, phimTinhHuong } from './phim-ai.js';
+import { phimGuiViec, phimXemViec, phimTinhHuong } from './phim-ai.js';
+import { phimMienPhi, phimTrangThaiDu } from './phim-0d.js';
 import { hoiDaTri, hoiDongDaTri, chamDaTri, soDaTri, luuGiaiPhap, duyetGiaiPhap, dsGiaiPhap, boSungGiaiPhap,
   canhMauDaTri, canhMauTuDong, thuMauDaTri, vongKhoaHocTuDong, docVongKhoaHoc,
   taoTuyenDaTri, chayChangDaTri, docTuyenDaTri } from './bo-nao-da-tri.js';
@@ -318,7 +321,7 @@ const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau'
   'hoiDaTri', 'hoiDongDaTri', 'chamDaTri', 'soDaTri',
   'luuGiaiPhap', 'duyetGiaiPhap', 'dsGiaiPhap', 'boSungGiaiPhap', 'canhMauDaTri', 'thuMauDaTri', 'docVongKhoaHoc',
   'taoTuyenDaTri', 'chayChangDaTri', 'docTuyenDaTri', 'docKpiCayTien', 'docDongChay',
-  'phimTrangThai', 'phimGuiViec', 'phimXemViec', 'phimTinhHuong',
+  'phimTrangThai', 'phimGuiViec', 'phimXemViec', 'phimTinhHuong', 'phimMienPhi', 'quayKhopMoi', 'quayXem',
   'guiBaoCaoNgay', 'tongHopBaoCao', 'dsBaoCaoNgay'];
 
 async function lam(fn, y, env, db) {
@@ -695,7 +698,10 @@ async function lam(fn, y, env, db) {
   if (fn === 'docTuyenDaTri')     return await docTuyenDaTri(y, env, db, hoSo);
   if (fn === 'docKpiCayTien')     return await docKpiCayTien(y, env, db, hoSo);
   if (fn === 'docDongChay')       return await docDongChay(y, env, db, hoSo);
-  if (fn === 'phimTrangThai')     return await phimTrangThai(y, env, db, hoSo);
+  if (fn === 'phimTrangThai')     return await phimTrangThaiDu(y, env, db, hoSo);
+  if (fn === 'phimMienPhi')       return await phimMienPhi(y, env, db, hoSo);
+  if (fn === 'quayKhopMoi')       return await quayKhopMoi(y, env, db, hoSo);
+  if (fn === 'quayXem')           return await quayXem(y, env, db, hoSo);
   if (fn === 'phimGuiViec')       return await phimGuiViec(y, env, db, hoSo);
   if (fn === 'phimXemViec')       return await phimXemViec(y, env, db, hoSo);
   if (fn === 'phimTinhHuong')     return await phimTinhHuong(y, env, db, hoSo);
@@ -1074,6 +1080,8 @@ export async function donDep(env) {
       ke.push(h.bang + ': ' + String(e && e.message || e).slice(0, 80));
     }
   }
+  try { const n = await donQuay(env); tong += n; ke.push('quay_viec −' + n); }
+  catch (e) { ke.push('quay_viec: ' + String(e && e.message || e).slice(0, 80)); }
   /* Ghi SAU khi dọn, để chính dòng này không bị lượt dọn vừa rồi cuốn đi. */
   try {
     await Kho.ghiNhatKy(db, {viec: 'DON_DEP', doiTuong: 'tự động',
@@ -1123,6 +1131,20 @@ export default {
   },
 
   async fetch(req, env) {
+    /* Tài nguyên tĩnh công khai (giọng đọc Piper) — phục vụ từ R2. */
+    if ((req.method === 'GET' || req.method === 'HEAD') && new URL(req.url).pathname.startsWith('/tn/'))
+      return phucVuTaiNguyen(req, env);
+    /* Xưởng quay khớp môi: phim đã quay (công khai theo mã) + lời gọi của máy quay GitHub Actions. */
+    const duongQ = new URL(req.url).pathname;
+    if (duongQ.startsWith('/quay/')) {
+      try {
+        if ((req.method === 'GET' || req.method === 'HEAD') && duongQ.startsWith('/quay/phim/')) return await phucVuPhimQuay(req, env, duongQ);
+        return await xuLyMayQuay(req, env, duongQ);
+      } catch (e) {
+        console.error('QUAY_LOI', String(e && e.message || e));
+        return new Response('{"ok":false,"error":"Máy chủ gặp trục trặc."}', {status: 500, headers: {'Content-Type': 'application/json; charset=utf-8'}});
+      }
+    }
     const cors = corsTheoEnv(env, req);
     if (req.method === 'OPTIONS') return new Response(null, {status: 204, headers: cors});
     const ma = maYeuCau(req);
@@ -1134,7 +1156,7 @@ export default {
       let n = 0;
       try { n = Object.keys(JSON.parse(env.GITA_KHOA_KHO || '{}')).length; } catch (e) {}
       const r = traJson({ok: true, ten: 'GITA 365 — máy chủ cấp phép',
-        daNapKhoa: n, luc: new Date().toISOString()}, 200, env, req);
+        daNapKhoa: n, ai: !!env.AI, luc: new Date().toISOString()}, 200, env, req);
       r.headers.set('Cache-Control', 'public, max-age=30');
       return r;
     }

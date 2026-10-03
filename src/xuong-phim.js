@@ -307,6 +307,27 @@ G.VIEWS = G.VIEWS || {};
     var s = Math.max(W / sw, H / sh) * (zoom || 1), dw = sw * s, dh = sh * s;
     x.drawImage(src, (W - dw) / 2, (H - dh) / 2, dw, dh);
   }
+  /* 9.99.253 — Ken Burns: ảnh tĩnh (chế độ 0 đồng) có máy quay đẩy/lùi/lia
+     chậm, mỗi cảnh một hướng (theo mã cảnh). Cảnh dài > 7 giây đổi khung
+     ở giữa (cắt cận vào), như máy quay thứ hai — phim không bị "đứng". */
+  var KEN = [
+    [1.04, 1.18, 0, 0, 0, 0], [1.20, 1.05, 0, 0, 0, 0],
+    [1.16, 1.16, -1, 0, 1, 0], [1.16, 1.16, 1, 0, -1, 0],
+    [1.05, 1.22, 0, 0, 0, -0.6], [1.18, 1.18, 0, 0.8, 0, -0.8],
+    [1.06, 1.20, -0.5, 0.3, 0.4, -0.4], [1.20, 1.08, 0.6, -0.5, -0.2, 0.2]
+  ];
+  function bam(s) { var h = 0; s = String(s || ''); for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return Math.abs(h); }
+  function kenBurns(x, src, sw, sh, W, H, ma, t, d) {
+    var p = d > 0 ? Math.max(0, Math.min(1, t / d)) : 0, k = bam(ma) % KEN.length, them = 0;
+    if (d > 7) {
+      if (p >= 0.5) { k = (k + 3) % KEN.length; them = 0.12; p = (p - 0.5) * 2; } else p = p * 2;
+    }
+    var e = p * p * (3 - 2 * p), m = KEN[k];
+    var z = m[0] + (m[1] - m[0]) * e + them, ox = m[2] + (m[4] - m[2]) * e, oy = m[3] + (m[5] - m[3]) * e;
+    var s = Math.max(W / sw, H / sh) * z, dw = sw * s, dh = sh * s;
+    x.drawImage(src, (W - dw) / 2 + ox * (dw - W) / 2, (H - dh) / 2 + oy * (dh - H) / 2, dw, dh);
+  }
+  G.xpKenBurns = kenBurns;
   function chuNgat(x, chu, rong) {
     var tu = String(chu).split(/\s+/), dong = [], cur = '';
     tu.forEach(function (w) {
@@ -346,11 +367,48 @@ G.VIEWS = G.VIEWS || {};
     dong.forEach(function (d, i) { x.strokeText(d, W / 2, y0 + i * co * 1.25); x.fillText(d, W / 2, y0 + i * co * 1.25); });
     x.textAlign = 'left';
   }
+  /* Hoàn thiện điện ảnh 0 đồng (Bom tấn Cloudflare): pha màu teal–cam, tối viền,
+     hạt phim 35mm và dải đen mỏng trên/dưới — vẽ ngay trên canvas, không gọi dịch vụ nào. */
+  var hatPhim = null;
+  function taoHatPhim() {
+    var c = document.createElement('canvas'); c.width = c.height = 256;
+    var g = c.getContext('2d'), d = g.createImageData(256, 256), s = 1234567;
+    for (var i = 0; i < d.data.length; i += 4) {
+      s = (Math.imul(s, 1103515245) + 12345) >>> 0;
+      var v = 128 + ((s >>> 16) % 64) - 32;
+      d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 40;
+    }
+    g.putImageData(d, 0, 0); return c;
+  }
+  function hoanThienDienAnh(x, W, H, tPhim) {
+    x.save();
+    x.globalCompositeOperation = 'soft-light';
+    var mau = x.createLinearGradient(0, 0, 0, H);
+    mau.addColorStop(0, 'rgba(0,110,140,.35)'); mau.addColorStop(0.55, 'rgba(255,170,90,.18)'); mau.addColorStop(1, 'rgba(0,80,110,.35)');
+    x.fillStyle = mau; x.fillRect(0, 0, W, H);
+    x.globalCompositeOperation = 'source-over';
+    var vien = x.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.35, W / 2, H / 2, Math.max(W, H) * 0.75);
+    vien.addColorStop(0, 'rgba(0,0,0,0)'); vien.addColorStop(1, 'rgba(0,0,0,.55)');
+    x.fillStyle = vien; x.fillRect(0, 0, W, H);
+    try {
+      hatPhim = hatPhim || taoHatPhim();
+      var buoc = Math.floor((tPhim || 0) * 24), dx = (buoc * 73) % 256, dy = (buoc * 151) % 256;
+      x.globalCompositeOperation = 'overlay';
+      x.fillStyle = x.createPattern(hatPhim, 'repeat');
+      x.translate(-dx, -dy); x.fillRect(dx, dy, W, H);
+    } catch (e) {}
+    x.restore();
+    var dai = Math.round(H * 0.035);
+    x.fillStyle = '#000'; x.fillRect(0, 0, W, dai); x.fillRect(0, H - dai, W, dai);
+  }
   G.xpVeKhung = function (x, c, tCanh, dCanh, tPhim) {
     var K = kichThuoc(), W = K.w, H = K.h, v = c && c.clip && G.xpVat[c.clip];
     x.fillStyle = '#000'; x.fillRect(0, 0, W, H);
     if (v && v.loai === 'phim' && v.el.videoWidth) phuKin(x, v.el, v.el.videoWidth, v.el.videoHeight, W, H);
-    else if (v && v.loai === 'anh') phuKin(x, v.el, v.el.width, v.el.height, W, H, 1 + 0.06 * (tCanh / (dCanh || 1)));
+    else if (v && v.loai === 'anh') {
+      kenBurns(x, v.el, v.el.width, v.el.height, W, H, c.id, tCanh, dCanh || 1);
+      if (G.xpTdLaBomTanCF && G.xpTdLaBomTanCF(G.xpDA.chatLuong)) hoanThienDienAnh(x, W, H, tPhim);
+    }
     else if (c) {
       x.fillStyle = '#1f2937'; x.fillRect(0, 0, W, H);
       x.fillStyle = '#9ca3af'; x.font = '600 ' + Math.round(W * 0.04) + 'px system-ui, sans-serif'; x.textBaseline = 'top';

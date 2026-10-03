@@ -69,6 +69,32 @@ GITA_THU_TRA_LOI = "typhuquanggita@gmail.com"
 # thử: không ai muốn bộ thử của mình gửi thư thật vào hòm thư thật.
 GITA_THU_DOANH_THU = "typhuquanggita@gmail.com"
 
+# HỘP THƯ GITHUB (thu.js · guiQuaGithub_): kho RIÊNG TƯ có workflow mở
+# issue khi nhận repository_dispatch "thu" → GitHub gửi email về hòm chủ
+# hệ. Chỉ dùng cho thư tới hòm chủ hệ (mã bảo mật, báo doanh thu, quản
+# trị). Khoá đi kèm là secret GITA_GH_KHOA_THU (nạp qua deploy.yml).
+GITA_GH_HOP_THU = "typhuquanggita-commits/gita365-hop-thu"
+# XƯỞNG QUAY KHỚP MÔI 0 ĐỒNG (may-chu/xuong-quay.js): kho CÔNG KHAI chạy
+# SadTalker trên máy CPU miễn phí của GitHub Actions. Khoá chung giữa
+# Worker và kho quay là secret GITA_KHOA_XUONG_QUAY (nạp qua deploy.yml).
+# Nếu GITA_GH_KHOA_THU cũng có quyền kho này thì máy quay bật ngay,
+# không thì kho tự nhặt việc theo lịch 10 phút/lần.
+GITA_GH_XUONG_QUAY = "typhuquanggita-commits/gita365-xuong-quay"
+
+# XƯỞNG PHIM 0 ĐỒNG (9.99.253, may-chu/phim-0d.js). "1" = KHOÁ CỨNG cửa
+# fal.ai trả phí; xưởng phim chỉ dùng Workers AI miễn phí + giọng đọc
+# chạy trong trình duyệt. Thiếu biến cũng tính là "1". Chỉ đổi sang "0"
+# khi chủ hệ CHỦ ĐỘNG muốn trả tiền fal.ai.
+GITA_PHIM_CHI_0D = "1"
+# Trần neuron Workers AI mỗi ngày cho xưởng phim (miễn phí là 10.000,
+# máy chủ không cho đặt quá 9.500 để chừa lề an toàn).
+GITA_PHIM_TRAN_NEURON = "9000"
+# Hạng "Bom tấn Cloudflare" dùng FLUX.2 klein 9B (đẹp hơn) CHỈ khi số
+# này > 0 — đó là neuron TRẢ PHÍ mỗi ngày (cần gói Workers Paid 5 USD/
+# tháng; 1.000 neuron ≈ 0,011 USD; một ảnh 9B ≈ 1.500 neuron). "0" =
+# tắt: Bom tấn vẫn chạy 0 đồng bằng klein 4B khung lớn.
+GITA_PHIM_TRAN_TRA_PHI = "0"
+
 # Khoá cửa ngân hàng. KHÔNG để ở đây — đây là tệp nằm trong kho mã.
 # Nạp bằng:  npx wrangler secret put GITA_KHOA_NGANHANG
 #
@@ -76,6 +102,11 @@ GITA_THU_DOANH_THU = "typhuquanggita@gmail.com"
 # được bất kỳ cửa nào khác, nên lộ nó không mất dữ liệu khách — nhưng
 # người cầm nó ghi được những dòng ngân hàng giả, và bản đối chiếu là
 # thứ duy nhất trong hệ đứng ngoài. Giữ nó như giữ khoá két.
+
+# Workers AI — bộ não miễn phí của xưởng phim 0 đồng (10.000 neuron/ngày
+# không mất tiền; máy chủ tự dừng ở GITA_PHIM_TRAN_NEURON).
+[ai]
+binding = "AI"
 
 # HAI KHUNG GIỜ, HAI VIỆC KHÁC NHAU.
 #

@@ -16,7 +16,8 @@
      videoDienAnh — Kling 2.5 turbo pro i2v      clip chất lượng điện ảnh
      lipSync      — Kling lipsync audio→video    khớp khẩu hình với giọng
      giong        — fal-ai/minimax/speech-02-hd  lời thoại tiếng Việt có cảm xúc
-
+     anhPro/anhSuaPro — Nano Banana Pro 2K       hạng Bom tấn (9.99.254)
+     videoBomTan  — Kling 3 Pro i2v + elements   hạng Bom tấn, giữ mặt nhân vật
    Bốn cửa (đều cần phiên, đều chỉ R01):
      phimTrangThai — có khoá chưa, hôm nay đã dùng bao nhiêu
      phimGuiViec   — gửi một việc vào hàng đợi fal, trả địa chỉ xem/lấy
@@ -39,6 +40,7 @@
 import { Kho } from './nen.js';
 import { laR01, tenNguoiDung as ten } from './vai-tro.js';
 import { soatRaNhaCungCap } from './an-toan-ai.js';
+import { soatRaNgoai } from './bo-nao.js';
 import { TH_KHACH } from './tinh-huong-khach-du-lieu.js';
 
 const HANG_DOI = 'https://queue.fal.run/';
@@ -55,8 +57,30 @@ export const MAU_PHIM = {
   video:        { id: 'fal-ai/kling-video/v2.1/standard/image-to-video', han: 300 },
   videoDienAnh: { id: 'fal-ai/kling-video/v2.5-turbo/pro/image-to-video', han: 700 },
   lipSync:      { id: 'fal-ai/kling-video/lipsync/audio-to-video', han: 700 },
-  giong:        { id: 'fal-ai/minimax/speech-02-hd', han: 1500 }
+  giong:        { id: 'fal-ai/minimax/speech-02-hd', han: 1500 },
+  /* 9.99.254 — hạng BOM TẤN: ảnh Nano Banana Pro 2K + Kling 3 Pro (1080p,
+     giữ mặt nhân vật bằng "elements"). Tiếng gốc của Kling 3 chỉ có
+     Trung/Anh nên luôn tắt — thoại tiếng Việt vẫn do MiniMax + khớp môi. */
+  anhPro:       { id: 'fal-ai/nano-banana-pro', han: 400 },
+  anhSuaPro:    { id: 'fal-ai/nano-banana-pro/edit', han: 900 },
+  videoBomTan:  { id: 'fal-ai/kling-video/v3/pro/image-to-video', han: 700 }
 };
+
+/* Ngôn ngữ máy quay phim hành động bom tấn — máy chủ tự gắn, máy khách không bỏ được */
+export const BOM_TAN = 'Hollywood blockbuster cinematography: dynamic motivated camera movement (push-in, dolly, ' +
+  'orbit or handheld tracking matching the action), anamorphic widescreen lens look, shallow depth of field, ' +
+  'dramatic high-contrast lighting with volumetric light and rim light, natural 24fps motion blur, rich ' +
+  'teal-and-orange film grade, fine 35mm film grain, realistic physics and weight, expressive micro-expressions, ' +
+  'consistent faces and outfits.';
+
+/* Chỉ đạo viết kịch bản cho hạng Bom tấn — nhịp phim hành động, nhưng không bạo lực */
+export const DAO_DIEN_BOM_TAN = 'DIRECTING STYLE — BLOCKBUSTER ACTION-DRAMA: write and shoot this like a big-budget action film. ' +
+  'High stakes and a ticking clock in every episode; open each episode with a kinetic cold-open hook in the first 5 seconds; ' +
+  'physical, visual conflict (chases on foot or motorbike through the city, storms, deadlines, crowds, races against time, ' +
+  'confrontations in dramatic locations) grounded in the family\'s real problem; varied shot sizes with fast cuts during tension ' +
+  'and slow-motion beats at emotional peaks; strong silhouettes, rain, neon, golden hour, smoke and practical light. ' +
+  'In every shot\'s video prompt describe concrete camera movement and physical action. ' +
+  'NO gore, NO weapons pointed at people, NO graphic violence — the enemy is the problem, not a person.';
 
 /* Khung kể chuyện 10 phần của GITA365 (bản sao G.KTL_KHUNG_SACH) — mỗi phần một tập */
 export const KHUNG_KE = [
@@ -176,6 +200,44 @@ export const HUONG_TAP = [
   '7. Write all Vietnamese with full diacritics. Dialogue must sound natural, spoken, emotional.'
 ].join('\n');
 
+/* 9.99.254 — TỔ DUYỆT của đội Agent xưởng phim: một lượt phản biện kinh bộ
+   phim trước khi vẽ (Điều 13 · giọng GITA · đúng hành trình · kịch tính).
+   Trả lại bản kinh đã sửa cùng điểm và nhận xét — chủ hệ xem được. */
+export const HUONG_DUYET_KINH = [
+  'You are the GITA365 script review board of an AI film studio, four reviewers in one pass:',
+  '(1) SAFETY & PRIVACY reviewer (GITA365 "Article 13"): no real people, no full names, no phone numbers, addresses, schools or brands; anonymous fictional family only; nothing harmful, humiliating or frightening for children; no graphic violence, no nudity.',
+  '(2) GITA VOICE editor: warm, respectful, hopeful, never preachy or salesy; the companion Minh listens first, follows the protocol in small concrete daily steps, celebrates small wins, admits setbacks honestly.',
+  '(3) JOURNEY coach: if a CUSTOMER JOURNEY is given, the 10 episodes must start at the current level, show its action chain, WOW touchpoints and mechanism, and end with the concrete signals of reaching the next level — leading the viewer to grow one level.',
+  '(4) DRAMA critic: strong hook, rising tension, a real emotional peak, clear turning point, cliffhangers, consistent characters (same names, ages, appearance) and locations across episodes.',
+  LUAT_CHUNG,
+  'Read the SERIES BIBLE (JSON). Fix every problem directly in the bible; keep what is already good; keep the same characters unless one breaks the rules.',
+  'Output ONLY one valid JSON object, no markdown fences, with exactly this shape:',
+  '{"diem": {"anToan": 0-10, "giongGita": 0-10, "hanhTrinh": 0-10, "kichTinh": 0-10},',
+  ' "nhanXet": ["Vietnamese, max 6 short notes: what you fixed and why"],',
+  ' "kinh": { the full corrected bible with exactly the same shape as the input: ten, logline, phongCach, nhanVat, boiCanh, tap (exactly 10, so 1..10) } }',
+  'Scores describe the CORRECTED bible. Write all Vietnamese with full diacritics.'
+].join('\n');
+
+/* Mã cấp hành trình 50 cấp: "tầng.cấp", ví dụ 2.3 */
+export const RE_CAP = /^[1-5]\.(?:10|[1-9])$/;
+
+/* 9.99.253 — Tập phim ở chế độ 0 ĐỒNG: mỗi cảnh là MỘT ảnh tĩnh, máy dựng
+   tự đẩy/lia máy khi xuất (không quay video trả phí, không khớp khẩu
+   hình). Nên ít cảnh hơn, cảnh dài hơn — ít ảnh là ít neuron miễn phí. */
+export const HUONG_TAP_0D = HUONG_TAP
+  .replace('1. 55 to 64 shots. giay is 5 for almost all shots; use 10 only for a long silent emotional moment.',
+    '1. 28 to 34 shots. Each shot is ONE still photograph that the editor animates with a slow camera push/pan, so make every image rich and expressive. giay is 10 for most shots; use 5 only for quick inserts and reactions. Total 290-320 seconds.')
+  .replace('2. AT MOST ONE dialogue line per shot, spoken by a character visible in that shot, framed as a close-up or medium close-up of the speaker facing the camera (needed for lip sync). Line length max 22 words (fits in 5 seconds).',
+    '2. AT MOST TWO dialogue lines per shot, spoken by characters visible in that shot; frame the speaker in a close-up or medium shot. Each line max 22 words. A 10-second shot fits two lines.');
+
+/* Chế độ 0 đồng — MẶC ĐỊNH BẬT (thiếu biến cũng bật). Chỉ đặt
+   GITA_PHIM_CHI_0D = "0" khi chủ hệ chủ động muốn dùng fal.ai trả phí. */
+export function chi0d(env) {
+  return String((env && env.GITA_PHIM_CHI_0D) == null ? '1' : env.GITA_PHIM_CHI_0D).trim() !== '0';
+}
+const KHOA_0D = { ok: false, code: 'CHE_DO_0_DONG',
+  error: 'Xưởng phim đang ở chế độ 0 đồng: không gọi dịch vụ trả phí (fal.ai). Dùng chế độ 0 đồng (Workers AI miễn phí).' };
+
 function tomTatTinhHuong(keys) {
   const ra = [];
   for (const t of TANG) for (const x of (TH_KHACH[t] || [])) {
@@ -193,16 +255,31 @@ function chu(v, toiDa) { return String(v == null ? '' : v).replace(/[\u0000-\u00
 export function dungDauVao(loai, y) {
   y = y || {};
   if (loai === 'llm') {
-    const che = y.che === 'boPhim' || y.che === 'tap' ? y.che : 'phanCanh';
+    const che = ['boPhim', 'tap', 'duyetKinh'].indexOf(y.che) >= 0 ? y.che : 'phanCanh';
+    const capMa = RE_CAP.test(String(y.capMa || '')) ? String(y.capMa) : '';
+    const hanhTrinh = capMa ? chu(y.hanhTrinh, 3000) : '';
+    const doanHT = hanhTrinh ? '\n\nCUSTOMER JOURNEY — GITA365 50-level ladder (5 tiers, 10 levels each). ' +
+      'This family is now at level ' + capMa + '. Personalize the whole series to this exact position and lead them to the next level:\n' + hanhTrinh : '';
+    const doanBT = y.bomTan === true ? '\n\n' + DAO_DIEN_BOM_TAN : '';
+    /* 9.99.255 — chất liệu gốc từ Sổ tay gia đình & kho tri thức GITA365.
+       Đây là chữ của hệ (máy khách trích từ kho), không phải lời khách: dòng
+       nào cổng Điều 13 ngờ thì BỎ dòng đó (chiều an toàn — không gửi đi),
+       để một cụm chữ trùng dáng họ tên không chặn cả bộ phim. */
+    const chatLieu = che === 'phanCanh' ? '' : chu(y.chatLieu, 4000).split('\n')
+      .filter(d => d.trim() && soatRaNgoai(d).sach).join('\n');
+    const doanCL = chatLieu ? '\n\nSOURCE MATERIAL — real lines from the GITA365 family handbook (Sổ tay gia đình) and knowledge library. ' +
+      'Build the emotional core of the story on these lines: keep their Vietnamese wording when characters quote them, ' +
+      'turn each into a lived scene, and never contradict or exaggerate them:\n' + chatLieu : '';
     if (che === 'boPhim') {
       const keys = (Array.isArray(y.keys) ? y.keys : []).slice(0, 6).map(k => chu(k, 300));
       const ds = tomTatTinhHuong(keys);
-      if (!ds.length) return { loi: 'Chọn ít nhất một tình huống khảo sát của khách.' };
+      if (!ds.length && !hanhTrinh) return { loi: 'Chọn ít nhất một tình huống khảo sát hoặc cấp hành trình của khách.' };
       const ghiChu = chu(y.ghiChu, 3000);
-      const prompt = 'CUSTOMER SURVEY — problems of this family (anonymous):\n\n' + ds.join('\n\n') +
-        (ghiChu ? '\n\nEXTRA NOTES FROM THE SURVEY (anonymous):\n' + ghiChu : '') +
+      const prompt = (ds.length ? 'CUSTOMER SURVEY — problems of this family (anonymous):\n\n' + ds.join('\n\n')
+        : 'CUSTOMER SURVEY: no specific problem chosen — build the story from the journey level below.') +
+        (ghiChu ? '\n\nEXTRA NOTES FROM THE SURVEY (anonymous):\n' + ghiChu : '') + doanHT + doanCL +
         '\n\nGITA365 STORYTELLING FRAME (10 parts, one per episode):\n' +
-        KHUNG_KE.map((k, i) => (i + 1) + '. ' + k).join('\n') +
+        KHUNG_KE.map((k, i) => (i + 1) + '. ' + k).join('\n') + doanBT +
         '\n\nWrite the series bible now.';
       /* Cổng Điều 13 soát phần DO NGƯỜI DÙNG GỬI (mã tình huống + ghi chú).
          Chữ tình huống TH_KHACH là dữ liệu cố định của máy chủ, ẩn danh,
@@ -210,7 +287,15 @@ export function dungDauVao(loai, y) {
          "QUẢN LÝ" hay "mẹ lại phải nhắc" mà cổng ngờ oan là họ tên. */
       return { dauVao: { model: 'google/gemini-2.5-flash', system_prompt: HUONG_BO_PHIM, prompt,
         temperature: 0.7, max_tokens: 24000, priority: 'throughput' },
-        soat: { keys, ghiChu } };
+        soat: { keys, ghiChu, hanhTrinh, chatLieu } };
+    }
+    if (che === 'duyetKinh') {
+      const kinh = chu(y.kinh, 24000);
+      if (kinh.length < 200) return { loi: 'Thiếu kinh bộ phim để duyệt.' };
+      return { dauVao: { model: 'google/gemini-2.5-flash', system_prompt: HUONG_DUYET_KINH,
+        prompt: 'SERIES BIBLE:\n' + kinh + (doanHT || '\n\nCUSTOMER JOURNEY: not given — skip reviewer (3).') + doanCL +
+          '\n\nReview and return the corrected bible now.',
+        temperature: 0.3, max_tokens: 24000, priority: 'throughput' } };
     }
     if (che === 'tap') {
       const kinh = chu(y.kinh, 24000);
@@ -218,27 +303,53 @@ export function dungDauVao(loai, y) {
       if (kinh.length < 200) return { loi: 'Thiếu kinh thánh bộ phim.' };
       if (!(so >= 1 && so <= 10)) return { loi: 'Số tập phải từ 1 đến 10.' };
       return { dauVao: { model: 'google/gemini-2.5-flash', system_prompt: HUONG_TAP,
-        prompt: 'SERIES BIBLE:\n' + kinh + '\n\nWrite EPISODE ' + so + ' of 10 (frame section: ' + KHUNG_KE[so - 1] + ').',
+        prompt: 'SERIES BIBLE:\n' + kinh + doanCL + doanBT + '\n\nWrite EPISODE ' + so + ' of 10 (frame section: ' + KHUNG_KE[so - 1] + ').' +
+          (chatLieu ? (so === 10 ? ' This is the finale: end on the handbook opening line, verbatim.' : ' Weave at least one SOURCE MATERIAL line into a lived moment of this episode.') : ''),
         temperature: 0.6, max_tokens: 32000, priority: 'throughput' } };
     }
     const kichBan = chu(y.kichBan, 24000);
     if (kichBan.length < 30) return { loi: 'Kịch bản quá ngắn (cần ít nhất 30 ký tự).' };
     return { dauVao: {
       model: 'google/gemini-2.5-flash', system_prompt: HUONG_PHAN_CANH,
-      prompt: 'SCRIPT:\n' + kichBan, temperature: 0.4, max_tokens: 16000, priority: 'throughput'
+      prompt: 'SCRIPT:\n' + kichBan + doanBT, temperature: 0.4, max_tokens: 16000, priority: 'throughput'
     } };
   }
-  if (loai === 'anh' || loai === 'anhSua') {
+  if (loai === 'anh' || loai === 'anhSua' || loai === 'anhPro' || loai === 'anhSuaPro') {
     const prompt = chu(y.prompt, 3000);
     if (prompt.length < 10) return { loi: 'Thiếu mô tả ảnh.' };
     const khung = KHUNG.indexOf(y.khung) >= 0 ? y.khung : '9:16';
     const dv = { prompt, num_images: 1, aspect_ratio: khung, output_format: 'jpeg' };
-    if (loai === 'anhSua') {
+    if (loai === 'anhPro' || loai === 'anhSuaPro') dv.resolution = '2K';
+    if (loai === 'anhSua' || loai === 'anhSuaPro') {
       const ds = Array.isArray(y.anhThamChieu) ? y.anhThamChieu.slice(0, 4).map(String) : [];
       if (!ds.length) return { loi: 'Thiếu ảnh tham chiếu.' };
       if (!ds.every(u => RE_TEP.test(u))) return { loi: 'Ảnh tham chiếu phải là tệp do fal.ai tạo.' };
       dv.image_urls = ds;
     }
+    return { dauVao: dv };
+  }
+  if (loai === 'videoBomTan') {
+    const prompt = chu(y.prompt, 1600);
+    const anh = String(y.anh || '');
+    if (prompt.length < 10) return { loi: 'Thiếu mô tả chuyển động.' };
+    if (!RE_TEP.test(anh)) return { loi: 'Ảnh mở đầu phải là tệp do fal.ai tạo.' };
+    /* Tối đa 3 nhân vật: ảnh chính diện + 1–3 ảnh góc khác, gọi trong prompt là @Element1… */
+    const nv = Array.isArray(y.nhanVat) ? y.nhanVat.slice(0, 3) : [];
+    const elements = [], goi = [];
+    for (const n of nv) {
+      const mat = String((n && n.mat) || '');
+      const tc = (Array.isArray(n && n.thamChieu) ? n.thamChieu : []).slice(0, 3).map(String).filter(u => RE_TEP.test(u));
+      if (!RE_TEP.test(mat)) continue;
+      elements.push({ frontal_image_url: mat, reference_image_urls: tc.length ? tc : [mat] });
+      goi.push('@Element' + elements.length + ' is ' + chu(n.ten, 40));
+    }
+    const dv = {
+      prompt: prompt + (goi.length ? ' Characters: ' + goi.join('; ') + '.' : '') + ' ' + BOM_TAN,
+      start_image_url: anh, duration: String(y.giay) === '10' ? '10' : '5', generate_audio: false,
+      negative_prompt: chu(y.am, 600) || 'blur, distort, low quality, text, subtitles, watermark, deformed hands, flicker, morphing faces',
+      cfg_scale: 0.5
+    };
+    if (elements.length) dv.elements = elements;
     return { dauVao: dv };
   }
   if (loai === 'video' || loai === 'videoDienAnh') {
@@ -273,11 +384,11 @@ export function dungDauVao(loai, y) {
 export function rutKetQua(loai, o) {
   o = o || {};
   if (loai === 'llm') return { chu: String(o.output || '') };
-  if (loai === 'anh' || loai === 'anhSua') {
+  if (loai === 'anh' || loai === 'anhSua' || loai === 'anhPro' || loai === 'anhSuaPro') {
     const a = Array.isArray(o.images) && o.images[0];
     return { url: a && a.url ? String(a.url) : '' };
   }
-  if (loai === 'video' || loai === 'videoDienAnh' || loai === 'lipSync')
+  if (loai === 'video' || loai === 'videoDienAnh' || loai === 'videoBomTan' || loai === 'lipSync')
     return { url: o.video && o.video.url ? String(o.video.url) : '' };
   if (loai === 'giong') return { url: o.audio && o.audio.url ? String(o.audio.url) : '',
     ms: +o.duration_ms || 0 };
@@ -309,6 +420,7 @@ export async function phimTrangThai(y, env, db, hoSo) {
 
 export async function phimGuiViec(y, env, db, hoSo) {
   const cam = chiR01(hoSo); if (cam) return cam;
+  if (chi0d(env)) return KHOA_0D;
   y = y || {};
   const loai = String(y.loai || '');
   const mau = MAU_PHIM[loai];
@@ -391,6 +503,7 @@ async function xemMot(v, khoa) {
 
 export async function phimXemViec(y, env, db, hoSo) {
   const cam = chiR01(hoSo); if (cam) return cam;
+  if (chi0d(env)) return KHOA_0D;
   const khoa = khoaCua(env);
   if (!khoa) return { ok: false, code: 'CHUA_CO_KHOA', error: 'Máy chủ chưa có khoá fal.ai (GITA_KHOA_FAL).' };
   const ds = Array.isArray((y || {}).ds) ? y.ds.slice(0, 12) : [];
