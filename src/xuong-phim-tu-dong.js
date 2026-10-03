@@ -40,7 +40,8 @@ var G = window.G || {}; window.G = G;
   var BUOC = [
     ['phanCanh', 'Phân cảnh kịch bản'], ['giong', 'Đọc thoại'], ['chanDung', 'Vẽ chân dung nhân vật'],
     ['khungDau', 'Vẽ khung mở đầu từng cảnh'], ['quay', 'Quay clip từng cảnh'], ['khopMoi', 'Khớp khẩu hình với giọng'],
-    ['tai', 'Tải clip về máy'], ['xuat', 'Xuất phim']
+        ['khopMoi0d', 'Khớp môi AI (máy GitHub miễn phí)'],
+        ['tai', 'Tải clip về máy'], ['xuat', 'Xuất phim']
   ];
   var LOI_DUNG_HAN = ['CHUA_CO_KHOA', 'NOPERM', 'VUOT_HAN', 'AUTH', 'DIEU13', 'NHALA', 'CHE_DO_0_DONG', 'CHUA_CO_AI'];
   var CAM_XUC = ['happy', 'sad', 'angry', 'fearful', 'disgusted', 'surprised', 'neutral'];
@@ -366,9 +367,11 @@ var G = window.G || {}; window.G = G;
   function buocPhanCanh() {
     var td = TD(), da = G.xpDA;
     if (td.phanCanhXong) return Promise.resolve();
-    td.viec = {}; td.ngo = null;
+    td.viec = {}; td.ngo = null; td.quay = {};
     var laTap = !!(da.boMa && G.xpBoKinh);
     var dv = laTap ? {che: 'tap', kinh: G.xpBoKinh(), soTap: da.boTap} : {kichBan: da.kichBan};
+    var cl = laTap && G.xpBoChatLieu ? G.xpBoChatLieu() : '';
+    if (cl) dv.chatLieu = cl;
     if (laBomTanCF(da.chatLuong)) dv.bomTan = true;
     ghi(laTap ? 'AI viết kịch bản phân cảnh tập ' + da.boTap + ' (khoảng 5 phút)…' : 'Bắt đầu phân cảnh kịch bản (' + da.kichBan.length + ' ký tự)…');
     return chayLo([{khoa: 'llm', loai: 'llm', dauVao: dv, tuSua: laTap, xong: function (kq) {
@@ -472,12 +475,121 @@ var G = window.G || {}; window.G = G;
     ghi('Khớp khẩu hình ' + ds.length + ' cảnh có lời thoại.');
     return chayLo(ds, 6, 'Khớp khẩu hình');
   }
+  /* ══ KHỚP MÔI 0 ĐỒNG — máy CPU miễn phí của GitHub Actions (SadTalker)
+     quay khuôn mặt trong khung cảnh nói theo đúng tiếng thoại. Chỉ cảnh
+     có MỘT người nói (2–15 giây); tiếng vẫn phát từ giọng trong máy nên
+     clip trả về không kèm âm thanh và bắt đầu đúng từ giây 0 của cảnh. ══ */
+  var KM0 = {toiThieu: 2, toiDa: 15, hoi: 30000};
+  function apiGoc() { return String(G.API_CAP_PHEP || 'https://gita365.typhuquanggita.workers.dev').replace(/\/+$/, ''); }
+  function canhKhopMoi0d(c) {
+    if (!c.anhUrl || c.videoUrl) return 0;
+    var noi = c.thoai.filter(function (x) { return x.amUrl && x.amMs && x.den; });
+    if (!noi.length) return 0;
+    var ai = {}; noi.forEach(function (x) { ai[String(x.ai || '').toLowerCase()] = 1; });
+    if (Object.keys(ai).length !== 1) return 0;
+    var p = G.xpPrompt ? G.xpPrompt(c) : {nv: []};
+    if ((p.nv || []).length > 1) return 0;
+    var d = Math.max(+c.giay || 5, Math.max.apply(null, noi.map(function (x) { return +x.den; })) + 0.4);
+    return d >= KM0.toiThieu && d <= KM0.toiDa ? d : 0;
+  }
+  G.xpTdCanhKhopMoi0d = canhKhopMoi0d;
+  function blobB64(bl) {
+    return new Promise(function (ok, hong) {
+      var fr = new FileReader();
+      fr.onload = function () { ok(String(fr.result).replace(/^data:[^,]*,/, '')); };
+      fr.onerror = function () { hong(new Error('không đọc được tệp')); };
+      fr.readAsDataURL(bl);
+    });
+  }
+  function wavTu(buf) {
+    var d = buf.getChannelData(0), n = d.length, ab = new ArrayBuffer(44 + n * 2), v = new DataView(ab);
+    function s(o, t) { for (var i = 0; i < t.length; i++) v.setUint8(o + i, t.charCodeAt(i)); }
+    s(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); s(8, 'WAVE'); s(12, 'fmt ');
+    v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+    v.setUint32(24, buf.sampleRate, true); v.setUint32(28, buf.sampleRate * 2, true);
+    v.setUint16(32, 2, true); v.setUint16(34, 16, true); s(36, 'data'); v.setUint32(40, n * 2, true);
+    for (var i = 0; i < n; i++) { var x = Math.max(-1, Math.min(1, d[i])); v.setInt16(44 + i * 2, x < 0 ? x * 0x8000 : x * 0x7FFF, true); }
+    return new Blob([ab], {type: 'audio/wav'});
+  }
+  G.xpTdWavTu = wavTu;
+  /* Trộn các câu thoại của cảnh vào một dải tiếng 16 kHz dài đúng bằng cảnh */
+  function amCanhWav(c, giay) {
+    var tan = 16000, oc = new OfflineAudioContext(1, Math.ceil(giay * tan), tan);
+    var noi = c.thoai.filter(function (x) { return x.amUrl && x.amMs && x.den; });
+    return Promise.all(noi.map(function (x) {
+      return taiBlob(x.amUrl).then(function (bl) { return bl.arrayBuffer(); })
+        .then(function (b) { return oc.decodeAudioData(b); })
+        .then(function (ab) { var s = oc.createBufferSource(); s.buffer = ab; s.connect(oc.destination); s.start(Math.max(0, +x.tu || 0)); });
+    })).then(function () { return oc.startRendering(); }).then(wavTu);
+  }
+  function buocKhopMoi0d() {
+    var da = G.xpDA, td = TD();
+    if (da.khopMoi0d === false || td.coGiong === false) return Promise.resolve();
+    if (!td.quay) td.quay = {};
+    var ds = da.canh.filter(function (c) { var q = td.quay[c.id]; return q ? !q.xong && !q.loi : canhKhopMoi0d(c); });
+    if (!ds.length) return Promise.resolve();
+    var chan = null;
+    var gui = ds.filter(function (c) { return !td.quay[c.id]; }).map(function (c) {
+      return function () {
+        if (chan) return Promise.resolve();
+        var giay = canhKhopMoi0d(c);
+        return Promise.all([taiBlob(c.anhUrl).then(blobB64), amCanhWav(c, giay).then(blobB64)]).then(function (v) {
+          return goi('quayKhopMoi', {anh: v[0], am: v[1]});
+        }).then(function (x) {
+          if (x.ok) { td.quay[c.id] = {ma: x.ma}; luu(); return; }
+          if (x.code === 'CHUA_CO_XUONG' || x.code === 'CHUA_CO_R2' || x.code === 'NOPERM' || x.code === 'DAY') chan = x;
+          else ghi('Khớp môi: bỏ qua 1 cảnh (' + (x.error || 'lỗi') + ').');
+        }, function (e) { ghi('Khớp môi: bỏ qua 1 cảnh (' + ((e && e.message) || e) + ').'); });
+      };
+    });
+    ghi('Khớp môi 0 đồng: ' + ds.length + ' cảnh một người nói → xưởng quay GitHub (máy miễn phí, mỗi cảnh 10–30 phút, nhiều máy chạy song song).');
+    var t0 = Date.now();
+    return chayLan(gui, 2).then(function () {
+      if (chan) { ghi('Khớp môi tạm bỏ qua: ' + (chan.error || '') + ' Phim vẫn làm bằng ảnh tĩnh chuyển động.'); return; }
+      function vong() {
+        if (dungLai) throw {code: 'DUNG', error: 'Đã dừng.'};
+        var cho = da.canh.filter(function (c) { var q = td.quay[c.id]; return q && q.ma && !q.xong && !q.loi; });
+        if (!cho.length) return;
+        if (Date.now() - t0 > 8 * 3600e3) { ghi('Khớp môi quá 8 giờ chưa xong — dùng ảnh tĩnh cho các cảnh còn lại.'); return; }
+        return goi('quayXem', {ds: cho.map(function (c) { return td.quay[c.id].ma; })}).then(function (x) {
+          if (x && x.ok) {
+            var dang = 0, truoc = 0;
+            (x.ds || []).forEach(function (r, i) {
+              var c = cho[i], q = c && td.quay[c.id];
+              if (!q || r.ma !== q.ma) return;
+              if (r.trangThai === 'xong' && r.url) {
+                q.xong = true; c.videoUrl = apiGoc() + r.url; c.khopMoi0d = true;
+                if (c.clip && G.xpVat[c.clip]) { delete G.xpVat[c.clip]; c.clip = ''; }
+              }
+              else if (r.trangThai === 'loi' || r.trangThai === 'mat') { q.loi = r.loi || 'mất việc'; }
+              else if (r.trangThai === 'dang') dang++;
+              else truoc = Math.max(truoc, +r.truoc || 0);
+            });
+            luu();
+            var xong = da.canh.filter(function (c) { return td.quay[c.id] && td.quay[c.id].xong; }).length;
+            var tong = Object.keys(td.quay).length;
+            hienTienDo('Khớp môi: xong ' + xong + '/' + tong + ' · đang quay ' + dang + ' · máy GitHub đang chạy ' + (+x.mayDangChay || 0) +
+              (x.mayDangChay ? '' : ' (máy tự bật trong vòng ~10 phút)'));
+          }
+          return ngu(KM0.hoi).then(vong);
+        });
+      }
+      return vong();
+    }).then(function () {
+      var hong = Object.keys(td.quay).filter(function (k) { return td.quay[k].loi; }).length;
+      if (hong) ghi('Khớp môi: ' + hong + ' cảnh không quay được (thường do khung không thấy rõ mặt) — dùng ảnh tĩnh chuyển động.');
+    });
+  }
   function buocTai() {
     var viec = [], loiDem = 0;
     G.xpDA.canh.forEach(function (c, i) {
       var ten = 'canh-' + (i < 9 ? '0' : '') + (i + 1);
       if (!(c.clip && G.xpVat[c.clip])) {
-        if (c.videoUrl) viec.push(function () { return taiPhim(c.videoUrl, ten + '.mp4').then(function (id) { c.clip = id; }, function () { loiDem++; }); });
+        if (c.videoUrl) viec.push(function () { return taiPhim(c.videoUrl, ten + '.mp4').then(function (id) { c.clip = id; }, function () {
+          /* Clip khớp môi 0 đồng chỉ giữ 7 ngày trên máy chủ — mất thì quay về ảnh tĩnh của cảnh */
+          if (c.khopMoi0d && c.anhUrl) return taiAnh(c.anhUrl, ten + '.jpg').then(function (id) { c.clip = id; }, function () { loiDem++; });
+          loiDem++;
+        }); });
         else if (c.anhUrl) viec.push(function () { return taiAnh(c.anhUrl, ten + '.jpg').then(function (id) { c.clip = id; }, function () { loiDem++; }); });
       }
       c.thoai.forEach(function (x, j) {
@@ -550,7 +662,7 @@ var G = window.G || {}; window.G = G;
     if (!che0d()) {
       buoc('quay', buocQuay);
       buoc('khopMoi', buocKhopMoi);
-    }
+    } else buoc('khopMoi0d', buocKhopMoi0d);
     buoc('tai', buocTai);
     buoc('xuat', buocXuat);
     return p.catch(function (e) {
@@ -675,6 +787,7 @@ var G = window.G || {}; window.G = G;
     o += '<textarea rows="8" style="width:100%;box-sizing:border-box" placeholder="Dán kịch bản vào đây…" oninput="G.xpSua(\'kichBan\',this.value)"' + (dangChay ? ' disabled' : '') + '>' + h(da.kichBan || '') + '</textarea>';
     o += '<div class="row"><label><input type="checkbox"' + (td.coGiong !== false ? ' checked' : '') + ' onchange="G.xpTdGiong(this.checked)"> Đọc thoại bằng giọng AI tiếng Việt</label>' +
       (la0d ?
+      '<label><input type="checkbox"' + (da.khopMoi0d !== false ? ' checked' : '') + ' onchange="G.xpTdTuyChon(\'khopMoi0d\',this.checked)"> 🗣️ Khớp môi AI (0 đồng, máy GitHub)</label>' +
       '<label>Chất lượng <select onchange="G.xpTdTuyChon(\'chatLuong\',this.value)">' +
       '<option value="bomTan"' + (da.chatLuong !== 'thuong' ? ' selected' : '') + '>🎥 Bom tấn Cloudflare (0 đồng)</option>' +
       '<option value="thuong"' + (da.chatLuong === 'thuong' ? ' selected' : '') + '>Tiêu chuẩn (nhanh hơn, 0 đồng)</option></select></label>' :
@@ -699,7 +812,8 @@ var G = window.G || {}; window.G = G;
         '. Hệ thống không gửi thông tin nhận dạng ra ngoài.</p><button class="btn" onclick="G.xpTdRutTen()">Đổi thành tên gọi ngắn (ví dụ "Nguyễn Văn An" → "An")</button>';
     }
     if (td.buoc) {
-      var cacBuoc = la0d ? BUOC.filter(function (b) { return b[0] !== 'quay' && b[0] !== 'khopMoi'; }) : BUOC;
+      var cacBuoc = la0d ? BUOC.filter(function (b) { return b[0] !== 'quay' && b[0] !== 'khopMoi' && (b[0] !== 'khopMoi0d' || da.khopMoi0d !== false); })
+        : BUOC.filter(function (b) { return b[0] !== 'khopMoi0d'; });
       var i = cacBuoc.map(function (b) { return b[0]; }).indexOf(td.buoc === 'choDuyet' ? 'giong' : td.buoc);
       o += '<ol class="note" style="padding-left:22px">' + cacBuoc.map(function (b, j) {
         var dau = td.buoc === 'xong' || j < i ? '✓ ' : (j === i ? (dangChay ? '⏳ ' : '• ') : '');

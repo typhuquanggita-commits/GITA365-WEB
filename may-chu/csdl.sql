@@ -1474,6 +1474,14 @@ CREATE TABLE IF NOT EXISTS chanNhip (
 
 CREATE INDEX IF NOT EXISTS ix_chan_han ON chanNhip (hetHan);
 
+-- Xưởng quay khớp môi 0 đồng (may-chu/xuong-quay.js; Worker cũng tự tạo khi chưa có).
+CREATE TABLE IF NOT EXISTS quay_viec (
+  ma TEXT PRIMARY KEY, uid TEXT NOT NULL, trangThai TEXT NOT NULL DEFAULT 'cho',
+  kieuAnh TEXT, kieuAm TEXT, taoLuc INTEGER NOT NULL, nhanLuc INTEGER, xongLuc INTEGER,
+  may TEXT, lanThu INTEGER NOT NULL DEFAULT 0, loi TEXT);
+CREATE INDEX IF NOT EXISTS ix_quay_tt ON quay_viec (trangThai, taoLuc);
+CREATE TABLE IF NOT EXISTS quay_may (ma TEXT PRIMARY KEY, luc INTEGER NOT NULL);
+
 CREATE TABLE IF NOT EXISTS soDem (
   khoa   TEXT PRIMARY KEY,
   gia    INTEGER NOT NULL DEFAULT 0,
