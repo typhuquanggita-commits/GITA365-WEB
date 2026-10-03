@@ -54,7 +54,27 @@ G.danhDau = function(nhom, khoa){
   if(NHOM.indexOf(nhom) < 0) return;
   var m = docMoc(); m[nhom + '.' + khoa] = Date.now(); ghiMoc(m);
   G.DONGBO.choBaoNhieu = demCho();
+  henDongBo();
 };
+
+/* ─── HẸN ĐỒNG BỘ SAU KHI SỬA (giảm cửa sổ mất dữ liệu) ───
+   Trước đây phần sửa chỉ đi lên lúc mở app, mỗi sáu giờ, hoặc lúc rời
+   trang — xoá bộ nhớ trình duyệt giữa chừng là mất cả buổi. Nay sửa xong
+   HAI phút thì tự đẩy, nhưng hai lượt tự đẩy cách nhau ít nhất MƯỜI phút:
+   một buổi sửa liên tục tốn tối đa ~6 lượt/giờ chứ không phải mỗi cú bấm
+   một lượt (xem docs/TOI_UU_CHI_PHI_CHAT_LUONG.md, ngân sách lượt gọi). */
+var HEN_SAU_MS = 2 * 60e3, CACH_TOI_THIEU_MS = 10 * 60e3, henDB = 0, daBat = false;
+function lanCuoiXong(){ return Number(localStorage.getItem(KEY_HANG) || 0); }
+function henDongBo(){
+  if(!daBat || henDB) return;
+  var cho = Math.max(HEN_SAU_MS, lanCuoiXong() + CACH_TOI_THIEU_MS - Date.now());
+  henDB = setTimeout(function(){
+    henDB = 0;
+    if(!demCho()) return;
+    if(Date.now() - lanCuoiXong() < CACH_TOI_THIEU_MS){ henDongBo(); return; }
+    G.dongBo();
+  }, cho);
+}
 
 function demCho(){
   var m = docMoc(), lan = Number(localStorage.getItem(KEY_HANG) || 0), n = 0;
@@ -233,7 +253,15 @@ G.dongBo = function(tuTay){
 /* ─── Tự chạy: khi mở, khi có mạng lại, và mỗi sáu giờ ─── */
 G.batDongBo = function(){
   if(!G.API_CAP_PHEP) return;
-  setTimeout(function(){ G.dongBo(); }, 4000);
+  daBat = true;
+  /* Mở app: kéo về để thấy phần máy khác đã sửa. Nhưng mở lại/tải lại
+     trang trong vòng mười phút sau một lượt thành công mà máy không có gì
+     chờ đẩy thì bỏ qua — mười lần F5 không thành mười lượt Worker. */
+  setTimeout(function(){
+    if(!demCho() && Date.now() - lanCuoiXong() < CACH_TOI_THIEU_MS) return;
+    G.dongBo();
+  }, 4000);
+  if(demCho()) henDongBo();
   window.addEventListener('online', function(){
     G.U.toast('Có mạng trở lại — đang đồng bộ phần đã ghi khi ngoại tuyến.','ok');
     G.dongBo();
@@ -243,16 +271,25 @@ G.batDongBo = function(){
     G.U.toast('Mất mạng. Ứng dụng vẫn chạy bình thường, dữ liệu ghi trong máy.','err');
   });
   setInterval(function(){ G.dongBo(); }, 6 * 3600 * 1000);
-  /* Rời trang thì cố đẩy nốt phần còn lại */
-  window.addEventListener('pagehide', function(){
+  /* Rời trang thì cố đẩy nốt phần còn lại. Trên điện thoại pagehide hay
+     không nổ (người ta vuốt tắt app) — visibilitychange → hidden thì nổ
+     chắc hơn, nên nghe cả hai; cùng một gói thì chỉ gửi một lần. */
+  var goiDaGui = '';
+  function dayKhiRoi(){
     var g = gomThayDoi();
     if(!g.so || !navigator.onLine || !G.API_CAP_PHEP || !G.S.acc) return;
+    var than = JSON.stringify({
+      fn:'dongBo', u:G.S.acc.u, token:G.PHIEN_TOKEN||'',
+      day:g.day, mocTruong:g.mocDay, may:'pagehide'
+    });
+    if(than === goiDaGui) return;
     try{
-      navigator.sendBeacon(G.API_CAP_PHEP, new Blob([JSON.stringify({
-        fn:'dongBo', u:G.S.acc.u, token:G.PHIEN_TOKEN||'',
-        day:g.day, mocTruong:g.mocDay, may:'pagehide'
-      })], {type:'text/plain;charset=utf-8'}));
+      if(navigator.sendBeacon(G.API_CAP_PHEP, new Blob([than], {type:'text/plain;charset=utf-8'}))) goiDaGui = than;
     }catch(e){}
+  }
+  window.addEventListener('pagehide', dayKhiRoi);
+  document.addEventListener('visibilitychange', function(){
+    if(document.visibilityState === 'hidden') dayKhiRoi();
   });
 };
 

@@ -3164,3 +3164,10 @@ body.hdp-khoa{overflow:hidden}
   .man-xu input[type=range]{height:34px}
   .man-xu input[type=text],.man-xu input[type=number],.man-xu input[type=file]{min-height:34px}
 }
+
+/* ── MÁY YẾU (src/nang-luc-may.js gắn html[data-may="yeu"]) ──
+   Tắt chuyển động và lớp làm mờ nền — hai thứ ăn GPU nhiều nhất trên
+   điện thoại cũ. Bố cục và nội dung giữ nguyên. */
+html[data-may="yeu"] *,html[data-may="yeu"] *::before,html[data-may="yeu"] *::after{
+  animation-duration:.01ms!important;animation-iteration-count:1!important;
+  transition-duration:.01ms!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}

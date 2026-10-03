@@ -45,5 +45,17 @@ const r2 = await goi({}, 'GET', 'https://bat-ky.example');
 kiem('biến trống → ' + r2.acao, r2.acao === '*');
 const r3 = await goi(env, 'PUT', WEB);
 kiem('405 cũng mang CORS đúng origin → ' + r3.acao, r3.status === 405 && r3.acao === WEB);
+
+/* Lá chắn PV05 · BM02: trần thân 10 MB + nosniff/no-store trên JSON. */
+const lon = await worker.fetch(new Request('https://gita365.example.workers.dev/', {method: 'POST',
+  headers: {Origin: WEB, 'content-length': String(11 * 1024 * 1024)}, body: '{}'}), env);
+kiem('thân khai > 10 MB → ' + lon.status + ' (cắt trước khi đọc)', lon.status === 413 && lon.headers.get('Access-Control-Allow-Origin') === WEB);
+const lon2 = await worker.fetch(new Request('https://gita365.example.workers.dev/', {method: 'POST',
+  headers: {Origin: WEB}, body: '{"fn":"x","d":"' + 'a'.repeat(10 * 1024 * 1024) + '"}'}), env);
+kiem('thân thật > 10 MB (không khai) → ' + lon2.status, lon2.status === 413);
+const rong = await worker.fetch(new Request('https://gita365.example.workers.dev/', {method: 'POST',
+  headers: {Origin: WEB}, body: '[1,2]'}), env);
+kiem('thân là mảng → không vỡ máy (' + rong.status + ') · nosniff · no-store',
+  rong.status !== 500 && rong.headers.get('X-Content-Type-Options') === 'nosniff' && rong.headers.get('Cache-Control') === 'no-store');
 console.log(loi ? '\nCÓ ' + loi + ' LỖI.' : '\nCORS ĐÚNG.');
 process.exit(loi ? 1 : 0);

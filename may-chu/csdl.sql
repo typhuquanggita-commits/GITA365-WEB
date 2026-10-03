@@ -2357,3 +2357,30 @@ CREATE TABLE IF NOT EXISTS thanhTraSo (
   luc      TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS ix_thanhtraso_loai ON thanhTraSo (loai);
+
+-- KHOANG: khoá từng phần (may-chu/khoang.js). Super Admin/Admin khoá/mở
+-- trong ứng dụng; hetHan rỗng = khoá tới khi mở tay. Khoang 'cua' và
+-- 'cuuhe' không bao giờ khoá từ đây (tránh tự nhốt) — dùng GITA_KHOA_KHOANG.
+CREATE TABLE IF NOT EXISTS heKhoang (
+  khoang  TEXT PRIMARY KEY,
+  khoa    INTEGER NOT NULL DEFAULT 0,
+  lyDo    TEXT,
+  hetHan  TEXT,
+  boi     TEXT,
+  luc     TEXT
+);
+
+-- Bộ não đa trí (bo-nao-da-tri.js) — cũng tự dựng lúc chạy.
+CREATE TABLE IF NOT EXISTS triNhoDaTri (khoa TEXT PRIMARY KEY, loai TEXT, ncc TEXT, traLoi TEXT, luc INTEGER, hetHan INTEGER, dung INTEGER DEFAULT 0);
+CREATE TABLE IF NOT EXISTS soTokenDaTri (ngay TEXT, ncc TEXT, luot INTEGER DEFAULT 0, vao INTEGER DEFAULT 0, ra INTEGER DEFAULT 0, PRIMARY KEY (ngay, ncc));
+CREATE TABLE IF NOT EXISTS danhGiaDaTri (loai TEXT, ncc TEXT, tot INTEGER DEFAULT 0, xau INTEGER DEFAULT 0, PRIMARY KEY (loai, ncc));
+-- Kho giải pháp (hỏi một lần, dùng mãi; R01 duyệt) · mô hình đã thấy (canh mô hình mới) · nhịp việc định kỳ.
+CREATE TABLE IF NOT EXISTS khoGiaiPhapDaTri (ma TEXT PRIMARY KEY, loai TEXT, cauHoi TEXT, tuKhoa TEXT, giaiPhap TEXT, ncc TEXT, phienBan INTEGER DEFAULT 1, trangThai TEXT DEFAULT 'nhap', goc TEXT, nguoiDe TEXT, nguoiDuyet TEXT, luc INTEGER, lucSoat INTEGER, dung INTEGER DEFAULT 0);
+CREATE TABLE IF NOT EXISTS mauDaTriThay (ncc TEXT, model TEXT, lanDau INTEGER, PRIMARY KEY (ncc, model));
+CREATE TABLE IF NOT EXISTS nhipDaTri (viec TEXT PRIMARY KEY, luc INTEGER);
+-- Vòng nhà khoa học (0 token, mỗi đêm): quan sát → giả thuyết → phép thử → đề xuất. Giữ 30 bản.
+CREATE TABLE IF NOT EXISTS vongKhoaHocDaTri (luc INTEGER PRIMARY KEY, soPhatHien INTEGER, baoCao TEXT);
+-- V20: lọc trước token có đếm · lỗi lặp nhà cung cấp (cố vấn) · tuyến nhiều chặng có chốt chặn (R01).
+CREATE TABLE IF NOT EXISTS soLocDaTri (ngay TEXT, cua TEXT, luot INTEGER DEFAULT 0, PRIMARY KEY (ngay, cua));
+CREATE TABLE IF NOT EXISTS loiNccDaTri (ngay TEXT, ncc TEXT, soLan INTEGER DEFAULT 0, PRIMARY KEY (ngay, ncc));
+CREATE TABLE IF NOT EXISTS tuyenDaTri (ma TEXT PRIMARY KEY, ten TEXT, cacChang TEXT, dangO INTEGER DEFAULT 0, ketQua TEXT, trangThai TEXT DEFAULT 'dangChay', luc INTEGER, lucSua INTEGER);

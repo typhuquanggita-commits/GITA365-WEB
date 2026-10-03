@@ -1,0 +1,6 @@
+# Vùng nhạy cảm (máy chủ · CI · công cụ cổng · hiến pháp) cần chủ sở hữu duyệt.
+/may-chu/          @typhuquanggita-commits
+/.github/          @typhuquanggita-commits
+/tools/            @typhuquanggita-commits
+/src/bo-nao.js     @typhuquanggita-commits
+/src/dieu-phoi.js  @typhuquanggita-commits

@@ -65,6 +65,14 @@ jobs:
           })();
           NODE
 
+      # CỔNG KIỂM TRƯỚC KHI DEPLOY: Worker lỗi cú pháp hoặc không nạp được
+      # thì dừng ở đây — bản đang chạy trên Cloudflare giữ nguyên.
+      - name: Gate — kiểm cú pháp & nạp thử Worker
+        run: |
+          set -eu
+          for f in may-chu/*.js; do node --check "$f"; done
+          node --input-type=module -e "const w=(await import('./may-chu/worker.js')).default; if(typeof w.fetch!=='function'||typeof w.scheduled!=='function'){console.error('worker.js thiếu fetch/scheduled');process.exit(1)} console.log('Worker nạp được.')"
+
       - name: Deploy Cloudflare Worker
         uses: cloudflare/wrangler-action@v3
         with:

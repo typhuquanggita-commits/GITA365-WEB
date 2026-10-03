@@ -29,7 +29,10 @@
    ═══════════════════════════════════════════════════════════════ */
 
 import { Kho, kiemPhien, kiemMatKhau, bamMoi, muoiMoi, soSanhAnToan, mkQuaDeDoan } from './nen.js';
-import { dongBo } from './dong-bo.js';
+import { dongBo, quetSaoLuuMoCoi } from './dong-bo.js';
+import { veChiPhi, maYeuCau } from './ve-chi-phi.js';
+import { chanKhoang, ghiLoiKhoang, ghiTotKhoang, dsKhoang, datKhoang } from './khoang.js';
+import { tuSoatVaChua, sucKhoeHe } from './tu-chua.js';
 import { dangKy, guiLaiOtp, xacThucOtp, kichHoat } from './dang-ky.js';
 import { quenMatKhau, datLaiMatKhau } from './mat-khau.js';
 import { capQuyenXem, thuHoiQuyenXem, soiQuyenXem, xemKhachCao, nangTang } from './quyen-xem.js';
@@ -91,6 +94,11 @@ import { capQuyenAI, thuHoiQuyenAI, soatQuyenAI, aiPhanLoai, aiSoanNhap,
   soanDeBaiNgoai, aiTongHopGiamSat } from './quyen-nang-ai.js';
 import { phimGuiViec, phimXemViec, phimTinhHuong } from './phim-ai.js';
 import { phimMienPhi, phimTrangThaiDu } from './phim-0d.js';
+import { hoiDaTri, hoiDongDaTri, chamDaTri, soDaTri, luuGiaiPhap, duyetGiaiPhap, dsGiaiPhap, boSungGiaiPhap,
+  canhMauDaTri, canhMauTuDong, thuMauDaTri, vongKhoaHocTuDong, docVongKhoaHoc,
+  taoTuyenDaTri, chayChangDaTri, docTuyenDaTri } from './bo-nao-da-tri.js';
+import { docKpiCayTien } from './cay-tien.js';
+import { docDongChay } from './dong-chay.js';
 import { dieuPhoiTroLy, soatDieuPhoi, tuHoanThienTroLy, soatHoatDongAgent } from './dieu-phoi.js';
 import { soatKhungVanHanh, chamMotLuot } from './khung-van-hanh.js';
 import { lapKeHoachAgent, chayBuocAgent, dsWorkflowAgent } from './agent-team.js';
@@ -235,7 +243,7 @@ export function tachKhoaDuocCap(goi, kho) {
    xuatSheet · xemKpiKhach) bỏ hẳn vì máy khách không còn gọi. Không còn
    phần nào chạy trên Apps Script. */
 
-const CAN_PHIEN = ['capKhoa', 'doiMatKhau', 'dongBo', 'thuGuiThu',
+const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau', 'dongBo', 'thuGuiThu',
   'docTinCongDong', 'ghiTinCongDong', 'guiChuyen', 'napTaiLieu', 'duyetTaiLieu', 'napTinhHuongKhach',
   'capQuyenXem', 'thuHoiQuyenXem', 'soiQuyenXem', 'xemKhachCao', 'nangTang',
   'capQuyenT5Pro', 'thuHoiQuyenT5Pro', 'dsQuyenT5Pro',
@@ -310,6 +318,9 @@ const CAN_PHIEN = ['capKhoa', 'doiMatKhau', 'dongBo', 'thuGuiThu',
   'crmPhanTichKhach', 'crmUuTienNangCao',
   'loTrinhCaNhan', 'khoaNoiDungTheoTang',
   'hoiChatbot', 'lichSuChat', 'soanDeBaiNgoai',
+  'hoiDaTri', 'hoiDongDaTri', 'chamDaTri', 'soDaTri',
+  'luuGiaiPhap', 'duyetGiaiPhap', 'dsGiaiPhap', 'boSungGiaiPhap', 'canhMauDaTri', 'thuMauDaTri', 'docVongKhoaHoc',
+  'taoTuyenDaTri', 'chayChangDaTri', 'docTuyenDaTri', 'docKpiCayTien', 'docDongChay',
   'phimTrangThai', 'phimGuiViec', 'phimXemViec', 'phimTinhHuong', 'phimMienPhi', 'quayKhopMoi', 'quayXem',
   'guiBaoCaoNgay', 'tongHopBaoCao', 'dsBaoCaoNgay'];
 
@@ -366,6 +377,12 @@ async function lam(fn, y, env, db) {
   const hoSo = await kiemPhien(db, y.token, y.u);
   if (!hoSo) return {ok: false, code: 'AUTH', error: 'Phiên không hợp lệ hoặc đã hết hạn.'};
   if (hoSo.khoa) return {ok: false, code: 'LOCKED', error: 'Tài khoản đang bị khoá.'};
+
+  /* Điều khiển khoang & sức khoẻ hệ đứng TRƯỚC cổng đóng băng: lúc phá
+     kính chính là lúc quản trị cần khoá/mở từng phần nhất. */
+  if (fn === 'dsKhoang')  return await dsKhoang(y, env, db, hoSo, BAC);
+  if (fn === 'datKhoang') return await datKhoang(y, env, db, hoSo, BAC, Kho);
+  if (fn === 'sucKhoeHe') return await sucKhoeHe(y, env, db, hoSo, BAC);
 
   /* ── CỔNG ĐÓNG BĂNG: MẶC ĐỊNH-TỪ-CHỐI ──
      Khi hệ bị đóng băng trong lúc phá kính, chặn MỌI cửa trừ danh sách
@@ -665,6 +682,22 @@ async function lam(fn, y, env, db) {
   if (fn === 'aiPhanLoai')        return await aiPhanLoai(y, env, db, hoSo);
   if (fn === 'aiSoanNhap')        return await aiSoanNhap(y, env, db, hoSo);
   if (fn === 'soanDeBaiNgoai')    return await soanDeBaiNgoai(y, env, db, hoSo);
+  if (fn === 'hoiDaTri')          return await hoiDaTri(y, env, db, hoSo);
+  if (fn === 'hoiDongDaTri')      return await hoiDongDaTri(y, env, db, hoSo);
+  if (fn === 'chamDaTri')         return await chamDaTri(y, env, db, hoSo);
+  if (fn === 'soDaTri')           return await soDaTri(y, env, db, hoSo);
+  if (fn === 'luuGiaiPhap')       return await luuGiaiPhap(y, env, db, hoSo);
+  if (fn === 'duyetGiaiPhap')     return await duyetGiaiPhap(y, env, db, hoSo);
+  if (fn === 'dsGiaiPhap')        return await dsGiaiPhap(y, env, db, hoSo);
+  if (fn === 'boSungGiaiPhap')    return await boSungGiaiPhap(y, env, db, hoSo);
+  if (fn === 'canhMauDaTri')      return await canhMauDaTri(y, env, db, hoSo);
+  if (fn === 'thuMauDaTri')       return await thuMauDaTri(y, env, db, hoSo);
+  if (fn === 'docVongKhoaHoc')    return await docVongKhoaHoc(y, env, db, hoSo);
+  if (fn === 'taoTuyenDaTri')     return await taoTuyenDaTri(y, env, db, hoSo);
+  if (fn === 'chayChangDaTri')    return await chayChangDaTri(y, env, db, hoSo);
+  if (fn === 'docTuyenDaTri')     return await docTuyenDaTri(y, env, db, hoSo);
+  if (fn === 'docKpiCayTien')     return await docKpiCayTien(y, env, db, hoSo);
+  if (fn === 'docDongChay')       return await docDongChay(y, env, db, hoSo);
   if (fn === 'phimTrangThai')     return await phimTrangThaiDu(y, env, db, hoSo);
   if (fn === 'phimMienPhi')       return await phimMienPhi(y, env, db, hoSo);
   if (fn === 'quayKhopMoi')       return await quayKhopMoi(y, env, db, hoSo);
@@ -952,7 +985,8 @@ const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
-  'Access-Control-Max-Age': '86400'
+  'Access-Control-Max-Age': '86400',
+  'Access-Control-Expose-Headers': 'x-gita-ma'
 };
 
 /* GITA_DIA_CHI_WEB là DANH SÁCH origin, phân tách bằng dấu phẩy. Phải gồm
@@ -975,14 +1009,21 @@ export function corsTheoEnv(env, req) {
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Max-Age': '86400',
+    'Access-Control-Expose-Headers': 'x-gita-ma',
     'Vary': 'Origin'
   };
 }
+const TRAN_THAN_BYTE = 10 * 1024 * 1024;
+
 function traJson(o, ma, env, req) {
   const headers = corsTheoEnv(env || {}, req);
   return new Response(JSON.stringify(o), {
     status: ma || 200,
-    headers: {'Content-Type': 'application/json; charset=utf-8', ...headers}
+    /* nosniff + no-store (tầng BM02): dữ liệu tài khoản không nằm lại ở
+       bộ đệm trung gian, trình duyệt không đoán kiểu nội dung. GET trạng
+       thái tự đặt lại Cache-Control công khai 30 giây. */
+    headers: {'Content-Type': 'application/json; charset=utf-8',
+      'X-Content-Type-Options': 'nosniff', 'Cache-Control': 'no-store', ...headers}
   });
 }
 
@@ -1081,7 +1122,12 @@ export default {
         console.error('BAO_DOANHTHU_NGAY_HONG', String(e && e.message || e))));
       return;
     }
-    ctx.waitUntil(donDep(env));
+    ctx.waitUntil(donDep(env).then(() => quetSaoLuuMoCoi(env)).then(() => tuSoatVaChua(env)).catch(e =>
+      console.error('DON_DEP_HONG', String(e && e.message || e))));
+    ctx.waitUntil(vongKhoaHocTuDong(env).catch(e =>
+      console.error('DA_TRI_KHOA_HOC_HONG', String(e && e.message || e))));
+    ctx.waitUntil(canhMauTuDong(env).catch(e =>
+      console.error('DA_TRI_CANH_MAU_HONG', String(e && e.message || e))));
   },
 
   async fetch(req, env) {
@@ -1101,29 +1147,56 @@ export default {
     }
     const cors = corsTheoEnv(env, req);
     if (req.method === 'OPTIONS') return new Response(null, {status: 204, headers: cors});
+    const ma = maYeuCau(req);
 
     /* Trạng thái: máy chủ còn sống chưa, đã nạp khoá chưa. KHÔNG trả
-       khoá nào, và không nói gì về số tài khoản. */
+       khoá nào, và không nói gì về số tài khoản. Cho trình duyệt giữ 30
+       giây — máy giám sát/tab mở nhiều không biến thành nhiều lượt Worker. */
     if (req.method === 'GET') {
       let n = 0;
       try { n = Object.keys(JSON.parse(env.GITA_KHOA_KHO || '{}')).length; } catch (e) {}
-      return traJson({ok: true, ten: 'GITA 365 — máy chủ cấp phép',
+      const r = traJson({ok: true, ten: 'GITA 365 — máy chủ cấp phép',
         daNapKhoa: n, ai: !!env.AI, luc: new Date().toISOString()}, 200, env, req);
+      r.headers.set('Cache-Control', 'public, max-age=30');
+      return r;
     }
     if (req.method !== 'POST') return traJson({ok: false, error: 'Yêu cầu không hợp lệ.'}, 405, env, req);
 
+    /* Trần thân yêu cầu (tầng PV05): gói lớn nhất hợp lệ là tệp cộng đồng
+       8 MB base64 — trên 10 MB là phá, cắt TRƯỚC khi đọc/parse để không đốt
+       bộ nhớ và CPU của Worker. Kiểm cả content-length (rẻ) lẫn độ dài thật. */
+    const khaiCo = Number(req.headers.get('content-length') || 0);
+    if (khaiCo > TRAN_THAN_BYTE) return traJson({ok: false, code: 'TOOBIG', error: 'Yêu cầu vượt trần 10 MB.'}, 413, env, req);
     let y;
-    try { y = await req.json(); } catch (e) { y = {}; }
+    try {
+      const than = await req.text();
+      if (than.length > TRAN_THAN_BYTE) return traJson({ok: false, code: 'TOOBIG', error: 'Yêu cầu vượt trần 10 MB.'}, 413, env, req);
+      y = JSON.parse(than);
+    } catch (e) { y = {}; }
+    if (!y || typeof y !== 'object' || Array.isArray(y)) y = {};
+    const fn = String(y.fn || '');
 
     try {
-      return traJson(await lam(String(y.fn || ''), y, env, env.CSDL), 200, env, req);
+      /* Vệ chi phí đứng TRƯỚC lam(): bị chặn thì không tốn lượt D1/R2 nào.
+         Rồi tới cổng KHOANG: phần bị khoá/đang tự nghỉ trả lời ngay,
+         các phần khác vẫn chạy. */
+      const chan = await veChiPhi(fn, y, env, req) || await chanKhoang(fn, env, env.CSDL);
+      const kq = chan || await lam(fn, y, env, env.CSDL);
+      if (!chan) ghiTotKhoang(fn);
+      const r = traJson(kq, 200, env, req);
+      r.headers.set('x-gita-ma', ma);
+      return r;
     } catch (err) {
+      ghiLoiKhoang(fn);
       /* KHÔNG ĐẨY LỜI LỖI CỦA MÁY RA CHO MÁY KHÁCH. Lời lỗi của cơ sở
          dữ liệu hay kể tên bảng, tên cột, có khi cả mảnh câu lệnh —
          đó là bản đồ cho người đi dò. Ghi đủ vào nhật ký máy chủ, trả
-         ra một câu. */
-      console.error('LOI', String(y.fn || ''), err && err.stack || err);
-      return traJson({ok: false, error: 'Máy chủ gặp trục trặc. Thử lại sau ít phút.'}, 500, env, req);
+         ra một câu — kèm MÃ YÊU CẦU để tra đúng dòng nhật ký ấy. */
+      console.error('LOI', ma, fn, err && err.stack || err);
+      const r = traJson({ok: false, maYeuCau: ma,
+        error: 'Máy chủ gặp trục trặc. Thử lại sau ít phút. (mã ' + ma + ')'}, 500, env, req);
+      r.headers.set('x-gita-ma', ma);
+      return r;
     }
   }
 };

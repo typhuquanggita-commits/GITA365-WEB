@@ -22,3 +22,5 @@
 - Cache tích cực ở service worker.
 
 Xem thêm `docs/SUC_CHUA_TOC_DO.md`.
+
+> Xem thêm: [Tối ưu chi phí & chất lượng](TOI_UU_CHI_PHI_CHAT_LUONG.md) — mô hình 0đ (<200k TK) và <30 USD (200k–500k TK).
