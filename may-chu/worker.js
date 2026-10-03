@@ -50,7 +50,7 @@ import { soNgay, chotTuan, soatChot, tongHop, baoCaoKeToan, boSoKhaiThue,
 import { tongNgayDoanhThu } from './bao-doanh-thu.js';
 import { thuGuiThu } from './thu.js';
 import { phucVuTaiNguyen } from './tai-nguyen.js';
-import { quayKhopMoi, quayXem, xuLyMayQuay, phucVuPhimQuay, donQuay } from './xuong-quay.js';
+import { quayKhopMoi, quayChuyenDong, quayXem, xuLyMayQuay, phucVuPhimQuay, donQuay } from './xuong-quay.js';
 import { chamKpiTaiChinh } from './kpi-tai-chinh.js';
 import { dangTinTaiChinh, bangTinTaiChinh,
   xuLyTinTaiChinh } from './tin-tai-chinh.js';
@@ -321,7 +321,7 @@ const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau'
   'hoiDaTri', 'hoiDongDaTri', 'chamDaTri', 'soDaTri',
   'luuGiaiPhap', 'duyetGiaiPhap', 'dsGiaiPhap', 'boSungGiaiPhap', 'canhMauDaTri', 'thuMauDaTri', 'docVongKhoaHoc',
   'taoTuyenDaTri', 'chayChangDaTri', 'docTuyenDaTri', 'docKpiCayTien', 'docDongChay',
-  'phimTrangThai', 'phimGuiViec', 'phimXemViec', 'phimTinhHuong', 'phimMienPhi', 'quayKhopMoi', 'quayXem',
+  'phimTrangThai', 'phimGuiViec', 'phimXemViec', 'phimTinhHuong', 'phimMienPhi', 'quayKhopMoi', 'quayChuyenDong', 'quayXem',
   'guiBaoCaoNgay', 'tongHopBaoCao', 'dsBaoCaoNgay'];
 
 async function lam(fn, y, env, db) {
@@ -701,6 +701,7 @@ async function lam(fn, y, env, db) {
   if (fn === 'phimTrangThai')     return await phimTrangThaiDu(y, env, db, hoSo);
   if (fn === 'phimMienPhi')       return await phimMienPhi(y, env, db, hoSo);
   if (fn === 'quayKhopMoi')       return await quayKhopMoi(y, env, db, hoSo);
+  if (fn === 'quayChuyenDong')    return await quayChuyenDong(y, env, db, hoSo);
   if (fn === 'quayXem')           return await quayXem(y, env, db, hoSo);
   if (fn === 'phimGuiViec')       return await phimGuiViec(y, env, db, hoSo);
   if (fn === 'phimXemViec')       return await phimXemViec(y, env, db, hoSo);
