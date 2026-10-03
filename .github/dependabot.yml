@@ -1,0 +1,10 @@
+# Repo không có package.json gốc — chỉ giữ GitHub Actions luôn mới, vá lỗ hổng.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ['*']

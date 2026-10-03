@@ -1,0 +1,31 @@
+# Quét bảo mật CodeQL — miễn phí cho repo công khai.
+name: CodeQL
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '17 3 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          # Bỏ bundle sinh ra — quét mã nguồn src/ là đủ, tránh báo trùng.
+          config: |
+            paths-ignore:
+              - gita-app.js
+              - gita-nghe.js
+      - uses: github/codeql-action/analyze@v3

@@ -1,0 +1,57 @@
+# Cổng kiểm tra mọi PR/push — đo, không khai.
+# Chạy trên mọi nhánh trước khi deploy.yml đưa lên Cloudflare (main).
+name: Kiem tra GITA365
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kiem-tra-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  kiem-tra:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      # node:sqlite (thử đồng bộ giả lập) cần Node >= 22.5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Bundle khớp src (gop-src --kiem)
+        run: node tools/gop-src.js --kiem
+
+      - name: Cú pháp Worker
+        run: for f in may-chu/*.js; do node --check "$f"; done
+
+      - name: Rà soát đầy đủ
+        run: node tools/ra-soat-day-du.js
+
+      - name: Thử CORS
+        run: node tools/thu-cors.mjs
+
+      - name: Thử đồng bộ · ngăn khoang · tự lành (D1/R2 giả lập)
+        run: node tools/thu-dong-bo.mjs
+
+      - name: Thử Bộ não đa trí (Điều 13 · đệm · rẻ trước · leo bậc · ngân sách)
+        run: node tools/thu-da-tri.mjs
+
+      - name: Thử Cây tiền (KPI 90/90/20 tính từ D1)
+        run: node tools/thu-cay-tien.mjs
+
+      - name: Thử Truy vấn đa chiều (bốn dòng chảy · bảng điểm 16 ban)
+        run: node tools/thu-dong-chay.mjs
+
+      - name: Đo 16 hệ (con trỏ sống · SOP đúng miền · 1000 chiến lược · lá chắn 30 tầng)
+        run: node tools/do-16-he.js
+
+      - name: Soát bí mật (không khoá API nào trong repo)
+        run: node tools/soat-bi-mat.js

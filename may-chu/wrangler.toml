@@ -137,6 +137,33 @@ database_id = "8ce5271b-be05-47cb-bc34-d25c9e0436d8"
 binding = "HOSO"
 bucket_name = "gita365-hoso"
 
+# ── VỆ CHI PHÍ (may-chu/ve-chi-phi.js) — xem docs/TOI_UU_CHI_PHI_CHAT_LUONG.md ──
+# Tầng 1 (đếm trong bộ nhớ isolate) luôn chạy, không cần khai gì.
+# Tầng 2 TUỲ CHỌN: Rate Limiting binding của Cloudflare — đếm ở mạng biên,
+# không tốn lượt D1. Bỏ dấu # ba khối dưới để bật (namespace_id là số
+# nguyên tự chọn, duy nhất trong tài khoản). Không khai thì mã tự bỏ qua.
+# [[ratelimits]]
+# name = "GIOI_HAN"
+# namespace_id = "3650"
+# simple = { limit = 300, period = 60 }
+#
+# Chế độ tiết kiệm: khi bảng Cloudflare báo sắp chạm hạn mức miễn phí,
+# đặt GITA_CHE_DO_TIET_KIEM = "1" ở [vars] (hoặc Dashboard → Settings →
+# Variables) để tạm đóng các việc gọi AI tính tiền theo lượt.
+#
+# ── KHOANG (may-chu/khoang.js) — khoá TỪNG PHẦN thay vì đóng băng cả hệ ──
+# GITA_KHOA_KHOANG = "ai,phim"  (Dashboard → Settings → Variables) khoá ngay
+# các khoang ấy mà không cần D1 hay đăng nhập. "*" = khoá mọi khoang trừ
+# đăng nhập và cứu hệ. Khoang: dongbo ai phim crm taichinh thigiac
+# congdong noidung taikhoan khac cua. Bình thường để trống.
+#
+# GITA_GIU_SAO_LUU = "5"  — số bản sao lưu hồ sơ giữ mỗi người (3–30, mặc
+# định 10). Hạ xuống 5 khi R2 vượt 8 GB để ở lại hạn miễn phí 10 GB.
+# GITA_SAO_LUU_PHUT = "4320" — khoảng cách tối thiểu giữa hai bản sao lưu
+# (phút, mặc định 30). Đặt 4320 từ ~200k tài khoản để ghi D1 và R2 lớp A
+# ở dưới hạn miễn phí. Đổi lại: điểm khôi phục thưa hơn (tối đa 3 ngày);
+# bản sao offline hằng đêm trên Windows bù phần này (docs/KIEN_TRUC_NOI_LUC.md).
+
 # ═══════════════════════════════════════════════════════════════
 #  BỐN BÍ MẬT — KHÔNG BAO GIỜ VIẾT VÀO TỆP NÀY
 #
@@ -204,6 +231,29 @@ bucket_name = "gita365-hoso"
 #    npx wrangler secret put GITA_AI_KHOA
 #    npx wrangler secret put GITA_AI_MAU
 #
+# ── BỘ NÃO ĐA TRÍ (bo-nao-da-tri.js · TẮT SẴN) ──
+# Định tuyến 5 bậc: đệm D1 (0 token) → Workers AI → DeepSeek → Gemini/GPT
+# → Claude/Grok (chỉ Super Admin). Mọi lượt qua soatRaNhaCungCap (Điều 13).
+# Bật cửa (biến thường, không bí mật):
+#    GITA_DA_TRI_BAT = "1"            (đặt ở Dashboard › Settings › Variables)
+# Bậc 1 miễn phí — mở khối [ai] ở dưới cùng tệp này.
+# Mỗi nhà cung cấp chỉ chạy khi có khoá; nhà nào không có khoá coi như vắng:
+#    npx wrangler secret put GITA_KHOA_DEEPSEEK
+#    npx wrangler secret put GITA_KHOA_GEMINI
+#    npx wrangler secret put GITA_KHOA_OPENAI
+#    npx wrangler secret put GITA_KHOA_ANTHROPIC  + GITA_MAU_ANTHROPIC (bắt buộc)
+#    npx wrangler secret put GITA_KHOA_XAI        + GITA_MAU_XAI       (bắt buộc)
+# Ngân sách token mỗi ngày (tuỳ chọn, ghi đè mặc định trong NCC):
+#    GITA_NGAN_TOKEN_DEEPSEEK · _GEMINI · _OPENAI · _ANTHROPIC · _XAI
+# Trần tải: chỉ dùng tối đa GITA_TRAN_TAI % ngân sách trên (mặc định 50).
+#    GITA_TRAN_TAI = "50"   → nửa còn lại là dự phòng, không bao giờ chạm đáy.
+# Tự điều chỉnh có biên: nhà cung cấp bị chấm "chưa tốt" >70% (≥10 lượt) cho
+# một loại việc thì xếp cuối hàng loại đó (không loại hẳn). Mặc định bật.
+#    GITA_TU_DIEU_CHINH = "0"  → tắt, về thứ tự gốc (docs/LA_CHAN_30_TANG.md).
+# Kho giải pháp + canh mô hình mới (lịch chạy, tối đa 1 lần/7 ngày, chỉ báo,
+# không tự đổi GITA_MAU_*) chạy sẵn khi GITA_DA_TRI_BAT = "1".
+# GITA_CHE_DO_TIET_KIEM = "1" → chỉ còn đệm + Workers AI.
+#
 # LƯU Ý MỘT CHỖ HAY BỊ HỎI: mô hình NGÔN NGỮ (loại đang chạy trợ lý
 # này) ĐỌC được ảnh nhưng KHÔNG sinh ra ảnh. Ảnh người như ảnh chụp là
 # việc của mô hình KHUẾCH TÁN, một loại máy khác. Không có công tắc nào
@@ -256,3 +306,8 @@ bucket_name = "gita365-hoso"
 #  cũ. Đổi bề mặt cùng lúc với đổi nền thì lúc hỏng không ai biết hỏng
 #  vì nền hay vì bề mặt.
 # ═══════════════════════════════════════════════════════════════
+
+# Bậc 1 của Bộ não đa trí — Workers AI, hạn mức miễn phí mỗi ngày.
+# Bỏ dấu # hai dòng dưới rồi deploy để bật (không tốn gì khi cửa tắt).
+# [ai]
+# binding = "AI"

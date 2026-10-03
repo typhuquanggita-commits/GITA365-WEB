@@ -5,6 +5,7 @@
     "src/data.tuyen.js",
     "src/data.accounts.js",
     "src/ui.js",
+    "src/nang-luc-may.js",
     "src/bieu-do.js",
     "src/logo-gita.js",
     "src/nhan-dien.js",
@@ -137,6 +138,12 @@
     "src/noi-nhan-tai.js",
     "src/ke-toan-thue.js",
     "src/dieu-phoi.js",
+    "src/he-16.js",
+    "src/bo-nao-da-tri.js",
+    "src/la-chan-30.js",
+    "src/bo-may-tap-doan.js",
+    "src/kien-truc-hop-nhat.js",
+    "src/truy-van-da-chieu.js",
     "src/khung-van-hanh.js",
     "src/suc-chua-toc-do.js",
     "src/thanh-tra-soi.js",
@@ -183,6 +190,7 @@
     "src/cay-tien-vip.js",
     "src/chuoi-wow.js",
     "src/dong-hanh.js",
+    "src/phim-cau-noi.js",
     "src/goi-nghe.js",
     "src/assessment.js"
   ]
