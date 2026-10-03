@@ -1,26 +1,21 @@
 # TÊN MIỀN — GITA 365
 
-## Mặc định
+## Địa chỉ chính thức
 
-- **Frontend:** `https://gita365.pages.dev` (Cloudflare Pages)
+- **Frontend:** `https://gita365.pages.dev` (Cloudflare Pages) — địa chỉ web chính thức duy nhất
 - **API Worker:** `https://gita365.typhuquanggita.workers.dev` (Cloudflare Worker)
 
-## Khi dùng tên miền riêng `gita.edu.vn`
+Dự án **không dùng tên miền riêng**. Không thêm tệp `CNAME`; nếu GitHub Pages hoặc
+Cloudflare Pages đã từng gắn custom domain thì gỡ trong phần cài đặt.
 
-Có hai cách phổ biến:
+## CORS giữa Pages và Worker
 
-### Cách 1: Pages + Worker riêng origin
+Frontend và Worker khác origin, nên Worker chỉ trả CORS cho các origin trong
+`GITA_DIA_CHI_WEB` (`may-chu/wrangler.toml`, hiện là `https://gita365.pages.dev`).
+Đổi địa chỉ web thì phải sửa biến này và deploy lại Worker — xem `docs/MAY_CHU.md`.
 
-- Pages: `gita.edu.vn`
-- Worker: `api.gita.edu.vn` hoặc route `gita.edu.vn/api/*`
-- Sửa `cau-hinh.js` cho đúng origin Worker.
-- Thêm origin vào `connect-src` trong `index.html`.
-
-### Cách 2: Worker route trên cùng origin
-
-- Pages phục vụ `gita.edu.vn/*`
-- Worker đăng ký route `gita.edu.vn/api/*`
-- Máy khách gọi `https://gita.edu.vn/api/?fn=...`
+- Đổi địa chỉ Worker thì sửa `cau-hinh.js` và bảo đảm origin nằm trong `connect-src` của `index.html`
+  (đã mở sẵn `https://*.workers.dev` và `https://*.pages.dev`).
 
 ## CSP và tiêu đề bảo mật
 
@@ -34,4 +29,5 @@ Có hai cách phổ biến:
 node tools/soat-san-sang.js
 ```
 
-Tool sẽ đối chiếu `cau-hinh.js` với `connect-src` trong `index.html`.
+Tool sẽ đối chiếu `cau-hinh.js` với `connect-src` trong `index.html`, kiểm
+`GITA_DIA_CHI_WEB` chứa `https://gita365.pages.dev`, và kiểm repo không còn tham chiếu tên miền cũ đã gỡ.

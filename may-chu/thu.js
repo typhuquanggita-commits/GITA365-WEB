@@ -12,7 +12,8 @@
      · Hết hạn ngày là hết SẠCH: mã OTP của khách hàng thật ngừng gửi
        cho tới nửa đêm, và không có gì báo trước.
      · Thư gửi từ hòm thư người dùng dễ rơi vào mục spam hơn thư gửi
-       qua một đường chuyên dụng có SPF/DKIM cho tên miền gita.edu.vn.
+       qua một đường chuyên dụng có SPF/DKIM cho tên miền gửi thư
+       (đặt ở GITA_THU_GUI_TU trong wrangler.toml).
 
    ── CHỖ ĐỔI NHÀ CUNG CẤP CHỈ CÓ MỘT ──
 
@@ -51,7 +52,8 @@ async function guiQuaResend_(env, tepThu) {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      from: env.GITA_THU_GUI_TU || 'GITA 365 <khonggui@gita.edu.vn>',
+      from: env.GITA_THU_GUI_TU,
+      ...(env.GITA_THU_TRA_LOI ? {reply_to: env.GITA_THU_TRA_LOI} : {}),
       to: [tepThu.den],
       subject: tepThu.tieuDe,
       text: tepThu.than
@@ -78,8 +80,10 @@ export async function guiThu(env, {den, tieuDe, than, batBuoc}) {
      triển và trong bộ thử, env.GHI_THU nhận lá thư để soi được nội dung
      mà không gửi đi thật. */
   if (env.GHI_THU) { env.GHI_THU.push({den, tieuDe, than}); return true; }
-  if (!env.GITA_KHOA_THU) {
-    if (batBuoc) throw new Error('Máy chủ chưa được nạp khoá gửi thư.');
+  if (!env.GITA_KHOA_THU || !env.GITA_THU_GUI_TU) {
+    if (batBuoc) throw new Error(env.GITA_KHOA_THU
+      ? 'Máy chủ chưa đặt địa chỉ người gửi thư (GITA_THU_GUI_TU).'
+      : 'Máy chủ chưa được nạp khoá gửi thư.');
     return false;
   }
   try {
@@ -92,4 +96,4 @@ export async function guiThu(env, {den, tieuDe, than, batBuoc}) {
   }
 }
 
-export const CHAN_THU = '\n\nCần người thật: 08.5555.4688\nHọc viện GITA';
+export const CHAN_THU = '\n\nCần người thật: 08.5555.4688 · typhuquanggita@gmail.com\nHọc viện GITA';

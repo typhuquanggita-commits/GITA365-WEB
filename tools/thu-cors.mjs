@@ -25,25 +25,25 @@ const env = {GITA_DIA_CHI_WEB: DS};
 const dau = DS.split(',')[0].trim();
 console.log('GITA_DIA_CHI_WEB = ' + DS);
 
-for (const o of ['https://gita.edu.vn', 'https://www.gita.edu.vn', 'https://gita365.pages.dev']) {
-  for (const m of ['GET', 'OPTIONS']) {
-    const r = await goi(env, m, o);
-    kiem(m + ' ' + o + ' → ' + r.acao, r.acao === o && /Origin/.test(r.vary || ''));
-  }
+const WEB = 'https://gita365.pages.dev';
+kiem('GITA_DIA_CHI_WEB chứa ' + WEB, DS.split(',').map(s => s.trim()).includes(WEB));
+
+for (const m of ['GET', 'OPTIONS']) {
+  const r = await goi(env, m, WEB);
+  kiem(m + ' ' + WEB + ' → ' + r.acao, r.acao === WEB && /Origin/.test(r.vary || ''));
 }
-for (const o of ['https://ke-la.example', 'null', undefined]) {
+for (const o of ['https://ke-la.example', 'https://gita365.pages.dev.ke-la.example', 'null', undefined]) {
   const r = await goi(env, 'OPTIONS', o);
   kiem('OPTIONS ' + o + ' → ' + r.acao + ' (không mở cho origin lạ)', r.acao === dau && r.acao !== 'null');
 }
+const DS2 = {GITA_DIA_CHI_WEB: WEB + ', https://ban-thu.example/'};
+const r0 = await goi(DS2, 'GET', 'https://ban-thu.example');
+kiem('danh sách nhiều origin: phản xạ origin thứ hai → ' + r0.acao, r0.acao === 'https://ban-thu.example');
 const r1 = await goi({GITA_DIA_CHI_WEB: 'null, https://a.example/'}, 'GET', 'null');
 kiem('origin "null" trong biến bị bỏ qua → ' + r1.acao, r1.acao === 'https://a.example');
 const r2 = await goi({}, 'GET', 'https://bat-ky.example');
 kiem('biến trống → ' + r2.acao, r2.acao === '*');
-const r3 = await goi(env, 'PUT', 'https://www.gita.edu.vn');
-kiem('405 cũng mang CORS đúng origin → ' + r3.acao, r3.status === 405 && r3.acao === 'https://www.gita.edu.vn');
-
-const cname = fs.readFileSync(path.join(ROOT, 'CNAME'), 'utf8').trim();
-kiem('CNAME https://' + cname + ' nằm trong GITA_DIA_CHI_WEB', DS.split(',').map(s => s.trim()).includes('https://' + cname));
-
+const r3 = await goi(env, 'PUT', WEB);
+kiem('405 cũng mang CORS đúng origin → ' + r3.acao, r3.status === 405 && r3.acao === WEB);
 console.log(loi ? '\nCÓ ' + loi + ' LỖI.' : '\nCORS ĐÚNG.');
 process.exit(loi ? 1 : 0);

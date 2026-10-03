@@ -7,7 +7,8 @@
 
    Kiểm tra các điều kiện hay gây "đẩy lên xong mà không chạy":
      · cau-hinh.js và connect-src trong index.html cùng origin
-     · origin của CNAME nằm trong GITA_DIA_CHI_WEB (CORS của Worker)
+     · GITA_DIA_CHI_WEB chứa https://gita365.pages.dev (CORS của Worker)
+     · repo không còn chuỗi tên miền cũ đã gỡ
      · các tệp tĩnh cần thiết có mặt
      · gita-app.js / gita-nghe.js khớp với src/
      · sw.js cache version khớp với G.META.version
@@ -124,8 +125,9 @@ if (api) {
   else fail('Origin ' + new URL(api).origin + ' KHÔNG nằm trong connect-src');
 }
 
-/* 6b. CORS: mọi tên miền chạy web phải nằm trong GITA_DIA_CHI_WEB của Worker,
+/* 6b. CORS: địa chỉ web chính thức phải nằm trong GITA_DIA_CHI_WEB của Worker,
    nếu không trình duyệt chặn và app báo "không kết nối được máy chủ". */
+const WEB_CHINH = 'https://gita365.pages.dev';
 const wrangler = doc('may-chu/wrangler.toml');
 const dsWeb = ((wrangler.match(/^\s*GITA_DIA_CHI_WEB\s*=\s*"([^"]*)"/m) || [])[1] || '')
   .split(',').map(s => s.trim().replace(/\/+$/, '')).filter(Boolean);
@@ -133,15 +135,18 @@ if (!dsWeb.length) warn('wrangler.toml chưa đặt GITA_DIA_CHI_WEB — Worker 
 else {
   ok('GITA_DIA_CHI_WEB: ' + dsWeb.join(', '));
   if (dsWeb.includes('null')) fail('GITA_DIA_CHI_WEB không được chứa origin "null"');
-  if (fs.existsSync(path.join(ROOT, 'CNAME'))) {
-    const tenMien = doc('CNAME').trim();
-    const goc = 'https://' + tenMien;
-    if (dsWeb.includes(goc)) ok('Origin CNAME ' + goc + ' nằm trong GITA_DIA_CHI_WEB');
-    else fail('Origin CNAME ' + goc + ' KHÔNG nằm trong GITA_DIA_CHI_WEB (wrangler.toml) — web sẽ bị chặn CORS');
-    if (!/^www\./.test(tenMien) && !dsWeb.includes('https://www.' + tenMien))
-      warn('GITA_DIA_CHI_WEB chưa có https://www.' + tenMien);
-  }
+  if (dsWeb.includes(WEB_CHINH)) ok(WEB_CHINH + ' nằm trong GITA_DIA_CHI_WEB');
+  else fail(WEB_CHINH + ' KHÔNG nằm trong GITA_DIA_CHI_WEB (wrangler.toml) — web sẽ bị chặn CORS');
 }
+
+/* 6c. Tên miền cũ đã gỡ (nhầm lẫn) không được quay lại repo. Chuỗi ghép
+   lúc chạy để chính tệp này không tự khớp. Bỏ qua tệp nhị phân (-I). */
+const MIEN_CU = ['gita', 'edu', 'vn'].join('.');
+const conSot = chay('git grep -n -I -i -F ' + JSON.stringify(MIEN_CU));
+const conSotStr = typeof conSot === 'string' ? conSot : (conSot.out || '');
+if (fs.existsSync(path.join(ROOT, 'CNAME'))) fail('Còn tệp CNAME — địa chỉ web chính thức là ' + WEB_CHINH);
+if (conSotStr.trim()) fail('Repo còn tham chiếu ' + MIEN_CU + ':\n' + conSotStr.trim());
+else ok('Không còn tham chiếu ' + MIEN_CU);
 
 /* 7. Gọi thử máy chủ */
 log('\n7. Gọi thử máy chủ');

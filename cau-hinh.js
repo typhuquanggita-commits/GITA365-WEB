@@ -21,9 +21,9 @@ var G = window.G || {}; window.G = G;
    Thiếu một chỗ là trình duyệt chặn im lặng — chạy node tools/soat-san-sang.js
    để máy đối chiếu hai chỗ.
 
-   CHỖ THỨ BA, Ở PHÍA MÁY CHỦ: tên miền chạy bản web (CNAME, cả www) phải
-   nằm trong danh sách GITA_DIA_CHI_WEB ở may-chu/wrangler.toml — Worker
-   chỉ mở CORS cho các origin trong danh sách ấy. Thêm tên miền mới thì
+   CHỖ THỨ BA, Ở PHÍA MÁY CHỦ: địa chỉ chạy bản web (https://gita365.pages.dev)
+   phải nằm trong danh sách GITA_DIA_CHI_WEB ở may-chu/wrangler.toml — Worker
+   chỉ mở CORS cho các origin trong danh sách ấy. Thêm địa chỉ mới thì
    sửa danh sách rồi deploy lại Worker. Xem docs/MAY_CHU.md. */
 G.API_CAP_PHEP = G.API_CAP_PHEP || 'https://gita365.typhuquanggita.workers.dev';
 

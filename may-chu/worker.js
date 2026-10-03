@@ -942,7 +942,7 @@ const CORS = {
 };
 
 /* GITA_DIA_CHI_WEB là DANH SÁCH origin, phân tách bằng dấu phẩy. Phải gồm
-   MỌI tên miền đang chạy bản web (gita.edu.vn, www.gita.edu.vn, *.pages.dev…):
+   MỌI địa chỉ đang chạy bản web (hiện chỉ https://gita365.pages.dev):
    thiếu một tên miền là trình duyệt chặn CORS và app báo "không kết nối được
    máy chủ" dù Worker vẫn sống. Origin của request khớp danh sách thì trả lại
    đúng origin ấy; không khớp thì trả origin đầu tiên (trình duyệt sẽ chặn).

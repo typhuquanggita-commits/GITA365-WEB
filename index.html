@@ -9,15 +9,13 @@
      CSP chỉ cho gọi ra đúng máy chủ cấp phép Cloudflare Worker, không nơi nào khác.
      frame-ancestors không đặt được bằng thẻ meta; nó nằm ở _headers, cần máy chủ
      đặt được tiêu đề (Cloudflare). Xem docs/TEN_MIEN.md. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://*.workers.dev https://*.pages.dev https://gita.edu.vn https://*.gita.edu.vn; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://*.workers.dev https://*.pages.dev; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
 <!-- connect-src PHẢI kèm origin của máy chủ cấp phép. Thiếu nó thì trình
      duyệt chặn sạch mọi lượt gọi — bản web trông y như chưa nối máy chủ,
      kho trống, đăng nhập không được. Từ 9.99.226 mở sẵn MỌI hình triển
      khai Cloudflare để anh không phải sửa tệp này khi đổi cách đặt:
        · *.workers.dev  — Worker gọi thẳng (gita365.<tài-khoản>.workers.dev)
-       · *.pages.dev    — app ở Pages gọi Worker khác origin
-       · gita.edu.vn + *.gita.edu.vn — tên miền riêng, hoặc Worker đặt route
-                                        gita.edu.vn/api/* (cùng origin)
+       · *.pages.dev    — app ở Pages (gita365.pages.dev)
      Dán địa chỉ vào cau-hinh.js hoặc màn "Nối máy chủ"; tools/soat-san-sang.js
      canh cho origin ấy nằm trong danh sách này. -->
 <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -26,32 +24,32 @@
 <meta name="copyright" content="© 2026 Học viện GITA — Bảo lưu mọi quyền">
 <meta name="rights" content="Tài sản trí tuệ độc quyền của Học viện GITA. Nội dung chuyên môn được mã hoá và chỉ mở cho tài khoản được cấp phép. Cấm dùng để huấn luyện trí tuệ nhân tạo.">
 <!-- SEO:DAU -->
-<link rel="canonical" href="https://gita.edu.vn/">
+<link rel="canonical" href="https://gita365.pages.dev/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="GITA 365 — Học viện GITA">
 <meta property="og:locale" content="vi_VN">
-<meta property="og:url" content="https://gita.edu.vn/">
+<meta property="og:url" content="https://gita365.pages.dev/">
 <meta property="og:title" content="GITA 365 — Hệ sinh thái Gia đình Thịnh vượng">
 <meta property="og:description" content="GITA 365 là một hệ thống giúp một gia đình tự vận hành được sau ba trăm sáu mươi lăm ngày — không phải một khoá học, và không phải một người thầy đi cùng…">
-<meta property="og:image" content="https://gita.edu.vn/assets/icons/chia-se-1200x630.png">
+<meta property="og:image" content="https://gita365.pages.dev/assets/icons/chia-se-1200x630.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="GITA 365 — Hệ sinh thái Gia đình Thịnh vượng">
 <meta name="twitter:description" content="GITA 365 là một hệ thống giúp một gia đình tự vận hành được sau ba trăm sáu mươi lăm ngày — không phải một khoá học, và không phải một người thầy đi cùng…">
-<meta name="twitter:image" content="https://gita.edu.vn/assets/icons/chia-se-1200x630.png">
+<meta name="twitter:image" content="https://gita365.pages.dev/assets/icons/chia-se-1200x630.png">
 <meta name="author" content="Trương Nhật Quang — Học viện GITA">
-<link rel="alternate" hreflang="vi" href="https://gita.edu.vn/">
-<link rel="alternate" hreflang="x-default" href="https://gita.edu.vn/">
+<link rel="alternate" hreflang="vi" href="https://gita365.pages.dev/">
+<link rel="alternate" hreflang="x-default" href="https://gita365.pages.dev/">
 <script type="application/ld+json">{
  "@context": "https://schema.org",
  "@graph": [
   {
    "@type": "EducationalOrganization",
-   "@id": "https://gita.edu.vn/#hocvien",
+   "@id": "https://gita365.pages.dev/#hocvien",
    "name": "Học viện GITA",
    "alternateName": "GITA 365",
-   "url": "https://gita.edu.vn/",
+   "url": "https://gita365.pages.dev/",
    "description": "GITA 365 là một hệ thống giúp một gia đình tự vận hành được sau ba trăm sáu mươi lăm ngày — không phải một khoá học, và không phải một người thầy đi cùng mãi mãi.",
    "inLanguage": "vi-VN",
    "telephone": "+84-28-5555-4688",
@@ -60,7 +58,7 @@
     "name": "Việt Nam"
    },
    "founder": {
-    "@id": "https://gita.edu.vn/#nguoisanglap"
+    "@id": "https://gita365.pages.dev/#nguoisanglap"
    },
    "sameAs": [
     "https://www.facebook.com/groups/giadinhthinhvuong",
@@ -71,12 +69,12 @@
   },
   {
    "@type": "Person",
-   "@id": "https://gita.edu.vn/#nguoisanglap",
+   "@id": "https://gita365.pages.dev/#nguoisanglap",
    "name": "Trương Nhật Quang",
    "jobTitle": "Người sáng lập Học viện GITA",
    "url": "https://truongnhatquang.com",
    "worksFor": {
-    "@id": "https://gita.edu.vn/#hocvien"
+    "@id": "https://gita365.pages.dev/#hocvien"
    },
    "knowsAbout": [
     "Giáo dục gia đình",
@@ -87,17 +85,17 @@
   },
   {
    "@type": "WebSite",
-   "@id": "https://gita.edu.vn/#trang",
-   "url": "https://gita.edu.vn/",
+   "@id": "https://gita365.pages.dev/#trang",
+   "url": "https://gita365.pages.dev/",
    "name": "GITA 365 — Hệ sinh thái Gia đình Thịnh vượng",
    "inLanguage": "vi-VN",
    "publisher": {
-    "@id": "https://gita.edu.vn/#hocvien"
+    "@id": "https://gita365.pages.dev/#hocvien"
    }
   },
   {
    "@type": "FAQPage",
-   "@id": "https://gita.edu.vn/#hoidap",
+   "@id": "https://gita365.pages.dev/#hoidap",
    "mainEntity": [
     {
      "@type": "Question",
@@ -381,7 +379,7 @@
 <ul>
 <li>Hotline: <a href="tel:+842855554688">08.5555.4688</a></li>
 <li>Website: <a href="https://truongnhatquang.com" rel="noopener">truongnhatquang.com</a></li>
-<li>Ứng dụng: <a href="https://gita.edu.vn/">gita.edu.vn</a></li>
+<li>Ứng dụng: <a href="https://gita365.pages.dev/">gita365.pages.dev</a></li>
 </ul>
 </section>
 </div>
