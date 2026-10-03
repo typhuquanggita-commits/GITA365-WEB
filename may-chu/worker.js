@@ -91,7 +91,8 @@ import { ghiPhatSinh, soanBanNhap, duyetCap, nhapKho, traBoSung,
 import { capQuyenAI, thuHoiQuyenAI, soatQuyenAI, aiPhanLoai, aiSoanNhap,
   soanDeBaiNgoai, aiTongHopGiamSat } from './quyen-nang-ai.js';
 import { phimTrangThai, phimGuiViec, phimXemViec, phimTinhHuong } from './phim-ai.js';
-import { hoiDaTri, hoiDongDaTri, chamDaTri, soDaTri } from './bo-nao-da-tri.js';
+import { hoiDaTri, hoiDongDaTri, chamDaTri, soDaTri, luuGiaiPhap, duyetGiaiPhap, dsGiaiPhap, boSungGiaiPhap,
+  canhMauDaTri, canhMauTuDong, thuMauDaTri } from './bo-nao-da-tri.js';
 import { dieuPhoiTroLy, soatDieuPhoi, tuHoanThienTroLy, soatHoatDongAgent } from './dieu-phoi.js';
 import { soatKhungVanHanh, chamMotLuot } from './khung-van-hanh.js';
 import { lapKeHoachAgent, chayBuocAgent, dsWorkflowAgent } from './agent-team.js';
@@ -312,6 +313,7 @@ const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau'
   'loTrinhCaNhan', 'khoaNoiDungTheoTang',
   'hoiChatbot', 'lichSuChat', 'soanDeBaiNgoai',
   'hoiDaTri', 'hoiDongDaTri', 'chamDaTri', 'soDaTri',
+  'luuGiaiPhap', 'duyetGiaiPhap', 'dsGiaiPhap', 'boSungGiaiPhap', 'canhMauDaTri', 'thuMauDaTri',
   'phimTrangThai', 'phimGuiViec', 'phimXemViec', 'phimTinhHuong',
   'guiBaoCaoNgay', 'tongHopBaoCao', 'dsBaoCaoNgay'];
 
@@ -677,6 +679,12 @@ async function lam(fn, y, env, db) {
   if (fn === 'hoiDongDaTri')      return await hoiDongDaTri(y, env, db, hoSo);
   if (fn === 'chamDaTri')         return await chamDaTri(y, env, db, hoSo);
   if (fn === 'soDaTri')           return await soDaTri(y, env, db, hoSo);
+  if (fn === 'luuGiaiPhap')       return await luuGiaiPhap(y, env, db, hoSo);
+  if (fn === 'duyetGiaiPhap')     return await duyetGiaiPhap(y, env, db, hoSo);
+  if (fn === 'dsGiaiPhap')        return await dsGiaiPhap(y, env, db, hoSo);
+  if (fn === 'boSungGiaiPhap')    return await boSungGiaiPhap(y, env, db, hoSo);
+  if (fn === 'canhMauDaTri')      return await canhMauDaTri(y, env, db, hoSo);
+  if (fn === 'thuMauDaTri')       return await thuMauDaTri(y, env, db, hoSo);
   if (fn === 'phimTrangThai')     return await phimTrangThai(y, env, db, hoSo);
   if (fn === 'phimGuiViec')       return await phimGuiViec(y, env, db, hoSo);
   if (fn === 'phimXemViec')       return await phimXemViec(y, env, db, hoSo);
@@ -1092,6 +1100,8 @@ export default {
     }
     ctx.waitUntil(donDep(env).then(() => quetSaoLuuMoCoi(env)).then(() => tuSoatVaChua(env)).catch(e =>
       console.error('DON_DEP_HONG', String(e && e.message || e))));
+    ctx.waitUntil(canhMauTuDong(env).catch(e =>
+      console.error('DA_TRI_CANH_MAU_HONG', String(e && e.message || e))));
   },
 
   async fetch(req, env) {

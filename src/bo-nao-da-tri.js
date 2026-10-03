@@ -208,6 +208,8 @@ G.TB_HANH_TRINH = [
 /* ═══════════════ ĐIỀU KHIỂN ═══════════════ */
 var NGAN = [
   { ma: 'nao', ten: 'Bộ não đa trí', ic: 'orbit' },
+  { ma: 'kho', ten: 'Kho giải pháp', ic: 'vault' },
+  { ma: 'tinhtuy', ten: 'Tinh túy 5 bộ não', ic: 'shield' },
   { ma: 'tri', ten: 'Kho trí tuệ', ic: 'book' },
   { ma: 'bang', ten: 'Tảng băng giá trị', ic: 'grid' },
   { ma: 'toiuu', ten: 'Tối ưu token', ic: 'lightning' }
@@ -225,7 +227,7 @@ G.dtTaiSo = function () {
   G.goiMayChu('soDaTri', {}).then(function (x) { G.dtDangTai = false; G.dtSo = x || { ok: false, error: 'Không có phản hồi.' }; veLai(); });
 };
 function giaTri(id) { var e = document.getElementById(id); return e ? e.value : ''; }
-G.dtHoi = function (tuBac, hoiDong) {
+G.dtHoi = function (tuBac, hoiDong, boQuaKho) {
   if (!G.goiMayChu) { U.toast('Chưa nối máy chủ.', 'err'); return; }
   var cau = giaTri('dt-cau').trim(), loai = giaTri('dt-loai') || 'soan';
   if (cau.length < 4) { U.toast('Nhập câu hỏi.', 'err'); return; }
@@ -233,8 +235,8 @@ G.dtHoi = function (tuBac, hoiDong) {
   G.dtCau = cau; G.dtLoai = loai;
   G.dtKq = { cho: true };
   veLai();
-  G.goiMayChu(hoiDong ? 'hoiDongDaTri' : 'hoiDaTri', { cau: cau, loai: loai, triThuc: tri, tuBac: tuBac || 0 }).then(function (x) {
-    G.dtKq = Object.assign({ loai: loai, tri: tri }, x || { ok: false, error: 'Không có phản hồi.' });
+  G.goiMayChu(hoiDong ? 'hoiDongDaTri' : 'hoiDaTri', { cau: cau, loai: loai, triThuc: tri, tuBac: tuBac || 0, boQuaKho: !!boQuaKho }).then(function (x) {
+    G.dtKq = Object.assign({ loai: loai, tri: tri, cau: cau }, x || { ok: false, error: 'Không có phản hồi.' });
     G.dtSo = null; veLai();
   });
 };
@@ -244,10 +246,48 @@ G.dtCham = function (tot) {
   if (!k.ok || !k.ncc) return;
   G.goiMayChu('chamDaTri', { loai: k.loai, ncc: k.ncc, tot: !!tot, khoa: k.khoa }).then(function (x) {
     U.toast(x && x.ok ? 'Đã ghi — bộ não học từ điểm chấm này.' : 'Không ghi được.', x && x.ok ? 'ok' : 'err');
-    k.daCham = true; veLai();
+    k.daCham = true; k.chamTot = !!tot; veLai();
   });
 };
 G.dtDatTim = function (v) { G.dtTim = v; veLai(); };
+
+/* ── Kho giải pháp: hỏi một lần, dùng mãi; khi cần chỉ kiểm lại & bổ sung ── */
+G.dtKho = G.dtKho || null;
+G.dtKhoTai = function () {
+  if (!G.goiMayChu || G.dtKhoDangTai) return;
+  G.dtKhoDangTai = true;
+  G.goiMayChu('dsGiaiPhap', {}).then(function (x) { G.dtKhoDangTai = false; G.dtKho = x || { ok: false, error: 'Không có phản hồi.' }; veLai(); });
+};
+function sauViec(x, okMsg) {
+  U.toast(x && x.ok ? okMsg : ((x && x.error) || 'Không làm được.'), x && x.ok ? 'ok' : 'err');
+  G.dtKho = null; G.dtSo = null; veLai();
+}
+G.dtLuuKho = function () {
+  var k = G.dtKq || {};
+  if (!k.ok || !k.traLoi) return;
+  G.goiMayChu('luuGiaiPhap', { loai: k.loai, cau: k.cau || G.dtCau, traLoi: k.traLoi, ncc: k.ncc }).then(function (x) {
+    if (x && x.ok) k.daLuu = true;
+    sauViec(x, x && x.trangThai === 'duyet' ? 'Đã lưu vào kho (đã duyệt).' : 'Đã gửi vào kho — chờ Super Admin duyệt.');
+  });
+};
+G.dtDuyet = function (ma, dongY) { G.goiMayChu('duyetGiaiPhap', { ma: ma, dongY: !!dongY }).then(function (x) { sauViec(x, dongY ? 'Đã duyệt.' : 'Đã bỏ bản nháp.'); }); };
+G.dtBoSung = function (ma) {
+  U.toast('Đang kiểm lại…', 'ok');
+  G.goiMayChu('boSungGiaiPhap', { ma: ma, ghiChu: giaTri('dt-gc') }).then(function (x) {
+    sauViec(x, x && x.du ? 'Giải pháp vẫn đủ — đã đóng dấu soát lại.' : 'Có phần bổ sung — bản nháp phiên bản mới chờ duyệt.');
+  });
+};
+/* ── Tự cập nhật theo 5 hãng: canh mô hình mới, thử trên đề của GITA ── */
+G.dtCanhMau = function () {
+  G.dtCanh = { cho: true }; veLai();
+  G.goiMayChu('canhMauDaTri', {}).then(function (x) { G.dtCanh = x || { ok: false, error: 'Không có phản hồi.' }; veLai(); });
+};
+G.dtThuMau = function () {
+  var ncc = giaTri('dt-tm-ncc'), model = giaTri('dt-tm-mau').trim();
+  if (!model) { U.toast('Nhập tên mô hình cần thử.', 'err'); return; }
+  G.dtThu = { cho: true }; veLai();
+  G.goiMayChu('thuMauDaTri', { ncc: ncc, model: model }).then(function (x) { G.dtThu = x || { ok: false, error: 'Không có phản hồi.' }; veLai(); });
+};
 
 /* Tự tối ưu: loại việc nào mà một bậc RẺ HƠN trần đã đạt ≥80% "tốt" qua
    ≥5 lượt chấm → đề xuất hạ trần. Máy chỉ đề xuất (AT5). */
@@ -278,12 +318,15 @@ function veNao() {
     o += '<div class="card mt"><b>Trạng thái</b> ' + (so.bat ? '<span class="chip" style="color:var(--ok)">Đang bật</span>' :
       '<span class="chip" style="color:var(--gita-do)">Đang tắt — đặt GITA_DA_TRI_BAT = 1</span>') +
       (so.tietKiem ? ' <span class="chip">Chế độ tiết kiệm</span>' : '') +
-      '<table class="tbl sm mt"><tr><th>Bậc</th><th>Nhà cung cấp</th><th>Mô hình</th><th>Sẵn sàng</th><th>Ngân sách token/ngày</th><th>Cấu hình</th></tr>' +
-      '<tr><td>0</td><td>Bộ nhớ đệm D1</td><td>—</td><td style="color:var(--ok)">luôn</td><td>0 token</td><td>—</td></tr>' +
+      ' <span class="chip">Trần tải ' + (so.tranTai || 50) + '% ngân sách</span>' +
+      (so.kho ? ' <span class="chip">Kho: ' + so.kho.duyet + ' giải pháp · ' + so.kho.nhap + ' chờ duyệt' + (so.kho.canSoat ? ' · ' + so.kho.canSoat + ' quá hạn soát' : '') + '</span>' : '') +
+      '<table class="tbl sm mt"><tr><th>Bậc</th><th>Nhà cung cấp</th><th>Mô hình</th><th>Sẵn sàng</th><th>Ngân sách token/ngày (hiệu lực / gốc)</th><th>Cấu hình</th></tr>' +
+      '<tr><td>0</td><td>Kho giải pháp + bộ nhớ đệm D1</td><td>—</td><td style="color:var(--ok)">luôn</td><td>0 token</td><td>—</td></tr>' +
       so.ncc.map(function (n) {
         return '<tr><td>' + n.bac + '</td><td>' + h(n.ten) + '</td><td class="mono">' + h(n.model || 'chưa khai') + '</td><td>' +
           (n.sanSang ? '<span style="color:var(--ok)">có</span>' : '<span class="muted">chưa</span>') + '</td><td>' +
-          (n.nganNgay ? Number(n.nganNgay).toLocaleString('vi-VN') : 'hạn mức Cloudflare') + '</td><td class="mono tiny">' + h(n.bien) + '</td></tr>';
+          (n.nganNgay ? Number(n.nganNgay).toLocaleString('vi-VN') + (n.nganGoc ? ' / ' + Number(n.nganGoc).toLocaleString('vi-VN') : '') : 'hạn mức Cloudflare') +
+          '</td><td class="mono tiny">' + h(n.bien) + '</td></tr>';
       }).join('') + '</table></div>';
   }
   var loai = (so && so.loai) || [{ ma: 'soan', ten: 'Soạn nháp' }];
@@ -303,13 +346,81 @@ function veNao() {
       return '<div class="card mt"><b>' + h(x.tenNcc || x.ncc) + '</b> <span class="chip mono">' + h(x.model || '') + '</span> <span class="tiny muted">' + (x.token || 0) + ' token</span>' +
         '<div class="sm mt" style="white-space:pre-wrap">' + h(x.traLoi || x.loi || '') + '</div></div>';
     }).join('');
+  else if (k && k.ok && k.tuKho) o += '<div class="card mt" style="border-color:var(--ok)"><div class="row" style="gap:6px;flex-wrap:wrap"><b>Kho giải pháp</b>' +
+    '<span class="chip" style="color:var(--ok)">0 token</span><span class="chip mono">' + h(k.maGP) + ' · phiên bản ' + k.phienBan + '</span>' +
+    '<span class="chip">khớp ' + k.khop + '%</span>' + (k.canSoat ? '<span class="chip" style="color:var(--gita-do)">quá hạn soát — nên kiểm lại</span>' : '') + '</div>' +
+    '<div class="tiny muted mt">Câu gốc: ' + h(k.cauGoc) + '</div>' +
+    '<div class="sm mt" style="white-space:pre-wrap">' + h(k.traLoi) + '</div>' +
+    '<div class="row mt" style="gap:8px">' + nut('G.dtBoSung(\'' + h(k.maGP) + '\')', 'Kiểm lại & bổ sung') +
+    nut('G.dtHoi(0,false,true)', 'Hỏi mới (bỏ qua kho)') + '</div></div>';
   else if (k && k.ok) o += '<div class="card mt"><div class="row" style="gap:6px;flex-wrap:wrap"><b>' + h(k.tenNcc || k.ncc) + '</b>' +
     '<span class="chip">bậc ' + k.bac + '</span>' + (k.tuDem ? '<span class="chip" style="color:var(--ok)">từ bộ đệm · 0 token</span>' : '<span class="chip">' + k.token + ' token</span>') +
     (k.model ? '<span class="chip mono">' + h(k.model) + '</span>' : '') + '</div>' +
     '<div class="sm mt" style="white-space:pre-wrap">' + h(k.traLoi) + '</div><div class="tiny muted mt">' + h(k.nhac || 'Bản nháp — người phụ trách kiểm chứng.') + '</div>' +
     '<div class="row mt" style="gap:8px">' + (k.daCham ? '<span class="tiny muted">Đã chấm.</span>' : nut('G.dtCham(true)', 'Tốt') + nut('G.dtCham(false)', 'Chưa tốt')) +
+    (k.chamTot && !k.daLuu ? nut('G.dtLuuKho()', ic('vault', 'w-4 h-4') + 'Lưu vào kho giải pháp', 'pri') : '') +
     (k.coTheLenBac || k.tuDem ? nut('G.dtLenBac()', 'Lên bậc — hỏi trí tuệ mạnh hơn') : '') + '</div></div>';
   return o;
+}
+
+function veKho() {
+  var kh = G.dtKho;
+  if (!kh) { if (G.goiMayChu) G.dtKhoTai(); return chuaNoi(); }
+  if (!kh.ok) return '<div class="card mt" style="color:var(--gita-do)">' + h(kh.error || '') + '</div>';
+  var duyet = kh.ds.filter(function (r) { return r.trangThai === 'duyet'; }), nhap = kh.ds.filter(function (r) { return r.trangThai === 'nhap'; });
+  var o = '<div class="card mt"><b>Kho giải pháp — hỏi một lần, dùng mãi</b><div class="tiny muted mt">Câu hỏi tương tự (khớp ≥ 60% từ khoá) được trả thẳng từ kho, 0 token. ' +
+    'Người nhà gửi vào → Super Admin duyệt. Mỗi giải pháp quá ' + kh.hanSoat + ' ngày chưa soát được đánh dấu; "Kiểm lại & bổ sung" chỉ hỏi AI phần THIẾU/CŨ (≤ 400 token), ' +
+    'phần thêm thành phiên bản mới chờ duyệt.</div>' +
+    '<input id="dt-gc" class="mt" style="width:100%" placeholder="Ghi chú khi kiểm lại (tuỳ chọn): điều gì đã thay đổi?"></div>';
+  if (nhap.length) o += '<div class="card mt" style="border-color:var(--gita-sau)"><b>Chờ duyệt · ' + nhap.length + '</b>' + nhap.map(function (r) {
+    return '<div class="mt"><span class="chip mono">' + h(r.ma) + '</span> ' + (r.goc ? '<span class="chip">bổ sung cho ' + h(r.goc) + '</span> ' : '') +
+      '<b>' + h(r.cauHoi) + '</b> <span class="tiny muted">đề bởi ' + h(r.nguoiDe || '') + '</span>' +
+      '<div class="sm" style="white-space:pre-wrap">' + h(r.giaiPhap) + '</div><div class="row" style="gap:8px">' +
+      nut('G.dtDuyet(\'' + h(r.ma) + '\',true)', 'Duyệt', 'pri') + nut('G.dtDuyet(\'' + h(r.ma) + '\',false)', 'Bỏ') + '</div></div>';
+  }).join('') + '</div>';
+  o += duyet.map(function (r) {
+    return '<div class="card mt"><div class="row" style="gap:6px;flex-wrap:wrap"><span class="chip mono">' + h(r.ma) + '</span><span class="chip">' + h(r.loai) + '</span>' +
+      '<span class="chip">phiên bản ' + r.phienBan + '</span><span class="chip">dùng ' + (r.dung || 0) + ' lần</span>' +
+      (r.canSoat ? '<span class="chip" style="color:var(--gita-do)">quá hạn soát</span>' : '') + '</div><b class="mt">' + h(r.cauHoi) + '</b>' +
+      '<div class="sm mt" style="white-space:pre-wrap">' + h(r.giaiPhap) + '</div><div class="row mt">' + nut('G.dtBoSung(\'' + h(r.ma) + '\')', 'Kiểm lại & bổ sung') + '</div></div>';
+  }).join('');
+  if (!duyet.length && !nhap.length) o += '<div class="card mt tiny muted">Kho trống. Hỏi ở ngăn "Bộ não đa trí", chấm "Tốt" rồi bấm "Lưu vào kho giải pháp".</div>';
+  return o;
+}
+
+function veTinhTuy() {
+  var so = G.dtSo;
+  if (!so) { if (G.goiMayChu) G.dtTaiSo(); return chuaNoi(); }
+  if (!so.ok) return '<div class="card mt">' + h(so.error || '') + '</div>';
+  var o = '<div class="card mt"><b>Tinh túy 5 bộ não → kỹ thuật GITA đang chạy</b><div class="tiny muted mt">Điểm mạnh dưới đây là điều chính các hãng công bố; GITA chưa tự kiểm chứng. ' +
+    'GITA không vượt được bản thân các mô hình hàng đầu — GITA hơn từng mô hình đơn lẻ trên VIỆC CỦA GITA nhờ định tuyến, kho giải pháp đã duyệt và tri thức miền, đo bằng điểm chấm.</div>' +
+    '<table class="tbl sm mt"><tr><th>Hãng</th><th>Điểm mạnh (theo hãng)</th><th>GITA dùng thế nào</th><th>Ở đâu</th></tr>' +
+    (so.tinhTuy || []).map(function (t) { return '<tr><td><b>' + h(t.hang) + '</b></td><td>' + h(t.manh) + '</td><td>' + h(t.gita) + '</td><td class="mono tiny">' + h(t.o) + '</td></tr>'; }).join('') +
+    '</table></div>';
+  o += '<div class="card mt"><b>Khuôn tư duy theo loại việc</b><table class="tbl sm mt"><tr><th>Loại việc</th><th>Bậc</th><th>Khuôn</th></tr>' +
+    (so.loai || []).map(function (l) { return '<tr><td>' + h(l.ten) + '</td><td>' + l.tu + '–' + l.den + '</td><td class="tiny">' + h(l.khuon || '') + '</td></tr>'; }).join('') + '</table></div>';
+  var c = G.dtCanh;
+  o += '<div class="card mt"><b>Tự cập nhật theo 5 hãng</b><div class="tiny muted mt">Lịch chạy tự canh danh sách mô hình mỗi 7 ngày (lần cuối: ' +
+    (so.lucCanhMau ? new Date(so.lucCanhMau).toLocaleString('vi-VN') : 'chưa') + '). Máy chỉ BÁO; Super Admin thử mô hình mới trên chính đề trong kho giải pháp, ' +
+    'thấy tốt hơn mới đổi biến GITA_MAU_*.</div><div class="row mt" style="gap:8px">' + nut('G.dtCanhMau()', 'Canh mô hình mới ngay') + '</div>';
+  if (c && c.cho) o += '<div class="tiny muted mt">Đang canh…</div>';
+  else if (c && !c.ok) o += '<div class="tiny mt" style="color:var(--gita-do)">' + h(c.error || '') + '</div>';
+  else if (c) o += '<table class="tbl sm mt"><tr><th>Hãng</th><th>Đang dùng</th><th>Số mô hình</th><th>Mới</th></tr>' + c.kq.map(function (x) {
+    return '<tr><td>' + h(x.ten) + '</td><td class="mono">' + h(x.dangDung || '—') + (x.dangDungConTrongDs === false ? ' <span style="color:var(--gita-do)">(đã biến khỏi danh sách)</span>' : '') +
+      '</td><td>' + (x.loi ? '<span style="color:var(--gita-do)">' + h(x.loi) + '</span>' : x.tong) + '</td><td class="mono tiny">' +
+      (x.mocNen ? 'ghi mốc nền' : h((x.moi || []).join(', ') || '—')) + '</td></tr>';
+  }).join('') + '</table>';
+  var t = G.dtThu;
+  o += '<div class="row mt" style="gap:8px;flex-wrap:wrap"><select id="dt-tm-ncc">' + (so.ncc || []).map(function (n) { return '<option value="' + h(n.ma) + '">' + h(n.ten) + '</option>'; }).join('') +
+    '</select><input id="dt-tm-mau" placeholder="Tên mô hình cần thử"> ' + nut('G.dtThuMau()', 'Thử trên đề của GITA', 'pri') + '</div>';
+  if (t && t.cho) o += '<div class="tiny muted mt">Đang thử…</div>';
+  else if (t && !t.ok) o += '<div class="tiny mt" style="color:var(--gita-do)">' + h(t.error || '') + '</div>';
+  else if (t) o += '<div class="tiny muted mt">' + h(t.nhac) + '</div>' + t.ket.map(function (x) {
+    return '<div class="card mt"><b>' + h(x.cauHoi) + '</b><div class="row mt" style="gap:12px;align-items:flex-start"><div style="flex:1"><div class="tiny muted">Bản đã duyệt</div>' +
+      '<div class="sm" style="white-space:pre-wrap">' + h(x.daDuyet) + '</div></div><div style="flex:1"><div class="tiny muted">' + h(t.model) + ' · ' + x.token + ' token</div>' +
+      '<div class="sm" style="white-space:pre-wrap">' + h(x.moi) + '</div></div></div></div>';
+  }).join('');
+  return o + '</div>';
 }
 
 function veTri() {
@@ -362,23 +473,25 @@ function veToiUu() {
   if (!so) { if (G.goiMayChu) G.dtTaiSo(); return chuaNoi(); }
   if (!so.ok) return '<div class="card mt">' + h(so.error || '') + '</div>';
   var goi = 0, tk = 0, dem = 0;
-  (so.homNay || []).forEach(function (r) { if (r.ncc === 'dem') dem += r.luot; else { goi += r.luot; tk += r.vao + r.ra; } });
+  (so.homNay || []).forEach(function (r) { if (r.ncc === 'dem' || r.ncc === 'kho') dem += r.luot; else { goi += r.luot; tk += r.vao + r.ra; } });
   var o = U.bdSoHang ? U.bdSoHang([
     { k: 'Lượt gọi AI hôm nay', v: goi },
     { k: 'Token hôm nay', v: tk.toLocaleString('vi-VN') },
-    { k: 'Trúng đệm hôm nay (0 token)', v: dem },
-    { k: 'Tỉ lệ trúng đệm', v: (goi + dem ? Math.round(100 * dem / (goi + dem)) : 0) + '%' }
+    { k: 'Trúng kho + đệm hôm nay (0 token)', v: dem },
+    { k: 'Tỉ lệ 0 token', v: (goi + dem ? Math.round(100 * dem / (goi + dem)) : 0) + '%' }
   ]) : '';
   o += '<div class="card mt"><b>7 ngày theo nhà cung cấp</b><table class="tbl sm mt"><tr><th>Nhà cung cấp</th><th>Lượt</th><th>Token vào</th><th>Token ra</th></tr>' +
-    (so.tuan || []).map(function (r) { return '<tr><td>' + h(r.ncc === 'dem' ? 'bộ đệm' : r.ncc) + '</td><td>' + r.luot + '</td><td>' + r.vao + '</td><td>' + r.ra + '</td></tr>'; }).join('') + '</table></div>';
-  o += '<div class="card mt"><b>Bảy đòn tối ưu token đang chạy</b><div class="sm mt">' +
-    '1. Bộ đệm: câu đã hỏi trả lại 0 token (giữ 1–30 ngày theo loại việc).<br>' +
-    '2. Rẻ trước: Workers AI → DeepSeek → Gemini/GPT → Claude/Grok.<br>' +
-    '3. Trần token ra theo loại việc (200–2.000).<br>' +
-    '4. Lời hệ thống ngắn, gửi mỗi lượt nên mỗi chữ đều tính.<br>' +
-    '5. Tri thức gửi ở dạng nén (≤ 800 ký tự), chỉ 3 nguyên lý liên quan nhất.<br>' +
-    '6. Ngân sách token mỗi ngày cho từng nhà cung cấp; hết thì leo hoặc dừng.<br>' +
-    '7. Chế độ tiết kiệm: chỉ còn đệm + Workers AI.</div></div>';
+    (so.tuan || []).map(function (r) { return '<tr><td>' + h(r.ncc === 'dem' ? 'bộ đệm' : r.ncc === 'kho' ? 'kho giải pháp' : r.ncc) + '</td><td>' + r.luot + '</td><td>' + r.vao + '</td><td>' + r.ra + '</td></tr>'; }).join('') + '</table></div>';
+  o += '<div class="card mt"><b>Chín đòn tối ưu token đang chạy</b><div class="sm mt">' +
+    '1. Kho giải pháp đã duyệt: câu tương tự trả thẳng, 0 token, không hạn.<br>' +
+    '2. Bộ đệm: câu đã hỏi trả lại 0 token (giữ 1–30 ngày theo loại việc).<br>' +
+    '3. Rẻ trước: Workers AI → DeepSeek → Gemini/GPT → Claude/Grok.<br>' +
+    '4. Trần token ra theo loại việc (200–2.000); kiểm lại kho chỉ 400.<br>' +
+    '5. Lời hệ thống ngắn, gửi mỗi lượt nên mỗi chữ đều tính.<br>' +
+    '6. Tri thức gửi ở dạng nén (≤ 800 ký tự), chỉ 3 nguyên lý liên quan nhất.<br>' +
+    '7. Ngân sách token mỗi ngày cho từng nhà cung cấp; hết thì leo hoặc dừng.<br>' +
+    '8. Trần tải ' + (so.tranTai || 50) + '%: chỉ dùng tới mức này của mỗi ngân sách, phần còn lại là dự phòng (GITA_TRAN_TAI).<br>' +
+    '9. Chế độ tiết kiệm: chỉ còn kho + đệm + Workers AI.</div></div>';
   var dx = G.dtDeXuat(so);
   o += '<div class="card mt"><b>Đề xuất tự tối ưu (máy đề xuất, chủ hệ quyết)</b><div class="sm mt">' +
     (dx.length ? dx.map(h).join('<br>') : 'Chưa đủ điểm chấm (cần ≥ 5 lượt mỗi loại × nhà cung cấp).') + '</div></div>';
@@ -391,7 +504,7 @@ G.VIEWS['bo-nao-da-tri'] = function () {
   o += '<div class="row" style="gap:6px;flex-wrap:wrap">' + NGAN.map(function (x) {
     return '<button class="btn ' + (G.dtNgan === x.ma ? 'pri' : 'ghost') + '" onclick="G.dtMoNgan(\'' + x.ma + '\')">' + ic(x.ic, 'w-4 h-4') + h(x.ten) + '</button>';
   }).join('') + '</div>';
-  var f = { nao: veNao, tri: veTri, bang: veBang, toiuu: veToiUu }[G.dtNgan] || veNao;
+  var f = { nao: veNao, kho: veKho, tinhtuy: veTinhTuy, tri: veTri, bang: veBang, toiuu: veToiUu }[G.dtNgan] || veNao;
   return o + f();
 };
 })();

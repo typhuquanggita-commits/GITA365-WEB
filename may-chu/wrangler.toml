@@ -214,6 +214,10 @@ bucket_name = "gita365-hoso"
 #    npx wrangler secret put GITA_KHOA_XAI        + GITA_MAU_XAI       (bắt buộc)
 # Ngân sách token mỗi ngày (tuỳ chọn, ghi đè mặc định trong NCC):
 #    GITA_NGAN_TOKEN_DEEPSEEK · _GEMINI · _OPENAI · _ANTHROPIC · _XAI
+# Trần tải: chỉ dùng tối đa GITA_TRAN_TAI % ngân sách trên (mặc định 50).
+#    GITA_TRAN_TAI = "50"   → nửa còn lại là dự phòng, không bao giờ chạm đáy.
+# Kho giải pháp + canh mô hình mới (lịch chạy, tối đa 1 lần/7 ngày, chỉ báo,
+# không tự đổi GITA_MAU_*) chạy sẵn khi GITA_DA_TRI_BAT = "1".
 # GITA_CHE_DO_TIET_KIEM = "1" → chỉ còn đệm + Workers AI.
 #
 # LƯU Ý MỘT CHỖ HAY BỊ HỎI: mô hình NGÔN NGỮ (loại đang chạy trợ lý

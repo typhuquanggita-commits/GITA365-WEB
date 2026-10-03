@@ -2366,3 +2366,7 @@ CREATE TABLE IF NOT EXISTS heKhoang (
 CREATE TABLE IF NOT EXISTS triNhoDaTri (khoa TEXT PRIMARY KEY, loai TEXT, ncc TEXT, traLoi TEXT, luc INTEGER, hetHan INTEGER, dung INTEGER DEFAULT 0);
 CREATE TABLE IF NOT EXISTS soTokenDaTri (ngay TEXT, ncc TEXT, luot INTEGER DEFAULT 0, vao INTEGER DEFAULT 0, ra INTEGER DEFAULT 0, PRIMARY KEY (ngay, ncc));
 CREATE TABLE IF NOT EXISTS danhGiaDaTri (loai TEXT, ncc TEXT, tot INTEGER DEFAULT 0, xau INTEGER DEFAULT 0, PRIMARY KEY (loai, ncc));
+-- Kho giải pháp (hỏi một lần, dùng mãi; R01 duyệt) · mô hình đã thấy (canh mô hình mới) · nhịp việc định kỳ.
+CREATE TABLE IF NOT EXISTS khoGiaiPhapDaTri (ma TEXT PRIMARY KEY, loai TEXT, cauHoi TEXT, tuKhoa TEXT, giaiPhap TEXT, ncc TEXT, phienBan INTEGER DEFAULT 1, trangThai TEXT DEFAULT 'nhap', goc TEXT, nguoiDe TEXT, nguoiDuyet TEXT, luc INTEGER, lucSoat INTEGER, dung INTEGER DEFAULT 0);
+CREATE TABLE IF NOT EXISTS mauDaTriThay (ncc TEXT, model TEXT, lanDau INTEGER, PRIMARY KEY (ncc, model));
+CREATE TABLE IF NOT EXISTS nhipDaTri (viec TEXT PRIMARY KEY, luc INTEGER);

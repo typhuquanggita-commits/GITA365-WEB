@@ -84,6 +84,29 @@ Máy không tự sửa cấu hình. Cổng nhiều nhà cung cấp là vùng đ�
 4. Đặt ngân sách ngày, ví dụ `GITA_NGAN_TOKEN_DEEPSEEK = "200000"`.
 5. Chạy `wrangler deploy`. Vào màn **Bộ não đa trí** và xem cột "Sẵn sàng".
 
+### Siêu não: tinh túy 5 bộ não · trần tải 50% · kho giải pháp · tự cập nhật
+
+Nói thẳng trước: GITA **không** vượt được bản thân các mô hình hàng đầu. GITA hơn **từng mô hình đơn lẻ trên việc của GITA** nhờ định tuyến, kho giải pháp đã duyệt và tri thức miền — và điều đó phải **đo** bằng điểm chấm, không tuyên bố. Không ai hứa được một mức định giá; giá trị với nhà đầu tư nằm ở tài sản riêng tích luỹ được: kho giải pháp đã duyệt, dữ liệu chấm điểm, số đo chi phí.
+
+1. **Tinh túy 5 bộ não → kỹ thuật GITA** (`TINH_TUY`, ngăn "Tinh túy 5 bộ não"). Điểm mạnh là điều các hãng tự công bố, GITA chưa kiểm chứng:
+   - Claude · huấn luyện theo bộ nguyên tắc → cổng Điều 13 + bước tự soát cuối khuôn phân tích.
+   - DeepSeek · chuyên gia hỗn hợp (chỉ kích hoạt phần cần) → định tuyến theo bậc, rẻ trước.
+   - ChatGPT · đầu ra có cấu trúc → khuôn trả lời theo loại việc (`KHUON`) và kho giải pháp.
+   - Grok · bám thông tin mới → hạn soát 90 ngày (`HAN_SOAT_NGAY`) và "Kiểm lại & bổ sung".
+   - Gemini · ngữ cảnh dài → ưu tiên Gemini cho tóm tắt trong bậc 3 (`LOAI.tomTat.uuTien`).
+2. **Tư duy nhà khoa học.** Khuôn của "Phân tích sâu" và "Chiến lược": câu hỏi thật → giả thuyết → bằng chứng ủng hộ/phản bác → mức chắc chắn → phép thử nhỏ nhất → tự soát.
+3. **Trần tải 50%.** Mỗi nhà cung cấp chỉ được dùng tới `GITA_TRAN_TAI` % ngân sách ngày (mặc định 50). Nửa còn lại là dự phòng nên hệ không bao giờ chạm đáy hạn mức.
+4. **Kho giải pháp** (`khoGiaiPhapDaTri`, ngăn "Kho giải pháp"): hỏi một lần, dùng mãi.
+   - Chấm "Tốt" → "Lưu vào kho". Người nhà gửi thành nháp; Super Admin duyệt.
+   - Câu tương tự (khớp ≥ 60% từ khoá bỏ dấu) được trả thẳng từ kho, **0 token**, trước cả bộ đệm và trước mọi AI.
+   - "Kiểm lại & bổ sung": AI chỉ được hỏi phần THIẾU/SAI/CŨ (≤ 400 token ra). Đủ thì đóng dấu soát; thiếu thì thành nháp phiên bản mới chờ duyệt.
+5. **Tự cập nhật theo 5 hãng** — máy báo, người quyết:
+   - Lịch chạy canh cổng liệt kê mô hình của từng hãng có khoá, tối đa 1 lần/7 ngày (`canhMauTuDong`). Lần đầu chỉ ghi mốc nền; các lần sau báo mô hình MỚI và báo khi mô hình đang dùng biến khỏi danh sách (sổ `DA_TRI_MAU_MOI`).
+   - "Thử trên đề của GITA" (`thuMauDaTri`, R01): mô hình ứng viên trả lời 3 giải pháp dùng nhiều nhất trong kho, đặt cạnh bản đã duyệt. Thấy tốt hơn mới đổi `GITA_MAU_*`.
+   - Cổng liệt kê mô hình lấy theo tài liệu công khai của từng hãng, **CHƯA thử với API thật**.
+
+Đo: `node tools/thu-da-tri.mjs` (47 phép thử, gồm trần 50%, khuôn, ưu tiên Gemini, kho, bổ sung, canh mô hình, thử mô hình).
+
 ## 2. Kho trí tuệ
 
 - **Không chép toàn văn sách còn bản quyền.** Mỗi mục gồm:

@@ -26,14 +26,14 @@ export const VIEC_AI = new Set([
   'phimGuiViec', 'hoiChatbot', 'hoiTroLyTaiChinh', 'crmTroLy', 'crmDieuPhoiAI',
   'aiPhanLoai', 'aiSoanNhap', 'aiTongHopGiamSat', 'soanDeBaiNgoai',
   'sinhNoiDungKenh', 'traLoiCoach', 'dieuPhoiTroLy', 'chayBuocAgent',
-  'hoiDaTri', 'hoiDongDaTri'
+  'hoiDaTri', 'hoiDongDaTri', 'boSungGiaiPhap', 'thuMauDaTri', 'canhMauDaTri'
 ]);
 
 /* Trong số đó, việc CHẮC CHẮN gọi ra nhà cung cấp tính tiền theo lượt
    (fal.ai ở phim-ai.js, OpenAI ở quyen-nang-ai.js) — chế độ tiết kiệm
    chỉ đóng nhóm này, các trợ lý chạy luật nội bộ vẫn mở. */
 export const VIEC_TRA_PHI = new Set([
-  'phimGuiViec', 'aiPhanLoai', 'aiSoanNhap', 'aiTongHopGiamSat', 'soanDeBaiNgoai'
+  'phimGuiViec', 'aiPhanLoai', 'aiSoanNhap', 'aiTongHopGiamSat', 'soanDeBaiNgoai', 'thuMauDaTri'
 ]);
 
 /* Việc KHÔNG cần phiên, dễ bị dò — đếm theo IP. */
