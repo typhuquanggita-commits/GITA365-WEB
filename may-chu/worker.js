@@ -95,6 +95,7 @@ import { hoiDaTri, hoiDongDaTri, chamDaTri, soDaTri, luuGiaiPhap, duyetGiaiPhap,
   canhMauDaTri, canhMauTuDong, thuMauDaTri, vongKhoaHocTuDong, docVongKhoaHoc,
   taoTuyenDaTri, chayChangDaTri, docTuyenDaTri } from './bo-nao-da-tri.js';
 import { docKpiCayTien } from './cay-tien.js';
+import { docDongChay } from './dong-chay.js';
 import { dieuPhoiTroLy, soatDieuPhoi, tuHoanThienTroLy, soatHoatDongAgent } from './dieu-phoi.js';
 import { soatKhungVanHanh, chamMotLuot } from './khung-van-hanh.js';
 import { lapKeHoachAgent, chayBuocAgent, dsWorkflowAgent } from './agent-team.js';
@@ -316,7 +317,7 @@ const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau'
   'hoiChatbot', 'lichSuChat', 'soanDeBaiNgoai',
   'hoiDaTri', 'hoiDongDaTri', 'chamDaTri', 'soDaTri',
   'luuGiaiPhap', 'duyetGiaiPhap', 'dsGiaiPhap', 'boSungGiaiPhap', 'canhMauDaTri', 'thuMauDaTri', 'docVongKhoaHoc',
-  'taoTuyenDaTri', 'chayChangDaTri', 'docTuyenDaTri', 'docKpiCayTien',
+  'taoTuyenDaTri', 'chayChangDaTri', 'docTuyenDaTri', 'docKpiCayTien', 'docDongChay',
   'phimTrangThai', 'phimGuiViec', 'phimXemViec', 'phimTinhHuong',
   'guiBaoCaoNgay', 'tongHopBaoCao', 'dsBaoCaoNgay'];
 
@@ -693,6 +694,7 @@ async function lam(fn, y, env, db) {
   if (fn === 'chayChangDaTri')    return await chayChangDaTri(y, env, db, hoSo);
   if (fn === 'docTuyenDaTri')     return await docTuyenDaTri(y, env, db, hoSo);
   if (fn === 'docKpiCayTien')     return await docKpiCayTien(y, env, db, hoSo);
+  if (fn === 'docDongChay')       return await docDongChay(y, env, db, hoSo);
   if (fn === 'phimTrangThai')     return await phimTrangThai(y, env, db, hoSo);
   if (fn === 'phimGuiViec')       return await phimGuiViec(y, env, db, hoSo);
   if (fn === 'phimXemViec')       return await phimXemViec(y, env, db, hoSo);

@@ -1021,6 +1021,7 @@ G.NAV = [
     {v:'la-chan-30', t:'Lá chắn 30 tầng · 15 bảo mật + 15 phòng vệ', h:'Mỗi tầng trỏ vào mã đang chạy và được CI đo trên mỗi PR · HTTPS/CSP/CORS · băm mật khẩu · OTP · passkey · phân quyền · mã hoá đầu cuối · chữ ký HMAC · chống SSRF · soát bí mật · cổng Điều 13 · chặn nhịp · trần ngân sách · ngăn khoang · đóng băng · sao lưu · tự chữa · nhật ký · quyền dữ liệu theo luật · ghi thật chỗ còn trống', ic:'shield', perm:'qt_trang', capMo:'chung'},
     {v:'bo-may-tap-doan', t:'Bộ máy tập đoàn tinh gọn · cây giá trị · cây tiền', h:'16 ban/hệ thống trỏ vào mã thật (CI đo mỗi PR) · thanh tra · sản xuất nội dung · kho tài liệu · giải pháp khách hàng · coach · giáo dục · luật sư · dự án · bộ não · lá chắn · cây giá trị 5 tầng · cây tiền: 90% hài lòng · 90% tái dùng+nâng cấp · 20% tầng 5 — tính lúc đọc từ D1, không ô nhập tay', ic:'grid', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'kien-truc-hop-nhat', t:'Kiến trúc hợp nhất — mô hình mục tiêu ↔ mã đang chạy', h:'7 lớp: hiến pháp · bộ não · 6 agent · nghiệp vụ · vận hành · dữ liệu-đo lường-bảo mật · nền tảng · mỗi mảnh: ĐÃ CÓ (trỏ mã thật) / TỰ XÂY TƯƠNG ĐƯƠNG / CHƯA — kèm ngưỡng kích hoạt đo được · không nhập một mảnh vì nó đẹp trên hình', ic:'map', star:1, perm:'qt_trang', capMo:'chung'},
+    {v:'truy-van-da-chieu', t:'Truy vấn đa chiều — bốn dòng chảy · bảng điểm 16 ban', h:'dòng tiền · dòng chi phí · dòng giá trị · dòng công việc tính lúc đọc từ D1, không ô nhập tay · ban nào có tín hiệu xấu vượt ngưỡng thì đỏ — cần nâng cấp · 7/30/90/365 ngày', ic:'chart', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'khung-van-hanh', t:'Khung vận hành · V20', h:'Harness Engineering — tầng chuẩn hoá cách Bộ não điều phối 100 trợ lý · năm trụ: quản lý ngữ cảnh · gọi đúng cổng công cụ · gác Hiến pháp · chống hai trợ lý cùng ra tay · tự kiểm chất lượng mỗi lượt · mỗi trụ TRỎ vào cơ chế thật (không chép luật), bộ chấm mỗi lượt đo được từng trụ (phá-thử-đỏ-được) · V20 là đo được, không phải con số tự khai · bộ chấm KHÔNG tự ra tay', ic:'shield', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'suc-chua-toc-do', t:'Sức chứa & Tốc độ', h:'Bộ não chạy nhanh và chứa nhiều trên Cloudflare bằng NĂM TRỤ (việc nặng ở máy khách · chỉ mục đường tra nóng · bộ nhớ đệm ở biên · Workers tự co giãn · R2 cho tệp lớn), không bằng một con số · "1TB" là dung lượng, đạt bằng R2 (hàng TB) + chia mảnh D1, không phải mức của bộ não · sức chứa ĐO ĐƯỢC lúc gọi (cửa doSucChua), không tự khai · nói ra cả trần Cloudflare lẫn đường vượt trần', ic:'vault', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'thanh-tra-soi', t:'Mười tổ thanh tra soi', h:'Mười thanh tra ĐỘC LẬP chuyên phá các điểm chưa tốt, mười CẤP × 100 bậc = 1000 bậc tiêu chuẩn liền mạch · mỗi tổ NEO vào một phép soi CÓ THẬT trong mã nguồn (soatRaNgoai · truyHoiHe · capDuyetTheoTien · nhaCuaMinh · xuatDuLieuNha · danhDauXoa · dieuPhoiTroLy · a11yNhan · lapTheVungManh · kiemPhien), không phải một dòng khẩu hiệu — mục 114 đối chiếu tên ấy tồn tại trong tệp, trỏ vào cái tên bịa thì đỏ · cấp cao = hậu quả nặng hơn khi hỏng, cấp 10 là rò dữ liệu một đứa trẻ ra ngoài', ic:'shield', star:1, perm:'qt_trang', capMo:'chung'},
@@ -1537,6 +1538,7 @@ G.ITEM_EN = {
 'la-chan-30':['30-Layer Shield · 15 Security + 15 Defence','Every layer points at running code and is measured by CI on every PR · HTTPS/CSP/CORS · password hashing · OTP · passkeys · roles · end-to-end encryption · HMAC signatures · anti-SSRF · secret scanning · Article 13 gate · rate limits · budget ceilings · compartments · freeze · backups · self-heal · audit log · legal data rights · honest list of remaining gaps'],
 'bo-may-tap-doan':['Lean Conglomerate Machine · Value Tree · Money Tree','16 divisions pointing at running code (CI-measured every PR) · inspectorate · content production · document warehouse · customer solutions · coaches · education · legal · projects · brain · shield · 5-layer value tree · money tree: 90% happy · 90% renewal+upgrade · 20% tier-5 — computed at read time from D1, no manual input cells'],
 'kien-truc-hop-nhat':['Unified Architecture — Target Model vs Running Code','7 layers: constitution · brain · 6 agents · business systems · operations · data-observability-security · platform · each piece: IN PLACE (points at real code) / SELF-BUILT EQUIVALENT / NOT YET — with a measurable adoption threshold · nothing is imported just because it looks good on a diagram'],
+'truy-van-da-chieu':['Multi-Dimensional Queries — Four Flows & 16-Division Scorecard','money · cost · value · work flows computed at read time from D1, no manual cells · a division with a signal past its threshold turns red — needs upgrade · 7/30/90/365 days'],
   'goi-nghe':['Professional Kits by Department','Each role a full kit: mission · professional standard · certification · tools'],
   'assessment':['Tier-1 Assessment','6 domains · 10-step protocol · DCI reliability · care direction — the consultant/assessor diagnostic'],
   'nhan-su-tt':['Loyal staff profile','5 levels · 7 metrics · 5 rules'],
@@ -54194,7 +54196,7 @@ G.H16_HE = [
   { ma: 'H03', ten: 'Vận hành nội lực', ic: 'pulse',
     troVao: ['v:tu-hoan-thien', 'v:tu-nang-cap', 'v:tu-dong', 'v:tu-van-hanh', 'v:giam-sat', 'v:noi-may-chu',
       'f:sucKhoeHe', 'f:dsKhoang', 'f:datKhoang', 'f:soatCuuHe', 'f:deXuatNangCap',
-      'd:docs/KIEN_TRUC_NOI_LUC.md', 't:tools/thu-dong-bo.mjs'],
+      'd:docs/KIEN_TRUC_NOI_LUC.md', 't:tools/thu-dong-bo.mjs', 'f:docDongChay', 'v:truy-van-da-chieu'],
     trong: 'Phát hành vẫn ghi số phiên bản tay; chưa có nhật ký thay đổi sinh tự động.',
     ke: 'release-please (Google) sinh CHANGELOG + thẻ phiên bản từ commit quy ước.' },
   { ma: 'H04', ten: 'Khách hàng', ic: 'eye',
@@ -55923,6 +55925,105 @@ G.KT_LOP = [
     });
     o += '<p class="note hvh-note">Bản as-built (đo từ repo) ở tài liệu KIEN_TRUC_TONG_THE.md · sơ đồ vận hành ở SO_DO_VAN_HANH_TONG_THE.md. ' +
       'Màn này được CI đo trong tools/do-16-he.js — con trỏ chết là đỏ.</p>';
+    return o;
+  };
+})();
+
+})();
+
+/* ═════════ src/truy-van-da-chieu.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — TRUY VẤN ĐA CHIỀU · BỐN DÒNG CHẢY · BẢNG ĐIỂM 16 BAN
+
+   Màn đọc cửa docDongChay (may-chu/dong-chay.js). Tên ban lấy từ
+   G.TD_BAN (bo-may-tap-doan.js) — KHÔNG chép lại tên ban ở đây.
+
+   "Các phòng ban bắt buộc nâng cấp, làm chuẩn" được hiện thực bằng
+   bảng điểm: tín hiệu xấu vượt ngưỡng khai ở máy chủ thì ban ấy ĐỎ.
+   Hệ thống lộ sáng con số — việc nâng cấp là của người (AT5).
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.VIEWS = G.VIEWS || {};
+
+(function () {
+  var U = G.U, h = U.h, ic = U.ic;
+  function nut(on, nd, k) { return '<button class="btn ' + (k || 'ghost') + ' sm" onclick="' + on + '">' + nd + '</button>'; }
+  function tien(n) { return Number(n || 0).toLocaleString('vi-VN') + ' đ'; }
+
+  G.dcNgay = G.dcNgay || 30;
+  G.dcTai = function (ngay) {
+    if (ngay) G.dcNgay = ngay;
+    if (!G.goiMayChu || G.dcDangTai) return;
+    G.dcDangTai = true;
+    G.goiMayChu('docDongChay', { ngay: G.dcNgay }).then(function (x) {
+      G.dcDangTai = false; G.dc = x || { ok: false, error: 'Không có phản hồi.' };
+      if (G.S && G.S.view === 'truy-van-da-chieu' && G.render) G.render();
+    });
+  };
+
+  function theDong(ten, ic2, cacSo) {
+    return '<div class="hvh-tru-o"><div class="hvh-tru-dau"><b>' + ic(ic2, 'w-4 h-4') + ' ' + h(ten) + '</b></div>' +
+      cacSo.map(function (s) {
+        return '<p class="hvh-meta">' + h(s[0]) + ': <b>' + h(s[1]) + '</b>' + (s[2] ? ' <span class="tiny muted">' + h(s[2]) + '</span>' : '') + '</p>';
+      }).join('') + '</div>';
+  }
+
+  G.VIEWS['truy-van-da-chieu'] = function () {
+    var d = G.dc;
+    var o = '<div class="hd"><h2>' + ic('chart') + ' Truy vấn đa chiều — bốn dòng chảy & bảng điểm 16 ban</h2>' +
+      '<p class="sub">Dòng tiền · dòng chi phí · dòng giá trị · dòng công việc — tính lúc đọc từ D1, không ô nhập tay. ' +
+      'Ban nào có tín hiệu xấu vượt ngưỡng thì <b style="color:var(--gita-do)">đỏ — cần nâng cấp</b>.</p></div>';
+    o += '<div class="row mt" style="gap:6px">' + [7, 30, 90, 365].map(function (n) {
+      return '<button class="btn ' + (G.dcNgay === n ? 'pri' : 'ghost') + ' sm" onclick="G.dcTai(' + n + ')">' + n + ' ngày</button>';
+    }).join('') + nut('G.dcTai()', 'Tải lại') + '</div>';
+
+    if (!d) { if (G.goiMayChu) G.dcTai(); return o + '<div class="card mt tiny muted">Đang đọc từ máy chủ…</div>'; }
+    if (!d.ok) return o + '<div class="card mt" style="color:var(--gita-do)">' + h(d.error || 'Không đọc được.') + '</div>';
+
+    /* ── BỐN DÒNG CHẢY ── */
+    o += '<h3 class="hvh-h">' + ic('chart') + ' Bốn dòng chảy · ' + d.ngay + ' ngày qua</h3><div class="hvh-tru">';
+    o += theDong('Dòng tiền', 'chart', [
+      ['Thu đã duyệt', tien(d.tien.thu)], ['Hoàn tiền', tien(d.tien.hoan)], ['Hoa hồng đã trả', tien(d.tien.hoaHong)],
+      ['Dòng tiền ròng', tien(d.tien.rong), 'thu − hoàn − hoa hồng']]);
+    o += theDong('Dòng chi phí', 'grid', [
+      ['Chi phí vận hành', tien(d.chiPhi.tong)],
+      ['Khoản lớn nhất', (d.chiPhi.top[0] ? d.chiPhi.top[0].khoanMuc + ' · ' + tien(d.chiPhi.top[0].n) : '—')],
+      ['Lương kỳ gần nhất', d.chiPhi.luong ? tien(d.chiPhi.luong.n) + ' · ' + d.chiPhi.luong.soNguoi + ' người · kỳ ' + d.chiPhi.luong.ky : 'chưa có'],
+      ['Token AI', (d.chiPhi.aiToken || []).map(function (x) { return x.ncc + ' ' + Number(x.n).toLocaleString('vi-VN'); }).join(' · ') || '0', 'token, không phải tiền']]);
+    o += theDong('Dòng giá trị khách nhận', 'spark', [
+      ['Bài học hoàn thành', d.giaTri.baiHoc], ['Lượt WOW ghi sổ', d.giaTri.wow],
+      ['Lượt lên tầng', d.giaTri.lenTang], ['Kho giải pháp đã dùng', d.giaTri.khoDung + ' lần', '0 token mỗi lần'],
+      ['Tuyến dự án hoàn tất', d.giaTri.tuyenXong]]);
+    o += theDong('Dòng công việc', 'pulse', [
+      ['Tổng lượt ghi sổ', d.congViec.tongLuot], ['Trung bình/ngày', d.congViec.trungBinhNgay],
+      ['Việc nhiều nhất', d.congViec.top[0] ? d.congViec.top[0].viec + ' · ' + d.congViec.top[0].n + ' lượt' : '—']]);
+    o += '</div>';
+
+    if (d.tien.theoThang && d.tien.theoThang.length)
+      o += '<div class="card mt"><b>Thu theo tháng (6 kỳ gần nhất)</b><table class="tbl sm mt"><tr><th>Tháng</th><th>Thu đã duyệt</th></tr>' +
+        d.tien.theoThang.map(function (r) { return '<tr><td class="mono">' + h(r.thang) + '</td><td>' + tien(r.n) + '</td></tr>'; }).join('') + '</table></div>';
+
+    /* ── BẢNG ĐIỂM 16 BAN ── */
+    var tenBan = {}; (G.TD_BAN || []).forEach(function (b) { tenBan[b.ma] = b.ten; });
+    var soDo = Object.keys(d.ban || {}).filter(function (m) { return d.ban[m].danhGia === 'can-nang-cap'; }).length;
+    o += '<h3 class="hvh-h">' + ic('shield') + ' Bảng điểm 16 ban — ' +
+      (soDo ? '<span style="color:var(--gita-do)">' + soDo + ' ban cần nâng cấp</span>' : '<span style="color:var(--ok)">mọi ban đạt chuẩn</span>') + '</h3>';
+    o += '<table class="tbl sm"><tr><th>Ban</th><th>Đánh giá</th><th>Chỉ số · ngưỡng</th></tr>' +
+      Object.keys(d.ban || {}).map(function (ma) {
+        var b = d.ban[ma];
+        var chip = b.danhGia === 'can-nang-cap' ? '<span class="chip" style="color:var(--gita-do)">CẦN NÂNG CẤP</span>' :
+          b.danhGia === 'chuan' ? '<span class="chip" style="color:var(--ok)">đạt chuẩn</span>' :
+          '<span class="chip">chưa đo được</span>';
+        return '<tr><td><b>' + h(ma) + '</b> ' + h(tenBan[ma] || '') + '</td><td>' + chip + '</td><td class="tiny">' +
+          b.chiSo.map(function (c) {
+            return '<div' + (c.xau ? ' style="color:var(--gita-do);font-weight:600"' : '') + '>' + h(c.ten) + ': ' +
+              (c.giaTri === null ? '—' : h(String(c.giaTri)) + (c.donVi || '')) + ' <span class="muted">(ngưỡng ' + h(c.nguong) + ')</span></div>';
+          }).join('') + '</td></tr>';
+      }).join('') + '</table>';
+    o += '<div class="card mt">' + (d.gioiHan || []).map(function (g) {
+      return '<div class="tiny muted"><b>Giới hạn:</b> ' + h(g) + '</div>'; }).join('') + '</div>';
     return o;
   };
 })();

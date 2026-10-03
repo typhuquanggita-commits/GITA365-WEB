@@ -43,7 +43,7 @@ G.H16_HE = [
   { ma: 'H03', ten: 'Vận hành nội lực', ic: 'pulse',
     troVao: ['v:tu-hoan-thien', 'v:tu-nang-cap', 'v:tu-dong', 'v:tu-van-hanh', 'v:giam-sat', 'v:noi-may-chu',
       'f:sucKhoeHe', 'f:dsKhoang', 'f:datKhoang', 'f:soatCuuHe', 'f:deXuatNangCap',
-      'd:docs/KIEN_TRUC_NOI_LUC.md', 't:tools/thu-dong-bo.mjs'],
+      'd:docs/KIEN_TRUC_NOI_LUC.md', 't:tools/thu-dong-bo.mjs', 'f:docDongChay', 'v:truy-van-da-chieu'],
     trong: 'Phát hành vẫn ghi số phiên bản tay; chưa có nhật ký thay đổi sinh tự động.',
     ke: 'release-please (Google) sinh CHANGELOG + thẻ phiên bản từ commit quy ước.' },
   { ma: 'H04', ten: 'Khách hàng', ic: 'eye',
