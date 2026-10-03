@@ -242,7 +242,9 @@ export async function xacThucOtp(y, env, db) {
     "otpHash='',otpSalt='' WHERE id=?"
   ).bind(token, Date.now() + KICHHOAT_GIO * 3600e3, c.id).run();
 
-  const lien = (env.GITA_DIA_CHI_WEB || 'https://gita.edu.vn') + '#kichhoat=' + token;
+  /* GITA_DIA_CHI_WEB là danh sách origin; đường dẫn trong thư dùng origin đầu tiên. */
+  const web = String(env.GITA_DIA_CHI_WEB || '').split(',')[0].trim().replace(/\/+$/, '');
+  const lien = (web || 'https://gita365.pages.dev') + '#kichhoat=' + token;
   try {
     await guiThu(env, {den: email, batBuoc: true,
       tieuDe: 'GITA 365 — bước cuối để mở tài khoản',

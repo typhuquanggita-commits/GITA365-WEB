@@ -45,8 +45,9 @@
 
 Hiện phần tĩnh chạy tại `gita365.pages.dev` và API tại
 `gita365.typhuquanggita.workers.dev`. Ứng dụng đã đặt sẵn đúng địa chỉ API
-trong `cau-hinh.js`. Khi đưa `gita.edu.vn` vào Cloudflare, có thể cấu hình
-Pages cho tên miền này và Worker cho route `/api/*` để hai đầu cùng một origin.
+trong `cau-hinh.js`. Đây là địa chỉ chính thức duy nhất — dự án không dùng
+tên miền riêng. Hai đầu khác origin nên `GITA_DIA_CHI_WEB` trong
+`may-chu/wrangler.toml` phải chứa `https://gita365.pages.dev` (xem `docs/MAY_CHU.md`).
 
 ---
 
@@ -117,7 +118,8 @@ bash nap-bi-mat.sh /duong/dan/toi/khoa.json
 #   Trước khi tạo Super Admin đầu tiên, nạp thêm GITA_TAO_ADMIN bằng một
 #   secret ngẫu nhiên dùng một lần; xoá secret này ngay sau khi tạo xong.
 
-# 4) (Tên miền) xác thực gita.edu.vn ở nhà gửi thư — SPF/DKIM (xem wrangler.toml)
+# 4) (Gửi thư) điền GITA_THU_GUI_TU trong wrangler.toml và xác thực tên miền
+#    của địa chỉ gửi ở nhà gửi thư — SPF/DKIM (xem wrangler.toml)
 
 # 5) Đưa Worker lên lần đầu. Những thay đổi may-chu/ tiếp theo
 #    được GitHub Actions triển khai tự động sau khi đã có hai secrets ở Phần 1.

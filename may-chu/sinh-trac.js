@@ -369,7 +369,7 @@ export async function xacThucDangNhapMat(y, env, db) {
    Tăng bảo mật + chống chiếm tài khoản: việc quan trọng đòi một lượt quét
    mặt TƯƠI, dù đã đăng nhập. Kẻ trộm mật khẩu/phiên không có khuôn mặt
    thật thì không qua được. WebAuthn khoá theo miền nên cũng chống lừa đảo
-   (trang giả không lấy được chữ ký cho gita.edu.vn). */
+   (trang giả không lấy được chữ ký cho gita365.pages.dev). */
 export const BUOCMAT_SONG_GIAY = 120;   /* bằng chứng mặt tươi sống 2 phút */
 
 export async function xacThucLaiMatBatDau(y, env, db, hoSo) {

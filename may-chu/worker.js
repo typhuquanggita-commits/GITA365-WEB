@@ -941,10 +941,21 @@ const CORS = {
   'Access-Control-Max-Age': '86400'
 };
 
-/* Khi có GITA_DIA_CHI_WEB, CORS chỉ cho phép nguồn đó thay vì '*'. */
-function corsTheoEnv(env) {
-  const origin = String(env.GITA_DIA_CHI_WEB || '').trim();
-  if (!origin) return CORS;
+/* GITA_DIA_CHI_WEB là DANH SÁCH origin, phân tách bằng dấu phẩy. Phải gồm
+   MỌI địa chỉ đang chạy bản web (hiện chỉ https://gita365.pages.dev):
+   thiếu một tên miền là trình duyệt chặn CORS và app báo "không kết nối được
+   máy chủ" dù Worker vẫn sống. Origin của request khớp danh sách thì trả lại
+   đúng origin ấy; không khớp thì trả origin đầu tiên (trình duyệt sẽ chặn).
+   'null' (file://) không bao giờ được chấp nhận. Biến trống → '*'. */
+function dsOriginWeb(env) {
+  return String((env && env.GITA_DIA_CHI_WEB) || '').split(',')
+    .map(s => s.trim().replace(/\/+$/, '')).filter(s => s && s !== 'null');
+}
+export function corsTheoEnv(env, req) {
+  const ds = dsOriginWeb(env);
+  if (!ds.length) return CORS;
+  const goi = req && req.headers && req.headers.get('Origin');
+  const origin = goi && goi !== 'null' && ds.includes(goi) ? goi : ds[0];
   return {
     'Access-Control-Allow-Origin': origin,
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
@@ -953,8 +964,8 @@ function corsTheoEnv(env) {
     'Vary': 'Origin'
   };
 }
-function traJson(o, ma, env) {
-  const headers = corsTheoEnv(env || {});
+function traJson(o, ma, env, req) {
+  const headers = corsTheoEnv(env || {}, req);
   return new Response(JSON.stringify(o), {
     status: ma || 200,
     headers: {'Content-Type': 'application/json; charset=utf-8', ...headers}
@@ -1058,7 +1069,7 @@ export default {
   },
 
   async fetch(req, env) {
-    const cors = corsTheoEnv(env);
+    const cors = corsTheoEnv(env, req);
     if (req.method === 'OPTIONS') return new Response(null, {status: 204, headers: cors});
 
     /* Trạng thái: máy chủ còn sống chưa, đã nạp khoá chưa. KHÔNG trả
@@ -1067,22 +1078,22 @@ export default {
       let n = 0;
       try { n = Object.keys(JSON.parse(env.GITA_KHOA_KHO || '{}')).length; } catch (e) {}
       return traJson({ok: true, ten: 'GITA 365 — máy chủ cấp phép',
-        daNapKhoa: n, luc: new Date().toISOString()}, 200, env);
+        daNapKhoa: n, luc: new Date().toISOString()}, 200, env, req);
     }
-    if (req.method !== 'POST') return traJson({ok: false, error: 'Yêu cầu không hợp lệ.'}, 405, env);
+    if (req.method !== 'POST') return traJson({ok: false, error: 'Yêu cầu không hợp lệ.'}, 405, env, req);
 
     let y;
     try { y = await req.json(); } catch (e) { y = {}; }
 
     try {
-      return traJson(await lam(String(y.fn || ''), y, env, env.CSDL), 200, env);
+      return traJson(await lam(String(y.fn || ''), y, env, env.CSDL), 200, env, req);
     } catch (err) {
       /* KHÔNG ĐẨY LỜI LỖI CỦA MÁY RA CHO MÁY KHÁCH. Lời lỗi của cơ sở
          dữ liệu hay kể tên bảng, tên cột, có khi cả mảnh câu lệnh —
          đó là bản đồ cho người đi dò. Ghi đủ vào nhật ký máy chủ, trả
          ra một câu. */
       console.error('LOI', String(y.fn || ''), err && err.stack || err);
-      return traJson({ok: false, error: 'Máy chủ gặp trục trặc. Thử lại sau ít phút.'}, 500, env);
+      return traJson({ok: false, error: 'Máy chủ gặp trục trặc. Thử lại sau ít phút.'}, 500, env, req);
     }
   }
 };

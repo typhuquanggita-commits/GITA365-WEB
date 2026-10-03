@@ -33,15 +33,25 @@ main = "worker.js"
 compatibility_date = "2026-09-01"
 
 [vars]
-# KHÔNG phải bí mật — đây là địa chỉ công khai của bản web, dùng để dựng
-# đường dẫn kích hoạt trong thư. Sai địa chỉ ở đây thì thư đi đúng nhưng
-# đường dẫn trong thư trỏ vào chỗ không có gì.
+# KHÔNG phải bí mật — DANH SÁCH origin công khai của bản web, phân tách
+# bằng dấu phẩy. Hai việc:
+#   1. CORS: Worker chỉ cho các origin này gọi. PHẢI gồm MỌI địa chỉ
+#      đang chạy web (kể cả bản PWA cài từ địa chỉ đó) — thiếu một là
+#      app báo "không kết nối được máy chủ" dù Worker vẫn sống.
+#      Không bao giờ thêm 'null' (file://).
+#   2. Origin ĐẦU TIÊN dùng để dựng đường dẫn kích hoạt trong thư.
+# Địa chỉ web chính thức duy nhất hiện nay: https://gita365.pages.dev
 GITA_DIA_CHI_WEB = "https://gita365.pages.dev"
 
-# Địa chỉ đứng tên người gửi. Tên miền này PHẢI được xác thực ở nhà gửi
-# thư (SPF/DKIM), nếu không thì thư đi nhưng rơi vào mục spam — mà một
-# mã xác nhận nằm trong mục spam thì coi như không gửi.
-GITA_THU_GUI_TU = "GITA 365 <khonggui@gita.edu.vn>"
+# Địa chỉ đứng tên người gửi, dạng "GITA 365 <dia-chi@ten-mien>".
+# CHỦ DỰ ÁN ĐIỀN. Resend CHỈ cho gửi từ tên miền đã xác minh (SPF/DKIM),
+# nên KHÔNG đặt địa chỉ @gmail.com ở đây — Resend sẽ từ chối. Để trống
+# thì máy chủ KHÔNG gửi thư (mã OTP / kích hoạt báo lỗi rõ ràng thay vì
+# im lặng).
+GITA_THU_GUI_TU = ""
+
+# Khách bấm "Trả lời" thì thư về đây (reply-to). Email chính thức.
+GITA_THU_TRA_LOI = "typhuquanggita@gmail.com"
 
 # Hòm thư nhận báo DÒNG DOANH THU — chốt của chủ hệ thống bản 9.96.
 # Mỗi lượt khách chuyển tiền gửi một thư về đây, và mỗi sáng gửi bản
@@ -172,18 +182,16 @@ bucket_name = "gita365-hoso"
 #  1. npx wrangler d1 create gita365          → dán database_id lên trên
 #  2. npx wrangler d1 execute gita365 --file=csdl.sql --remote
 #  3. bốn lệnh secret put ở trên
-#  4. xác thực tên miền gita.edu.vn ở nhà gửi thư (SPF + DKIM)
-#     Chủ hệ quản lý trực tiếp tên miền này, nên bước ấy là tự làm được:
-#     nhà gửi thư đưa ra vài bản ghi TXT/CNAME, thêm vào DNS của
-#     gita.edu.vn rồi bấm xác thực. KHÔNG BỎ QUA BƯỚC NÀY — thư vẫn đi
+#  4. đặt GITA_THU_GUI_TU ở [vars] (chủ dự án điền) và xác thực tên
+#     miền của địa chỉ ấy ở nhà gửi thư (SPF + DKIM): nhà gửi thư đưa ra
+#     vài bản ghi TXT/CNAME, thêm vào DNS của tên miền đó rồi bấm xác
+#     thực. KHÔNG BỎ QUA BƯỚC NÀY — thư vẫn đi
 #     nhưng rơi vào mục spam, mà một mã xác nhận nằm trong mục spam thì
 #     đúng bằng không gửi, và người dùng chỉ thấy "mã không tới".
 #
-#     Vì tên miền là của chủ hệ, phần tĩnh cũng nên chạy trên chính nó:
-#     Worker đặt route gita.edu.vn/api/* và Pages phục vụ phần còn lại.
-#     Cùng một tên miền thì không có CORS, không có lượt gọi thăm dò
-#     trước mỗi yêu cầu, và địa chỉ máy chủ không phải một tên lạ mà
-#     khách hàng nhìn thấy trong thanh địa chỉ.
+#     Bản web chạy ở https://gita365.pages.dev, máy chủ ở
+#     https://gita365.typhuquanggita.workers.dev — khác origin, nên
+#     GITA_DIA_CHI_WEB ở trên phải chứa địa chỉ web để CORS cho qua.
 #  5. npx wrangler deploy
 #
 #  Rồi trong ứng dụng: Super Admin → Quản trị trang → Nối máy chủ →
