@@ -85,6 +85,7 @@ G.VIEWS = G.VIEWS || {};
   }
   function luuDuAn() {
     try { localStorage.setItem(KHOA_LUU, JSON.stringify(G.xpDA)); } catch (e) {}
+    if (G.xpDA && G.xpDA.boMa && G.xpBoLuu) G.xpBoLuu();
   }
 
   /* ══ TÁCH KỊCH BẢN → CẢNH QUAY ══
@@ -446,7 +447,9 @@ G.VIEWS = G.VIEWS || {};
         v.el.currentTime = 0; var p = v.el.play(); if (p && p.catch) p.catch(function () {});
       }
       tatGiong();
-      (c ? c.thoai : []).forEach(function (x) {
+      /* Cảnh đã khớp khẩu hình: giọng nằm sẵn trong clip, không phát thêm lần nữa */
+      var giongTrongClip = c && c.khopMoi && v && v.loai === 'phim';
+      (c && !giongTrongClip ? c.thoai : []).forEach(function (x) {
         var gv = x.am && G.xpVat[x.am];
         if (!gv || gv.loai !== 'giong') return;
         var s = a.createBufferSource(), g = a.createGain();
@@ -524,6 +527,13 @@ G.VIEWS = G.VIEWS || {};
     var loai = {}; loai[mo] = [duoi];
     return window.showSaveFilePicker({suggestedName: tenTep() + duoi, types: [{description: 'Phim', accept: loai}]});
   };
+  /* Hỏi một THƯ MỤC (cần cú bấm) — bộ phim ghi Tap-01 … Tap-10 vào đó */
+  G.xpChonThuMuc = function () {
+    if (!duocLuu()) return Promise.reject(new Error('KHONG_LUU'));
+    if (!window.showDirectoryPicker) { U.toast('Trình duyệt này chưa chọn được thư mục. Dùng Chrome hoặc Edge trên máy tính.', 'err'); return Promise.reject(new Error('KHONG_LUU')); }
+    return window.showDirectoryPicker({id: 'gita-bo-phim', mode: 'readwrite'});
+  };
+  G.xpDuoiPhim = function () { return window.MediaRecorder && MediaRecorder.isTypeSupported('video/mp4') ? '.mp4' : '.webm'; };
   G.xpXuatVao = function (fh, xongFn) {
     U.toast('Đang xuất theo thời gian thực (' + Math.round(tongGiay()) + ' giây). Giữ tab này mở và hiện trên màn hình.', 'ok');
     G.xpPhat(true, function (bl) {
@@ -588,6 +598,7 @@ G.VIEWS = G.VIEWS || {};
       '<p class="sub">Viết kịch bản → máy soạn prompt cho từng cảnh → bạn tạo clip bằng công cụ video AI → nạp clip vào đây ' +
       '→ máy lắp phụ đề, logo, số tập, nhạc và xuất thành phim. Clip, ảnh và nhạc xử lý ngay trên máy, không tải lên đâu.</p></div>';
     o += '<div class="man-xu">';
+    if (G.xpBoView) o += G.xpBoView();
     if (G.xpTuDongView) o += G.xpTuDongView();
 
     /* Hướng dẫn nhanh */

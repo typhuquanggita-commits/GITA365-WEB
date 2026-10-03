@@ -104,6 +104,7 @@
     "src/studio.js",
     "src/xuong-phim.js",
     "src/xuong-phim-tu-dong.js",
+    "src/xuong-phim-bo.js",
     "src/thu-phong.js",
     "src/thanh-duoi.js",
     "src/bo-nao.js",
