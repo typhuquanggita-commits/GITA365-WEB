@@ -28,7 +28,7 @@ const worker = doc('may-chu/worker.js');
 const G = { VIEWS: {}, U: { h: s => String(s), ic: () => '' } };
 const ctx = { window: { G }, G, console, localStorage: { getItem: () => null, setItem() {} } };
 vm.createContext(ctx);
-for (const f of ['src/dieu-phoi.js', 'src/he-16.js']) vm.runInContext(doc(f), ctx, { filename: f });
+for (const f of ['src/dieu-phoi.js', 'src/he-16.js', 'src/bo-nao-da-tri.js']) vm.runInContext(doc(f), ctx, { filename: f });
 
 const loi = [];
 let ok = 0;
@@ -83,7 +83,24 @@ const du8 = mt.filter(r => G.H16_NANG_LUC.every(n => n.ma === 'NV' || r[n.ma])).
 dat(du8 === mt.length, `Chỉ ${du8}/${mt.length} miền đủ 7 năng lực bắt buộc (NV tuỳ hồ sơ)`);
 const tc = G.h16TuChu();
 
-console.log(`  ✓ ${ok} phép đo đạt · ${HE.length} hệ · ${G.H16_SOP.length} SOP · ${G.DP_TRO_LY.length} trợ lý`);
+/* Bộ não đa trí · kho trí tuệ · tảng băng: con trỏ sống, mã không trùng,
+   mỗi nguyên lý có nguồn VÀ giới hạn, hành trình trỏ nguyên lý có thật. */
+const maTT = new Set(G.TT_KHO.map(x => x.ma));
+dat(maTT.size === G.TT_KHO.length, 'Mã nguyên lý TT_KHO trùng');
+const coMien = new Set(G.TT_MIEN.map(m => m.ma));
+G.TT_KHO.forEach(x => {
+  dat(coMien.has(x.mien), `${x.ma}: miền ${x.mien} không có`);
+  dat(/ — /.test(x.nguonGoc) && !!x.ranhGioi && !!x.nguyenLy, `${x.ma}: thiếu nguồn "Tác giả — Sách" hoặc giới hạn`);
+});
+G.TT_MIEN.forEach(m => kiemTro(m.ap, 'TT ' + m.ma));
+G.TB_TANG.noi.forEach(x => kiemTro(x.tro, 'Tảng nổi ' + x.ten));
+G.TB_TANG.chim.forEach(x => x.tro.forEach(t => kiemTro(t, 'Tảng chìm ' + x.ten)));
+G.TB_HANH_TRINH.forEach(s => {
+  dat(!!s.cam, `${s.ma}: thiếu điều CẤM`);
+  s.nl.forEach(m => dat(maTT.has(m), `${s.ma}: nguyên lý ${m} không có`));
+});
+dat(G.ttTim('thói quen', 3).length > 0 && G.ttTim('thoi quen', 3)[0].ma === G.ttTim('thói quen', 3)[0].ma, 'Tìm kiếm bỏ dấu không khớp');
+console.log(`  ✓ ${ok} phép đo đạt · ${HE.length} hệ · ${G.H16_SOP.length} SOP · ${G.DP_TRO_LY.length} trợ lý · ${G.TT_KHO.length} nguyên lý`);
 console.log(`  · Tự chủ: AI làm ${tc.aiLamPhan}% cửa · AI tự chạy trọn (TC4) ${tc.tuChayTron}% · ` +
   Object.keys(tc.dem).sort().map(k => `${k}=${tc.dem[k]}`).join(' '));
 if (loi.length) {

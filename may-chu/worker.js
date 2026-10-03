@@ -91,6 +91,7 @@ import { ghiPhatSinh, soanBanNhap, duyetCap, nhapKho, traBoSung,
 import { capQuyenAI, thuHoiQuyenAI, soatQuyenAI, aiPhanLoai, aiSoanNhap,
   soanDeBaiNgoai, aiTongHopGiamSat } from './quyen-nang-ai.js';
 import { phimTrangThai, phimGuiViec, phimXemViec, phimTinhHuong } from './phim-ai.js';
+import { hoiDaTri, hoiDongDaTri, chamDaTri, soDaTri } from './bo-nao-da-tri.js';
 import { dieuPhoiTroLy, soatDieuPhoi, tuHoanThienTroLy, soatHoatDongAgent } from './dieu-phoi.js';
 import { soatKhungVanHanh, chamMotLuot } from './khung-van-hanh.js';
 import { lapKeHoachAgent, chayBuocAgent, dsWorkflowAgent } from './agent-team.js';
@@ -310,6 +311,7 @@ const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau'
   'crmPhanTichKhach', 'crmUuTienNangCao',
   'loTrinhCaNhan', 'khoaNoiDungTheoTang',
   'hoiChatbot', 'lichSuChat', 'soanDeBaiNgoai',
+  'hoiDaTri', 'hoiDongDaTri', 'chamDaTri', 'soDaTri',
   'phimTrangThai', 'phimGuiViec', 'phimXemViec', 'phimTinhHuong',
   'guiBaoCaoNgay', 'tongHopBaoCao', 'dsBaoCaoNgay'];
 
@@ -671,6 +673,10 @@ async function lam(fn, y, env, db) {
   if (fn === 'aiPhanLoai')        return await aiPhanLoai(y, env, db, hoSo);
   if (fn === 'aiSoanNhap')        return await aiSoanNhap(y, env, db, hoSo);
   if (fn === 'soanDeBaiNgoai')    return await soanDeBaiNgoai(y, env, db, hoSo);
+  if (fn === 'hoiDaTri')          return await hoiDaTri(y, env, db, hoSo);
+  if (fn === 'hoiDongDaTri')      return await hoiDongDaTri(y, env, db, hoSo);
+  if (fn === 'chamDaTri')         return await chamDaTri(y, env, db, hoSo);
+  if (fn === 'soDaTri')           return await soDaTri(y, env, db, hoSo);
   if (fn === 'phimTrangThai')     return await phimTrangThai(y, env, db, hoSo);
   if (fn === 'phimGuiViec')       return await phimGuiViec(y, env, db, hoSo);
   if (fn === 'phimXemViec')       return await phimXemViec(y, env, db, hoSo);

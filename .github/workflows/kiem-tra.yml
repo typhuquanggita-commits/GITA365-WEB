@@ -41,5 +41,8 @@ jobs:
       - name: Thử đồng bộ · ngăn khoang · tự lành (D1/R2 giả lập)
         run: node tools/thu-dong-bo.mjs
 
+      - name: Thử Bộ não đa trí (Điều 13 · đệm · rẻ trước · leo bậc · ngân sách)
+        run: node tools/thu-da-tri.mjs
+
       - name: Đo 16 hệ (con trỏ sống · SOP đúng miền · 1000 chiến lược)
         run: node tools/do-16-he.js

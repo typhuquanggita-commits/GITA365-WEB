@@ -105,3 +105,7 @@ Repo GITA365 dùng giấy phép riêng: không chép mã AGPL.
 3. Workers AI cho trợ lý TC4; Workflows cho sổ lệnh Bộ não dài hơi.
 4. Chụp mốc nền R&D tháng 0; ghi 10 ca giải pháp đầu.
 5. Bật release-please khi commit đã theo quy ước.
+
+## Tiếp nối
+
+- [Bộ não đa trí · Kho trí tuệ · Tảng băng giá trị](BO_NAO_DA_TRI.md) — hiện thực H08 (Agent), H09 (Bộ não), H04 (Khách hàng), H16 (Chi phí) cho năm họ AI, nguyên lý từ sách kinh điển và hành trình gắn bó có đạo đức.

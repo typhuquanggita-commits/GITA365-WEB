@@ -25,7 +25,8 @@
 export const VIEC_AI = new Set([
   'phimGuiViec', 'hoiChatbot', 'hoiTroLyTaiChinh', 'crmTroLy', 'crmDieuPhoiAI',
   'aiPhanLoai', 'aiSoanNhap', 'aiTongHopGiamSat', 'soanDeBaiNgoai',
-  'sinhNoiDungKenh', 'traLoiCoach', 'dieuPhoiTroLy', 'chayBuocAgent'
+  'sinhNoiDungKenh', 'traLoiCoach', 'dieuPhoiTroLy', 'chayBuocAgent',
+  'hoiDaTri', 'hoiDongDaTri'
 ]);
 
 /* Trong số đó, việc CHẮC CHẮN gọi ra nhà cung cấp tính tiền theo lượt

@@ -200,6 +200,22 @@ bucket_name = "gita365-hoso"
 #    npx wrangler secret put GITA_AI_KHOA
 #    npx wrangler secret put GITA_AI_MAU
 #
+# ── BỘ NÃO ĐA TRÍ (bo-nao-da-tri.js · TẮT SẴN) ──
+# Định tuyến 5 bậc: đệm D1 (0 token) → Workers AI → DeepSeek → Gemini/GPT
+# → Claude/Grok (chỉ Super Admin). Mọi lượt qua soatRaNhaCungCap (Điều 13).
+# Bật cửa (biến thường, không bí mật):
+#    GITA_DA_TRI_BAT = "1"            (đặt ở Dashboard › Settings › Variables)
+# Bậc 1 miễn phí — mở khối [ai] ở dưới cùng tệp này.
+# Mỗi nhà cung cấp chỉ chạy khi có khoá; nhà nào không có khoá coi như vắng:
+#    npx wrangler secret put GITA_KHOA_DEEPSEEK
+#    npx wrangler secret put GITA_KHOA_GEMINI
+#    npx wrangler secret put GITA_KHOA_OPENAI
+#    npx wrangler secret put GITA_KHOA_ANTHROPIC  + GITA_MAU_ANTHROPIC (bắt buộc)
+#    npx wrangler secret put GITA_KHOA_XAI        + GITA_MAU_XAI       (bắt buộc)
+# Ngân sách token mỗi ngày (tuỳ chọn, ghi đè mặc định trong NCC):
+#    GITA_NGAN_TOKEN_DEEPSEEK · _GEMINI · _OPENAI · _ANTHROPIC · _XAI
+# GITA_CHE_DO_TIET_KIEM = "1" → chỉ còn đệm + Workers AI.
+#
 # LƯU Ý MỘT CHỖ HAY BỊ HỎI: mô hình NGÔN NGỮ (loại đang chạy trợ lý
 # này) ĐỌC được ảnh nhưng KHÔNG sinh ra ảnh. Ảnh người như ảnh chụp là
 # việc của mô hình KHUẾCH TÁN, một loại máy khác. Không có công tắc nào
@@ -252,3 +268,8 @@ bucket_name = "gita365-hoso"
 #  cũ. Đổi bề mặt cùng lúc với đổi nền thì lúc hỏng không ai biết hỏng
 #  vì nền hay vì bề mặt.
 # ═══════════════════════════════════════════════════════════════
+
+# Bậc 1 của Bộ não đa trí — Workers AI, hạn mức miễn phí mỗi ngày.
+# Bỏ dấu # hai dòng dưới rồi deploy để bật (không tốn gì khi cửa tắt).
+# [ai]
+# binding = "AI"

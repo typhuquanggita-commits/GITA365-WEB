@@ -2361,3 +2361,8 @@ CREATE TABLE IF NOT EXISTS heKhoang (
   boi     TEXT,
   luc     TEXT
 );
+
+-- Bộ não đa trí (bo-nao-da-tri.js) — cũng tự dựng lúc chạy.
+CREATE TABLE IF NOT EXISTS triNhoDaTri (khoa TEXT PRIMARY KEY, loai TEXT, ncc TEXT, traLoi TEXT, luc INTEGER, hetHan INTEGER, dung INTEGER DEFAULT 0);
+CREATE TABLE IF NOT EXISTS soTokenDaTri (ngay TEXT, ncc TEXT, luot INTEGER DEFAULT 0, vao INTEGER DEFAULT 0, ra INTEGER DEFAULT 0, PRIMARY KEY (ngay, ncc));
+CREATE TABLE IF NOT EXISTS danhGiaDaTri (loai TEXT, ncc TEXT, tot INTEGER DEFAULT 0, xau INTEGER DEFAULT 0, PRIMARY KEY (loai, ncc));

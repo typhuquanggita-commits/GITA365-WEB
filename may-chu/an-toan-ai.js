@@ -35,11 +35,13 @@
 'use strict';
 
 import { soatRaNgoai } from './bo-nao.js';
+import { Kho } from './nen.js';
 
 /* Nhà cung cấp NGOÀI lãnh thổ — gửi nội dung tới đây là xử lý dữ liệu
    xuyên biên giới. Cloudflare Workers AI (cf-workers-ai) chạy TRONG vùng
    nên khác loại, nhưng cổng vẫn sàng nó để phòng thủ nhiều lớp. */
-export const NHA_NGOAI = ['gemini', 'groq', 'openrouter', 'together', 'hf', 'openai', 'anthropic', 'fal'];
+export const NHA_NGOAI = ['gemini', 'groq', 'openrouter', 'together', 'hf', 'openai', 'anthropic', 'fal',
+  'deepseek', 'xai'];
 export const NHA_TRONG = ['cf-workers-ai'];
 
 /* Host thật của các nhà cung cấp ngoài — mục 121 dò các host này trong
@@ -47,8 +49,9 @@ export const NHA_TRONG = ['cf-workers-ai'];
    (tên ngắn "hf"/"together" bắt oan chữ thường). */
 export const HOST_NGOAI = [
   'generativelanguage.googleapis.com', 'api.groq.com', 'openrouter.ai',
-  'api.together.xyz', 'api-inference.huggingface.co', 'api.openai.com', 'api.anthropic.com', 'queue.fal.run'
-];
+  'api.together.xyz', 'api-inference.huggingface.co',   'api.openai.com', 'api.anthropic.com', 'queue.fal.run',
+    'api.deepseek.com', 'api.x.ai'
+  ];
 
 /* Dựng CHUỖI ĐÃ GHÉP XONG rồi mới soi (luật 9.99.62: soi chuỗi đã dựng,
    KHÔNG soi từng ô — một cái tên nằm ở ô nội dung, ô bố cục hay ô ngữ
@@ -76,10 +79,12 @@ function chuoiRa(opts) {
 
 async function ghiSo(db, hoSo, provider, code, chiTiet) {
   if (!db) return;
+  /* Đi qua Kho.ghiNhatKy — đúng cột của bảng audit. Bản cũ ghi cột
+     `boiAi` không tồn tại, lỗi bị nuốt ở catch, nên sổ ATAI_* chưa từng
+     có một dòng (tools/thu-da-tri.mjs bắt được). */
   try {
-    await db.prepare('INSERT INTO audit (viec,boiAi,chiTiet,luc) VALUES (?,?,?,?)')
-      .bind('ATAI_' + code, (hoSo && hoSo.u) || '?', provider + ' · ' + chiTiet, new Date().toISOString())
-      .run();
+    await Kho.ghiNhatKy(db, { uid: (hoSo && hoSo.uid) || '', username: (hoSo && hoSo.u) || '?',
+      viec: 'ATAI_' + code, doiTuong: provider, chiTiet });
   } catch (e) { /* nhật ký hỏng không được chặn phép sàng — sàng là chính */ }
 }
 
