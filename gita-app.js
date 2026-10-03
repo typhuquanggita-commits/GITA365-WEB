@@ -43494,11 +43494,18 @@ G.VIEWS = G.VIEWS || {};
     return {
       ten: 'Bữa Cơm Muộn', tap: 1, logo: 'GITA 365', khung: '720x1280',
       phongCach: 'photorealistic cinematic short drama, soft natural light, shallow depth of field, 35mm film look, subtle film grain',
+      chuDe: 'Một bữa cơm muộn có thể trở thành cuộc trò chuyện chữa lành.',
+      tienDe: 'Minh chờ con gái An về ăn tối; An giấu nỗi buồn vì điểm kém.',
+      machCamXuc: 'Xa cách và lo lắng → thành thật → được đón nhận → ấm áp.',
       nhanVat: [
         {id: 'nv-minh', ten: 'Minh', moTa: 'Bố, 42 tuổi, áo sơ mi xanh nhạt',
-          prompt: 'a 42-year-old Vietnamese man, short neat black hair, light stubble, tired kind eyes, light blue cotton shirt with rolled sleeves'},
+          prompt: 'a 42-year-old Vietnamese man, short neat black hair, light stubble, tired kind eyes, light blue cotton shirt with rolled sleeves',
+          neoLienTuc: 'same face, hairstyle, light-blue rolled-sleeve shirt and silver wedding band in every appearance',
+          cungCamXuc: 'Starts worried and restrained; softens into patient reassurance.'},
         {id: 'nv-an', ten: 'An', moTa: 'Con gái, 15 tuổi, đồng phục học sinh',
-          prompt: 'a 15-year-old Vietnamese girl, long straight black hair in a low ponytail, white school uniform shirt, small silver hair clip'}
+          prompt: 'a 15-year-old Vietnamese girl, long straight black hair in a low ponytail, white school uniform shirt, small silver hair clip',
+          neoLienTuc: 'same face, low ponytail, silver hair clip and white school uniform in every appearance',
+          cungCamXuc: 'Hides disappointment at first, then lets herself be vulnerable and relieved.'}
       ],
       boiCanh: [
         {id: 'bc-bep', ten: 'Gian bếp - tối', prompt: 'a small warm Vietnamese family kitchen at night, wooden dining table, two bowls of rice, warm yellow pendant lamp'},
@@ -43506,13 +43513,19 @@ G.VIEWS = G.VIEWS || {};
       ],
       kichBan: [
         '# Gian bếp - tối',
+        '@SỰ KIỆN: Minh chờ bữa cơm nguội và nhắn tin cho An.',
+        '@CẢM XÚC: Minh = lo lắng nhưng kìm lại',
         '[Toàn cảnh, máy đứng yên] Minh ngồi một mình bên mâm cơm đã nguội, nhìn đồng hồ.',
         '[Cận cảnh, đẩy máy vào] Minh cầm điện thoại, ngập ngừng rồi gõ tin nhắn.',
         'TIN NHẮN: Minh: Con về chưa? Bố để phần cơm rồi.',
         '# Phòng của An',
+        '@SỰ KIỆN: An đọc tin nhắn và quyết định nói thật.',
+        '@CẢM XÚC: An = tủi thân, cố kìm nước mắt',
         '[Trung cảnh, máy cầm tay] An ngồi bên bàn học, đọc tin nhắn, mắt đỏ hoe.',
         'An: Con xin lỗi bố… hôm nay con bị điểm kém.',
         '# Gian bếp - tối',
+        '@SỰ KIỆN: Hai cha con gặp lại và tháo nút thắt.',
+        '@CẢM XÚC: Minh = dịu dàng, trấn an; An = nhẹ nhõm, được yêu thương',
         '[Trung cảnh hai người, lia máy chậm] An bước vào bếp, Minh mỉm cười, kéo ghế cho con.',
         'Minh: Ăn đi con. Điểm kém thì mai mình học lại.',
         'An: Bố không giận con ạ?',
@@ -43560,9 +43573,19 @@ G.VIEWS = G.VIEWS || {};
   G.xpTachKichBan = function (vb, da) {
     da = da || G.xpDA;
     var ds = [], bc = (da.boiCanh[0] || {}).id || '', cur = null;
+    var suKienCho = '', camXucCho = {};
+    function tachCamXuc(chu) {
+      var ra = {};
+      String(chu || '').split(/[;|]/).forEach(function (muc) {
+        var p = muc.match(/^\s*([^=:=]{1,60})\s*[=:]\s*(.+?)\s*$/);
+        if (p) ra[p[1].trim()] = p[2].trim();
+      });
+      return ra;
+    }
     function moi(chiDao, hanhDong) {
       cur = {id: ma('c'), boiCanh: bc, chiDao: chiDao || '', hanhDong: hanhDong || '',
-        thoai: [], tinNhan: [], giay: 5, clip: ''};
+        thoai: [], tinNhan: [], suKien: suKienCho, camXuc: camXucCho, giay: 5, clip: ''};
+      suKienCho = ''; camXucCho = {};
       ds.push(cur); return cur;
     }
     String(vb || '').split(/\r?\n/).forEach(function (dong) {
@@ -43573,6 +43596,15 @@ G.VIEWS = G.VIEWS || {};
         var co = da.boiCanh.filter(function (b) { return b.ten.toLowerCase() === ten.toLowerCase(); })[0];
         if (!co && ten) { co = {id: ma('bc'), ten: ten, prompt: ''}; da.boiCanh.push(co); }
         if (co) bc = co.id; cur = null; return;
+      }
+      if ((m = d.match(/^@\s*sự\s*kiện\s*:\s*(.+)$/i))) {
+        if (cur) cur.suKien = m[1].trim(); else suKienCho = m[1].trim();
+        return;
+      }
+      if ((m = d.match(/^@\s*cảm\s*xúc\s*:\s*(.+)$/i))) {
+        var cx = tachCamXuc(m[1]);
+        if (cur) cur.camXuc = cx; else camXucCho = cx;
+        return;
       }
       if ((m = d.match(/^\[([^\]]*)\]\s*(.*)$/))) { moi(m[1], m[2]); return; }
       if ((m = d.match(/^tin nh[aắ]n\s*:\s*(.*)$/i))) {
@@ -43598,26 +43630,43 @@ G.VIEWS = G.VIEWS || {};
   /* ══ SOẠN PROMPT ══ */
   function nvTrongCanh(c) {
     var chu = (c.hanhDong + ' ' + c.thoai.map(function (t) { return t.ai; }).join(' ') + ' ' +
-      c.tinNhan.map(function (t) { return t.ai; }).join(' ')).toLowerCase();
+      c.tinNhan.map(function (t) { return t.ai; }).join(' ') + ' ' + (c.suKien || '') + ' ' +
+      Object.keys(c.camXuc || {}).join(' ')).toLowerCase();
     return G.xpDA.nhanVat.filter(function (n) { return n.ten && chu.indexOf(n.ten.toLowerCase()) >= 0; });
   }
   function boiCanhCua(c) {
     return G.xpDA.boiCanh.filter(function (b) { return b.id === c.boiCanh; })[0] || {ten: '', prompt: ''};
   }
+  function camXucNhanVat(c, n) {
+    return ((c.camXuc || {})[n.ten] || n.cungCamXuc || '').trim();
+  }
   G.xpPrompt = function (c) {
     var nv = nvTrongCanh(c), bc = boiCanhCua(c);
     var goc = tra(GOC, c.chiDao) || 'medium shot', may = tra(MAY, c.chiDao) || 'static camera';
-    var ai = nv.map(function (n) { return n.ten + ' (' + (n.prompt || n.moTa) + ')'; }).join('; ');
+    var ai = nv.map(function (n) {
+      var moTa = n.prompt || n.moTa;
+      var neo = n.neoLienTuc ? '; continuity anchor: ' + n.neoLienTuc : '';
+      var cx = camXucNhanVat(c, n) ? '; emotional performance: ' + camXucNhanVat(c, n) : '';
+      return n.ten + ' (' + moTa + neo + cx + ')';
+    }).join('; ');
+    var camXuc = nv.map(function (n) {
+      return camXucNhanVat(c, n) ? n.ten + ': ' + camXucNhanVat(c, n) : '';
+    }).filter(Boolean).join('; ');
     var noi = c.thoai.length ? ' The character is speaking with natural lip movement and genuine emotion.' : '';
     var anh = 'Vertical 9:16 frame. ' + G.xpDA.phongCach + '. ' + goc + '. ' +
       (ai ? 'Characters: ' + ai + '. ' : '') +
       (bc.prompt || bc.ten ? 'Setting: ' + (bc.prompt || bc.ten) + '. ' : '') +
+      (G.xpDA.chuDe ? 'Story theme: ' + G.xpDA.chuDe + '. ' : '') +
+      (c.suKien ? 'Dramatic event: ' + c.suKien + '. ' : '') +
+      (camXuc ? 'Emotional direction: ' + camXuc + '. ' : '') +
       'Scene (Vietnamese description, translate faithfully): ' + c.hanhDong + '. ' +
       (c.tinNhan.length ? 'Close-up of a smartphone screen showing a chat conversation. ' : '') +
-      'Consistent character appearance, realistic skin texture, no text, no subtitles, no watermark, no logo.';
+      'Use the same approved character reference identity in every shot. Consistent character appearance, realistic skin texture, no text, no subtitles, no watermark, no logo.';
     var vid = goc + ', ' + may + '. ' + (ai ? ai + '. ' : '') + c.hanhDong + '.' + noi +
+      (c.suKien ? ' Dramatic beat: ' + c.suKien + '.' : '') +
+      (camXuc ? ' Perform emotion with restrained, readable facial expression and body language: ' + camXuc + '.' : '') +
       ' Smooth natural motion, cinematic lighting, vertical 9:16, ' + (+c.giay || 5) +
-      ' seconds. No text on screen, no subtitles, no watermark.';
+      ' seconds. Preserve the approved reference identity, wardrobe and continuity anchors. No text on screen, no subtitles, no watermark.';
     var am = 'blurry, distorted face, extra fingers, deformed hands, text, subtitles, watermark, logo, cartoon, low quality';
     return {anh: anh, video: vid, am: am, nv: nv};
   };
@@ -43657,10 +43706,15 @@ G.VIEWS = G.VIEWS || {};
     var da = G.xpDA, o = [];
     o.push('GÓI PROMPT · ' + da.ten + ' · Tập ' + da.tap);
     o.push('Phong cách chung: ' + da.phongCach);
+    if (da.chuDe) o.push('Chủ đề: ' + da.chuDe);
+    if (da.tienDe) o.push('Tiền đề/xung đột: ' + da.tienDe);
+    if (da.machCamXuc) o.push('Mạch cảm xúc: ' + da.machCamXuc);
     o.push('');
     o.push('=== NHÂN VẬT (dùng ảnh chân dung này làm ảnh tham chiếu cho mọi cảnh) ===');
     da.nhanVat.forEach(function (n) {
       o.push('• ' + n.ten + ' — ' + n.moTa);
+      if (n.neoLienTuc) o.push('  Neo liên tục: ' + n.neoLienTuc);
+      if (n.cungCamXuc) o.push('  Cung cảm xúc: ' + n.cungCamXuc);
       o.push('  Prompt chân dung: Vertical 9:16 portrait, ' + da.phongCach + '. ' + (n.prompt || n.moTa) +
         ', neutral expression, looking at camera, plain soft background, full face clearly visible, no text.');
     });
@@ -43671,6 +43725,8 @@ G.VIEWS = G.VIEWS || {};
       o.push('Ảnh mở đầu (image prompt):'); o.push(p.anh);
       o.push('Video (image-to-video prompt):'); o.push(p.video);
       o.push('Negative prompt: ' + p.am);
+      if (c.suKien) o.push('Sự kiện kịch tính: ' + c.suKien);
+      if (c.camXuc && Object.keys(c.camXuc).length) o.push('Cảm xúc cảnh: ' + Object.keys(c.camXuc).map(function (ten) { return ten + ': ' + c.camXuc[ten]; }).join(' | '));
       if (c.thoai.length) o.push('Thoại (phụ đề, KHÔNG đưa vào prompt): ' + c.thoai.map(function (t) { return t.ai + ': ' + t.loi; }).join(' | '));
       o.push('');
     });
@@ -43959,7 +44015,9 @@ G.VIEWS = G.VIEWS || {};
     if (o) { o[k] = (k === 'giay') ? Math.max(1, Math.min(60, +v || 5)) : v; phuDeDem = null; luuDuAn(); }
   };
   G.xpThem = function (ds) {
-    G.xpDA[ds].push(ds === 'nhanVat' ? {id: ma('nv'), ten: 'Nhân vật mới', moTa: '', prompt: ''} : {id: ma('bc'), ten: 'Bối cảnh mới', prompt: ''});
+    G.xpDA[ds].push(ds === 'nhanVat'
+      ? {id: ma('nv'), ten: 'Nhân vật mới', moTa: '', prompt: '', neoLienTuc: '', cungCamXuc: ''}
+      : {id: ma('bc'), ten: 'Bối cảnh mới', prompt: ''});
     luuDuAn(); veLai();
   };
   G.xpXoa = function (ds, id) {
@@ -43998,8 +44056,8 @@ G.VIEWS = G.VIEWS || {};
     /* Hướng dẫn nhanh */
     o += '<details class="giay"' + (da.anHuongDan ? '' : ' open') + ' ontoggle="G.xpSua(\'anHuongDan\',!this.open)"><summary><b>Cách làm một tập phim (đọc một lần)</b></summary>' +
       '<ol class="note">' +
-      '<li><b>Sổ nhân vật:</b> mỗi nhân vật một câu mô tả ngoại hình bằng tiếng Anh (tuổi, tóc, trang phục). Giữ nguyên câu này suốt cả bộ phim để gương mặt không đổi.</li>' +
-      '<li><b>Kịch bản:</b> dòng <code># Tên bối cảnh</code> · dòng <code>[Cận cảnh, đẩy máy vào] hành động</code> mở một cảnh · dòng <code>Tên: lời thoại</code> · dòng <code>TIN NHẮN: Tên: nội dung</code> cho cảnh điện thoại. Bấm <b>Tách kịch bản thành cảnh</b>.</li>' +
+      '<li><b>Sổ nhân vật:</b> mỗi nhân vật một câu mô tả ngoại hình bằng tiếng Anh, một neo liên tục (trang phục/đạo cụ) và cung cảm xúc. Giữ nguyên chúng suốt cả bộ phim để gương mặt, phục trang và diễn xuất không trôi.</li>' +
+      '<li><b>Kịch bản:</b> dòng <code># Tên bối cảnh</code> · <code>@SỰ KIỆN: nút thắt của cảnh</code> · <code>@CẢM XÚC: Tên = trạng thái; Tên khác = trạng thái</code> · dòng <code>[Cận cảnh, đẩy máy vào] hành động</code> mở một cảnh · dòng <code>Tên: lời thoại</code> · dòng <code>TIN NHẮN: Tên: nội dung</code> cho cảnh điện thoại. Bấm <b>Tách kịch bản thành cảnh</b>.</li>' +
       '<li><b>Tạo ảnh nhân vật trước:</b> trong gói prompt có "Prompt chân dung". Tạo 1 ảnh chân dung cho mỗi nhân vật, lưu lại làm ảnh tham chiếu.</li>' +
       '<li><b>Tạo clip từng cảnh:</b> mở công cụ video AI, chọn khổ <b>9:16</b>, dùng chức năng ảnh → video (image-to-video) hoặc "nhân vật tham chiếu", dán prompt VIDEO của cảnh. Tải clip về, đặt tên <code>canh-01.mp4</code>, <code>canh-02.mp4</code>…</li>' +
       '<li><b>Nạp clip:</b> chọn tất cả clip một lượt — máy tự xếp theo tên tệp vào các cảnh. Thêm logo và nhạc nền nếu có.</li>' +
@@ -44021,13 +44079,21 @@ G.VIEWS = G.VIEWS || {};
       '<div class="row"><button class="btn" onclick="G.xpDuAnMoi(false)">Dự án trống</button>' +
       '<button class="btn" onclick="G.xpDuAnMoi(true)">Nạp lại dự án mẫu</button></div></div>';
 
+    o += '<div class="giay"><h3>1.5 · La bàn câu chuyện</h3>' +
+      '<label>Chủ đề / điều phim muốn để lại <textarea rows="2" oninput="G.xpSua(\'chuDe\',this.value)">' + h(da.chuDe || '') + '</textarea></label>' +
+      '<label>Tiền đề và xung đột trung tâm <textarea rows="2" oninput="G.xpSua(\'tienDe\',this.value)">' + h(da.tienDe || '') + '</textarea></label>' +
+      '<label>Mạch cảm xúc toàn phim <textarea rows="2" oninput="G.xpSua(\'machCamXuc\',this.value)">' + h(da.machCamXuc || '') + '</textarea></label>' +
+      '<p class="note">Ba dòng này đi vào gói prompt để mọi bối cảnh, sự kiện và đối thoại cùng phục vụ một câu chuyện thay vì các cảnh rời rạc.</p></div>';
+
     /* 2 · Sổ nhân vật & bối cảnh */
     o += '<div class="giay"><h3>2 · Sổ nhân vật</h3>';
     da.nhanVat.forEach(function (n) {
       o += '<div class="row">' + o_('Tên', n.ten, "G.xpSuaDS('nhanVat','" + h(n.id) + "','ten',this.value)") +
         o_('Ghi chú (tiếng Việt)', n.moTa, "G.xpSuaDS('nhanVat','" + h(n.id) + "','moTa',this.value)") +
         '<button class="btn" onclick="G.xpXoa(\'nhanVat\',\'' + h(n.id) + '\')">Xoá</button></div>' +
-        '<label>Ngoại hình cố định (tiếng Anh) <textarea rows="2" oninput="G.xpSuaDS(\'nhanVat\',\'' + h(n.id) + '\',\'prompt\',this.value)">' + h(n.prompt) + '</textarea></label>';
+        '<label>Ngoại hình cố định (tiếng Anh) <textarea rows="2" oninput="G.xpSuaDS(\'nhanVat\',\'' + h(n.id) + '\',\'prompt\',this.value)">' + h(n.prompt) + '</textarea></label>' +
+        '<label>Neo liên tục (tiếng Anh: trang phục, đạo cụ, dấu hiệu nhận diện không đổi) <textarea rows="2" oninput="G.xpSuaDS(\'nhanVat\',\'' + h(n.id) + '\',\'neoLienTuc\',this.value)">' + h(n.neoLienTuc || '') + '</textarea></label>' +
+        '<label>Cung cảm xúc (trạng thái đầu → chuyển biến → trạng thái cuối) <textarea rows="2" oninput="G.xpSuaDS(\'nhanVat\',\'' + h(n.id) + '\',\'cungCamXuc\',this.value)">' + h(n.cungCamXuc || '') + '</textarea></label>';
     });
     o += '<button class="btn" onclick="G.xpThem(\'nhanVat\')">+ Thêm nhân vật</button>';
     o += '<h3>Bối cảnh</h3>';
@@ -44053,6 +44119,9 @@ G.VIEWS = G.VIEWS || {};
       o += '<details class="giay xu-canh"><summary><b>Cảnh ' + (i + 1) + '</b> · ' + h(bc.ten) + ' · ' + h(c.chiDao || '—') + ' · ' +
         h(String(c.giay)) + 's' + (c.clip && G.xpVat[c.clip] ? ' · ✓ ' + h(G.xpVat[c.clip].ten) : ' · <em>chưa có clip</em>') + '</summary>' +
         '<p class="note">' + h(c.hanhDong) + '</p>' +
+        (c.suKien ? '<p class="note"><b>Sự kiện:</b> ' + h(c.suKien) + '</p>' : '') +
+        (c.camXuc && Object.keys(c.camXuc).length ? '<p class="note"><b>Chỉ đạo cảm xúc:</b> ' +
+         Object.keys(c.camXuc).map(function (ten) { return '<b>' + h(ten) + ':</b> ' + h(c.camXuc[ten]); }).join(' · ') + '</p>' : '') +
         (c.thoai.length ? '<p class="note">' + c.thoai.map(function (t) { return '<b>' + h(t.ai) + ':</b> ' + h(t.loi); }).join('<br>') + '</p>' : '') +
         (c.tinNhan.length ? '<p class="note">Tin nhắn: ' + c.tinNhan.map(function (t) { return h(t.ai + ': ' + t.loi); }).join(' · ') + '</p>' : '') +
         (p.nv.length ? '' : '<p class="note">⚠ Không thấy tên nhân vật nào trong cảnh — nhắc tên nhân vật trong hành động để prompt có mô tả ngoại hình.</p>') +
