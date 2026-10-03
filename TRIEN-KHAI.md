@@ -118,8 +118,13 @@ bash nap-bi-mat.sh /duong/dan/toi/khoa.json
 #   Trước khi tạo Super Admin đầu tiên, nạp thêm GITA_TAO_ADMIN bằng một
 #   secret ngẫu nhiên dùng một lần; xoá secret này ngay sau khi tạo xong.
 
-# 4) (Gửi thư) điền GITA_THU_GUI_TU trong wrangler.toml và xác thực tên miền
-#    của địa chỉ gửi ở nhà gửi thư — SPF/DKIM (xem wrangler.toml)
+# 4) (Gửi thư) Chưa có tên miền riêng → dựng CẦU NỐI GMAIL theo
+#    docs/MAY_CHU.md ("Dựng cầu nối Gmail"), rồi:
+#      npx wrangler secret put GITA_CAU_NOI_GMAIL
+#      npx wrangler secret put GITA_KHOA_CAU_NOI
+#    Thư đi từ typhuquanggita@gmail.com (~100 người nhận/ngày).
+#    Khi có tên miền: điền GITA_THU_GUI_TU + GITA_KHOA_THU (Resend) và
+#    xác thực SPF/DKIM — Resend thành đường dự phòng/mở rộng.
 
 # 5) Đưa Worker lên lần đầu. Những thay đổi may-chu/ tiếp theo
 #    được GitHub Actions triển khai tự động sau khi đã có hai secrets ở Phần 1.
@@ -141,7 +146,8 @@ Thấy **số khoá > 0** là xong. Đổi địa chỉ máy chủ đảo ngư�
 | `GITA_TIEU` | Tiêu băm mật khẩu | Sinh **một lần**, giữ mãi. Đổi = mọi mật khẩu hỏng. |
 | `GITA_TAO_ADMIN` | Mã khởi tạo Super Admin đầu tiên | Chỉ cần khi khởi tạo; xoá ngay sau khi tạo tài khoản. |
 | `GITA_KHOA_KY` | Khoá ký chứng cứ (HMAC) | Chuỗi ngẫu nhiên bất kỳ. |
-| `GITA_KHOA_THU` | Khoá gửi thư (Resend) | Chỉ cần nếu gửi email xác nhận. |
+| `GITA_KHOA_THU` | Khoá gửi thư (Resend) | Chỉ cần nếu gửi qua Resend (cần tên miền đã xác minh). |
+| `GITA_CAU_NOI_GMAIL` / `GITA_KHOA_CAU_NOI` | URL + khoá cầu nối Gmail (Apps Script) | Đường gửi thư chính hiện nay, từ typhuquanggita@gmail.com. |
 
 Tuỳ chọn (mặc định TẮT): `GITA_KHOA_NGANHANG`, `GITA_KHOA_VE`/`GITA_CONG_VE` (bộ tạo ảnh ngoài).
 

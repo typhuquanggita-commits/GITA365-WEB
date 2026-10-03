@@ -45,6 +45,7 @@ import { ghiPhieuThu, duyetPhieuThu, congNo, banKeTaiChinh,
 import { soNgay, chotTuan, soatChot, tongHop, baoCaoKeToan, boSoKhaiThue,
   dsChot } from './bao-cao.js';
 import { tongNgayDoanhThu } from './bao-doanh-thu.js';
+import { thuGuiThu } from './thu.js';
 import { chamKpiTaiChinh } from './kpi-tai-chinh.js';
 import { dangTinTaiChinh, bangTinTaiChinh,
   xuLyTinTaiChinh } from './tin-tai-chinh.js';
@@ -230,7 +231,7 @@ export function tachKhoaDuocCap(goi, kho) {
    xuatSheet · xemKpiKhach) bỏ hẳn vì máy khách không còn gọi. Không còn
    phần nào chạy trên Apps Script. */
 
-const CAN_PHIEN = ['capKhoa', 'doiMatKhau', 'dongBo',
+const CAN_PHIEN = ['capKhoa', 'doiMatKhau', 'dongBo', 'thuGuiThu',
   'docTinCongDong', 'ghiTinCongDong', 'guiChuyen', 'napTaiLieu', 'duyetTaiLieu', 'napTinhHuongKhach',
   'capQuyenXem', 'thuHoiQuyenXem', 'soiQuyenXem', 'xemKhachCao', 'nangTang',
   'capQuyenT5Pro', 'thuHoiQuyenT5Pro', 'dsQuyenT5Pro',
@@ -371,6 +372,7 @@ async function lam(fn, y, env, db) {
              'Super Admin truy hồi xong. Chỉ cửa đọc và cửa cứu hệ còn mở.'};
 
   if (fn === 'doiMatKhau') return await doiMatKhau(y, env, db, hoSo);
+  if (fn === 'thuGuiThu')  return await thuGuiThu(y, env, db, hoSo);
   if (fn === 'capKhoa')    return await capKhoa(y, env, db, hoSo);
   if (fn === 'dongBo')     return await dongBo(y, env, db, hoSo);
 
