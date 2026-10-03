@@ -229,6 +229,7 @@ var G = window.G || {}; window.G = G;
           })(v);
         }
       }
+      var nhipHoi = 5000;
       function vong() {
         if (ketThuc) return;
         if (dungLai) { het({code: 'DUNG', error: 'Đã dừng theo yêu cầu.'}); return; }
@@ -240,8 +241,9 @@ var G = window.G || {}; window.G = G;
           .then(function (x) {
             if (!x.ok) {
               if (LOI_DUNG_HAN.indexOf(x.code) >= 0) { het(x); return; }
-              setTimeout(vong, 8000); return;
+              setTimeout(vong, Math.max(8000, (Number(x.thuLaiSau) || 0) * 1000)); return;
             }
+            var truoc = xong;
             (x.ds || []).forEach(function (r, i) {
               var v = hoi[i]; if (!v || !r) return;
               if (r.trangThai === 'XONG') {
@@ -251,7 +253,11 @@ var G = window.G || {}; window.G = G;
               } else if (r.trangThai === 'LOI') thatBai(v, r.loi || 'model báo lỗi');
             });
             luuKho(); bao();
-            setTimeout(vong, xong >= tong ? 0 : 5000);
+            /* GIÃN NHỊP HỎI: clip video mất vài phút mới xong — hỏi đều 5 giây
+               là hàng chục lượt Worker vô ích mỗi clip. Chưa có gì xong thì
+               giãn dần ×1,5 tới trần 30 giây; có cái xong thì về lại 5 giây. */
+            nhipHoi = xong > truoc ? 5000 : Math.min(30000, Math.round(nhipHoi * 1.5));
+            setTimeout(vong, xong >= tong ? 0 : nhipHoi);
           });
       }
       vong();

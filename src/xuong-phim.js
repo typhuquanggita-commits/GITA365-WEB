@@ -411,7 +411,7 @@ G.VIEWS = G.VIEWS || {};
     G.xpDA.canh.forEach(function (c) { var v = G.xpVat[c.clip]; if (v && v.loai === 'phim') try { v.el.pause(); } catch (e) {} });
     if (chay.nhac) try { chay.nhac.stop(); } catch (e) {}
   }
-  G.xpPhat = function (xuat, xongFn) {
+  G.xpPhat = function (xuat, xongFn, ghiThang) {
     if (chay && !chay.dung) { G.xpDung(); return; }
     if (!G.xpDA.canh.length) { U.toast('Chưa có cảnh nào — bấm "Tách kịch bản thành cảnh" trước.', 'err'); return; }
     var cv = document.getElementById('xp-man'); if (!cv) return;
@@ -428,14 +428,35 @@ G.VIEWS = G.VIEWS || {};
       src.start(); chay.nhac = src;
     }
     if (xuat) {
-      var luong = cv.captureStream(30);
+      /* Bậc máy (src/nang-luc-may.js): máy yếu ghi 24 khung/giây, bitrate
+         thấp hơn — tab không treo, tệp nhỏ hơn mà vẫn rõ trên điện thoại. */
+      var ch = G.cauHinhPhim ? G.cauHinhPhim() : {fps: 30, bitrate: 6000000};
+      var luong = cv.captureStream(ch.fps);
       dich.stream.getAudioTracks().forEach(function (t) { luong.addTrack(t); });
       var kieu = ['video/mp4;codecs=avc1.42E01E,mp4a.40.2', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm']
         .filter(function (k) { return window.MediaRecorder && MediaRecorder.isTypeSupported(k); })[0];
       if (!kieu) { U.toast('Trình duyệt này không ghi được video. Dùng Chrome hoặc Edge trên máy tính.', 'err'); dungPhat(); chay = null; return; }
-      var manh = [], ghi = new MediaRecorder(luong, {mimeType: kieu, videoBitsPerSecond: 6000000});
-      ghi.ondataavailable = function (e) { if (e.data && e.data.size) manh.push(e.data); };
-      ghi.onstop = function () { var bl = new Blob(manh, {type: kieu}); if (xongFn) xongFn(bl, kieu); };
+      var manh = [], ghi = new MediaRecorder(luong, {mimeType: kieu, videoBitsPerSecond: ch.bitrate});
+      /* GHI THẲNG XUỐNG ĐĨA nếu có sẵn tệp đích (ghiThang = FileSystemWritableFileStream):
+         từng mảnh một giây đi xuống đĩa ngay, RAM không phình theo độ dài phim
+         (5 phút ở 6 Mbps ≈ 225 MB nếu giữ hết trong bộ nhớ). Ghép tuần tự
+         các mảnh cho ra đúng tệp như ghép Blob. */
+      var hangGhi = Promise.resolve(), hongGhi = null;
+      ghi.ondataavailable = function (e) {
+        if (!e.data || !e.data.size) return;
+        if (ghiThang) hangGhi = hangGhi.then(function () { if (!hongGhi) return ghiThang.write(e.data); })
+          .catch(function (er) { hongGhi = er; });
+        else manh.push(e.data);
+      };
+      ghi.onstop = function () {
+        if (ghiThang) {
+          hangGhi.then(function () { if (hongGhi) throw hongGhi; return ghiThang.close(); })
+            .then(function () { if (xongFn) xongFn(null, kieu); },
+              function (er) { try { ghiThang.abort(); } catch (e2) {} if (xongFn) xongFn(null, kieu, er || new Error('ghi hỏng')); });
+          return;
+        }
+        var bl = new Blob(manh, {type: kieu}); if (xongFn) xongFn(bl, kieu);
+      };
       ghi.start(1000); chay.ghi = ghi;
     }
     function sangCanh(i) {
@@ -536,10 +557,23 @@ G.VIEWS = G.VIEWS || {};
   G.xpDuoiPhim = function () { return window.MediaRecorder && MediaRecorder.isTypeSupported('video/mp4') ? '.mp4' : '.webm'; };
   G.xpXuatVao = function (fh, xongFn) {
     U.toast('Đang xuất theo thời gian thực (' + Math.round(tongGiay()) + ' giây). Giữ tab này mở và hiện trên màn hình.', 'ok');
-    G.xpPhat(true, function (bl) {
-      fh.createWritable().then(function (w) { return w.write(bl).then(function () { return w.close(); }); })
-        .then(function () { U.toast('Đã xuất xong ' + fh.name, 'ok'); if (xongFn) xongFn(true); })
-        .catch(function (e) { U.toast('Không ghi được tệp: ' + (e && e.message), 'err'); if (xongFn) xongFn(false); });
+    /* Mở tệp đích TRƯỚC rồi ghi thẳng từng mảnh (xem G.xpPhat). Trình duyệt
+       không mở được luồng ghi thì lùi về cách cũ: gom Blob rồi ghi một lần. */
+    function baoXong(ok, e) {
+      if (ok) U.toast('Đã xuất xong ' + fh.name, 'ok');
+      else U.toast('Không ghi được tệp: ' + (e && e.message), 'err');
+      if (xongFn) xongFn(ok);
+    }
+    fh.createWritable().then(function (w) {
+      G.xpPhat(true, function (bl, kieu, loi) { baoXong(!loi, loi); }, w);
+      /* xpPhat dừng sớm (chưa có cảnh, trình duyệt không ghi được video…)
+         thì nhả tệp đích, không để khoá tệp tạm treo đó. */
+      if (!chay || chay.dung || !chay.ghi) { try { w.abort(); } catch (e) {} }
+    }, function () {
+      G.xpPhat(true, function (bl) {
+        fh.createWritable().then(function (w) { return w.write(bl).then(function () { return w.close(); }); })
+          .then(function () { baoXong(true); }, function (e) { baoXong(false, e); });
+      });
     });
   };
   G.xpChep = function (i, loai) {

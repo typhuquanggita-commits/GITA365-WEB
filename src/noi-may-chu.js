@@ -124,33 +124,90 @@ G.thuMayChu = function(){
 
    Bốn chỗ cũ chưa chuyển sang: chúng đang chạy đúng, và đổi cả bốn
    trong một lượt là bốn chỗ có thể hỏng cùng lúc mà không phép đo nào
-   phủ hết. Chuyển dần khi có việc chạm vào từng chỗ. */
-G.goiMayChu = function(fn, than){
+   phủ hết. Chuyển dần khi có việc chạm vào từng chỗ.
+
+   ── BỐN LỚP CHỐNG "BILL SHOCK" & TĂNG ĐỘ BỀN (docs/TOI_UU_CHI_PHI_CHAT_LUONG.md) ──
+   1. GỘP lượt đọc giống hệt đang bay: mười ô cùng hỏi một thứ → một lượt.
+   2. ĐỆM NGẮN (15 giây) cho việc CHỈ ĐỌC; bất kỳ lượt ghi nào xoá sạch
+      đệm, nên không bao giờ thấy dữ liệu cũ sau khi chính mình vừa sửa.
+      Cần số tươi thì gọi G.goiMayChu(fn, than, {moi:true}).
+   3. Máy chủ báo RATE/BUSY → TỰ NGHỈ đúng thuLaiSau, không gọi lại vô ích.
+   4. CẦU DAO: 3 lượt hỏng mạng/5xx liền nhau → ngắt 30 giây. Một vòng lặp
+      lỗi ở màn hình không biến thành hàng nghìn lượt Worker. */
+var DEM_DOC = {}, DANG_BAY = {}, NGHI_DEN = 0, HONG_LIEN = 0, NGAT_DEN = 0;
+var DEM_GIAY = 15;
+/* Việc chỉ đọc: tên bắt đầu bằng các tiền tố này. Việc theo dõi tiến độ
+   (phimXemViec, phimTrangThai) cố ý KHÔNG đệm — chúng phải luôn tươi. */
+var LA_DOC = /^(doc|ds|xem|soi|lichSu|bangTin|baoCao|crmDanhSach|crmChiTiet|crmBangDieuKhien|tongHop)/;
+var KHONG_DEM = {phimXemViec:1, phimTrangThai:1, docHomNay:1, hopThongBao:1};
+G.laViecDoc = function(fn){ return LA_DOC.test(fn) && !KHONG_DEM[fn]; };
+G.xoaDemMayChu = function(){ DEM_DOC = {}; };
+
+G.goiMayChu = function(fn, than, tuyChon){
   if(!G.API_CAP_PHEP)
     return Promise.resolve({ok:false, error:'Chưa nối máy chủ. Vào Quản trị trang → Nối máy chủ.'});
+  tuyChon = tuyChon || {};
+  var bayGio = Date.now();
+  if(bayGio < NGHI_DEN)
+    return Promise.resolve({ok:false, code:'RATE', thuLaiSau:Math.ceil((NGHI_DEN - bayGio)/1000),
+      error:'Đang tạm nghỉ để giữ hạn mức. Thử lại sau ' + Math.ceil((NGHI_DEN - bayGio)/1000) + ' giây.'});
+  if(bayGio < NGAT_DEN)
+    return Promise.resolve({ok:false, code:'NGAT',
+      error:'Máy chủ vừa không trả lời mấy lượt liền. Ứng dụng tạm chờ ' +
+        Math.ceil((NGAT_DEN - bayGio)/1000) + ' giây rồi tự thử lại — dữ liệu trong máy vẫn nguyên.'});
+
   var body = Object.assign({}, than || {}, {
     fn: fn,
     u: (G.S && G.S.acc && G.S.acc.u) || '',
     token: G.PHIEN_TOKEN || ''
   });
-  return fetch(G.API_CAP_PHEP, {
+  var doc = G.laViecDoc(fn);
+  var khoa = doc ? JSON.stringify(body) : '';
+  if(!doc) DEM_DOC = {};
+  if(doc && !tuyChon.moi){
+    var o = DEM_DOC[khoa];
+    if(o && bayGio - o.luc < DEM_GIAY * 1000) return Promise.resolve(o.d);
+    if(DANG_BAY[khoa]) return DANG_BAY[khoa];
+  }
+  var ma = '';
+  var p = fetch(G.API_CAP_PHEP, {
     method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
     body: JSON.stringify(body)
-  }).then(function(r){ return r.json(); })
+  }).then(function(r){
+      try { ma = r.headers.get('x-gita-ma') || ''; } catch(_e){}
+      if(r.status >= 500) HONG_LIEN++; else HONG_LIEN = 0;
+      return r.json();
+    })
     .then(function(d){
       if(!d) return {ok:false, error:'Máy chủ trả về nội dung không đọc được.'};
       if(G.nhanPhanHoiMayChu) G.nhanPhanHoiMayChu(d, body.token);
+      if(!d.ok){
+        if(ma && !d.maYeuCau) d.maYeuCau = ma;
+        if((d.code === 'RATE' || d.code === 'BUSY') && d.thuLaiSau)
+          NGHI_DEN = Date.now() + Math.min(Number(d.thuLaiSau) || 5, 300) * 1000;
+        if(G.ghiLoi) G.ghiLoi('may-chu', fn + ': ' + (d.code || '') + ' ' + (d.error || ''), d.maYeuCau);
+      }
       /* Phiên hết hạn nói RÕ là hết hạn, không lẫn vào "không có quyền":
          hai câu ấy dẫn tới hai việc khác nhau — đăng nhập lại, hay đi
          xin quyền. */
       if(!d.ok && d.code === 'AUTH'){
         return {ok:false, code:'AUTH', error:'Phiên đã hết hạn. Đăng nhập lại rồi thử lại.'};
       }
+      if(doc && d.ok) DEM_DOC[khoa] = {luc: Date.now(), d: d};
       return d;
     })
     .catch(function(e){
+      HONG_LIEN++;
+      if(G.ghiLoi) G.ghiLoi('mang', fn + ': ' + ((e && e.message) || e), ma);
       return {ok:false, error:'Không gọi được máy chủ: ' + doanViSao(e)};
+    })
+    .then(function(d){
+      if(HONG_LIEN >= 3){ NGAT_DEN = Date.now() + 30000; HONG_LIEN = 0; }
+      if(khoa) delete DANG_BAY[khoa];
+      return d;
     });
+  if(doc) DANG_BAY[khoa] = p;
+  return p;
 };
 
 /* ══ MỘT LƯỢT BỊ CSP CHẶN TRÔNG Y HỆT MỘT LƯỢT MẤT MẠNG ══
@@ -219,6 +276,7 @@ G.VIEWS['noi-may-chu'] = function(){
       '<button class="btn pri" data-act="mc-luu">'+ic('check','w-4 h-4')+'Lưu địa chỉ</button>'+
       '<button class="btn ghost" data-act="mc-thu">'+ic('pulse','w-4 h-4')+'Gọi thử</button>'+
       (noi ? '<button class="btn ghost" data-act="mc-bo">'+ic('x','w-4 h-4')+'Bỏ nối</button>' : '')+
+      (G.chepNhatKyLoi ? '<button class="btn ghost" data-act="mc-nhatky" title="Chép nhật ký lỗi (kèm mã yêu cầu) để gửi hỗ trợ">'+ic('alert','w-4 h-4')+'Chép nhật ký lỗi</button>' : '')+
     '</div>'+
     '<div id="mcKq" class="mt"></div>'+
     (G.KHO && G.KHO.lyDoTuChoi ?
@@ -322,6 +380,17 @@ document.addEventListener('click', function(e){
     var r = G.datMayChu(i ? i.value : '');
     U.toast(r.ok ? 'Đã lưu địa chỉ máy chủ trên máy này.' : r.ly, r.ok ? 'ok' : 'err');
     if(r.ok) G.render && G.render();
+  }
+  else if(a === 'mc-nhatky'){
+    G.chepNhatKyLoi().then(function(chu){
+      var so = G.NHAT_KY_LOI().length;
+      U.toast(so ? 'Đã chép ' + so + ' dòng nhật ký lỗi — dán vào thư gửi hỗ trợ.' : 'Chưa có lỗi nào được ghi trong phiên này.', 'ok');
+      if(kq){
+        var pre = document.createElement('pre');
+        pre.className = 'sm'; pre.style.cssText = 'white-space:pre-wrap;max-height:240px;overflow:auto';
+        pre.textContent = chu; kq.innerHTML = ''; kq.appendChild(pre);
+      }
+    }, function(){ U.toast('Trình duyệt không cho chép — mở lại trang bằng https.', 'err'); });
   }
   else if(a === 'mc-bo'){
     G.datMayChu('');

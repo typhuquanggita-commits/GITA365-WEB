@@ -106,6 +106,20 @@ database_id = "8ce5271b-be05-47cb-bc34-d25c9e0436d8"
 binding = "HOSO"
 bucket_name = "gita365-hoso"
 
+# ── VỆ CHI PHÍ (may-chu/ve-chi-phi.js) — xem docs/TOI_UU_CHI_PHI_CHAT_LUONG.md ──
+# Tầng 1 (đếm trong bộ nhớ isolate) luôn chạy, không cần khai gì.
+# Tầng 2 TUỲ CHỌN: Rate Limiting binding của Cloudflare — đếm ở mạng biên,
+# không tốn lượt D1. Bỏ dấu # ba khối dưới để bật (namespace_id là số
+# nguyên tự chọn, duy nhất trong tài khoản). Không khai thì mã tự bỏ qua.
+# [[ratelimits]]
+# name = "GIOI_HAN"
+# namespace_id = "3650"
+# simple = { limit = 300, period = 60 }
+#
+# Chế độ tiết kiệm: khi bảng Cloudflare báo sắp chạm hạn mức miễn phí,
+# đặt GITA_CHE_DO_TIET_KIEM = "1" ở [vars] (hoặc Dashboard → Settings →
+# Variables) để tạm đóng các việc gọi AI tính tiền theo lượt.
+
 # ═══════════════════════════════════════════════════════════════
 #  BỐN BÍ MẬT — KHÔNG BAO GIỜ VIẾT VÀO TỆP NÀY
 #

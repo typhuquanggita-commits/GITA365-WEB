@@ -2212,6 +2212,134 @@ U.closeModal = function(){ document.getElementById('modal').classList.remove('on
 
 })();
 
+/* ═════════ src/nang-luc-may.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 · NĂNG LỰC MÁY & NHẬT KÝ LỖI PHÍA MÁY KHÁCH
+   (docs/TOI_UU_CHI_PHI_CHAT_LUONG.md — điểm yếu 1 và 2)
+
+   1. ĐO MÁY TRƯỚC KHI GIAO VIỆC NẶNG. Xưởng phim xuất video bằng canvas
+      + MediaRecorder ngay trên máy; điện thoại cũ mà ép 30 khung/giây,
+      6 Mbps là treo tab. Ở đây đo RAM, số lõi, WebGL/WebGPU/WASM, chế độ
+      tiết kiệm dữ liệu → xếp máy vào BA BẬC: 'manh' | 'vua' | 'yeu'.
+      Các màn hỏi G.NANG_LUC / G.cauHinhPhim() thay vì đoán.
+      Bậc 'yeu' gắn data-may="yeu" lên <html> → CSS tắt hiệu ứng nặng.
+
+   2. XIN TRÌNH DUYỆT GIỮ KHO. navigator.storage.persist(): được duyệt
+      thì trình duyệt KHÔNG tự xoá IndexedDB/localStorage khi thiếu chỗ —
+      bớt hẳn một đường mất dữ liệu chưa kịp đồng bộ.
+
+   3. NHẬT KÝ LỖI VÒNG (40 dòng gần nhất, chỉ trong máy). Bắt lỗi JS,
+      promise bị bỏ rơi, lỗi gọi máy chủ KÈM MÃ YÊU CẦU (x-gita-ma) — mã
+      ấy tra thẳng ra dòng nhật ký Worker. Người dùng bấm "chép nhật ký"
+      gửi hỗ trợ là ghép được hai phía Client ↔ Edge, khỏi đoán.
+      KHÔNG ghi token, mật khẩu hay nội dung hồ sơ — chỉ lời lỗi.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+
+(function(){
+  var nav = window.navigator || {};
+  var ram = Number(nav.deviceMemory || 0);          // GB, Chrome/Edge; Safari/Firefox không có
+  var loi = Number(nav.hardwareConcurrency || 0);
+  var ketNoi = nav.connection || {};
+  var coWebGL = false;
+  try {
+    var cv = document.createElement('canvas');
+    coWebGL = !!(cv.getContext('webgl2') || cv.getContext('webgl'));
+  } catch(e){}
+  var nl = {
+    ram: ram, loi: loi,
+    webgpu: !!nav.gpu,
+    webgl: coWebGL,
+    wasm: typeof WebAssembly === 'object',
+    ghiHinh: typeof window.MediaRecorder === 'function',
+    luuTep: typeof window.showSaveFilePicker === 'function',
+    tietKiemDuLieu: !!ketNoi.saveData,
+    mangCham: /(^|-)2g$/.test(String(ketNoi.effectiveType || '')),
+    diDong: /Android|iPhone|iPad|iPod|Mobile/i.test(nav.userAgent || '')
+  };
+  var bac;
+  if((ram && ram <= 2) || (loi && loi <= 2) || !nl.webgl) bac = 'yeu';
+  else if((ram && ram >= 8) && loi >= 8 && !nl.diDong) bac = 'manh';
+  else bac = 'vua';
+  /* Người dùng tự chọn (Cài đặt → hiệu năng) thắng phép đo. */
+  try { var chon = localStorage.getItem('gita365.bacMay'); if(/^(manh|vua|yeu)$/.test(chon || '')) bac = chon; } catch(e){}
+  nl.bac = bac;
+  G.NANG_LUC = nl;
+  try { document.documentElement.setAttribute('data-may', bac); } catch(e){}
+
+  G.datBacMay = function(b){
+    try {
+      if(/^(manh|vua|yeu)$/.test(b || '')) localStorage.setItem('gita365.bacMay', b);
+      else localStorage.removeItem('gita365.bacMay');
+    } catch(e){}
+  };
+
+  /* Thông số xuất phim theo bậc máy. Khung hình (dọc/ngang) giữ nguyên
+     theo dự án; chỉ hạ khung/giây, bitrate và — ở máy yếu — thu nhỏ cạnh
+     dài về tối đa 960 px (vẫn rõ trên điện thoại, nhẹ RAM ~45%). */
+  var PHIM = {
+    manh: {fps: 30, bitrate: 6000000, canhToiDa: 1920},
+    vua:  {fps: 30, bitrate: 4000000, canhToiDa: 1280},
+    yeu:  {fps: 24, bitrate: 2500000, canhToiDa: 960}
+  };
+  G.cauHinhPhim = function(){ return PHIM[G.NANG_LUC.bac] || PHIM.vua; };
+})();
+
+/* ── Xin giữ kho — gọi một lần, im lặng nếu trình duyệt không hỗ trợ ── */
+(function(){
+  try {
+    if(navigator.storage && navigator.storage.persist && navigator.storage.persisted){
+      navigator.storage.persisted().then(function(da){
+        if(!da) return navigator.storage.persist();
+        return true;
+      }).then(function(ok){ G.KHO_BEN = !!ok; }).catch(function(){});
+    }
+  } catch(e){}
+})();
+
+/* ── Nhật ký lỗi vòng ── */
+(function(){
+  var TRAN = 40, KHOA = 'gita365.nhatKyLoi';
+  var ds = [];
+  try { ds = JSON.parse(sessionStorage.getItem(KHOA) || '[]') || []; } catch(e){ ds = []; }
+  function luu(){ try { sessionStorage.setItem(KHOA, JSON.stringify(ds)); } catch(e){} }
+  /* Bỏ mọi thứ trông như token/mật khẩu trước khi ghi. */
+  function sach(s){
+    return String(s || '').slice(0, 300)
+      .replace(/(token|matKhau|password|mk)\s*[:=]\s*["']?[^"',\s}]+/gi, '$1=***');
+  }
+  G.ghiLoi = function(loai, loi, ma){
+    ds.push({luc: new Date().toISOString(), loai: loai, loi: sach(loi), ma: ma || '',
+      man: (G.S && G.S.view) || '', ban: (G.META && G.META.version) || ''});
+    if(ds.length > TRAN) ds = ds.slice(-TRAN);
+    luu();
+  };
+  G.NHAT_KY_LOI = function(){ return ds.slice(); };
+  /* Một khối chữ để dán vào thư hỗ trợ: máy gì, bậc nào, lỗi gì, mã nào. */
+  G.chepNhatKyLoi = function(){
+    var nl = G.NANG_LUC || {};
+    var dau = 'GITA 365 ' + ((G.META && G.META.version) || '') + ' · bậc máy ' + (nl.bac || '?') +
+      ' · RAM ' + (nl.ram || '?') + 'GB · ' + (nl.loi || '?') + ' lõi · ' + (navigator.userAgent || '').slice(0, 120);
+    var chu = dau + '\n' + ds.map(function(x){
+      return x.luc + ' [' + x.loai + '] ' + (x.ma ? '(mã ' + x.ma + ') ' : '') + x.loi;
+    }).join('\n');
+    if(navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(chu).then(function(){ return chu; });
+    return Promise.resolve(chu);
+  };
+  window.addEventListener('error', function(ev){
+    if(!ev || !ev.message) return;   // lỗi tải tài nguyên (img/script) không có message — bỏ
+    G.ghiLoi('js', ev.message + ' @' + String(ev.filename || '').split('/').pop() + ':' + (ev.lineno || 0));
+  });
+  window.addEventListener('unhandledrejection', function(ev){
+    var r = ev && ev.reason;
+    G.ghiLoi('promise', (r && (r.message || r.name)) || String(r));
+  });
+})();
+
+})();
+
 /* ═════════ src/bieu-do.js ═════════ */
 (function(){
 /* ═══════════════════════════════════════════════════════════════
@@ -3946,7 +4074,27 @@ G.danhDau = function(nhom, khoa){
   if(NHOM.indexOf(nhom) < 0) return;
   var m = docMoc(); m[nhom + '.' + khoa] = Date.now(); ghiMoc(m);
   G.DONGBO.choBaoNhieu = demCho();
+  henDongBo();
 };
+
+/* ─── HẸN ĐỒNG BỘ SAU KHI SỬA (giảm cửa sổ mất dữ liệu) ───
+   Trước đây phần sửa chỉ đi lên lúc mở app, mỗi sáu giờ, hoặc lúc rời
+   trang — xoá bộ nhớ trình duyệt giữa chừng là mất cả buổi. Nay sửa xong
+   HAI phút thì tự đẩy, nhưng hai lượt tự đẩy cách nhau ít nhất MƯỜI phút:
+   một buổi sửa liên tục tốn tối đa ~6 lượt/giờ chứ không phải mỗi cú bấm
+   một lượt (xem docs/TOI_UU_CHI_PHI_CHAT_LUONG.md, ngân sách lượt gọi). */
+var HEN_SAU_MS = 2 * 60e3, CACH_TOI_THIEU_MS = 10 * 60e3, henDB = 0, daBat = false;
+function lanCuoiXong(){ return Number(localStorage.getItem(KEY_HANG) || 0); }
+function henDongBo(){
+  if(!daBat || henDB) return;
+  var cho = Math.max(HEN_SAU_MS, lanCuoiXong() + CACH_TOI_THIEU_MS - Date.now());
+  henDB = setTimeout(function(){
+    henDB = 0;
+    if(!demCho()) return;
+    if(Date.now() - lanCuoiXong() < CACH_TOI_THIEU_MS){ henDongBo(); return; }
+    G.dongBo();
+  }, cho);
+}
 
 function demCho(){
   var m = docMoc(), lan = Number(localStorage.getItem(KEY_HANG) || 0), n = 0;
@@ -4125,7 +4273,15 @@ G.dongBo = function(tuTay){
 /* ─── Tự chạy: khi mở, khi có mạng lại, và mỗi sáu giờ ─── */
 G.batDongBo = function(){
   if(!G.API_CAP_PHEP) return;
-  setTimeout(function(){ G.dongBo(); }, 4000);
+  daBat = true;
+  /* Mở app: kéo về để thấy phần máy khác đã sửa. Nhưng mở lại/tải lại
+     trang trong vòng mười phút sau một lượt thành công mà máy không có gì
+     chờ đẩy thì bỏ qua — mười lần F5 không thành mười lượt Worker. */
+  setTimeout(function(){
+    if(!demCho() && Date.now() - lanCuoiXong() < CACH_TOI_THIEU_MS) return;
+    G.dongBo();
+  }, 4000);
+  if(demCho()) henDongBo();
   window.addEventListener('online', function(){
     G.U.toast('Có mạng trở lại — đang đồng bộ phần đã ghi khi ngoại tuyến.','ok');
     G.dongBo();
@@ -4135,16 +4291,25 @@ G.batDongBo = function(){
     G.U.toast('Mất mạng. Ứng dụng vẫn chạy bình thường, dữ liệu ghi trong máy.','err');
   });
   setInterval(function(){ G.dongBo(); }, 6 * 3600 * 1000);
-  /* Rời trang thì cố đẩy nốt phần còn lại */
-  window.addEventListener('pagehide', function(){
+  /* Rời trang thì cố đẩy nốt phần còn lại. Trên điện thoại pagehide hay
+     không nổ (người ta vuốt tắt app) — visibilitychange → hidden thì nổ
+     chắc hơn, nên nghe cả hai; cùng một gói thì chỉ gửi một lần. */
+  var goiDaGui = '';
+  function dayKhiRoi(){
     var g = gomThayDoi();
     if(!g.so || !navigator.onLine || !G.API_CAP_PHEP || !G.S.acc) return;
+    var than = JSON.stringify({
+      fn:'dongBo', u:G.S.acc.u, token:G.PHIEN_TOKEN||'',
+      day:g.day, mocTruong:g.mocDay, may:'pagehide'
+    });
+    if(than === goiDaGui) return;
     try{
-      navigator.sendBeacon(G.API_CAP_PHEP, new Blob([JSON.stringify({
-        fn:'dongBo', u:G.S.acc.u, token:G.PHIEN_TOKEN||'',
-        day:g.day, mocTruong:g.mocDay, may:'pagehide'
-      })], {type:'text/plain;charset=utf-8'}));
+      if(navigator.sendBeacon(G.API_CAP_PHEP, new Blob([than], {type:'text/plain;charset=utf-8'}))) goiDaGui = than;
     }catch(e){}
+  }
+  window.addEventListener('pagehide', dayKhiRoi);
+  document.addEventListener('visibilitychange', function(){
+    if(document.visibilityState === 'hidden') dayKhiRoi();
   });
 };
 
@@ -17041,33 +17206,90 @@ G.thuMayChu = function(){
 
    Bốn chỗ cũ chưa chuyển sang: chúng đang chạy đúng, và đổi cả bốn
    trong một lượt là bốn chỗ có thể hỏng cùng lúc mà không phép đo nào
-   phủ hết. Chuyển dần khi có việc chạm vào từng chỗ. */
-G.goiMayChu = function(fn, than){
+   phủ hết. Chuyển dần khi có việc chạm vào từng chỗ.
+
+   ── BỐN LỚP CHỐNG "BILL SHOCK" & TĂNG ĐỘ BỀN (docs/TOI_UU_CHI_PHI_CHAT_LUONG.md) ──
+   1. GỘP lượt đọc giống hệt đang bay: mười ô cùng hỏi một thứ → một lượt.
+   2. ĐỆM NGẮN (15 giây) cho việc CHỈ ĐỌC; bất kỳ lượt ghi nào xoá sạch
+      đệm, nên không bao giờ thấy dữ liệu cũ sau khi chính mình vừa sửa.
+      Cần số tươi thì gọi G.goiMayChu(fn, than, {moi:true}).
+   3. Máy chủ báo RATE/BUSY → TỰ NGHỈ đúng thuLaiSau, không gọi lại vô ích.
+   4. CẦU DAO: 3 lượt hỏng mạng/5xx liền nhau → ngắt 30 giây. Một vòng lặp
+      lỗi ở màn hình không biến thành hàng nghìn lượt Worker. */
+var DEM_DOC = {}, DANG_BAY = {}, NGHI_DEN = 0, HONG_LIEN = 0, NGAT_DEN = 0;
+var DEM_GIAY = 15;
+/* Việc chỉ đọc: tên bắt đầu bằng các tiền tố này. Việc theo dõi tiến độ
+   (phimXemViec, phimTrangThai) cố ý KHÔNG đệm — chúng phải luôn tươi. */
+var LA_DOC = /^(doc|ds|xem|soi|lichSu|bangTin|baoCao|crmDanhSach|crmChiTiet|crmBangDieuKhien|tongHop)/;
+var KHONG_DEM = {phimXemViec:1, phimTrangThai:1, docHomNay:1, hopThongBao:1};
+G.laViecDoc = function(fn){ return LA_DOC.test(fn) && !KHONG_DEM[fn]; };
+G.xoaDemMayChu = function(){ DEM_DOC = {}; };
+
+G.goiMayChu = function(fn, than, tuyChon){
   if(!G.API_CAP_PHEP)
     return Promise.resolve({ok:false, error:'Chưa nối máy chủ. Vào Quản trị trang → Nối máy chủ.'});
+  tuyChon = tuyChon || {};
+  var bayGio = Date.now();
+  if(bayGio < NGHI_DEN)
+    return Promise.resolve({ok:false, code:'RATE', thuLaiSau:Math.ceil((NGHI_DEN - bayGio)/1000),
+      error:'Đang tạm nghỉ để giữ hạn mức. Thử lại sau ' + Math.ceil((NGHI_DEN - bayGio)/1000) + ' giây.'});
+  if(bayGio < NGAT_DEN)
+    return Promise.resolve({ok:false, code:'NGAT',
+      error:'Máy chủ vừa không trả lời mấy lượt liền. Ứng dụng tạm chờ ' +
+        Math.ceil((NGAT_DEN - bayGio)/1000) + ' giây rồi tự thử lại — dữ liệu trong máy vẫn nguyên.'});
+
   var body = Object.assign({}, than || {}, {
     fn: fn,
     u: (G.S && G.S.acc && G.S.acc.u) || '',
     token: G.PHIEN_TOKEN || ''
   });
-  return fetch(G.API_CAP_PHEP, {
+  var doc = G.laViecDoc(fn);
+  var khoa = doc ? JSON.stringify(body) : '';
+  if(!doc) DEM_DOC = {};
+  if(doc && !tuyChon.moi){
+    var o = DEM_DOC[khoa];
+    if(o && bayGio - o.luc < DEM_GIAY * 1000) return Promise.resolve(o.d);
+    if(DANG_BAY[khoa]) return DANG_BAY[khoa];
+  }
+  var ma = '';
+  var p = fetch(G.API_CAP_PHEP, {
     method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
     body: JSON.stringify(body)
-  }).then(function(r){ return r.json(); })
+  }).then(function(r){
+      try { ma = r.headers.get('x-gita-ma') || ''; } catch(_e){}
+      if(r.status >= 500) HONG_LIEN++; else HONG_LIEN = 0;
+      return r.json();
+    })
     .then(function(d){
       if(!d) return {ok:false, error:'Máy chủ trả về nội dung không đọc được.'};
       if(G.nhanPhanHoiMayChu) G.nhanPhanHoiMayChu(d, body.token);
+      if(!d.ok){
+        if(ma && !d.maYeuCau) d.maYeuCau = ma;
+        if((d.code === 'RATE' || d.code === 'BUSY') && d.thuLaiSau)
+          NGHI_DEN = Date.now() + Math.min(Number(d.thuLaiSau) || 5, 300) * 1000;
+        if(G.ghiLoi) G.ghiLoi('may-chu', fn + ': ' + (d.code || '') + ' ' + (d.error || ''), d.maYeuCau);
+      }
       /* Phiên hết hạn nói RÕ là hết hạn, không lẫn vào "không có quyền":
          hai câu ấy dẫn tới hai việc khác nhau — đăng nhập lại, hay đi
          xin quyền. */
       if(!d.ok && d.code === 'AUTH'){
         return {ok:false, code:'AUTH', error:'Phiên đã hết hạn. Đăng nhập lại rồi thử lại.'};
       }
+      if(doc && d.ok) DEM_DOC[khoa] = {luc: Date.now(), d: d};
       return d;
     })
     .catch(function(e){
+      HONG_LIEN++;
+      if(G.ghiLoi) G.ghiLoi('mang', fn + ': ' + ((e && e.message) || e), ma);
       return {ok:false, error:'Không gọi được máy chủ: ' + doanViSao(e)};
+    })
+    .then(function(d){
+      if(HONG_LIEN >= 3){ NGAT_DEN = Date.now() + 30000; HONG_LIEN = 0; }
+      if(khoa) delete DANG_BAY[khoa];
+      return d;
     });
+  if(doc) DANG_BAY[khoa] = p;
+  return p;
 };
 
 /* ══ MỘT LƯỢT BỊ CSP CHẶN TRÔNG Y HỆT MỘT LƯỢT MẤT MẠNG ══
@@ -17136,6 +17358,7 @@ G.VIEWS['noi-may-chu'] = function(){
       '<button class="btn pri" data-act="mc-luu">'+ic('check','w-4 h-4')+'Lưu địa chỉ</button>'+
       '<button class="btn ghost" data-act="mc-thu">'+ic('pulse','w-4 h-4')+'Gọi thử</button>'+
       (noi ? '<button class="btn ghost" data-act="mc-bo">'+ic('x','w-4 h-4')+'Bỏ nối</button>' : '')+
+      (G.chepNhatKyLoi ? '<button class="btn ghost" data-act="mc-nhatky" title="Chép nhật ký lỗi (kèm mã yêu cầu) để gửi hỗ trợ">'+ic('alert','w-4 h-4')+'Chép nhật ký lỗi</button>' : '')+
     '</div>'+
     '<div id="mcKq" class="mt"></div>'+
     (G.KHO && G.KHO.lyDoTuChoi ?
@@ -17239,6 +17462,17 @@ document.addEventListener('click', function(e){
     var r = G.datMayChu(i ? i.value : '');
     U.toast(r.ok ? 'Đã lưu địa chỉ máy chủ trên máy này.' : r.ly, r.ok ? 'ok' : 'err');
     if(r.ok) G.render && G.render();
+  }
+  else if(a === 'mc-nhatky'){
+    G.chepNhatKyLoi().then(function(chu){
+      var so = G.NHAT_KY_LOI().length;
+      U.toast(so ? 'Đã chép ' + so + ' dòng nhật ký lỗi — dán vào thư gửi hỗ trợ.' : 'Chưa có lỗi nào được ghi trong phiên này.', 'ok');
+      if(kq){
+        var pre = document.createElement('pre');
+        pre.className = 'sm'; pre.style.cssText = 'white-space:pre-wrap;max-height:240px;overflow:auto';
+        pre.textContent = chu; kq.innerHTML = ''; kq.appendChild(pre);
+      }
+    }, function(){ U.toast('Trình duyệt không cho chép — mở lại trang bằng https.', 'err'); });
   }
   else if(a === 'mc-bo'){
     G.datMayChu('');
@@ -43860,7 +44094,7 @@ G.VIEWS = G.VIEWS || {};
     G.xpDA.canh.forEach(function (c) { var v = G.xpVat[c.clip]; if (v && v.loai === 'phim') try { v.el.pause(); } catch (e) {} });
     if (chay.nhac) try { chay.nhac.stop(); } catch (e) {}
   }
-  G.xpPhat = function (xuat, xongFn) {
+  G.xpPhat = function (xuat, xongFn, ghiThang) {
     if (chay && !chay.dung) { G.xpDung(); return; }
     if (!G.xpDA.canh.length) { U.toast('Chưa có cảnh nào — bấm "Tách kịch bản thành cảnh" trước.', 'err'); return; }
     var cv = document.getElementById('xp-man'); if (!cv) return;
@@ -43877,14 +44111,35 @@ G.VIEWS = G.VIEWS || {};
       src.start(); chay.nhac = src;
     }
     if (xuat) {
-      var luong = cv.captureStream(30);
+      /* Bậc máy (src/nang-luc-may.js): máy yếu ghi 24 khung/giây, bitrate
+         thấp hơn — tab không treo, tệp nhỏ hơn mà vẫn rõ trên điện thoại. */
+      var ch = G.cauHinhPhim ? G.cauHinhPhim() : {fps: 30, bitrate: 6000000};
+      var luong = cv.captureStream(ch.fps);
       dich.stream.getAudioTracks().forEach(function (t) { luong.addTrack(t); });
       var kieu = ['video/mp4;codecs=avc1.42E01E,mp4a.40.2', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm']
         .filter(function (k) { return window.MediaRecorder && MediaRecorder.isTypeSupported(k); })[0];
       if (!kieu) { U.toast('Trình duyệt này không ghi được video. Dùng Chrome hoặc Edge trên máy tính.', 'err'); dungPhat(); chay = null; return; }
-      var manh = [], ghi = new MediaRecorder(luong, {mimeType: kieu, videoBitsPerSecond: 6000000});
-      ghi.ondataavailable = function (e) { if (e.data && e.data.size) manh.push(e.data); };
-      ghi.onstop = function () { var bl = new Blob(manh, {type: kieu}); if (xongFn) xongFn(bl, kieu); };
+      var manh = [], ghi = new MediaRecorder(luong, {mimeType: kieu, videoBitsPerSecond: ch.bitrate});
+      /* GHI THẲNG XUỐNG ĐĨA nếu có sẵn tệp đích (ghiThang = FileSystemWritableFileStream):
+         từng mảnh một giây đi xuống đĩa ngay, RAM không phình theo độ dài phim
+         (5 phút ở 6 Mbps ≈ 225 MB nếu giữ hết trong bộ nhớ). Ghép tuần tự
+         các mảnh cho ra đúng tệp như ghép Blob. */
+      var hangGhi = Promise.resolve(), hongGhi = null;
+      ghi.ondataavailable = function (e) {
+        if (!e.data || !e.data.size) return;
+        if (ghiThang) hangGhi = hangGhi.then(function () { if (!hongGhi) return ghiThang.write(e.data); })
+          .catch(function (er) { hongGhi = er; });
+        else manh.push(e.data);
+      };
+      ghi.onstop = function () {
+        if (ghiThang) {
+          hangGhi.then(function () { if (hongGhi) throw hongGhi; return ghiThang.close(); })
+            .then(function () { if (xongFn) xongFn(null, kieu); },
+              function (er) { try { ghiThang.abort(); } catch (e2) {} if (xongFn) xongFn(null, kieu, er || new Error('ghi hỏng')); });
+          return;
+        }
+        var bl = new Blob(manh, {type: kieu}); if (xongFn) xongFn(bl, kieu);
+      };
       ghi.start(1000); chay.ghi = ghi;
     }
     function sangCanh(i) {
@@ -43985,10 +44240,23 @@ G.VIEWS = G.VIEWS || {};
   G.xpDuoiPhim = function () { return window.MediaRecorder && MediaRecorder.isTypeSupported('video/mp4') ? '.mp4' : '.webm'; };
   G.xpXuatVao = function (fh, xongFn) {
     U.toast('Đang xuất theo thời gian thực (' + Math.round(tongGiay()) + ' giây). Giữ tab này mở và hiện trên màn hình.', 'ok');
-    G.xpPhat(true, function (bl) {
-      fh.createWritable().then(function (w) { return w.write(bl).then(function () { return w.close(); }); })
-        .then(function () { U.toast('Đã xuất xong ' + fh.name, 'ok'); if (xongFn) xongFn(true); })
-        .catch(function (e) { U.toast('Không ghi được tệp: ' + (e && e.message), 'err'); if (xongFn) xongFn(false); });
+    /* Mở tệp đích TRƯỚC rồi ghi thẳng từng mảnh (xem G.xpPhat). Trình duyệt
+       không mở được luồng ghi thì lùi về cách cũ: gom Blob rồi ghi một lần. */
+    function baoXong(ok, e) {
+      if (ok) U.toast('Đã xuất xong ' + fh.name, 'ok');
+      else U.toast('Không ghi được tệp: ' + (e && e.message), 'err');
+      if (xongFn) xongFn(ok);
+    }
+    fh.createWritable().then(function (w) {
+      G.xpPhat(true, function (bl, kieu, loi) { baoXong(!loi, loi); }, w);
+      /* xpPhat dừng sớm (chưa có cảnh, trình duyệt không ghi được video…)
+         thì nhả tệp đích, không để khoá tệp tạm treo đó. */
+      if (!chay || chay.dung || !chay.ghi) { try { w.abort(); } catch (e) {} }
+    }, function () {
+      G.xpPhat(true, function (bl) {
+        fh.createWritable().then(function (w) { return w.write(bl).then(function () { return w.close(); }); })
+          .then(function () { baoXong(true); }, function (e) { baoXong(false, e); });
+      });
     });
   };
   G.xpChep = function (i, loai) {
@@ -44382,6 +44650,7 @@ var G = window.G || {}; window.G = G;
           })(v);
         }
       }
+      var nhipHoi = 5000;
       function vong() {
         if (ketThuc) return;
         if (dungLai) { het({code: 'DUNG', error: 'Đã dừng theo yêu cầu.'}); return; }
@@ -44393,8 +44662,9 @@ var G = window.G || {}; window.G = G;
           .then(function (x) {
             if (!x.ok) {
               if (LOI_DUNG_HAN.indexOf(x.code) >= 0) { het(x); return; }
-              setTimeout(vong, 8000); return;
+              setTimeout(vong, Math.max(8000, (Number(x.thuLaiSau) || 0) * 1000)); return;
             }
+            var truoc = xong;
             (x.ds || []).forEach(function (r, i) {
               var v = hoi[i]; if (!v || !r) return;
               if (r.trangThai === 'XONG') {
@@ -44404,7 +44674,11 @@ var G = window.G || {}; window.G = G;
               } else if (r.trangThai === 'LOI') thatBai(v, r.loi || 'model báo lỗi');
             });
             luuKho(); bao();
-            setTimeout(vong, xong >= tong ? 0 : 5000);
+            /* GIÃN NHỊP HỎI: clip video mất vài phút mới xong — hỏi đều 5 giây
+               là hàng chục lượt Worker vô ích mỗi clip. Chưa có gì xong thì
+               giãn dần ×1,5 tới trần 30 giây; có cái xong thì về lại 5 giây. */
+            nhipHoi = xong > truoc ? 5000 : Math.min(30000, Math.round(nhipHoi * 1.5));
+            setTimeout(vong, xong >= tong ? 0 : nhipHoi);
           });
       }
       vong();

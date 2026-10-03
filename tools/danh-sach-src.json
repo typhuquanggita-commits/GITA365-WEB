@@ -5,6 +5,7 @@
     "src/data.tuyen.js",
     "src/data.accounts.js",
     "src/ui.js",
+    "src/nang-luc-may.js",
     "src/bieu-do.js",
     "src/logo-gita.js",
     "src/nhan-dien.js",

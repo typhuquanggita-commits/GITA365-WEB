@@ -52,17 +52,30 @@ const tepHoSo = uid => 'hoso/' + uid + '.json';
 
    Cùng đúng lớp lỗi với id bản ghi ngay dưới: MỐC THỜI GIAN KHÔNG PHẢI
    KHOÁ, ở đâu cũng vậy. */
-const tepSao  = (uid, ma) => 'hoso-sao/' + uid + '/' + ma + '.json';
+const tepSao  = (uid, ma, nen) => 'hoso-sao/' + uid + '/' + ma + (nen ? '.json.gz' : '.json');
+
+/* NÉN BẢN SAO LƯU. JSON hồ sơ nén gzip còn ~10–20% — mười bản sao mỗi
+   người là phần lớn dung lượng R2, nên nén ở đây là thứ giữ giai đoạn 1
+   (dưới 200.000 tài khoản) nằm trong 10 GB miễn phí. Bản sao chỉ đọc khi
+   cứu hộ (tải về, gunzip) nên không tốn CPU lượt đồng bộ thường.
+   Môi trường không có CompressionStream thì ghi nguyên — không hỏng. */
+async function nenGzip(chu) {
+  if (typeof CompressionStream !== 'function') return null;
+  const luong = new Blob([chu]).stream().pipeThrough(new CompressionStream('gzip'));
+  return new Uint8Array(await new Response(luong).arrayBuffer());
+}
 
 /* ═══════════════ RUỘT HỒ SƠ ═══════════════ */
 
 async function docRuot(kho, uid) {
-  if (!kho) return {duLieu: {}, moc: {}};
+  if (!kho) return {duLieu: {}, moc: {}, etag: null, tep: null};
   const o = await kho.get(tepHoSo(uid));
-  if (!o) return {duLieu: {}, moc: {}};
+  if (!o) return {duLieu: {}, moc: {}, etag: null, tep: null};
+  const tep = await o.text();
   try {
-    const j = JSON.parse(await o.text());
-    return {duLieu: j.duLieu || {}, moc: j.moc || {}};
+    const j = JSON.parse(tep);
+    /* etag để ghi có điều kiện; tep (chuỗi gốc) để sao lưu khỏi get lại. */
+    return {duLieu: j.duLieu || {}, moc: j.moc || {}, etag: o.etag || null, tep: tep};
   } catch (e) {
     /* Tệp hỏng thì KHÔNG coi như hồ sơ rỗng rồi ghi đè lên nó — như thế
        là xoá sạch hồ sơ của người ta để chữa một lỗi đọc. Ném ra, để
@@ -164,7 +177,89 @@ async function dongBoCaiDat(db, y, hoSo) {
   return await locCaiDat(db, cu, lv, hoSo.uid);
 }
 
-/* ═══════════════ ĐỒNG BỘ ═══════════════ */
+/* ═══════════════ ĐỒNG BỘ ═══════════════
+
+   BA LUẬT TIẾT KIỆM VÀ NHẤT QUÁN (xem docs/TOI_UU_CHI_PHI_CHAT_LUONG.md):
+
+   1. KHÔNG ĐỔI GÌ THÌ KHÔNG GHI GÌ. Phần lớn lượt đồng bộ chỉ để KÉO về
+      (mở app, có mạng lại, nhịp sáu giờ). Bản cũ lượt nào cũng chép sao
+      lưu, ghi đè tệp, sửa D1, ghi nhật ký — năm lượt ghi để không đổi
+      gì. Nay lượt không đổi chỉ ĐỌC: một lượt R2 + một câu caiDat.
+   2. SAO LƯU THEO NHỊP, KHÔNG THEO LƯỢT. Bản sao gần nhất còn mới hơn
+      SAO_LUU_PHUT thì không chép thêm — vẫn luôn có một bản trước mỗi
+      khoảng nửa giờ sửa, mà một buổi sửa liên tục không đẻ ra hàng chục
+      bản sao giống nhau.
+   3. GHI CÓ ĐIỀU KIỆN. Hai máy đồng bộ cùng lúc thì bản cũ đọc–gộp–ghi
+      không khoá gì: lượt ghi sau xoá phần lượt trước vừa gộp. Nay ghi R2
+      kèm etag đã đọc; etag đổi giữa chừng thì đọc lại, gộp lại, ghi lại
+      (tối đa BA lần). */
+
+const SAO_LUU_PHUT = 30;
+const SO_LAN_THU = 3;
+
+/* Gộp phần máy đẩy lên vào hồ sơ. Trả số trường THỰC SỰ đổi. */
+function gop(duLieu, moc, day, mocDay, boQua) {
+  let doi = 0;
+  for (const nhom of Object.keys(day)) {
+    if (NHOM.indexOf(nhom) < 0) { if (boQua.indexOf(nhom) < 0) boQua.push(nhom); continue; }
+    const v = day[nhom];
+    if (v === null || typeof v !== 'object') continue;
+    duLieu[nhom] = duLieu[nhom] || {};
+    for (const k of Object.keys(v)) {
+      const khoa = nhom + '.' + k;
+      const tMay = Number(mocDay[khoa] || 0);
+      const tChu = Number(moc[khoa] || 0);
+      /* tMay < tChu: máy chủ mới hơn — giữ nguyên, và bản mới ấy đi về
+         máy khách ở phần "keo" ngay dưới. */
+      if (tMay < tChu) continue;
+      const tMoi = tMay || Date.now();
+      if (tMoi === tChu && JSON.stringify(duLieu[nhom][k]) === JSON.stringify(v[k])) continue;
+      duLieu[nhom][k] = v[k]; moc[khoa] = tMoi; doi++;
+    }
+  }
+  return doi;
+}
+
+/* SAO LƯU TRƯỚC, GHI ĐÈ SAU — thứ tự này không đổi được.
+
+   Ghi đè trước rồi sao lưu là sao lưu chính bản vừa ghi, tức là không
+   sao lưu gì cả; và nếu lượt ghi hỏng giữa chừng thì mất luôn bản cũ.
+   Sao lưu chỉ có nghĩa khi nó đứng TRƯỚC.
+
+   Chép từ chuỗi ĐÃ ĐỌC (tep), không get thêm lượt nữa — đúng bản đã gộp,
+   và đỡ một lượt R2. */
+async function saoLuuNeuCan(db, kho, uid, cuDb, tep, luc) {
+  if (!cuDb || !kho || !tep) return;
+  const gan = await db.prepare(
+    'SELECT luc FROM hosoAppSaoLuu WHERE uid = ? ORDER BY luc DESC LIMIT 1').bind(uid).first();
+  if (gan && Date.parse(gan.luc) > Date.now() - SAO_LUU_PHUT * 60e3) return;
+
+  const maSao = tokenMoi().slice(0, 24);
+  let nen = null;
+  try { nen = await nenGzip(tep); } catch (e) { nen = null; }
+  const khoaSao = tepSao(uid, maSao, !!nen);
+  await kho.put(khoaSao, nen || tep, nen ? {httpMetadata: {contentType: 'application/gzip'}} : undefined);
+  /* MỐC THỜI GIAN KHÔNG PHẢI KHOÁ.
+
+     Nền cũ ghép id = uid + '-' + Date.now(), và tôi chép nguyên
+     sang đây. Hai lượt đồng bộ rơi vào CÙNG MỘT MI-LI-GIÂY là đụng
+     khoá chính, cả lượt ghi ném ra, và người dùng thấy "máy chủ gặp
+     trục trặc" trong khi hồ sơ họ vừa sửa không được lưu.
+
+     Máy tính bàn đồng bộ theo nhịp máy, không theo nhịp người — hai
+     lượt cách nhau dưới một mi-li-giây là chuyện thường. */
+  try {
+    await db.prepare('INSERT INTO hosoAppSaoLuu (id,uid,khoaTep,coByte,luc) VALUES (?,?,?,?,?)')
+      .bind(maSao, uid, khoaSao, Number(cuDb.coByte || 0), cuDb.suaLuc || luc).run();
+  } catch (e) {
+    /* BÙ TRỪ: D1 không nhận dòng thì xoá tệp vừa chép — không để lại tệp
+       "mồ côi" trong R2 mà không sổ nào trỏ tới (tiền kho tính theo dung
+       lượng). Bộ quét đêm (quetSaoLuuMoCoi) là lưới thứ hai. */
+    try { await kho.delete(khoaSao); } catch (e2) {}
+    throw e;
+  }
+  await donSaoLuu(db, kho, uid);
+}
 
 export async function dongBo(y, env, db, hoSo) {
   const kho = env.HOSO;
@@ -175,78 +270,103 @@ export async function dongBo(y, env, db, hoSo) {
   if (co > TRAN_DAY_KB * 1024)
     return {ok: false, code: 'TOOBIG', error: 'Gói đẩy lên vượt trần ' + TRAN_DAY_KB + ' KB.'};
 
-  /* 2 · Hồ sơ đang có */
-  const {duLieu, moc} = await docRuot(kho, uid);
+  const day = y.day || {}, mocDay = y.mocTruong || {};
+  let boQua = [], duLieu, moc, doi = 0, luc = new Date().toISOString();
 
-  /* 3 · Gộp theo TỪNG TRƯỜNG, bên nào mới hơn thì thắng. */
-  const day = y.day || {}, mocDay = y.mocTruong || {}, boQua = [];
-  for (const nhom of Object.keys(day)) {
-    if (NHOM.indexOf(nhom) < 0) { boQua.push(nhom); continue; }
-    const v = day[nhom];
-    if (v === null || typeof v !== 'object') continue;
-    duLieu[nhom] = duLieu[nhom] || {};
-    for (const k of Object.keys(v)) {
-      const khoa = nhom + '.' + k;
-      const tMay = Number(mocDay[khoa] || 0);
-      const tChu = Number(moc[khoa] || 0);
-      /* tMay < tChu: máy chủ mới hơn — giữ nguyên, và bản mới ấy đi về
-         máy khách ở phần "keo" ngay dưới. */
-      if (tMay >= tChu) { duLieu[nhom][k] = v[k]; moc[khoa] = tMay || Date.now(); }
+  for (let lan = 0; lan < SO_LAN_THU; lan++) {
+    /* 2 · Hồ sơ đang có (kèm etag để ghi có điều kiện) */
+    const r = await docRuot(kho, uid);
+    duLieu = r.duLieu; moc = r.moc; boQua = [];
+
+    /* 3 · Gộp theo TỪNG TRƯỜNG, bên nào mới hơn thì thắng. */
+    doi = gop(duLieu, moc, day, mocDay, boQua);
+
+    /* Luật 1: không đổi gì thì chỉ trả phần kéo về. */
+    if (!doi) break;
+
+    luc = new Date().toISOString();
+    const cuDb = await db.prepare('SELECT * FROM hosoApp WHERE uid = ?').bind(uid).first();
+
+    /* 4 · Sao lưu (theo nhịp) rồi mới ghi đè. */
+    await saoLuuNeuCan(db, kho, uid, cuDb, r.tep, luc);
+
+    const than = JSON.stringify({duLieu: duLieu, moc: moc});
+    if (kho) {
+      /* Luật 3: ghi khi etag còn đúng bản đã đọc. R2 trả null nếu điều
+         kiện hỏng (có máy khác vừa ghi) → vòng lặp đọc lại và gộp lại. */
+      const ghi = r.etag
+        ? await kho.put(tepHoSo(uid), than, {onlyIf: {etagMatches: r.etag}})
+        : await kho.put(tepHoSo(uid), than);
+      if (!ghi) {
+        if (lan === SO_LAN_THU - 1)
+          return {ok: false, code: 'BUSY', thuLaiSau: 5,
+            error: 'Hồ sơ đang được máy khác đồng bộ. Thử lại sau vài giây — dữ liệu trong máy vẫn nguyên.'};
+        continue;
+      }
     }
-  }
 
-  /* 4 · SAO LƯU TRƯỚC, GHI ĐÈ SAU — thứ tự này không đổi được.
-
-     Ghi đè trước rồi sao lưu là sao lưu chính bản vừa ghi, tức là không
-     sao lưu gì cả; và nếu lượt ghi hỏng giữa chừng thì mất luôn bản cũ.
-     Sao lưu chỉ có nghĩa khi nó đứng TRƯỚC. */
-  const luc = new Date().toISOString();
-  const cuDb = await db.prepare('SELECT * FROM hosoApp WHERE uid = ?').bind(uid).first();
-  if (cuDb && kho) {
-    const cuTep = await kho.get(tepHoSo(uid));
-    if (cuTep) {
-      const maSao = tokenMoi().slice(0, 24);
-      const khoaSao = tepSao(uid, maSao);
-      await kho.put(khoaSao, await cuTep.arrayBuffer());
-      /* MỐC THỜI GIAN KHÔNG PHẢI KHOÁ.
-
-         Nền cũ ghép id = uid + '-' + Date.now(), và tôi chép nguyên
-         sang đây. Hai lượt đồng bộ rơi vào CÙNG MỘT MI-LI-GIÂY là đụng
-         khoá chính, cả lượt ghi ném ra, và người dùng thấy "máy chủ gặp
-         trục trặc" trong khi hồ sơ họ vừa sửa không được lưu.
-
-         Ở Sheets chuyện này không nổ, vì một dòng bảng tính không có
-         khoá chính — nó lặng lẽ tạo hai dòng trùng id, rồi Store.find
-         trả về dòng đầu tiên, nên lượt sửa sau ghi vào nhầm bản. Hỏng
-         im lặng thay vì hỏng ồn ào; chuyển sang cơ sở dữ liệu thật là
-         chỗ ấy mới chịu kêu.
-
-         Máy tính bàn đồng bộ theo nhịp máy, không theo nhịp người — hai
-         lượt cách nhau dưới một mi-li-giây là chuyện thường. */
-      await db.prepare('INSERT INTO hosoAppSaoLuu (id,uid,khoaTep,coByte,luc) VALUES (?,?,?,?,?)')
-        .bind(maSao, uid, khoaSao, Number(cuDb.coByte || 0), cuDb.suaLuc || luc).run();
-      await donSaoLuu(db, kho, uid);
+    if (cuDb) {
+      await db.prepare('UPDATE hosoApp SET coByte = ?, suaLuc = ? WHERE uid = ?')
+        .bind(than.length, luc, uid).run();
+    } else {
+      await db.prepare(
+        'INSERT INTO hosoApp (id,uid,u,role,khoaTep,coByte,taoLuc,suaLuc) VALUES (?,?,?,?,?,?,?,?)'
+      ).bind(uid, uid, hoSo.u, hoSo.role, tepHoSo(uid), than.length, luc, luc).run();
     }
+    break;
   }
 
-  const than = JSON.stringify({duLieu: duLieu, moc: moc});
-  if (kho) await kho.put(tepHoSo(uid), than);
-
-  if (cuDb) {
-    await db.prepare('UPDATE hosoApp SET coByte = ?, suaLuc = ? WHERE uid = ?')
-      .bind(than.length, luc, uid).run();
-  } else {
-    await db.prepare(
-      'INSERT INTO hosoApp (id,uid,u,role,khoaTep,coByte,taoLuc,suaLuc) VALUES (?,?,?,?,?,?,?,?)'
-    ).bind(uid, uid, hoSo.u, hoSo.role, tepHoSo(uid), than.length, luc, luc).run();
-  }
-
-  await Kho.ghiNhatKy(db, {uid: uid, username: hoSo.u, viec: 'DONG_BO',
-    chiTiet: Math.round(co / 1024) + ' KB · ' + Object.keys(day).join(',') +
-             (boQua.length ? ' · bỏ qua: ' + boQua.join(',') : '')});
+  /* Nhật ký chỉ khi CÓ đổi (hoặc có nhóm bị từ chối — thứ ấy phải thấy). */
+  if (doi || boQua.length)
+    await Kho.ghiNhatKy(db, {uid: uid, username: hoSo.u, viec: 'DONG_BO',
+      chiTiet: Math.round(co / 1024) + ' KB · ' + doi + ' trường · ' + Object.keys(day).join(',') +
+               (boQua.length ? ' · bỏ qua: ' + boQua.join(',') : '')});
 
   return {ok: true, caiDat: await dongBoCaiDat(db, y, hoSo),
-    keo: duLieu, mocTruong: moc, mocMayChu: luc, boQua: boQua};
+    keo: duLieu, mocTruong: moc, mocMayChu: luc, boQua: boQua, doi: doi};
+}
+
+/* ═══════════════ QUÉT SAO LƯU MỒ CÔI (chạy đêm) ═══════════════
+
+   Lưới thứ hai cho tính nhất quán D1 ↔ R2: tệp trong hoso-sao/ mà sổ
+   hosoAppSaoLuu không còn dòng nào trỏ tới (Worker chết giữa hai bước,
+   lượt bù trừ cũng hỏng) — quá một ngày tuổi thì xoá.
+
+   Mỗi đêm chỉ quét MỘT TRANG (≤ 500 tệp) rồi ghi con trỏ vào chính R2,
+   lượt sau đi tiếp; hết vòng thì quay lại đầu. Chi phí cố định mỗi đêm:
+   1 lượt list + 1 lượt ghi con trỏ + ≤ 10 câu đọc D1 — không phình theo
+   số người dùng. Con trỏ KHÔNG nằm trong caiDat vì caiDat gửi xuống máy
+   khách. */
+const KHOA_CON_TRO = 'he-thong/con-tro-quet-sao-luu.txt';
+
+export async function quetSaoLuuMoCoi(env, trang) {
+  const kho = env && env.HOSO, db = env && env.CSDL;
+  if (!kho || !db || typeof kho.list !== 'function') return {ok: true, boQua: 'khong-co-kho'};
+  let conTro;
+  try { const o = await kho.get(KHOA_CON_TRO); conTro = o ? (await o.text()) || undefined : undefined; }
+  catch (e) {}
+  const ds = await kho.list({prefix: 'hoso-sao/', limit: trang || 500, cursor: conTro});
+  const tep = (ds && ds.objects) || [];
+  const han = Date.now() - 86400e3;
+  let xoa = 0;
+  for (let i = 0; i < tep.length; i += 50) {
+    const lo = tep.slice(i, i + 50);
+    const r = await db.prepare('SELECT khoaTep FROM hosoAppSaoLuu WHERE khoaTep IN (' +
+      lo.map(() => '?').join(',') + ')').bind(...lo.map(o => o.key)).all();
+    const con = new Set((r.results || []).map(x => x.khoaTep));
+    for (const o of lo) {
+      const tuoi = o.uploaded ? new Date(o.uploaded).getTime() : 0;
+      if (con.has(o.key) || tuoi > han) continue;
+      try { await kho.delete(o.key); xoa++; } catch (e) {}
+    }
+  }
+  const tiep = ds && ds.truncated && ds.cursor ? ds.cursor : '';
+  try { await kho.put(KHOA_CON_TRO, tiep); } catch (e) {}
+  if (xoa) {
+    try { await Kho.ghiNhatKy(db, {viec: 'DON_SAO_LUU_MO_COI', doiTuong: 'tự động',
+      chiTiet: 'xoá ' + xoa + '/' + tep.length + ' tệp sao lưu không còn trong sổ'}); } catch (e) {}
+  }
+  return {ok: true, daXem: tep.length, xoa: xoa, conTiep: !!tiep};
 }
 
 /* GIỮ MƯỜI BẢN GẦN NHẤT MỖI NGƯỜI — cùng luật với GITA_HAN của bộ dọn.

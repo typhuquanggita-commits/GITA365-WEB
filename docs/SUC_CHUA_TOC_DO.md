@@ -33,3 +33,5 @@ npx http-server -p 8099
 - Đặt `cache-control` dài cho static assets (đã có trong `_headers`).
 - Dùng Cloudflare CDN cho toàn bộ tên miền.
 - Tránh render-blocking scripts ngoài `gita-app.js` và `cau-hinh.js`.
+
+> Xem thêm: [Tối ưu chi phí & chất lượng](TOI_UU_CHI_PHI_CHAT_LUONG.md) — mô hình 0đ (<200k TK) và <30 USD (200k–500k TK).
