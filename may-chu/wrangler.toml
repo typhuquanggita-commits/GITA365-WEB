@@ -33,10 +33,14 @@ main = "worker.js"
 compatibility_date = "2026-09-01"
 
 [vars]
-# KHÔNG phải bí mật — đây là địa chỉ công khai của bản web, dùng để dựng
-# đường dẫn kích hoạt trong thư. Sai địa chỉ ở đây thì thư đi đúng nhưng
-# đường dẫn trong thư trỏ vào chỗ không có gì.
-GITA_DIA_CHI_WEB = "https://gita365.pages.dev"
+# KHÔNG phải bí mật — DANH SÁCH origin công khai của bản web, phân tách
+# bằng dấu phẩy. Hai việc:
+#   1. CORS: Worker chỉ cho các origin này gọi. PHẢI gồm MỌI tên miền
+#      đang chạy web (kể cả www và bản PWA cài từ tên miền đó) — thiếu
+#      một là app báo "không kết nối được máy chủ" dù Worker vẫn sống.
+#      Không bao giờ thêm 'null' (file://).
+#   2. Origin ĐẦU TIÊN dùng để dựng đường dẫn kích hoạt trong thư.
+GITA_DIA_CHI_WEB = "https://gita.edu.vn,https://www.gita.edu.vn,https://gita365.pages.dev"
 
 # Địa chỉ đứng tên người gửi. Tên miền này PHẢI được xác thực ở nhà gửi
 # thư (SPF/DKIM), nếu không thì thư đi nhưng rơi vào mục spam — mà một

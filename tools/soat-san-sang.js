@@ -7,6 +7,7 @@
 
    Kiểm tra các điều kiện hay gây "đẩy lên xong mà không chạy":
      · cau-hinh.js và connect-src trong index.html cùng origin
+     · origin của CNAME nằm trong GITA_DIA_CHI_WEB (CORS của Worker)
      · các tệp tĩnh cần thiết có mặt
      · gita-app.js / gita-nghe.js khớp với src/
      · sw.js cache version khớp với G.META.version
@@ -121,6 +122,25 @@ if (api) {
   });
   if (coOrigin) ok('Origin máy chủ nằm trong connect-src');
   else fail('Origin ' + new URL(api).origin + ' KHÔNG nằm trong connect-src');
+}
+
+/* 6b. CORS: mọi tên miền chạy web phải nằm trong GITA_DIA_CHI_WEB của Worker,
+   nếu không trình duyệt chặn và app báo "không kết nối được máy chủ". */
+const wrangler = doc('may-chu/wrangler.toml');
+const dsWeb = ((wrangler.match(/^\s*GITA_DIA_CHI_WEB\s*=\s*"([^"]*)"/m) || [])[1] || '')
+  .split(',').map(s => s.trim().replace(/\/+$/, '')).filter(Boolean);
+if (!dsWeb.length) warn('wrangler.toml chưa đặt GITA_DIA_CHI_WEB — Worker trả CORS "*"');
+else {
+  ok('GITA_DIA_CHI_WEB: ' + dsWeb.join(', '));
+  if (dsWeb.includes('null')) fail('GITA_DIA_CHI_WEB không được chứa origin "null"');
+  if (fs.existsSync(path.join(ROOT, 'CNAME'))) {
+    const tenMien = doc('CNAME').trim();
+    const goc = 'https://' + tenMien;
+    if (dsWeb.includes(goc)) ok('Origin CNAME ' + goc + ' nằm trong GITA_DIA_CHI_WEB');
+    else fail('Origin CNAME ' + goc + ' KHÔNG nằm trong GITA_DIA_CHI_WEB (wrangler.toml) — web sẽ bị chặn CORS');
+    if (!/^www\./.test(tenMien) && !dsWeb.includes('https://www.' + tenMien))
+      warn('GITA_DIA_CHI_WEB chưa có https://www.' + tenMien);
+  }
 }
 
 /* 7. Gọi thử máy chủ */

@@ -19,7 +19,12 @@ var G = window.G || {}; window.G = G;
    HAI CHỖ PHẢI ĐI CÙNG NHAU: đổi địa chỉ ở đây thì connect-src trong
    index.html cũng phải cho phép origin ấy (đã mở sẵn https://*.workers.dev).
    Thiếu một chỗ là trình duyệt chặn im lặng — chạy node tools/soat-san-sang.js
-   để máy đối chiếu hai chỗ. */
+   để máy đối chiếu hai chỗ.
+
+   CHỖ THỨ BA, Ở PHÍA MÁY CHỦ: tên miền chạy bản web (CNAME, cả www) phải
+   nằm trong danh sách GITA_DIA_CHI_WEB ở may-chu/wrangler.toml — Worker
+   chỉ mở CORS cho các origin trong danh sách ấy. Thêm tên miền mới thì
+   sửa danh sách rồi deploy lại Worker. Xem docs/MAY_CHU.md. */
 G.API_CAP_PHEP = G.API_CAP_PHEP || 'https://gita365.typhuquanggita.workers.dev';
 
 /* Không phải ai cũng sửa được tệp này — bản cài trên máy Windows nằm trong
