@@ -23,7 +23,7 @@ const SO_TANG = 5;
    máy khách tự biết bản của nó (G.META.version); cửa này chỉ nói "bản
    mới nhất Học viện đã phát hành là gì". Cập nhật số này mỗi lượt phát
    hành app mới. */
-const BAN_APP = '9.99.249';
+const BAN_APP = '9.99.250';
 
 import { BAC } from './vai-tro.js';
 

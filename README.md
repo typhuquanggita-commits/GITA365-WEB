@@ -1,4 +1,4 @@
-# GITA 365 · v9.99.249 — Hệ Sinh Thái Gia Đình Thịnh Vượng
+# GITA 365 · v9.99.250 — Hệ Sinh Thái Gia Đình Thịnh Vượng
 
 > ⚠ **TÀI SẢN ĐỘC QUYỀN.** Toàn bộ nội dung chuyên môn của GITA 365 được mã hoá
 > AES-256-GCM và chỉ mở cho tài khoản đã đăng nhập, trong đúng phạm vi vai và

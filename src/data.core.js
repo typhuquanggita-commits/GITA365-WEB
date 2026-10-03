@@ -18,7 +18,7 @@ window.G = G;
    trong khi nội dung đổi là một cách nói dối không cố ý. */
 G.META = {
   name: 'GITA 365',
-  version: '9.99.249',
+  version: '9.99.250',
   tagline: 'Hệ Sinh Thái Gia Đình Thịnh Vượng',
   hotline: '08.5555.4688',
   site: 'truongnhatquang.com',
@@ -984,6 +984,7 @@ G.NAV = [
     {v:'supreme', t:'GITA Supreme · bản đồ', h:'Bản đồ ba quyển nghiên cứu của chủ hệ và CÁI TRẦN của chúng — ngăn đầu là BẪY TÊN GỌI: ba thang cùng mang chữ điểm chạm (1.000 tiến độ · 9 cảm xúc · 100.000 hệ thống), và một luật bị phạm thì có người cãi còn hai thang cùng tên thì không ai cãi · bốn chỗ va MỚI, không chép lại sáu điều cấm đã có · hai chỗ phép dò của chính tôi BẮT OAN vì tài liệu đang phê phán chính thứ bị dò · ma trận 28 năng lực · mười lớp điểm chạm · 45/100 phần đã có chữ', ic:'shield', star:1, perm:'nghe_chung', capMo:'chung'},
     {v:'bien-soan-noi-dung', t:'Biên soạn nội dung', h:'Khuôn 24 khối · máy đo · thang năm cổng · hiến pháp nội dung', ic:'book', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'studio', t:'GITA Studio · Xưởng dựng video', h:'Kịch bản · MC tham chiếu · chuyển động 2.5D · phối âm cục bộ', ic:'spark', star:1, perm:'qt_trang', capMo:'chung'},
+    {v:'xuong-phim', t:'Xưởng phim ngắn AI · phim dọc 9:16', h:'Sổ nhân vật · kịch bản → prompt từng cảnh cho công cụ video AI · nạp clip · phụ đề, logo, số tập, nhạc · xuất phim ngay trên máy', ic:'spark', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'tu-hoan-thien', t:'Vòng tự hoàn thiện · lấp kho có cấp phép', h:'Kho rỗng lúc tư vấn thì Bộ não SOẠN từ dữ liệu đã có, KHÔNG bịa — nhưng 入库 (đưa vào kho phục vụ khách) phải qua Bộ phận sản phẩm → Giám đốc → Super Admin · máy soạn không nhập, hai cửa tách hẳn · đủ ba chữ ký hay chưa TÍNH LÚC ĐỌC từ sổ, không cột đãDuyệt · ba cấp ba người khác nhau · sự chậm là có thật và được nói thẳng với khách', ic:'shield', star:1, perm:'nghe_chung', capMo:'chung'},
     {v:'quyen-nang-ai', t:'Quyền năng AI · Super Admin cấp', h:'Super Admin bật/thu MƯỜI chức năng cho AI xử lý công việc · mỗi chức năng TẮT mặc định, chỉ R01 bật, AI không tự bật · bật hay chưa tính LÚC ĐỌC từ sổ, không cột đang-bật · chức năng SOẠN đi qua chuỗi cấp phép ba cấp đã có (trỏ, không dựng cổng thứ hai) · chức năng ĐỌC thì nêu không kết luận · năm cửa chạy thật, năm cái khai chuaCoCua', ic:'shield', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'dieu-phoi', t:'Điều phối trợ lý AI · 100 siêu cấp', h:'Bộ não GITA365 cao nhất, điều phối toàn diện · 100 trợ lý siêu cấp đảm nhận từng cửa thật, mỗi trợ lý MỘT khoá sở hữu nên không xung đột · mọi trợ lý qua đúng cổng (Điều 13 · cấp quyền AI · ba chữ ký), TRỎ chứ không chép luật · tự hoàn thiện đi qua vòng nâng cấp có cổng · ×100 là hướng, không phải chỉ tiêu · sẵn sàng nối tuyến web app nhánh không trùng khoá', ic:'orbit', star:1, perm:'qt_trang', capMo:'chung'},
