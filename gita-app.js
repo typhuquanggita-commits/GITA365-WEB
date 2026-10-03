@@ -16985,6 +16985,9 @@ G.tuChoiCachSua = function(ma){
       return 'Phiên máy chủ không hợp lệ hoặc đã hết hạn. Ở phần Đăng nhập máy chủ bên dưới, '+
         'đăng nhập lại bằng tài khoản thật của Học viện rồi mở lại kho.';
     case 'NETWORK':
+      if (location.protocol === 'file:')
+        return 'Ứng dụng đang được mở từ một tệp trên máy (file://), nên máy chủ không nhận. '+
+          'Hãy mở bằng trình duyệt tại https://gita365.pages.dev rồi đăng nhập lại.';
       return 'Không liên lạc được máy chủ cấp phép. Kiểm tra kết nối mạng, địa chỉ Worker và '+
         'mục connect-src trong index.html, rồi bấm Gọi thử.';
     case 'SERVER':

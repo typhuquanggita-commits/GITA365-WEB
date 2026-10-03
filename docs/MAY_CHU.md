@@ -17,12 +17,12 @@ Có thể ghi đè trên từng máy qua màn **Quản trị trang → Nối má
 Biến `[vars] GITA_DIA_CHI_WEB` trong `may-chu/wrangler.toml` là **danh sách origin, phân tách bằng dấu phẩy**:
 
 ```toml
-GITA_DIA_CHI_WEB = "https://gita365.pages.dev"
+GITA_DIA_CHI_WEB = "https://gita365.pages.dev,https://typhuquanggita-commits.github.io"
 ```
 
-- Danh sách **phải gồm mọi địa chỉ đang chạy bản web** — hiện chỉ có `https://gita365.pages.dev` (địa chỉ chính thức duy nhất). Thêm địa chỉ khác thì nối bằng dấu phẩy. Thiếu một địa chỉ thì trình duyệt chặn CORS và app báo *không kết nối được máy chủ* dù Worker vẫn chạy bình thường.
+- Danh sách **phải gồm mọi địa chỉ đang chạy bản web**: `https://gita365.pages.dev` (chính thức, đứng đầu) và bản sao GitHub Pages `https://typhuquanggita-commits.github.io` (workflow deploy tự đồng bộ). Thêm địa chỉ khác thì nối bằng dấu phẩy. Thiếu một địa chỉ thì trình duyệt chặn CORS và app báo *không kết nối được máy chủ* dù Worker vẫn chạy bình thường.
 - Worker đọc header `Origin`: khớp danh sách thì trả lại đúng origin đó (kèm `Vary: Origin`); không khớp thì trả origin đầu tiên (trình duyệt sẽ chặn).
-- Không bao giờ thêm `null` (trang mở bằng `file://`). Để trống biến thì Worker trả `*`.
+- Không bao giờ thêm `null` (trang mở bằng `file://`); app khi đó sẽ báo người dùng mở https://gita365.pages.dev. Để trống biến thì Worker trả `*`.
 - Origin **đầu tiên** được dùng để dựng đường dẫn kích hoạt trong thư.
 - Đổi biến xong phải **deploy lại Worker** (`npx wrangler deploy` trong `may-chu/`, hoặc workflow deploy).
 - Kiểm: `node tools/thu-cors.mjs` và `node tools/soat-san-sang.js`.
@@ -37,10 +37,12 @@ Mọi thư (mã OTP đăng ký, lấy lại mật khẩu, thông báo tài kho�
 ### Dựng cầu nối Gmail (khoảng 10 phút)
 
 1. Đăng nhập Google bằng `typhuquanggita@gmail.com`, mở <https://script.google.com> → **Dự án mới**. Dán toàn bộ `may-chu/cau-noi-gmail/Code.gs` vào `Code.gs`, rồi lưu.
-2. Tạo khoá ngẫu nhiên: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`. Vào **Cài đặt dự án → Thuộc tính tập lệnh**, thêm `KHOA` = chuỗi vừa tạo.
+2. Tạo khoá ngẫu nhiên: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`. Vào **Cài đặt dự án → Thuộc tính tập lệnh**, thêm `KHOA` = chuỗi vừa tạo. Nếu nhận được bản dán sẵn (biến `KHOA_DAN` đã có khoá), bỏ qua bước này.
 3. Chọn hàm `thuGui` → **Chạy** → cấp quyền "Gửi email thay bạn". Hòm thư sẽ nhận một lá "thử cầu nối Gmail".
 4. **Triển khai → Tùy chọn triển khai mới → Ứng dụng web**: *Thực thi với tư cách* = **Tôi**, *Người có quyền truy cập* = **Bất kỳ ai**. Chép URL `https://script.google.com/macros/s/…/exec`.
-5. Trong `may-chu/`:
+5. Nạp vào Worker — chọn một cách:
+   - **Không cần máy có wrangler:** đặt hai secret `GITA_CAU_NOI_GMAIL` (URL) và `GITA_KHOA_CAU_NOI` (khoá) ở GitHub → *Settings → Secrets and variables → Actions*. Sau đó chạy workflow **Deploy GITA365 to Cloudflare** (*Run workflow*); workflow sẽ nạp cả hai vào Worker.
+   - Hoặc chạy trong `may-chu/`:
    ```bash
    npx wrangler secret put GITA_CAU_NOI_GMAIL   # dán URL ở bước 4
    npx wrangler secret put GITA_KHOA_CAU_NOI    # dán đúng KHOA ở bước 2

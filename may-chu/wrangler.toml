@@ -40,8 +40,11 @@ compatibility_date = "2026-09-01"
 #      app báo "không kết nối được máy chủ" dù Worker vẫn sống.
 #      Không bao giờ thêm 'null' (file://).
 #   2. Origin ĐẦU TIÊN dùng để dựng đường dẫn kích hoạt trong thư.
-# Địa chỉ web chính thức duy nhất hiện nay: https://gita365.pages.dev
-GITA_DIA_CHI_WEB = "https://gita365.pages.dev"
+# Địa chỉ web chính thức: https://gita365.pages.dev (đứng ĐẦU — dùng cho
+# đường dẫn trong thư). Bản sao trên GitHub Pages
+# (https://typhuquanggita-commits.github.io/GITA365-WEB/) do workflow
+# deploy tự đồng bộ; người dùng đã cài PWA từ đó nên phải cho qua.
+GITA_DIA_CHI_WEB = "https://gita365.pages.dev,https://typhuquanggita-commits.github.io"
 
 # Địa chỉ đứng tên người gửi KHI GỬI QUA RESEND, dạng
 # "GITA 365 <dia-chi@ten-mien>". Resend CHỈ cho gửi từ tên miền đã xác

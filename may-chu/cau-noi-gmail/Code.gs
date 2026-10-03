@@ -8,7 +8,8 @@
    CÀI ĐẶT — xem docs/MAY_CHU.md, mục "Gửi thư":
      1. script.google.com → Dự án mới → dán tệp này vào Code.gs.
      2. Cài đặt dự án → Thuộc tính tập lệnh → thêm KHOA = <chuỗi ngẫu
-        nhiên dài, ví dụ 64 ký tự hex>. KHÔNG dán khoá vào mã.
+        nhiên dài, ví dụ 64 ký tự hex>. (Bản dán sẵn nhận từ người cài
+        đã có khoá ở biến KHOA_DAN — bỏ qua bước này.)
      3. Chọn hàm thuGui → Chạy → cấp quyền gửi thư. Hòm thư sẽ nhận
         một lá "thử cầu nối".
      4. Triển khai → Tùy chọn triển khai mới → Ứng dụng web:
@@ -26,10 +27,13 @@
 var DAI_TIEU_DE = 200;
 var DAI_THAN = 20000;
 var MAU_EMAIL = /^[^\s@,;<>"]+@[^\s@,;<>"]+\.[^\s@,;<>"]+$/;
+/* Bản dán sẵn khoá (do người cài sinh riêng cho chủ hệ) đặt khoá ở đây.
+   Thuộc tính tập lệnh KHOA, nếu có, luôn thắng. Bản trong kho mã để trống. */
+var KHOA_DAN = '';
 
 function doPost(e) {
   try {
-    var khoa = PropertiesService.getScriptProperties().getProperty('KHOA');
+    var khoa = PropertiesService.getScriptProperties().getProperty('KHOA') || KHOA_DAN;
     if (!khoa || khoa.length < 32) return tra_({ok: false, error: 'Cầu nối chưa đặt KHOA (≥ 32 ký tự).'});
 
     var y = JSON.parse((e && e.postData && e.postData.contents) || '{}');
