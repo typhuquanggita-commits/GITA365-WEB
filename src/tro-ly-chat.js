@@ -511,6 +511,16 @@ function theDap(d){
   if(d.chuaCo)
     return o + '<p class="ai-loi">'+h(d.thieu || 'Kho chưa có phần này. Em không đoán.')+'</p>';
 
+  /* Khách chỉ nhận cuộc trao đổi 1:1, không nhận tên, mã, số lượng hoặc
+     nội dung từ kho nghề. Phần có thể dùng đã được trả lời ở trên bằng một
+     tình huống đã duyệt hoặc một câu hỏi làm rõ duy nhất. */
+  if(khach()){
+    if(!d.loi && !d.kbs && !d.chuoi && !d.noiThat && !d.phatSinh)
+      o += '<p class="ai-loi">Em muốn hiểu đúng chuyện của nhà mình trước. Điều gì đang làm anh chị cần hỗ trợ nhất lúc này?</p>';
+    if(d.chot) o += '<p class="ai-chot">'+h(d.chot)+'</p>';
+    return o;
+  }
+
   /* Chia hai rổ: mở được ngay và phải qua người thật */
   var mo = [], cho = [];
   d.nguon.forEach(function(n){

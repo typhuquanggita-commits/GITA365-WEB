@@ -46,13 +46,13 @@ function phatHienNguyCap(cau) {
 
 function traLoiMau(y, tang, role) {
   const map = {
-    tai_chinh: 'Về học phí và thanh toán, bạn có thể xem bảng giá trong ứng dụng. Trợ lý chưa gửi yêu cầu này cho nhân viên.',
-    nang_tang: 'Nâng tầng cần đạt KPI và được coach xác nhận. Bạn muốn xem điều kiện lên Tầng ' + Math.min(5, tang + 1) + '?',
-    hoc_tap: 'Bạn đang ở Tầng ' + tang + '. Tôi có thể gợi ý bài học phù hợp hoặc kết nối với coach.',
-    ky_thuat: 'Bạn mô tả thêm lỗi gặp phải (màn hình nào, thông báo gì) để bộ phận kỹ thuật hỗ trợ nhanh nhất.',
-    cham_soc: 'Tôi chưa chuyển tin nhắn này cho nhân viên. Hãy gửi yêu cầu qua kênh chăm sóc khách hàng trong ứng dụng.',
-    phap_ly: 'Tôi không thể đưa ra kết luận pháp lý. Hãy gửi yêu cầu qua kênh hỗ trợ chính thức để được người có trách nhiệm xem xét.',
-    tong_quat: 'Cảm ơn bạn. Tôi là trợ lý GITA365. Bạn cần hỗ trợ về học tập, tài chính, kỹ thuật hay chăm sóc?'
+    tai_chinh: 'Để hỗ trợ đúng việc, bạn đang cần hỏi về thanh toán, hóa đơn hay hoàn tiền?',
+    nang_tang: 'Bạn muốn làm rõ điều kiện nào trước khi cân nhắc chặng tiếp theo?',
+    hoc_tap: 'Bạn đang vướng ở bài học cụ thể nào hoặc ở phần nào của lộ trình hiện tại?',
+    ky_thuat: 'Lỗi xuất hiện ở màn hình nào và thông báo chính xác là gì?',
+    cham_soc: 'Bạn cần đội ngũ chăm sóc hỗ trợ việc gì cụ thể?',
+    phap_ly: 'Câu hỏi của bạn liên quan đến hợp đồng, điều khoản hay quyền riêng tư?',
+    tong_quat: 'Điều gì đang làm bạn cần hỗ trợ nhất lúc này?'
   };
   return map[y] || map.tong_quat;
 }
@@ -98,7 +98,9 @@ export async function hoiChatbot(y, env, db, hoSo) {
 
   const yDinh = phanLoaiY(cau);
   const nguyCap = phatHienNguyCap(cau);
-  const traLoi = traLoiMau(yDinh, tang, role);
+  const traLoi = nguyCap
+    ? 'Điều bạn vừa chia sẻ cần một người thật hỗ trợ ngay. Bạn có đang ở nơi an toàn lúc này không?'
+    : traLoiMau(yDinh, tang, role);
 
   await Kho.ghiNhatKy(db, { uid, username: hoSo.u || uid,
     viec: 'CHATBOT_HOI', doiTuong: uid,
@@ -108,7 +110,8 @@ export async function hoiChatbot(y, env, db, hoSo) {
     yDinh, traLoi, nguyCap, phamVi: 'huong_dan_chung_khong_co_noi_dung_khoa_hoc',
     canhBao: nguyCap ? 'Tin nhắn có thể cho thấy nguy cơ cần được người thật hỗ trợ. Chatbot chưa gửi cảnh báo cho nhân viên. ' +
       'Nếu có nguy hiểm tức thời, hãy liên hệ dịch vụ khẩn cấp tại địa phương hoặc người đáng tin cậy ngay.' : '',
-    goiY: ['Học phí như thế nào?', 'Điều kiện nâng tầng?', 'Cách đăng nhập lại?', 'Kết nối tư vấn']
+    canChuyenNguoiThat: nguyCap || yDinh === 'cham_soc',
+    goiY: []
   };
 }
 

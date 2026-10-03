@@ -367,7 +367,10 @@ G.aiTraLoi = function(cauHoi){
      dẫn việc ấy, không cần mười hai tư liệu có chữ "ghi" trong đó. Một
      việc một lượt — đổ ra cả bánh đà là trả lại đúng cái bảng họ đang
      thấy khó, mà họ hỏi chính vì cái bảng ấy quá nhiều. */
-  var viec = G.aiDanViec ? G.aiDanViec(cauHoi) : null;
+  /* Khách không tra kho nghề qua chat. Trợ lý chỉ lắng nghe, trả lời theo
+     tình huống đã được duyệt và dẫn từng bước; mọi tư liệu nghiệp vụ ở lại
+     trong kho dành cho người được cấp quyền. */
+  var viec = !khach && G.aiDanViec ? G.aiDanViec(cauHoi) : null;
 
   /* ── NÓI TIẾP (9.76) ──
      ĐỨNG SAU LƯỚI KHẨN, và đó là thứ tự bắt buộc. Một phụ huynh đang
@@ -380,7 +383,8 @@ G.aiTraLoi = function(cauHoi){
   var tiep = G.tlDocNoiTiep ? G.tlDocNoiTiep(cauHoi) : { la: false };
   var hoiThat = tiep.la && G.tlDungLai ? G.tlDungLai(cauHoi, tiep) : cauHoi;
 
-  var tim = G.aiTra(hoiThat);
+  var tim = khach ? [] : G.aiTra(hoiThat);
+  if(khach) tim.tangNha = G.aiTangNha ? G.aiTangNha() : null;
 
   /* ── CỬA ĐỘ KHÓ (9.74) ──
      Trước bản này trợ lý chỉ có HAI trạng thái: trả lời, hoặc dừng
@@ -420,7 +424,7 @@ G.aiTraLoi = function(cauHoi){
   if (G.tlLaCauSoat && G.tlLaCauSoat(cauHoi) && G.tlSoanSoat) {
     try { soan = G.tlSoanSoat(); } catch (e) { soan = null; }
   }
-  if (!soan && G.tlSoan && (!kho || kho.lam !== false)) {
+  if (!khach && !soan && G.tlSoan && (!kho || kho.lam !== false)) {
     try {
       soan = G.tlSoan(hoiThat, tim);
       if (tiep.la && G.tlSoanTiep) soan = G.tlSoanTiep(tiep, soan, tim);
@@ -436,7 +440,7 @@ G.aiTraLoi = function(cauHoi){
   }
   /* Ghi ngữ cảnh cho lượt sau. Ghi CẢ khi lượt này là nối tiếp, để
      "còn nữa" hai lần liền không lặp lại cùng một khúc. */
-  if (G.tlGhiNgu) {
+  if (!khach && G.tlGhiNgu) {
     if (soan && soan.y !== 'HET')
       G.tlGhiNgu(tiep.la ? tiep.ngu.hoi : cauHoi, soan, kho ? kho.cap : 1, tiep.la);
     else if (soan && soan.y === 'HET' && G.TL_NGU)
@@ -473,7 +477,7 @@ G.aiTraLoi = function(cauHoi){
     doKho: kho,
     loi: y ? y[giong] : null,
     viec: viec,
-    chuaCo: !tim.length && !viec,
+    chuaCo: !khach && !tim.length && !viec,
     thieu: (!tim.length && !viec) ? (K.chuaCo ? K.chuaCo[giong] : '') : '',
     chot: K.chot ? K.chot[giong] : '',
     /* Ba con số này nói cái trợ lý KHÔNG đưa ra, và chúng phải đi cùng
