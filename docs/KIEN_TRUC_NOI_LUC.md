@@ -161,3 +161,7 @@ Màn **Phim cầu nối cấp độ** (nhóm Nghề, quyền `pro_consult`) sinh
 - Mỗi kịch bản qua **bộ soát đạo đức** `G.pcnSoatDaoDuc` (cấm "chỉ còn", "kẻo lỡ", "chia sẻ ngay"…), đúng luật `CWOW_LUAT`.
 - Nút **Gửi sang Xưởng phim bộ** đưa kịch bản vào ghi chú khách hàng để dựng phim thật.
 - Không gian và hành động là **mẫu đề xuất**; chủ hệ chốt. Phần lấy từ kho được gắn nhãn "lời từ kho".
+
+## 16 hệ thống · thang tự chủ AI
+
+Xem [HE_16_TRU.md](HE_16_TRU.md): bản đồ 16 hệ trỏ vào cơ chế thật, thang tự chủ TC0–TC5, Agent 8 năng lực, 1000 chiến lược, R&D 6 tháng, kho repo đã phán quyết. Cổng CI: `node tools/do-16-he.js`.

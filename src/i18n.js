@@ -346,6 +346,7 @@ G.ITEM_EN = {
   'chuoi-wow':['WOW Chain → Fan → Spread','The 50-cấp journey mapped: WOW at each level → loyalty → superfan → spreading the system'],
   'dong-hanh-cap':['Per-Level Companion','Pick one level → full portrait · curriculum · deep coaching · proof story · measurement, all in one place'],
   'phim-cau-noi':['Level Bridge Films','50 films linking previous level → new level → a glimpse of the next · 5 expert voices · send to Film Studio'],
+'he-16':['16 GITA365 Systems — Deep Build-out','16-system map pointing at what really runs, measured not claimed · AI autonomy ladder TC0–TC5 capped by the constitution · 8-capability agents (role · expertise · SOP · KPI · teamwork · self-upgrade · self-protection · constitution) · 1000 coded strategies with ICE · 6-month R&D cycle against a baseline · one solution template · code schemes · GitHub repo verdicts'],
   'goi-nghe':['Professional Kits by Department','Each role a full kit: mission · professional standard · certification · tools'],
   'assessment':['Tier-1 Assessment','6 domains · 10-step protocol · DCI reliability · care direction — the consultant/assessor diagnostic'],
   'nhan-su-tt':['Loyal staff profile','5 levels · 7 metrics · 5 rules'],
