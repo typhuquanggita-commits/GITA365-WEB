@@ -84,3 +84,7 @@ flowchart TB
 3. Drive phụ thuộc tài khoản Google của Học viện — chưa có phương án dự phòng nếu tài khoản đó mất quyền.
 4. Pentest độc lập, WAF/Bot Fight Mode (bật tay trên Cloudflare), diễn tập khôi phục định kỳ — xem [LA_CHAN_30_TANG.md](LA_CHAN_30_TANG.md).
 5. Khảo sát hài lòng trực tiếp (CSAT) chưa có — KPI "hài lòng" đang là proxy.
+
+## 6. Hợp nhất với mô hình mục tiêu chuẩn doanh nghiệp
+
+Sơ đồ mô hình chuẩn (Hiến pháp OPA/Rego · Bộ não LangGraph/Letta · 6 Agent · Twenty/ERPNext/Mautic/Documenso · Vectorize/Langfuse/Zero Trust · Cloudflare đủ loại) đã được HỢP NHẤT với mã đang chạy ở màn `kien-truc-hop-nhat`: mỗi mảnh mang một trong ba trạng thái — ĐÃ CÓ (trỏ mã thật, CI đo) · TỰ XÂY TƯƠNG ĐƯƠNG · CHƯA — kèm ngưỡng kích hoạt đo được. Không nhập một mảnh vì nó đẹp trên hình; một mảnh chỉ vào khi chạm ngưỡng, và mọi mảnh đổi được mà không sập hệ.

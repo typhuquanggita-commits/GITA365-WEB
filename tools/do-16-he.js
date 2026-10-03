@@ -29,7 +29,7 @@ const worker = doc('may-chu/worker.js');
 const G = { VIEWS: {}, U: { h: s => String(s), ic: () => '' } };
 const ctx = { window: { G }, G, console, localStorage: { getItem: () => null, setItem() {} } };
 vm.createContext(ctx);
-for (const f of ['src/dieu-phoi.js', 'src/he-16.js', 'src/bo-nao-da-tri.js', 'src/la-chan-30.js', 'src/bo-may-tap-doan.js']) vm.runInContext(doc(f), ctx, { filename: f });
+for (const f of ['src/dieu-phoi.js', 'src/he-16.js', 'src/bo-nao-da-tri.js', 'src/la-chan-30.js', 'src/bo-may-tap-doan.js', 'src/kien-truc-hop-nhat.js']) vm.runInContext(doc(f), ctx, { filename: f });
 
 const loi = [];
 let ok = 0;
@@ -142,6 +142,18 @@ G.TD_CAY_GT.forEach(t => {
   dat(!!t.tang && !!t.ten, `Cây giá trị ${t.tang || '?'}: thiếu tên`);
   t.tro.forEach(x => kiemTro(x, 'Cây giá trị ' + t.tang));
 });
+/* Kiến trúc hợp nhất: mọi mục có trạng thái hợp lệ; mục "chưa" bắt buộc
+   ghi ngưỡng kích hoạt; mọi con trỏ sống. */
+const KT = (G.KT_LOP || []).flatMap(l => l.muc.map(m => ({ ...m, lop: l.ma })));
+dat(KT.length >= 20, `Kiến trúc hợp nhất cần ≥ 20 mảnh, có ${KT.length}`);
+dat(new Set(KT.map(m => m.ma)).size === KT.length, 'Mã mảnh kiến trúc trùng');
+KT.forEach(m => {
+  dat(['co', 'tuongduong', 'chua'].includes(m.tt), `${m.ma}: trạng thái lạ ${m.tt}`);
+  dat(!!m.gita, `${m.ma}: thiếu "GITA đang chạy"`);
+  if (m.tt === 'chua') dat(m.kichHoat.length > 20, `${m.ma}: mảnh CHƯA có phải ghi ngưỡng kích hoạt`);
+  m.tro.forEach(x => kiemTro(x, m.ma));
+});
+dat(KT.some(m => m.tt === 'chua'), 'Kiến trúc hợp nhất: phải ghi thật ít nhất một mảnh chưa có');
 
 console.log(`  ✓ ${ok} phép đo đạt · ${HE.length} hệ · ${G.H16_SOP.length} SOP · ${G.DP_TRO_LY.length} trợ lý · ${G.TT_KHO.length} nguyên lý · ${LC.length} tầng lá chắn`);
 console.log(`  · Tự chủ: AI làm ${tc.aiLamPhan}% cửa · AI tự chạy trọn (TC4) ${tc.tuChayTron}% · ` +
