@@ -48,7 +48,8 @@ export async function taoBangQuay(db) {
   await db.prepare(`CREATE TABLE IF NOT EXISTS quay_viec (
     ma TEXT PRIMARY KEY, uid TEXT NOT NULL, trangThai TEXT NOT NULL DEFAULT 'cho',
     kieuAnh TEXT, kieuAm TEXT, taoLuc INTEGER NOT NULL, nhanLuc INTEGER, xongLuc INTEGER,
-    may TEXT, lanThu INTEGER NOT NULL DEFAULT 0, loi TEXT)`).run();
+    may TEXT, lanThu INTEGER NOT NULL DEFAULT 0, loi TEXT, loai TEXT NOT NULL DEFAULT 'moi')`).run();
+  await db.prepare('ALTER TABLE quay_viec ADD COLUMN loai TEXT').run().catch(() => {});
   await db.prepare('CREATE INDEX IF NOT EXISTS ix_quay_tt ON quay_viec (trangThai, taoLuc)').run();
   await db.prepare('CREATE TABLE IF NOT EXISTS quay_may (ma TEXT PRIMARY KEY, luc INTEGER NOT NULL)').run();
   daTaoBang = true;
@@ -136,6 +137,30 @@ export async function quayKhopMoi(y, env, db, hoSo) {
   return { ok: true, ma };
 }
 
+/* Hai khung của cùng một cảnh (ảnh gốc + tư thế cuối). Máy GitHub nối
+   bằng RIFE thành clip người cử động. Không có tiếng. */
+export async function quayChuyenDong(y, env, db, hoSo) {
+  if (!laR01(hoSo)) return { ok: false, code: 'NOPERM', error: 'Chỉ Super Admin được dùng xưởng quay.' };
+  if (!env.HOSO) return { ok: false, code: 'CHUA_CO_R2', error: 'Máy chủ chưa gắn R2.' };
+  if (!env.GITA_KHOA_XUONG_QUAY) return { ok: false, code: 'CHUA_CO_XUONG', error: 'Máy chủ chưa có khoá xưởng quay (GITA_KHOA_XUONG_QUAY).' };
+  await taoBangQuay(db);
+  const anh = giaiB64(y && y.anh), sau = giaiB64(y && y.sau);
+  if (!anh || !anh.length || anh.length > QUAY.toiDaAnh) return { ok: false, error: 'Ảnh gốc thiếu hoặc quá lớn.' };
+  if (!sau || !sau.length || sau.length > QUAY.toiDaAnh) return { ok: false, error: 'Ảnh tư thế cuối thiếu hoặc quá lớn.' };
+  const ka = kieuAnh(anh), ks = kieuAnh(sau);
+  if (!ka || !ks) return { ok: false, error: 'Hai khung phải là JPEG/PNG/WEBP.' };
+  const uid = String(hoSo.uid || '');
+  const dem = await db.prepare("SELECT COUNT(*) AS n FROM quay_viec WHERE uid = ? AND trangThai IN ('cho','dang')").bind(uid).first();
+  if (dem && +dem.n >= QUAY.toiDaCho) return { ok: false, code: 'DAY', error: 'Hàng chờ xưởng quay đã đầy, đợi bớt rồi gửi tiếp.' };
+  const ma = maMoi();
+  await env.HOSO.put('quay/' + ma + '/anh', anh, { httpMetadata: { contentType: ka } });
+  await env.HOSO.put('quay/' + ma + '/cd', sau, { httpMetadata: { contentType: ks } });
+  await db.prepare("INSERT INTO quay_viec (ma, uid, trangThai, kieuAnh, kieuAm, taoLuc, loai) VALUES (?, ?, 'cho', ?, ?, ?, 'cd')")
+    .bind(ma, uid, ka, ks, Date.now()).run();
+  await goiKhoQuay(env, db).catch(() => false);
+  return { ok: true, ma };
+}
+
 export async function quayXem(y, env, db, hoSo) {
   if (!laR01(hoSo)) return { ok: false, code: 'NOPERM', error: 'Chỉ Super Admin được dùng xưởng quay.' };
   await taoBangQuay(db);
@@ -207,17 +232,19 @@ export async function xuLyMayQuay(req, env, duong) {
     if (duong === '/quay/song') return traMay({ ok: true });
     await traVeHang(db);
     for (let lan = 0; lan < 5; lan++) {
-      const r = await db.prepare("SELECT ma, kieuAnh FROM quay_viec WHERE trangThai = 'cho' ORDER BY taoLuc, rowid LIMIT 1").first();
+      const r = await db.prepare("SELECT ma, kieuAnh, kieuAm, loai FROM quay_viec WHERE trangThai = 'cho' ORDER BY taoLuc, rowid LIMIT 1").first();
       if (!r) return traMay({ ok: true, ma: null });
       const u = await db.prepare("UPDATE quay_viec SET trangThai = 'dang', nhanLuc = ?, may = ?, lanThu = lanThu + 1 WHERE ma = ? AND trangThai = 'cho'")
         .bind(bay, may, r.ma).run();
-      if (u && u.meta && u.meta.changes === 1)
-        return traMay({ ok: true, ma: r.ma, duoiAnh: r.kieuAnh === 'image/png' ? 'png' : r.kieuAnh === 'image/webp' ? 'webp' : 'jpg' });
+      if (u && u.meta && u.meta.changes === 1) {
+        const duoi = function (k) { return k === 'image/png' ? 'png' : k === 'image/webp' ? 'webp' : 'jpg'; };
+        return traMay({ ok: true, ma: r.ma, loai: r.loai || 'moi', duoiAnh: duoi(r.kieuAnh), duoiCd: duoi(r.kieuAm) });
+      }
     }
     return traMay({ ok: true, ma: null });
   }
 
-  const m = /^\/quay\/(tep|kq|loi)\/([0-9a-f]{32})(?:\/(anh|am))?$/.exec(duong);
+  const m = /^\/quay\/(tep|kq|loi)\/([0-9a-f]{32})(?:\/(anh|am|cd))?$/.exec(duong);
   if (!m) return traMay({ ok: false, error: 'Không có đường này.' }, 404);
   const [, viec, ma, tep] = m;
   const r = await db.prepare('SELECT trangThai FROM quay_viec WHERE ma = ?').bind(ma).first();
@@ -272,7 +299,7 @@ export async function donQuay(env) {
   const ma = ((ds && ds.results) || []).map(r => r.ma);
   if (env.HOSO && ma.length) {
     const khoa = [];
-    ma.forEach(m => khoa.push('quay/' + m + '/anh', 'quay/' + m + '/am', 'quay/' + m + '/kq.mp4'));
+    ma.forEach(m => khoa.push('quay/' + m + '/anh', 'quay/' + m + '/am', 'quay/' + m + '/cd', 'quay/' + m + '/kq.mp4'));
     for (let i = 0; i < khoa.length; i += 900) await env.HOSO.delete(khoa.slice(i, i + 900));
   }
   const r = await db.prepare('DELETE FROM quay_viec WHERE taoLuc < ?').bind(moc).run();

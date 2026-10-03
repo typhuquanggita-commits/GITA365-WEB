@@ -2,7 +2,7 @@
    bằng SQLite thật (node:sqlite) và R2 giả lập bằng Map.
    Chạy: node tools/thu-xuong-quay.mjs */
 import { DatabaseSync } from 'node:sqlite';
-import { quayKhopMoi, quayXem, xuLyMayQuay, phucVuPhimQuay, donQuay, QUAY, bangNhau } from '../may-chu/xuong-quay.js';
+import { quayKhopMoi, quayChuyenDong, quayXem, xuLyMayQuay, phucVuPhimQuay, donQuay, QUAY, bangNhau } from '../may-chu/xuong-quay.js';
 
 let dat = 0, hong = 0;
 function kiem(dk, ten) { if (dk) dat++; else { hong++; console.error('✗ ' + ten); } }
@@ -142,6 +142,15 @@ kiem(xoa === 1 && !env.HOSO._m.has('quay/' + g1.ma + '/kq.mp4') && env.HOSO._m.h
 
 // Hàng chờ đầy
 env.CSDL._s.prepare("UPDATE quay_viec SET trangThai='cho'").run();
+env.CSDL._s.prepare("UPDATE quay_viec SET trangThai = 'xong' WHERE trangThai = 'cho'").run();
+const cd = await quayChuyenDong({ anh: jpg, sau: jpg }, env, env.CSDL, R01);
+kiem(cd.ok && /^[0-9a-f]{32}$/.test(cd.ma), 'gửi việc chuyển động ra mã');
+kiem(!(await quayChuyenDong({ anh: jpg }, env, env.CSDL, R01)).ok, 'thiếu khung cuối thì từ chối');
+kiem(env.HOSO._m.has('quay/' + cd.ma + '/cd'), 'đã lưu khung cuối');
+const ncd = await may('/quay/nhan', jb({ may: 'gh-cd-1' }));
+kiem(ncd.j.ma === cd.ma && ncd.j.loai === 'cd', 'nhận việc chuyển động, loại cd');
+kiem((await may('/quay/tep/' + cd.ma + '/cd')).status === 200, 'máy tải được khung cuối');
+
 for (let i = 0; i < QUAY.toiDaCho; i++)
   env.CSDL._s.prepare("INSERT INTO quay_viec (ma, uid, trangThai, taoLuc) VALUES (?, 'u1', 'cho', ?)").run('day' + i, Date.now());
 kiem((await quayKhopMoi({ anh: jpg, am: wav }, env, env.CSDL, R01)).code === 'DAY', 'hàng chờ đầy → DAY');

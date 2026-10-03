@@ -40,6 +40,7 @@ var G = window.G || {}; window.G = G;
   var BUOC = [
     ['phanCanh', 'Phân cảnh kịch bản'], ['giong', 'Đọc thoại'], ['chanDung', 'Vẽ chân dung nhân vật'],
     ['khungDau', 'Vẽ khung mở đầu từng cảnh'], ['quay', 'Quay clip từng cảnh'], ['khopMoi', 'Khớp khẩu hình với giọng'],
+        ['chuyenDong0d', 'Người chuyển động (0 đồng, máy GitHub)'],
         ['khopMoi0d', 'Khớp môi AI (máy GitHub miễn phí)'],
         ['tai', 'Tải clip về máy'], ['xuat', 'Xuất phim']
   ];
@@ -367,7 +368,7 @@ var G = window.G || {}; window.G = G;
   function buocPhanCanh() {
     var td = TD(), da = G.xpDA;
     if (td.phanCanhXong) return Promise.resolve();
-    td.viec = {}; td.ngo = null; td.quay = {};
+    td.viec = {}; td.ngo = null; td.quay = {}; td.cd = {};
     var laTap = !!(da.boMa && G.xpBoKinh);
     var dv = laTap ? {che: 'tap', kinh: G.xpBoKinh(), soTap: da.boTap} : {kichBan: da.kichBan};
     var cl = laTap && G.xpBoChatLieu ? G.xpBoChatLieu() : '';
@@ -580,6 +581,83 @@ var G = window.G || {}; window.G = G;
       if (hong) ghi('Khớp môi: ' + hong + ' cảnh không quay được (thường do khung không thấy rõ mặt) — dùng ảnh tĩnh chuyển động.');
     });
   }
+  /* ══ NGƯỜI CHUYỂN ĐỘNG 0 ĐỒNG ══
+     Cloudflare vẽ tư thế cuối của đúng người trong ảnh (giữ mặt, áo, phòng).
+     Máy GitHub nối hai khung bằng RIFE thành clip cử động. Cảnh một người
+     nói để khớp môi lo; cảnh chạy/đánh/nhảy chỉ rung nhẹ vì nối khung
+     không làm được cảnh hành động. */
+  function loiCuChi(c) {
+    var t = ((c.hanhDong || '') + ' ' + (c.chiDao || '') + ' ' + (c.moTa || '')).toLowerCase();
+    if (/bước|đi tới|tiến lại|bước tới|bước vào|bước ra/.test(t)) return 'takes one small step forward, arms relaxed';
+    if (/quay đầu|ngoảnh|nhìn sang|quay sang/.test(t)) return 'turns the head slightly to one side';
+    if (/giơ tay|vẫy tay|chỉ tay|đưa tay/.test(t)) return 'raises one hand a little, not above the chest';
+    return 'shifts weight slightly onto one leg, a tiny natural movement, feet almost still';
+  }
+  function canhChuyenDong(c) {
+    if (!c.anhUrl || c.videoUrl || c.cdUrl) return false;
+    if (G.xpDA.khopMoi0d !== false && canhKhopMoi0d(c)) return false;
+    return true;
+  }
+  function buocChuyenDong0d() {
+    var da = G.xpDA, td = TD();
+    if (da.chuyenDong0d === false) return Promise.resolve();
+    if (!td.cd) td.cd = {};
+    var ds = da.canh.filter(canhChuyenDong).map(function (c) {
+      return {khoa: 'cdanh-' + c.id, loai: 'anhSua', tuSua: true,
+        dauVao: {khung: '9:16', anhThamChieu: [c.anhUrl],
+          prompt: 'Edit this exact photo. The same person ' + loiCuChi(c) +
+            '. Keep the exact same face, clothes, room, lighting and camera. Photoreal film still, no text, no extra people.'},
+        xong: function (kq) { c.cdUrl = kq.url; }};
+    });
+    var ve = ds.length ? chayLo(ds, 3, 'Tư thế cuối') : Promise.resolve();
+    return ve.then(function () {
+      var chan = null;
+      var gui = da.canh.filter(function (c) { return c.cdUrl && !c.videoUrl && !(td.cd[c.id] && td.cd[c.id].ma); }).map(function (c) {
+        return function () {
+          if (chan) return Promise.resolve();
+          return Promise.all([taiBlob(c.anhUrl).then(blobB64), taiBlob(c.cdUrl).then(blobB64)]).then(function (v) {
+            return goi('quayChuyenDong', {anh: v[0], sau: v[1]});
+          }).then(function (x) {
+            if (x.ok) { td.cd[c.id] = {ma: x.ma}; luu(); return; }
+            if (x.code === 'CHUA_CO_XUONG' || x.code === 'CHUA_CO_R2' || x.code === 'NOPERM' || x.code === 'DAY') chan = x;
+            else ghi('Chuyển động: bỏ qua 1 cảnh (' + (x.error || 'lỗi') + ').');
+          }, function (e) { ghi('Chuyển động: bỏ qua 1 cảnh (' + ((e && e.message) || e) + ').'); });
+        };
+      });
+      if (!gui.length && !da.canh.some(function (c) { var q = td.cd[c.id]; return q && q.ma && !q.xong && !q.loi; })) return;
+      ghi('Người chuyển động 0 đồng: máy GitHub đang nối khung (mỗi cảnh vài phút, nhiều máy chạy song song).');
+      var t0 = Date.now();
+      return chayLan(gui, 2).then(function () {
+        if (chan) { ghi('Chuyển động tạm bỏ qua: ' + (chan.error || '') + ' Cảnh giữ ảnh tĩnh.'); return; }
+        function vong() {
+          if (dungLai) throw {code: 'DUNG', error: 'Đã dừng.'};
+          var cho = da.canh.filter(function (c) { var q = td.cd[c.id]; return q && q.ma && !q.xong && !q.loi; });
+          if (!cho.length) return;
+          if (Date.now() - t0 > 3 * 3600e3) { ghi('Chuyển động quá 3 giờ — các cảnh còn lại giữ ảnh tĩnh.'); return; }
+          return goi('quayXem', {ds: cho.map(function (c) { return td.cd[c.id].ma; })}).then(function (x) {
+            if (x && x.ok) {
+              var dang = 0;
+              (x.ds || []).forEach(function (r, i) {
+                var c = cho[i], q = c && td.cd[c.id];
+                if (!q || r.ma !== q.ma) return;
+                if (r.trangThai === 'xong' && r.url) {
+                  q.xong = true; c.videoUrl = apiGoc() + r.url; c.chuyenDong0d = true;
+                  if (c.clip && G.xpVat[c.clip]) { delete G.xpVat[c.clip]; c.clip = ''; }
+                } else if (r.trangThai === 'loi' || r.trangThai === 'mat') q.loi = r.loi || 'mất việc';
+                else if (r.trangThai === 'dang') dang++;
+              });
+              luu();
+              var xong = da.canh.filter(function (c) { return td.cd[c.id] && td.cd[c.id].xong; }).length;
+              hienTienDo('Chuyển động: xong ' + xong + '/' + Object.keys(td.cd).length + ' · đang nối ' + dang +
+                ' · máy GitHub ' + (+x.mayDangChay || 0));
+            }
+            return ngu(20000).then(vong);
+          });
+        }
+        return vong();
+      });
+    });
+  }
   function buocTai() {
     var viec = [], loiDem = 0;
     G.xpDA.canh.forEach(function (c, i) {
@@ -587,7 +665,7 @@ var G = window.G || {}; window.G = G;
       if (!(c.clip && G.xpVat[c.clip])) {
         if (c.videoUrl) viec.push(function () { return taiPhim(c.videoUrl, ten + '.mp4').then(function (id) { c.clip = id; }, function () {
           /* Clip khớp môi 0 đồng chỉ giữ 7 ngày trên máy chủ — mất thì quay về ảnh tĩnh của cảnh */
-          if (c.khopMoi0d && c.anhUrl) return taiAnh(c.anhUrl, ten + '.jpg').then(function (id) { c.clip = id; }, function () { loiDem++; });
+          if ((c.khopMoi0d || c.chuyenDong0d) && c.anhUrl) return taiAnh(c.anhUrl, ten + '.jpg').then(function (id) { c.clip = id; }, function () { loiDem++; });
           loiDem++;
         }); });
         else if (c.anhUrl) viec.push(function () { return taiAnh(c.anhUrl, ten + '.jpg').then(function (id) { c.clip = id; }, function () { loiDem++; }); });
@@ -658,11 +736,11 @@ var G = window.G || {}; window.G = G;
     buoc('giong', buocGiong);
     buoc('chanDung', buocChanDung);
     buoc('khungDau', buocKhungDau);
-    /* 0 đồng: không quay video/khớp môi trả phí — ảnh tĩnh + Ken Burns khi xuất */
+    /* 0 đồng: không gọi dịch vụ trả phí. Người cử động bằng nối khung; cảnh nói thì khớp môi. */
     if (!che0d()) {
       buoc('quay', buocQuay);
       buoc('khopMoi', buocKhopMoi);
-    } else buoc('khopMoi0d', buocKhopMoi0d);
+    } else { buoc('chuyenDong0d', buocChuyenDong0d); buoc('khopMoi0d', buocKhopMoi0d); }
     buoc('tai', buocTai);
     buoc('xuat', buocXuat);
     return p.catch(function (e) {
@@ -787,6 +865,7 @@ var G = window.G || {}; window.G = G;
     o += '<textarea rows="8" style="width:100%;box-sizing:border-box" placeholder="Dán kịch bản vào đây…" oninput="G.xpSua(\'kichBan\',this.value)"' + (dangChay ? ' disabled' : '') + '>' + h(da.kichBan || '') + '</textarea>';
     o += '<div class="row"><label><input type="checkbox"' + (td.coGiong !== false ? ' checked' : '') + ' onchange="G.xpTdGiong(this.checked)"> Đọc thoại bằng giọng AI tiếng Việt</label>' +
       (la0d ?
+      '<label><input type="checkbox"' + (da.chuyenDong0d !== false ? ' checked' : '') + ' onchange="G.xpTdTuyChon(\'chuyenDong0d\',this.checked)"> 🚶 Người chuyển động (0 đồng)</label>' +
       '<label><input type="checkbox"' + (da.khopMoi0d !== false ? ' checked' : '') + ' onchange="G.xpTdTuyChon(\'khopMoi0d\',this.checked)"> 🗣️ Khớp môi AI (0 đồng, máy GitHub)</label>' +
       '<label>Chất lượng <select onchange="G.xpTdTuyChon(\'chatLuong\',this.value)">' +
       '<option value="bomTan"' + (da.chatLuong !== 'thuong' ? ' selected' : '') + '>🎥 Bom tấn Cloudflare (0 đồng)</option>' +
@@ -812,8 +891,9 @@ var G = window.G || {}; window.G = G;
         '. Hệ thống không gửi thông tin nhận dạng ra ngoài.</p><button class="btn" onclick="G.xpTdRutTen()">Đổi thành tên gọi ngắn (ví dụ "Nguyễn Văn An" → "An")</button>';
     }
     if (td.buoc) {
-      var cacBuoc = la0d ? BUOC.filter(function (b) { return b[0] !== 'quay' && b[0] !== 'khopMoi' && (b[0] !== 'khopMoi0d' || da.khopMoi0d !== false); })
-        : BUOC.filter(function (b) { return b[0] !== 'khopMoi0d'; });
+      var cacBuoc = la0d ? BUOC.filter(function (b) {
+        return b[0] !== 'quay' && b[0] !== 'khopMoi' && (b[0] !== 'khopMoi0d' || da.khopMoi0d !== false) && (b[0] !== 'chuyenDong0d' || da.chuyenDong0d !== false);
+      }) : BUOC.filter(function (b) { return b[0] !== 'khopMoi0d' && b[0] !== 'chuyenDong0d'; });
       var i = cacBuoc.map(function (b) { return b[0]; }).indexOf(td.buoc === 'choDuyet' ? 'giong' : td.buoc);
       o += '<ol class="note" style="padding-left:22px">' + cacBuoc.map(function (b, j) {
         var dau = td.buoc === 'xong' || j < i ? '✓ ' : (j === i ? (dangChay ? '⏳ ' : '• ') : '');

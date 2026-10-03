@@ -175,7 +175,7 @@ var G = window.G || {}; window.G = G;
       khung: b.chatLuong === 'thuong' ? '720x1280' : '1080x1920', phongCach: b.kinh.phongCach,
       nhanVat: b.nhanVat.map(function (n) { return {id: n.id, ten: n.ten, moTa: n.moTa, prompt: n.prompt, gioi: n.gioi, giong: n.giong, anhUrl: n.anhUrl || '', sheetUrl: n.sheetUrl || ''}; }),
       boiCanh: b.boiCanh.map(function (x) { return {id: x.id, ten: x.ten, prompt: x.prompt, plateUrl: x.plateUrl || ''}; }),
-      kichBan: dan, canh: [], boMa: b.ma, boTap: t.so, chatLuong: b.chatLuong, khopMoi: !!b.khopMoi, khopMoi0d: b.khopMoi !== false, anHuongDan: true,
+      kichBan: dan, canh: [], boMa: b.ma, boTap: t.so, chatLuong: b.chatLuong, khopMoi: !!b.khopMoi, khopMoi0d: b.khopMoi !== false, chuyenDong0d: b.chuyenDong !== false, anHuongDan: true,
       tuDong: {buoc: '', viec: {}, nhatKy: [], coGiong: true, duyetSan: true, daDuyet: true}};
   }
   function moTap(so) {
@@ -183,7 +183,7 @@ var G = window.G || {}; window.G = G;
     if (!t) return null;
     if (G.xpDA && G.xpDA.boMa === b.ma && G.xpDA.boTap && b.tap[G.xpDA.boTap - 1]) b.tap[G.xpDA.boTap - 1].da = G.xpDA;
     if (!t.da) t.da = taoTap(t);
-    t.da.chatLuong = b.chatLuong; t.da.khopMoi = !!b.khopMoi; t.da.khopMoi0d = b.khopMoi !== false; t.da.logo = b.logo || t.da.logo;
+    t.da.chatLuong = b.chatLuong; t.da.khopMoi = !!b.khopMoi; t.da.khopMoi0d = b.khopMoi !== false; t.da.chuyenDong0d = b.chuyenDong !== false; t.da.logo = b.logo || t.da.logo;
     G.xpDA = t.da;
     if (G.xpLuu) G.xpLuu();
     return t.da;
@@ -424,6 +424,7 @@ var G = window.G || {}; window.G = G;
       '<label>Chất lượng <select onchange="G.xpBoSua(\'chatLuong\',this.value)"' + dis + '>' +
       '<option value="bomTan"' + (b.chatLuong !== 'thuong' ? ' selected' : '') + '>🎥 Bom tấn Cloudflare (0 đồng)</option>' +
       '<option value="thuong"' + (b.chatLuong === 'thuong' ? ' selected' : '') + '>Tiêu chuẩn (nhanh hơn, 0 đồng)</option></select></label>' +
+      '<label><input type="checkbox"' + (b.chuyenDong !== false ? ' checked' : '') + ' onchange="G.xpBoSua(\'chuyenDong\',this.checked)"' + dis + '> 🚶 Người chuyển động (0 đồng)</label>' +
       '<label><input type="checkbox"' + (b.khopMoi !== false ? ' checked' : '') + ' onchange="G.xpBoSua(\'khopMoi\',this.checked)"' + dis + '> 🗣️ Khớp môi AI (0 đồng, máy GitHub)</label>' :
       '<label>Chất lượng <select onchange="G.xpBoSua(\'chatLuong\',this.value)"' + dis + '>' +
       '<option value="bomTan"' + (b.chatLuong === 'bomTan' ? ' selected' : '') + '>🎥 Bom tấn (Kling 3 Pro + Nano Banana Pro)</option>' +

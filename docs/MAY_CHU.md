@@ -113,6 +113,10 @@ Cảnh **một người nói**, dài 2–15 giây, được gửi sang kho công
 - GitHub tắt lịch chạy nếu kho `gita365-xuong-quay` không có hoạt động 60 ngày — khi đó vào tab Actions bấm "Enable workflow".
 - Tắt: bỏ chọn "🗣️ Khớp môi AI" trong xưởng phim.
 
+### Người chuyển động 0 đồng (cùng máy GitHub)
+
+Cảnh không phải một người nói: Cloudflare vẽ **một tư thế cuối** của đúng người trong ảnh (giữ mặt, áo, phòng), rồi máy GitHub nối hai khung bằng RIFE thành clip khoảng 2 giây. Người bước nhẹ, quay đầu hoặc giơ tay — không phải cảnh chạy, đánh, nhảy (những cảnh đó chỉ rung nhẹ, vì không có card đồ họa miễn phí để quay phim AI thật). Ô "🚶 Người chuyển động" mặc định bật. Việc loại `cd` đi cùng hàng chờ khớp môi.
+
 ## Xưởng phim tự động A-Z (fal.ai — trả phí, mặc định TẮT)
 
 Mô-đun `may-chu/phim-ai.js` cho phép Super Admin (R01) dán kịch bản và để hệ thống tự làm phim dọc 9:16: phân cảnh (LLM), vẽ chân dung nhân vật, vẽ khung mở đầu giữ đúng gương mặt, quay clip (Kling 2.1 image-to-video), đọc thoại tiếng Việt (MiniMax), rồi trình duyệt tự lắp phụ đề, logo, nhạc và xuất MP4.
