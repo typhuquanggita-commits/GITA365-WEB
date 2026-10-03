@@ -31,6 +31,8 @@
 import { Kho, kiemPhien, kiemMatKhau, bamMoi, muoiMoi, soSanhAnToan, mkQuaDeDoan } from './nen.js';
 import { dongBo, quetSaoLuuMoCoi } from './dong-bo.js';
 import { veChiPhi, maYeuCau } from './ve-chi-phi.js';
+import { chanKhoang, ghiLoiKhoang, ghiTotKhoang, dsKhoang, datKhoang } from './khoang.js';
+import { tuSoatVaChua, sucKhoeHe } from './tu-chua.js';
 import { dangKy, guiLaiOtp, xacThucOtp, kichHoat } from './dang-ky.js';
 import { quenMatKhau, datLaiMatKhau } from './mat-khau.js';
 import { capQuyenXem, thuHoiQuyenXem, soiQuyenXem, xemKhachCao, nangTang } from './quyen-xem.js';
@@ -233,7 +235,7 @@ export function tachKhoaDuocCap(goi, kho) {
    xuatSheet · xemKpiKhach) bỏ hẳn vì máy khách không còn gọi. Không còn
    phần nào chạy trên Apps Script. */
 
-const CAN_PHIEN = ['capKhoa', 'doiMatKhau', 'dongBo', 'thuGuiThu',
+const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau', 'dongBo', 'thuGuiThu',
   'docTinCongDong', 'ghiTinCongDong', 'guiChuyen', 'napTaiLieu', 'duyetTaiLieu', 'napTinhHuongKhach',
   'capQuyenXem', 'thuHoiQuyenXem', 'soiQuyenXem', 'xemKhachCao', 'nangTang',
   'capQuyenT5Pro', 'thuHoiQuyenT5Pro', 'dsQuyenT5Pro',
@@ -364,6 +366,12 @@ async function lam(fn, y, env, db) {
   const hoSo = await kiemPhien(db, y.token, y.u);
   if (!hoSo) return {ok: false, code: 'AUTH', error: 'Phiên không hợp lệ hoặc đã hết hạn.'};
   if (hoSo.khoa) return {ok: false, code: 'LOCKED', error: 'Tài khoản đang bị khoá.'};
+
+  /* Điều khiển khoang & sức khoẻ hệ đứng TRƯỚC cổng đóng băng: lúc phá
+     kính chính là lúc quản trị cần khoá/mở từng phần nhất. */
+  if (fn === 'dsKhoang')  return await dsKhoang(y, env, db, hoSo, BAC);
+  if (fn === 'datKhoang') return await datKhoang(y, env, db, hoSo, BAC, Kho);
+  if (fn === 'sucKhoeHe') return await sucKhoeHe(y, env, db, hoSo, BAC);
 
   /* ── CỔNG ĐÓNG BĂNG: MẶC ĐỊNH-TỪ-CHỐI ──
      Khi hệ bị đóng băng trong lúc phá kính, chặn MỌI cửa trừ danh sách
@@ -1076,7 +1084,7 @@ export default {
         console.error('BAO_DOANHTHU_NGAY_HONG', String(e && e.message || e))));
       return;
     }
-    ctx.waitUntil(donDep(env).then(() => quetSaoLuuMoCoi(env)).catch(e =>
+    ctx.waitUntil(donDep(env).then(() => quetSaoLuuMoCoi(env)).then(() => tuSoatVaChua(env)).catch(e =>
       console.error('DON_DEP_HONG', String(e && e.message || e))));
   },
 
@@ -1103,12 +1111,17 @@ export default {
     const fn = String(y.fn || '');
 
     try {
-      /* Vệ chi phí đứng TRƯỚC lam(): bị chặn thì không tốn lượt D1/R2 nào. */
-      const chan = await veChiPhi(fn, y, env, req);
-      const r = traJson(chan || await lam(fn, y, env, env.CSDL), 200, env, req);
+      /* Vệ chi phí đứng TRƯỚC lam(): bị chặn thì không tốn lượt D1/R2 nào.
+         Rồi tới cổng KHOANG: phần bị khoá/đang tự nghỉ trả lời ngay,
+         các phần khác vẫn chạy. */
+      const chan = await veChiPhi(fn, y, env, req) || await chanKhoang(fn, env, env.CSDL);
+      const kq = chan || await lam(fn, y, env, env.CSDL);
+      if (!chan) ghiTotKhoang(fn);
+      const r = traJson(kq, 200, env, req);
       r.headers.set('x-gita-ma', ma);
       return r;
     } catch (err) {
+      ghiLoiKhoang(fn);
       /* KHÔNG ĐẨY LỜI LỖI CỦA MÁY RA CHO MÁY KHÁCH. Lời lỗi của cơ sở
          dữ liệu hay kể tên bảng, tên cột, có khi cả mảnh câu lệnh —
          đó là bản đồ cho người đi dò. Ghi đủ vào nhật ký máy chủ, trả

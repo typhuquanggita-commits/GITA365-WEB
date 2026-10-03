@@ -1,9 +1,10 @@
 # TỐI ƯU CHI PHÍ & CHẤT LƯỢNG — GITA 365
 
-Mục tiêu:
+Mục tiêu (cập nhật — xem thêm [KIEN_TRUC_NOI_LUC.md](KIEN_TRUC_NOI_LUC.md)):
 
-- **Giai đoạn 1 (dưới 200.000 tài khoản): 0 đồng.** Chạy hoàn toàn trên gói miễn phí của Cloudflare.
-- **Giai đoạn 2 (200.000–500.000 tài khoản): phí nền tảng dưới 30 USD/tháng.** Chỉ dùng Workers Paid (5 USD) cộng phần vượt nhỏ.
+- **Giai đoạn 1 (dưới 300.000 tài khoản): 0 đồng.** Chạy hoàn toàn trên gói miễn phí của Cloudflare + GitHub.
+- **Giai đoạn 2 (300.000–500.000 tài khoản): ≤ 20 USD/tháng.** Workers Paid (5 USD) cộng phần vượt nhỏ.
+- **Giai đoạn 3 (trên 500.000 tài khoản): ≤ 50 USD/tháng.**
 
 Tài liệu này ghi lại năm điểm yếu của kiến trúc (client nặng, Worker ở edge, E2EE, D1+R2, serverless), cách đã khắc phục trong mã, mô hình chi phí và sổ tay vận hành.
 
@@ -41,45 +42,51 @@ Tài liệu này ghi lại năm điểm yếu của kiến trúc (client nặng,
 
 ### Ngân sách trên mỗi người dùng hoạt động/ngày (DAU)
 
-Giả định: tỉ lệ hoạt động hằng ngày khoảng 10% số tài khoản.
+Giả định: 10% tài khoản hoạt động mỗi ngày; khoảng 60% DAU có sửa dữ liệu (một lượt đồng bộ có ghi).
 
-| | Giai đoạn 1 (200k TK → 20k DAU) | Giai đoạn 2 (500k TK → 50k DAU) |
-|---|---|---|
-| Lượt Worker/DAU/ngày | **≤ 5** (100k ÷ 20k) | khoảng 10 → 15M/tháng |
-| Ghi D1/DAU/ngày | ≤ 5 | dư sức (50M/tháng) |
-| R2 hồ sơ | khoảng 30 KB/TK + sao lưu nén → 6–8 GB | 15–25 GB |
+| | GĐ1: 300k TK → 30k DAU (Free) | GĐ2: 500k TK → 50k DAU | GĐ3: 1M TK → 100k DAU |
+|---|---|---|---|
+| Lượt Worker/DAU/ngày | **≤ 3,3** (100k ÷ 30k) | ≤ 10 | ≤ 10 |
+| Ghi D1/ngày | ≤ 100k (cứng) | 50M/tháng gói Paid | 50M/tháng gói Paid |
+| R2 lớp A/tháng | ≤ 1M (miễn phí) | ~1,5–2M | ~3–4M |
+| R2 dung lượng | ≤ 10 GB (≈ 33 KB/TK) | 15–20 GB | 30–40 GB |
 
-Vì sao trong ngân sách 5 lượt/DAU vẫn đủ dùng:
+**Ràng buộc thật ở GĐ1 không phải lượt Worker mà là ghi D1 (100k/ngày) và R2 lớp A (1M/tháng)**: mỗi lượt đồng bộ có sửa = 1 ghi R2 + 1 ghi D1, cộng một bản sao lưu (1 ghi R2 + 2 ghi D1) nếu đã quá khoảng cách sao lưu. Hai đòn bẩy (biến môi trường, không cần sửa mã):
+
+- GITA_SAO_LUU_PHUT=4320 — sao lưu tối đa 3 ngày/lần/người. 18k lượt sửa/ngày × (1 + 0,33) × 30 ≈ **0,72M lớp A/tháng** và ≈ 40k ghi D1/ngày.
+- GITA_GIU_SAO_LUU=5 — giữ 5 bản thay vì 10 → R2 về dưới 10 GB.
+
+Vì sao 3,3 lượt/DAU vẫn đủ dùng:
 
 - Tài nguyên tĩnh (HTML/JS/CSS) đi qua Pages, **không tính** vào lượt Worker.
-- Đồng bộ chạy theo lô: 1 lượt khi mở ứng dụng (bỏ qua nếu lượt trước chưa đầy 10 phút), 1 lượt sau mỗi đợt sửa, và 1 beacon khi đóng tab.
-- Cache đọc 15 giây và gộp lượt trùng loại bỏ các lượt gọi lặp.
+- Đồng bộ chạy theo lô: 1 lượt khi mở ứng dụng (bỏ qua nếu lượt trước chưa đầy 10 phút), 1 lượt sau mỗi đợt sửa, 1 beacon khi đóng tab.
+- Cache đọc 15 giây, gộp lượt trùng, và việc khoang bị khoá được nghỉ ngay ở máy khách (không gọi lại).
 
-### Ước tính giai đoạn 2 (500k TK, mức trần)
+### Ước tính GĐ2 (500k TK) và GĐ3 (1M TK)
 
-| Hạng mục | USD/tháng |
-|---|---|
-| Workers Paid nền | 5,00 |
-| Vượt 5M lượt × 0,30 | 1,50 |
-| CPU vượt (≈ 3 ms × 15M = 45M, trừ 30M) | 0,30 |
-| R2 25 GB − 10 GB miễn phí | 0,23 |
-| R2 lớp A/B (trong hạn miễn phí) | 0 |
-| D1 (trong hạn gói Paid) | 0 |
-| **Tổng** | **≈ 7 USD** (dư hơn 20 USD cho các đợt tăng đột biến) |
+| Hạng mục (USD/tháng) | GĐ2 · 500k | GĐ3 · 1M |
+|---|---|---|
+| Workers Paid nền | 5,00 | 5,00 |
+| Lượt Worker vượt 10M × 0,30/M | 1,50 (15M) | 6,00 (30M) |
+| CPU vượt 30M CPU-ms × 0,02/M | 0,30 | 1,20 |
+| R2 dung lượng vượt 10 GB × 0,015 | 0,15 | 0,45 |
+| R2 lớp A vượt 1M × 4,50/M | ≈ 4,50 | ≈ 11–13 |
+| D1 (trong hạn gói Paid) | 0 | 0 |
+| **Tổng** | **≈ 11,5 USD (trần 20)** | **≈ 25 USD (trần 50)** |
 
-Gọi AI từ bên thứ ba (khoá API riêng) **không** thuộc phí nền tảng. Phần này được kiểm soát bằng hạn mức `ai` (12 lượt/phút mỗi IP), hạn mức trong D1 và công tắc tiết kiệm.
+R2 lớp A là dòng lớn nhất từ GĐ2 — chính vì vậy sao lưu được nén, thưa và chỉ ghi khi có đổi thật. Trần 50 USD giữ được tới khoảng 1,5–2M tài khoản; quá mức ấy xem mục "Tinh gọn" trong KIEN_TRUC_NOI_LUC.md.
+
+Gọi AI từ bên thứ ba (khoá API riêng) **không** thuộc phí nền tảng. Phần này được kiểm soát bằng hạn mức i (12 lượt/phút mỗi IP), hạn mức trong D1, công tắc tiết kiệm và khoang i (khoá riêng được).
 
 ### Khi nào chuyển sang Workers Paid
 
-Chuyển khi có **một** trong các dấu hiệu sau:
+Chuyển khi có **một** trong các dấu hiệu sau (thường quanh 250–300k tài khoản):
 
-- Có ngày gặp lỗi 1027.
-- Số lượt đều đặn vượt 80k/ngày.
-- Ghi D1 vượt 80k/ngày.
-- Dung lượng R2 vượt 8 GB.
+- Có ngày gặp lỗi 1027, hoặc D1 báo hết hạn ghi.
+- Số lượt đều đặn vượt 80k/ngày, hoặc ghi D1 vượt 80k/ngày.
+- R2 lớp A vượt 0,8M/tháng hoặc dung lượng vượt 8 GB (đã bật hai đòn bẩy trên).
 
-Trước khi chuyển, đặt **Budget alert** trong Cloudflare (Billing → Notifications) ở mức 15 và 25 USD.
-
+Trước khi chuyển, đặt **Budget alert** trong Cloudflare (Billing → Notifications) ở mức 15 USD (GĐ2) và 40 USD (GĐ3).
 ---
 
 ## 3. Sổ tay vận hành
@@ -92,7 +99,8 @@ Trước khi chuyển, đặt **Budget alert** trong Cloudflare (Billing → Not
    1. Người dùng bấm “Chép nhật ký lỗi” rồi gửi nội dung đã chép.
    2. Trong nhật ký, lấy mã `x-gita-ma`.
    3. Chạy `wrangler tail --format pretty` rồi lọc `LOI <mã>`, hoặc tìm trong Workers Logs.
-4. **Dọn dẹp**: cron `scheduled` gọi `donDep` rồi `quetSaoLuuMoCoi` (mỗi đêm 500 tệp, tiếp nối theo con trỏ lưu trong `he-thong/con-tro-quet-sao-luu.txt`).
+4. **Dọn dẹp & tự chữa**: cron `scheduled` gọi `donDep` → `quetSaoLuuMoCoi` (mỗi đêm 500 tệp, con trỏ `he-thong/con-tro-quet-sao-luu.txt`) → `tuSoatVaChua` (nhịp tim D1/R2, soát 200 hồ sơ/đêm, dựng lại tệp mất từ sao lưu, mở khoang hết hạn, báo cáo `he-thong/suc-khoe.json`).
+5. **Khoá từng phần**: xem màn Nối máy chủ → *Khoang hệ thống & sức khoẻ* (Super Admin/Admin) hoặc biến `GITA_KHOA_KHOANG`. Chi tiết: [KIEN_TRUC_NOI_LUC.md](KIEN_TRUC_NOI_LUC.md).
 
 ---
 

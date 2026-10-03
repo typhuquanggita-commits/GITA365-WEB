@@ -2349,3 +2349,15 @@ CREATE TABLE IF NOT EXISTS thanhTraSo (
   luc      TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS ix_thanhtraso_loai ON thanhTraSo (loai);
+
+-- KHOANG: khoá từng phần (may-chu/khoang.js). Super Admin/Admin khoá/mở
+-- trong ứng dụng; hetHan rỗng = khoá tới khi mở tay. Khoang 'cua' và
+-- 'cuuhe' không bao giờ khoá từ đây (tránh tự nhốt) — dùng GITA_KHOA_KHOANG.
+CREATE TABLE IF NOT EXISTS heKhoang (
+  khoang  TEXT PRIMARY KEY,
+  khoa    INTEGER NOT NULL DEFAULT 0,
+  lyDo    TEXT,
+  hetHan  TEXT,
+  boi     TEXT,
+  luc     TEXT
+);

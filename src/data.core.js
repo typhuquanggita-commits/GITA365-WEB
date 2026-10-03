@@ -902,6 +902,7 @@ G.NAV = [
     {v:'trai-nghiem-kh',t:'Hệ trải nghiệm khách hàng',  h:'Cỗ máy dịch vụ 10 tầng · chuỗi WOW 5 tầng · thư viện tình huống→giải pháp', ic:'heart', star:1, perm:'pro_consult', capMo:'nghe'},
     {v:'chuoi-wow',   t:'Chuỗi WOW → Fan → Lan toả',    h:'Hành trình 50 cấp bám sát: WOW mỗi cấp → trung thành → fan cuồng → lan toả', ic:'spark', star:1, perm:'pro_consult', capMo:'nghe'},
     {v:'dong-hanh-cap',t:'Đồng hành từng cấp (trọn gói)', h:'Chọn một cấp → đủ chân dung · giáo trình · bài coach sâu · câu chuyện · đo lường', ic:'compass', star:1, perm:'pro_consult', capMo:'nghe'},
+    {v:'phim-cau-noi',t:'Phim cầu nối cấp độ',        h:'50 phim nối cấp trước → cấp mới → hé cấp sau · 5 giọng chuyên gia · gửi Xưởng phim', ic:'spark', star:1, perm:'pro_consult', capMo:'nghe'},
     {v:'goi-nghe',    t:'Gói nghề · bộ phận chuyên môn', h:'Mỗi vai một gói nghề: sứ mệnh · chuẩn nghề · sát hạch · công cụ', ic:'crown', star:1, perm:'nghe_chung', capMo:'nghe'},
     {v:'assessment',  t:'Assessment Tầng 1 (chẩn đoán)', h:'6 miền · 10 bước bắt buộc · DCI · định hướng chăm sóc — công cụ Tư vấn/Assessor', ic:'check', star:1, perm:'pro_consult', capMo:'nghe'},
     {v:'hang-vip',    t:'Phân hạng VIP & VVIP',        h:'4 hạng · chuẩn phục vụ · AI chăm sóc',ic:'crown', star:1, perm:'pro_consult', capMo:'nghe'},

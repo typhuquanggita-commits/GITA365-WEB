@@ -134,7 +134,7 @@ G.thuMayChu = function(){
    3. Máy chủ báo RATE/BUSY → TỰ NGHỈ đúng thuLaiSau, không gọi lại vô ích.
    4. CẦU DAO: 3 lượt hỏng mạng/5xx liền nhau → ngắt 30 giây. Một vòng lặp
       lỗi ở màn hình không biến thành hàng nghìn lượt Worker. */
-var DEM_DOC = {}, DANG_BAY = {}, NGHI_DEN = 0, HONG_LIEN = 0, NGAT_DEN = 0;
+var DEM_DOC = {}, DANG_BAY = {}, NGHI_DEN = 0, HONG_LIEN = 0, NGAT_DEN = 0, NGHI_FN = {};
 var DEM_GIAY = 15;
 /* Việc chỉ đọc: tên bắt đầu bằng các tiền tố này. Việc theo dõi tiến độ
    (phimXemViec, phimTrangThai) cố ý KHÔNG đệm — chúng phải luôn tươi. */
@@ -151,6 +151,8 @@ G.goiMayChu = function(fn, than, tuyChon){
   if(bayGio < NGHI_DEN)
     return Promise.resolve({ok:false, code:'RATE', thuLaiSau:Math.ceil((NGHI_DEN - bayGio)/1000),
       error:'Đang tạm nghỉ để giữ hạn mức. Thử lại sau ' + Math.ceil((NGHI_DEN - bayGio)/1000) + ' giây.'});
+  if(NGHI_FN[fn] && bayGio < NGHI_FN[fn].den)
+    return Promise.resolve(NGHI_FN[fn].d);
   if(bayGio < NGAT_DEN)
     return Promise.resolve({ok:false, code:'NGAT',
       error:'Máy chủ vừa không trả lời mấy lượt liền. Ứng dụng tạm chờ ' +
@@ -185,6 +187,10 @@ G.goiMayChu = function(fn, than, tuyChon){
         if(ma && !d.maYeuCau) d.maYeuCau = ma;
         if((d.code === 'RATE' || d.code === 'BUSY') && d.thuLaiSau)
           NGHI_DEN = Date.now() + Math.min(Number(d.thuLaiSau) || 5, 300) * 1000;
+        /* Khoang bị khoá/tự nghỉ chỉ chặn ĐÚNG việc ấy — phần còn lại của
+           ứng dụng vẫn gọi máy chủ bình thường (may-chu/khoang.js). */
+        if((d.code === 'KHOANG_KHOA' || d.code === 'KHOANG_NGHI') && d.thuLaiSau)
+          NGHI_FN[fn] = {den: Date.now() + Math.min(Number(d.thuLaiSau) || 30, 600) * 1000, d: d};
         if(G.ghiLoi) G.ghiLoi('may-chu', fn + ': ' + (d.code || '') + ' ' + (d.error || ''), d.maYeuCau);
       }
       /* Phiên hết hạn nói RÕ là hết hạn, không lẫn vào "không có quyền":
@@ -322,6 +328,19 @@ G.VIEWS['noi-may-chu'] = function(){
         '</div><div id="mcAdKq" class="mt"></div>'+
       '</details>'+
     '</div>';
+
+    /* ── KHOANG & SỨC KHOẺ HỆ — chỉ Super Admin/Admin (máy chủ tự kiểm lại vai). ── */
+    if(G.can && G.can('admin_users')){
+      o += '<div class="card mt2" style="border-color:var(--gita-vien-2)">'+
+        '<div class="up mb" style="color:var(--gita-ink)">'+ic('shield','w-4 h-4')+' KHOANG HỆ THỐNG & SỨC KHOẺ</div>'+
+        '<p class="sm dim" style="line-height:1.65">Khoá <b>từng phần</b> (AI, phim, CRM…) khi có sự cố — phần còn lại vẫn chạy. '+
+        'Mỗi đêm agent tự chữa soát hồ sơ, dựng lại tệp mất/hỏng từ bản sao lưu và ghi báo cáo ở đây.</p>'+
+        '<div class="row mt2" style="gap:9px;flex-wrap:wrap">'+
+          '<button class="btn ghost" data-act="mc-khoang">'+ic('grid','w-4 h-4')+'Xem khoang</button>'+
+          '<button class="btn ghost" data-act="mc-suckhoe">'+ic('pulse','w-4 h-4')+'Báo cáo tự chữa</button>'+
+        '</div><div id="mcKhoangKq" class="mt"></div>'+
+      '</div>';
+    }
   }
 
   o += U.sec('SÁU BƯỚC DỰNG MÁY CHỦ TRÊN CLOUDFLARE','Làm một lần, khoảng hai mươi phút · gói miễn phí');
@@ -369,8 +388,26 @@ G.VIEWS['noi-may-chu'] = function(){
   return o;
 };
 
+function veKhoang(){
+  var hop = document.getElementById('mcKhoangKq');
+  if(!hop) return;
+  hop.innerHTML = '<p class="sm dim">Đang đọc…</p>';
+  G.goiMayChu('dsKhoang', {}, {moi:true}).then(function(d){
+    if(!d.ok){ hop.innerHTML = '<p class="sm" style="color:var(--gita-do-ink)">'+h(d.error || 'Lỗi')+'</p>'; return; }
+    hop.innerHTML = U.tbl(['Khoang','Trạng thái',''], d.ds.map(function(x){
+      var tt = x.khoaEnv ? 'Khoá bằng biến môi trường' : x.khoaApp ? 'Khoá' + (x.lyDo ? ': ' + x.lyDo : '') +
+        (x.hetHan ? ' · tự mở ' + x.hetHan : '') : x.tuNgat ? 'Tự nghỉ (cầu dao lỗi)' : 'Đang chạy';
+      var dangKhoa = x.khoaEnv || x.khoaApp;
+      return ['<b class="sm">'+h(x.ten)+'</b> <span class="tiny mono muted">'+h(x.khoang)+'</span>',
+        '<span class="sm" style="color:'+(dangKhoa||x.tuNgat?'var(--gita-do-ink)':'var(--ok)')+'">'+h(tt)+'</span>',
+        x.khoaDuoc && !x.khoaEnv ? '<button class="btn ghost sm" data-act="mc-khoang-dat" data-k="'+h(x.khoang)+
+          '" data-khoa="'+(x.khoaApp?'0':'1')+'">'+ic(x.khoaApp?'check':'lock','w-3 h-3')+(x.khoaApp?'Mở':'Khoá')+'</button>' : ''];
+    }));
+  });
+}
+
 document.addEventListener('click', function(e){
-  var b = e.target.closest && e.target.closest('[data-act]');
+  var b = e.target.closest  && e.target.closest('[data-act]');
   if(!b) return;
   var a = b.getAttribute('data-act');
   var kq = document.getElementById('mcKq');
@@ -391,6 +428,33 @@ document.addEventListener('click', function(e){
         pre.textContent = chu; kq.innerHTML = ''; kq.appendChild(pre);
       }
     }, function(){ U.toast('Trình duyệt không cho chép — mở lại trang bằng https.', 'err'); });
+  }
+  else if(a === 'mc-khoang'){ veKhoang(); }
+  else if(a === 'mc-khoang-dat'){
+    var kk = b.getAttribute('data-k'), dk = b.getAttribute('data-khoa') === '1';
+    var lyDo = dk ? (window.prompt('Lý do khoá khoang "' + kk + '" (ghi vào nhật ký):', 'Sự cố') || '') : '';
+    if(dk && !lyDo) return;
+    var phut = dk ? Number(window.prompt('Tự mở sau bao nhiêu phút? (0 = tới khi mở tay)', '60')) || 0 : 0;
+    G.goiMayChu('datKhoang', {khoang: kk, khoa: dk ? 1 : 0, lyDo: lyDo, phut: phut}).then(function(d){
+      U.toast(d.ok ? (dk ? 'Đã khoá khoang ' : 'Đã mở khoang ') + kk : (d.error || 'Không đặt được.'), d.ok ? 'ok' : 'err');
+      veKhoang();
+    });
+  }
+  else if(a === 'mc-suckhoe'){
+    var hop = document.getElementById('mcKhoangKq');
+    G.goiMayChu('sucKhoeHe', {}).then(function(d){
+      if(!hop) return;
+      if(!d.ok){ hop.innerHTML = '<p class="sm" style="color:var(--gita-do-ink)">'+h(d.error || 'Lỗi')+'</p>'; return; }
+      var bc = d.baoCao;
+      if(!bc){ hop.innerHTML = '<p class="sm dim">Chưa có báo cáo — agent tự chữa chạy theo lịch cron hằng đêm.</p>'; return; }
+      var tot = bc.d1 && bc.r2 && !bc.khongChuaDuoc;
+      hop.innerHTML = '<div class="card pad-sm" style="border-color:'+(tot?'var(--ok)':'var(--gita-do)')+'">'+
+        '<b class="sm">'+ic(tot?'check':'alert','w-3 h-3')+' '+(tot?'Hệ khoẻ':'Cần xem')+' · '+h(bc.luc || '')+'</b>'+
+        '<p class="sm mt">D1: '+(bc.d1?'tốt':'LỖI')+' · R2: '+(bc.r2?'tốt':'LỖI')+' · đã soát '+(bc.daSoat|0)+
+        ' hồ sơ · mất/hỏng '+(bc.mat|0)+' · đã tự chữa '+(bc.daChua|0)+' · không chữa được '+(bc.khongChuaDuoc|0)+
+        ' · khoang tự mở '+(bc.moKhoang|0)+'</p>'+
+        ((bc.loi && bc.loi.length) ? '<p class="tiny muted mt">'+h(bc.loi.join(' | '))+'</p>' : '')+'</div>';
+    });
   }
   else if(a === 'mc-bo'){
     G.datMayChu('');

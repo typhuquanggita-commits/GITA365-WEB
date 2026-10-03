@@ -345,6 +345,7 @@ G.ITEM_EN = {
   'trai-nghiem-kh':['Customer Experience System','A 10-layer service machine · a 5-tier WOW chain · a situation→solution library'],
   'chuoi-wow':['WOW Chain → Fan → Spread','The 50-cấp journey mapped: WOW at each level → loyalty → superfan → spreading the system'],
   'dong-hanh-cap':['Per-Level Companion','Pick one level → full portrait · curriculum · deep coaching · proof story · measurement, all in one place'],
+  'phim-cau-noi':['Level Bridge Films','50 films linking previous level → new level → a glimpse of the next · 5 expert voices · send to Film Studio'],
   'goi-nghe':['Professional Kits by Department','Each role a full kit: mission · professional standard · certification · tools'],
   'assessment':['Tier-1 Assessment','6 domains · 10-step protocol · DCI reliability · care direction — the consultant/assessor diagnostic'],
   'nhan-su-tt':['Loyal staff profile','5 levels · 7 metrics · 5 rules'],

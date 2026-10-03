@@ -228,11 +228,11 @@ function gop(duLieu, moc, day, mocDay, boQua) {
 
    Chép từ chuỗi ĐÃ ĐỌC (tep), không get thêm lượt nữa — đúng bản đã gộp,
    và đỡ một lượt R2. */
-async function saoLuuNeuCan(db, kho, uid, cuDb, tep, luc) {
+async function saoLuuNeuCan(db, kho, uid, cuDb, tep, luc, giu, phut) {
   if (!cuDb || !kho || !tep) return;
   const gan = await db.prepare(
     'SELECT luc FROM hosoAppSaoLuu WHERE uid = ? ORDER BY luc DESC LIMIT 1').bind(uid).first();
-  if (gan && Date.parse(gan.luc) > Date.now() - SAO_LUU_PHUT * 60e3) return;
+  if (gan && Date.parse(gan.luc) > Date.now() - (phut || SAO_LUU_PHUT) * 60e3) return;
 
   const maSao = tokenMoi().slice(0, 24);
   let nen = null;
@@ -258,7 +258,7 @@ async function saoLuuNeuCan(db, kho, uid, cuDb, tep, luc) {
     try { await kho.delete(khoaSao); } catch (e2) {}
     throw e;
   }
-  await donSaoLuu(db, kho, uid);
+  await donSaoLuu(db, kho, uid, giu);
 }
 
 export async function dongBo(y, env, db, hoSo) {
@@ -271,11 +271,25 @@ export async function dongBo(y, env, db, hoSo) {
     return {ok: false, code: 'TOOBIG', error: 'Gói đẩy lên vượt trần ' + TRAN_DAY_KB + ' KB.'};
 
   const day = y.day || {}, mocDay = y.mocTruong || {};
-  let boQua = [], duLieu, moc, doi = 0, luc = new Date().toISOString();
+  let boQua = [], duLieu, moc, doi = 0, luc = new Date().toISOString(), daChua = false;
 
   for (let lan = 0; lan < SO_LAN_THU; lan++) {
-    /* 2 · Hồ sơ đang có (kèm etag để ghi có điều kiện) */
-    const r = await docRuot(kho, uid);
+    /* 2 · Hồ sơ đang có (kèm etag để ghi có điều kiện).
+       TỰ CHỮA THEO KHO: tệp hỏng, hoặc sổ D1 nói có hồ sơ mà R2 mất tệp
+       → dựng lại từ bản sao lưu gần nhất còn đọc được, RỒI mới gộp.
+       Không chữa thì lượt gộp coi như hồ sơ rỗng và ghi đè — mất trắng. */
+    let r;
+    try { r = await docRuot(kho, uid); }
+    catch (e) {
+      if (daChua || !(await khoiPhucTuSaoLuu(db, kho, uid, 'hong'))) throw e;
+      daChua = true; r = await docRuot(kho, uid);
+    }
+    if (kho && !r.tep && !daChua) {
+      const soCo = await db.prepare('SELECT coByte FROM hosoApp WHERE uid = ?').bind(uid).first();
+      if (soCo && Number(soCo.coByte) > 0 && await khoiPhucTuSaoLuu(db, kho, uid, 'mat')) {
+        daChua = true; r = await docRuot(kho, uid);
+      }
+    }
     duLieu = r.duLieu; moc = r.moc; boQua = [];
 
     /* 3 · Gộp theo TỪNG TRƯỜNG, bên nào mới hơn thì thắng. */
@@ -288,7 +302,7 @@ export async function dongBo(y, env, db, hoSo) {
     const cuDb = await db.prepare('SELECT * FROM hosoApp WHERE uid = ?').bind(uid).first();
 
     /* 4 · Sao lưu (theo nhịp) rồi mới ghi đè. */
-    await saoLuuNeuCan(db, kho, uid, cuDb, r.tep, luc);
+    await saoLuuNeuCan(db, kho, uid, cuDb, r.tep, luc, soGiuSaoLuu(env), phutSaoLuu(env));
 
     const than = JSON.stringify({duLieu: duLieu, moc: moc});
     if (kho) {
@@ -324,6 +338,45 @@ export async function dongBo(y, env, db, hoSo) {
 
   return {ok: true, caiDat: await dongBoCaiDat(db, y, hoSo),
     keo: duLieu, mocTruong: moc, mocMayChu: luc, boQua: boQua, doi: doi};
+}
+
+/* ═══════════════ TỰ CHỮA HỒ SƠ TỪ BẢN SAO LƯU ═══════════════
+
+   Agent tự chữa "theo kho dữ liệu": nguồn sự thật để chữa là chính các
+   bản sao lưu đã có (hoso-sao/), không đoán, không dựng dữ liệu mới.
+   Thử tối đa 5 bản gần nhất; bản nào giải nén + đọc JSON được thì chép
+   về chỗ hồ sơ chính. Tệp hỏng được giữ lại ở hoso-hong/ để điều tra —
+   không xoá chứng cứ. Trả true nếu đã chữa. */
+async function giaiNen(o, khoa) {
+  if (!/\.gz$/.test(khoa)) return await o.text();
+  if (typeof DecompressionStream !== 'function') throw new Error('không giải nén được');
+  const luong = (o.body || new Blob([await o.arrayBuffer()]).stream()).pipeThrough(new DecompressionStream('gzip'));
+  return await new Response(luong).text();
+}
+
+export async function khoiPhucTuSaoLuu(db, kho, uid, viSao) {
+  if (!kho || !db) return false;
+  const r = await db.prepare(
+    'SELECT khoaTep FROM hosoAppSaoLuu WHERE uid = ? ORDER BY luc DESC, id DESC LIMIT 5').bind(uid).all();
+  for (const x of (r.results || [])) {
+    try {
+      const o = await kho.get(x.khoaTep);
+      if (!o) continue;
+      const chu = await giaiNen(o, x.khoaTep);
+      JSON.parse(chu);
+      if (viSao === 'hong') {
+        try {
+          const cu = await kho.get(tepHoSo(uid));
+          if (cu) await kho.put('hoso-hong/' + uid + '/' + Date.now() + '.json', await cu.arrayBuffer());
+        } catch (e) {}
+      }
+      await kho.put(tepHoSo(uid), chu);
+      try { await Kho.ghiNhatKy(db, {uid: uid, viec: 'TU_CHUA_HO_SO', doiTuong: 'tự động',
+        chiTiet: (viSao === 'hong' ? 'tệp hỏng' : 'mất tệp') + ' → dựng lại từ ' + x.khoaTep}); } catch (e) {}
+      return true;
+    } catch (e) { /* bản này hỏng — thử bản cũ hơn */ }
+  }
+  return false;
 }
 
 /* ═══════════════ QUÉT SAO LƯU MỒ CÔI (chạy đêm) ═══════════════
@@ -375,7 +428,21 @@ export async function quetSaoLuuMoCoi(env, trang) {
    người dùng, còn bộ dọn chạy mỗi ngày một lần; để dồn thì một người
    đồng bộ liên tục cả ngày có thể để lại vài trăm tệp trước lượt dọn
    đầu tiên, và tiền kho tệp tính theo dung lượng nằm đó. */
-async function donSaoLuu(db, kho, uid) {
+/* Số bản sao lưu giữ mỗi người — đòn bẩy dung lượng R2 (10 GB miễn phí).
+   Mặc định 10; đặt GITA_GIU_SAO_LUU = 5 khi R2 vượt 8 GB (docs/KIEN_TRUC_NOI_LUC.md). */
+/* Khoảng cách tối thiểu giữa hai bản sao lưu (phút, 30–10080). Đặt 4320
+   (3 ngày) từ ~200k tài khoản để giữ ghi D1 < 100k/ngày và R2 lớp A < 1M/tháng. */
+export function phutSaoLuu(env) {
+  const n = parseInt(env && env.GITA_SAO_LUU_PHUT, 10);
+  return n >= 30 && n <= 10080 ? n : SAO_LUU_PHUT;
+}
+
+export function soGiuSaoLuu(env) {
+  const n = parseInt(env && env.GITA_GIU_SAO_LUU, 10);
+  return n >= 3 && n <= 30 ? n : 10;
+}
+
+async function donSaoLuu(db, kho, uid, giu) {
   const r = await db.prepare(
     /* Xếp thêm theo id khi mốc bằng nhau: hai bản sao lưu cùng một
        mi-li-giây là chuyện có thật, và một thứ tự không xác định thì
@@ -383,7 +450,7 @@ async function donSaoLuu(db, kho, uid) {
     'SELECT id, khoaTep FROM hosoAppSaoLuu WHERE uid = ? ORDER BY luc DESC, id DESC'
   ).bind(uid).all();
   const ds = r.results || [];
-  for (let i = 10; i < ds.length; i++) {
+  for (let i = giu || 10; i < ds.length; i++) {
     if (kho) { try { await kho.delete(ds[i].khoaTep); } catch (e) {} }
     await db.prepare('DELETE FROM hosoAppSaoLuu WHERE id = ?').bind(ds[i].id).run();
   }

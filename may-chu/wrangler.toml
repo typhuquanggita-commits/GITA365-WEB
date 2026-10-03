@@ -119,6 +119,19 @@ bucket_name = "gita365-hoso"
 # Chế độ tiết kiệm: khi bảng Cloudflare báo sắp chạm hạn mức miễn phí,
 # đặt GITA_CHE_DO_TIET_KIEM = "1" ở [vars] (hoặc Dashboard → Settings →
 # Variables) để tạm đóng các việc gọi AI tính tiền theo lượt.
+#
+# ── KHOANG (may-chu/khoang.js) — khoá TỪNG PHẦN thay vì đóng băng cả hệ ──
+# GITA_KHOA_KHOANG = "ai,phim"  (Dashboard → Settings → Variables) khoá ngay
+# các khoang ấy mà không cần D1 hay đăng nhập. "*" = khoá mọi khoang trừ
+# đăng nhập và cứu hệ. Khoang: dongbo ai phim crm taichinh thigiac
+# congdong noidung taikhoan khac cua. Bình thường để trống.
+#
+# GITA_GIU_SAO_LUU = "5"  — số bản sao lưu hồ sơ giữ mỗi người (3–30, mặc
+# định 10). Hạ xuống 5 khi R2 vượt 8 GB để ở lại hạn miễn phí 10 GB.
+# GITA_SAO_LUU_PHUT = "4320" — khoảng cách tối thiểu giữa hai bản sao lưu
+# (phút, mặc định 30). Đặt 4320 từ ~200k tài khoản để ghi D1 và R2 lớp A
+# ở dưới hạn miễn phí. Đổi lại: điểm khôi phục thưa hơn (tối đa 3 ngày);
+# bản sao offline hằng đêm trên Windows bù phần này (docs/KIEN_TRUC_NOI_LUC.md).
 
 # ═══════════════════════════════════════════════════════════════
 #  BỐN BÍ MẬT — KHÔNG BAO GIỜ VIẾT VÀO TỆP NÀY
