@@ -31,8 +31,20 @@ GITA_DIA_CHI_WEB = "https://gita365.pages.dev,https://typhuquanggita-commits.git
 
 Mọi thư (mã OTP đăng ký, lấy lại mật khẩu, thông báo tài khoản, báo doanh thu) đi qua `guiThu()` trong `may-chu/thu.js`. Máy chủ thử các đường đã cấu hình theo thứ tự; đường đầu hỏng thì tự thử đường sau:
 
-1. **Cầu nối Gmail (đường chính, không cần tên miền riêng).** Một Google Apps Script chạy dưới tài khoản `typhuquanggita@gmail.com` gửi thư bằng chính hòm Gmail đó. Thư có chữ ký DKIM của Google nên vào hộp thư đến. Hạn mức khoảng **100 người nhận/ngày** (Gmail thường).
+0. **Hộp thư GitHub (chỉ thư gửi chủ hệ — chỉ dùng GitHub + Cloudflare).** Khi người nhận là hòm chủ hệ (`GITA_THU_TRA_LOI`, `GITA_THU_DOANH_THU`, `GITA_MAIL_CUU`), Worker gửi `repository_dispatch` loại `thu` vào kho **riêng tư** `GITA_GH_HOP_THU` (`typhuquanggita-commits/gita365-hop-thu`). Workflow `thu.yml` trong kho đó mở một issue bằng `github-actions[bot]` → GitHub gửi email thông báo tới `typhuquanggita@gmail.com`. Không giới hạn số thư/ngày đáng kể, không cần tên miền. **Không bao giờ** dùng cho thư gửi khách.
+1. **Cầu nối Gmail (tuỳ chọn, cho thư gửi khách khi chưa có tên miền).** Một Google Apps Script chạy dưới tài khoản `typhuquanggita@gmail.com` gửi thư bằng chính hòm Gmail đó. Thư có chữ ký DKIM của Google nên vào hộp thư đến. Hạn mức khoảng **100 người nhận/ngày** (Gmail thường). Đây là dịch vụ Google — chỉ dựng nếu chủ hệ chấp nhận ngoài GitHub + Cloudflare.
 2. **Resend (dự phòng / khi có tên miền).** Cần secret `GITA_KHOA_THU` và `GITA_THU_GUI_TU` là một địa chỉ thuộc tên miền **đã xác minh** ở Resend. Resend không cho gửi từ `@gmail.com`.
+
+### Bật hộp thư GitHub (khoảng 3 phút, một lần)
+
+Kho `typhuquanggita-commits/gita365-hop-thu` (riêng tư) và workflow đã được tạo sẵn; tài khoản đã bật *Watch*.
+
+1. Tạo khoá: mở <https://github.com/settings/personal-access-tokens/new?name=GITA365-hop-thu&description=May+chu+GITA+365+gui+thu&target_name=typhuquanggita-commits&expires_in=none&contents=write> → *Repository access* = **Only select repositories** → chọn `gita365-hop-thu` → **Generate token** → chép chuỗi `github_pat_…`.
+2. Mở <https://github.com/typhuquanggita-commits/GITA365-WEB/settings/secrets/actions/new>: *Name* = `GITA_GH_KHOA_THU`, *Secret* = chuỗi vừa chép → **Add secret**.
+3. Chạy lại workflow **Deploy GITA365 to Cloudflare** (*Actions → Run workflow*). Bước "Nạp khoá hộp thư GitHub" sẽ đưa khoá vào Worker.
+4. Kiểm: Super Admin gọi `thuGuiThu` (xem dưới) → Gmail nhận thư "[typhuquanggita-commits/gita365-hop-thu] GITA 365 — thư thử từ máy chủ". Nếu không thấy: GitHub → *Settings → Notifications* → bật **Email** cho *Watching*.
+
+Thư cho **khách hàng** (OTP đăng ký khách) cần tên miền riêng: mua ở Cloudflare Registrar (~10 USD/năm), bật Cloudflare Email Service (gửi tới địa chỉ bất kỳ cần gói Workers Paid 5 USD/tháng) — hoặc dùng cầu nối Gmail ở trên.
 
 ### Dựng cầu nối Gmail (khoảng 10 phút)
 
@@ -60,10 +72,34 @@ Quyền truy cập "Bất kỳ ai" là bắt buộc để Worker gọi được 
 
 - `GITA_THU_TRA_LOI` (reply-to, nơi nhận thư thử) và `GITA_THU_DOANH_THU` (nhận báo doanh thu): `typhuquanggita@gmail.com`, email chính thức.
 - `GITA_THU_GUI_TU`: chỉ dùng cho Resend; để trống khi chưa có tên miền.
+- Secret `GITA_GH_KHOA_THU` + biến `GITA_GH_HOP_THU`: hộp thư GitHub (chỉ thư gửi chủ hệ).
 - Secret `GITA_CAU_NOI_GMAIL`, `GITA_KHOA_CAU_NOI`: cầu nối Gmail. Secret `GITA_KHOA_THU`: khoá API Resend.
 - Khi không có đường gửi nào, các thư bắt buộc (OTP, kích hoạt) báo lỗi rõ ràng thay vì im lặng.
 
-## Xưởng phim tự động A-Z (fal.ai)
+## Xưởng phim chế độ 0 đồng (mặc định)
+
+Mặc định xưởng phim chạy **0 đồng** và **chỉ dùng GitHub + Cloudflare**: không gọi bất kỳ dịch vụ trả phí hay CDN bên ngoài nào.
+
+| Phần việc | Làm bằng | Chi phí |
+|---|---|---|
+| Phân cảnh, viết bộ phim, viết tập | Workers AI `@cf/google/gemma-4-26b-a4b-it` (hạng Bom tấn thêm chỉ dẫn đạo diễn `DAO_DIEN_BOM_TAN`) | miễn phí (trong 10.000 neuron/ngày) |
+| Chân dung, khung cảnh, giữ mặt | Workers AI `@cf/black-forest-labs/flux-2-klein-4b` (tối đa 4 ảnh tham chiếu ≤ 512 px); hỏng thì lùi về `flux-1-schnell` | miễn phí |
+| Giọng đọc tiếng Việt | Piper (vais1000, vivos) chạy **trong trình duyệt**; tệp giọng + piper-phonemize do Worker phục vụ từ **R2** (`GET /tn/<tệp>`, `may-chu/tai-nguyen.js`); onnxruntime-web từ cdnjs.cloudflare.com; lưu ở Cache API `gita-piper-v1` | miễn phí |
+| Chuyển động | Hiệu ứng máy quay Ken Burns trên ảnh tĩnh khi xuất (`G.xpKenBurns`) | miễn phí |
+| Hoàn thiện điện ảnh (Bom tấn) | Pha màu teal–cam, tối viền, hạt phim, dải đen — vẽ trên canvas khi xuất | miễn phí |
+| Lưu ảnh/giọng | IndexedDB `gita-xuong-phim-0d` trong máy | miễn phí |
+
+- Cửa duy nhất: `phimMienPhi` (`may-chu/phim-0d.js`), chỉ R01, loại `llm` / `anh` / `anhSua` / `anhCao` / `anhSuaCao` (hoặc `cao: true`). Mọi chuỗi đi ra vẫn qua `soatRaNhaCungCap` (provider `cf-workers-ai`).
+- **Hạng "Bom tấn Cloudflare"** (mặc định ở chế độ 0đ; chọn "Tiêu chuẩn" để nhanh hơn): ảnh 768×1344 bằng klein 4B + hậu tố điện ảnh `ANH_BOM_TAN`, ~156 neuron/ảnh, vẫn 0 đồng (khoảng 1 tập/ngày). Nếu chủ hệ **tự** bật gói Workers Paid và đặt `GITA_PHIM_TRAN_TRA_PHI` > 0, ảnh Bom tấn dùng `flux-2-klein-9b` 896×1600 (~1.430 neuron ≈ 0,016 USD/ảnh), đếm riêng trong D1 (khoá `phim-cf·tra-phi·YYYY-MM-DD`) và không vượt trần đó; hỏng/hết quỹ thì tự về klein 4B miễn phí. Mặc định `"0"` = tắt.
+- **Tài nguyên R2** (`/tn/`): danh sách cố định 7 tệp, ghim độ dài + SHA-256. Lần đầu có người gọi, Worker chép một lần từ nguồn gốc (jsDelivr/Hugging Face, phía máy chủ) vào bucket `gita365-hoso` tiền tố `tn/`, sai SHA thì xoá. Từ đó trình duyệt chỉ tải từ Cloudflare.
+- `[ai] binding = "AI"` trong `wrangler.toml`. Gói Workers Free: vượt 10.000 neuron/ngày thì Cloudflare chỉ báo lỗi, **không tính tiền**.
+- `GITA_PHIM_TRAN_NEURON` (mặc định 9000, tối đa 9500): trần tự đặt dưới mức miễn phí, đếm trong D1 `chanNhip` (khoá `phim-0d·neuron·YYYY-MM-DD`) bằng một câu ghi có điều kiện nên lượt song song không vượt trần. Chạm trần → `HET_MIEN_PHI` kèm `mai` (00:00 UTC = 07:00 giờ Việt Nam); trình duyệt tự chờ rồi làm tiếp.
+- `GITA_PHIM_CHI_0D` (mặc định `"1"`): khi bật, `phimGuiViec`/`phimXemViec` (fal.ai) trả `CHE_DO_0_DONG` dù có `GITA_KHOA_FAL`. Chỉ đặt `"0"` nếu chủ hệ chủ động muốn dùng fal.ai trả phí.
+- Không có quay video AI và khớp môi ở chế độ này (Workers AI chưa có mô hình video). Mỗi tập 28–34 cảnh (`HUONG_TAP_0D`), phần miễn phí mỗi ngày đủ khoảng 1 tập Bom tấn hoặc 2 tập Tiêu chuẩn.
+- Lần đầu đọc thoại, trình duyệt tải giọng (~63 MB + ~28 MB), các lần sau lấy từ bộ nhớ đệm.
+- Kiểm tra: `GET /` của Worker trả `ai: true` khi binding đã có.
+
+## Xưởng phim tự động A-Z (fal.ai — trả phí, mặc định TẮT)
 
 Mô-đun `may-chu/phim-ai.js` cho phép Super Admin (R01) dán kịch bản và để hệ thống tự làm phim dọc 9:16: phân cảnh (LLM), vẽ chân dung nhân vật, vẽ khung mở đầu giữ đúng gương mặt, quay clip (Kling 2.1 image-to-video), đọc thoại tiếng Việt (MiniMax), rồi trình duyệt tự lắp phụ đề, logo, nhạc và xuất MP4.
 

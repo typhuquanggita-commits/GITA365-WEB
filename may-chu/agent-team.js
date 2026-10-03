@@ -38,6 +38,17 @@ const WORKFLOW = {
     { buoc: 2, agent: 'AI02', cua: 'aiSoanNhap', input: 'baiVietBlog', output: 'emailSequence', canQuyen: 'AI02' },
     { buoc: 3, agent: 'AI02', cua: 'aiSoanNhap', input: 'baiVietBlog', output: 'socialPosts', canQuyen: 'AI02' },
     { buoc: 4, agent: 'AI05', cua: 'aiTongHopGiamSat', input: 'ketQuaKenh', output: 'baoCaoKenh', canQuyen: null }
+  ],
+  /* 9.99.254 — đội Agent xưởng phim 0 đồng, cá nhân hoá theo cấp hành trình
+     50 cấp của khách. Cả bốn bước đi qua cửa phimMienPhi (Workers AI miễn
+     phí, trần neuron mỗi ngày, cổng Điều 13). Phần dựng — giọng Piper,
+     chiều sâu 2.5D, chỉnh màu, xuất MP4 — chạy trong trình duyệt, không
+     phải cửa máy chủ nên không nằm trong danh sách bước. */
+  'xuong-phim-ca-nhan': [
+    { buoc: 1, agent: 'XP-BK', cua: 'phimMienPhi', input: 'hanhTrinhKhach', output: 'kinhBoPhim', canQuyen: null },
+    { buoc: 2, agent: 'XP-DUYET', cua: 'phimMienPhi', input: 'kinhBoPhim', output: 'kinhDaDuyet', canQuyen: null },
+    { buoc: 3, agent: 'XP-DD', cua: 'phimMienPhi', input: 'kinhDaDuyet', output: 'phanCanhTap', canQuyen: null },
+    { buoc: 4, agent: 'XP-HOA', cua: 'phimMienPhi', input: 'phanCanhTap', output: 'anhCanh', canQuyen: null }
   ]
 };
 

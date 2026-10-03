@@ -46,6 +46,7 @@ import { soNgay, chotTuan, soatChot, tongHop, baoCaoKeToan, boSoKhaiThue,
   dsChot } from './bao-cao.js';
 import { tongNgayDoanhThu } from './bao-doanh-thu.js';
 import { thuGuiThu } from './thu.js';
+import { phucVuTaiNguyen } from './tai-nguyen.js';
 import { chamKpiTaiChinh } from './kpi-tai-chinh.js';
 import { dangTinTaiChinh, bangTinTaiChinh,
   xuLyTinTaiChinh } from './tin-tai-chinh.js';
@@ -87,7 +88,8 @@ import { ghiPhatSinh, soanBanNhap, duyetCap, nhapKho, traBoSung,
   soatTuHoanThien } from './tu-hoan-thien.js';
 import { capQuyenAI, thuHoiQuyenAI, soatQuyenAI, aiPhanLoai, aiSoanNhap,
   soanDeBaiNgoai, aiTongHopGiamSat } from './quyen-nang-ai.js';
-import { phimTrangThai, phimGuiViec, phimXemViec, phimTinhHuong } from './phim-ai.js';
+import { phimGuiViec, phimXemViec, phimTinhHuong } from './phim-ai.js';
+import { phimMienPhi, phimTrangThaiDu } from './phim-0d.js';
 import { dieuPhoiTroLy, soatDieuPhoi, tuHoanThienTroLy, soatHoatDongAgent } from './dieu-phoi.js';
 import { soatKhungVanHanh, chamMotLuot } from './khung-van-hanh.js';
 import { lapKeHoachAgent, chayBuocAgent, dsWorkflowAgent } from './agent-team.js';
@@ -307,7 +309,7 @@ const CAN_PHIEN = ['capKhoa', 'doiMatKhau', 'dongBo', 'thuGuiThu',
   'crmPhanTichKhach', 'crmUuTienNangCao',
   'loTrinhCaNhan', 'khoaNoiDungTheoTang',
   'hoiChatbot', 'lichSuChat', 'soanDeBaiNgoai',
-  'phimTrangThai', 'phimGuiViec', 'phimXemViec', 'phimTinhHuong',
+  'phimTrangThai', 'phimGuiViec', 'phimXemViec', 'phimTinhHuong', 'phimMienPhi',
   'guiBaoCaoNgay', 'tongHopBaoCao', 'dsBaoCaoNgay'];
 
 async function lam(fn, y, env, db) {
@@ -662,7 +664,8 @@ async function lam(fn, y, env, db) {
   if (fn === 'aiPhanLoai')        return await aiPhanLoai(y, env, db, hoSo);
   if (fn === 'aiSoanNhap')        return await aiSoanNhap(y, env, db, hoSo);
   if (fn === 'soanDeBaiNgoai')    return await soanDeBaiNgoai(y, env, db, hoSo);
-  if (fn === 'phimTrangThai')     return await phimTrangThai(y, env, db, hoSo);
+  if (fn === 'phimTrangThai')     return await phimTrangThaiDu(y, env, db, hoSo);
+  if (fn === 'phimMienPhi')       return await phimMienPhi(y, env, db, hoSo);
   if (fn === 'phimGuiViec')       return await phimGuiViec(y, env, db, hoSo);
   if (fn === 'phimXemViec')       return await phimXemViec(y, env, db, hoSo);
   if (fn === 'phimTinhHuong')     return await phimTinhHuong(y, env, db, hoSo);
@@ -1077,6 +1080,9 @@ export default {
   },
 
   async fetch(req, env) {
+    /* Tài nguyên tĩnh công khai (giọng đọc Piper) — phục vụ từ R2. */
+    if ((req.method === 'GET' || req.method === 'HEAD') && new URL(req.url).pathname.startsWith('/tn/'))
+      return phucVuTaiNguyen(req, env);
     const cors = corsTheoEnv(env, req);
     if (req.method === 'OPTIONS') return new Response(null, {status: 204, headers: cors});
 
@@ -1086,7 +1092,7 @@ export default {
       let n = 0;
       try { n = Object.keys(JSON.parse(env.GITA_KHOA_KHO || '{}')).length; } catch (e) {}
       return traJson({ok: true, ten: 'GITA 365 — máy chủ cấp phép',
-        daNapKhoa: n, luc: new Date().toISOString()}, 200, env, req);
+        daNapKhoa: n, ai: !!env.AI, luc: new Date().toISOString()}, 200, env, req);
     }
     if (req.method !== 'POST') return traJson({ok: false, error: 'Yêu cầu không hợp lệ.'}, 405, env, req);
 
