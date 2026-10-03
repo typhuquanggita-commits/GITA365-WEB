@@ -63,6 +63,27 @@ Quyền truy cập "Bất kỳ ai" là bắt buộc để Worker gọi được 
 - Secret `GITA_CAU_NOI_GMAIL`, `GITA_KHOA_CAU_NOI`: cầu nối Gmail. Secret `GITA_KHOA_THU`: khoá API Resend.
 - Khi không có đường gửi nào, các thư bắt buộc (OTP, kích hoạt) báo lỗi rõ ràng thay vì im lặng.
 
+## Xưởng phim tự động A-Z (fal.ai)
+
+Mô-đun `may-chu/phim-ai.js` cho phép Super Admin (R01) dán kịch bản và để hệ thống tự làm phim dọc 9:16: phân cảnh (LLM), vẽ chân dung nhân vật, vẽ khung mở đầu giữ đúng gương mặt, quay clip (Kling 2.1 image-to-video), đọc thoại tiếng Việt (MiniMax), rồi trình duyệt tự lắp phụ đề, logo, nhạc và xuất MP4.
+
+- Secret `GITA_KHOA_FAL`: khoá API fal.ai của chủ hệ. Đặt ở GitHub secret cùng tên rồi chạy workflow deploy, hoặc `npx wrangler secret put GITA_KHOA_FAL` trong `may-chu/`.
+- Cửa: `phimTrangThai`, `phimGuiViec` (gửi một việc vào hàng đợi `queue.fal.run`), `phimXemViec` (hỏi tối đa 12 việc/lượt), `phimTinhHuong` (R01: trả 75 tình huống khảo sát `TH_KHACH` và 10 phần khung kể chuyện GITA365). Model theo danh sách trắng; mọi chuỗi đi ra qua `soatRaNhaCungCap` (provider `fal`).
+- Loại việc: `llm` (che `kichBan` / `boPhim` / `tap`), `anh`, `anhSua` (giữ mặt, tối đa 4 ảnh tham chiếu), `video` (Kling 2.1 tiêu chuẩn), `videoDienAnh` (Kling 2.5 Turbo Pro), `lipSync` (Kling lipsync — khớp khẩu hình với giọng), `giong` (MiniMax, có `camXuc`: happy/sad/angry/fearful/surprised/disgusted/neutral). Lip-sync chỉ nhận URL `*.fal.media` do chính fal trả về.
+- Với `boPhim`, cổng Điều 13 soát phần do người dùng gõ (`ghiChu`) và khoá tình huống; văn bản `TH_KHACH` là dữ liệu cố định, ẩn danh của máy chủ.
+- Hạn mức mỗi ngày: llm 60 · ảnh 400 · ảnh-giữ-mặt 900 · clip 300 · clip điện ảnh 700 · lip-sync 700 · giọng 1500. Đặt thêm hạn mức chi tiêu ở fal.ai/dashboard/billing.
+- Chi phí tham khảo (giá fal.ai): ảnh 0,039 USD; clip 5 giây 0,28 USD (điện ảnh 0,35 USD); lip-sync ~0,07 USD/cảnh; giọng 0,1 USD/1.000 ký tự. Một tập 5 phút điện ảnh ~26,6 USD; bộ 10 tập ~265 USD.
+
+### Bộ phim 10 tập (`src/xuong-phim-bo.js`)
+
+1. Chọn tầng và các tình huống khách (từ `phimTinhHuong`), ghi chú thêm.
+2. "Viết kinh bộ phim" → LLM `boPhim` trả tên bộ, nhân vật (mô tả ngoại hình cố định, giọng), bối cảnh và dàn ý 10 tập theo khung kể chuyện.
+3. "Dựng tư liệu" → chân dung + ảnh nền bối cảnh, rồi tờ nhân vật nhiều góc (`anhSua`) để giữ gương mặt xuyên suốt.
+4. "Làm cả bộ" → chọn thư mục, xác nhận chi phí, rồi lần lượt mỗi tập: LLM `tap` (kèm kinh bộ phim) → ghép nhân vật/bối cảnh của bộ → giọng có cảm xúc → khung đầu dùng ảnh tham chiếu → quay điện ảnh → khớp khẩu hình → lắp → ghi `Tap-01.mp4` … `Tap-10.mp4`. Dừng ở tập lỗi, bấm lại để làm tiếp.
+- Trạng thái lưu ở `localStorage` khoá `gita.xuongPhim.bo.v1`.
+- Kết quả tải thẳng từ `*.fal.media` về trình duyệt (CSP `connect-src` đã mở các host này).
+- Đây là ngoại lệ có chủ ý của luật C20 theo yêu cầu chủ hệ; xưởng cũ (`src/studio.js`) vẫn giữ C20.
+
 ## Chức năng chính
 
 - Đăng nhập / đăng xuất / kiểm phiên
