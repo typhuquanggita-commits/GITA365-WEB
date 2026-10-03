@@ -16,7 +16,9 @@ jobs:
   worker:
     name: Deploy API worker
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' || contains(join(github.event.commits.*.modified, ' '), 'may-chu/') || contains(join(github.event.commits.*.added, ' '), 'may-chu/') || contains(join(github.event.commits.*.removed, ' '), 'may-chu/')
+    # Luôn deploy Worker khi có thay đổi trên main: lọc theo đường dẫn bằng
+    # github.event.commits.*.modified không đáng tin (mảng lồng mảng) và đã
+    # khiến Worker bị bỏ qua. Deploy lại cùng mã là vô hại.
     steps:
       - name: Check out application
         uses: actions/checkout@v4
@@ -71,6 +73,26 @@ jobs:
           workingDirectory: may-chu
           command: deploy
 
+      # Secret của cầu nối Gmail: đặt ở GitHub (Settings → Secrets → Actions)
+      # thì workflow nạp vào Worker, chủ hệ không phải chạy wrangler trên máy.
+      - name: Nạp secret cầu nối Gmail vào Worker (nếu có)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          GITA_CAU_NOI_GMAIL: ${{ secrets.GITA_CAU_NOI_GMAIL }}
+          GITA_KHOA_CAU_NOI: ${{ secrets.GITA_KHOA_CAU_NOI }}
+        working-directory: may-chu
+        run: |
+          set -eu
+          if [ -z "${GITA_CAU_NOI_GMAIL:-}" ] || [ -z "${GITA_KHOA_CAU_NOI:-}" ]; then
+            echo "Chưa có GITA_CAU_NOI_GMAIL/GITA_KHOA_CAU_NOI ở GitHub secrets — bỏ qua."
+            exit 0
+          fi
+          f="$RUNNER_TEMP/bi-mat-thu.json"
+          node -e "require('fs').writeFileSync(process.argv[1], JSON.stringify({GITA_CAU_NOI_GMAIL: process.env.GITA_CAU_NOI_GMAIL, GITA_KHOA_CAU_NOI: process.env.GITA_KHOA_CAU_NOI}))" "$f"
+          npx --yes wrangler@4 secret bulk "$f"
+          rm -f "$f"
+
       - name: Verify Worker health
         run: |
           set -eu
@@ -89,7 +111,7 @@ jobs:
   pages:
     name: Deploy static application
     needs: worker
-    if: always() && (needs.worker.result == 'success' || needs.worker.result == 'skipped')
+    if: always() && !cancelled()
     runs-on: ubuntu-latest
     steps:
       - name: Check out application
@@ -177,6 +199,10 @@ jobs:
   github-pages:
     name: Mirror to GitHub Pages artifact
     needs: pages
+    # Không có dòng này thì job bị bỏ qua mỗi khi job worker bị bỏ qua
+    # (điều kiện mặc định success() xét cả job tổ tiên) — bản GitHub
+    # Pages đã đứng yên từ 20/9 vì thế.
+    if: always() && needs.pages.result == 'success'
     runs-on: ubuntu-latest
     permissions:
       pages: write

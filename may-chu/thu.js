@@ -17,6 +17,11 @@
 
    ── CHỖ ĐỔI NHÀ CUNG CẤP CHỈ CÓ MỘT ──
 
+   HIỆN NAY (chưa có tên miền riêng) đường gửi chính là CẦU NỐI GMAIL
+   (guiQuaGmail_, ở dưới) — chấp nhận hạn mức ~100 người nhận/ngày cho
+   tới khi có tên miền; Resend là đường dự phòng/mở rộng. Thứ tự thử
+   nằm ở duongGuiThu.
+
    Hàm guiQuaResend_ ở dưới là toàn bộ phần dính tới nhà cung cấp. Đổi
    sang Mailgun, SendGrid hay Amazon SES là viết một hàm cùng chữ ký và
    đổi một dòng trong guiThu. Mọi chỗ gọi thư ở nơi khác không biết và
@@ -66,6 +71,43 @@ async function guiQuaResend_(env, tepThu) {
   return true;
 }
 
+/* ── CẦU NỐI GMAIL (Google Apps Script) ──
+   Dự án không có tên miền riêng, mà Resend chỉ cho gửi từ tên miền đã
+   xác minh. Cầu nối là một Apps Script chạy DƯỚI tài khoản Gmail của
+   chủ hệ (mã ở may-chu/cau-noi-gmail/Code.gs): Worker POST lá thư kèm
+   khoá chung, Google gửi bằng chính hòm Gmail ấy — có chữ ký DKIM của
+   Google, nên vào hộp thư đến chứ không vào spam. Hạn mức: khoảng 100
+   người nhận/ngày với Gmail thường. */
+async function guiQuaGmail_(env, tepThu) {
+  const r = await fetch(env.GITA_CAU_NOI_GMAIL, {
+    method: 'POST',
+    redirect: 'follow',
+    headers: {'Content-Type': 'text/plain; charset=utf-8'},
+    body: JSON.stringify({
+      khoa: env.GITA_KHOA_CAU_NOI,
+      den: tepThu.den,
+      tieuDe: tepThu.tieuDe,
+      than: tepThu.than,
+      traLoi: env.GITA_THU_TRA_LOI || ''
+    })
+  });
+  const t = await r.text().catch(() => '');
+  let j = null;
+  try { j = JSON.parse(t); } catch (e) {}
+  if (!r.ok || !j || j.ok !== true)
+    throw new Error('Cầu nối Gmail từ chối (' + r.status + '): ' +
+      String((j && j.error) || t).slice(0, 200));
+  return true;
+}
+
+/* Các đường gửi đã cấu hình đủ, theo thứ tự ưu tiên. */
+export function duongGuiThu(env) {
+  const ds = [];
+  if (env.GITA_CAU_NOI_GMAIL && env.GITA_KHOA_CAU_NOI) ds.push({ten: 'gmail', gui: guiQuaGmail_});
+  if (env.GITA_KHOA_THU && env.GITA_THU_GUI_TU) ds.push({ten: 'resend', gui: guiQuaResend_});
+  return ds;
+}
+
 /**
  * den     — địa chỉ nhận
  * tieuDe  — tiêu đề
@@ -80,20 +122,44 @@ export async function guiThu(env, {den, tieuDe, than, batBuoc}) {
      triển và trong bộ thử, env.GHI_THU nhận lá thư để soi được nội dung
      mà không gửi đi thật. */
   if (env.GHI_THU) { env.GHI_THU.push({den, tieuDe, than}); return true; }
-  if (!env.GITA_KHOA_THU || !env.GITA_THU_GUI_TU) {
-    if (batBuoc) throw new Error(env.GITA_KHOA_THU
-      ? 'Máy chủ chưa đặt địa chỉ người gửi thư (GITA_THU_GUI_TU).'
-      : 'Máy chủ chưa được nạp khoá gửi thư.');
+  const ds = duongGuiThu(env);
+  if (!ds.length) {
+    if (batBuoc) throw new Error('Máy chủ chưa cấu hình đường gửi thư ' +
+      '(cầu nối Gmail GITA_CAU_NOI_GMAIL + GITA_KHOA_CAU_NOI, hoặc Resend).');
     return false;
   }
-  try {
-    return await guiQuaResend_(env, {den, tieuDe, than});
-  } catch (e) {
-    if (batBuoc) throw e;
-    /* Thư phụ hỏng thì ghi lại và đi tiếp — không kéo đổ việc chính. */
-    console.error('THU_HONG', den, String(e && e.message || e));
-    return false;
+  /* Đường đầu hỏng (hết hạn mức ngày, Google trục trặc…) thì thử đường sau. */
+  let loi = null;
+  for (const d of ds) {
+    try { return await d.gui(env, {den, tieuDe, than}); }
+    catch (e) {
+      loi = e;
+      console.error('THU_HONG', d.ten, den, String(e && e.message || e));
+    }
   }
+  if (batBuoc) throw loi;
+  return false;
 }
 
 export const CHAN_THU = '\n\nCần người thật: 08.5555.4688 · typhuquanggita@gmail.com\nHọc viện GITA';
+
+/* Super Admin bấm "gửi thư thử" để biết đường gửi đã thông chưa. Người
+   nhận CỐ ĐỊNH là hòm thư chủ hệ (GITA_THU_TRA_LOI) — cửa này không nhận
+   địa chỉ từ máy khách, nên không thành chỗ để gửi thư tới người lạ. */
+export async function thuGuiThu(y, env, db, hoSo) {
+  if (!hoSo || hoSo.role !== 'R01')
+    return {ok: false, code: 'CHIR01', error: 'Chỉ Super Admin được gửi thư thử.'};
+  const den = String(env.GITA_THU_TRA_LOI || '').trim();
+  if (!den) return {ok: false, error: 'Máy chủ chưa đặt GITA_THU_TRA_LOI (hòm thư chủ hệ).'};
+  const duong = duongGuiThu(env).map(d => d.ten);
+  try {
+    await guiThu(env, {den, batBuoc: true,
+      tieuDe: 'GITA 365 — thư thử từ máy chủ',
+      than: 'Máy chủ GITA 365 đã gửi được thư tới hòm này.\n' +
+        'Đường gửi đã cấu hình: ' + (duong.join(', ') || 'không có') + '\n' +
+        'Lúc: ' + new Date().toISOString() + CHAN_THU});
+  } catch (e) {
+    return {ok: false, duong, error: 'Gửi thư thử hỏng: ' + String(e && e.message || e).slice(0, 200)};
+  }
+  return {ok: true, den, duong};
+}

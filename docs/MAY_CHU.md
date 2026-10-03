@@ -17,21 +17,51 @@ Có thể ghi đè trên từng máy qua màn **Quản trị trang → Nối má
 Biến `[vars] GITA_DIA_CHI_WEB` trong `may-chu/wrangler.toml` là **danh sách origin, phân tách bằng dấu phẩy**:
 
 ```toml
-GITA_DIA_CHI_WEB = "https://gita365.pages.dev"
+GITA_DIA_CHI_WEB = "https://gita365.pages.dev,https://typhuquanggita-commits.github.io"
 ```
 
-- Danh sách **phải gồm mọi địa chỉ đang chạy bản web** — hiện chỉ có `https://gita365.pages.dev` (địa chỉ chính thức duy nhất). Thêm địa chỉ khác thì nối bằng dấu phẩy. Thiếu một địa chỉ thì trình duyệt chặn CORS và app báo *không kết nối được máy chủ* dù Worker vẫn chạy bình thường.
+- Danh sách **phải gồm mọi địa chỉ đang chạy bản web**: `https://gita365.pages.dev` (chính thức, đứng đầu) và bản sao GitHub Pages `https://typhuquanggita-commits.github.io` (workflow deploy tự đồng bộ). Thêm địa chỉ khác thì nối bằng dấu phẩy. Thiếu một địa chỉ thì trình duyệt chặn CORS và app báo *không kết nối được máy chủ* dù Worker vẫn chạy bình thường.
 - Worker đọc header `Origin`: khớp danh sách thì trả lại đúng origin đó (kèm `Vary: Origin`); không khớp thì trả origin đầu tiên (trình duyệt sẽ chặn).
-- Không bao giờ thêm `null` (trang mở bằng `file://`). Để trống biến thì Worker trả `*`.
+- Không bao giờ thêm `null` (trang mở bằng `file://`); app khi đó sẽ báo người dùng mở https://gita365.pages.dev. Để trống biến thì Worker trả `*`.
 - Origin **đầu tiên** được dùng để dựng đường dẫn kích hoạt trong thư.
 - Đổi biến xong phải **deploy lại Worker** (`npx wrangler deploy` trong `may-chu/`, hoặc workflow deploy).
 - Kiểm: `node tools/thu-cors.mjs` và `node tools/soat-san-sang.js`.
 
 ## Gửi thư
 
-- `GITA_THU_GUI_TU` (người gửi, FROM): **chủ dự án điền** một địa chỉ thuộc tên miền đã xác minh ở Resend (SPF/DKIM). Resend không cho gửi từ `@gmail.com`. Để trống thì máy chủ không gửi thư (OTP/kích hoạt báo lỗi rõ ràng).
-- `GITA_THU_TRA_LOI` (reply-to) và `GITA_THU_DOANH_THU` (nhận báo doanh thu): `typhuquanggita@gmail.com` — email chính thức.
-- Secret `GITA_KHOA_THU`: khoá API Resend.
+Mọi thư (mã OTP đăng ký, lấy lại mật khẩu, thông báo tài khoản, báo doanh thu) đi qua `guiThu()` trong `may-chu/thu.js`. Máy chủ thử các đường đã cấu hình theo thứ tự; đường đầu hỏng thì tự thử đường sau:
+
+1. **Cầu nối Gmail (đường chính, không cần tên miền riêng).** Một Google Apps Script chạy dưới tài khoản `typhuquanggita@gmail.com` gửi thư bằng chính hòm Gmail đó. Thư có chữ ký DKIM của Google nên vào hộp thư đến. Hạn mức khoảng **100 người nhận/ngày** (Gmail thường).
+2. **Resend (dự phòng / khi có tên miền).** Cần secret `GITA_KHOA_THU` và `GITA_THU_GUI_TU` là một địa chỉ thuộc tên miền **đã xác minh** ở Resend. Resend không cho gửi từ `@gmail.com`.
+
+### Dựng cầu nối Gmail (khoảng 10 phút)
+
+1. Đăng nhập Google bằng `typhuquanggita@gmail.com`, mở <https://script.google.com> → **Dự án mới**. Dán toàn bộ `may-chu/cau-noi-gmail/Code.gs` vào `Code.gs`, rồi lưu.
+2. Tạo khoá ngẫu nhiên: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`. Vào **Cài đặt dự án → Thuộc tính tập lệnh**, thêm `KHOA` = chuỗi vừa tạo. Nếu nhận được bản dán sẵn (biến `KHOA_DAN` đã có khoá), bỏ qua bước này.
+3. Chọn hàm `thuGui` → **Chạy** → cấp quyền "Gửi email thay bạn". Hòm thư sẽ nhận một lá "thử cầu nối Gmail".
+4. **Triển khai → Tùy chọn triển khai mới → Ứng dụng web**: *Thực thi với tư cách* = **Tôi**, *Người có quyền truy cập* = **Bất kỳ ai**. Chép URL `https://script.google.com/macros/s/…/exec`.
+5. Nạp vào Worker — chọn một cách:
+   - **Không cần máy có wrangler:** đặt hai secret `GITA_CAU_NOI_GMAIL` (URL) và `GITA_KHOA_CAU_NOI` (khoá) ở GitHub → *Settings → Secrets and variables → Actions*. Sau đó chạy workflow **Deploy GITA365 to Cloudflare** (*Run workflow*); workflow sẽ nạp cả hai vào Worker.
+   - Hoặc chạy trong `may-chu/`:
+   ```bash
+   npx wrangler secret put GITA_CAU_NOI_GMAIL   # dán URL ở bước 4
+   npx wrangler secret put GITA_KHOA_CAU_NOI    # dán đúng KHOA ở bước 2
+   ```
+   Secret có hiệu lực ngay, không cần deploy lại. Đổi mã `thu.js` thì cần deploy lại Worker.
+6. Kiểm: đăng nhập tài khoản Super Admin (R01) rồi gọi `fn: "thuGuiThu"`. Máy chủ gửi một thư thử tới `GITA_THU_TRA_LOI` và trả về các đường gửi đã cấu hình. Ví dụ bằng `curl`, dùng `token`/`u` của phiên đăng nhập:
+   ```bash
+   curl -s https://gita365.typhuquanggita.workers.dev/ -H "Content-Type: application/json" \
+     -d '{"fn":"thuGuiThu","token":"<token>","u":"<tên đăng nhập>"}'
+   ```
+
+Quyền truy cập "Bất kỳ ai" là bắt buộc để Worker gọi được cầu nối, nên `KHOA` là thứ duy nhất giữ cửa. Lộ khoá thì đổi `KHOA` ở Apps Script và nạp lại `GITA_KHOA_CAU_NOI`. Sửa `Code.gs` thì phải **Quản lý triển khai → Chỉnh sửa → Phiên bản mới** để URL cũ chạy mã mới.
+
+### Biến liên quan
+
+- `GITA_THU_TRA_LOI` (reply-to, nơi nhận thư thử) và `GITA_THU_DOANH_THU` (nhận báo doanh thu): `typhuquanggita@gmail.com`, email chính thức.
+- `GITA_THU_GUI_TU`: chỉ dùng cho Resend; để trống khi chưa có tên miền.
+- Secret `GITA_CAU_NOI_GMAIL`, `GITA_KHOA_CAU_NOI`: cầu nối Gmail. Secret `GITA_KHOA_THU`: khoá API Resend.
+- Khi không có đường gửi nào, các thư bắt buộc (OTP, kích hoạt) báo lỗi rõ ràng thay vì im lặng.
 
 ## Chức năng chính
 

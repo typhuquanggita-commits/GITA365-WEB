@@ -40,14 +40,19 @@ compatibility_date = "2026-09-01"
 #      app báo "không kết nối được máy chủ" dù Worker vẫn sống.
 #      Không bao giờ thêm 'null' (file://).
 #   2. Origin ĐẦU TIÊN dùng để dựng đường dẫn kích hoạt trong thư.
-# Địa chỉ web chính thức duy nhất hiện nay: https://gita365.pages.dev
-GITA_DIA_CHI_WEB = "https://gita365.pages.dev"
+# Địa chỉ web chính thức: https://gita365.pages.dev (đứng ĐẦU — dùng cho
+# đường dẫn trong thư). Bản sao trên GitHub Pages
+# (https://typhuquanggita-commits.github.io/GITA365-WEB/) do workflow
+# deploy tự đồng bộ; người dùng đã cài PWA từ đó nên phải cho qua.
+GITA_DIA_CHI_WEB = "https://gita365.pages.dev,https://typhuquanggita-commits.github.io"
 
-# Địa chỉ đứng tên người gửi, dạng "GITA 365 <dia-chi@ten-mien>".
-# CHỦ DỰ ÁN ĐIỀN. Resend CHỈ cho gửi từ tên miền đã xác minh (SPF/DKIM),
-# nên KHÔNG đặt địa chỉ @gmail.com ở đây — Resend sẽ từ chối. Để trống
-# thì máy chủ KHÔNG gửi thư (mã OTP / kích hoạt báo lỗi rõ ràng thay vì
-# im lặng).
+# Địa chỉ đứng tên người gửi KHI GỬI QUA RESEND, dạng
+# "GITA 365 <dia-chi@ten-mien>". Resend CHỈ cho gửi từ tên miền đã xác
+# minh (SPF/DKIM), nên KHÔNG đặt địa chỉ @gmail.com ở đây. Dự án chưa có
+# tên miền riêng → đường gửi chính là CẦU NỐI GMAIL (hai secret
+# GITA_CAU_NOI_GMAIL + GITA_KHOA_CAU_NOI, xem docs/MAY_CHU.md): thư đi
+# từ chính typhuquanggita@gmail.com. Để trống biến này thì Resend chỉ
+# không được dùng; cầu nối Gmail vẫn gửi bình thường.
 GITA_THU_GUI_TU = ""
 
 # Khách bấm "Trả lời" thì thư về đây (reply-to). Email chính thức.
@@ -130,6 +135,12 @@ bucket_name = "gita365-hoso"
 #
 #    npx wrangler secret put GITA_KHOA_THU
 #
+# ── CẦU NỐI GMAIL (đường gửi thư chính khi chưa có tên miền riêng) ──
+# Apps Script ở may-chu/cau-noi-gmail/Code.gs, chạy dưới tài khoản
+# typhuquanggita@gmail.com. Có đủ hai secret này thì mọi thư (OTP, lấy
+# lại mật khẩu, báo doanh thu…) đi qua Gmail trước; hỏng thì thử Resend.
+#    npx wrangler secret put GITA_CAU_NOI_GMAIL   # URL .../exec của Apps Script
+#    npx wrangler secret put GITA_KHOA_CAU_NOI    # trùng thuộc tính KHOA ở Apps Script
 # ── CỬA ĐI RA NGOÀI (tuỳ chọn — TẮT SẴN) ──
 # Chủ hệ chốt ở 9.99.11: được phép nối một bộ tạo ảnh bên ngoài.
 # Thiếu MỘT trong hai thì cửa ĐÓNG, và máy chủ nói rõ là đóng chứ không
@@ -182,12 +193,18 @@ bucket_name = "gita365-hoso"
 #  1. npx wrangler d1 create gita365          → dán database_id lên trên
 #  2. npx wrangler d1 execute gita365 --file=csdl.sql --remote
 #  3. bốn lệnh secret put ở trên
-#  4. đặt GITA_THU_GUI_TU ở [vars] (chủ dự án điền) và xác thực tên
-#     miền của địa chỉ ấy ở nhà gửi thư (SPF + DKIM): nhà gửi thư đưa ra
-#     vài bản ghi TXT/CNAME, thêm vào DNS của tên miền đó rồi bấm xác
-#     thực. KHÔNG BỎ QUA BƯỚC NÀY — thư vẫn đi
+#  4. Gửi thư — làm MỘT trong hai:
+#     a) (chưa có tên miền riêng — HIỆN DÙNG) dựng cầu nối Gmail theo
+#        hướng dẫn đầu tệp may-chu/cau-noi-gmail/Code.gs rồi nạp hai
+#        secret GITA_CAU_NOI_GMAIL + GITA_KHOA_CAU_NOI. Hạn mức khoảng
+#        100 người nhận/ngày.
+#     b) (khi đã có tên miền) đặt GITA_THU_GUI_TU ở [vars] và xác thực
+#        tên miền ấy ở Resend (SPF + DKIM): thêm vài bản ghi TXT/CNAME
+#        vào DNS rồi bấm xác thực. KHÔNG BỎ QUA bước xác thực — thư vẫn đi
 #     nhưng rơi vào mục spam, mà một mã xác nhận nằm trong mục spam thì
 #     đúng bằng không gửi, và người dùng chỉ thấy "mã không tới".
+#     Kiểm: đăng nhập Super Admin, gọi fn "thuGuiThu" — thư thử tới
+#     GITA_THU_TRA_LOI.
 #
 #     Bản web chạy ở https://gita365.pages.dev, máy chủ ở
 #     https://gita365.typhuquanggita.workers.dev — khác origin, nên
