@@ -43983,6 +43983,11 @@ G.VIEWS = G.VIEWS || {};
   G.xpXuat = function () {
     if (chay && !chay.dung) { G.xpDung(); return; }
     if (!duocLuu()) return;
+    var sanSang = G.xpKiemTraSanXuat();
+    if (!sanSang.ok) {
+      U.toast('Chưa thể xuất: hoàn tất ' + sanSang.loi.length + ' mục kịch bản bắt buộc trước.', 'err');
+      veLai(); return;
+    }
     var thieu = G.xpDA.canh.filter(function (c) { return !c.clip || !G.xpVat[c.clip]; }).length;
     if (thieu && !confirm(thieu + ' cảnh chưa có clip sẽ hiện khung xám. Vẫn xuất?')) return;
     /* Hỏi chỗ lưu TRƯỚC khi ghi — hộp lưu cần cú bấm của người dùng */
@@ -44031,6 +44036,41 @@ G.VIEWS = G.VIEWS || {};
     luuDuAn(); veLai();
     U.toast('Đã tách ' + G.xpDA.canh.length + ' cảnh quay.', 'ok');
   };
+  G.xpKiemTraSanXuat = function () {
+    var da = G.xpDA, loi = [], canhBao = [];
+    function thieu(duLieu, nhan) { if (!String(duLieu || '').trim()) loi.push(nhan); }
+    thieu(da.ten, 'Đặt tên phim.');
+    thieu(da.chuDe, 'Viết chủ đề/điều phim muốn để lại.');
+    thieu(da.tienDe, 'Viết tiền đề và xung đột trung tâm.');
+    thieu(da.machCamXuc, 'Viết mạch cảm xúc toàn phim.');
+    if (!da.nhanVat.length) loi.push('Thêm ít nhất một nhân vật.');
+    da.nhanVat.forEach(function (n) {
+      if (!String(n.prompt || '').trim()) loi.push('Nhân vật ' + (n.ten || 'chưa tên') + ' chưa có ngoại hình cố định.');
+      if (!String(n.neoLienTuc || '').trim()) canhBao.push('Nhân vật ' + (n.ten || 'chưa tên') + ' chưa có neo liên tục.');
+      if (!String(n.cungCamXuc || '').trim()) canhBao.push('Nhân vật ' + (n.ten || 'chưa tên') + ' chưa có cung cảm xúc.');
+    });
+    if (!da.canh.length) loi.push('Tách kịch bản thành ít nhất một cảnh quay.');
+    da.canh.forEach(function (c, i) {
+      var so = 'Cảnh ' + (i + 1);
+      if (!boiCanhCua(c).ten) loi.push(so + ' chưa có bối cảnh.');
+      if (!String(c.hanhDong || '').trim()) loi.push(so + ' chưa có hành động hình ảnh.');
+      if (!String(c.suKien || '').trim()) canhBao.push(so + ' chưa có sự kiện/nút thắt.');
+      if (!Object.keys(c.camXuc || {}).length) canhBao.push(so + ' chưa có chỉ đạo cảm xúc.');
+      (c.thoai || []).forEach(function (t) {
+        var co = da.nhanVat.some(function (n) { return n.ten.toLowerCase() === String(t.ai || '').toLowerCase(); });
+        if (!co) canhBao.push(so + ' có thoại của "' + (t.ai || 'chưa rõ') + '" nhưng chưa có trong sổ nhân vật.');
+      });
+      if (!nvTrongCanh(c).length) canhBao.push(so + ' chưa nhận được nhân vật; nhắc tên nhân vật trong hành động, thoại, sự kiện hoặc cảm xúc.');
+    });
+    return {loi: loi, canhBao: canhBao, ok: !loi.length};
+  };
+  G.xpXemSanSang = function () {
+    var kq = G.xpKiemTraSanXuat();
+    if (kq.loi.length) U.toast('Cần hoàn tất ' + kq.loi.length + ' mục trước khi sản xuất.', 'err');
+    else if (kq.canhBao.length) U.toast('Kịch bản đủ điều kiện; còn ' + kq.canhBao.length + ' khuyến nghị cần xem.', 'ok');
+    else U.toast('Kịch bản sẵn sàng đưa vào sản xuất.', 'ok');
+    veLai();
+  };
   G.xpDuAnMoi = function (mau) {
     if (!confirm(mau ? 'Nạp lại dự án mẫu? Dự án đang mở sẽ bị thay.' : 'Tạo dự án trống? Dự án đang mở sẽ bị thay.')) return;
     var m = duAnMau();
@@ -44077,7 +44117,8 @@ G.VIEWS = G.VIEWS || {};
       '</select></label></div>' +
       '<label>Phong cách hình (tiếng Anh, dùng chung mọi cảnh) <textarea rows="2" oninput="G.xpSua(\'phongCach\',this.value)">' + h(da.phongCach) + '</textarea></label>' +
       '<div class="row"><button class="btn" onclick="G.xpDuAnMoi(false)">Dự án trống</button>' +
-      '<button class="btn" onclick="G.xpDuAnMoi(true)">Nạp lại dự án mẫu</button></div></div>';
+      '<button class="btn" onclick="G.xpDuAnMoi(true)">Nạp bản mẫu hoàn chỉnh</button></div>' +
+      '<p class="note">Bản mẫu gốc <b>Bữa Cơm Muộn</b> gồm 2 nhân vật, 2 bối cảnh, 3 sự kiện, đối thoại và mạch cảm xúc hoàn chỉnh để bạn thay nội dung theo câu chuyện của mình.</p></div>';
 
     o += '<div class="giay"><h3>1.5 · La bàn câu chuyện</h3>' +
       '<label>Chủ đề / điều phim muốn để lại <textarea rows="2" oninput="G.xpSua(\'chuDe\',this.value)">' + h(da.chuDe || '') + '</textarea></label>' +
@@ -44113,7 +44154,13 @@ G.VIEWS = G.VIEWS || {};
 
     /* 4 · Cảnh quay & prompt */
     var vPhim = Object.keys(G.xpVat).filter(function (k) { return G.xpVat[k].loai === 'phim' || G.xpVat[k].loai === 'anh'; });
-    o += '<div class="giay"><h3>4 · ' + da.canh.length + ' cảnh quay · ' + Math.round(tongGiay()) + ' giây</h3>';
+    var kiem = G.xpKiemTraSanXuat();
+    o += '<div class="giay"><h3>4 · ' + da.canh.length + ' cảnh quay · ' + Math.round(tongGiay()) + ' giây</h3>' +
+      '<div class="row"><button class="btn btn-chinh" onclick="G.xpXemSanSang()">Kiểm tra sẵn sàng sản xuất</button>' +
+      '<span class="note">' + (kiem.ok ? '✓ Đủ dữ liệu bắt buộc' : '⚠ Còn ' + kiem.loi.length + ' mục bắt buộc') +
+      (kiem.canhBao.length ? ' · ' + kiem.canhBao.length + ' khuyến nghị' : '') + '</span></div>' +
+      (kiem.loi.length ? '<p class="note"><b>Cần hoàn tất:</b> ' + h(kiem.loi.join(' · ')) + '</p>' : '') +
+      (kiem.canhBao.length ? '<p class="note"><b>Nên rà soát:</b> ' + h(kiem.canhBao.join(' · ')) + '</p>' : '');
     da.canh.forEach(function (c, i) {
       var p = G.xpPrompt(c), bc = boiCanhCua(c);
       o += '<details class="giay xu-canh"><summary><b>Cảnh ' + (i + 1) + '</b> · ' + h(bc.ten) + ' · ' + h(c.chiDao || '—') + ' · ' +
@@ -44146,6 +44193,9 @@ G.VIEWS = G.VIEWS || {};
       o_('Âm lượng nhạc (0–1)', da.amLuongNhac == null ? 0.25 : da.amLuongNhac, "G.xpSua('amLuongNhac',this.value)", 'number') +
       '<label><input type="checkbox"' + (da.theoClip ? ' checked' : '') + ' onchange="G.xpSua(\'theoClip\',this.checked);G.render()"> Thời lượng cảnh theo độ dài clip</label></div>' +
       (G.xpDA.nhac && G.xpVat[G.xpDA.nhac] ? '<p class="note">Nhạc nền: ' + h(G.xpVat[G.xpDA.nhac].ten) + '</p>' : '') +
+      '<p class="note">' + (kiem.ok ? '✓ Kịch bản đủ điều kiện xuất. ' : '⚠ Hoàn tất kiểm tra kịch bản trước khi xuất. ') +
+      (da.canh.filter(function (c) { return !c.clip || !G.xpVat[c.clip]; }).length
+        ? 'Các cảnh chưa có clip sẽ cần xác nhận trước khi xuất.' : 'Tất cả cảnh đã có clip.') + '</p>' +
       '<p class="note">Clip chỉ nằm trong bộ nhớ của tab này — tải lại trang thì cần nạp lại (kịch bản và prompt vẫn được giữ).</p>' +
       '<canvas id="xp-man" style="width:100%;max-width:300px;aspect-ratio:9/16;background:#000;display:block;margin:8px 0;border-radius:8px"></canvas>' +
       '<p class="note" id="xp-tt"></p>' +
