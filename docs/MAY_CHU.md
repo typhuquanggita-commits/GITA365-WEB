@@ -95,9 +95,23 @@ Mặc định xưởng phim chạy **0 đồng** và **chỉ dùng GitHub + Clou
 - `[ai] binding = "AI"` trong `wrangler.toml`. Gói Workers Free: vượt 10.000 neuron/ngày thì Cloudflare chỉ báo lỗi, **không tính tiền**.
 - `GITA_PHIM_TRAN_NEURON` (mặc định 9000, tối đa 9500): trần tự đặt dưới mức miễn phí, đếm trong D1 `chanNhip` (khoá `phim-0d·neuron·YYYY-MM-DD`) bằng một câu ghi có điều kiện nên lượt song song không vượt trần. Chạm trần → `HET_MIEN_PHI` kèm `mai` (00:00 UTC = 07:00 giờ Việt Nam); trình duyệt tự chờ rồi làm tiếp.
 - `GITA_PHIM_CHI_0D` (mặc định `"1"`): khi bật, `phimGuiViec`/`phimXemViec` (fal.ai) trả `CHE_DO_0_DONG` dù có `GITA_KHOA_FAL`. Chỉ đặt `"0"` nếu chủ hệ chủ động muốn dùng fal.ai trả phí.
-- Không có quay video AI và khớp môi ở chế độ này (Workers AI chưa có mô hình video). Mỗi tập 28–34 cảnh (`HUONG_TAP_0D`), phần miễn phí mỗi ngày đủ khoảng 1 tập Bom tấn hoặc 2 tập Tiêu chuẩn.
+- Workers AI chưa có mô hình video, nên chuyển động toàn cảnh vẫn là Ken Burns. **Khớp môi** 0 đồng xem mục dưới. Mỗi tập 28–34 cảnh (`HUONG_TAP_0D`), phần miễn phí mỗi ngày đủ khoảng 1 tập Bom tấn hoặc 2 tập Tiêu chuẩn.
 - Lần đầu đọc thoại, trình duyệt tải giọng (~63 MB + ~28 MB), các lần sau lấy từ bộ nhớ đệm.
 - Kiểm tra: `GET /` của Worker trả `ai: true` khi binding đã có.
+- **Chất liệu câu chuyện**: phân cảnh/bộ phim lấy chất liệu từ "Sổ tay gia đình" và thư viện GITA365 (`src/xuong-phim-chat-lieu.js`), gửi lên Worker trong khối SOURCE MATERIAL (đã lọc `soatRaNgoai` từng dòng).
+
+### Khớp môi AI 0 đồng (máy GitHub — `may-chu/xuong-quay.js`)
+
+Cảnh **một người nói**, dài 2–15 giây, được gửi sang kho công khai `typhuquanggita-commits/gita365-xuong-quay` (biến `GITA_GH_XUONG_QUAY`) để SadTalker chạy trên máy GitHub Actions (CPU, miễn phí không giới hạn cho kho công khai). Kết quả: khuôn mặt trong ảnh điện ảnh mấp máy môi khớp lời thoại + cử động đầu nhẹ.
+
+1. Trình duyệt (R01) gọi `quayKhopMoi` với ảnh cảnh + âm thoại WAV 16 kHz → Worker lưu R2 `quay/<mã>/anh|am`, ghi D1 `quay_viec`.
+2. Workflow `quay.yml` chạy mỗi 10 phút (hoặc ngay lập tức nếu `GITA_GH_KHOA_THU` có quyền Contents ghi trên **cả** `gita365-hop-thu` và `gita365-xuong-quay`), hỏi `GET /quay/can`, nhận việc `POST /quay/nhan`, nộp `PUT /quay/kq/<mã>` (mp4 H.264, không tiếng) hoặc `POST /quay/loi/<mã>`.
+3. Trình duyệt hỏi `quayXem` mỗi 30 giây; xong thì cảnh dùng `GET /quay/phim/<mã>.mp4` (công khai, CORS `*`), giọng vẫn phát riêng như cũ. Hỏng thì lùi về ảnh tĩnh.
+
+- Khoá máy quay: secret `GITA_KHOA_XUONG_QUAY` (64 hex ngẫu nhiên) phải **giống nhau** ở GitHub secret của GITA365-WEB (workflow deploy nạp vào Worker) và của `gita365-xuong-quay` (header `X-Khoa-Quay`). Thiếu khoá → `/quay/*` trả 401 và trình duyệt bỏ qua khớp môi.
+- Tốc độ: khoảng 25 phút cho 10 giây cảnh mỗi máy, tối đa 20 máy song song. Việc giữ 7 ngày rồi tự dọn (`donQuay`). Nhận quá 90 phút không nộp → trả lại hàng, tối đa 3 lần.
+- GitHub tắt lịch chạy nếu kho `gita365-xuong-quay` không có hoạt động 60 ngày — khi đó vào tab Actions bấm "Enable workflow".
+- Tắt: bỏ chọn "🗣️ Khớp môi AI" trong xưởng phim.
 
 ## Xưởng phim tự động A-Z (fal.ai — trả phí, mặc định TẮT)
 

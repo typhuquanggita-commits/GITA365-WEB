@@ -124,6 +124,8 @@ bash nap-bi-mat.sh /duong/dan/toi/khoa.json
 #    chạy lại workflow deploy (hoặc: npx wrangler secret put GITA_GH_KHOA_THU).
 #    Thư cho KHÁCH: cần tên miền (Cloudflare) + GITA_THU_GUI_TU/GITA_KHOA_THU,
 #    hoặc cầu nối Gmail (GITA_CAU_NOI_GMAIL + GITA_KHOA_CAU_NOI, ~100/ngày).
+#    (Khớp môi 0đ) Đặt cùng một giá trị ngẫu nhiên GITA_KHOA_XUONG_QUAY làm
+#    GitHub secret ở GITA365-WEB và gita365-xuong-quay — xem docs/MAY_CHU.md.
 
 # 5) Đưa Worker lên lần đầu. Những thay đổi may-chu/ tiếp theo
 #    được GitHub Actions triển khai tự động sau khi đã có hai secrets ở Phần 1.

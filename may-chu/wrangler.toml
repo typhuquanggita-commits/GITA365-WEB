@@ -74,6 +74,12 @@ GITA_THU_DOANH_THU = "typhuquanggita@gmail.com"
 # hệ. Chỉ dùng cho thư tới hòm chủ hệ (mã bảo mật, báo doanh thu, quản
 # trị). Khoá đi kèm là secret GITA_GH_KHOA_THU (nạp qua deploy.yml).
 GITA_GH_HOP_THU = "typhuquanggita-commits/gita365-hop-thu"
+# XƯỞNG QUAY KHỚP MÔI 0 ĐỒNG (may-chu/xuong-quay.js): kho CÔNG KHAI chạy
+# SadTalker trên máy CPU miễn phí của GitHub Actions. Khoá chung giữa
+# Worker và kho quay là secret GITA_KHOA_XUONG_QUAY (nạp qua deploy.yml).
+# Nếu GITA_GH_KHOA_THU cũng có quyền kho này thì máy quay bật ngay,
+# không thì kho tự nhặt việc theo lịch 10 phút/lần.
+GITA_GH_XUONG_QUAY = "typhuquanggita-commits/gita365-xuong-quay"
 
 # XƯỞNG PHIM 0 ĐỒNG (9.99.253, may-chu/phim-0d.js). "1" = KHOÁ CỨNG cửa
 # fal.ai trả phí; xưởng phim chỉ dùng Workers AI miễn phí + giọng đọc

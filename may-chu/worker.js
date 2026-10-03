@@ -47,6 +47,7 @@ import { soNgay, chotTuan, soatChot, tongHop, baoCaoKeToan, boSoKhaiThue,
 import { tongNgayDoanhThu } from './bao-doanh-thu.js';
 import { thuGuiThu } from './thu.js';
 import { phucVuTaiNguyen } from './tai-nguyen.js';
+import { quayKhopMoi, quayXem, xuLyMayQuay, phucVuPhimQuay, donQuay } from './xuong-quay.js';
 import { chamKpiTaiChinh } from './kpi-tai-chinh.js';
 import { dangTinTaiChinh, bangTinTaiChinh,
   xuLyTinTaiChinh } from './tin-tai-chinh.js';
@@ -309,7 +310,7 @@ const CAN_PHIEN = ['capKhoa', 'doiMatKhau', 'dongBo', 'thuGuiThu',
   'crmPhanTichKhach', 'crmUuTienNangCao',
   'loTrinhCaNhan', 'khoaNoiDungTheoTang',
   'hoiChatbot', 'lichSuChat', 'soanDeBaiNgoai',
-  'phimTrangThai', 'phimGuiViec', 'phimXemViec', 'phimTinhHuong', 'phimMienPhi',
+  'phimTrangThai', 'phimGuiViec', 'phimXemViec', 'phimTinhHuong', 'phimMienPhi', 'quayKhopMoi', 'quayXem',
   'guiBaoCaoNgay', 'tongHopBaoCao', 'dsBaoCaoNgay'];
 
 async function lam(fn, y, env, db) {
@@ -666,6 +667,8 @@ async function lam(fn, y, env, db) {
   if (fn === 'soanDeBaiNgoai')    return await soanDeBaiNgoai(y, env, db, hoSo);
   if (fn === 'phimTrangThai')     return await phimTrangThaiDu(y, env, db, hoSo);
   if (fn === 'phimMienPhi')       return await phimMienPhi(y, env, db, hoSo);
+  if (fn === 'quayKhopMoi')       return await quayKhopMoi(y, env, db, hoSo);
+  if (fn === 'quayXem')           return await quayXem(y, env, db, hoSo);
   if (fn === 'phimGuiViec')       return await phimGuiViec(y, env, db, hoSo);
   if (fn === 'phimXemViec')       return await phimXemViec(y, env, db, hoSo);
   if (fn === 'phimTinhHuong')     return await phimTinhHuong(y, env, db, hoSo);
@@ -1036,6 +1039,8 @@ export async function donDep(env) {
       ke.push(h.bang + ': ' + String(e && e.message || e).slice(0, 80));
     }
   }
+  try { const n = await donQuay(env); tong += n; ke.push('quay_viec −' + n); }
+  catch (e) { ke.push('quay_viec: ' + String(e && e.message || e).slice(0, 80)); }
   /* Ghi SAU khi dọn, để chính dòng này không bị lượt dọn vừa rồi cuốn đi. */
   try {
     await Kho.ghiNhatKy(db, {viec: 'DON_DEP', doiTuong: 'tự động',
@@ -1083,6 +1088,17 @@ export default {
     /* Tài nguyên tĩnh công khai (giọng đọc Piper) — phục vụ từ R2. */
     if ((req.method === 'GET' || req.method === 'HEAD') && new URL(req.url).pathname.startsWith('/tn/'))
       return phucVuTaiNguyen(req, env);
+    /* Xưởng quay khớp môi: phim đã quay (công khai theo mã) + lời gọi của máy quay GitHub Actions. */
+    const duongQ = new URL(req.url).pathname;
+    if (duongQ.startsWith('/quay/')) {
+      try {
+        if ((req.method === 'GET' || req.method === 'HEAD') && duongQ.startsWith('/quay/phim/')) return await phucVuPhimQuay(req, env, duongQ);
+        return await xuLyMayQuay(req, env, duongQ);
+      } catch (e) {
+        console.error('QUAY_LOI', String(e && e.message || e));
+        return new Response('{"ok":false,"error":"Máy chủ gặp trục trặc."}', {status: 500, headers: {'Content-Type': 'application/json; charset=utf-8'}});
+      }
+    }
     const cors = corsTheoEnv(env, req);
     if (req.method === 'OPTIONS') return new Response(null, {status: 204, headers: cors});
 

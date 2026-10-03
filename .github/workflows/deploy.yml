@@ -130,6 +130,23 @@ jobs:
           npx --yes wrangler@4 secret bulk "$f"
           rm -f "$f"
 
+      - name: Nạp khoá xưởng quay khớp môi vào Worker (nếu có)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          GITA_KHOA_XUONG_QUAY: ${{ secrets.GITA_KHOA_XUONG_QUAY }}
+        working-directory: may-chu
+        run: |
+          set -eu
+          if [ -z "${GITA_KHOA_XUONG_QUAY:-}" ]; then
+            echo "Chưa có GITA_KHOA_XUONG_QUAY ở GitHub secrets — bỏ qua."
+            exit 0
+          fi
+          f="$RUNNER_TEMP/bi-mat-quay.json"
+          node -e "require('fs').writeFileSync(process.argv[1], JSON.stringify({GITA_KHOA_XUONG_QUAY: process.env.GITA_KHOA_XUONG_QUAY.trim()}))" "$f"
+          npx --yes wrangler@4 secret bulk "$f"
+          rm -f "$f"
+
       - name: Verify Worker health
         run: |
           set -eu

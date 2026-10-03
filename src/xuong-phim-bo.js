@@ -175,7 +175,7 @@ var G = window.G || {}; window.G = G;
       khung: b.chatLuong === 'thuong' ? '720x1280' : '1080x1920', phongCach: b.kinh.phongCach,
       nhanVat: b.nhanVat.map(function (n) { return {id: n.id, ten: n.ten, moTa: n.moTa, prompt: n.prompt, gioi: n.gioi, giong: n.giong, anhUrl: n.anhUrl || '', sheetUrl: n.sheetUrl || ''}; }),
       boiCanh: b.boiCanh.map(function (x) { return {id: x.id, ten: x.ten, prompt: x.prompt, plateUrl: x.plateUrl || ''}; }),
-      kichBan: dan, canh: [], boMa: b.ma, boTap: t.so, chatLuong: b.chatLuong, khopMoi: !!b.khopMoi, anHuongDan: true,
+      kichBan: dan, canh: [], boMa: b.ma, boTap: t.so, chatLuong: b.chatLuong, khopMoi: !!b.khopMoi, khopMoi0d: b.khopMoi !== false, anHuongDan: true,
       tuDong: {buoc: '', viec: {}, nhatKy: [], coGiong: true, duyetSan: true, daDuyet: true}};
   }
   function moTap(so) {
@@ -183,7 +183,7 @@ var G = window.G || {}; window.G = G;
     if (!t) return null;
     if (G.xpDA && G.xpDA.boMa === b.ma && G.xpDA.boTap && b.tap[G.xpDA.boTap - 1]) b.tap[G.xpDA.boTap - 1].da = G.xpDA;
     if (!t.da) t.da = taoTap(t);
-    t.da.chatLuong = b.chatLuong; t.da.khopMoi = !!b.khopMoi; t.da.logo = b.logo || t.da.logo;
+    t.da.chatLuong = b.chatLuong; t.da.khopMoi = !!b.khopMoi; t.da.khopMoi0d = b.khopMoi !== false; t.da.logo = b.logo || t.da.logo;
     G.xpDA = t.da;
     if (G.xpLuu) G.xpLuu();
     return t.da;
@@ -200,6 +200,23 @@ var G = window.G || {}; window.G = G;
     });
   }
 
+  /* Chất liệu gốc từ sổ tay & kho GITA (9.99.255) — tính một lần khi viết
+     kinh rồi giữ trong bộ, để 10 tập cùng đứng trên một nền chữ thật. */
+  function vanDeKhach(b) {
+    var ds = (tinhHuong && tinhHuong.ds) || [];
+    return ds.filter(function (x) { return b.khach.keys.indexOf(x.key) >= 0; })
+      .map(function (x) { return x.nhom + ' ' + x.th; }).concat([b.khach.ghiChu || '']).join(' . ');
+  }
+  function lamChatLieu(b, cap) {
+    if (b.dungChatLieu === false || !G.xpClDoan) return '';
+    try { return G.xpClDoan({tang: b.khach.tang, cap: cap, vanDe: vanDeKhach(b)}); } catch (e) { return ''; }
+  }
+  G.xpBoChatLieu = function () {
+    var b = G.xpBo;
+    if (!b || b.dungChatLieu === false || (G.xpDA && G.xpDA.boMa && G.xpDA.boMa !== b.ma)) return '';
+    return b.chatLieu || '';
+  };
+
   /* ══ CÁC BƯỚC CỦA BỘ ══ */
   function chayLo(ds, nhan) { return G.xpTdChayLo(ds, 6, nhan, kho()); }
   function buocKinh() {
@@ -210,6 +227,8 @@ var G = window.G || {}; window.G = G;
     ghi('Agent Biên kịch đang viết kinh bộ phim (nhân vật, bối cảnh, 10 tập)' + (cap ? ' theo cấp ' + cap : '') + '…');
     var dv = {che: 'boPhim', keys: b.khach.keys.slice(0, 6), ghiChu: b.khach.ghiChu || ''};
     if (cap) { dv.capMa = cap; dv.hanhTrinh = G.xpBoHanhTrinh(cap); }
+    b.chatLieu = lamChatLieu(b, cap);
+    if (b.chatLieu) { dv.chatLieu = b.chatLieu; ghi('Đã lấy chất liệu từ Sổ tay gia đình & kho GITA cho câu chuyện.'); }
     if (G.xpTdLaBomTanCF ? G.xpTdLaBomTanCF(b.chatLuong) : (G.xpTdLaBomTan && G.xpTdLaBomTan(b.chatLuong))) dv.bomTan = true;
     return chayLo([{khoa: 'kinh', loai: 'llm', dauVao: dv,
       xong: function (kq) { G.xpBoApKinh(G.xpTdDocJSON(kq.chu), b); }}], 'Kinh bộ phim').then(function (r) {
@@ -231,6 +250,7 @@ var G = window.G || {}; window.G = G;
       tap: b.tap.map(function (t) { return {so: t.so, ten: t.ten, khung: t.khung, vanDe: t.vanDe, tomTat: t.tomTat, boiCanh: t.boiCanh}; })}).slice(0, 24000);
     var dv = {che: 'duyetKinh', kinh: kinhGoc};
     if (cap) { dv.capMa = cap; dv.hanhTrinh = G.xpBoHanhTrinh(cap); }
+    if (b.chatLieu && b.dungChatLieu !== false) dv.chatLieu = b.chatLieu;
     ghi('Agent Tổ duyệt đang phản biện câu chuyện (Điều 13 · giọng GITA · hành trình · kịch tính)…');
     var kq = null;
     return chayLo([{khoa: 'duyet', loai: 'llm', dauVao: dv, xong: function (k) { kq = G.xpTdDocJSON(k.chu); }}], 'Tổ duyệt').then(function (r) {
@@ -403,7 +423,8 @@ var G = window.G || {}; window.G = G;
       ['T1', 'T2', 'T3', 'T4', 'T5'].map(function (t) { return '<option' + (t === b.khach.tang ? ' selected' : '') + '>' + t + '</option>'; }).join('') + '</select></label>' + (la0d() ?
       '<label>Chất lượng <select onchange="G.xpBoSua(\'chatLuong\',this.value)"' + dis + '>' +
       '<option value="bomTan"' + (b.chatLuong !== 'thuong' ? ' selected' : '') + '>🎥 Bom tấn Cloudflare (0 đồng)</option>' +
-      '<option value="thuong"' + (b.chatLuong === 'thuong' ? ' selected' : '') + '>Tiêu chuẩn (nhanh hơn, 0 đồng)</option></select></label>' :
+      '<option value="thuong"' + (b.chatLuong === 'thuong' ? ' selected' : '') + '>Tiêu chuẩn (nhanh hơn, 0 đồng)</option></select></label>' +
+      '<label><input type="checkbox"' + (b.khopMoi !== false ? ' checked' : '') + ' onchange="G.xpBoSua(\'khopMoi\',this.checked)"' + dis + '> 🗣️ Khớp môi AI (0 đồng, máy GitHub)</label>' :
       '<label>Chất lượng <select onchange="G.xpBoSua(\'chatLuong\',this.value)"' + dis + '>' +
       '<option value="bomTan"' + (b.chatLuong === 'bomTan' ? ' selected' : '') + '>🎥 Bom tấn (Kling 3 Pro + Nano Banana Pro)</option>' +
       '<option value="dienAnh"' + (b.chatLuong === 'dienAnh' ? ' selected' : '') + '>Điện ảnh (Kling 2.5 Pro)</option>' +
@@ -436,6 +457,13 @@ var G = window.G || {}; window.G = G;
       }).join('') + '</div><p class="note">Đã chọn ' + b.khach.keys.length + '/6 tình huống.</p>';
     }
     o += '<label>Ghi chú thêm từ khảo sát (không ghi họ tên, số điện thoại của khách) <textarea rows="3" oninput="G.xpBoSua(\'ghiChu\',this.value)"' + dis + '>' + h(b.khach.ghiChu || '') + '</textarea></label>';
+    if (G.xpClTomTat) {
+      var cl = [];
+      try { cl = G.xpClTomTat({tang: b.khach.tang, cap: b.khach.cap, vanDe: vanDeKhach(b)}); } catch (e) { cl = []; }
+      o += '<label style="display:block;margin:6px 0"><input type="checkbox"' + (b.dungChatLieu !== false ? ' checked' : '') + dis +
+        ' onchange="G.xpBoSua(\'dungChatLieu\',this.checked);G.render()"> <b>📖 Dựng câu chuyện từ Sổ tay gia đình &amp; kho GITA</b> (lời thật của hệ — khách thấy chính nhà mình)</label>' +
+        (b.dungChatLieu !== false && cl.length ? '<p class="note">Sẽ dùng: ' + h(cl.join(' · ')) + '. Mở khoá thêm gói tài liệu thì chất liệu càng đầy.</p>' : '');
+    }
     o += '<div class="row">';
     if (chay) o += '<button class="btn" onclick="G.xpBoDung()">Dừng</button>';
     else {

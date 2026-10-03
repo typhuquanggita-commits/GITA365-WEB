@@ -40,6 +40,7 @@
 import { Kho } from './nen.js';
 import { laR01, tenNguoiDung as ten } from './vai-tro.js';
 import { soatRaNhaCungCap } from './an-toan-ai.js';
+import { soatRaNgoai } from './bo-nao.js';
 import { TH_KHACH } from './tinh-huong-khach-du-lieu.js';
 
 const HANG_DOI = 'https://queue.fal.run/';
@@ -260,6 +261,15 @@ export function dungDauVao(loai, y) {
     const doanHT = hanhTrinh ? '\n\nCUSTOMER JOURNEY — GITA365 50-level ladder (5 tiers, 10 levels each). ' +
       'This family is now at level ' + capMa + '. Personalize the whole series to this exact position and lead them to the next level:\n' + hanhTrinh : '';
     const doanBT = y.bomTan === true ? '\n\n' + DAO_DIEN_BOM_TAN : '';
+    /* 9.99.255 — chất liệu gốc từ Sổ tay gia đình & kho tri thức GITA365.
+       Đây là chữ của hệ (máy khách trích từ kho), không phải lời khách: dòng
+       nào cổng Điều 13 ngờ thì BỎ dòng đó (chiều an toàn — không gửi đi),
+       để một cụm chữ trùng dáng họ tên không chặn cả bộ phim. */
+    const chatLieu = che === 'phanCanh' ? '' : chu(y.chatLieu, 4000).split('\n')
+      .filter(d => d.trim() && soatRaNgoai(d).sach).join('\n');
+    const doanCL = chatLieu ? '\n\nSOURCE MATERIAL — real lines from the GITA365 family handbook (Sổ tay gia đình) and knowledge library. ' +
+      'Build the emotional core of the story on these lines: keep their Vietnamese wording when characters quote them, ' +
+      'turn each into a lived scene, and never contradict or exaggerate them:\n' + chatLieu : '';
     if (che === 'boPhim') {
       const keys = (Array.isArray(y.keys) ? y.keys : []).slice(0, 6).map(k => chu(k, 300));
       const ds = tomTatTinhHuong(keys);
@@ -267,7 +277,7 @@ export function dungDauVao(loai, y) {
       const ghiChu = chu(y.ghiChu, 3000);
       const prompt = (ds.length ? 'CUSTOMER SURVEY — problems of this family (anonymous):\n\n' + ds.join('\n\n')
         : 'CUSTOMER SURVEY: no specific problem chosen — build the story from the journey level below.') +
-        (ghiChu ? '\n\nEXTRA NOTES FROM THE SURVEY (anonymous):\n' + ghiChu : '') + doanHT +
+        (ghiChu ? '\n\nEXTRA NOTES FROM THE SURVEY (anonymous):\n' + ghiChu : '') + doanHT + doanCL +
         '\n\nGITA365 STORYTELLING FRAME (10 parts, one per episode):\n' +
         KHUNG_KE.map((k, i) => (i + 1) + '. ' + k).join('\n') + doanBT +
         '\n\nWrite the series bible now.';
@@ -277,13 +287,13 @@ export function dungDauVao(loai, y) {
          "QUẢN LÝ" hay "mẹ lại phải nhắc" mà cổng ngờ oan là họ tên. */
       return { dauVao: { model: 'google/gemini-2.5-flash', system_prompt: HUONG_BO_PHIM, prompt,
         temperature: 0.7, max_tokens: 24000, priority: 'throughput' },
-        soat: { keys, ghiChu, hanhTrinh } };
+        soat: { keys, ghiChu, hanhTrinh, chatLieu } };
     }
     if (che === 'duyetKinh') {
       const kinh = chu(y.kinh, 24000);
       if (kinh.length < 200) return { loi: 'Thiếu kinh bộ phim để duyệt.' };
       return { dauVao: { model: 'google/gemini-2.5-flash', system_prompt: HUONG_DUYET_KINH,
-        prompt: 'SERIES BIBLE:\n' + kinh + (doanHT || '\n\nCUSTOMER JOURNEY: not given — skip reviewer (3).') +
+        prompt: 'SERIES BIBLE:\n' + kinh + (doanHT || '\n\nCUSTOMER JOURNEY: not given — skip reviewer (3).') + doanCL +
           '\n\nReview and return the corrected bible now.',
         temperature: 0.3, max_tokens: 24000, priority: 'throughput' } };
     }
@@ -293,7 +303,8 @@ export function dungDauVao(loai, y) {
       if (kinh.length < 200) return { loi: 'Thiếu kinh thánh bộ phim.' };
       if (!(so >= 1 && so <= 10)) return { loi: 'Số tập phải từ 1 đến 10.' };
       return { dauVao: { model: 'google/gemini-2.5-flash', system_prompt: HUONG_TAP,
-        prompt: 'SERIES BIBLE:\n' + kinh + doanBT + '\n\nWrite EPISODE ' + so + ' of 10 (frame section: ' + KHUNG_KE[so - 1] + ').',
+        prompt: 'SERIES BIBLE:\n' + kinh + doanCL + doanBT + '\n\nWrite EPISODE ' + so + ' of 10 (frame section: ' + KHUNG_KE[so - 1] + ').' +
+          (chatLieu ? (so === 10 ? ' This is the finale: end on the handbook opening line, verbatim.' : ' Weave at least one SOURCE MATERIAL line into a lived moment of this episode.') : ''),
         temperature: 0.6, max_tokens: 32000, priority: 'throughput' } };
     }
     const kichBan = chu(y.kichBan, 24000);
