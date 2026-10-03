@@ -210,6 +210,7 @@ var NGAN = [
   { ma: 'nao', ten: 'Bộ não đa trí', ic: 'orbit' },
   { ma: 'kho', ten: 'Kho giải pháp', ic: 'vault' },
   { ma: 'tinhtuy', ten: 'Tinh túy 5 bộ não', ic: 'shield' },
+  { ma: 'khoahoc', ten: 'Vòng nhà khoa học', ic: 'book' },
   { ma: 'tri', ten: 'Kho trí tuệ', ic: 'book' },
   { ma: 'bang', ten: 'Tảng băng giá trị', ic: 'grid' },
   { ma: 'toiuu', ten: 'Tối ưu token', ic: 'lightning' }
@@ -423,6 +424,36 @@ function veTinhTuy() {
   return o + '</div>';
 }
 
+/* ── Vòng nhà khoa học: quan sát → giả thuyết → phép thử → đề xuất, 0 token ── */
+var KH_NGAN = { boSungGiaiPhap: 'kho', duyetGiaiPhap: 'kho', dsGiaiPhap: 'kho', thuMauDaTri: 'tinhtuy', canhMauDaTri: 'tinhtuy', soDaTri: 'toiuu' };
+var KH_MAU = { cao: 'var(--gita-do)', vua: 'var(--gita-sau)', thap: '#9aa0a6' };
+G.dtKhTai = function (chay) {
+  if (!G.goiMayChu || G.dtKhDangTai) return;
+  G.dtKhDangTai = true;
+  G.goiMayChu('docVongKhoaHoc', { chay: !!chay }).then(function (x) { G.dtKhDangTai = false; G.dtKh = x || { ok: false, error: 'Không có phản hồi.' }; veLai(); });
+};
+function veKhoaHoc() {
+  var kh = G.dtKh;
+  if (!kh) { if (G.goiMayChu) G.dtKhTai(false); return '<div class="card mt tiny muted">Đang tải báo cáo… ' + nut('G.dtKh=null;G.dtKhDangTai=false;G.dtKhTai(false)', 'Tải lại') + '</div>'; }
+  if (!kh.ok) return '<div class="card mt" style="color:var(--gita-do)">' + h(kh.error || '') + '</div>';
+  var bc = kh.moiNhat;
+  var o = '<div class="card mt"><b>Vòng nhà khoa học — mỗi đêm, 0 token</b><div class="tiny muted mt">Bộ não tự đọc số đo thật của chính nó (kho giải pháp, điểm chấm, ngân sách, đệm, mô hình mới) ' +
+    'và viết từng phát hiện theo phương pháp khoa học. Mỗi phát hiện trỏ đúng một cửa để kiểm chứng. Máy đề xuất — Super Admin quyết (AT5). ' +
+    'Tự điều chỉnh duy nhất máy được làm: xếp cuối hàng nhà cung cấp bị chấm "chưa tốt" > 70% trên ≥ 10 lượt (đảo: GITA_TU_DIEU_CHINH="0").</div>' +
+    '<div class="row mt" style="gap:8px">' + nut('G.dtKhTai(true)', 'Chạy vòng ngay', 'pri') +
+    (bc ? '<span class="tiny muted">Lần cuối: ' + new Date(bc.luc).toLocaleString('vi-VN') + '</span>' : '') + '</div>' +
+    (kh.xuHuong && kh.xuHuong.length > 1 ? '<div class="tiny muted mt">Số phát hiện 7 lần gần nhất: ' + kh.xuHuong.map(function (x) { return x.n; }).reverse().join(' → ') + '</div>' : '') + '</div>';
+  if (!bc) return o + '<div class="card mt tiny muted">Chưa có báo cáo — lịch chạy đêm nay sẽ tạo, hoặc bấm "Chạy vòng ngay".</div>';
+  if (!bc.phatHien.length) return o + '<div class="card mt">Không phát hiện bất thường nào trên số đo hiện có. Không có nghĩa là không có lỗi — chỉ là các chỉ số đang đo đều trong ngưỡng.</div>';
+  return o + bc.phatHien.map(function (p) {
+    var ngan = KH_NGAN[p.cua];
+    return '<div class="card mt" style="border-left:3px solid ' + (KH_MAU[p.mucDo] || '') + '"><span class="chip">' + h(p.mucDo) + '</span>' +
+      (p.cua ? ' <span class="chip mono">' + h(p.cua) + '</span>' : '') +
+      '<div class="sm mt"><b>Quan sát:</b> ' + h(p.quanSat) + '<br><b>Giả thuyết:</b> ' + h(p.giaThuyet) + '<br><b>Phép thử:</b> ' + h(p.phepThu) +
+      '<br><b>Đề xuất:</b> ' + h(p.deXuat) + '</div>' + (ngan ? '<div class="row mt">' + nut('G.dtMoNgan(\'' + ngan + '\')', 'Mở nơi kiểm chứng') + '</div>' : '') + '</div>';
+  }).join('');
+}
+
 function veTri() {
   var tat = G.ttTatCa(), kq = G.dtTim ? G.ttTim(G.dtTim) : tat;
   var o = '<div class="card mt"><b>Kho trí tuệ — đếm thật: ' + tat.length + ' nguyên lý/tư liệu</b>' +
@@ -504,7 +535,7 @@ G.VIEWS['bo-nao-da-tri'] = function () {
   o += '<div class="row" style="gap:6px;flex-wrap:wrap">' + NGAN.map(function (x) {
     return '<button class="btn ' + (G.dtNgan === x.ma ? 'pri' : 'ghost') + '" onclick="G.dtMoNgan(\'' + x.ma + '\')">' + ic(x.ic, 'w-4 h-4') + h(x.ten) + '</button>';
   }).join('') + '</div>';
-  var f = { nao: veNao, kho: veKho, tinhtuy: veTinhTuy, tri: veTri, bang: veBang, toiuu: veToiUu }[G.dtNgan] || veNao;
+  var f = { nao: veNao, kho: veKho, tinhtuy: veTinhTuy, khoahoc: veKhoaHoc, tri: veTri, bang: veBang, toiuu: veToiUu }[G.dtNgan] || veNao;
   return o + f();
 };
 })();

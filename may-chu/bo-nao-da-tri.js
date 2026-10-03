@@ -143,7 +143,8 @@ async function dungBang(db) {
       'giaiPhap TEXT, ncc TEXT, phienBan INTEGER DEFAULT 1, trangThai TEXT DEFAULT \'nhap\', goc TEXT, ' +
       'nguoiDe TEXT, nguoiDuyet TEXT, luc INTEGER, lucSoat INTEGER, dung INTEGER DEFAULT 0)'),
     db.prepare('CREATE TABLE IF NOT EXISTS mauDaTriThay (ncc TEXT, model TEXT, lanDau INTEGER, PRIMARY KEY (ncc, model))'),
-    db.prepare('CREATE TABLE IF NOT EXISTS nhipDaTri (viec TEXT PRIMARY KEY, luc INTEGER)')
+    db.prepare('CREATE TABLE IF NOT EXISTS nhipDaTri (viec TEXT PRIMARY KEY, luc INTEGER)'),
+    db.prepare('CREATE TABLE IF NOT EXISTS vongKhoaHocDaTri (luc INTEGER PRIMARY KEY, soPhatHien INTEGER, baoCao TEXT)')
   ]);
   daDung = true;
 }
@@ -245,8 +246,21 @@ async function ungVien(env, db, l, tuBac, hoSo) {
     ds.push(n);
   }
   const uu = l.uuTien || [];
-  const hang = n => n.bac * 10 + (uu.indexOf(n.ma) >= 0 ? 0 : 1);
+  const yeu = await nccYeu(env, db, l);
+  const hang = n => (yeu.has(n.ma) ? 1000 : 0) + n.bac * 10 + (uu.indexOf(n.ma) >= 0 ? 0 : 1);
   return ds.sort((a, b) => hang(a) - hang(b));
+}
+
+/* TỰ ĐIỀU CHỈNH CÓ BIÊN: nhà cung cấp bị chấm "chưa tốt" > 70% trên ≥ 10
+   lượt cho đúng loại việc thì bị XẾP CUỐI hàng (không loại bỏ — vẫn là
+   lưới đỡ khi không còn ai). Đảo được ngay: GITA_TU_DIEU_CHINH = "0".
+   Đây là điều chỉnh vận hành; đổi bảng LOAI vẫn là việc chủ hệ (AT5). */
+const NGUONG_YEU = { luot: 10, tiLe: 0.7 };
+async function nccYeu(env, db, l) {
+  if (String((env && env.GITA_TU_DIEU_CHINH) || '') === '0') return new Set();
+  const loai = Object.keys(LOAI).find(k => LOAI[k] === l);
+  const ds = (await db.prepare('SELECT ncc, tot, xau FROM danhGiaDaTri WHERE loai = ?').bind(loai || '').all()).results || [];
+  return new Set(ds.filter(r => r.tot + r.xau >= NGUONG_YEU.luot && r.xau / (r.tot + r.xau) > NGUONG_YEU.tiLe).map(r => r.ncc));
 }
 
 /* Vòng leo bậc dùng chung: mỗi ứng viên qua cổng Điều 13 RIÊNG (tên nhà
@@ -615,4 +629,108 @@ export async function thuMauDaTri(y, env, db, hoSo) {
   await Kho.ghiNhatKy(db, { uid: hoSo.uid, username: ten(hoSo), viec: 'DA_TRI_THU_MAU', doiTuong: n.ma + ':' + model,
     chiTiet: 'token ' + ket.reduce((s, x) => s + x.token, 0) });
   return { ok: true, ncc: n.ma, model, ket, nhac: 'So từng cặp. Chỉ đổi ' + n0.bienMau + ' khi bản mới tốt hơn bản đã duyệt.' };
+}
+
+/* ═══════════════ VÒNG NHÀ KHOA HỌC — 0 TOKEN, MỖI ĐÊM ═══════════════
+   Bộ não không "nghĩ giỏi" bằng lời khen; nó làm đúng phương pháp khoa
+   học trên SỐ ĐO THẬT của chính nó: QUAN SÁT → GIẢ THUYẾT → PHÉP THỬ
+   nhỏ nhất (một cửa có sẵn) → ĐỀ XUẤT. Không gọi AI nào — chỉ đọc D1.
+   Mỗi phát hiện trỏ đúng cửa để kiểm chứng; R01 bấm chạy hoặc bỏ (AT5).
+   Không phát hiện nào được tự sửa luật hay bảng LOAI. */
+export const NGUONG_KH = { danhGia: 5, xau: 0.5, ganTran: 0.8, deMin: 20, deTrung: 0.1, mauMoiNgay: 7, canhCuNgay: 14 };
+const GIU_BAO_CAO = 30;
+
+export async function vongKhoaHoc(env, db) {
+  await dungBang(db);
+  const ra = [], bayGio = Date.now(), N = NGUONG_KH;
+  const them = (mucDo, quanSat, giaThuyet, phepThu, cua, deXuat) => ra.push({ mucDo, quanSat, giaThuyet, phepThu, cua, deXuat });
+
+  if (!moBat(env)) them('thap', 'Bộ não đa trí đang tắt (GITA_DA_TRI_BAT ≠ "1").', 'Chủ hệ chưa mở hoặc đang khoá khẩn.',
+    'Không cần — trạng thái có chủ ý.', null, 'Giữ nguyên nếu có chủ ý; mở bằng wrangler.toml khi sẵn sàng.');
+  if (!NCC.some(n => sanSang(n, env))) them('vua', 'Không nhà cung cấp nào sẵn sàng.', 'Thiếu binding AI hoặc chưa nạp khoá.',
+    'Mở tab "Sổ" xem cột Sẵn sàng.', 'soDaTri', 'Nạp ít nhất Workers AI (miễn phí) để giữ chi phí 0đ.');
+
+  const kho = (await db.prepare('SELECT ma, trangThai, luc, lucSoat, dung FROM khoGiaiPhapDaTri').all()).results || [];
+  const cu = kho.filter(canSoat).sort((a, b) => (b.dung || 0) - (a.dung || 0));
+  if (cu.length) them(cu[0].dung > 0 ? 'cao' : 'vua', cu.length + ' giải pháp đã duyệt quá ' + HAN_SOAT_NGAY + ' ngày chưa soát (dùng nhiều nhất: ' + cu[0].ma + ', ' + (cu[0].dung || 0) + ' lượt).',
+    'Kiến thức có thể đã cũ — câu trả lời 0 token đang lặp lại một bản có thể sai.',
+    'Chạy "Kiểm lại & bổ sung" cho ' + cu[0].ma + ' (trần 400 token).', 'boSungGiaiPhap',
+    'Soát từ giải pháp dùng nhiều nhất xuống.');
+  const nhap = kho.filter(r => r.trangThai === 'nhap').length;
+  if (nhap) them('vua', nhap + ' bản nháp đang chờ duyệt.', 'Tri thức mới chưa vào vận hành vì chưa ai quyết.',
+    'Đọc từng bản ở tab "Kho".', 'duyetGiaiPhap', 'R01 duyệt hoặc bỏ — nháp không phục vụ ai.');
+
+  const dg = (await db.prepare('SELECT loai, ncc, tot, xau FROM danhGiaDaTri').all()).results || [];
+  dg.filter(r => r.tot + r.xau >= N.danhGia && r.xau / (r.tot + r.xau) > N.xau).forEach(r => {
+    const tl = Math.round(r.xau / (r.tot + r.xau) * 100);
+    them(tl > NGUONG_YEU.tiLe * 100 ? 'cao' : 'vua', r.ncc + ' bị chấm chưa tốt ' + tl + '% trên ' + (r.tot + r.xau) + ' lượt ở loại "' + r.loai + '".',
+      'Mô hình hiện tại của ' + r.ncc + ' không hợp loại việc này (hoặc khuôn lời chưa hợp).',
+      'Chạy "Hội đồng" cùng câu cho 2–3 nhà cung cấp, hoặc "Thử mô hình" bản mới của ' + r.ncc + '.', 'thuMauDaTri',
+      (r.tot + r.xau >= NGUONG_YEU.luot && tl > NGUONG_YEU.tiLe * 100) ? 'Máy đã tự xếp ' + r.ncc + ' cuối hàng cho loại này (đảo: GITA_TU_DIEU_CHINH="0"). Chủ hệ cân nhắc đổi GITA_MAU_* hoặc bỏ khỏi uuTien.'
+        : 'Theo dõi thêm; tới ' + NGUONG_YEU.luot + ' lượt mà còn > ' + NGUONG_YEU.tiLe * 100 + '% máy sẽ tự xếp cuối hàng.');
+  });
+
+  const tk = (await db.prepare('SELECT ncc, vao + ra AS t FROM soTokenDaTri WHERE ngay = ?').bind(homNay()).all()).results || [];
+  tk.forEach(r => {
+    const n = NCC.find(x => x.ma === r.ncc), ngan = n ? nganCua(n, env) : 0;
+    if (ngan > 0 && r.t >= ngan * N.ganTran) them(r.t >= ngan ? 'cao' : 'vua',
+      r.ncc + ' đã dùng ' + Math.round(r.t / ngan * 100) + '% ngân sách hôm nay (trần tải ' + Math.round(tranTai(env) * 100) + '%).',
+      'Nhu cầu tăng hoặc câu hỏi lặp chưa vào kho/đệm.', 'So tỉ lệ trúng đệm và kho ở tab "Tối ưu".', 'soDaTri',
+      'Lưu câu lặp vào kho (0 token); chỉ nâng GITA_NGAN_TOKEN_* nếu vẫn trong hạn mức miễn phí.');
+  });
+
+  const dem = await db.prepare('SELECT COUNT(*) n, COALESCE(SUM(dung),0) dung FROM triNhoDaTri').first();
+  if (dem && dem.n >= N.deMin && dem.dung / dem.n < N.deTrung) them('thap',
+    'Đệm có ' + dem.n + ' ô nhưng chỉ ' + dem.dung + ' lượt trúng (' + Math.round(dem.dung / dem.n * 100) + '%).',
+    'Câu hỏi đa dạng — trùng nguyên văn hiếm; kho (so khớp từ khoá) hợp hơn đệm.',
+    'Đếm lượt "kho" so với "đệm" ở tab "Tối ưu" sau 7 ngày.', 'dsGiaiPhap', 'Chấm "Tốt" rồi "Lưu vào kho" cho câu hỏi vận hành lặp lại.');
+
+  const moi = (await db.prepare('SELECT ncc, COUNT(*) n FROM mauDaTriThay WHERE lanDau > ? GROUP BY ncc')
+    .bind(bayGio - N.mauMoiNgay * 86400e3).all()).results || [];
+  const nhip = await db.prepare('SELECT luc FROM nhipDaTri WHERE viec = ?').bind('canhMau').first();
+  const lanDauCanh = nhip && (await db.prepare('SELECT MIN(lanDau) m FROM mauDaTriThay').first());
+  moi.filter(r => !(lanDauCanh && lanDauCanh.m > bayGio - N.mauMoiNgay * 86400e3)).forEach(r => them('vua',
+    r.ncc + ' có ' + r.n + ' mô hình mới trong ' + N.mauMoiNgay + ' ngày.', 'Bản mới có thể tốt hơn hoặc rẻ hơn bản đang dùng.',
+    '"Thử mô hình" trên đề thi là các giải pháp đã duyệt của chính GITA.', 'thuMauDaTri', 'Chỉ đổi GITA_MAU_* khi bản mới thắng bản đã duyệt.'));
+  if (moBat(env) && (!nhip || bayGio - nhip.luc > N.canhCuNgay * 86400e3)) them('thap',
+    'Chưa canh mô hình mới quá ' + N.canhCuNgay + ' ngày.', 'Lịch chạy chưa tới, hoặc chưa hãng nào có khoá.',
+    'Bấm "Canh mô hình mới".', 'canhMauDaTri', 'Giữ lịch tuần; kiểm khoá nhà cung cấp.');
+
+  const thu = { cao: 0, vua: 1, thap: 2 };
+  ra.sort((a, b) => thu[a.mucDo] - thu[b.mucDo]);
+  return { luc: bayGio, nguong: N, phatHien: ra,
+    phuongPhap: ['Quan sát số đo thật', 'Nêu giả thuyết có thể sai', 'Phép thử nhỏ nhất bằng cửa có sẵn', 'Đề xuất — chủ hệ quyết'] };
+}
+
+async function luuVong(db, bc) {
+  await db.batch([
+    db.prepare('INSERT OR REPLACE INTO vongKhoaHocDaTri (luc, soPhatHien, baoCao) VALUES (?, ?, ?)')
+      .bind(bc.luc, bc.phatHien.length, JSON.stringify(bc)),
+    db.prepare('DELETE FROM vongKhoaHocDaTri WHERE luc NOT IN (SELECT luc FROM vongKhoaHocDaTri ORDER BY luc DESC LIMIT ' + GIU_BAO_CAO + ')'),
+    db.prepare('INSERT OR REPLACE INTO nhipDaTri (viec, luc) VALUES (?, ?)').bind('vongKhoaHoc', bc.luc)
+  ]);
+  const cao = bc.phatHien.filter(x => x.mucDo === 'cao').length;
+  if (cao) await Kho.ghiNhatKy(db, { uid: MAY.uid, username: MAY.u, viec: 'DA_TRI_KHOA_HOC', doiTuong: String(bc.luc),
+    chiTiet: bc.phatHien.length + ' phát hiện · ' + cao + ' mức cao' });
+}
+/* Gọi từ lịch chạy — tối đa 1 lần/20 giờ, 0 token. Chạy cả khi bộ não tắt:
+   chỉ đọc D1 nên vẫn báo được "đang tắt / chưa có nhà cung cấp". */
+export async function vongKhoaHocTuDong(env) {
+  const db = env && env.CSDL;
+  if (!db) return;
+  await dungBang(db);
+  const r = await db.prepare('SELECT luc FROM nhipDaTri WHERE viec = ?').bind('vongKhoaHoc').first();
+  if (r && Date.now() - r.luc < 20 * 3600e3) return;
+  await luuVong(db, await vongKhoaHoc(env, db));
+}
+export async function docVongKhoaHoc(y, env, db, hoSo) {
+  if (!laR01(hoSo)) return { ok: false, code: 'NOPERM', error: 'Chỉ Super Admin.' };
+  await dungBang(db);
+  if ((y || {}).chay) {
+    const bc = await vongKhoaHoc(env, db);
+    await luuVong(db, bc);
+  }
+  const ds = (await db.prepare('SELECT luc, soPhatHien, baoCao FROM vongKhoaHocDaTri ORDER BY luc DESC LIMIT 7').all()).results || [];
+  return { ok: true, moiNhat: ds[0] ? JSON.parse(ds[0].baoCao) : null,
+    xuHuong: ds.map(r => ({ luc: r.luc, n: r.soPhatHien })) };
 }

@@ -8,7 +8,7 @@ import fs from 'node:fs';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 const ROOT = process.argv[2] || fileURLToPath(new URL('..', import.meta.url)).replace(/[\\/]$/, '');
 const { hoiDaTri, hoiDongDaTri, chamDaTri, soDaTri, luuGiaiPhap, duyetGiaiPhap, dsGiaiPhap, boSungGiaiPhap,
-  canhMauDaTri, canhMauTuDong, thuMauDaTri, tuKhoa, KHUON } = await import(pathToFileURL(ROOT + '/may-chu/bo-nao-da-tri.js').href);
+  canhMauDaTri, canhMauTuDong, thuMauDaTri, vongKhoaHocTuDong, docVongKhoaHoc, tuKhoa, KHUON } = await import(pathToFileURL(ROOT + '/may-chu/bo-nao-da-tri.js').href);
 
 const sq = new DatabaseSync(':memory:');
 sq.exec(fs.readFileSync(ROOT + '/may-chu/csdl.sql', 'utf8'));
@@ -175,6 +175,26 @@ kiem('thử mô hình: R05 bị chặn', (await thuMauDaTri({ ncc: 'openai', mod
 const tm = await thuMauDaTri({ ncc: 'openai', model: 'gpt-9-test' }, env, db, r01);
 kiem('thử mô hình: chạy đề kho bằng đúng mô hình ứng viên, đặt cạnh bản duyệt', tm.ok && tm.ket.length === 1 &&
   thanCuoi['api.openai.com'].model === 'gpt-9-test' && tm.ket[0].daDuyet.includes('48 giờ'));
+
+/* ── VÒNG NHÀ KHOA HỌC (0 token) · TỰ ĐIỀU CHỈNH CÓ BIÊN ── */
+kiem('vòng khoa học: R05 bị chặn', (await docVongKhoaHoc({ chay: true }, env, db, r05)).code === 'NOPERM');
+sq.prepare('UPDATE khoGiaiPhapDaTri SET lucSoat = ? WHERE trangThai = \'duyet\'').run(Date.now() - 100 * 86400e3);
+sq.prepare('INSERT OR REPLACE INTO danhGiaDaTri (loai, ncc, tot, xau) VALUES (\'tomTat\', \'cf-workers-ai\', 1, 11)').run();
+let n2 = goi.length + cfGoi;
+const vk = await docVongKhoaHoc({ chay: true }, env, db, r01);
+const ph = (vk.moiNhat || { phatHien: [] }).phatHien;
+kiem('vòng khoa học: 0 lượt gọi AI', vk.ok && goi.length + cfGoi === n2);
+kiem('vòng khoa học: mỗi phát hiện đủ quan sát · giả thuyết · phép thử · đề xuất',
+  ph.length >= 2 && ph.every(x => x.quanSat && x.giaThuyet && x.phepThu && x.deXuat));
+kiem('vòng khoa học: thấy giải pháp quá hạn soát → trỏ boSungGiaiPhap', ph.some(x => x.cua === 'boSungGiaiPhap'));
+kiem('vòng khoa học: thấy nhà cung cấp bị chê → mức cao, xếp đầu', ph[0].mucDo === 'cao' && ph.some(x => x.cua === 'thuMauDaTri' && /cf-workers-ai/.test(x.quanSat)));
+kiem('vòng khoa học: mức cao có vết DA_TRI_KHOA_HOC', sq.prepare("SELECT COUNT(*) n FROM audit WHERE viec = 'DA_TRI_KHOA_HOC'").get().n === 1);
+await vongKhoaHocTuDong(env);
+kiem('lịch chạy: chưa đủ 20 giờ → không chạy lại', sq.prepare('SELECT COUNT(*) n FROM vongKhoaHocDaTri').get().n === 1);
+const tdc = await hoiDaTri({ loai: 'tomTat', cau: 'Tóm tắt cách lập kế hoạch tuần cho gia đình' }, env, db, r05);
+kiem('tự điều chỉnh: nhà bị chê > 70%/≥10 lượt xếp cuối hàng', tdc.ok && tdc.ncc !== 'cf-workers-ai');
+const tdc0 = await hoiDaTri({ loai: 'tomTat', cau: 'Tóm tắt cách lập kế hoạch tháng cho gia đình' }, Object.assign({}, env, { GITA_TU_DIEU_CHINH: '0' }), db, r05);
+kiem('GITA_TU_DIEU_CHINH="0" → đảo lại, rẻ nhất trước', tdc0.ok && tdc0.ncc === 'cf-workers-ai');
 
 console.log(`\n${dat} đạt · ${truot} sai`);
 process.exit(truot ? 1 : 0);

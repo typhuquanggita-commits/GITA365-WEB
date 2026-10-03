@@ -2370,3 +2370,5 @@ CREATE TABLE IF NOT EXISTS danhGiaDaTri (loai TEXT, ncc TEXT, tot INTEGER DEFAUL
 CREATE TABLE IF NOT EXISTS khoGiaiPhapDaTri (ma TEXT PRIMARY KEY, loai TEXT, cauHoi TEXT, tuKhoa TEXT, giaiPhap TEXT, ncc TEXT, phienBan INTEGER DEFAULT 1, trangThai TEXT DEFAULT 'nhap', goc TEXT, nguoiDe TEXT, nguoiDuyet TEXT, luc INTEGER, lucSoat INTEGER, dung INTEGER DEFAULT 0);
 CREATE TABLE IF NOT EXISTS mauDaTriThay (ncc TEXT, model TEXT, lanDau INTEGER, PRIMARY KEY (ncc, model));
 CREATE TABLE IF NOT EXISTS nhipDaTri (viec TEXT PRIMARY KEY, luc INTEGER);
+-- Vòng nhà khoa học (0 token, mỗi đêm): quan sát → giả thuyết → phép thử → đề xuất. Giữ 30 bản.
+CREATE TABLE IF NOT EXISTS vongKhoaHocDaTri (luc INTEGER PRIMARY KEY, soPhatHien INTEGER, baoCao TEXT);

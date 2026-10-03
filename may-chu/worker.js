@@ -92,7 +92,7 @@ import { capQuyenAI, thuHoiQuyenAI, soatQuyenAI, aiPhanLoai, aiSoanNhap,
   soanDeBaiNgoai, aiTongHopGiamSat } from './quyen-nang-ai.js';
 import { phimTrangThai, phimGuiViec, phimXemViec, phimTinhHuong } from './phim-ai.js';
 import { hoiDaTri, hoiDongDaTri, chamDaTri, soDaTri, luuGiaiPhap, duyetGiaiPhap, dsGiaiPhap, boSungGiaiPhap,
-  canhMauDaTri, canhMauTuDong, thuMauDaTri } from './bo-nao-da-tri.js';
+  canhMauDaTri, canhMauTuDong, thuMauDaTri, vongKhoaHocTuDong, docVongKhoaHoc } from './bo-nao-da-tri.js';
 import { dieuPhoiTroLy, soatDieuPhoi, tuHoanThienTroLy, soatHoatDongAgent } from './dieu-phoi.js';
 import { soatKhungVanHanh, chamMotLuot } from './khung-van-hanh.js';
 import { lapKeHoachAgent, chayBuocAgent, dsWorkflowAgent } from './agent-team.js';
@@ -313,7 +313,7 @@ const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau'
   'loTrinhCaNhan', 'khoaNoiDungTheoTang',
   'hoiChatbot', 'lichSuChat', 'soanDeBaiNgoai',
   'hoiDaTri', 'hoiDongDaTri', 'chamDaTri', 'soDaTri',
-  'luuGiaiPhap', 'duyetGiaiPhap', 'dsGiaiPhap', 'boSungGiaiPhap', 'canhMauDaTri', 'thuMauDaTri',
+  'luuGiaiPhap', 'duyetGiaiPhap', 'dsGiaiPhap', 'boSungGiaiPhap', 'canhMauDaTri', 'thuMauDaTri', 'docVongKhoaHoc',
   'phimTrangThai', 'phimGuiViec', 'phimXemViec', 'phimTinhHuong',
   'guiBaoCaoNgay', 'tongHopBaoCao', 'dsBaoCaoNgay'];
 
@@ -685,6 +685,7 @@ async function lam(fn, y, env, db) {
   if (fn === 'boSungGiaiPhap')    return await boSungGiaiPhap(y, env, db, hoSo);
   if (fn === 'canhMauDaTri')      return await canhMauDaTri(y, env, db, hoSo);
   if (fn === 'thuMauDaTri')       return await thuMauDaTri(y, env, db, hoSo);
+  if (fn === 'docVongKhoaHoc')    return await docVongKhoaHoc(y, env, db, hoSo);
   if (fn === 'phimTrangThai')     return await phimTrangThai(y, env, db, hoSo);
   if (fn === 'phimGuiViec')       return await phimGuiViec(y, env, db, hoSo);
   if (fn === 'phimXemViec')       return await phimXemViec(y, env, db, hoSo);
@@ -997,11 +998,17 @@ export function corsTheoEnv(env, req) {
     'Vary': 'Origin'
   };
 }
+const TRAN_THAN_BYTE = 10 * 1024 * 1024;
+
 function traJson(o, ma, env, req) {
   const headers = corsTheoEnv(env || {}, req);
   return new Response(JSON.stringify(o), {
     status: ma || 200,
-    headers: {'Content-Type': 'application/json; charset=utf-8', ...headers}
+    /* nosniff + no-store (tầng BM02): dữ liệu tài khoản không nằm lại ở
+       bộ đệm trung gian, trình duyệt không đoán kiểu nội dung. GET trạng
+       thái tự đặt lại Cache-Control công khai 30 giây. */
+    headers: {'Content-Type': 'application/json; charset=utf-8',
+      'X-Content-Type-Options': 'nosniff', 'Cache-Control': 'no-store', ...headers}
   });
 }
 
@@ -1100,6 +1107,8 @@ export default {
     }
     ctx.waitUntil(donDep(env).then(() => quetSaoLuuMoCoi(env)).then(() => tuSoatVaChua(env)).catch(e =>
       console.error('DON_DEP_HONG', String(e && e.message || e))));
+    ctx.waitUntil(vongKhoaHocTuDong(env).catch(e =>
+      console.error('DA_TRI_KHOA_HOC_HONG', String(e && e.message || e))));
     ctx.waitUntil(canhMauTuDong(env).catch(e =>
       console.error('DA_TRI_CANH_MAU_HONG', String(e && e.message || e))));
   },
@@ -1122,8 +1131,18 @@ export default {
     }
     if (req.method !== 'POST') return traJson({ok: false, error: 'Yêu cầu không hợp lệ.'}, 405, env, req);
 
+    /* Trần thân yêu cầu (tầng PV05): gói lớn nhất hợp lệ là tệp cộng đồng
+       8 MB base64 — trên 10 MB là phá, cắt TRƯỚC khi đọc/parse để không đốt
+       bộ nhớ và CPU của Worker. Kiểm cả content-length (rẻ) lẫn độ dài thật. */
+    const khaiCo = Number(req.headers.get('content-length') || 0);
+    if (khaiCo > TRAN_THAN_BYTE) return traJson({ok: false, code: 'TOOBIG', error: 'Yêu cầu vượt trần 10 MB.'}, 413, env, req);
     let y;
-    try { y = await req.json(); } catch (e) { y = {}; }
+    try {
+      const than = await req.text();
+      if (than.length > TRAN_THAN_BYTE) return traJson({ok: false, code: 'TOOBIG', error: 'Yêu cầu vượt trần 10 MB.'}, 413, env, req);
+      y = JSON.parse(than);
+    } catch (e) { y = {}; }
+    if (!y || typeof y !== 'object' || Array.isArray(y)) y = {};
     const fn = String(y.fn || '');
 
     try {

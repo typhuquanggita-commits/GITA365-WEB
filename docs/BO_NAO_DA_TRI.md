@@ -141,3 +141,7 @@ Khách muốn quay lại vì thấy con mình tiến bộ, không vì sợ mất
 ## Sửa kèm
 
 Hàm `ghiSo` trong `may-chu/an-toan-ai.js` từng ghi vào cột `audit.boiAi`, nhưng cột này không tồn tại. Lỗi bị nuốt, nên **không lượt ATAI nào từng được ghi sổ**. Hàm nay ghi qua `Kho.ghiNhatKy`. `thu-da-tri.mjs` kiểm rằng mọi lượt, kể cả lượt bị chặn theo Điều 13, đều để lại vết trong sổ.
+
+## Vòng nhà khoa học · tự điều chỉnh có biên
+
+Mỗi đêm (0 token), bộ não tự soát theo khuôn quan sát → giả thuyết → phép thử → đề xuất; chỉ tự làm một việc đảo được: xếp nhà cung cấp kém xuống cuối (GITA_TU_DIEU_CHINH="0" để tắt). Chi tiết và lá chắn 30 tầng: [LA_CHAN_30_TANG.md](LA_CHAN_30_TANG.md).

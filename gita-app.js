@@ -1018,6 +1018,7 @@ G.NAV = [
     {v:'dieu-phoi', t:'Điều phối trợ lý AI · 100 siêu cấp', h:'Bộ não GITA365 cao nhất, điều phối toàn diện · 100 trợ lý siêu cấp đảm nhận từng cửa thật, mỗi trợ lý MỘT khoá sở hữu nên không xung đột · mọi trợ lý qua đúng cổng (Điều 13 · cấp quyền AI · ba chữ ký), TRỎ chứ không chép luật · tự hoàn thiện đi qua vòng nâng cấp có cổng · ×100 là hướng, không phải chỉ tiêu · sẵn sàng nối tuyến web app nhánh không trùng khoá', ic:'orbit', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'he-16', t:'16 hệ thống GITA365 · kiện toàn sâu', h:'Bản đồ 16 hệ trỏ vào thứ đang chạy thật, đo chứ không khai · thang tự chủ AI TC0–TC5 theo trần hiến pháp · Agent 8 năng lực (vai · nghiệp vụ · SOP · KPI · teamwork · tự nâng cấp · tự bảo vệ · hiến pháp) · không gian 1000 chiến lược có mã + ICE · chu kỳ R&D 6 tháng so mốc nền · khuôn giải pháp chung · lược đồ mã · kho repo GitHub đã phán quyết', ic:'grid', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'bo-nao-da-tri', t:'Bộ não đa trí · kho trí tuệ · tảng băng giá trị', h:'Claude · DeepSeek · ChatGPT · Grok · Gemini cùng Workers AI, định tuyến rẻ trước, đệm 0 token, ngân sách ngày, mọi lượt qua cổng Điều 13 · kho nguyên lý từ sách kinh điển có nguồn và giới hạn · tảng băng 10% nổi / 90% chìm với hành trình gắn bó có đạo đức · đề xuất tự tối ưu từ điểm chấm thật', ic:'orbit', star:1, perm:'qt_trang', capMo:'chung'},
+    {v:'la-chan-30', t:'Lá chắn 30 tầng · 15 bảo mật + 15 phòng vệ', h:'Mỗi tầng trỏ vào mã đang chạy và được CI đo trên mỗi PR · HTTPS/CSP/CORS · băm mật khẩu · OTP · passkey · phân quyền · mã hoá đầu cuối · chữ ký HMAC · chống SSRF · soát bí mật · cổng Điều 13 · chặn nhịp · trần ngân sách · ngăn khoang · đóng băng · sao lưu · tự chữa · nhật ký · quyền dữ liệu theo luật · ghi thật chỗ còn trống', ic:'shield', perm:'qt_trang', capMo:'chung'},
     {v:'khung-van-hanh', t:'Khung vận hành · V20', h:'Harness Engineering — tầng chuẩn hoá cách Bộ não điều phối 100 trợ lý · năm trụ: quản lý ngữ cảnh · gọi đúng cổng công cụ · gác Hiến pháp · chống hai trợ lý cùng ra tay · tự kiểm chất lượng mỗi lượt · mỗi trụ TRỎ vào cơ chế thật (không chép luật), bộ chấm mỗi lượt đo được từng trụ (phá-thử-đỏ-được) · V20 là đo được, không phải con số tự khai · bộ chấm KHÔNG tự ra tay', ic:'shield', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'suc-chua-toc-do', t:'Sức chứa & Tốc độ', h:'Bộ não chạy nhanh và chứa nhiều trên Cloudflare bằng NĂM TRỤ (việc nặng ở máy khách · chỉ mục đường tra nóng · bộ nhớ đệm ở biên · Workers tự co giãn · R2 cho tệp lớn), không bằng một con số · "1TB" là dung lượng, đạt bằng R2 (hàng TB) + chia mảnh D1, không phải mức của bộ não · sức chứa ĐO ĐƯỢC lúc gọi (cửa doSucChua), không tự khai · nói ra cả trần Cloudflare lẫn đường vượt trần', ic:'vault', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'thanh-tra-soi', t:'Mười tổ thanh tra soi', h:'Mười thanh tra ĐỘC LẬP chuyên phá các điểm chưa tốt, mười CẤP × 100 bậc = 1000 bậc tiêu chuẩn liền mạch · mỗi tổ NEO vào một phép soi CÓ THẬT trong mã nguồn (soatRaNgoai · truyHoiHe · capDuyetTheoTien · nhaCuaMinh · xuatDuLieuNha · danhDauXoa · dieuPhoiTroLy · a11yNhan · lapTheVungManh · kiemPhien), không phải một dòng khẩu hiệu — mục 114 đối chiếu tên ấy tồn tại trong tệp, trỏ vào cái tên bịa thì đỏ · cấp cao = hậu quả nặng hơn khi hỏng, cấp 10 là rò dữ liệu một đứa trẻ ra ngoài', ic:'shield', star:1, perm:'qt_trang', capMo:'chung'},
@@ -1531,6 +1532,7 @@ G.ITEM_EN = {
   'phim-cau-noi':['Level Bridge Films','50 films linking previous level → new level → a glimpse of the next · 5 expert voices · send to Film Studio'],
 'he-16':['16 GITA365 Systems — Deep Build-out','16-system map pointing at what really runs, measured not claimed · AI autonomy ladder TC0–TC5 capped by the constitution · 8-capability agents (role · expertise · SOP · KPI · teamwork · self-upgrade · self-protection · constitution) · 1000 coded strategies with ICE · 6-month R&D cycle against a baseline · one solution template · code schemes · GitHub repo verdicts'],
 'bo-nao-da-tri':['Multi-AI Brain · Wisdom Store · Value Iceberg','Claude · DeepSeek · ChatGPT · Grok · Gemini plus Workers AI, cheapest-first routing, 0-token cache, daily budgets, every call through the Article 13 gate · principles distilled from classic books with sources and limits · 10% visible / 90% hidden value with an ethical loyalty journey · self-optimisation proposals from real ratings'],
+'la-chan-30':['30-Layer Shield · 15 Security + 15 Defence','Every layer points at running code and is measured by CI on every PR · HTTPS/CSP/CORS · password hashing · OTP · passkeys · roles · end-to-end encryption · HMAC signatures · anti-SSRF · secret scanning · Article 13 gate · rate limits · budget ceilings · compartments · freeze · backups · self-heal · audit log · legal data rights · honest list of remaining gaps'],
   'goi-nghe':['Professional Kits by Department','Each role a full kit: mission · professional standard · certification · tools'],
   'assessment':['Tier-1 Assessment','6 domains · 10-step protocol · DCI reliability · care direction — the consultant/assessor diagnostic'],
   'nhan-su-tt':['Loyal staff profile','5 levels · 7 metrics · 5 rules'],
@@ -54213,11 +54215,11 @@ G.H16_HE = [
     ke: 'Luật-thành-mã: bước CI quét may-chu/ tìm fetch ra nhà cung cấp AI không qua cổng (mẫu OPA/Rego, chỉ học mẫu).' },
   { ma: 'H08', ten: 'Agent', ic: 'orbit',
     troVao: ['v:dieu-phoi', 'v:bo-nao-da-tri', 'f:hoiDaTri', 'f:hoiDongDaTri', 'v:quyen-nang-ai', 'v:ai-dieu-phoi', 'v:bo-prompt', 'v:khung-van-hanh',
-      'g:DP_TRO_LY', 'g:DP_MIEN', 'g:DP_TRAN', 'g:H16_SOP', 'f:soatHoatDongAgent', 'f:lapKeHoachAgent', 'f:capQuyenAI'],
+      'g:DP_TRO_LY', 'g:DP_MIEN', 'g:DP_TRAN', 'g:H16_SOP', 'f:soatHoatDongAgent', 'f:lapKeHoachAgent', 'f:capQuyenAI', 'f:docVongKhoaHoc'],
     trong: 'Roster 100 trợ lý có vai, cổng, khoá sở hữu; trước bản này chưa có quy trình (SOP), KPI và bàn giao chéo theo từng miền.',
     ke: 'Ngăn "Agent 8 năng lực" bên dưới: SOP từng miền trên cửa thật, KPI đọc từ sổ audit, bàn giao giữa miền.' },
   { ma: 'H09', ten: 'Bộ não vận hành trung tâm', ic: 'book',
-    troVao: ['v:bo-nao', 'v:he-dieu-hanh', 'v:dieu-hanh', 'v:hom-nay', 'g:DP_BONAO', 'g:TT_KHO', 'd:docs/BO_NAO_DA_TRI.md', 'f:docBangDieuKhien', 'f:banTinSang'],
+    troVao: ['v:bo-nao', 'v:he-dieu-hanh', 'v:dieu-hanh', 'v:hom-nay', 'g:DP_BONAO', 'g:TT_KHO', 'd:docs/BO_NAO_DA_TRI.md', 'f:docBangDieuKhien', 'f:banTinSang', 'f:docVongKhoaHoc'],
     trong: 'Lệnh điều phối rải giữa màn, cửa và cron; chưa có một sổ lệnh chung có trạng thái.',
     ke: 'Sổ lệnh có trạng thái theo mẫu Cloudflare Workflows (bước bền, tự thử lại) khi vượt gói miễn phí.' },
   { ma: 'H10', ten: 'Main tự chủ', ic: 'pulse',
@@ -54243,7 +54245,7 @@ G.H16_HE = [
     ke: 'Ngăn 1000 chiến lược: 10×10×10 câu hỏi có mã, chấm ICE, chỉ "chứng minh" khi có bằng chứng.' },
   { ma: 'H15', ten: 'Quản trị mã nguồn · mã định dạng', ic: 'lock',
     troVao: ['v:ra-soat', 'v:soat-day-du', 'g:H16_MA', 't:tools/gop-src.js', 't:tools/ra-soat-day-du.js',
-      't:tools/do-16-he.js', 't:.github/workflows/kiem-tra.yml', 't:.github/CODEOWNERS', 'd:docs/HE_16_TRU.md'],
+      't:tools/do-16-he.js', 't:.github/workflows/kiem-tra.yml', 't:.github/CODEOWNERS', 'd:docs/HE_16_TRU.md', 'v:la-chan-30', 'g:LC_TANG', 't:tools/soat-bi-mat.js', 'd:docs/LA_CHAN_30_TANG.md'],
     trong: 'Trước bản này chỉ kiểm lúc deploy; PR không có cổng kiểm, chưa quét bảo mật mã.',
     ke: 'Cổng PR (kiem-tra.yml) · CodeQL · OpenSSF Scorecard · Dependabot cho Actions · CODEOWNERS.' },
   { ma: 'H16', ten: 'Chi phí · sức chứa', ic: 'pulse',
@@ -55012,6 +55014,7 @@ var NGAN = [
   { ma: 'nao', ten: 'Bộ não đa trí', ic: 'orbit' },
   { ma: 'kho', ten: 'Kho giải pháp', ic: 'vault' },
   { ma: 'tinhtuy', ten: 'Tinh túy 5 bộ não', ic: 'shield' },
+  { ma: 'khoahoc', ten: 'Vòng nhà khoa học', ic: 'book' },
   { ma: 'tri', ten: 'Kho trí tuệ', ic: 'book' },
   { ma: 'bang', ten: 'Tảng băng giá trị', ic: 'grid' },
   { ma: 'toiuu', ten: 'Tối ưu token', ic: 'lightning' }
@@ -55225,6 +55228,36 @@ function veTinhTuy() {
   return o + '</div>';
 }
 
+/* ── Vòng nhà khoa học: quan sát → giả thuyết → phép thử → đề xuất, 0 token ── */
+var KH_NGAN = { boSungGiaiPhap: 'kho', duyetGiaiPhap: 'kho', dsGiaiPhap: 'kho', thuMauDaTri: 'tinhtuy', canhMauDaTri: 'tinhtuy', soDaTri: 'toiuu' };
+var KH_MAU = { cao: 'var(--gita-do)', vua: 'var(--gita-sau)', thap: '#9aa0a6' };
+G.dtKhTai = function (chay) {
+  if (!G.goiMayChu || G.dtKhDangTai) return;
+  G.dtKhDangTai = true;
+  G.goiMayChu('docVongKhoaHoc', { chay: !!chay }).then(function (x) { G.dtKhDangTai = false; G.dtKh = x || { ok: false, error: 'Không có phản hồi.' }; veLai(); });
+};
+function veKhoaHoc() {
+  var kh = G.dtKh;
+  if (!kh) { if (G.goiMayChu) G.dtKhTai(false); return '<div class="card mt tiny muted">Đang tải báo cáo… ' + nut('G.dtKh=null;G.dtKhDangTai=false;G.dtKhTai(false)', 'Tải lại') + '</div>'; }
+  if (!kh.ok) return '<div class="card mt" style="color:var(--gita-do)">' + h(kh.error || '') + '</div>';
+  var bc = kh.moiNhat;
+  var o = '<div class="card mt"><b>Vòng nhà khoa học — mỗi đêm, 0 token</b><div class="tiny muted mt">Bộ não tự đọc số đo thật của chính nó (kho giải pháp, điểm chấm, ngân sách, đệm, mô hình mới) ' +
+    'và viết từng phát hiện theo phương pháp khoa học. Mỗi phát hiện trỏ đúng một cửa để kiểm chứng. Máy đề xuất — Super Admin quyết (AT5). ' +
+    'Tự điều chỉnh duy nhất máy được làm: xếp cuối hàng nhà cung cấp bị chấm "chưa tốt" > 70% trên ≥ 10 lượt (đảo: GITA_TU_DIEU_CHINH="0").</div>' +
+    '<div class="row mt" style="gap:8px">' + nut('G.dtKhTai(true)', 'Chạy vòng ngay', 'pri') +
+    (bc ? '<span class="tiny muted">Lần cuối: ' + new Date(bc.luc).toLocaleString('vi-VN') + '</span>' : '') + '</div>' +
+    (kh.xuHuong && kh.xuHuong.length > 1 ? '<div class="tiny muted mt">Số phát hiện 7 lần gần nhất: ' + kh.xuHuong.map(function (x) { return x.n; }).reverse().join(' → ') + '</div>' : '') + '</div>';
+  if (!bc) return o + '<div class="card mt tiny muted">Chưa có báo cáo — lịch chạy đêm nay sẽ tạo, hoặc bấm "Chạy vòng ngay".</div>';
+  if (!bc.phatHien.length) return o + '<div class="card mt">Không phát hiện bất thường nào trên số đo hiện có. Không có nghĩa là không có lỗi — chỉ là các chỉ số đang đo đều trong ngưỡng.</div>';
+  return o + bc.phatHien.map(function (p) {
+    var ngan = KH_NGAN[p.cua];
+    return '<div class="card mt" style="border-left:3px solid ' + (KH_MAU[p.mucDo] || '') + '"><span class="chip">' + h(p.mucDo) + '</span>' +
+      (p.cua ? ' <span class="chip mono">' + h(p.cua) + '</span>' : '') +
+      '<div class="sm mt"><b>Quan sát:</b> ' + h(p.quanSat) + '<br><b>Giả thuyết:</b> ' + h(p.giaThuyet) + '<br><b>Phép thử:</b> ' + h(p.phepThu) +
+      '<br><b>Đề xuất:</b> ' + h(p.deXuat) + '</div>' + (ngan ? '<div class="row mt">' + nut('G.dtMoNgan(\'' + ngan + '\')', 'Mở nơi kiểm chứng') + '</div>' : '') + '</div>';
+  }).join('');
+}
+
 function veTri() {
   var tat = G.ttTatCa(), kq = G.dtTim ? G.ttTim(G.dtTim) : tat;
   var o = '<div class="card mt"><b>Kho trí tuệ — đếm thật: ' + tat.length + ' nguyên lý/tư liệu</b>' +
@@ -55306,8 +55339,140 @@ G.VIEWS['bo-nao-da-tri'] = function () {
   o += '<div class="row" style="gap:6px;flex-wrap:wrap">' + NGAN.map(function (x) {
     return '<button class="btn ' + (G.dtNgan === x.ma ? 'pri' : 'ghost') + '" onclick="G.dtMoNgan(\'' + x.ma + '\')">' + ic(x.ic, 'w-4 h-4') + h(x.ten) + '</button>';
   }).join('') + '</div>';
-  var f = { nao: veNao, kho: veKho, tinhtuy: veTinhTuy, tri: veTri, bang: veBang, toiuu: veToiUu }[G.dtNgan] || veNao;
+  var f = { nao: veNao, kho: veKho, tinhtuy: veTinhTuy, khoahoc: veKhoaHoc, tri: veTri, bang: veBang, toiuu: veToiUu }[G.dtNgan] || veNao;
   return o + f();
+};
+})();
+
+})();
+
+/* ═════════ src/la-chan-30.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — LÁ CHẮN 30 TẦNG (15 BẢO MẬT + 15 PHÒNG VỆ)
+
+   Chủ hệ: "hệ thống bảo mật cao cấp 15 tầng + 15 tầng phòng vệ, kín kẽ
+   từng chi tiết, không lỗi, không lỗ hổng."
+
+   ══ NÓI THẬT TRƯỚC ══
+   Không hệ thống nào chứng minh được "không có lỗ hổng". Điều làm được:
+   mỗi tầng TRỎ vào mã đang chạy, và CI (tools/do-16-he.js) đo từng con
+   trỏ trên mỗi PR — tầng nào bị gỡ mất là CI đỏ. Bảng này không khai
+   tầng nào chưa có mã: chỗ còn trống ghi ở LC_KHOANG_TRONG.
+
+   BM = BẢO MẬT (ngăn trước: ai được vào, dữ liệu được khoá thế nào).
+   PV = PHÒNG VỆ (khi bị tấn công/sự cố: chặn, khoanh, ghi, phục hồi).
+
+   Con trỏ: v:/g: đo sống trên máy · f: tên cửa trong worker.js ·
+   d:/t: tệp tồn tại · m:tệp#chuỗi tệp chứa đúng chuỗi ấy (CI đo).
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.VIEWS = G.VIEWS || {};
+
+(function () {
+var U = G.U, h = U.h, ic = U.ic;
+
+G.LC_TANG = [
+  /* ── 15 TẦNG BẢO MẬT ── */
+  { ma: 'BM01', nhom: 'BM', ten: 'Biên mạng & HTTPS bắt buộc', lo: 'Nghe lén, hạ cấp HTTP, nhúng khung (clickjacking)',
+    tro: ['m:_headers#Strict-Transport-Security', 'm:_headers#X-Frame-Options'], gioiHan: 'TLS do Cloudflare cấp; HSTS preload cần đăng ký tên miền riêng.' },
+  { ma: 'BM02', nhom: 'BM', ten: 'Chính sách nội dung (CSP) · nosniff · no-store', lo: 'Chèn mã (XSS), đoán kiểu tệp, bộ đệm trung gian giữ dữ liệu',
+    tro: ['m:index.html#Content-Security-Policy', 'm:may-chu/worker.js#X-Content-Type-Options', 'm:may-chu/worker.js#no-store'], gioiHan: 'CSP qua thẻ meta không chặn được frame-ancestors — bù bằng X-Frame-Options (BM01).' },
+  { ma: 'BM03', nhom: 'BM', ten: 'CORS theo danh sách trắng', lo: 'Trang lạ gọi máy chủ bằng phiên người dùng',
+    tro: ['f:dsOriginWeb', 't:tools/thu-cors.mjs'], gioiHan: 'Biến GITA_DIA_CHI_WEB trống thì mở * — chỉ dùng khi thử.' },
+  { ma: 'BM04', nhom: 'BM', ten: 'Mật khẩu băm PBKDF2 · so sánh hằng thời gian · chặn mật khẩu yếu', lo: 'Lộ CSDL thành lộ mật khẩu; dò theo thời gian phản hồi',
+    tro: ['m:may-chu/nen.js#PBKDF2', 'm:may-chu/nen.js#soSanhAnToan', 'm:may-chu/nen.js#mkQuaDeDoan'], gioiHan: 'Workers giới hạn số vòng PBKDF2 ≤ 100.000.' },
+  { ma: 'BM05', nhom: 'BM', ten: 'Phiên có hạn & mã ngẫu nhiên an toàn', lo: 'Chiếm phiên, đoán token',
+    tro: ['m:may-chu/nen.js#kiemPhien', 'm:may-chu/nen.js#tokenMoi'], gioiHan: 'Thu hồi phiên tức thì phụ thuộc lượt đọc D1.' },
+  { ma: 'BM06', nhom: 'BM', ten: 'Xác minh OTP khi đăng ký & đặt lại mật khẩu', lo: 'Tạo tài khoản ảo, chiếm tài khoản qua quên mật khẩu',
+    tro: ['f:xacThucOtp', 'f:datLaiMatKhau'], gioiHan: 'Kênh gửi OTP (email/SMS) nằm ngoài GITA.' },
+  { ma: 'BM07', nhom: 'BM', ten: 'Sinh trắc học WebAuthn (passkey)', lo: 'Lừa đảo lấy mật khẩu (phishing)',
+    tro: ['d:may-chu/sinh-trac.js'], gioiHan: 'Tuỳ thiết bị/trình duyệt có hỗ trợ.' },
+  { ma: 'BM08', nhom: 'BM', ten: 'Phân quyền theo vai trò R01–R20 · cửa bắt buộc phiên', lo: 'Leo thang đặc quyền, gọi cửa không đăng nhập',
+    tro: ['m:may-chu/vai-tro.js#laR01', 'm:may-chu/worker.js#CAN_PHIEN'], gioiHan: 'Vai trò do người cấp — cấp sai là sai.' },
+  { ma: 'BM09', nhom: 'BM', ten: 'Quyền xem từng phần · quyền năng AI từng Agent', lo: 'Xem quá phạm vi, Agent làm quá việc',
+    tro: ['d:may-chu/quyen-xem.js', 'm:may-chu/quyen-nang-ai.js#aiCoQuyen'], gioiHan: 'Ma trận quyền cần soát định kỳ (offboard khi nghỉ việc).' },
+  { ma: 'BM10', nhom: 'BM', ten: 'Mã hoá đầu cuối AES-GCM trên máy khách', lo: 'Lộ kho dữ liệu trên máy chủ/R2',
+    tro: ['m:src/kho-khoa.js#AES-GCM', 'd:tools/ma-hoa-kho.js'], gioiHan: 'Máy chủ không tìm kiếm được nội dung đã mã hoá — tìm trên máy khách.' },
+  { ma: 'BM11', nhom: 'BM', ten: 'Chữ ký HMAC cho chứng cứ & giao dịch ngân hàng', lo: 'Giả mạo chứng cứ, giả thông báo chuyển khoản',
+    tro: ['m:may-chu/chung-cu.js#kyChungCu', 'm:may-chu/ngan-hang.js#soSanhAnToan'], gioiHan: 'An toàn bằng độ bí mật của khoá HMAC.' },
+  { ma: 'BM12', nhom: 'BM', ten: 'Chống SSRF: cổng ngoài cố định, cấm chuyển hướng', lo: 'Lừa máy chủ gọi địa chỉ nội bộ/tuỳ ý',
+    tro: ["m:may-chu/bo-nao-da-tri.js#redirect: 'error'", "m:may-chu/phim-ai.js#redirect: 'error'"], gioiHan: 'Mọi cửa gọi ra ngoài mới phải giữ cùng luật — người duyệt PR soát.' },
+  { ma: 'BM13', nhom: 'BM', ten: 'Soát bí mật trong mã nguồn (CI)', lo: 'Khoá API bị commit lên GitHub',
+    tro: ['t:tools/soat-bi-mat.js', 'm:.github/workflows/kiem-tra.yml#soat-bi-mat'], gioiHan: 'Dò theo dáng khoá đã biết; khoá dạng lạ có thể lọt — bật thêm GitHub secret scanning.' },
+  { ma: 'BM14', nhom: 'BM', ten: 'Cổng Điều 13: dữ liệu trẻ em không ra nhà cung cấp AI', lo: 'Rò dữ liệu cá nhân/trẻ em sang bên thứ ba',
+    tro: ['m:may-chu/an-toan-ai.js#soatRaNhaCungCap', 'm:may-chu/bo-nao.js#soatAnDanh'], gioiHan: 'Bộ dò ẩn danh dựa mẫu — không bắt được mọi cách viết.' },
+  { ma: 'BM15', nhom: 'BM', ten: 'Chuỗi cung ứng mã: CodeQL · Dependabot · Scorecard · chủ sở hữu mã', lo: 'Lỗ hổng trong mã/thư viện, sửa mã không người duyệt',
+    tro: ['d:.github/workflows/codeql.yml', 'd:.github/dependabot.yml', 'd:.github/workflows/scorecard.yml', 'd:.github/CODEOWNERS'], gioiHan: 'Công cụ tĩnh không thay được kiểm thử xâm nhập.' },
+
+  /* ── 15 TẦNG PHÒNG VỆ ── */
+  { ma: 'PV01', nhom: 'PV', ten: 'Chặn nhịp theo phút (cửa · AI · thường)', lo: 'Dò mật khẩu, spam, DDoS lớp ứng dụng',
+    tro: ['m:may-chu/ve-chi-phi.js#HAN_PHUT', 'm:may-chu/ve-chi-phi.js#GIOI_HAN'], gioiHan: 'DDoS lớp mạng do Cloudflare chặn, không ở mã GITA.' },
+  { ma: 'PV02', nhom: 'PV', ten: 'Ngân sách token ngày · trần tải 50%', lo: 'Hoá đơn bất ngờ (bill shock), cạn hạn mức miễn phí',
+    tro: ['m:may-chu/bo-nao-da-tri.js#GITA_TRAN_TAI', 'm:may-chu/bo-nao-da-tri.js#HAN_NGAY'], gioiHan: 'Hạn mức gốc của Workers AI là ước lượng bảo thủ, CHƯA ĐO.' },
+  { ma: 'PV03', nhom: 'PV', ten: 'Chế độ tiết kiệm khẩn cấp', lo: 'Chi phí tăng vọt khi bị lạm dụng',
+    tro: ['m:may-chu/ve-chi-phi.js#GITA_CHE_DO_TIET_KIEM'], gioiHan: 'Chủ hệ bật tay.' },
+  { ma: 'PV04', nhom: 'PV', ten: 'Ngăn khoang + cầu dao từng phần', lo: 'Một phần hỏng kéo sập cả hệ',
+    tro: ['m:may-chu/khoang.js#chanKhoang', 'm:may-chu/worker.js#ghiLoiKhoang'], gioiHan: 'Cầu dao trong bộ nhớ từng isolate — đếm D1 bù cho phần còn lại.' },
+  { ma: 'PV05', nhom: 'PV', ten: 'Trần kích thước: thân yêu cầu 10 MB · gói đồng bộ 512 KB', lo: 'Gói khổng lồ đốt CPU/bộ nhớ Worker',
+    tro: ['m:may-chu/worker.js#TRAN_THAN_BYTE', 'm:may-chu/dong-bo.js#TRAN_DAY_KB'], gioiHan: 'Trần chung 10 MB; cửa nào nhỏ hơn tự đặt trần riêng.' },
+  { ma: 'PV06', nhom: 'PV', ten: 'Đóng băng sự cố · cứu hệ', lo: 'Sự cố lan khi đang điều tra',
+    tro: ['m:may-chu/cuu-he.js#dongBangHe', 'm:may-chu/cuu-he.js#AN_TOAN_KHI_BANG'], gioiHan: 'Ai bấm đóng băng là quyết định của người.' },
+  { ma: 'PV07', nhom: 'PV', ten: 'Sao lưu & khôi phục hồ sơ', lo: 'Mất dữ liệu do ghi hỏng/xoá nhầm',
+    tro: ['m:may-chu/dong-bo.js#khoiPhucTuSaoLuu'], gioiHan: 'Khoá giải mã E2EE người dùng phải tự giữ bản khôi phục.' },
+  { ma: 'PV08', nhom: 'PV', ten: 'Quét dữ liệu mồ côi D1 ↔ R2', lo: 'Lệch metadata và tệp sau lỗi giữa chừng',
+    tro: ['m:may-chu/dong-bo.js#quetSaoLuuMoCoi'], gioiHan: 'Quét theo lô mỗi đêm, không tức thì.' },
+  { ma: 'PV09', nhom: 'PV', ten: 'Tự soát & tự chữa mỗi đêm', lo: 'Lỗi âm thầm tích tụ',
+    tro: ['m:may-chu/tu-chua.js#tuSoatVaChua', 'm:may-chu/worker.js#tuSoatVaChua(env)'], gioiHan: 'Chỉ chữa lớp lỗi đã biết; lỗi mới thì báo.' },
+  { ma: 'PV10', nhom: 'PV', ten: 'Nhật ký kiểm toán mọi việc ghi', lo: 'Không truy được ai làm gì',
+    tro: ['m:may-chu/nen.js#ghiNhatKy', 'd:may-chu/nhat-ky.js'], gioiHan: 'Nhật ký trong cùng D1 — người có quyền R01 đọc được.' },
+  { ma: 'PV11', nhom: 'PV', ten: 'Giám sát · hộp đen', lo: 'Phát hiện muộn',
+    tro: ['d:may-chu/giam-sat.js', 'm:may-chu/cuu-he.js#soatSoDen'], gioiHan: 'Cảnh báo cần người trực đọc.' },
+  { ma: 'PV12', nhom: 'PV', ten: 'Mã yêu cầu · lỗi không lộ cấu trúc', lo: 'Lời lỗi thành bản đồ cho kẻ dò',
+    tro: ['m:may-chu/worker.js#maYeuCau', 'm:may-chu/worker.js#x-gita-ma'], gioiHan: 'Chi tiết lỗi chỉ ở nhật ký Cloudflare.' },
+  { ma: 'PV13', nhom: 'PV', ten: 'Quyền dữ liệu theo luật: đồng ý · xoá · xuất', lo: 'Vi phạm Luật Bảo vệ dữ liệu cá nhân (VN) và chuẩn quốc tế tương đương',
+    tro: ['m:may-chu/phap-ly-rui-ro.js#ghiDongY', 'm:may-chu/phap-ly-rui-ro.js#yeuCauXoaDuLieu', 'm:may-chu/phap-ly-rui-ro.js#xuatDuLieuNha'], gioiHan: 'Mã thực thi quy trình; đánh giá tuân thủ cần luật sư (vùng luật sư).' },
+  { ma: 'PV14', nhom: 'PV', ten: 'Công tắc tắt & tự điều chỉnh đảo được', lo: 'Máy tự làm sai không dừng được',
+    tro: ['m:may-chu/bo-nao-da-tri.js#GITA_DA_TRI_BAT', 'm:may-chu/bo-nao-da-tri.js#GITA_TU_DIEU_CHINH'], gioiHan: 'Đổi biến cần quyền Cloudflare của chủ hệ.' },
+  { ma: 'PV15', nhom: 'PV', ten: 'Cổng CI + vòng nhà khoa học mỗi đêm · chủ hệ quyết', lo: 'Lùi chất lượng, suy giảm không ai thấy',
+    tro: ['d:.github/workflows/kiem-tra.yml', 'm:may-chu/bo-nao-da-tri.js#vongKhoaHoc', 'f:docVongKhoaHoc'], gioiHan: 'Vòng chỉ đọc số đo đã có — chỉ số chưa đo thì không thấy.' }
+];
+
+/* Chỗ trống THẬT — ghi ra thay vì khai đã có. */
+G.LC_KHOANG_TRONG = [
+  { ten: 'Kiểm thử xâm nhập độc lập', vi: 'Chưa có bên thứ ba kiểm. Không công cụ tĩnh nào thay được.', viec: 'Thuê/mời kiểm thử trước khi vượt 200.000 tài khoản.' },
+  { ten: 'WAF · Bot Fight Mode của Cloudflare', vi: 'Bật ở bảng điều khiển Cloudflare — repo không đo được.', viec: 'Chủ hệ bật Bot Fight Mode + quy tắc WAF miễn phí, chụp lại cấu hình.' },
+  { ten: 'Diễn tập khôi phục định kỳ', vi: 'Mã khôi phục có thử giả lập (thu-dong-bo.mjs) nhưng chưa diễn tập trên dữ liệu thật.', viec: 'Mỗi quý: khôi phục một hồ sơ thử từ sao lưu, ghi biên bản.' },
+  { ten: 'Đánh giá pháp lý chính thức', vi: 'Mã thực thi đồng ý/xoá/xuất; kết luận tuân thủ phải do luật sư.', viec: 'Dùng vùng luật sư (docVungLuatSu) trước khi mở bán diện rộng.' }
+];
+
+G.lcDo = function () {
+  return G.LC_TANG.map(function (t) {
+    var kq = t.tro.map(G.h16DoTro || function (x) { return { tro: x, song: null, noi: 'ci' }; });
+    var may = kq.filter(function (x) { return x.noi === 'may'; });
+    return { ma: t.ma, may: may.length, song: may.filter(function (x) { return x.song; }).length, ci: kq.length - may.length, kq: kq };
+  });
+};
+
+G.VIEWS['la-chan-30'] = function () {
+  var do_ = {}; G.lcDo().forEach(function (d) { do_[d.ma] = d; });
+  var tong = G.LC_TANG.reduce(function (s, t) { return s + t.tro.length; }, 0);
+  var o = '<div class="hd"><h2>' + ic('shield') + ' Lá chắn 30 tầng</h2><p class="sub">15 tầng <b>bảo mật</b> (ngăn trước) + 15 tầng <b>phòng vệ</b> (chặn · khoanh · ghi · phục hồi). ' +
+    'Mỗi tầng trỏ vào mã đang chạy — ' + tong + ' con trỏ được CI đo trên mỗi PR (tools/do-16-he.js). Không hệ nào chứng minh được "không lỗ hổng"; ' +
+    'điều GITA cam kết là <b>đo liên tục</b> và <b>ghi thật chỗ còn trống</b>.</p></div>';
+  ['BM', 'PV'].forEach(function (nh) {
+    o += '<div class="card mt"><b>' + (nh === 'BM' ? '15 tầng bảo mật' : '15 tầng phòng vệ') + '</b><table class="tbl sm mt"><tr><th>Mã</th><th>Tầng</th><th>Chặn gì</th><th>Trỏ vào mã</th><th>Giới hạn thật</th></tr>' +
+      G.LC_TANG.filter(function (t) { return t.nhom === nh; }).map(function (t) {
+        var d = do_[t.ma];
+        return '<tr><td class="mono">' + h(t.ma) + '</td><td><b>' + h(t.ten) + '</b></td><td class="tiny">' + h(t.lo) + '</td><td class="mono tiny">' +
+          d.kq.map(function (x) { return h(x.tro) + (x.noi === 'may' ? (x.song ? ' ✓' : ' ✗') : ''); }).join('<br>') + '</td><td class="tiny muted">' + h(t.gioiHan) + '</td></tr>';
+      }).join('') + '</table></div>';
+  });
+  o += '<div class="card mt" style="border-color:var(--gita-sau)"><b>Chỗ còn trống — ghi thật</b>' + G.LC_KHOANG_TRONG.map(function (k) {
+    return '<div class="sm mt"><b>' + h(k.ten) + ':</b> ' + h(k.vi) + ' <span class="tiny muted">→ ' + h(k.viec) + '</span></div>';
+  }).join('') + '</div>';
+  return o;
 };
 })();
 

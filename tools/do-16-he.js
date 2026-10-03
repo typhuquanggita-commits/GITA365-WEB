@@ -8,6 +8,7 @@ trỏ; công cụ này kiểm từng con trỏ trên MÃ THẬT, không tin lờ
   g:NAME  → có  G.NAME =           trong src/
   f:cua   → có tên cửa trong may-chu/worker.js
   d:/t:   → tệp tồn tại
+  m:tệp#chuỗi → tệp tồn tại VÀ chứa đúng chuỗi ấy (lá chắn 30 tầng)
 Thêm: SOP chỉ dùng cửa đúng miền · mọi miền có trần tự chủ · 1000 mã
 chiến lược đôi một khác nhau · repo trỏ về hệ có thật.
 
@@ -28,7 +29,7 @@ const worker = doc('may-chu/worker.js');
 const G = { VIEWS: {}, U: { h: s => String(s), ic: () => '' } };
 const ctx = { window: { G }, G, console, localStorage: { getItem: () => null, setItem() {} } };
 vm.createContext(ctx);
-for (const f of ['src/dieu-phoi.js', 'src/he-16.js', 'src/bo-nao-da-tri.js']) vm.runInContext(doc(f), ctx, { filename: f });
+for (const f of ['src/dieu-phoi.js', 'src/he-16.js', 'src/bo-nao-da-tri.js', 'src/la-chan-30.js']) vm.runInContext(doc(f), ctx, { filename: f });
 
 const loi = [];
 let ok = 0;
@@ -41,6 +42,11 @@ function kiemTro(tro, noi) {
   if (k === 'g:') return dat(new RegExp('G\\.' + esc(ten) + '\\s*=').test(srcGop), `${noi}: G.${ten} không có`);
   if (k === 'f:') return dat(new RegExp('\\b' + esc(ten) + '\\b').test(worker), `${noi}: cửa ${ten} không có trong worker.js`);
   if (k === 'd:' || k === 't:') return dat(fs.existsSync(path.join(ROOT, ten)), `${noi}: tệp ${ten} không có`);
+  if (k === 'm:') {
+    const i = ten.indexOf('#'), tep = ten.slice(0, i), chuoi = ten.slice(i + 1);
+    const p = path.join(ROOT, tep);
+    return dat(i > 0 && !!chuoi && fs.existsSync(p) && fs.readFileSync(p, 'utf8').includes(chuoi), `${noi}: ${tep} không chứa "${chuoi}"`);
+  }
   loi.push(`${noi}: con trỏ lạ ${tro}`);
 }
 
@@ -100,7 +106,20 @@ G.TB_HANH_TRINH.forEach(s => {
   s.nl.forEach(m => dat(maTT.has(m), `${s.ma}: nguyên lý ${m} không có`));
 });
 dat(G.ttTim('thói quen', 3).length > 0 && G.ttTim('thoi quen', 3)[0].ma === G.ttTim('thói quen', 3)[0].ma, 'Tìm kiếm bỏ dấu không khớp');
-console.log(`  ✓ ${ok} phép đo đạt · ${HE.length} hệ · ${G.H16_SOP.length} SOP · ${G.DP_TRO_LY.length} trợ lý · ${G.TT_KHO.length} nguyên lý`);
+/* Lá chắn 30 tầng: đúng 15 BM + 15 PV, mã không trùng, mỗi tầng có điều
+   nó chặn + giới hạn thật + ít nhất một con trỏ — và MỌI con trỏ sống. */
+const LC = G.LC_TANG;
+dat(LC.length === 30, `Lá chắn cần 30 tầng, có ${LC.length}`);
+dat(new Set(LC.map(t => t.ma)).size === LC.length, 'Mã tầng lá chắn trùng');
+dat(LC.filter(t => t.nhom === 'BM').length === 15 && LC.filter(t => t.nhom === 'PV').length === 15, 'Lá chắn cần 15 BM + 15 PV');
+LC.forEach(t => {
+  dat(new RegExp('^' + t.nhom + '\\d{2}$').test(t.ma), `${t.ma}: mã không khớp nhóm ${t.nhom}`);
+  dat(!!t.lo && !!t.gioiHan && t.tro.length > 0, `${t.ma}: thiếu "chặn gì", giới hạn hoặc con trỏ`);
+  t.tro.forEach(x => kiemTro(x, t.ma));
+});
+dat(G.LC_KHOANG_TRONG.length > 0 && G.LC_KHOANG_TRONG.every(k => k.ten && k.vi && k.viec), 'Lá chắn: chỗ trống phải ghi đủ tên · vì sao · việc cần làm');
+
+console.log(`  ✓ ${ok} phép đo đạt · ${HE.length} hệ · ${G.H16_SOP.length} SOP · ${G.DP_TRO_LY.length} trợ lý · ${G.TT_KHO.length} nguyên lý · ${LC.length} tầng lá chắn`);
 console.log(`  · Tự chủ: AI làm ${tc.aiLamPhan}% cửa · AI tự chạy trọn (TC4) ${tc.tuChayTron}% · ` +
   Object.keys(tc.dem).sort().map(k => `${k}=${tc.dem[k]}`).join(' '));
 if (loi.length) {
