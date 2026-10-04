@@ -2561,36 +2561,19 @@ button.nha-o-nen:hover .nha-ic{transform:scale(1.06)}
    sát; đặt nút bằng cos()/sin() (Chromium hỗ trợ trig trong calc): góc
    bắt đầu -90° = đỉnh, mỗi nút +36°. Nhãn thu hẹp (max-width) để không
    chạm thân nhà. */
-@container nhaVong (min-width:960px){
-  /* Vòng TRÒN CHUẨN (rx=ry) — nhà rộng ra để 8 phòng tự xếp 4 cột (ngắn
-     lại, gần vuông) nên NẰM GỌN cân đối trong hình tròn (chủ hệ 9.99.151). */
-  .nha-ring{position:relative;width:100%;margin:0 auto;padding:150px 0;--rx:470px;--ry:470px}
-  .nha-ring .nha{max-width:600px;margin:0 auto}
-  /* Ép 4 cột phòng trong vòng → nhà thấp lại, gần vuông, nằm gọn hình tròn */
-  .nha-ring .nha-luoi-8{grid-template-columns:repeat(4,minmax(0,1fr))}
-  /* Trong vòng: phòng chỉ icon + tên (bỏ dòng mô tả) → nhà THẤP lại, gần
-     vuông, chữ bánh đà KHÔNG bị mái/nền che (chủ hệ: "bị khuất chữ"). */
-  .nha-ring .nha-o small{display:none}
-  .nha-ring .nha-o{min-height:0;padding:14px 12px}
-  .nha-ring .nha-o .nha-ic{width:44px;height:44px}
-  .nha-ring .nha-o .nha-ic svg{width:22px;height:22px}
-  .nha-ring::before{content:"";position:absolute;top:50%;left:50%;
-    width:calc(var(--rx) * 2);height:calc(var(--ry) * 2);transform:translate(-50%,-50%);
-    border:2px dashed var(--line-2);border-radius:50%;pointer-events:none}
-  .nha-ring-nodes{position:absolute;inset:0;margin:0;display:block;pointer-events:none;
-    animation:nhaQuay 80s linear infinite}
-  /* SLOT chỉ neo ở tâm, KHÔNG mang transform định vị — để transform của nút
-     không bị kẹp giữa hai lớp. Mọi phép đặt vị trí + giữ chữ thẳng nằm gọn
-     trong MỘT transform của nút. */
-  .nha-ring-nodes .nha-bd-slot{position:absolute;top:50%;left:50%;pointer-events:none}
-  /* Nút: rotate(a) xoay trục → translate(0,-ry) đẩy ra chu vi → rotate(-a)
-     xoay lại để CHỮ thẳng. Ba bước trong một transform, vị trí trên vòng
-     tròn đúng và chữ luôn đứng. Không cos/sin, không @property — chạy mọi
-     trình duyệt. Khi wrapper nhaQuay quay, cả cụm quay theo, chữ vẫn thẳng. */
-  .nha-ring-nodes .nha-bd-slot .nha-bd-o{pointer-events:auto;
-    max-width:120px;text-align:left;display:flex;gap:6px;align-items:center;
-    transform:rotate(calc(var(--i) * 36deg - 90deg)) translateY(calc(var(--ry) * -1)) rotate(calc((var(--i) * 36deg - 90deg) * -1)) translate(-50%,-50%)}
-}
+/* Vòng bánh đà — ĐẶT VỊ TRÍ BẰNG SỐ (Math.cos/sin trong JS lúc render,
+   ghi thẳng left/top dạng % vào từng nút), xoay cả vòng bằng MỘT animation
+   transform duy nhất. Cách này chạy MỌI trình duyệt kể cả trình duyệt cũ,
+   vì CSS chỉ cần: position absolute + % + animation rotate — ba thứ có từ
+   rất lâu. Bỏ hẳn container query và cos/sin trong calc (nguyên nhân vòng
+   không dựng/không quay trên nhiều máy). */
+.nha-ring{position:relative;width:min(680px,100%);aspect-ratio:1/1;margin:0 auto}
+.nha-ring .nha{position:absolute;inset:15%;display:flex;flex-direction:column;justify-content:center}
+.nha-ring::before{content:"";position:absolute;inset:2%;border:2px dashed var(--line-2);border-radius:50%;pointer-events:none}
+.nha-ring-nodes{position:absolute;inset:0;animation:nhaQuay 80s linear infinite}
+.nha-ring-nodes .nha-bd-slot{position:absolute;pointer-events:none}
+.nha-ring-nodes .nha-bd-o{pointer-events:auto;max-width:110px;text-align:left;display:flex;gap:6px;align-items:center}
+@media(prefers-reduced-motion:reduce){.nha-ring-nodes{animation:none}}
 
 /* ── TỔNG QUAN (tong-quan.js) — thẻ ít chữ, số to, lưới co giãn ── */
 .tq-luoi{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:10px;margin-top:10px}
