@@ -44458,6 +44458,7 @@ G.VIEWS = G.VIEWS || {};
       '→ máy lắp phụ đề, logo, số tập, nhạc và xuất thành phim. Clip, ảnh và nhạc xử lý ngay trên máy, không tải lên đâu.</p></div>';
     o += '<div class="man-xu">';
     if (G.xpBoView) o += G.xpBoView();
+    if (G.xpKaggleView) o += G.xpKaggleView();
     if (G.xpTuDongView) o += G.xpTuDongView();
 
     /* Hướng dẫn nhanh */
@@ -45742,6 +45743,120 @@ var G = window.G || {}; window.G = G;
     o += '<p class="note" id="xp-td-tt"><b>' + h(td.loi ? 'Lỗi: ' + td.loi : '') + '</b></p>';
     o += '<pre class="note" id="xp-td-nk" style="white-space:pre-wrap;max-height:180px;overflow:auto">' + h(td.nhatKy.slice(-8).join('\n')) + '</pre>';
     o += '</div>';
+    return o;
+  };
+
+  /* ══ ĐẶT PHIM TRÊN MÁY KAGGLE (xưởng studio V21) ══
+     Khác dây chuyền tự động bên dưới (vẽ từng cảnh rồi lắp trên máy
+     này): việc 'film' giao TRỌN bộ phim cho máy Kaggle — máy tự viết
+     kịch bản từ đề bài, quay chuyển động thật bằng LTX-Video với ảnh
+     nhân vật ĐÃ KHÓA, đọc thoại edge-tts, khớp môi MuseTalk, chấm QC,
+     ghép FFmpeg + phụ đề + intro/outro rồi nộp MP4 về máy chủ. */
+  var KG_KHOA = 'gita.xuongKaggle.v1';
+  var kg = { viec: [], tt: null, dangHoi: false, nhac: 0 };
+  try { kg.viec = JSON.parse(localStorage.getItem(KG_KHOA) || '[]') || []; } catch (eKg) { kg.viec = []; }
+  function kgLuu() { try { localStorage.setItem(KG_KHOA, JSON.stringify(kg.viec.slice(-30))); } catch (eKg) {} }
+  var KG_NV = [
+    ['trainer', 'Trainer Trương Nhật Quang (đã khóa ảnh)'],
+    ['mc', 'MC Minh Anh (đã khóa ảnh)'],
+    ['giang-vien', 'Giảng viên Thu Hà (đã khóa ảnh)'],
+    ['bo', 'Bố (chưa khóa ảnh — quay từ mô tả)'],
+    ['me', 'Mẹ (chưa khóa ảnh — quay từ mô tả)'],
+    ['con-gai', 'Con gái (chưa khóa ảnh — quay từ mô tả)'],
+    ['con-trai', 'Con trai (chưa khóa ảnh — quay từ mô tả)']
+  ];
+  var KG_LOAI_PHIM = [
+    ['dao_tao', 'Đào tạo (7 cảnh)'],
+    ['huan_luyen', 'Huấn luyện (6 cảnh)'],
+    ['hotro_khach', 'Hỗ trợ khách (6 cảnh)'],
+    ['gita_hanh_trinh', 'Hành trình 5 tầng GITA (5 cảnh)']
+  ];
+  var kgFm = { tieuDe: '', chuDe: '', loaiPhim: 'dao_tao', nhanVat: 'trainer', soCanhToiDa: 7, phamVi: 'khach', thoai: '', giong: 'vi-VN-NamMinhNeural' };
+  G.xpKgSua = function (k, v) { kgFm[k] = v; };
+  function kgGocMay() { return G.API_CAP_PHEP || G.diaChiMayChu() || ''; }
+  function kgThem(ma, loai, ten) {
+    kg.viec.push({ ma: ma, loai: loai, ten: ten || '', luc: Date.now() });
+    kgLuu(); kg.tt = null; kgHoi(true);
+    if (G.xpVeLai) G.xpVeLai();
+  }
+  G.xpKgDat = function () {
+    if (String(kgFm.chuDe || '').trim().length < 8) { U.toast('Cần đề bài phim ít nhất 8 ký tự.', 'err'); return; }
+    goi('quayPhimMoi', {
+      tieuDe: kgFm.tieuDe, chuDe: kgFm.chuDe, loaiPhim: kgFm.loaiPhim,
+      nhanVat: kgFm.nhanVat, soCanhToiDa: kgFm.soCanhToiDa, phamVi: kgFm.phamVi
+    }).then(function (x) {
+      if (x && x.ok) { kgThem(x.ma, 'film', kgFm.tieuDe || kgFm.chuDe.slice(0, 60)); U.toast('Đã đặt phim — máy Kaggle sẽ tự quay.', 'ok'); }
+      else U.toast((x && x.error) || 'Không đặt được phim.', 'err');
+    });
+  };
+  G.xpKgTts = function () {
+    if (String(kgFm.thoai || '').trim().length < 8) { U.toast('Cần lời thoại ít nhất 8 ký tự.', 'err'); return; }
+    goi('quayGiongNoi', { thoai: kgFm.thoai, giong: kgFm.giong }).then(function (x) {
+      if (x && x.ok) { kgThem(x.ma, 'tts', kgFm.thoai.slice(0, 60)); U.toast('Đã đặt đọc thoại — MP3 về khi máy Kaggle đọc xong.', 'ok'); }
+      else U.toast((x && x.error) || 'Không đặt được.', 'err');
+    });
+  };
+  function kgHoi(ngay) {
+    if (!laR01() || !G.goiMayChu || kg.dangHoi || !kg.viec.length) return;
+    if (!ngay && kg.nhac && Date.now() - kg.nhac < 15000) return;
+    kg.dangHoi = true;
+    goi('quayXem', { ds: kg.viec.map(function (v) { return v.ma; }) }).then(function (x) {
+      kg.dangHoi = false; kg.nhac = Date.now();
+      if (x && x.ok) { kg.tt = x; if (G.xpVeLai) G.xpVeLai(); }
+    }, function () { kg.dangHoi = false; });
+  }
+  G.xpKgHoi = function () { kgHoi(true); if (G.xpVeLai) G.xpVeLai(); };
+  setInterval(function () { if (document.getElementById('xp-kg')) kgHoi(); }, 20000);
+
+  G.xpKaggleView = function () {
+    if (!laR01()) return '';
+    var o = '<div class="giay" id="xp-kg" style="border:2px solid #2a7dc5"><h3>🎥 Quay phim nguyên bộ — máy Kaggle (0 đồng)</h3>';
+    o += '<p class="note">Chỉ cần ghi <b>đề bài</b>: máy Kaggle tự viết kịch bản, quay chuyển động thật bằng ảnh nhân vật đã khóa, ' +
+      'đọc thoại, khớp môi, ghép phim rồi trả MP4 về đây. Nhớ giữ notebook Kaggle đang Run.</p>';
+    var may = kg.tt && typeof kg.tt.mayDangChay === 'number' ? kg.tt.mayDangChay : null;
+    o += '<p class="note">' + (may === null ? 'Đang hỏi máy chủ…' :
+      may > 0 ? '💚 Máy Kaggle đang mở: <b>' + may + '</b> máy.' :
+      '⚠️ Chưa thấy máy Kaggle nào đang mở — phim đặt vẫn vào hàng chờ, máy mở là làm ngay.') +
+      ' <button class="btn" onclick="G.xpKgHoi()">Làm mới</button></p>';
+    o += '<div class="row">' +
+      '<label>Tiêu đề <input value="' + h(kgFm.tieuDe) + '" oninput="G.xpKgSua(\'tieuDe\',this.value)" style="width:220px"></label>' +
+      '<label>Loại phim <select onchange="G.xpKgSua(\'loaiPhim\',this.value)">' + KG_LOAI_PHIM.map(function (l) {
+        return '<option value="' + l[0] + '"' + (kgFm.loaiPhim === l[0] ? ' selected' : '') + '>' + h(l[1]) + '</option>';
+      }).join('') + '</select></label>' +
+      '<label>Nhân vật chính <select onchange="G.xpKgSua(\'nhanVat\',this.value)">' + KG_NV.map(function (n) {
+        return '<option value="' + n[0] + '"' + (kgFm.nhanVat === n[0] ? ' selected' : '') + '>' + h(n[1]) + '</option>';
+      }).join('') + '</select></label>' +
+      '<label>Số cảnh tối đa <input type="number" min="3" max="10" value="' + h(String(kgFm.soCanhToiDa)) + '" oninput="G.xpKgSua(\'soCanhToiDa\',this.value)" style="width:70px"></label>' +
+      '<label>Phạm vi <select onchange="G.xpKgSua(\'phamVi\',this.value)">' +
+      '<option value="khach"' + (kgFm.phamVi !== 'noi-bo' ? ' selected' : '') + '>Cho khách (tự giảm bí mật)</option>' +
+      '<option value="noi-bo"' + (kgFm.phamVi === 'noi-bo' ? ' selected' : '') + '>Nội bộ (đào tạo, huấn luyện)</option></select></label></div>';
+    o += '<textarea rows="3" style="width:100%;box-sizing:border-box" placeholder="Đề bài phim — ví dụ: Huấn luyện 100 học viên bứt phá giới hạn tại hội trường lớn…" oninput="G.xpKgSua(\'chuDe\',this.value)">' + h(kgFm.chuDe) + '</textarea>';
+    o += '<div class="row"><button class="btn btn-chinh" onclick="G.xpKgDat()">🎬 Đặt phim</button></div>';
+    o += '<details><summary><b>🗣️ Chỉ đọc thoại (TTS, không quay hình)</b></summary>' +
+      '<textarea rows="2" style="width:100%;box-sizing:border-box" placeholder="Lời thoại cần đọc…" oninput="G.xpKgSua(\'thoai\',this.value)">' + h(kgFm.thoai) + '</textarea>' +
+      '<div class="row"><label>Giọng <select onchange="G.xpKgSua(\'giong\',this.value)">' +
+      '<option value="vi-VN-NamMinhNeural"' + (kgFm.giong === 'vi-VN-NamMinhNeural' ? ' selected' : '') + '>Nam Minh (nam, miền Nam)</option>' +
+      '<option value="vi-VN-HoaiMyNeural"' + (kgFm.giong === 'vi-VN-HoaiMyNeural' ? ' selected' : '') + '>Hoài My (nữ, miền Bắc)</option></select></label>' +
+      '<button class="btn" onclick="G.xpKgTts()">🗣️ Đặt đọc thoại</button></div></details>';
+    if (kg.viec.length) {
+      var dsTt = (kg.tt && kg.tt.ds) || [], goc = kgGocMay();
+      o += '<h4>Việc đã đặt</h4><ol class="note">';
+      for (var i = kg.viec.length - 1; i >= 0; i--) {
+        var v = kg.viec[i], t = null;
+        for (var j = 0; j < dsTt.length; j++) if (dsTt[j].ma === v.ma) { t = dsTt[j]; break; }
+        var chu = !t ? '…' :
+          t.trangThai === 'xong' ? '✅ xong' :
+          t.trangThai === 'cho' ? '⏳ chờ' + (t.truoc ? ' (trước còn ' + t.truoc + ' việc)' : '') :
+          t.trangThai === 'dang' ? '🎬 đang quay' :
+          t.trangThai === 'loi' ? '❌ ' + h(t.loi || 'lỗi') : h(t.trangThai);
+        o += '<li>' + (v.loai === 'tts' ? '🗣️' : '🎬') + ' ' + h(v.ten || v.ma) + ' — ' + chu;
+        if (t && t.url) o += ' — <a href="' + h(goc + t.url) + '" target="_blank" rel="noopener">Mở kết quả</a>';
+        o += '</li>';
+      }
+      o += '</ol>';
+    }
+    o += '</div>';
+    kgHoi();
     return o;
   };
 })();
