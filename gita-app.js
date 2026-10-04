@@ -50178,13 +50178,19 @@ G.nhaMoChang = function (el) {
       var idx = tu + i;
       var mau = BD_MAU[idx % BD_MAU.length];
       var ten = b.ten || b.t || ('Bánh đà ' + (idx + 1));
-      /* Icon THẬT của bánh đà (b.ic) trong huy hiệu tròn màu — khớp bản
-         render chủ hệ gửi (mỗi nút một icon + tên). KHÔNG bịa dòng phụ:
-         BD_LON không có ô tagline ngắn, thêm một câu cho "đẹp" là làm sai
-         nội dung ô. Hai <span> đều CÓ nội dung (icon SVG · tên), nên bộ rà
-         soát chỗ trống không đếm thẻ rỗng. */
-      return '<span class="nha-bd-slot" style="--i:' + idx + '">' +
-        '<button class="nha-bd-o" style="--ac:' + mau + '" data-v="banh-da">' +
+      /* Vị trí trên vòng tròn tính BẰNG SỐ lúc render (Math.cos/sin trong
+         JS — không phải trig trong CSS), nên chạy MỌI trình duyệt, kể cả
+         trình duyệt không hiểu cos() trong calc(). Góc -90° = đỉnh, mỗi
+         nút +36°. Bán kính 46% theo trục ngang / 46% theo trục dọc của
+         khung vòng (khung là hình vuông nên vòng TRÒN CHUẨN). */
+      var goc = (idx * 36 - 90) * Math.PI / 180;
+      var x = 50 + 46 * Math.cos(goc);
+      var y = 50 + 46 * Math.sin(goc);
+      /* Góc giữ chữ thẳng là HẰNG SỐ (-(idx*36-90)) — khi wrapper quay, nút
+         đi theo vòng và chữ vẫn đứng vì góc đặt đã được triệt. */
+      var giuThang = (idx * 36 - 90) * -1;
+      return '<span class="nha-bd-slot" style="left:' + x.toFixed(2) + '%;top:' + y.toFixed(2) + '%">' +
+        '<button class="nha-bd-o" style="--ac:' + mau + ';transform:translate(-50%,-50%) rotate(' + giuThang + 'deg)" data-v="banh-da">' +
         '<span class="nha-bd-ic">' + ic(b.ic) + '</span>' +
         '<span class="nha-bd-ten">' + h(ten) + '</span></button></span>';
     }).join('');
