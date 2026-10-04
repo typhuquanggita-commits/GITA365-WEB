@@ -29,7 +29,7 @@ const worker = doc('may-chu/worker.js');
 const G = { VIEWS: {}, U: { h: s => String(s), ic: () => '' } };
 const ctx = { window: { G }, G, console, localStorage: { getItem: () => null, setItem() {} } };
 vm.createContext(ctx);
-for (const f of ['src/dieu-phoi.js', 'src/he-16.js', 'src/bo-nao-da-tri.js', 'src/la-chan-30.js', 'src/bo-may-tap-doan.js', 'src/kien-truc-hop-nhat.js']) vm.runInContext(doc(f), ctx, { filename: f });
+for (const f of ['src/dieu-phoi.js', 'src/he-16.js', 'src/bo-nao-da-tri.js', 'src/la-chan-30.js', 'src/bo-may-tap-doan.js', 'src/kien-truc-hop-nhat.js', 'src/vong-lap-van-hanh.js']) vm.runInContext(doc(f), ctx, { filename: f });
 
 const loi = [];
 let ok = 0;
@@ -154,6 +154,16 @@ KT.forEach(m => {
   m.tro.forEach(x => kiemTro(x, m.ma));
 });
 dat(KT.some(m => m.tt === 'chua'), 'Kiến trúc hợp nhất: phải ghi thật ít nhất một mảnh chưa có');
+/* Vòng lặp vận hành: đủ 4 vòng + kiểm soát xuyên vòng + lường thực thi;
+   mã nút không trùng; mọi con trỏ sống; nút thiếu ghi rõ điều còn thiếu. */
+const VL = [...G.VL_KIEM_SOAT, ...G.VL_LUONG, ...G.VL_VONG.flatMap(v => v.muc), ...G.VL_PHU];
+dat(G.VL_VONG.length === 4, `Bánh đà cần 4 vòng, có ${G.VL_VONG.length}`);
+dat(G.VL_KIEM_SOAT.length === 6, `Kiểm soát xuyên vòng cần 6 mục, có ${G.VL_KIEM_SOAT.length}`);
+dat(new Set(VL.map(m => m.ma)).size === VL.length, 'Mã nút vòng lặp trùng');
+VL.forEach(m => {
+  dat(!!m.ten && m.tro.length > 0, `${m.ma}: thiếu tên hoặc con trỏ`);
+  m.tro.forEach(x => kiemTro(x, m.ma));
+});
 
 console.log(`  ✓ ${ok} phép đo đạt · ${HE.length} hệ · ${G.H16_SOP.length} SOP · ${G.DP_TRO_LY.length} trợ lý · ${G.TT_KHO.length} nguyên lý · ${LC.length} tầng lá chắn`);
 console.log(`  · Tự chủ: AI làm ${tc.aiLamPhan}% cửa · AI tự chạy trọn (TC4) ${tc.tuChayTron}% · ` +
