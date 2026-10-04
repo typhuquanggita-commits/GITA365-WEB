@@ -57087,8 +57087,8 @@ G.BD_KHOI = [
     n('B1', 'Kênh kết nối: mạng xã hội · đối tác · sự kiện · giới thiệu',
       ['v:crm', 'm:may-chu/csdl.sql#hoaHongTra'],
       'Chưa quy kết kênh đem khách thật mà không theo dõi cá nhân — đếm theo trang (mẫu Plausible) là hướng đi.'),
-    n('B2', 'Website công khai (landing · bảng giá · dịch vụ · hành trình)',
-      ['t:landing.html', 't:bang-gia.html', 't:hanh-trinh-12-chang.html'],
+    n('B2', 'Website công khai (landing · bảng giá · dịch vụ · hành trình · trạng thái hệ thống)',
+      ['t:landing.html', 't:bang-gia.html', 't:hanh-trinh-12-chang.html', 't:trang-thai.html'],
       'Không gian 3D thời gian thực chưa có — trang tĩnh + PWA đang đủ dùng; 3D khi có đội làm riêng.'),
     n('B3', 'Không gian quản trị: phòng ban · agent · nội dung · tài chính · quyền · dashboard',
       ['v:bo-may-tap-doan', 'v:truy-van-da-chieu']),
@@ -57192,8 +57192,8 @@ G.BD_KHOI = [
       ['m:may-chu/wrangler.toml#name = "gita365"', 'd:docs/KIEN_TRUC_TONG_THE.md'])
   ]},
   { ma: 'L', ten: 'Đo lường & cải tiến', ic: 'chart', muc: [
-    n('L1', 'Logs · metrics: kết quả · chất lượng · chi phí · tải · năng lực phục vụ',
-      ['m:may-chu/csdl.sql#audit', 'm:may-chu/csdl.sql#soTokenDaTri', 'f:soatSoDen']),
+    n('L1', 'Logs · metrics: kết quả · chất lượng · chi phí · tải · năng lực phục vụ · trạng thái công khai',
+      ['m:may-chu/csdl.sql#audit', 'm:may-chu/csdl.sql#soTokenDaTri', 'f:trangThaiCongKhai']),
     n('L2', 'Vòng cải tiến: phát hiện → soát → thử nghiệm → đánh giá → duyệt → chuẩn hoá',
       ['f:docVongKhoaHoc', 'v:cai-tien', 'v:tu-nang-cap']),
     n('L3', 'Dashboard quản trị: phòng ban · cấp · bánh đà · giá trị · dòng tiền · sản xuất · rủi ro',

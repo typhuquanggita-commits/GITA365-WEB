@@ -99,6 +99,7 @@ import { hoiDaTri, hoiDongDaTri, chamDaTri, soDaTri, luuGiaiPhap, duyetGiaiPhap,
   taoTuyenDaTri, chayChangDaTri, docTuyenDaTri } from './bo-nao-da-tri.js';
 import { docKpiCayTien } from './cay-tien.js';
 import { docDongChay } from './dong-chay.js';
+import { trangThaiCongKhai } from './trang-thai.js';
 import { dieuPhoiTroLy, soatDieuPhoi, tuHoanThienTroLy, soatHoatDongAgent } from './dieu-phoi.js';
 import { soatKhungVanHanh, chamMotLuot } from './khung-van-hanh.js';
 import { lapKeHoachAgent, chayBuocAgent, dsWorkflowAgent } from './agent-team.js';
@@ -371,6 +372,10 @@ async function lam(fn, y, env, db) {
   if (fn === 'dongBangHe')   return await dongBangHe(y, env, db);
   if (fn === 'moBangHe')     return await moBangHe(y, env, db);
   if (fn === 'truyHoiHe')    return await truyHoiHe(y, env, db);
+  /* Cửa trạng thái CÔNG KHAI: không phiên, chỉ tổng hợp số. Đứng trước
+     kiểm phiên — đây là cửa duy nhất cho phép vậy, và nó không chạm
+     bảng người dùng. */
+  if (fn === 'trangThaiCongKhai') return await trangThaiCongKhai(y, env, db);
 
   if (CAN_PHIEN.indexOf(fn) < 0) return {ok: false, error: 'Yêu cầu không hợp lệ.'};
 
@@ -698,6 +703,7 @@ async function lam(fn, y, env, db) {
   if (fn === 'docTuyenDaTri')     return await docTuyenDaTri(y, env, db, hoSo);
   if (fn === 'docKpiCayTien')     return await docKpiCayTien(y, env, db, hoSo);
   if (fn === 'docDongChay')       return await docDongChay(y, env, db, hoSo);
+  if (fn === 'trangThaiCongKhai') return await trangThaiCongKhai(y, env, db);
   if (fn === 'phimTrangThai')     return await phimTrangThaiDu(y, env, db, hoSo);
   if (fn === 'phimMienPhi')       return await phimMienPhi(y, env, db, hoSo);
   if (fn === 'quayKhopMoi')       return await quayKhopMoi(y, env, db, hoSo);

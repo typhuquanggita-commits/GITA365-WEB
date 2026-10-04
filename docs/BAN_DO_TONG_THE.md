@@ -43,3 +43,7 @@ flowchart TB
 5. Máy GPU render nội bộ (G5/K2) — khi sản lượng phim đủ lớn.
 6. Cửa duyệt ngân sách tái đầu tư (H5).
 7. Môi trường staging (J3) — khi đội phát triển > 3 người.
+
+## Trang trạng thái công khai
+
+`trang-thai.html` (không cần đăng nhập) gọi cửa công khai `trangThaiCongKhai` (`may-chu/trang-thai.js`) — cửa DUY NHẤT không cần phiên, chỉ trả tổng hợp số (lần tự soát gần nhất · lượt phục vụ 0 token hôm nay · lượt ghi sổ hôm nay), không tên, không định danh ai. Phép thử: `node tools/thu-trang-thai.mjs` (7 phép, gồm trường hợp D1 hỏng vẫn không sập).

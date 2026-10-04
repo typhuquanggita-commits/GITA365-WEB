@@ -50,6 +50,9 @@ jobs:
       - name: Thử Truy vấn đa chiều (bốn dòng chảy · bảng điểm 16 ban)
         run: node tools/thu-dong-chay.mjs
 
+      - name: Thử trang trạng thái công khai (không phiên · chỉ tổng hợp số)
+        run: node tools/thu-trang-thai.mjs
+
       - name: Đo 16 hệ (con trỏ sống · SOP đúng miền · 1000 chiến lược · lá chắn 30 tầng)
         run: node tools/do-16-he.js
 

@@ -40,6 +40,7 @@ export async function docDongChay(y, env, db, hoSo) {
   const hn = new Date().toISOString().slice(0, 10);
   const c3 = new Date(Date.now() - 3 * 86400e3).toISOString().slice(0, 10);
   const c7 = new Date(Date.now() - 7 * 86400e3).toISOString();
+  const c24 = new Date(Date.now() - 86400e3).toISOString().slice(0, 19);
 
   /* ── DÒNG TIỀN ── */
   const thu = await so(db, "SELECT COALESCE(SUM(soTien),0) n FROM phieuThu WHERE trangThai = 'daDuyet' AND substr(ghiLuc,1,10) >= ?", tu);
@@ -87,7 +88,11 @@ export async function docDongChay(y, env, db, hoSo) {
     { ten: 'Lượt chạm lúc đèn ĐỎ', giaTri: chamDo, nguong: '= 0', xau: chamDo > 0 }] };
   ban.B06 = { chiSo: [{ ten: 'Bài học hoàn thành trong kỳ', giaTri: baiHoc, nguong: 'tham chiếu', xau: false }] };
   const xoaTre = await so(db, 'SELECT COUNT(*) n FROM yeuCauXoa WHERE xoaTrongSo IS NULL AND hanXuLy < ?', hn);
-  ban.B07 = { chiSo: [{ ten: 'Yêu cầu xoá dữ liệu QUÁ HẠN xử lý', giaTri: xoaTre, nguong: '= 0', xau: xoaTre > 0 }] };
+  ban.B07 = { chiSo: [
+    { ten: 'Yêu cầu xoá dữ liệu QUÁ HẠN xử lý', giaTri: xoaTre, nguong: '= 0', xau: xoaTre > 0 },
+    { ten: 'Cổng bảo vệ hành động ra lệnh trong 24 giờ qua', giaTri: await so(db,
+      "SELECT COUNT(*) n FROM audit WHERE viec IN ('ATAI_DIEU13','XOA_DU_LIEU','KHOA_KHOANG','CUU_HE_DONG_BANG') AND substr(luc,1,19) >= ?", c24),
+      nguong: 'tham chiếu', xau: false }] };
   const tuyenTre = await so(db, "SELECT COUNT(*) n FROM tuyenDaTri WHERE trangThai = 'dangChay' AND lucSua < ?", Date.now() - 7 * 86400e3);
   ban.B08 = { chiSo: [{ ten: 'Tuyến dự án treo quá 7 ngày', giaTri: tuyenTre, nguong: '= 0', xau: tuyenTre > 0 }] };
   const dgXau = await so(db, 'SELECT COALESCE(SUM(xau),0) n FROM danhGiaDaTri');
