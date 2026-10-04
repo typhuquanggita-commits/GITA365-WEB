@@ -171,3 +171,7 @@ Phim không lưu thành file video. `may-chu/phim-phan-tu.js` ghi một công th
 - Cloudflare Workers AI vẽ được ảnh, không có mô hình quay video. Lúc xem không cần GPU.
 
 Kiểm: `node tools/thu-phim-phan-tu.mjs`. Đổi mã xong phải deploy lại Worker.
+
+### Video chuyển động trên GPU miễn phí (Kaggle)
+
+Nhân vật là AI, không dùng ảnh khách, nên được dùng GPU ngoài. Cửa `quayVideoDong` (R01): ảnh nhân vật + lời nhắc động tác + `phamVi` (`khach` mặc định, `noi-bo` cho phim đào tạo). Phạm vi `khach` bị chặn cứng từ khoá nội bộ ở `TU_KHOA_NOI_BO`; nội dung khách theo thị hiếu, lõi GITA tối đa ~30%. Máy Kaggle (GPU T4 miễn phí ~30 giờ/tuần) chạy `may-quay-kaggle/quay-kaggle.py`, nhận riêng việc loại `vd` qua cùng khoá `GITA_KHOA_XUONG_QUAY`, nộp MP4 về `/quay/phim/<ma>.mp4`. Máy GitHub vẫn lo `moi`/`cd` như cũ. Hướng dẫn từng bước: `docs/GPU-MIEN-PHI.md`. Kiểm: `node tools/thu-quay-video.mjs`.
