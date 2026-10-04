@@ -1024,6 +1024,7 @@ G.NAV = [
     {v:'truy-van-da-chieu', t:'Truy vấn đa chiều — bốn dòng chảy · bảng điểm 16 ban', h:'dòng tiền · dòng chi phí · dòng giá trị · dòng công việc tính lúc đọc từ D1, không ô nhập tay · ban nào có tín hiệu xấu vượt ngưỡng thì đỏ — cần nâng cấp · 7/30/90/365 ngày', ic:'chart', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'vong-lap-van-hanh', t:'Vòng lặp vận hành — bánh đà bốn vòng', h:'V1 tạo giá trị → V2 lan toả từ kết quả → V3 chất lượng tích luỹ → V4 nguồn lực & tái đầu tư · kiểm soát xuyên vòng: bảo mật · quyền riêng tư · ngân sách · giới hạn tải · nhật ký · dừng & phục hồi · bộ phận lường thực thi · mỗi nút trỏ mã thật, CI đo mỗi PR', ic:'pulse', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'ban-do-tong-the', t:'Bản đồ tổng thể — 12 khối A–L', h:'A quản trị & bảo mật · B website & kênh · C lõi vận hành · D con người & agent · E quy trình & bánh đà · F chăm sóc & giá trị · G xưởng phim · H VIP & dòng tiền · I hệ thống kho · J GitHub & phát triển · K Cloudflare & dịch vụ ngoài · L đo lường & cải tiến · mỗi nút trỏ mã thật, CI đo mỗi PR · nút thiếu ghi thật', ic:'map', star:1, perm:'qt_trang', capMo:'chung'},
+    {v:'tong-quan', t:'Tổng quan hôm nay', h:'ít chữ · KPI sống từ D1 · bốn dòng chảy + cây tiền + đòn bẩy kho giải pháp · bấm một thẻ mở đúng màn sâu', ic:'pulse', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'khung-van-hanh', t:'Khung vận hành · V20', h:'Harness Engineering — tầng chuẩn hoá cách Bộ não điều phối 100 trợ lý · năm trụ: quản lý ngữ cảnh · gọi đúng cổng công cụ · gác Hiến pháp · chống hai trợ lý cùng ra tay · tự kiểm chất lượng mỗi lượt · mỗi trụ TRỎ vào cơ chế thật (không chép luật), bộ chấm mỗi lượt đo được từng trụ (phá-thử-đỏ-được) · V20 là đo được, không phải con số tự khai · bộ chấm KHÔNG tự ra tay', ic:'shield', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'suc-chua-toc-do', t:'Sức chứa & Tốc độ', h:'Bộ não chạy nhanh và chứa nhiều trên Cloudflare bằng NĂM TRỤ (việc nặng ở máy khách · chỉ mục đường tra nóng · bộ nhớ đệm ở biên · Workers tự co giãn · R2 cho tệp lớn), không bằng một con số · "1TB" là dung lượng, đạt bằng R2 (hàng TB) + chia mảnh D1, không phải mức của bộ não · sức chứa ĐO ĐƯỢC lúc gọi (cửa doSucChua), không tự khai · nói ra cả trần Cloudflare lẫn đường vượt trần', ic:'vault', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'thanh-tra-soi', t:'Mười tổ thanh tra soi', h:'Mười thanh tra ĐỘC LẬP chuyên phá các điểm chưa tốt, mười CẤP × 100 bậc = 1000 bậc tiêu chuẩn liền mạch · mỗi tổ NEO vào một phép soi CÓ THẬT trong mã nguồn (soatRaNgoai · truyHoiHe · capDuyetTheoTien · nhaCuaMinh · xuatDuLieuNha · danhDauXoa · dieuPhoiTroLy · a11yNhan · lapTheVungManh · kiemPhien), không phải một dòng khẩu hiệu — mục 114 đối chiếu tên ấy tồn tại trong tệp, trỏ vào cái tên bịa thì đỏ · cấp cao = hậu quả nặng hơn khi hỏng, cấp 10 là rò dữ liệu một đứa trẻ ra ngoài', ic:'shield', star:1, perm:'qt_trang', capMo:'chung'},
@@ -1543,6 +1544,7 @@ G.ITEM_EN = {
 'truy-van-da-chieu':['Multi-Dimensional Queries — Four Flows & 16-Division Scorecard','money · cost · value · work flows computed at read time from D1, no manual cells · a division with a signal past its threshold turns red — needs upgrade · 7/30/90/365 days'],
 'vong-lap-van-hanh':['Operating Flywheel — Four Loops','V1 create value → V2 spread from results → V3 compounding quality → V4 resources & reinvestment · cross-loop control: security · privacy · budget · load limits · audit · stop & recover · execution instrumentation · every node points at real code, CI-measured each PR'],
 'ban-do-tong-the':['Master Map — 12 Blocks A–L','A governance & security · B website & channels · C operating core · D people & agents · E processes & flywheels · F care & value · G film studio · H VIP & money flows · I warehouses · J GitHub & development · K Cloudflare & external services · L measurement & improvement · every node points at real code, CI-measured each PR · missing nodes honestly recorded'],
+'tong-quan':['Today Overview','lean · live KPIs from D1 · four flows + money tree + solution-store leverage · tap a card to open the right deep screen'],
   'goi-nghe':['Professional Kits by Department','Each role a full kit: mission · professional standard · certification · tools'],
   'assessment':['Tier-1 Assessment','6 domains · 10-step protocol · DCI reliability · care direction — the consultant/assessor diagnostic'],
   'nhan-su-tt':['Loyal staff profile','5 levels · 7 metrics · 5 rules'],
@@ -50176,14 +50178,21 @@ G.nhaMoChang = function (el) {
       var idx = tu + i;
       var mau = BD_MAU[idx % BD_MAU.length];
       var ten = b.ten || b.t || ('Bánh đà ' + (idx + 1));
-      /* Icon THẬT của bánh đà (b.ic) trong huy hiệu tròn màu — khớp bản
-         render chủ hệ gửi (mỗi nút một icon + tên). KHÔNG bịa dòng phụ:
-         BD_LON không có ô tagline ngắn, thêm một câu cho "đẹp" là làm sai
-         nội dung ô. Hai <span> đều CÓ nội dung (icon SVG · tên), nên bộ rà
-         soát chỗ trống không đếm thẻ rỗng. */
-      return '<button class="nha-bd-o" style="--ac:' + mau + ';--i:' + idx + '" data-v="banh-da">' +
+      /* Vị trí trên vòng tròn tính BẰNG SỐ lúc render (Math.cos/sin trong
+         JS — không phải trig trong CSS), nên chạy MỌI trình duyệt, kể cả
+         trình duyệt không hiểu cos() trong calc(). Góc -90° = đỉnh, mỗi
+         nút +36°. Bán kính 46% theo trục ngang / 46% theo trục dọc của
+         khung vòng (khung là hình vuông nên vòng TRÒN CHUẨN). */
+      var goc = (idx * 36 - 90) * Math.PI / 180;
+      var x = 50 + 46 * Math.cos(goc);
+      var y = 50 + 46 * Math.sin(goc);
+      /* Góc giữ chữ thẳng là HẰNG SỐ (-(idx*36-90)) — khi wrapper quay, nút
+         đi theo vòng và chữ vẫn đứng vì góc đặt đã được triệt. */
+      var giuThang = (idx * 36 - 90) * -1;
+      return '<span class="nha-bd-slot" style="left:' + x.toFixed(2) + '%;top:' + y.toFixed(2) + '%">' +
+        '<button class="nha-bd-o" style="--ac:' + mau + ';transform:translate(-50%,-50%) rotate(' + giuThang + 'deg)" data-v="banh-da">' +
         '<span class="nha-bd-ic">' + ic(b.ic) + '</span>' +
-        '<span class="nha-bd-ten">' + h(ten) + '</span></button>';
+        '<span class="nha-bd-ten">' + h(ten) + '</span></button></span>';
     }).join('');
   }
 
@@ -57234,6 +57243,108 @@ G.BD_KHOI = [
     });
     o += '<p class="note hvh-note">Sơ đồ vận hành chi tiết (vòng đời yêu cầu · vòng đêm · CI/CD): docs/SO_DO_VAN_HANH_TONG_THE.md · ' +
       'kiến trúc as-built: docs/KIEN_TRUC_TONG_THE.md.</p>';
+    return o;
+  };
+})();
+
+})();
+
+/* ═════════ src/tong-quan.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — TỔNG QUAN HÔM NAY (ít chữ · KPI sống · đòn bẩy)
+
+   Chủ hệ: trang hiện đại hơn, tinh gọn hơn, ÍT CHỮ hơn; nhân sự dễ
+   theo dõi nhiệm vụ · tiến trình · KPI · và biết cập nhật giải pháp
+   tối ưu cho khách. Hệ thống đòn bẩy tối tân nhất.
+
+   Màn này KHÔNG dựng lại con số — nó ĐỌC thẳng hai cửa đã có
+   (docDongChay · docKpiCayTien) và bày ra thành thẻ. Mỗi thẻ bấm mở
+   đúng màn sâu. Đòn bẩy = chỉ số "kho giải pháp đã dùng × lần" — một
+   giải pháp duyệt một lần phục vụ mãi, 0 token mỗi lần.
+
+   TRỎ, KHÔNG CHÉP (HE-L1): mọi con số do máy chủ tính từ D1; màn này
+   chỉ vẽ. Không ô tự khai, không số cứng.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.VIEWS = G.VIEWS || {};
+
+(function () {
+  var U = G.U, h = U.h, ic = U.ic;
+  function nut(on, nd, k) { return '<button class="btn ' + (k || 'ghost') + ' sm" onclick="' + on + '">' + nd + '</button>'; }
+  function so(n) { return Number(n || 0).toLocaleString('vi-VN'); }
+  function tien(n) { return so(n) + ' đ'; }
+
+  G.tqTai = function () {
+    if (!G.goiMayChu || G.tqDangTai) return;
+    G.tqDangTai = true;
+    Promise.all([
+      G.goiMayChu('docDongChay', { ngay: 30 }).catch(function () { return { ok: false }; }),
+      G.goiMayChu('docKpiCayTien', {}).catch(function () { return { ok: false }; })
+    ]).then(function (r) {
+      G.tqDangTai = false; G.tqDC = r[0]; G.tqCT = r[1];
+      if (G.S && G.S.view === 'tong-quan' && G.render) G.render();
+    });
+  };
+
+  /* Một thẻ: số to · nhãn · bấm mở màn sâu. `sac`: ok · sau · do · thuong. */
+  function the(v, so2, nhan, duoi, sac) {
+    var mau = { ok: 'var(--ok)', sau: 'var(--gita-sau)', do: 'var(--gita-do)', thuong: 'var(--ink-2)' }[sac || 'thuong'];
+    return '<button class="card tq-the" data-v="' + h(v) + '" style="text-align:left;cursor:pointer">' +
+      '<div class="tq-so" style="color:' + mau + '">' + so2 + '</div>' +
+      '<div class="tq-nhan">' + h(nhan) + '</div>' +
+      (duoi ? '<div class="tq-duoi tiny muted">' + duoi + '</div>' : '') + '</button>';
+  }
+
+  G.VIEWS['tong-quan'] = function () {
+    var dc = G.tqDC, ct = G.tqCT;
+    var o = '<div class="hd"><h2>' + ic('pulse') + ' Tổng quan</h2>' +
+      '<p class="sub">30 ngày qua · mọi con số tính lúc đọc từ dữ liệu thật, không ô nhập tay. ' +
+      'Bấm một thẻ để mở đúng màn sâu.</p></div>';
+    o += '<div class="row">' + nut('G.tqTai()', 'Làm mới') + '</div>';
+
+    if (!dc) { if (G.goiMayChu) G.tqTai(); return o + '<div class="card mt tiny muted">Đang đọc…</div>'; }
+    if (!dc.ok) return o + '<div class="card mt" style="color:var(--gita-do)">' + h(dc.error || 'Không đọc được.') + ' ' + nut('G.tqTai()', 'Thử lại') + '</div>';
+
+    /* ── VIỆC CẦN LÀM NGAY (đòn bẩy: mở đúng chỗ đỏ) ── */
+    var doBan = Object.keys(dc.ban || {}).filter(function (m) { return dc.ban[m].danhGia === 'can-nang-cap'; });
+    var tenBan = {}; (G.TD_BAN || []).forEach(function (b) { tenBan[b.ma] = b.ten; });
+    o += '<div class="card mt" style="border-color:' + (doBan.length ? 'var(--gita-do)' : 'var(--ok)') + '">' +
+      '<b>' + (doBan.length ? ic('alert') + ' ' + doBan.length + ' việc cần xử lý' : ic('check') + ' Mọi ban đạt chuẩn') + '</b>';
+    if (doBan.length) o += '<div class="row mt" style="gap:6px;flex-wrap:wrap">' + doBan.map(function (m) {
+      return '<button class="btn ghost sm" data-v="truy-van-da-chieu" style="border-color:var(--gita-do);color:var(--gita-do)">' + h(m) + ' ' + h(tenBan[m] || '') + '</button>';
+    }).join('') + '</div>';
+    o += '</div>';
+
+    /* ── BỐN DÒNG — mỗi dòng một hàng thẻ, ít chữ ── */
+    o += '<h3 class="hvh-h">' + ic('chart') + ' Dòng chảy</h3><div class="tq-luoi">';
+    o += the('truy-van-da-chieu', tien(dc.tien.rong), 'Dòng tiền ròng', 'thu ' + tien(dc.tien.thu) + ' − hoàn − hoa hồng', dc.tien.rong >= 0 ? 'ok' : 'do');
+    o += the('truy-van-da-chieu', tien(dc.chiPhi.tong), 'Chi phí vận hành', 'kỳ này', 'thuong');
+    o += the('truy-van-da-chieu', so(dc.giaTri.lenTang), 'Lượt lên tầng', 'giá trị khách nhận', 'ok');
+    o += the('truy-van-da-chieu', so(dc.congViec.tongLuot), 'Lượt việc ghi sổ', 'trung bình ' + so(dc.congViec.trungBinhNgay) + '/ngày', 'thuong');
+    o += '</div>';
+
+    /* ── CÂY TIỀN — ba đích ── */
+    if (ct && ct.ok && ct.kpi) {
+      o += '<h3 class="hvh-h">' + ic('star') + ' Cây tiền</h3><div class="tq-luoi">';
+      ct.kpi.forEach(function (k) {
+        o += the('bo-may-tap-doan', k.giaTri + '%', k.ten, 'đích ' + k.dich + '%' + (k.dat ? '' : ' · thiếu ' + k.conThieu), k.dat ? 'ok' : 'sau');
+      });
+      o += '</div>';
+    }
+
+    /* ── ĐÒN BẨY — kho giải pháp & bộ não ── */
+    o += '<h3 class="hvh-h">' + ic('orbit') + ' Đòn bẩy</h3><div class="tq-luoi">';
+    o += the('bo-nao-da-tri', so(dc.giaTri.khoDung) + ' lần', 'Kho giải pháp đã dùng', 'duyệt một lần · phục vụ mãi · 0 token mỗi lần', 'ok');
+    o += the('bo-nao-da-tri', so(dc.giaTri.tuyenXong), 'Tuyến dự án hoàn tất', 'mỗi tuyến có chốt chặn', 'thuong');
+    o += the('bo-nao-da-tri', so(dc.giaTri.baiHoc), 'Bài học khách hoàn thành', 'kỳ này', 'thuong');
+    o += the('bo-nao-da-tri', so(dc.giaTri.wow), 'Lượt WOW ghi sổ', 'điểm chạm có căn cứ', 'ok');
+    o += '</div>';
+
+    o += '<p class="note hvh-note">Mọi thẻ đọc từ docDongChay · docKpiCayTien (máy chủ tính từ D1). ' +
+      'Muốn sâu hơn: màn <b data-v="truy-van-da-chieu">Truy vấn đa chiều</b> (bảng điểm 16 ban) · ' +
+      '<b data-v="bo-may-tap-doan">Bộ máy tập đoàn</b> · <b data-v="bo-nao-da-tri">Bộ não V20</b>.</p>';
     return o;
   };
 })();

@@ -146,6 +146,7 @@
     "src/truy-van-da-chieu.js",
     "src/vong-lap-van-hanh.js",
     "src/ban-do-tong-the.js",
+    "src/tong-quan.js",
     "src/khung-van-hanh.js",
     "src/suc-chua-toc-do.js",
     "src/thanh-tra-soi.js",
