@@ -2579,18 +2579,17 @@ button.nha-o-nen:hover .nha-ic{transform:scale(1.06)}
     border:2px dashed var(--line-2);border-radius:50%;pointer-events:none}
   .nha-ring-nodes{position:absolute;inset:0;margin:0;display:block;pointer-events:none;
     animation:nhaQuay 80s linear infinite}
-  /* SLOT định vị — KHÔNG animation, nên transform định vị không bị bộ hiện
-     dần oMo (fill:both) ghi đè. Nút bên trong mới chịu oMo. Cách này bỏ hẳn
-     cos()/sin() (chỉ Chromium) — chạy mọi trình duyệt: xoay theo góc rồi đẩy
-     ra ngoài theo bán kính dọc. */
-  .nha-ring-nodes .nha-bd-slot{position:absolute;top:50%;left:50%;pointer-events:none;
-    transform:translate(-50%,-50%) rotate(calc(var(--i) * 36deg - 90deg)) translateY(calc(var(--ry) * -1))}
+  /* SLOT chỉ neo ở tâm, KHÔNG mang transform định vị — để transform của nút
+     không bị kẹp giữa hai lớp. Mọi phép đặt vị trí + giữ chữ thẳng nằm gọn
+     trong MỘT transform của nút. */
+  .nha-ring-nodes .nha-bd-slot{position:absolute;top:50%;left:50%;pointer-events:none}
+  /* Nút: rotate(a) xoay trục → translate(0,-ry) đẩy ra chu vi → rotate(-a)
+     xoay lại để CHỮ thẳng. Ba bước trong một transform, vị trí trên vòng
+     tròn đúng và chữ luôn đứng. Không cos/sin, không @property — chạy mọi
+     trình duyệt. Khi wrapper nhaQuay quay, cả cụm quay theo, chữ vẫn thẳng. */
   .nha-ring-nodes .nha-bd-slot .nha-bd-o{pointer-events:auto;
     max-width:120px;text-align:left;display:flex;gap:6px;align-items:center;
-    /* Góc giữ chữ thẳng là HẰNG SỐ theo --i (không animation nào đè): slot
-       xoay +ang0 (và quay cùng vòng) → nút xoay ngược -ang0 ngay từ đầu,
-       chữ đứng thẳng suốt vòng. */
-    transform:rotate(calc((var(--i) * 36deg - 90deg) * -1))}
+    transform:rotate(calc(var(--i) * 36deg - 90deg)) translateY(calc(var(--ry) * -1)) rotate(calc((var(--i) * 36deg - 90deg) * -1)) translate(-50%,-50%)}
 }
 
 /* ── TỔNG QUAN (tong-quan.js) — thẻ ít chữ, số to, lưới co giãn ── */
