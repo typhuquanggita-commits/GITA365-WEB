@@ -41,10 +41,10 @@ export const QUAY = {
 
 const RE_MA = /^[0-9a-f]{32}$/;
 const RE_MAY = /^[A-Za-z0-9._-]{1,60}$/;
-let daTaoBang = false;
+const daTaoBang = new WeakSet();
 
 export async function taoBangQuay(db) {
-  if (daTaoBang) return;
+  if (daTaoBang.has(db)) return;
   await db.prepare(`CREATE TABLE IF NOT EXISTS quay_viec (
     ma TEXT PRIMARY KEY, uid TEXT NOT NULL, trangThai TEXT NOT NULL DEFAULT 'cho',
     kieuAnh TEXT, kieuAm TEXT, taoLuc INTEGER NOT NULL, nhanLuc INTEGER, xongLuc INTEGER,
@@ -54,7 +54,7 @@ export async function taoBangQuay(db) {
   await db.prepare('ALTER TABLE quay_viec ADD COLUMN phamVi TEXT').run().catch(() => {});
   await db.prepare('CREATE INDEX IF NOT EXISTS ix_quay_tt ON quay_viec (trangThai, taoLuc)').run();
   await db.prepare('CREATE TABLE IF NOT EXISTS quay_may (ma TEXT PRIMARY KEY, luc INTEGER NOT NULL)').run();
-  daTaoBang = true;
+  daTaoBang.add(db);
 }
 
 function maMoi() {

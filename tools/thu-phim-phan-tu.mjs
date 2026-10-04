@@ -43,7 +43,10 @@ const r = await phucVuPhimPhanTu(new Request('https://w.test/phim/mau'), env, '/
 kiem(r.status === 302 && r.headers.get('location').endsWith('/phim/xem/mau-gita-365'), 'link mẫu chuyển tới trang ghép');
 const xem = await phucVuPhimPhanTu(new Request('https://w.test/phim/xem/mau-gita-365'), env, '/phim/xem/mau-gita-365');
 const html = await xem.text();
-kiem(xem.status === 200 && html.includes('Không tải file video') && !html.includes('.mp4'), 'trang xem không phát file video');
+kiem(xem.status === 200 && html.includes('<video') && html.includes('đang được AI quay chuyển động thật'),
+  'trang xem phát clip AI quay thật, báo đang quay khi clip chưa về');
+kiem(!html.includes('requestAnimationFrame') && !html.includes('<canvas'),
+  'NGHIÊM CẤM ghép ảnh tĩnh giả chuyển động (không còn canvas pan/zoom)');
 const ct = await phucVuPhimPhanTu(new Request('https://w.test/phim/cong-thuc/mau-gita-365'), env, '/phim/cong-thuc/mau-gita-365');
 const j = await ct.json();
 kiem(j.canh.length === 4 && j.canh.every(c => ['tho', 'gio-tay', 'quay-dau', 'buoc'].includes(c.nhip)), 'công thức có 4 nhịp nhẹ');
@@ -68,7 +71,6 @@ kiem(xemKho.ok && xemKho.hat.so === 1, 'kho ảnh đếm một hạt');
 
 /* ── Người que bị cấm: trình xem không còn bộ vẽ người bằng nét ── */
 kiem(!html.includes('function nguoi(') && !html.includes('else nguoi('), 'trình xem không còn vẽ người que');
-kiem(html.includes('đang được AI vẽ lại'), 'cảnh thiếu ảnh báo đang vẽ, không vẽ hình tạm');
 
 /* ── Phim mẫu tự vẽ cảnh bằng Workers AI (0đ) ── */
 let soLanSchnell = 0, soLanKlein = 0;
@@ -78,14 +80,16 @@ const envAI = {
 };
 const mauAI = await damBaoMau(envAI, envAI.CSDL);
 kiem(mauAI.ok && mauAI.anhVuaVe === 4 && mauAI.duAnh === true, 'mẫu tự vẽ đủ 4 cảnh bằng AI');
-kiem(soLanKlein === 4 && soLanSchnell === 0, 'ưu tiên máy ảnh FLUX.2 klein, đúng một lần cho mỗi cảnh');
+kiem(soLanKlein === 5 && soLanSchnell === 0, 'vẽ 1 chân dung gốc + 4 cảnh bằng máy ảnh FLUX.2 klein');
+const nvHat = await envAI.CSDL.prepare("SELECT ma FROM phim_pt_hat WHERE loai = 'nvmau' || 4").first();
+kiem(!!nvHat, 'chân dung nhân vật gốc được lưu làm hạt riêng');
 const ctAI = await phucVuPhimPhanTu(new Request('https://w.test/phim/cong-thuc/mau-gita-365'), envAI, '/phim/cong-thuc/mau-gita-365');
 const jAI = await ctAI.json();
 kiem(jAI.canh.every(c => /^[0-9a-f]{32}$/.test(c.hatNen || '')), 'mọi cảnh mẫu đều gắn hạt ảnh');
 const hatAI = await phucVuPhimPhanTu(new Request('https://w.test/phim/hat/mau-gita-365/' + jAI.canh[0].hatNen), envAI, '/phim/hat/mau-gita-365/' + jAI.canh[0].hatNen);
 kiem(hatAI.status === 200 && hatAI.headers.get('content-type') === 'image/jpeg', 'ảnh cảnh mẫu được phục vụ công khai');
 const mauAI2 = await damBaoMau(envAI, envAI.CSDL);
-kiem(mauAI2.anhVuaVe === 0 && soLanKlein === 4, 'xem lại không vẽ lại, không tốn neuron');
+kiem(mauAI2.anhVuaVe === 0 && soLanKlein === 5, 'xem lại không vẽ lại, không tốn neuron');
 kiem(!JSON.stringify(jAI).includes('pbAnh'), 'JSON công khai không lộ dấu phiên bản ảnh');
 
 /* ── Cảnh vẽ bằng bản cũ (không dấu pbAnh) được vẽ lại bằng máy ảnh mới ── */
@@ -106,6 +110,54 @@ kiem(veLai.ok && veLai.anhVuaVe === 4 && ctPB.canh.every(c => c.hatNen && !/^f{3
   'ảnh bản cũ bị thay bằng bản máy ảnh mới');
 const veLai2 = await damBaoMau(envPB, envPB.CSDL);
 kiem(veLai2.anhVuaVe === 0, 'sau khi lên bản mới thì không vẽ lại nữa');
+
+/* ── Ảnh chân dung do CHỦ HỆ chọn (hạt 'nvmau-chu') được ưu tiên tuyệt
+   đối: mọi cảnh tự vẽ lại theo đúng gương mặt chủ hệ gửi ── */
+const nhanRef = [];
+const envChu = {
+  CSDL: taoD1(), HOSO: taoR2(),
+  AI: { async run(model, opts) {
+    if (opts && opts.multipart) nhanRef.push(String(await new Response(opts.multipart.body).text()).includes('input_image_0'));
+    return { image: jpg };
+  } }
+};
+await taoBangPhanTu(envChu.CSDL);
+const bamChu = 'c'.repeat(64);
+await envChu.HOSO.put('pt/' + bamChu, Uint8Array.from(atob(jpg), c => c.charCodeAt(0)));
+await envChu.CSDL.prepare("INSERT INTO phim_pt_hat (ma, bam, loai, mime, byte, soLan) VALUES (?, ?, 'nvmau-chu', 'image/jpeg', 84, 1)")
+  .bind('b'.repeat(32), bamChu).run();
+const canhMatCu = Array.from({ length: 4 }, (_, i) => ({
+  giay: 5, may: 'day', nhip: 'tho', loi: 'Lời ' + i,
+  hatNen: 'd'.repeat(31) + i, pbAnh: 4, nvRef: 'a'.repeat(32)
+}));
+await envChu.CSDL.prepare("INSERT INTO phim_pt_cong_thuc (ma, uid, ten, noiDung, taoLuc) VALUES ('mau-gita-365', 'he-thong', 'Hành trình GITA 365 — phim phân tử', ?, 1)")
+  .bind(JSON.stringify({ ten: 'Hành trình GITA 365 — phim phân tử', canh: canhMatCu })).run();
+const veChu = await damBaoMau(envChu, envChu.CSDL);
+kiem(veChu.ok && veChu.anhVuaVe === 4, 'đặt ảnh chủ hệ → toàn bộ cảnh tự vẽ lại theo gương mặt mới');
+kiem(nhanRef.length === 4 && nhanRef.every(Boolean), 'mọi cảnh đều nhận ảnh chân dung chủ hệ làm tham chiếu');
+const jChu = await (await phucVuPhimPhanTu(new Request('https://w.test/phim/cong-thuc/mau-gita-365'), envChu, '/phim/cong-thuc/mau-gita-365')).json();
+kiem(!JSON.stringify(jChu).includes('nvRef'), 'JSON công khai không lộ dấu tham chiếu nhân vật');
+const veChu2 = await damBaoMau(envChu, envChu.CSDL);
+kiem(veChu2.anhVuaVe === 0 && nhanRef.length === 4, 'vẽ theo mặt chủ hệ xong thì không vẽ lại, không tốn neuron');
+
+/* ── Cảnh đã có ảnh được gửi xưởng quay LTX-Video (chuyển động THẬT) ── */
+const envQ = {
+  CSDL: taoD1(), HOSO: taoR2(), GITA_KHOA_XUONG_QUAY: 'k'.repeat(40),
+  AI: { async run() { return { image: jpg }; } }
+};
+const mauQ = await damBaoMau(envQ, envQ.CSDL);
+kiem(mauQ.ok && mauQ.clipMoi === 4, 'bốn cảnh được xếp việc quay chuyển động thật');
+const viecQ = await envQ.CSDL.prepare("SELECT ma FROM quay_viec WHERE loai = 'vd' ORDER BY rowid").all();
+kiem(viecQ.results.length === 4, 'hàng chờ có đúng 4 việc video');
+const jQ0 = await (await phucVuPhimPhanTu(new Request('https://w.test/phim/cong-thuc/mau-gita-365'), envQ, '/phim/cong-thuc/mau-gita-365')).json();
+kiem(!JSON.stringify(jQ0).includes('clipXong') && !jQ0.canh.some(c => c.video), 'clip chưa quay xong thì chưa công khai đường phát');
+await envQ.CSDL.prepare("UPDATE quay_viec SET trangThai = 'xong' WHERE ma = ?").bind(viecQ.results[0].ma).run();
+await damBaoMau(envQ, envQ.CSDL);
+const jQ1 = await (await phucVuPhimPhanTu(new Request('https://w.test/phim/cong-thuc/mau-gita-365'), envQ, '/phim/cong-thuc/mau-gita-365')).json();
+kiem(jQ1.canh[0].video === '/quay/phim/' + viecQ.results[0].ma + '.mp4' && !jQ1.canh[1].video,
+  'clip quay xong thì công khai đúng đường phát của cảnh đó');
+const viecQ2 = await envQ.CSDL.prepare("SELECT COUNT(*) AS n FROM quay_viec WHERE loai = 'vd'").first();
+kiem(+viecQ2.n === 4, 'đồng bộ trạng thái không xếp việc trùng');
 
 /* ── Mẫu cũ (thoại đùa, không ảnh) được nâng cấp ── */
 const envCu = { CSDL: taoD1(), HOSO: taoR2(), AI: { async run() { return { image: jpg }; } } };
