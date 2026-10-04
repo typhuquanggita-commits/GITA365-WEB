@@ -1478,7 +1478,7 @@ CREATE INDEX IF NOT EXISTS ix_chan_han ON chanNhip (hetHan);
 CREATE TABLE IF NOT EXISTS quay_viec (
   ma TEXT PRIMARY KEY, uid TEXT NOT NULL, trangThai TEXT NOT NULL DEFAULT 'cho',
   kieuAnh TEXT, kieuAm TEXT, taoLuc INTEGER NOT NULL, nhanLuc INTEGER, xongLuc INTEGER,
-  may TEXT, lanThu INTEGER NOT NULL DEFAULT 0, loi TEXT);
+  may TEXT, lanThu INTEGER NOT NULL DEFAULT 0, loi TEXT, loai TEXT NOT NULL DEFAULT 'moi');
 CREATE INDEX IF NOT EXISTS ix_quay_tt ON quay_viec (trangThai, taoLuc);
 CREATE TABLE IF NOT EXISTS quay_may (ma TEXT PRIMARY KEY, luc INTEGER NOT NULL);
 
