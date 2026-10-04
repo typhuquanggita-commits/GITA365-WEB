@@ -691,6 +691,7 @@ G.VIEWS = G.VIEWS || {};
       '→ máy lắp phụ đề, logo, số tập, nhạc và xuất thành phim. Clip, ảnh và nhạc xử lý ngay trên máy, không tải lên đâu.</p></div>';
     o += '<div class="man-xu">';
     if (G.xpBoView) o += G.xpBoView();
+    if (G.xpKaggleView) o += G.xpKaggleView();
     if (G.xpTuDongView) o += G.xpTuDongView();
 
     /* Hướng dẫn nhanh */
