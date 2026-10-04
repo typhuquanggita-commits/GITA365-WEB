@@ -196,7 +196,7 @@ export function neuronAnh9b(w, h, soThamChieu) {
   return Math.ceil(NEURON.mpDau9b + Math.max(0, mp - 1) * NEURON.mpSau9b + NEURON.mpVao9b * 0.25 * (soThamChieu || 0));
 }
 
-async function veFlux2(env, mau, prompt, w, h, seed, refs) {
+export async function veFlux2(env, mau, prompt, w, h, seed, refs) {
   const f = new FormData();
   f.append('prompt', prompt); f.append('width', String(w)); f.append('height', String(h));
   if (seed != null && isFinite(+seed)) f.append('seed', String(Math.abs(Math.floor(+seed)) % 2147483647));

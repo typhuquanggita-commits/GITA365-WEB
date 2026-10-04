@@ -71,18 +71,41 @@ kiem(!html.includes('function nguoi(') && !html.includes('else nguoi('), 'trình
 kiem(html.includes('đang được AI vẽ lại'), 'cảnh thiếu ảnh báo đang vẽ, không vẽ hình tạm');
 
 /* ── Phim mẫu tự vẽ cảnh bằng Workers AI (0đ) ── */
-let soLanSchnell = 0;
-const envAI = { CSDL: taoD1(), HOSO: taoR2(), AI: { async run() { soLanSchnell++; return { image: jpg }; } } };
+let soLanSchnell = 0, soLanKlein = 0;
+const envAI = {
+  CSDL: taoD1(), HOSO: taoR2(),
+  AI: { async run(model, opts) { if (opts && opts.multipart) soLanKlein++; else soLanSchnell++; return { image: jpg }; } }
+};
 const mauAI = await damBaoMau(envAI, envAI.CSDL);
 kiem(mauAI.ok && mauAI.anhVuaVe === 4 && mauAI.duAnh === true, 'mẫu tự vẽ đủ 4 cảnh bằng AI');
-kiem(soLanSchnell === 4, 'vẽ đúng một lần cho mỗi cảnh thiếu');
+kiem(soLanKlein === 4 && soLanSchnell === 0, 'ưu tiên máy ảnh FLUX.2 klein, đúng một lần cho mỗi cảnh');
 const ctAI = await phucVuPhimPhanTu(new Request('https://w.test/phim/cong-thuc/mau-gita-365'), envAI, '/phim/cong-thuc/mau-gita-365');
 const jAI = await ctAI.json();
 kiem(jAI.canh.every(c => /^[0-9a-f]{32}$/.test(c.hatNen || '')), 'mọi cảnh mẫu đều gắn hạt ảnh');
 const hatAI = await phucVuPhimPhanTu(new Request('https://w.test/phim/hat/mau-gita-365/' + jAI.canh[0].hatNen), envAI, '/phim/hat/mau-gita-365/' + jAI.canh[0].hatNen);
 kiem(hatAI.status === 200 && hatAI.headers.get('content-type') === 'image/jpeg', 'ảnh cảnh mẫu được phục vụ công khai');
 const mauAI2 = await damBaoMau(envAI, envAI.CSDL);
-kiem(mauAI2.anhVuaVe === 0 && soLanSchnell === 4, 'xem lại không vẽ lại, không tốn neuron');
+kiem(mauAI2.anhVuaVe === 0 && soLanKlein === 4, 'xem lại không vẽ lại, không tốn neuron');
+kiem(!JSON.stringify(jAI).includes('pbAnh'), 'JSON công khai không lộ dấu phiên bản ảnh');
+
+/* ── Cảnh vẽ bằng bản cũ (không dấu pbAnh) được vẽ lại bằng máy ảnh mới ── */
+const envPB = {
+  CSDL: taoD1(), HOSO: taoR2(),
+  AI: { async run(model, opts) { return { image: jpg }; } }
+};
+await taoBangPhanTu(envPB.CSDL);
+const canhCu = Array.from({ length: 4 }, (_, i) => ({
+  giay: 5, may: 'day', nhip: 'tho', loi: 'Lời ' + i,
+  hatNen: 'f'.repeat(31) + i, pbAnh: 1, loiTTS: 'x'
+}));
+await envPB.CSDL.prepare("INSERT INTO phim_pt_cong_thuc (ma, uid, ten, noiDung, taoLuc) VALUES ('mau-gita-365', 'he-thong', 'Hành trình GITA 365 — phim phân tử', ?, 1)")
+  .bind(JSON.stringify({ ten: 'Hành trình GITA 365 — phim phân tử', canh: canhCu })).run();
+const veLai = await damBaoMau(envPB, envPB.CSDL);
+const ctPB = await (await phucVuPhimPhanTu(new Request('https://w.test/phim/cong-thuc/mau-gita-365'), envPB, '/phim/cong-thuc/mau-gita-365')).json();
+kiem(veLai.ok && veLai.anhVuaVe === 4 && ctPB.canh.every(c => c.hatNen && !/^f{31}[0-3]$/.test(c.hatNen)),
+  'ảnh bản cũ bị thay bằng bản máy ảnh mới');
+const veLai2 = await damBaoMau(envPB, envPB.CSDL);
+kiem(veLai2.anhVuaVe === 0, 'sau khi lên bản mới thì không vẽ lại nữa');
 
 /* ── Mẫu cũ (thoại đùa, không ảnh) được nâng cấp ── */
 const envCu = { CSDL: taoD1(), HOSO: taoR2(), AI: { async run() { return { image: jpg }; } } };
