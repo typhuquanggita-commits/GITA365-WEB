@@ -175,3 +175,7 @@ Kiểm: `node tools/thu-phim-phan-tu.mjs`. Đổi mã xong phải deploy lại W
 ### Video chuyển động trên GPU miễn phí (Kaggle)
 
 Nhân vật là AI, không dùng ảnh khách, nên được dùng GPU ngoài. Cửa `quayVideoDong` (R01): ảnh nhân vật + lời nhắc động tác + `phamVi` (`khach` mặc định, `noi-bo` cho phim đào tạo). Phạm vi `khach` bị chặn cứng từ khoá nội bộ ở `TU_KHOA_NOI_BO`; nội dung khách theo thị hiếu, lõi GITA tối đa ~30%. Máy Kaggle (GPU T4 miễn phí ~30 giờ/tuần) chạy `may-quay-kaggle/quay-kaggle.py`, nhận riêng việc loại `vd` qua cùng khoá `GITA_KHOA_XUONG_QUAY`, nộp MP4 về `/quay/phim/<ma>.mp4`. Máy GitHub vẫn lo `moi`/`cd` như cũ. Hướng dẫn từng bước: `docs/GPU-MIEN-PHI.md`. Kiểm: `node tools/thu-quay-video.mjs`.
+
+### Tạo nhân vật AI trên GPU miễn phí (Kaggle)
+
+Cửa `taoNhanVatAI` (R01): `moTa` chữ + tuỳ chọn `anhGoc` (ảnh nhân vật AI đã vẽ trước — máy vẽ lại từ đó để giữ cùng gương mặt ở cảnh mới) + `phamVi`. Việc loại `nv`, máy Kaggle chạy `may-quay-kaggle/tao-nhan-vat.py` (FLUX.1-schnell, Apache-2.0), nộp PNG/JPEG về `/quay/phim/<ma>.png` (công khai theo mã, `Cache-Control: private`). `quayXem` trả `loai` và đuôi url theo loại. Cổng bí mật `TU_KHOA_NOI_BO` áp cho `khach` y như `vd`. Kiểm: `node tools/thu-nhan-vat.mjs`.

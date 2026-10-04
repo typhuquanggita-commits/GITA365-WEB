@@ -221,6 +221,37 @@ export async function quayVideoDong(y, env, db, hoSo) {
   return { ok: true, ma, phamVi, ghiChu: 'Việc nằm trong hàng chờ. Clip xong khi máy Kaggle đang mở nhận và quay xong.' };
 }
 
+/* Tạo nhân vật AI chất lượng cao bằng Flux trên GPU miễn phí Kaggle.
+   Không dùng ảnh khách: chỉ mô tả chữ, tuỳ chọn kèm ảnh nhân vật AI
+   đã có để giữ gương mặt (máy Kaggle vẽ lại từ ảnh gốc đó). */
+export async function taoNhanVatAI(y, env, db, hoSo) {
+  if (!laR01(hoSo)) return { ok: false, code: 'NOPERM', error: 'Chỉ Super Admin được tạo nhân vật.' };
+  if (!env.HOSO) return { ok: false, code: 'CHUA_CO_R2', error: 'Máy chủ chưa gắn R2.' };
+  if (!env.GITA_KHOA_XUONG_QUAY) return { ok: false, code: 'CHUA_CO_XUONG', error: 'Máy chủ chưa có khoá xưởng quay (GITA_KHOA_XUONG_QUAY).' };
+  await taoBangQuay(db);
+  const moTa = String(y && y.moTa || '').replace(/[\u0000-\u001F]/g, ' ').trim().slice(0, 600);
+  if (moTa.length < 8) return { ok: false, error: 'Cần mô tả nhân vật (tuổi, tóc, trang phục, thần thái — ít nhất 8 ký tự).' };
+  const phamVi = String(y && y.phamVi || '') === 'noi-bo' ? 'noi-bo' : 'khach';
+  const trung = soatLoiNhac(moTa, phamVi);
+  if (trung) return { ok: false, code: 'BI_MAT', error: 'Mô tả cho phim khách không được chứa “' + trung + '”.' };
+  let goc = null, kg = '';
+  if (y && y.anhGoc) {
+    goc = giaiB64(y.anhGoc);
+    if (!goc || !goc.length || goc.length > QUAY.toiDaAnh) return { ok: false, error: 'Ảnh gốc thiếu hoặc quá lớn.' };
+    kg = kieuAnh(goc);
+    if (!kg) return { ok: false, error: 'Ảnh gốc phải là JPEG/PNG/WEBP.' };
+  }
+  const uid = String(hoSo.uid || '');
+  const dem = await db.prepare("SELECT COUNT(*) AS n FROM quay_viec WHERE uid = ? AND trangThai IN ('cho','dang')").bind(uid).first();
+  if (dem && +dem.n >= QUAY.toiDaCho) return { ok: false, code: 'DAY', error: 'Hàng chờ đã đầy, đợi bớt rồi gửi tiếp.' };
+  const ma = maMoi();
+  await env.HOSO.put('quay/' + ma + '/loi', new TextEncoder().encode(moTa), { httpMetadata: { contentType: 'text/plain; charset=utf-8' } });
+  if (goc) await env.HOSO.put('quay/' + ma + '/anh', goc, { httpMetadata: { contentType: kg } });
+  await db.prepare("INSERT INTO quay_viec (ma, uid, trangThai, kieuAnh, taoLuc, loai, phamVi) VALUES (?, ?, 'cho', ?, ?, 'nv', ?)")
+    .bind(ma, uid, kg || 'text/plain', Date.now(), phamVi).run();
+  return { ok: true, ma, phamVi, ghiChu: 'Nhân vật sẽ được vẽ khi máy Kaggle đang mở. Xong thì ảnh ở /quay/phim/<ma>.png.' };
+}
+
 export async function quayXem(y, env, db, hoSo) {
   if (!laR01(hoSo)) return { ok: false, code: 'NOPERM', error: 'Chỉ Super Admin được dùng xưởng quay.' };
   await taoBangQuay(db);
@@ -228,10 +259,10 @@ export async function quayXem(y, env, db, hoSo) {
   const uid = String(hoSo.uid || '');
   const kq = [];
   for (const ma of ds) {
-    const r = await db.prepare('SELECT rowid AS rid, ma, trangThai, taoLuc, loi FROM quay_viec WHERE ma = ? AND uid = ?').bind(ma, uid).first();
+    const r = await db.prepare('SELECT rowid AS rid, ma, trangThai, taoLuc, loi, loai FROM quay_viec WHERE ma = ? AND uid = ?').bind(ma, uid).first();
     if (!r) { kq.push({ ma, trangThai: 'mat' }); continue; }
-    const o = { ma, trangThai: r.trangThai };
-    if (r.trangThai === 'xong') o.url = '/quay/phim/' + ma + '.mp4';
+    const o = { ma, trangThai: r.trangThai, loai: r.loai || 'moi' };
+    if (r.trangThai === 'xong') o.url = '/quay/phim/' + ma + (r.loai === 'nv' ? '.png' : '.mp4');
     if (r.trangThai === 'loi') o.loi = String(r.loi || 'Máy quay không làm được cảnh này.');
     if (r.trangThai === 'cho') {
       const t = await db.prepare("SELECT COUNT(*) AS n FROM quay_viec WHERE trangThai = 'cho' AND (taoLuc < ? OR (taoLuc = ? AND rowid < ?))").bind(r.taoLuc, r.taoLuc, r.rid).first();
@@ -291,12 +322,14 @@ export async function xuLyMayQuay(req, env, duong) {
     await db.prepare('INSERT OR REPLACE INTO quay_may (ma, luc) VALUES (?, ?)').bind(may, bay).run();
     if (duong === '/quay/song') return traMay({ ok: true });
     await traVeHang(db);
-    /* Máy khai loai='vd' chỉ nhận việc video (máy Kaggle). Không khai
-       thì nhận mọi loại — giữ nguyên hành vi máy GitHub cũ. */
-    const chiLoai = ['moi', 'cd', 'vd'].indexOf(String(y.loai || '')) >= 0 ? String(y.loai) : '';
+    /* Máy khai loai ('vd' hoặc 'vd,nv') chỉ nhận đúng loại đó. Không
+       khai thì nhận mọi loại — giữ nguyên hành vi máy GitHub cũ. */
+    const locLoai = String(y.loai || '').split(',').map(s => s.trim())
+      .filter(s => ['moi', 'cd', 'vd', 'nv'].indexOf(s) >= 0);
     for (let lan = 0; lan < 5; lan++) {
-      const r = chiLoai
-        ? await db.prepare("SELECT ma, kieuAnh, kieuAm, loai, soKhung, phamVi FROM quay_viec WHERE trangThai = 'cho' AND loai = ? ORDER BY taoLuc, rowid LIMIT 1").bind(chiLoai).first()
+      const r = locLoai.length
+        ? await db.prepare("SELECT ma, kieuAnh, kieuAm, loai, soKhung, phamVi FROM quay_viec WHERE trangThai = 'cho' AND loai IN (" +
+            locLoai.map(() => '?').join(',') + ") ORDER BY taoLuc, rowid LIMIT 1").bind(...locLoai).first()
         : await db.prepare("SELECT ma, kieuAnh, kieuAm, loai, soKhung, phamVi FROM quay_viec WHERE trangThai = 'cho' ORDER BY taoLuc, rowid LIMIT 1").first();
       if (!r) return traMay({ ok: true, ma: null });
       const u = await db.prepare("UPDATE quay_viec SET trangThai = 'dang', nhanLuc = ?, may = ?, lanThu = lanThu + 1 WHERE ma = ? AND trangThai = 'cho'")
@@ -313,7 +346,7 @@ export async function xuLyMayQuay(req, env, duong) {
   const m = /^\/quay\/(tep|kq|loi)\/([0-9a-f]{32})(?:\/(anh|am|cd|loi|k[0-3]))?$/.exec(duong);
   if (!m) return traMay({ ok: false, error: 'Không có đường này.' }, 404);
   const [, viec, ma, tep] = m;
-  const r = await db.prepare('SELECT trangThai FROM quay_viec WHERE ma = ?').bind(ma).first();
+  const r = await db.prepare('SELECT trangThai, loai FROM quay_viec WHERE ma = ?').bind(ma).first();
   if (!r) return traMay({ ok: false, error: 'Không có việc này.' }, 404);
 
   if (viec === 'tep' && req.method === 'GET' && tep) {
@@ -326,6 +359,15 @@ export async function xuLyMayQuay(req, env, duong) {
     const dai = +req.headers.get('Content-Length') || 0;
     if (dai > 95 * 1024 * 1024) return traMay({ ok: false, error: 'Tệp quá lớn.' }, 413);
     const buf = new Uint8Array(await req.arrayBuffer());
+    if (r.loai === 'nv') {
+      /* Việc tạo nhân vật trả về ẢNH, không phải MP4. */
+      const png = buf.length > 8 && buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4E && buf[3] === 0x47;
+      const jpg = buf.length > 3 && buf[0] === 0xFF && buf[1] === 0xD8;
+      if (!png && !jpg) return traMay({ ok: false, error: 'Không phải ảnh PNG/JPEG.' }, 400);
+      await env.HOSO.put('quay/' + ma + '/kq.png', buf, { httpMetadata: { contentType: png ? 'image/png' : 'image/jpeg' } });
+      await db.prepare("UPDATE quay_viec SET trangThai = 'xong', xongLuc = ?, loi = NULL, kieuAm = ? WHERE ma = ?").bind(bay, png ? 'image/png' : 'image/jpeg', ma).run();
+      return traMay({ ok: true });
+    }
     if (buf.length < 1000 || !(buf[4] === 0x66 && buf[5] === 0x74 && buf[6] === 0x79 && buf[7] === 0x70))
       return traMay({ ok: false, error: 'Không phải MP4.' }, 400);
     await env.HOSO.put('quay/' + ma + '/kq.mp4', buf, { httpMetadata: { contentType: 'video/mp4' } });
@@ -345,9 +387,19 @@ export async function xuLyMayQuay(req, env, duong) {
 
 /* ── PHIM ĐÃ QUAY: công khai theo mã ngẫu nhiên 128 bit ── */
 export async function phucVuPhimQuay(req, env, duong) {
-  const m = /^\/quay\/phim\/([0-9a-f]{32})\.mp4$/.exec(duong);
+  const m = /^\/quay\/phim\/([0-9a-f]{32})\.(mp4|png)$/.exec(duong);
   const dau = { 'Access-Control-Allow-Origin': '*', 'Cross-Origin-Resource-Policy': 'cross-origin', 'X-Content-Type-Options': 'nosniff' };
   if (!m || !env.HOSO) return new Response('Không có phim này.', { status: 404, headers: dau });
+  if (env.CSDL) await taoBangQuay(env.CSDL);
+  if (m[2] === 'png') {
+    const db = env.CSDL;
+    const r = await db.prepare('SELECT kieuAm FROM quay_viec WHERE ma = ?').bind(m[1]).first();
+    const o = await env.HOSO.get('quay/' + m[1] + '/kq.png');
+    if (!o) return new Response('Không có ảnh này.', { status: 404, headers: dau });
+    dau['Content-Type'] = (r && r.kieuAm) || 'image/png';
+    dau['Cache-Control'] = 'private, max-age=86400';
+    return new Response(req.method === 'HEAD' ? null : o.body, { status: 200, headers: dau });
+  }
   const o = await env.HOSO.get('quay/' + m[1] + '/kq.mp4');
   if (!o) return new Response('Không có phim này.', { status: 404, headers: dau });
   dau['Content-Type'] = 'video/mp4';
@@ -365,7 +417,7 @@ export async function donQuay(env) {
   const ma = ((ds && ds.results) || []).map(r => r.ma);
   if (env.HOSO && ma.length) {
     const khoa = [];
-    ma.forEach(m => khoa.push('quay/' + m + '/anh', 'quay/' + m + '/am', 'quay/' + m + '/cd', 'quay/' + m + '/loi', 'quay/' + m + '/k0', 'quay/' + m + '/k1', 'quay/' + m + '/k2', 'quay/' + m + '/k3', 'quay/' + m + '/kq.mp4'));
+    ma.forEach(m => khoa.push('quay/' + m + '/anh', 'quay/' + m + '/am', 'quay/' + m + '/cd', 'quay/' + m + '/loi', 'quay/' + m + '/k0', 'quay/' + m + '/k1', 'quay/' + m + '/k2', 'quay/' + m + '/k3', 'quay/' + m + '/kq.mp4', 'quay/' + m + '/kq.png'));
     for (let i = 0; i < khoa.length; i += 900) await env.HOSO.delete(khoa.slice(i, i + 900));
   }
   const r = await db.prepare('DELETE FROM quay_viec WHERE taoLuc < ?').bind(moc).run();

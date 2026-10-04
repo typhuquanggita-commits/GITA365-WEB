@@ -63,3 +63,45 @@ mất vài phút trên T4.
   vẫn chạy bình thường.
 
 Kiểm cổng máy chủ: `node tools/thu-quay-video.mjs`.
+
+## Máy vẽ nhân vật AI (việc loại `nv`)
+
+Nhân vật và bối cảnh vẽ bằng **FLUX.1-schnell** (giấy phép Apache-2.0,
+được dùng thương mại miễn phí) trên cùng máy Kaggle T4. Phong cách đã
+chỉnh theo chuẩn phim ngắn dọc đang hút khách: diễn viên đẹp như thần
+tượng nhưng da/tóc có chi tiết thật, ánh sáng điện ảnh ấm, nền mờ nghệ
+thuật, khung dọc 9:16 (720×1280), cận cảnh cảm xúc. Bối cảnh (phòng
+khách, vườn, lớp học, quán cà phê…) nằm ở lời mô tả từng cảnh.
+
+Cách bật: làm **y hệt** mục "Bật máy quay Kaggle" ở trên, chỉ khác bước
+5: dán tệp `may-quay-kaggle/tao-nhan-vat.py`. Có thể mở 2 notebook song
+song: một cái vẽ nhân vật, một cái quay video.
+
+Gửi việc vẽ (cửa `taoNhanVatAI`, chỉ R01):
+
+```json
+{
+  "fn": "taoNhanVatAI",
+  "moTa": "người phụ nữ 35 tuổi, tóc dài đen, áo dài trắng, mỉm cười ấm áp trong phòng khách",
+  "phamVi": "khach"
+}
+```
+
+**Giữ cùng một gương mặt xuyên suốt phim**: vẽ nhân vật lần đầu → lấy
+ảnh kết quả ở `/quay/phim/<ma>.png` → gửi việc cảnh mới kèm ảnh đó trong
+ô `anhGoc` (base64). Máy sẽ vẽ lại từ ảnh gốc: cùng gương mặt, bối cảnh
+và dáng đứng mới theo `moTa`.
+
+```json
+{
+  "fn": "taoNhanVatAI",
+  "moTa": "cùng nhân vật, ngồi trong xe hơi, ánh nắng chiều hắt qua kính",
+  "anhGoc": "<ảnh nhân vật đã vẽ trước, base64 JPEG/PNG>",
+  "phamVi": "khach"
+}
+```
+
+Ảnh xong ở `/quay/phim/<ma>.png`. Luật bí mật (từ khoá nội bộ) chặn y
+như việc video.
+
+Kiểm cổng máy chủ: `node tools/thu-nhan-vat.mjs`.
