@@ -16,5 +16,7 @@ export async function onRequest(context) {
   });
   const dau = new Headers(r.headers);
   dau.set('X-Phuc-Vu-Qua', 'gita365-pages');
+  const viTri = dau.get('Location');
+  if (viTri && viTri.indexOf(MAY_CHU) === 0) dau.set('Location', viTri.slice(MAY_CHU.length));
   return new Response(r.body, { status: r.status, headers: dau });
 }

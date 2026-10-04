@@ -17,5 +17,9 @@ export async function onRequest(context) {
   });
   const dau = new Headers(r.headers);
   dau.set('X-Phuc-Vu-Qua', 'gita365-pages');
+  /* Worker trả redirect tuyệt đối về workers.dev — cắt phần origin để
+     khách ở lại tên miền chính. */
+  const viTri = dau.get('Location');
+  if (viTri && viTri.indexOf(MAY_CHU) === 0) dau.set('Location', viTri.slice(MAY_CHU.length));
   return new Response(r.body, { status: r.status, headers: dau });
 }
