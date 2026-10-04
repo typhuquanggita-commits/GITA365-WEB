@@ -16,9 +16,16 @@
 #
 #  Chỉ nhận việc loại 'vd' (video chuyển động). Việc khớp môi và
 #  chuyển động nhẹ vẫn do máy GitHub làm như cũ.
+#
+#  ⚠️ BẢN CŨ — CHỈ quay video đơn lẻ. Để quay PHIM NGUYÊN BỘ (việc
+#  'film' đặt từ thẻ "Quay phim nguyên bộ" trên web) phải chạy tệp
+#  xuong-phim-studio.py — máy studio báo tên "kaggle-studio-...".
 # ═══════════════════════════════════════════════════════════════
 
 import os, io, time, json, urllib.request
+
+print("⚠️ ĐÂY LÀ NOTEBOOK CŨ (quay-kaggle.py) — chỉ nhận việc video đơn lẻ.")
+print("⚠️ Muốn quay PHIM NGUYÊN BỘ: dừng phiên này, dán tệp xuong-phim-studio.py rồi Run lại.")
 
 MAY_CHU = "https://gita365.typhuquanggita.workers.dev"
 TEN_MAY = "kaggle-" + str(int(time.time()))

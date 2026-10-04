@@ -24,9 +24,17 @@
 #  gương mặt qua nhiều bối cảnh — nhân vật đồng nhất xuyên suốt phim.
 #  Notebook này chạy được chung tài khoản Kaggle với notebook quay
 #  video (quay-kaggle.py); mở 2 notebook song song thì cả 2 cùng làm.
+#
+#  ⚠️ Notebook này CHỈ vẽ nhân vật (việc 'nv'). Để quay PHIM NGUYÊN
+#  BỘ (việc 'film' đặt từ thẻ "Quay phim nguyên bộ" trên web) phải
+#  chạy tệp xuong-phim-studio.py — máy studio báo tên
+#  "kaggle-studio-...".
 # ═══════════════════════════════════════════════════════════════
 
 import os, io, time, json, urllib.request
+
+print("ℹ️ Đây là máy VẼ NHÂN VẬT (tao-nhan-vat.py), không quay phim nguyên bộ.")
+print("ℹ️ Muốn quay PHIM: dán tệp xuong-phim-studio.py rồi Run.")
 
 MAY_CHU = "https://gita365.typhuquanggita.workers.dev"
 TEN_MAY = "kaggle-nv-" + str(int(time.time()))
