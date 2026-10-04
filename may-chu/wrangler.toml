@@ -95,6 +95,16 @@ GITA_PHIM_TRAN_NEURON = "9000"
 # tắt: Bom tấn vẫn chạy 0 đồng bằng klein 4B khung lớn.
 GITA_PHIM_TRAN_TRA_PHI = "0"
 
+# VẼ ẢNH CẢNH BẰNG DỊCH VỤ NGOÀI (tuỳ chọn, MẶC ĐỊNH TẮT để giữ 0đ —
+# may-chu/phim-phan-tu.js). Chỉ khi chủ hệ tự muốn dùng tài khoản riêng
+# (ví dụ OpenAI gpt-image) cho ảnh nhân vật/cảnh đẹp hơn Workers AI:
+#   GITA_VE_ANH_URL  = địa chỉ Images API tương thích OpenAI
+#   GITA_VE_ANH_MAU  = tên mô hình (mặc định gpt-image-1)
+#   GITA_VE_ANH_CO   = khổ ảnh (mặc định 1024x1536)
+#   Khoá KHÔNG để ở đây: npx wrangler secret put GITA_VE_ANH_KHOA
+# Có cấu hình thì máy chủ ưu tiên dịch vụ này, lỗi thì tự về Workers AI
+# miễn phí. Không cấu hình = mọi ảnh vẽ bằng Workers AI, 0 đồng.
+
 # Khoá cửa ngân hàng. KHÔNG để ở đây — đây là tệp nằm trong kho mã.
 # Nạp bằng:  npx wrangler secret put GITA_KHOA_NGANHANG
 #

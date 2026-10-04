@@ -8,9 +8,15 @@
    Động tác là công thức (thở, giơ tay, quay đầu, một bước), không phải
    video. Chạy, đánh, nhảy không có trong thư viện — không có mô hình
    video trên Cloudflare.
+
+   NGƯỜI QUE BỊ CẤM TUYỆT ĐỐI: trình xem KHÔNG vẽ người bằng nét, không
+   hình tượng trưng. Mọi cảnh dùng ảnh điện ảnh do AI vẽ (Workers AI
+   FLUX, 0đ; hoặc dịch vụ ngoài khi chủ hệ tự cấu hình khoá). Cảnh chưa
+   có ảnh thì báo "đang vẽ" và tự tải lại — không bao giờ vẽ hình tạm.
    ═══════════════════════════════════════════════════════════════ */
 'use strict';
 import { laR01 } from './vai-tro.js';
+import { giuNeuron, NEURON, MAU_ANH_DU } from './phim-0d.js';
 
 export const MAY = {
   dung: { x: 0.5, y: 0.55, z: 1, x2: 0.5, y2: 0.54, z2: 1.06 },
@@ -21,7 +27,7 @@ export const MAY = {
 export const NHIP = ['tho', 'gio-tay', 'quay-dau', 'buoc'];
 const NEN = ['troi-sang', 'troi-chieu', 'phong', 'dem'];
 const MA_MAU = 'mau-gita-365';
-let daTao = false;
+const daTaoCho = new WeakSet();
 
 function chu(v, n) { return String(v == null ? '' : v).replace(/[\u0000-\u001F]/g, ' ').trim().slice(0, n); }
 function maMoi() {
@@ -31,26 +37,102 @@ function maMoi() {
 function loi(code, error) { return { ok: false, code, error }; }
 
 export async function taoBangPhanTu(db) {
-  if (daTao) return;
+  if (daTaoCho.has(db)) return;
   await db.prepare(`CREATE TABLE IF NOT EXISTS phim_pt_cong_thuc (
     ma TEXT PRIMARY KEY, uid TEXT NOT NULL, ten TEXT NOT NULL, noiDung TEXT NOT NULL, taoLuc INTEGER NOT NULL)`).run();
   await db.prepare(`CREATE TABLE IF NOT EXISTS phim_pt_hat (
     ma TEXT PRIMARY KEY, bam TEXT NOT NULL UNIQUE, loai TEXT NOT NULL, mime TEXT NOT NULL, byte INTEGER NOT NULL, soLan INTEGER NOT NULL DEFAULT 1)`).run();
-  daTao = true;
+  daTaoCho.add(db);
 }
 
 export function mayTheoMa(ma) { return MAY[ma] || MAY.dung; }
 
 function mauCongThuc() {
   return {
-    ten: 'Mẫu — ghép từ công thức',
+    ten: 'Hành trình GITA 365 — phim phân tử',
     canh: [
-      { giay: 4, may: 'lia', nen: 'troi-sang', nhip: 'tho', nhan: 'Người dẫn', loi: 'Đây không phải file video. Bấm link là máy ghép lại từ công thức.' },
-      { giay: 4, may: 'day', nen: 'phong', nhip: 'gio-tay', nhan: 'Người dẫn', loi: 'Người chỉ thở, giơ tay, quay đầu hoặc bước một bước. Không chạy, không đánh, không nhảy.' },
-      { giay: 4, may: 'cat', nen: 'troi-chieu', nhip: 'quay-dau', nhan: 'Người dẫn', loi: 'Ảnh và câu thoại dùng chung. Phim khác chỉ lưu công thức mới, không lưu lại cả file.' },
-      { giay: 4, may: 'dung', nen: 'dem', nhip: 'buoc', nhan: 'Người dẫn', loi: 'Xem lại cũng là link này. Không cần GPU. Cloudflare không có máy quay phim AI.' }
+      { giay: 5, may: 'lia', nen: 'troi-sang', nhip: 'tho', nhan: 'Chặng 1 · Bình an', loi: 'Hành trình vạn dặm bắt đầu từ một hơi thở thật chậm.' },
+      { giay: 5, may: 'day', nen: 'phong', nhip: 'gio-tay', nhan: 'Chặng 2 · Kết nối', loi: 'Có những điều chưa nói ra, nhưng gia đình luôn nghe thấy nhau.' },
+      { giay: 5, may: 'cat', nen: 'troi-chieu', nhip: 'quay-dau', nhan: 'Chặng 3 · Nhìn lại', loi: 'Dừng lại một nhịp, để thấy mình đã đi được xa thế nào.' },
+      { giay: 5, may: 'dung', nen: 'dem', nhip: 'buoc', nhan: 'Chặng 4 · Bước tiếp', loi: 'Rồi ta bước tiếp — chậm mà chắc. GITA 365 đồng hành cùng bạn.' }
     ]
   };
+}
+
+/* ── ẢNH CẢNH DO AI VẼ ──
+   Một nhân vật duy nhất xuyên suốt bốn cảnh: cùng mô tả chi tiết +
+   cùng seed. Ưu tiên dịch vụ ngoài nếu chủ hệ tự gắn khoá
+   (GITA_VE_ANH_URL/KHOA/MAU — ví dụ OpenAI gpt-image); mặc định 0đ là
+   FLUX.1-schnell của Workers AI, trừ vào ngân sách neuron ngày. */
+const SEED_MAU = 20260365;
+const KICH_MAU = [576, 1024];
+const NHAN_VAT_MAU = 'A beautiful Vietnamese woman in her mid-30s, long silky black hair neatly tied back, warm gentle face with subtle natural makeup, elegant white silk ao dai, expressive kind eyes';
+const PHONG_CACH_MAU = ', vertical 9:16 cinematic film still from a high-budget Asian emotional short drama, warm cinematic lighting, golden rim light, shallow depth of field, creamy bokeh, photorealistic, detailed natural skin texture, subtle 35mm film grain, muted warm color grade, masterpiece quality';
+const PROMPT_MAU = [
+  NHAN_VAT_MAU + ', standing peacefully in a lush green garden in soft early morning light, eyes gently closed, breathing calmly, serene expression' + PHONG_CACH_MAU,
+  NHAN_VAT_MAU + ', in a warm cozy family living room at dusk, gently raising one open hand as if softly guiding her loved ones, warm lamp light, heartfelt expression' + PHONG_CACH_MAU,
+  NHAN_VAT_MAU + ', on a balcony at golden sunset, gracefully turning her head to look back over her shoulder, wind softly blowing her hair, nostalgic emotional mood' + PHONG_CACH_MAU,
+  NHAN_VAT_MAU + ', walking alone on a quiet street at night under warm street lights, taking one confident hopeful step forward, gentle smile, glowing city bokeh behind' + PHONG_CACH_MAU
+];
+
+function anhHopLe(u, toiDa) {
+  if (!u || u.length < 32 || u.length > (toiDa || 350000)) return null;
+  const jpg = u[0] === 0xFF && u[1] === 0xD8 && u[2] === 0xFF;
+  const png = u[0] === 0x89 && u[1] === 0x50 && u[2] === 0x4E && u[3] === 0x47;
+  if (!jpg && !png) return null;
+  return { u, mime: png ? 'image/png' : 'image/jpeg' };
+}
+function anhTuB64(b64, toiDa) {
+  const t = String(b64 || '').replace(/\s/g, '');
+  if (!/^[A-Za-z0-9+/=]+$/.test(t) || t.length < 44) return null;
+  let u;
+  try { u = Uint8Array.from(atob(t), c => c.charCodeAt(0)); } catch (e) { return null; }
+  return anhHopLe(u, toiDa);
+}
+
+/* Dịch vụ ngoài tương thích OpenAI Images API — CHỈ chạy khi chủ hệ tự
+   cấu hình (mặc định tắt để giữ 0đ). Khoá đặt bằng wrangler secret,
+   không bao giờ ghi trong kho mã. */
+async function veCanhNgoai(env, prompt) {
+  const url = chu(env && env.GITA_VE_ANH_URL, 300);
+  const khoa = chu(env && env.GITA_VE_ANH_KHOA, 300);
+  if (!url || !khoa) return null;
+  const mau = chu(env.GITA_VE_ANH_MAU, 80) || 'gpt-image-1';
+  const co = chu(env.GITA_VE_ANH_CO, 20) || '1024x1536';
+  try {
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', authorization: 'Bearer ' + khoa },
+      body: JSON.stringify({ model: mau, prompt: prompt.slice(0, 3000), size: co, n: 1 })
+    });
+    if (!r.ok) return null;
+    const j = await r.json();
+    const d = j && j.data && j.data[0];
+    if (d && d.b64_json) return anhTuB64(String(d.b64_json), 1500000);
+    if (d && d.url) {
+      const a = await fetch(String(d.url));
+      if (!a.ok) return null;
+      return anhHopLe(new Uint8Array(await a.arrayBuffer()), 1500000);
+    }
+  } catch (e) { /* rớt mạng hoặc dịch vụ lỗi thì về Workers AI */ }
+  return null;
+}
+
+async function veCanhSchnell(env, db, prompt) {
+  if (!env || !env.AI || typeof env.AI.run !== 'function') return null;
+  const [w, h] = KICH_MAU, buoc = 4;
+  const can = Math.ceil(NEURON.schnellO * Math.ceil(w / 512) * Math.ceil(h / 512) + NEURON.schnellBuoc * buoc);
+  let giu = null;
+  try { giu = await giuNeuron(db, env, can); } catch (e) { giu = null; }
+  if (giu && giu.duoc === false) return null;
+  let o = null;
+  try { o = await env.AI.run(MAU_ANH_DU, { prompt: prompt.slice(0, 2048), steps: buoc, width: w, height: h, seed: SEED_MAU }); }
+  catch (e) {
+    /* Bản binding cũ không nhận width/height — vẽ khung vuông, máy khách tự cắt 9:16. */
+    try { o = await env.AI.run(MAU_ANH_DU, { prompt: prompt.slice(0, 2048), steps: buoc, seed: SEED_MAU }); }
+    catch (e2) { o = null; }
+  }
+  return anhTuB64(String((o && o.image) || ''), 350000);
 }
 
 function chuanCanh(raw) {
@@ -122,10 +204,38 @@ async function ghiCongThuc(db, uid, ten, canh, maCo) {
 
 export async function damBaoMau(env, db) {
   await taoBangPhanTu(db);
-  const co = await db.prepare('SELECT ma FROM phim_pt_cong_thuc WHERE ma = ?').bind(MA_MAU).first();
+  const co = await db.prepare('SELECT noiDung FROM phim_pt_cong_thuc WHERE ma = ?').bind(MA_MAU).first();
   const mau = mauCongThuc();
-  if (!co) await ghiCongThuc(db, 'he-thong', mau.ten, mau.canh, MA_MAU);
-  return { ok: true, ma: MA_MAU, link: '/phim/xem/' + MA_MAU, daCo: !!co };
+  const canh = mau.canh;
+  let cu = null;
+  if (co) { try { cu = JSON.parse(co.noiDung); } catch (e) { cu = null; } }
+  if (cu && Array.isArray(cu.canh))
+    for (let i = 0; i < canh.length; i++) {
+      const h = cu.canh[i] && chu(cu.canh[i].hatNen, 32);
+      if (/^[0-9a-f]{32}$/.test(h || '')) canh[i].hatNen = h;
+    }
+  if (!co) await ghiCongThuc(db, 'he-thong', mau.ten, canh, MA_MAU);
+  /* Cảnh chưa có ảnh → vẽ bằng AI rồi gắn hạt. Không vẽ được thì để
+     trống: trình xem báo "đang vẽ" chứ KHÔNG vẽ người que. */
+  let veThem = 0;
+  if (env && env.HOSO && canh.some(c => !c.hatNen)) {
+    for (let i = 0; i < canh.length && i < PROMPT_MAU.length; i++) {
+      if (canh[i].hatNen) continue;
+      const anh = (await veCanhNgoai(env, PROMPT_MAU[i])) || (await veCanhSchnell(env, db, PROMPT_MAU[i]));
+      if (anh) {
+        const luu = await luuHat(env, db, anh, 'nen');
+        if (luu.ok) {
+          canh[i].hatNen = luu.ma; veThem++;
+          /* Ghi ngay sau mỗi cảnh: lỡ hết giờ giữa chừng thì lượt tải
+             lại sau (trang xem tự tải lại) vẽ tiếp từ đúng cảnh dở. */
+          await ghiCongThuc(db, 'he-thong', mau.ten, canh, MA_MAU);
+        }
+      }
+    }
+  }
+  if (cu && (cu.ten !== mau.ten || JSON.stringify(cu.canh) !== JSON.stringify(canh)))
+    await ghiCongThuc(db, 'he-thong', mau.ten, canh, MA_MAU);
+  return { ok: true, ma: MA_MAU, link: '/phim/xem/' + MA_MAU, daCo: !!co, anhVuaVe: veThem, duAnh: canh.every(c => !!c.hatNen) };
 }
 
 export async function dongGoiPhanTu(y, env, db, hoSo) {
@@ -160,7 +270,7 @@ export async function dongGoiPhanTu(y, env, db, hoSo) {
     ok: true, ma: g.ma, link: '/phim/xem/' + g.ma,
     byteCongThuc: g.byteCongThuc, byteAnh, anhTrung: trung,
     byteNeuLuuVideo: giay * 250000,
-    ghiChu: 'Đã lưu công thức, không lưu file video. Người chỉ nhích theo công thức. Chạy, đánh, nhảy chưa làm được.'
+    ghiChu: 'Đã lưu công thức, không lưu file video. Cảnh thiếu ảnh sẽ chờ AI vẽ — hệ thống không bao giờ vẽ hình người que.'
   };
 }
 
@@ -213,18 +323,13 @@ function nen(ten){
   else {g.addColorStop(0,'#8ec6e8');g.addColorStop(1,'#d7c39a')}
   ctx.fillStyle=g; ctx.fillRect(0,0,360,640);
 }
-function nguoi(c, t, giay){
-  const k = Math.min(1, t/Math.max(0.2, giay));
-  let sx = Math.sin(t*1.4)*8, sy = Math.sin(t*1.8)*3, tay = -0.2, dau = 0;
-  if(c.nhip==='gio-tay') tay = -0.2 - k*1.1;
-  if(c.nhip==='quay-dau') dau = Math.sin(k*Math.PI)*14;
-  if(c.nhip==='buoc') sx += k*28 - 14;
-  const x = 180+sx+dau, y = 390+sy;
-  ctx.save(); ctx.translate(x,y); ctx.strokeStyle='#1c140f'; ctx.fillStyle='#1c140f'; ctx.lineWidth=8; ctx.lineCap='round';
-  ctx.beginPath(); ctx.arc(0,-78,22,0,6.3); ctx.fill();
-  ctx.beginPath(); ctx.moveTo(0,-54); ctx.lineTo(0,20); ctx.moveTo(0,-30); ctx.lineTo(-28,10);
-  ctx.moveTo(0,-30); ctx.lineTo(Math.cos(tay)*36, Math.sin(tay)*36); ctx.moveTo(0,20); ctx.lineTo(-16,70); ctx.moveTo(0,20); ctx.lineTo(16,70); ctx.stroke();
-  ctx.restore();
+function nenCho(ten){
+  nen(ten);
+  ctx.fillStyle='rgba(0,0,0,.5)'; ctx.fillRect(0,260,360,120);
+  ctx.fillStyle='#f3efe6'; ctx.textAlign='center';
+  ctx.font='600 16px Segoe UI'; ctx.fillText('Cảnh đang được AI vẽ lại.',180,308);
+  ctx.font='14px Segoe UI'; ctx.fillText('Trang tự tải lại sau ít phút.',180,334);
+  ctx.textAlign='left';
 }
 function veAnh(img, x, y, w, h){
   const s = Math.max(w/img.width, h/img.height);
@@ -234,11 +339,11 @@ function veAnh(img, x, y, w, h){
 function ve(c, t){
   const m = cam(c, Math.min(1, t/c.giay));
   ctx.save(); ctx.translate(360*m.x, 640*m.y); ctx.scale(m.z,m.z); ctx.translate(-180,-320);
-  if(anh[c.hatNen]) veAnh(anh[c.hatNen], 0, 0, 360, 640); else nen(c.nen);
+  if(anh[c.hatNen]) veAnh(anh[c.hatNen], 0, 0, 360, 640); else nenCho(c.nen);
   if(anh[c.hatNguoi]){
     const sx = c.nhip==='buoc' ? (Math.min(1,t/c.giay)*28-14) : Math.sin(t*1.4)*8;
     veAnh(anh[c.hatNguoi], 90+sx, 180, 180, 320);
-  } else nguoi(c, t, c.giay);
+  }
   ctx.restore();
   ctx.fillStyle='rgba(0,0,0,.55)'; ctx.fillRect(0,540,360,100);
   ctx.fillStyle='#fff'; ctx.font='16px Segoe UI'; ctx.fillText(c.nhan||'', 16, 568);
@@ -272,6 +377,7 @@ fetch('/phim/cong-thuc/'+ma).then(r=>r.json()).then(async j=>{
   (j.canh||[]).forEach(c=>{ if(c.hatNen) ids.push(c.hatNen); if(c.hatNguoi) ids.push(c.hatNguoi); });
   for(const id of ids) await tai(id);
   document.getElementById('chu').textContent=j.ten+' — ghép tại máy bạn, không tải video.';
+  if((j.canh||[]).some(c=>!c.hatNen)) setTimeout(()=>location.reload(), 45000);
   bat();
 }).catch(()=>{ document.getElementById('chu').textContent='Không ghép được phim này.'; });
 </script></body></html>`;
