@@ -2543,13 +2543,14 @@ button.nha-o-nen:hover .nha-ic{transform:scale(1.06)}
   .tbtn[data-act="thu-cot"]{display:none}
 }
 
-/* Bánh đà LUÔN QUAY quanh nhà (9.99.152): animate một góc --spin bằng
-   @property, nút tính left/top theo cos/sin(ang0+spin) — CHỈ vị trí đổi,
-   transform giữ nguyên translate(-50%,-50%) nên CHỮ LUÔN ĐỨNG THẲNG (không
-   nghiêng theo vòng). Bán kính không đổi → không tràn thêm. Tắt ở
-   prefers-reduced-motion. */
-@property --spin{syntax:"<angle>";inherits:false;initial-value:0deg}
-@keyframes orbitSpin{to{--spin:360deg}}
+/* Bánh đà LUÔN QUAY quanh nhà (9.99.152) — phiên bản CHẠY ĐƯỢC TRÊN MỌI
+   TRÌNH DUYỆT. Bản cũ animate một góc --spin bằng @property rồi tính vị trí
+   bằng cos()/sin() trong calc(): kỹ thuật ấy chỉ Chromium mới có, trên
+   Firefox/Safari/trình duyệt cũ --spin không đổi được nên 10 nút dồn về tâm
+   và CHẬP CHỜN (lỗi chủ hệ báo). Nay quay CẢ VÒNG bằng transform (hỗ trợ
+   phổ biến), và xoay NGƯỢC chữ trong nút để chữ luôn đứng thẳng. */
+@keyframes nhaQuay{to{transform:rotate(360deg)}}
+@keyframes nhaGiuThang{to{transform:rotate(-360deg)}}
 
 /* ── VÒNG BÁNH ĐÀ quanh nhà (9.99.150) — CONTAINER QUERY, không media ──
    Vòng chỉ dựng khi CỘT NỘI DUNG (.nha-vong) đủ rộng, nên KHÔNG BAO GIỜ
@@ -2574,18 +2575,29 @@ button.nha-o-nen:hover .nha-ic{transform:scale(1.06)}
   .nha-ring::before{content:"";position:absolute;top:50%;left:50%;
     width:calc(var(--rx) * 2);height:calc(var(--ry) * 2);transform:translate(-50%,-50%);
     border:2px dashed var(--line-2);border-radius:50%;pointer-events:none}
-  .nha-ring-nodes{position:absolute;inset:0;margin:0;display:block;pointer-events:none}
+  .nha-ring-nodes{position:absolute;inset:0;margin:0;display:block;pointer-events:none;
+    animation:nhaQuay 80s linear infinite;transform-origin:50% 50%}
   /* animation:none — bộ hiện dần oMo (fill:both) giữ transform ở khung 100%,
      đè mất vị trí vòng nếu không tắt (10 nút dồn về tâm, khuất sau nhà). */
   .nha-ring-nodes .nha-bd-o{position:absolute;pointer-events:auto;
     max-width:120px;text-align:left;
     --ang0:calc(var(--i) * 36deg - 90deg);
-    --ang:calc(var(--ang0) + var(--spin));
-    left:calc(50% + var(--rx) * cos(var(--ang)));
-    top:calc(50% + var(--ry) * sin(var(--ang)));
-    transform:translate(-50%,-50%);
-    animation:orbitSpin 80s linear infinite}
+    left:calc(50% + var(--rx) * cos(var(--ang0)));
+    top:calc(50% + var(--ry) * sin(var(--ang0)));
+    transform:translate(-50%,-50%) rotate(calc(var(--ang0) * -1))}
+  /* Chữ luôn đứng thẳng: nút đã xoay ngược -ang0 để triệt góc đặt, cả vòng
+     lại quay +360° nên lớp trong cùng quay -360° để chữ không nghiêng. */
+  .nha-ring-nodes .nha-bd-o>*{animation:nhaGiuThang 80s linear infinite;transform-origin:50% 50%}
 }
+
+/* ── TỔNG QUAN (tong-quan.js) — thẻ ít chữ, số to, lưới co giãn ── */
+.tq-luoi{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:10px;margin-top:10px}
+.card.tq-the{padding:16px 14px;border:1px solid var(--line);background:var(--nen-the, #fff);transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease}
+.card.tq-the:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(20,24,60,.10);border-color:var(--gita)}
+.card.tq-the:focus-visible{outline:2px solid var(--gita);outline-offset:2px}
+.tq-so{font-size:26px;line-height:1.1;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.tq-nhan{font-size:12.5px;font-weight:700;color:var(--ink-2);margin-top:6px}
+.tq-duoi{font-size:11.5px;margin-top:3px}
 
 /* ── HỆ CHỮ — mô thức hoá, ánh xạ ĐÚNG thang chín bậc đã có ──
    Sáu vai chữ, mọi cỡ đều nằm trong thang 10.5·12.5·14.5·16·18·21·26·33.
@@ -2912,6 +2924,8 @@ body.hdp-khoa{overflow:hidden}
 /* ── TẮT chuyển động khi máy xin giảm ── */
 @media(prefers-reduced-motion:reduce){
   .view,.nha-luoi-8>*,.dp-mien>*,.nha-bd-o,.cd-loc-o,.hdp-khung{animation:none}
+  /* Vòng bánh đà: tắt cả quay vòng lẫn giữ-thẳng chữ khi máy xin giảm chuyển động. */
+  .nha-ring-nodes,.nha-ring-nodes .nha-bd-o>*{animation:none}
   [data-v],.nav-i,.chip,.tbtn,.btn,.nha-o,.dp-mien-o,.dp-tl-o,.cd-loc-o,.val,.cd-chitiet,.dp-luat-o,.tln-fab,#left,#right{transition:none}
   .tln-fab::after,.tln-fab-cham,.ch-soan .soan-cham i{animation:none}
   .nha-o:hover,.dp-mien-o:hover,.val:hover,.dp-luat-o:hover{transform:none}

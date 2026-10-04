@@ -354,6 +354,7 @@ G.ITEM_EN = {
 'truy-van-da-chieu':['Multi-Dimensional Queries — Four Flows & 16-Division Scorecard','money · cost · value · work flows computed at read time from D1, no manual cells · a division with a signal past its threshold turns red — needs upgrade · 7/30/90/365 days'],
 'vong-lap-van-hanh':['Operating Flywheel — Four Loops','V1 create value → V2 spread from results → V3 compounding quality → V4 resources & reinvestment · cross-loop control: security · privacy · budget · load limits · audit · stop & recover · execution instrumentation · every node points at real code, CI-measured each PR'],
 'ban-do-tong-the':['Master Map — 12 Blocks A–L','A governance & security · B website & channels · C operating core · D people & agents · E processes & flywheels · F care & value · G film studio · H VIP & money flows · I warehouses · J GitHub & development · K Cloudflare & external services · L measurement & improvement · every node points at real code, CI-measured each PR · missing nodes honestly recorded'],
+'tong-quan':['Today Overview','lean · live KPIs from D1 · four flows + money tree + solution-store leverage · tap a card to open the right deep screen'],
   'goi-nghe':['Professional Kits by Department','Each role a full kit: mission · professional standard · certification · tools'],
   'assessment':['Tier-1 Assessment','6 domains · 10-step protocol · DCI reliability · care direction — the consultant/assessor diagnostic'],
   'nhan-su-tt':['Loyal staff profile','5 levels · 7 metrics · 5 rules'],
