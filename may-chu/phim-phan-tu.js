@@ -16,7 +16,7 @@
    ═══════════════════════════════════════════════════════════════ */
 'use strict';
 import { laR01 } from './vai-tro.js';
-import { giuNeuron, NEURON, MAU_ANH_DU } from './phim-0d.js';
+import { giuNeuron, chinhNeuron, neuronAnh, NEURON, MAU_ANH, MAU_ANH_DU, veFlux2 } from './phim-0d.js';
 
 export const MAY = {
   dung: { x: 0.5, y: 0.55, z: 1, x2: 0.5, y2: 0.54, z2: 1.06 },
@@ -60,23 +60,27 @@ function mauCongThuc() {
 }
 
 /* ── ẢNH CẢNH DO AI VẼ ──
-   Một nhân vật duy nhất xuyên suốt bốn cảnh nhờ CHUNG mô tả chi tiết
-   (binding Workers AI của schnell không nhận seed/width/height — lỗi
-   5006 — nên ảnh ra khung vuông và trình xem tự cắt 9:16). Ưu tiên
-   dịch vụ ngoài nếu chủ hệ tự gắn khoá (GITA_VE_ANH_URL/KHOA/MAU —
-   ví dụ OpenAI gpt-image); mặc định 0đ là FLUX.1-schnell của Workers
-   AI, trừ vào ngân sách neuron ngày. */
-const KICH_MAU = [1024, 1024];
+   Nhân vật phải NHƯ CHỤP TỪ MÁY ẢNH THẬT: prompt nói ngôn ngữ nhiếp
+   ảnh (máy full-frame, lens 85mm f/1.4, ảnh RAW chưa retouch, da có lỗ
+   chân lông, hạt film Kodak Portra) và CẤM các từ gây bóng "ảnh AI"
+   (masterpiece/beauty/digital art). Ưu tiên: dịch vụ ngoài do chủ hệ
+   gắn khoá → FLUX.2 klein 4B (multipart, 9:16 thật 576×1024, có seed
+   giữ mặt) → FLUX.1-schnell 8 bước (khung vuông, trình xem tự cắt).
+   PHIEN_BAN_ANH: đổi số này để máy tự VẼ LẠI toàn bộ cảnh mẫu khi
+   nâng cấp mô hình/prompt. */
+const PHIEN_BAN_ANH = 2;
+const SEED_MAU = 20260365;
+const KICH_MAU = [576, 1024];
 /* Prompt phải qua được cổng an toàn 8007 của Workers AI: luôn kèm
    "wholesome, fully clothed, modest, family-friendly, safe for all
    ages", tránh mọi từ ngữ mờ ám dù vô tình. */
-const NHAN_VAT_MAU = 'A graceful Vietnamese woman in her mid-30s, long black hair neatly tied back, warm gentle face, elegant traditional white ao dai, fully clothed modest attire, kind eyes';
-const PHONG_CACH_MAU = ', cinematic film still from a wholesome family drama, warm cinematic lighting, golden rim light, shallow depth of field, soft bokeh, photorealistic, detailed natural skin texture, subtle 35mm film grain, muted warm color grade, family-friendly, safe for all ages, masterpiece quality';
+const NHAN_VAT_MAU = 'A Vietnamese woman in her mid-30s, long black hair neatly tied back, warm gentle face, realistic natural skin with visible pores and fine texture, kind expressive eyes, elegant traditional white ao dai, fully clothed modest attire';
+const PHONG_CACH_MAU = ', candid photograph taken on a full-frame mirrorless camera with an 85mm f/1.4 prime lens, RAW unretouched photo, Kodak Portra 400 film color palette, soft natural directional light, shallow depth of field with optical lens bokeh, subtle authentic film grain, realistic skin with pores, no digital smoothing, no CGI, no illustration, no 3D render, documentary photography style, wholesome, family-friendly, safe for all ages';
 const PROMPT_MAU = [
-  NHAN_VAT_MAU + ', standing peacefully in a lush green public garden in bright morning sunlight, eyes gently closed, breathing calmly, serene wholesome expression' + PHONG_CACH_MAU,
-  NHAN_VAT_MAU + ', standing in a bright cozy family living room in daytime, raising one open hand in a warm welcoming gesture, cheerful wholesome mood' + PHONG_CACH_MAU,
-  NHAN_VAT_MAU + ', standing on an open balcony at bright golden sunset, gracefully turning her head to look at the view, calm hopeful wholesome mood' + PHONG_CACH_MAU,
-  NHAN_VAT_MAU + ', walking on a clean quiet city street in early evening under bright warm street lights, taking one confident hopeful step forward, gentle wholesome smile' + PHONG_CACH_MAU
+  NHAN_VAT_MAU + ', standing peacefully in a lush green public garden in bright morning sunlight, eyes gently closed, breathing calmly, serene expression' + PHONG_CACH_MAU,
+  NHAN_VAT_MAU + ', standing in a bright cozy family living room in daytime, raising one open hand in a warm welcoming gesture, cheerful mood' + PHONG_CACH_MAU,
+  NHAN_VAT_MAU + ', standing on an open balcony at bright golden sunset, gracefully turning her head to look at the view, calm hopeful mood' + PHONG_CACH_MAU,
+  NHAN_VAT_MAU + ', walking on a clean quiet city street in early evening under bright warm street lights, taking one confident hopeful step forward, gentle smile' + PHONG_CACH_MAU
 ];
 
 function anhHopLe(u, toiDa) {
@@ -147,26 +151,45 @@ async function anhTuKetQuaAI(o, toiDa) {
   return null;
 }
 
-async function veCanhSchnell(env, db, prompt, loiRa) {
+/* Vẽ một cảnh: ưu tiên FLUX.2 klein 4B qua multipart (khung 9:16 thật,
+   seed cố định giữ mặt nhân vật xuyên suốt, chất ảnh như máy chụp);
+   klein lỗi thì về FLUX.1-schnell 8 bước. Neuron giữ một lần theo giá
+   klein; nếu phải dùng schnell (rẻ hơn) hoặc thất bại thì hoàn lại. */
+async function veCanhAI(env, db, prompt, loiRa) {
   if (!env || !env.AI || typeof env.AI.run !== 'function') return null;
-  const [w, h] = KICH_MAU, buoc = 4;
-  const can = Math.ceil(NEURON.schnellO * Math.ceil(w / 512) * Math.ceil(h / 512) + NEURON.schnellBuoc * buoc);
+  const [w, h] = KICH_MAU;
+  const canKlein = neuronAnh(w, h, 0);
   let giu = null;
-  try { giu = await giuNeuron(db, env, can); } catch (e) { giu = null; }
+  try { giu = await giuNeuron(db, env, canKlein); } catch (e) { giu = null; }
   if (giu && giu.duoc === false) { if (loiRa) loiRa.loi = 'het neuron mien phi hom nay'; return null; }
+  try {
+    const b64 = await veFlux2(env, MAU_ANH, prompt.slice(0, 2048), w, h, SEED_MAU, []);
+    const anh = await anhTuB64(b64, 1500000);
+    if (anh) return anh;
+    console.warn('[phim-mau] klein tra ket qua rong');
+  } catch (e1) {
+    console.warn('[phim-mau] klein loi:', chu(e1 && e1.message || e1, 300));
+    if (loiRa) loiRa.loi = chu(e1 && e1.message || e1, 200);
+  }
+  const buoc = 8;
+  const canSchnell = Math.ceil(NEURON.schnellO * Math.ceil(w / 512) * Math.ceil(h / 512) + NEURON.schnellBuoc * buoc);
+  if (giu && giu.duoc) { try { await chinhNeuron(db, giu.khoa, canSchnell - canKlein); } catch (e0) { /* bảng chặn chưa có */ } }
   let o = null;
   try { o = await env.AI.run(MAU_ANH_DU, { prompt: prompt.slice(0, 2048), steps: buoc }); }
   catch (e2) {
     console.warn('[phim-mau] schnell loi:', chu(e2 && e2.message || e2, 300));
     if (loiRa) loiRa.loi = chu(e2 && e2.message || e2, 200); o = null;
   }
-  /* Ảnh FLUX 1024×1024 thường 150-500 KB — nới trần riêng cho ảnh do
-     AI vẽ (trần 350 KB chỉ áp cho ảnh khách TẢI LÊN ở docAnh). */
+  /* Ảnh FLUX thường 150-600 KB — trần 350 KB chỉ áp cho ảnh khách
+     TẢI LÊN ở docAnh, ảnh do AI vẽ được nới riêng. */
   const anh = await anhTuKetQuaAI(o, 1500000);
-  if (!anh && o && loiRa && !loiRa.loi) {
-    const khoa = typeof o === 'object' ? Object.keys(o).join(',') : typeof o;
-    console.warn('[phim-mau] ket qua khong phai anh:', khoa);
-    loiRa.loi = 'ket qua AI khong phai anh: ' + chu(khoa, 120);
+  if (!anh) {
+    if (giu && giu.duoc) { try { await chinhNeuron(db, giu.khoa, -canSchnell); } catch (e3) { /* bảng chặn chưa có */ } }
+    if (o && loiRa && !loiRa.loi) {
+      const khoa = typeof o === 'object' ? Object.keys(o).join(',') : typeof o;
+      console.warn('[phim-mau] ket qua khong phai anh:', khoa);
+      loiRa.loi = 'ket qua AI khong phai anh: ' + chu(khoa, 120);
+    }
   }
   return anh;
 }
@@ -248,7 +271,9 @@ export async function damBaoMau(env, db) {
   if (cu && Array.isArray(cu.canh))
     for (let i = 0; i < canh.length; i++) {
       const h = cu.canh[i] && chu(cu.canh[i].hatNen, 32);
-      if (/^[0-9a-f]{32}$/.test(h || '')) canh[i].hatNen = h;
+      /* Chỉ giữ ảnh vẽ bằng đúng phiên bản hiện tại; ảnh bản cũ (không
+         có dấu pbAnh hoặc số khác) sẽ được vẽ lại bằng máy ảnh mới. */
+      if (/^[0-9a-f]{32}$/.test(h || '') && cu.canh[i].pbAnh === PHIEN_BAN_ANH) canh[i].hatNen = h;
     }
   if (!co) await ghiCongThuc(db, 'he-thong', mau.ten, canh, MA_MAU);
   /* Cảnh chưa có ảnh → vẽ bằng AI rồi gắn hạt. Không vẽ được thì để
@@ -258,11 +283,11 @@ export async function damBaoMau(env, db) {
   if (env && env.HOSO && canh.some(c => !c.hatNen)) {
     for (let i = 0; i < canh.length && i < PROMPT_MAU.length; i++) {
       if (canh[i].hatNen) continue;
-      const anh = (await veCanhNgoai(env, PROMPT_MAU[i])) || (await veCanhSchnell(env, db, PROMPT_MAU[i], loiAI));
+      const anh = (await veCanhNgoai(env, PROMPT_MAU[i])) || (await veCanhAI(env, db, PROMPT_MAU[i], loiAI));
       if (anh) {
         const luu = await luuHat(env, db, anh, 'nen');
         if (luu.ok) {
-          canh[i].hatNen = luu.ma; veThem++;
+          canh[i].hatNen = luu.ma; canh[i].pbAnh = PHIEN_BAN_ANH; veThem++;
           /* Ghi ngay sau mỗi cảnh: lỡ hết giờ giữa chừng thì lượt tải
              lại sau (trang xem tự tải lại) vẽ tiếp từ đúng cảnh dở. */
           await ghiCongThuc(db, 'he-thong', mau.ten, canh, MA_MAU);
@@ -324,7 +349,8 @@ function jsonCongKhai(noi) {
   let o;
   try { o = JSON.parse(noi); } catch (e) { return null; }
   if (!o || !Array.isArray(o.canh)) return null;
-  return { ten: chu(o.ten, 80), canh: o.canh };
+  /* pbAnh là dấu kỹ thuật nội bộ (phiên bản máy vẽ) — không lộ ra ngoài */
+  return { ten: chu(o.ten, 80), canh: o.canh.map(c => { const { pbAnh, ...con } = c; return con; }) };
 }
 
 const DAU = { 'Access-Control-Allow-Origin': '*', 'X-Content-Type-Options': 'nosniff' };
