@@ -139,9 +139,10 @@ G.nhaMoChang = function (el) {
          BD_LON không có ô tagline ngắn, thêm một câu cho "đẹp" là làm sai
          nội dung ô. Hai <span> đều CÓ nội dung (icon SVG · tên), nên bộ rà
          soát chỗ trống không đếm thẻ rỗng. */
-      return '<button class="nha-bd-o" style="--ac:' + mau + ';--i:' + idx + '" data-v="banh-da">' +
+      return '<span class="nha-bd-slot" style="--i:' + idx + '">' +
+        '<button class="nha-bd-o" style="--ac:' + mau + '" data-v="banh-da">' +
         '<span class="nha-bd-ic">' + ic(b.ic) + '</span>' +
-        '<span class="nha-bd-ten">' + h(ten) + '</span></button>';
+        '<span class="nha-bd-ten">' + h(ten) + '</span></button></span>';
     }).join('');
   }
 

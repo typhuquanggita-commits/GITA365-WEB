@@ -2484,8 +2484,11 @@ button.nha-o-nen:hover .nha-ic{transform:scale(1.06)}
   .nha-o:hover{transform:translateY(-5px) rotateX(2.5deg)}
 }
 
-/* ── KHAI MỞ dần: các ô của hub hiện lần lượt như mở ra một thế giới ── */
-.nha-luoi-8>*,.dp-mien>*,.nha-bd-o,.cd-loc-o{animation:oMo .5s cubic-bezier(.22,.61,.36,1) both}
+/* ── KHAI MỞ dần: các ô của hub hiện lần lượt như mở ra một thế giới ──
+   .nha-bd-o KHÔNG nằm đây nữa: nó mang transform giữ-chữ-thẳng + animation
+   counter-rotate, mà oMo (fill:both) sẽ ghi đè transform đó. Nút bánh đà
+   được định vị bởi .nha-bd-slot trong suốt (không animation). */
+.nha-luoi-8>*,.dp-mien>*,.cd-loc-o{animation:oMo .5s cubic-bezier(.22,.61,.36,1) both}
 .nha-luoi-8>*:nth-child(2),.dp-mien>*:nth-child(2){animation-delay:.05s}
 .nha-luoi-8>*:nth-child(3),.dp-mien>*:nth-child(3){animation-delay:.1s}
 .nha-luoi-8>*:nth-child(4),.dp-mien>*:nth-child(4){animation-delay:.15s}
@@ -2550,7 +2553,6 @@ button.nha-o-nen:hover .nha-ic{transform:scale(1.06)}
    và CHẬP CHỜN (lỗi chủ hệ báo). Nay quay CẢ VÒNG bằng transform (hỗ trợ
    phổ biến), và xoay NGƯỢC chữ trong nút để chữ luôn đứng thẳng. */
 @keyframes nhaQuay{to{transform:rotate(360deg)}}
-@keyframes nhaGiuThang{to{transform:rotate(-360deg)}}
 
 /* ── VÒNG BÁNH ĐÀ quanh nhà (9.99.150) — CONTAINER QUERY, không media ──
    Vòng chỉ dựng khi CỘT NỘI DUNG (.nha-vong) đủ rộng, nên KHÔNG BAO GIỜ
@@ -2576,18 +2578,19 @@ button.nha-o-nen:hover .nha-ic{transform:scale(1.06)}
     width:calc(var(--rx) * 2);height:calc(var(--ry) * 2);transform:translate(-50%,-50%);
     border:2px dashed var(--line-2);border-radius:50%;pointer-events:none}
   .nha-ring-nodes{position:absolute;inset:0;margin:0;display:block;pointer-events:none;
-    animation:nhaQuay 80s linear infinite;transform-origin:50% 50%}
-  /* animation:none — bộ hiện dần oMo (fill:both) giữ transform ở khung 100%,
-     đè mất vị trí vòng nếu không tắt (10 nút dồn về tâm, khuất sau nhà). */
-  .nha-ring-nodes .nha-bd-o{position:absolute;pointer-events:auto;
-    max-width:120px;text-align:left;
-    --ang0:calc(var(--i) * 36deg - 90deg);
-    left:calc(50% + var(--rx) * cos(var(--ang0)));
-    top:calc(50% + var(--ry) * sin(var(--ang0)));
-    transform:translate(-50%,-50%) rotate(calc(var(--ang0) * -1))}
-  /* Chữ luôn đứng thẳng: nút đã xoay ngược -ang0 để triệt góc đặt, cả vòng
-     lại quay +360° nên lớp trong cùng quay -360° để chữ không nghiêng. */
-  .nha-ring-nodes .nha-bd-o>*{animation:nhaGiuThang 80s linear infinite;transform-origin:50% 50%}
+    animation:nhaQuay 80s linear infinite}
+  /* SLOT định vị — KHÔNG animation, nên transform định vị không bị bộ hiện
+     dần oMo (fill:both) ghi đè. Nút bên trong mới chịu oMo. Cách này bỏ hẳn
+     cos()/sin() (chỉ Chromium) — chạy mọi trình duyệt: xoay theo góc rồi đẩy
+     ra ngoài theo bán kính dọc. */
+  .nha-ring-nodes .nha-bd-slot{position:absolute;top:50%;left:50%;pointer-events:none;
+    transform:translate(-50%,-50%) rotate(calc(var(--i) * 36deg - 90deg)) translateY(calc(var(--ry) * -1))}
+  .nha-ring-nodes .nha-bd-slot .nha-bd-o{pointer-events:auto;
+    max-width:120px;text-align:left;display:flex;gap:6px;align-items:center;
+    /* Góc giữ chữ thẳng là HẰNG SỐ theo --i (không animation nào đè): slot
+       xoay +ang0 (và quay cùng vòng) → nút xoay ngược -ang0 ngay từ đầu,
+       chữ đứng thẳng suốt vòng. */
+    transform:rotate(calc((var(--i) * 36deg - 90deg) * -1))}
 }
 
 /* ── TỔNG QUAN (tong-quan.js) — thẻ ít chữ, số to, lưới co giãn ── */
@@ -2925,7 +2928,7 @@ body.hdp-khoa{overflow:hidden}
 @media(prefers-reduced-motion:reduce){
   .view,.nha-luoi-8>*,.dp-mien>*,.nha-bd-o,.cd-loc-o,.hdp-khung{animation:none}
   /* Vòng bánh đà: tắt cả quay vòng lẫn giữ-thẳng chữ khi máy xin giảm chuyển động. */
-  .nha-ring-nodes,.nha-ring-nodes .nha-bd-o>*{animation:none}
+  .nha-ring-nodes,.nha-ring-nodes .nha-bd-o{animation:none}
   [data-v],.nav-i,.chip,.tbtn,.btn,.nha-o,.dp-mien-o,.dp-tl-o,.cd-loc-o,.val,.cd-chitiet,.dp-luat-o,.tln-fab,#left,#right{transition:none}
   .tln-fab::after,.tln-fab-cham,.ch-soan .soan-cham i{animation:none}
   .nha-o:hover,.dp-mien-o:hover,.val:hover,.dp-luat-o:hover{transform:none}
