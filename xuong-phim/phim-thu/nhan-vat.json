@@ -1,0 +1,64 @@
+{
+  "duAn": "phim-thu-gita365",
+  "tieuDe": "Phim thử 60–90 giây: Trainer Trương Nhật Quang coaching gia đình",
+  "dich": "80 giây · 10 shot × ~8 giây · 16:9 · 24fps",
+  "boiCanh": {
+    "locationRevisionId": "living_room_v1",
+    "moTa": "Phòng khách gia đình Việt hiện đại, ấm sáng ban ngày; bàn trà gỗ, ghế sofa, bảng mục tiêu trên tường",
+    "trucMayQuay": "living_room_axis_A"
+  },
+  "nhanVat": [
+    {
+      "characterId": "trainer",
+      "ten": "Trainer Trương Nhật Quang",
+      "ageBand": "40-49",
+      "referenceSetId": "trainer_refs_v1",
+      "outfitId": "trainer_outfit_01",
+      "moTaVe": "Nam diễn giả Việt Nam đầy lôi cuốn, tóc đen ngắn gọn hơi điểm bạc thái dương, gương mặt quả cảm, mắt ấm kiên định, vest xanh navy áo sơ mi trắng không cà vạt",
+      "voiceProfileId": "trainer_voice_v1",
+      "ghiChuGiong": "Giọng nam miền Nam trầm ấm; TTS nội bộ chưa đấu nối (BLOCKED — xem docs/XUONG-PHIM-KIEM-KE.md)"
+    },
+    {
+      "characterId": "bo",
+      "ten": "Bố",
+      "ageBand": "40-49",
+      "referenceSetId": "bo_refs_v1",
+      "outfitId": "bo_outfit_01",
+      "moTaVe": "Người bố Việt Nam hiền hậu, tóc ngắn, áo polo xám, quần tây",
+      "voiceProfileId": "bo_voice_v1"
+    },
+    {
+      "characterId": "me",
+      "ten": "Mẹ",
+      "ageBand": "35-44",
+      "referenceSetId": "me_refs_v1",
+      "outfitId": "me_outfit_01",
+      "moTaVe": "Người mẹ Việt Nam dịu dàng, tóc dài buộc thấp, áo blouse kem",
+      "voiceProfileId": "me_voice_v1"
+    },
+    {
+      "characterId": "con-gai",
+      "ten": "Con gái (lớp 9)",
+      "ageBand": "14-15",
+      "referenceSetId": "congai_refs_v1",
+      "outfitId": "congai_outfit_01",
+      "moTaVe": "Nữ sinh Việt Nam lớp 9, tóc đuôi ngựa, áo thun trắng đồng phục, ba lô",
+      "voiceProfileId": "congai_voice_v1"
+    },
+    {
+      "characterId": "con-trai",
+      "ten": "Con trai (lớp 6)",
+      "ageBand": "11-12",
+      "referenceSetId": "contrai_refs_v1",
+      "outfitId": "contrai_outfit_01",
+      "moTaVe": "Nam sinh Việt Nam lớp 6, tóc cắt gọn, áo thun xanh đồng phục",
+      "voiceProfileId": "contrai_voice_v1"
+    }
+  ],
+  "quyTacChung": [
+    "Không dùng hình/giọng gia đình thật làm sample public mặc định — mọi nhân vật do AI tạo.",
+    "Pan/zoom trên ảnh chỉ cho tư liệu có ghi rõ; shot diễn xuất phải có chuyển động nội tại.",
+    "Chữ trên bảng/giấy cam kết dựng hậu kỳ bằng lớp chữ chính xác, không bắt model vẽ chữ.",
+    "Shot thiếu capability → BLOCKED_UNSUPPORTED_CAPABILITY + route thay thế; không âm thầm hạ thành ảnh chuyển động."
+  ]
+}

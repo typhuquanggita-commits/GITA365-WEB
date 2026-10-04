@@ -176,6 +176,7 @@ Phim không lưu thành file video. `may-chu/phim-phan-tu.js` ghi một công th
 - Đóng gói phim riêng (chỉ chủ hệ): `fn: dongGoiPhanTu`.
 - Nhịp có sẵn: thở, giơ tay, quay đầu, một bước. Không có chạy, đánh, nhảy.
 - Cloudflare Workers AI vẽ được ảnh, không có mô hình quay video. Lúc xem không cần GPU.
+- **Hợp đồng shot + phim thử** (lộ trình xưởng phim M1 trở đi): `may-chu/hop-dong-shot.js` (schema shot, sổ năng lực thật `NANG_LUC`, `chonRoute` trả BLOCKED thay vì hạ cấp âm thầm), fixture 10 shot `xuong-phim/phim-thu/`, doctor `tools/bac-si-xuong.mjs`, kiểm kê `docs/XUONG-PHIM-KIEM-KE.md`, cổng nghiệm thu `ACCEPTANCE.md`.
 
 Kiểm: `node tools/thu-phim-phan-tu.mjs`. Đổi mã xong phải deploy lại Worker.
 

@@ -1,0 +1,92 @@
+{
+  "revision": 1,
+  "durationMs": 8000,
+  "fps": {
+    "num": 24,
+    "den": 1
+  },
+  "aspectRatio": "16:9",
+  "locationRevisionId": "living_room_v1",
+  "maxAttempts": 3,
+  "shotId": "pilot_s09",
+  "camera": {
+    "framing": "medium",
+    "movement": "crane",
+    "axis": "living_room_axis_A"
+  },
+  "characters": [
+    {
+      "characterId": "trainer",
+      "referenceSetId": "trainer_refs_v1",
+      "outfitId": "trainer_outfit_01"
+    },
+    {
+      "characterId": "bo",
+      "referenceSetId": "bo_refs_v1",
+      "outfitId": "bo_outfit_01"
+    },
+    {
+      "characterId": "me",
+      "referenceSetId": "me_refs_v1",
+      "outfitId": "me_outfit_01"
+    },
+    {
+      "characterId": "con-gai",
+      "referenceSetId": "congai_refs_v1",
+      "outfitId": "congai_outfit_01"
+    },
+    {
+      "characterId": "con-trai",
+      "referenceSetId": "contrai_refs_v1",
+      "outfitId": "contrai_outfit_01"
+    }
+  ],
+  "actions": [
+    {
+      "actorId": "trainer",
+      "verb": "place_hand",
+      "objectId": "ban_cam_ket",
+      "startMs": 1500,
+      "endMs": 3000
+    },
+    {
+      "actorId": "bo",
+      "verb": "place_hand",
+      "objectId": "ban_cam_ket",
+      "startMs": 2300,
+      "endMs": 3800
+    },
+    {
+      "actorId": "me",
+      "verb": "place_hand",
+      "objectId": "ban_cam_ket",
+      "startMs": 3100,
+      "endMs": 4600
+    },
+    {
+      "actorId": "con-gai",
+      "verb": "place_hand",
+      "objectId": "ban_cam_ket",
+      "startMs": 3900,
+      "endMs": 5400
+    },
+    {
+      "actorId": "con-trai",
+      "verb": "place_hand",
+      "objectId": "ban_cam_ket",
+      "startMs": 4700,
+      "endMs": 6200
+    }
+  ],
+  "dialogues": [],
+  "requiredCapabilities": [
+    "reference_identity",
+    "multi_person_contact"
+  ],
+  "qaRequirements": [
+    "identity",
+    "no_major_anatomy_errors",
+    "continuity"
+  ],
+  "ghiChu": "Tiếp xúc nhiều người, không xuyên tay → multi_person_contact BLOCKED, route video diễn mẫu/3D blocking + composite có mask/depth."
+}

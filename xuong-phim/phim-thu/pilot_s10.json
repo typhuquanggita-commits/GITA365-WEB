@@ -1,0 +1,96 @@
+{
+  "revision": 1,
+  "durationMs": 8000,
+  "fps": {
+    "num": 24,
+    "den": 1
+  },
+  "aspectRatio": "16:9",
+  "locationRevisionId": "living_room_v1",
+  "maxAttempts": 3,
+  "shotId": "pilot_s10",
+  "camera": {
+    "framing": "wide",
+    "movement": "crane",
+    "axis": "living_room_axis_A"
+  },
+  "characters": [
+    {
+      "characterId": "trainer",
+      "referenceSetId": "trainer_refs_v1",
+      "outfitId": "trainer_outfit_01"
+    },
+    {
+      "characterId": "bo",
+      "referenceSetId": "bo_refs_v1",
+      "outfitId": "bo_outfit_01"
+    },
+    {
+      "characterId": "me",
+      "referenceSetId": "me_refs_v1",
+      "outfitId": "me_outfit_01"
+    },
+    {
+      "characterId": "con-gai",
+      "referenceSetId": "congai_refs_v1",
+      "outfitId": "congai_outfit_01"
+    },
+    {
+      "characterId": "con-trai",
+      "referenceSetId": "contrai_refs_v1",
+      "outfitId": "contrai_outfit_01"
+    }
+  ],
+  "actions": [
+    {
+      "actorId": "trainer",
+      "verb": "stand_up",
+      "startMs": 1000,
+      "endMs": 4000
+    },
+    {
+      "actorId": "bo",
+      "verb": "stand_up",
+      "startMs": 1000,
+      "endMs": 4000
+    },
+    {
+      "actorId": "me",
+      "verb": "stand_up",
+      "startMs": 1000,
+      "endMs": 4000
+    },
+    {
+      "actorId": "con-gai",
+      "verb": "stand_up",
+      "startMs": 1000,
+      "endMs": 4000
+    },
+    {
+      "actorId": "con-trai",
+      "verb": "stand_up",
+      "startMs": 1000,
+      "endMs": 4000
+    }
+  ],
+  "dialogues": [
+    {
+      "characterId": "trainer",
+      "text": "Gia đình mình bắt đầu từ hôm nay — cùng nhau, đều mỗi ngày!",
+      "audioAssetId": "trainer_line_10",
+      "startMs": 4000,
+      "endMs": 8000
+    }
+  ],
+  "requiredCapabilities": [
+    "reference_identity",
+    "chuyen_dong_nhe",
+    "lip_sync"
+  ],
+  "qaRequirements": [
+    "identity",
+    "continuity",
+    "lip_sync"
+  ],
+  "ghiChu": "Giữ danh tính/outfit khi cả nhà đứng lên; âm thanh kết + toàn cảnh khép phim thử."
+}

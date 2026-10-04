@@ -50,6 +50,9 @@ jobs:
       - name: Thử Truy vấn đa chiều (bốn dòng chảy · bảng điểm 16 ban)
         run: node tools/thu-dong-chay.mjs
 
+      - name: Thử hợp đồng shot xưởng phim (schema + route năng lực + 10 fixture phim thử)
+        run: node tools/thu-hop-dong-shot.mjs
+
       - name: Thử trang trạng thái công khai (không phiên · chỉ tổng hợp số)
         run: node tools/thu-trang-thai.mjs
 

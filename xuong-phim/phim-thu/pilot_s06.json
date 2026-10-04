@@ -1,0 +1,80 @@
+{
+  "revision": 1,
+  "durationMs": 8000,
+  "fps": {
+    "num": 24,
+    "den": 1
+  },
+  "aspectRatio": "16:9",
+  "locationRevisionId": "living_room_v1",
+  "maxAttempts": 3,
+  "shotId": "pilot_s06",
+  "camera": {
+    "framing": "medium_two_shot",
+    "movement": "locked",
+    "axis": "living_room_axis_A"
+  },
+  "characters": [
+    {
+      "characterId": "trainer",
+      "referenceSetId": "trainer_refs_v1",
+      "outfitId": "trainer_outfit_01"
+    },
+    {
+      "characterId": "con-trai",
+      "referenceSetId": "contrai_refs_v1",
+      "outfitId": "contrai_outfit_01"
+    }
+  ],
+  "actions": [
+    {
+      "actorId": "trainer",
+      "verb": "offer",
+      "objectId": "commitment_card",
+      "targetId": "con-trai",
+      "startMs": 1000,
+      "endMs": 3500
+    },
+    {
+      "actorId": "con-trai",
+      "verb": "receive",
+      "objectId": "commitment_card",
+      "startMs": 3500,
+      "endMs": 6000
+    }
+  ],
+  "dialogues": [
+    {
+      "characterId": "trainer",
+      "text": "Con chọn một việc nhỏ và làm đều mỗi ngày nhé.",
+      "audioAssetId": "trainer_line_06",
+      "startMs": 0,
+      "endMs": 4000
+    }
+  ],
+  "performanceAssetIds": [
+    "handoff_master_take_01"
+  ],
+  "continuityIn": {
+    "propOwner": {
+      "commitment_card": "trainer"
+    }
+  },
+  "continuityOut": {
+    "propOwner": {
+      "commitment_card": "con-trai"
+    }
+  },
+  "requiredCapabilities": [
+    "reference_identity",
+    "multi_person_contact",
+    "lip_sync"
+  ],
+  "qaRequirements": [
+    "identity",
+    "prop_transfer",
+    "lip_sync",
+    "no_major_anatomy_errors"
+  ],
+  "ghiChu": "Trao giấy cam kết: multi_person_contact chưa xác minh → BLOCKED_UNSUPPORTED_CAPABILITY, route video diễn mẫu người thật (handoff_master_take_01) hoặc animatic 3D; giấy phải đổi người giữ, không được biến mất."
+}

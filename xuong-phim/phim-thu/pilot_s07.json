@@ -1,0 +1,54 @@
+{
+  "revision": 1,
+  "durationMs": 8000,
+  "fps": {
+    "num": 24,
+    "den": 1
+  },
+  "aspectRatio": "16:9",
+  "locationRevisionId": "living_room_v1",
+  "maxAttempts": 3,
+  "shotId": "pilot_s07",
+  "camera": {
+    "framing": "close_up",
+    "movement": "gimbal",
+    "axis": "living_room_axis_A"
+  },
+  "characters": [
+    {
+      "characterId": "con-gai",
+      "referenceSetId": "congai_refs_v1",
+      "outfitId": "congai_outfit_01"
+    },
+    {
+      "characterId": "trainer",
+      "referenceSetId": "trainer_refs_v1",
+      "outfitId": "trainer_outfit_01"
+    }
+  ],
+  "actions": [
+    {
+      "actorId": "con-gai",
+      "verb": "write",
+      "objectId": "commitment_card",
+      "startMs": 1000,
+      "endMs": 6000
+    },
+    {
+      "actorId": "trainer",
+      "verb": "point_at",
+      "objectId": "bang_muc_tieu",
+      "startMs": 3000,
+      "endMs": 6000
+    }
+  ],
+  "dialogues": [],
+  "requiredCapabilities": [
+    "reference_identity"
+  ],
+  "qaRequirements": [
+    "identity",
+    "no_major_anatomy_errors"
+  ],
+  "ghiChu": "Tay, bút, điểm chỉ phải đúng; chữ trên thẻ/bảng dựng hậu kỳ bằng lớp chữ chính xác."
+}
