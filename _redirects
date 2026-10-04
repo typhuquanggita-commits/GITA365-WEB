@@ -5,7 +5,6 @@
 /tools/*         /404.html   404
 /server/*        /404.html   404
 
-# Phim phân tử và clip xưởng quay: chuyển tiếp (proxy) sang Worker để
-# khách xem ngay trên tên miền chính gita365.pages.dev
-/phim/*        https://gita365.typhuquanggita.workers.dev/phim/:splat        200
-/quay/phim/*   https://gita365.typhuquanggita.workers.dev/quay/phim/:splat   200
+# Lưu ý: Pages _redirects KHÔNG proxy được ra tên miền ngoài (chỉ đường
+# dẫn tương đối). Việc xem phim trên gita365.pages.dev/phim/* do Pages
+# Functions trong thư mục functions/ chuyển tiếp sang Worker.
