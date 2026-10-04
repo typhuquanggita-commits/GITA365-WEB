@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trạng thái hệ thống — GITA 365</title>
+<meta name="description" content="Trạng thái sống của hệ thống GITA 365 — chỉ tổng hợp số, không dữ liệu cá nhân.">
+<link rel="icon" href="assets/favicon.ico">
+<style>
+  :root { --bg:#0e1120; --card:#171b30; --line:#2a3052; --chu:#e8eaf4; --mo:#9aa0b8; --ok:#2fbf71; --do:#e5484d; }
+  * { box-sizing:border-box; margin:0; }
+  body { background:var(--bg); color:var(--chu); font:15px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; min-height:100vh; display:flex; justify-content:center; padding:32px 16px; }
+  main { max-width:640px; width:100%; }
+  h1 { font-size:22px; margin-bottom:4px; }
+  .mo { color:var(--mo); font-size:13px; }
+  .the { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px 20px; margin-top:16px; }
+  .song { display:inline-flex; align-items:center; gap:8px; font-weight:600; }
+  .cham { width:10px; height:10px; border-radius:50%; background:var(--ok); box-shadow:0 0 10px var(--ok); animation:nhip 2s infinite; }
+  .cham.chet { background:var(--do); box-shadow:0 0 10px var(--do); animation:none; }
+  @keyframes nhip { 50% { opacity:.4 } }
+  table { width:100%; border-collapse:collapse; margin-top:10px; font-size:14px; }
+  td { padding:8px 0; border-top:1px solid var(--line); }
+  td:first-child { color:var(--mo); }
+  td:last-child { text-align:right; font-variant-numeric:tabular-nums; }
+  .luat { font-size:12.5px; color:var(--mo); margin-top:14px; border-top:1px dashed var(--line); padding-top:12px; }
+  a { color:#8fa8ff; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Trạng thái hệ thống GITA 365</h1>
+  <p class="mo">Số liệu tổng hợp, cập nhật lúc mở trang · <a href="index.html">Về trang chính</a></p>
+
+  <div class="the">
+    <span class="song"><span class="cham" id="cham"></span><span id="trang-thai">Đang kiểm tra…</span></span>
+    <table id="bang" hidden>
+      <tr><td>Lần tự soát & tự chữa gần nhất</td><td id="tu-soat">—</td></tr>
+      <tr><td>Lượt được phục vụ từ kho/đệm hôm nay (0 token)</td><td id="loc">—</td></tr>
+      <tr><td>Lượt ghi sổ vận hành hôm nay</td><td id="ghi">—</td></tr>
+      <tr><td>Giờ máy chủ</td><td id="gio">—</td></tr>
+    </table>
+    <p class="luat">Trang này chỉ công bố <b>tổng hợp số</b> — không tên, không định danh, không nội dung
+    của bất kỳ ai. Chi tiết sức khoẻ đầy đủ nằm trong hệ, sau đăng nhập.</p>
+  </div>
+</main>
+<script>
+(async function () {
+  var api = (window.GITA_API || localStorage.getItem('gita_api') || 'https://gita365.typhuquanggita.workers.dev').replace(/\/+$/, '');
+  function chet(msg) {
+    document.getElementById('cham').classList.add('chet');
+    document.getElementById('trang-thai').textContent = msg;
+  }
+  try {
+    var r = await fetch(api, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fn: 'trangThaiCongKhai' }) });
+    var x = await r.json();
+    if (!x.ok) return chet('Hệ thống đang bảo trì — thử lại sau ít phút.');
+    document.getElementById('trang-thai').textContent = 'Hệ thống đang hoạt động bình thường';
+    document.getElementById('bang').hidden = false;
+    document.getElementById('tu-soat').textContent = x.he.tuSoatGanNhat ? new Date(x.he.tuSoatGanNhat).toLocaleString('vi-VN') : 'chưa ghi';
+    document.getElementById('loc').textContent = x.he.soLuotLocTruocTokenHomNay == null ? '—' : Number(x.he.soLuotLocTruocTokenHomNay).toLocaleString('vi-VN');
+    document.getElementById('ghi').textContent = x.he.soLuotGhiSoHomNay == null ? '—' : Number(x.he.soLuotGhiSoHomNay).toLocaleString('vi-VN');
+    document.getElementById('gio').textContent = new Date(x.luc).toLocaleString('vi-VN');
+  } catch (e) { chet('Không kết nối được máy chủ — kiểm tra đường truyền.'); }
+})();
+</script>
+</body>
+</html>
