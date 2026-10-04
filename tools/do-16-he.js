@@ -29,7 +29,7 @@ const worker = doc('may-chu/worker.js');
 const G = { VIEWS: {}, U: { h: s => String(s), ic: () => '' } };
 const ctx = { window: { G }, G, console, localStorage: { getItem: () => null, setItem() {} } };
 vm.createContext(ctx);
-for (const f of ['src/dieu-phoi.js', 'src/he-16.js', 'src/bo-nao-da-tri.js', 'src/la-chan-30.js', 'src/bo-may-tap-doan.js', 'src/kien-truc-hop-nhat.js', 'src/vong-lap-van-hanh.js']) vm.runInContext(doc(f), ctx, { filename: f });
+for (const f of ['src/dieu-phoi.js', 'src/he-16.js', 'src/bo-nao-da-tri.js', 'src/la-chan-30.js', 'src/bo-may-tap-doan.js', 'src/kien-truc-hop-nhat.js', 'src/vong-lap-van-hanh.js', 'src/ban-do-tong-the.js']) vm.runInContext(doc(f), ctx, { filename: f });
 
 const loi = [];
 let ok = 0;
@@ -164,6 +164,19 @@ VL.forEach(m => {
   dat(!!m.ten && m.tro.length > 0, `${m.ma}: thiếu tên hoặc con trỏ`);
   m.tro.forEach(x => kiemTro(x, m.ma));
 });
+/* Bản đồ tổng thể 12 khối A–L: mã khối không trùng, mọi nút có tên;
+   nút có con trỏ thì con trỏ phải sống; nút không con trỏ thì bắt buộc
+   ghi rõ điều còn thiếu. */
+const BD = G.BD_KHOI;
+dat(BD.length === 12, `Bản đồ tổng thể cần 12 khối, có ${BD.length}`);
+dat(new Set(BD.map(k => k.ma)).size === 12, 'Mã khối A–L trùng');
+let bdThieu = 0;
+BD.forEach(k => k.muc.forEach(m => {
+  dat(!!m.ten, `${m.ma}: thiếu tên nút`);
+  if (m.tro.length) m.tro.forEach(x => kiemTro(x, m.ma));
+  else { dat(m.thieu.length > 20, `${m.ma}: nút không có con trỏ phải ghi rõ điều thiếu`); bdThieu++; }
+}));
+dat(bdThieu > 0, 'Bản đồ tổng thể: phải ghi thật ít nhất một nút chưa có');
 
 console.log(`  ✓ ${ok} phép đo đạt · ${HE.length} hệ · ${G.H16_SOP.length} SOP · ${G.DP_TRO_LY.length} trợ lý · ${G.TT_KHO.length} nguyên lý · ${LC.length} tầng lá chắn`);
 console.log(`  · Tự chủ: AI làm ${tc.aiLamPhan}% cửa · AI tự chạy trọn (TC4) ${tc.tuChayTron}% · ` +
