@@ -50,7 +50,7 @@ import { soNgay, chotTuan, soatChot, tongHop, baoCaoKeToan, boSoKhaiThue,
 import { tongNgayDoanhThu } from './bao-doanh-thu.js';
 import { thuGuiThu } from './thu.js';
 import { phucVuTaiNguyen } from './tai-nguyen.js';
-import { quayKhopMoi, quayChuyenDong, quayVideoDong, taoNhanVatAI, quayXem, xuLyMayQuay, phucVuPhimQuay, donQuay } from './xuong-quay.js';
+import { quayKhopMoi, quayChuyenDong, quayVideoDong, taoNhanVatAI, quayXem, quayGiongNoi, quayPhimMoi, xuLyMayQuay, phucVuPhimQuay, donQuay } from './xuong-quay.js';
 import { dongGoiPhanTu, xemPhanTu, phucVuPhimPhanTu } from './phim-phan-tu.js';
 import { chamKpiTaiChinh } from './kpi-tai-chinh.js';
 import { dangTinTaiChinh, bangTinTaiChinh,
@@ -323,7 +323,7 @@ const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau'
   'hoiDaTri', 'hoiDongDaTri', 'chamDaTri', 'soDaTri',
   'luuGiaiPhap', 'duyetGiaiPhap', 'dsGiaiPhap', 'boSungGiaiPhap', 'canhMauDaTri', 'thuMauDaTri', 'docVongKhoaHoc',
   'taoTuyenDaTri', 'chayChangDaTri', 'docTuyenDaTri', 'docKpiCayTien', 'docDongChay',
-  'phimTrangThai', 'phimGuiViec', 'phimXemViec', 'phimTinhHuong', 'phimMienPhi', 'quayKhopMoi', 'quayChuyenDong', 'quayVideoDong', 'taoNhanVatAI', 'quayXem', 'dongGoiPhanTu', 'xemPhanTu',
+  'phimTrangThai', 'phimGuiViec', 'phimXemViec', 'phimTinhHuong', 'phimMienPhi', 'quayKhopMoi', 'quayChuyenDong', 'quayVideoDong', 'taoNhanVatAI', 'quayXem', 'quayGiongNoi', 'quayPhimMoi', 'dongGoiPhanTu', 'xemPhanTu',
   'guiBaoCaoNgay', 'tongHopBaoCao', 'dsBaoCaoNgay'];
 
 async function lam(fn, y, env, db) {
@@ -712,6 +712,8 @@ async function lam(fn, y, env, db) {
   if (fn === 'quayVideoDong')     return await quayVideoDong(y, env, db, hoSo);
   if (fn === 'taoNhanVatAI')      return await taoNhanVatAI(y, env, db, hoSo);
   if (fn === 'quayXem')           return await quayXem(y, env, db, hoSo);
+  if (fn === 'quayGiongNoi')      return await quayGiongNoi(y, env, db, hoSo);
+  if (fn === 'quayPhimMoi')       return await quayPhimMoi(y, env, db, hoSo);
   if (fn === 'dongGoiPhanTu')     return await dongGoiPhanTu(y, env, db, hoSo);
   if (fn === 'xemPhanTu')         return await xemPhanTu(y, env, db, hoSo);
   if (fn === 'phimGuiViec')       return await phimGuiViec(y, env, db, hoSo);

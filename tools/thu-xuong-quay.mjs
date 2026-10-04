@@ -2,7 +2,7 @@
    bằng SQLite thật (node:sqlite) và R2 giả lập bằng Map.
    Chạy: node tools/thu-xuong-quay.mjs */
 import { DatabaseSync } from 'node:sqlite';
-import { quayKhopMoi, quayChuyenDong, quayXem, xuLyMayQuay, phucVuPhimQuay, donQuay, QUAY, bangNhau } from '../may-chu/xuong-quay.js';
+import { quayKhopMoi, quayChuyenDong, quayGiongNoi, quayPhimMoi, quayXem, xuLyMayQuay, phucVuPhimQuay, donQuay, QUAY, bangNhau, LOAI_PHIM } from '../may-chu/xuong-quay.js';
 
 let dat = 0, hong = 0;
 function kiem(dk, ten) { if (dk) dat++; else { hong++; console.error('✗ ' + ten); } }
@@ -139,6 +139,74 @@ kiem(x.mayDangChay >= 1, 'đếm máy đang chạy');
 env.CSDL._s.prepare('UPDATE quay_viec SET taoLuc = ? WHERE ma = ?').run(Date.now() - 8 * 86400e3, g1.ma);
 const xoa = await donQuay(env);
 kiem(xoa === 1 && !env.HOSO._m.has('quay/' + g1.ma + '/kq.mp4') && env.HOSO._m.has('quay/' + g3.ma + '/anh'), 'dọn việc + tệp quá 7 ngày');
+
+// ── Việc ĐỌC THOẠI (tts) ──
+kiem((await quayGiongNoi({ thoai: 'Xin chào, đây là thử giọng đọc.' }, env, env.CSDL, KHAC)).code === 'NOPERM', 'tts: chặn người không phải R01');
+kiem(!(await quayGiongNoi({ thoai: 'ngắn' }, env, env.CSDL, R01)).ok, 'tts: thoại quá ngắn bị từ chối');
+const t1 = await quayGiongNoi({ thoai: 'Chào mừng bạn đến với hành trình GITA 365 ngày hôm nay.', giong: 'vi-VN-HoaiMyNeural' }, env, env.CSDL, R01);
+kiem(t1.ok && /^[0-9a-f]{32}$/.test(t1.ma) && t1.giong === 'vi-VN-HoaiMyNeural', 'tts: gửi việc đọc ra mã, giữ giọng chọn');
+kiem(env.HOSO._m.has('quay/' + t1.ma + '/loi'), 'tts: lời thoại đã lưu R2');
+const t2 = await quayGiongNoi({ thoai: 'Kiểm tra giọng mặc định của xưởng đọc nội bộ.', giong: 'en-US-X' }, env, env.CSDL, R01);
+kiem(t2.ok && t2.giong === 'vi-VN-NamMinhNeural', 'tts: giọng lạ → về giọng mặc định');
+const nt1 = await may('/quay/nhan', jb({ may: 'kg-tts-1', loai: 'tts' }));
+kiem(nt1.j.ma === t1.ma && nt1.j.loai === 'tts', 'máy tts nhận đúng việc đọc cũ nhất');
+const mp3 = Buffer.concat([Buffer.from('ID3'), Buffer.alloc(1500)]);
+kiem((await may('/quay/kq/' + t1.ma, { method: 'PUT', body: Buffer.alloc(800) })).status === 400, 'tts: từ chối tệp không phải MP3');
+kiem((await may('/quay/kq/' + t1.ma, { method: 'PUT', body: mp4 })).status === 400, 'tts: từ chối MP4 đóng gói MP3');
+kiem((await may('/quay/kq/' + t1.ma, { method: 'PUT', body: mp3 })).j.ok, 'tts: nộp MP3 được');
+x = await quayXem({ ds: [t1.ma] }, env, env.CSDL, R01);
+kiem(x.ds[0].trangThai === 'xong' && x.ds[0].url === '/quay/phim/' + t1.ma + '.mp3', 'tts: xem ra đường .mp3');
+let pa = await phucVuPhimQuay(new Request('https://w.test/quay/phim/' + t1.ma + '.mp3'), env, '/quay/phim/' + t1.ma + '.mp3');
+kiem(pa.status === 200 && pa.headers.get('Content-Type') === 'audio/mpeg', 'phát MP3 công khai theo mã');
+const nt2 = await may('/quay/nhan', jb({ may: 'kg-tts-1', loai: 'tts' }));
+kiem(nt2.j.ma === t2.ma, 'máy tts nhận nốt việc đọc 2');
+kiem((await may('/quay/kq/' + t2.ma, { method: 'PUT', body: mp3 })).j.ok, 'tts: nộp nốt MP3 2');
+
+// ── Việc PHIM HOÀN CHỈNH (film) ──
+kiem(LOAI_PHIM.indexOf('gita_hanh_trinh') >= 0, 'có mẫu phim hành trình 5 tầng GITA');
+kiem((await quayPhimMoi({ chuDe: 'Huấn luyện kỷ luật cho đội nhóm bán hàng' }, env, env.CSDL, KHAC)).code === 'NOPERM', 'film: chặn người không phải R01');
+kiem(!(await quayPhimMoi({ chuDe: 'ngắn' }, env, env.CSDL, R01)).ok, 'film: đề bài quá ngắn bị từ chối');
+kiem((await quayPhimMoi({ chuDe: 'Bí quyết hoa hồng tuyến dưới dành cho khách hàng thân thiết' }, env, env.CSDL, R01)).code === 'BI_MAT', 'film: phim khách bị chặn từ khoáy nội bộ');
+const f1 = await quayPhimMoi({ tieuDe: 'Kỷ luật mỗi sáng', chuDe: 'Huấn luyện kỷ luật cho đội nhóm bán hàng trong 21 ngày đầu', loaiPhim: 'huan_luyen', nhanVat: 'trainer', soCanhToiDa: 5 }, env, env.CSDL, R01);
+kiem(f1.ok && /^[0-9a-f]{32}$/.test(f1.ma) && f1.loaiPhim === 'huan_luyen' && f1.nhanVat === 'trainer', 'film: gửi việc phim ra mã');
+const goiFilm = JSON.parse(Buffer.from(env.HOSO._m.get('quay/' + f1.ma + '/loi').u).toString());
+kiem(goiFilm.kieu === 'phim' && goiFilm.soCanhToiDa === 5 && goiFilm.loaiPhim === 'huan_luyen' && goiFilm.chuDe.length >= 8, 'film: gói đề bài JSON đủ trường');
+const f2 = await quayPhimMoi({ chuDe: 'Giới thiệu hành trình năm tầng GITA cho người mới', loaiPhim: 'khong-co', nhanVat: 'la' }, env, env.CSDL, R01);
+kiem(f2.ok && f2.loaiPhim === 'dao_tao' && f2.nhanVat === 'trainer', 'film: loại/nhân vật lạ → mặc định an toàn');
+const nf1 = await may('/quay/nhan', jb({ may: 'kg-film-1', loai: 'film' }));
+kiem(nf1.j.ma === f1.ma && nf1.j.loai === 'film', 'máy chỉ nhận đúng loại film');
+kiem((await may('/quay/tep/' + f1.ma + '/loi')).status === 200, 'máy tải được gói đề bài');
+kiem((await may('/quay/kq/' + f1.ma, { method: 'PUT', body: mp3 })).status === 400, 'film: từ chối MP3 đóng gói MP4');
+kiem((await may('/quay/kq/' + f1.ma, { method: 'PUT', body: mp4 })).j.ok, 'film: nộp MP4 hoàn chỉnh được');
+x = await quayXem({ ds: [f1.ma] }, env, env.CSDL, R01);
+kiem(x.ds[0].trangThai === 'xong' && x.ds[0].url === '/quay/phim/' + f1.ma + '.mp4', 'film: xem ra đường .mp4');
+const nf2 = await may('/quay/nhan', jb({ may: 'kg-film-1', loai: 'film' }));
+kiem(nf2.j.ma === f2.ma, 'máy nhận nốt phim 2');
+kiem((await may('/quay/kq/' + f2.ma, { method: 'PUT', body: mp4 })).j.ok, 'film: nộp nốt MP4 2');
+
+// ── API nhân vật chuẩn đã khóa (máy Kaggle tải ảnh tham chiếu) ──
+kiem((await may('/quay/nvchuan', { khoa: false })).status === 401, 'nvchuan: thiếu khoá → 401');
+let nvc = await may('/quay/nvchuan');
+kiem(nvc.j.ok && Array.isArray(nvc.j.ds) && nvc.j.ds.length === 0, 'nvchuan: chưa khóa ảnh → danh sách rỗng');
+env.CSDL._s.exec('CREATE TABLE IF NOT EXISTS phim_pt_hat (ma TEXT PRIMARY KEY, bam TEXT NOT NULL UNIQUE, loai TEXT NOT NULL, mime TEXT NOT NULL, byte INTEGER NOT NULL, soLan INTEGER NOT NULL DEFAULT 1)');
+const anhA = Buffer.concat([Buffer.from([0xFF, 0xD8, 0xFF, 0xE0]), Buffer.alloc(300, 1)]);
+const anhB = Buffer.concat([Buffer.from([0x89, 0x50, 0x4E, 0x47]), Buffer.alloc(300, 2)]);
+env.CSDL._s.prepare('INSERT INTO phim_pt_hat (ma, bam, loai, mime, byte, soLan) VALUES (?, ?, ?, ?, ?, 1)').run('a'.repeat(32), 'bam-a', 'nvchuan-trainer', 'image/jpeg', anhA.length);
+env.CSDL._s.prepare('INSERT INTO phim_pt_hat (ma, bam, loai, mime, byte, soLan) VALUES (?, ?, ?, ?, ?, 1)').run('b'.repeat(32), 'bam-b', 'nvchuan-trainer', 'image/png', anhB.length);
+env.CSDL._s.prepare('INSERT INTO phim_pt_hat (ma, bam, loai, mime, byte, soLan) VALUES (?, ?, ?, ?, ?, 1)').run('c'.repeat(32), 'bam-c', 'nvchuan-mc', 'image/jpeg', anhA.length);
+env.CSDL._s.prepare('INSERT INTO phim_pt_hat (ma, bam, loai, mime, byte, soLan) VALUES (?, ?, ?, ?, ?, 1)').run('d'.repeat(32), 'bam-d', 'nvmau-chu', 'image/jpeg', anhA.length);
+env.HOSO._m.set('pt/bam-a', { u: anhA, kieu: 'image/jpeg' });
+env.HOSO._m.set('pt/bam-b', { u: anhB, kieu: 'image/png' });
+env.HOSO._m.set('pt/bam-c', { u: anhA, kieu: 'image/jpeg' });
+env.HOSO._m.set('pt/bam-d', { u: anhA, kieu: 'image/jpeg' });
+nvc = await may('/quay/nvchuan');
+kiem(nvc.j.ds.length === 2 && nvc.j.ds[0].id === 'trainer' && nvc.j.ds[0].refs.length === 2, 'nvchuan: trainer 2 ảnh khóa, đứng đầu');
+kiem(nvc.j.ds[0].giong === 'vi-VN-NamMinhNeural' && /Vietnamese/.test(nvc.j.ds[0].promptEn), 'nvchuan: kèm giọng + prompt khóa');
+kiem(nvc.j.ds[1].id === 'mc' && nvc.j.ds[1].refs.length === 1, 'nvchuan: mc 1 ảnh khóa');
+const ia = await may('/quay/nvchuan/' + 'a'.repeat(32));
+kiem(ia.status === 200 && ia.r.headers.get('Content-Type') === 'image/jpeg', 'máy tải được ảnh khóa đúng định dạng');
+kiem((await may('/quay/nvchuan/' + 'f'.repeat(32))).status === 404, 'nvchuan: mã lạ → 404');
+kiem((await may('/quay/nvchuan/' + 'd'.repeat(32))).status === 404, 'nvchuan: ảnh loại khác (không phải khóa nhân vật) bị chặn');
 
 // Hàng chờ đầy
 env.CSDL._s.prepare("UPDATE quay_viec SET trangThai='cho'").run();

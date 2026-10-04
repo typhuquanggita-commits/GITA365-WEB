@@ -26,6 +26,7 @@
    ═══════════════════════════════════════════════════════════════ */
 'use strict';
 import { laR01 } from './vai-tro.js';
+import { NHAN_VAT_CHUAN, nhanVatHopLe, loaiHatNV, giongNV } from './nhan-vat-chuan.js';
 
 export const QUAY = {
   toiDaAnh: 6 * 1024 * 1024,
@@ -137,6 +138,81 @@ export async function quayKhopMoi(y, env, db, hoSo) {
     .bind(ma, uid, ka, km, Date.now()).run();
   await goiKhoQuay(env, db).catch(() => false);
   return { ok: true, ma };
+}
+
+/* ── ĐỌC THOẠI 0Đ (TTS) — việc loại 'tts', máy Kaggle làm bằng
+   edge-tts (giọng vi-VN của Microsoft, miễn phí, cần internet).
+   Giọng nhân vật có provenance: chỉ dùng giọng mẫu được phép; clone
+   giọng riêng (XTTS) chỉ khi chủ hệ tải mẫu giọng CỦA MÌNH lên.
+   Kết quả MP3 ở /quay/phim/<ma>.mp3 (công khai theo mã 128 bit). */
+export const GIONG_VI = ['vi-VN-NamMinhNeural', 'vi-VN-HoaiMyNeural'];
+export async function quayGiongNoi(y, env, db, hoSo) {
+  if (!laR01(hoSo)) return { ok: false, code: 'NOPERM', error: 'Chỉ Super Admin được dùng xưởng đọc.' };
+  if (!env.HOSO) return { ok: false, code: 'CHUA_CO_R2', error: 'Máy chủ chưa gắn R2.' };
+  if (!env.GITA_KHOA_XUONG_QUAY) return { ok: false, code: 'CHUA_CO_XUONG', error: 'Máy chủ chưa có khoá xưởng quay (GITA_KHOA_XUONG_QUAY).' };
+  await taoBangQuay(db);
+  const thoai = String(y && y.thoai || '').replace(/[\u0000-\u001F]/g, ' ').trim().slice(0, 800);
+  if (thoai.length < 8) return { ok: false, error: 'Cần lời thoại (ít nhất 8 ký tự).' };
+  const giong = GIONG_VI.indexOf(y && y.giong) >= 0 ? y.giong : GIONG_VI[0];
+  const uid = String(hoSo.uid || '');
+  const dem = await db.prepare("SELECT COUNT(*) AS n FROM quay_viec WHERE uid = ? AND trangThai IN ('cho','dang')").bind(uid).first();
+  if (dem && +dem.n >= QUAY.toiDaCho) return { ok: false, code: 'DAY', error: 'Hàng chờ xưởng quay đã đầy, đợi bớt rồi gửi tiếp.' };
+  const ma = maMoi();
+  const goi = '#giong=' + giong + '\n' + thoai;
+  await env.HOSO.put('quay/' + ma + '/loi', new TextEncoder().encode(goi), { httpMetadata: { contentType: 'text/plain; charset=utf-8' } });
+  await db.prepare("INSERT INTO quay_viec (ma, uid, trangThai, taoLuc, loai, phamVi) VALUES (?, ?, 'cho', ?, 'tts', 'khach')")
+    .bind(ma, uid, Date.now()).run();
+  return { ok: true, ma, giong, ghiChu: 'Việc đọc nằm trong hàng chờ. MP3 về khi máy Kaggle đang mở (cùng notebook quay video) đọc xong.' };
+}
+
+/* ── PHIM HOÀN CHỈNH 0Đ (việc loại 'film') — máy Kaggle chạy notebook
+   xuong-phim-studio.py: tự viết kịch bản theo mẫu GITA, quay từng cảnh
+   bằng LTX-Video với ảnh nhân vật ĐÃ KHÓA (tải qua /quay/nvchuan),
+   đọc thoại edge-tts, khớp môi (MuseTalk/Wav2Lip), chấm QC, ghép
+   FFmpeg + phụ đề SRT + intro/outro GITA → nộp MP4 hoàn chỉnh.
+   Kết quả ở /quay/phim/<ma>.mp4 (công khai theo mã 128 bit). */
+export const LOAI_PHIM = ['dao_tao', 'huan_luyen', 'hotro_khach', 'gita_hanh_trinh'];
+export async function quayPhimMoi(y, env, db, hoSo) {
+  if (!laR01(hoSo)) return { ok: false, code: 'NOPERM', error: 'Chỉ Super Admin được đặt phim.' };
+  if (!env.HOSO) return { ok: false, code: 'CHUA_CO_R2', error: 'Máy chủ chưa gắn R2.' };
+  if (!env.GITA_KHOA_XUONG_QUAY) return { ok: false, code: 'CHUA_CO_XUONG', error: 'Máy chủ chưa có khoá xưởng quay (GITA_KHOA_XUONG_QUAY).' };
+  await taoBangQuay(db);
+  const tieuDe = String(y && y.tieuDe || '').replace(/[\u0000-\u001F]/g, ' ').trim().slice(0, 120);
+  const chuDe = String(y && y.chuDe || '').replace(/[\u0000-\u001F]/g, ' ').trim().slice(0, 600);
+  if (chuDe.length < 8) return { ok: false, error: 'Cần đề bài phim (chuDe) ít nhất 8 ký tự — xưởng tự viết kịch bản từ đề bài này.' };
+  const loaiPhim = LOAI_PHIM.indexOf(y && y.loaiPhim) >= 0 ? y.loaiPhim : 'dao_tao';
+  const nhanVat = nhanVatHopLe(y && y.nhanVat) ? String(y.nhanVat) : 'trainer';
+  const ghiChu = String(y && y.ghiChu || '').replace(/[\u0000-\u001F]/g, ' ').trim().slice(0, 300);
+  const soCanhToiDa = Math.min(10, Math.max(3, Math.round(Number(y && y.soCanhToiDa) || 7)));
+  const phamVi = String(y && y.phamVi || '') === 'noi-bo' ? 'noi-bo' : 'khach';
+  const trung = soatLoiNhac(tieuDe + ' ' + chuDe + ' ' + ghiChu, phamVi);
+  if (trung) return { ok: false, code: 'BI_MAT', error: 'Phim khách không được chứa “' + trung + '”. Bỏ từ đó hoặc chọn phạm vi nội bộ.' };
+  const uid = String(hoSo.uid || '');
+  const dem = await db.prepare("SELECT COUNT(*) AS n FROM quay_viec WHERE uid = ? AND trangThai IN ('cho','dang')").bind(uid).first();
+  if (dem && +dem.n >= QUAY.toiDaCho) return { ok: false, code: 'DAY', error: 'Hàng chờ xưởng quay đã đầy, đợi bớt rồi gửi tiếp.' };
+  const ma = maMoi();
+  const goi = JSON.stringify({ kieu: 'phim', tieuDe: tieuDe || chuDe.slice(0, 60), chuDe, loaiPhim, nhanVat, ghiChu, soCanhToiDa, phamVi });
+  await env.HOSO.put('quay/' + ma + '/loi', new TextEncoder().encode(goi), { httpMetadata: { contentType: 'application/json; charset=utf-8' } });
+  await db.prepare("INSERT INTO quay_viec (ma, uid, trangThai, taoLuc, loai, phamVi) VALUES (?, ?, 'cho', ?, 'film', ?)")
+    .bind(ma, uid, Date.now(), phamVi).run();
+  return { ok: true, ma, loaiPhim, nhanVat,
+    ghiChu: 'Phim nằm trong hàng chờ. Máy Kaggle (notebook xuong-phim-studio.py) đang mở sẽ tự viết kịch bản, quay từng cảnh, đọc thoại, khớp môi rồi nộp MP4 hoàn chỉnh về /quay/phim/' + ma + '.mp4.' };
+}
+
+/* Danh sách nhân vật chuẩn kèm ảnh khóa — máy Kaggle tải về làm ảnh
+   khởi tạo image-to-video. Chỉ trả nhân vật ĐÃ có ít nhất 1 ảnh khóa. */
+export async function danhSachNhanVatKhoa(env, db) {
+  await taoBangQuay(db);
+  const ra = [];
+  for (const id of Object.keys(NHAN_VAT_CHUAN)) {
+    const ds = await db.prepare('SELECT ma, mime FROM phim_pt_hat WHERE loai = ? ORDER BY rowid LIMIT 4')
+      .bind(loaiHatNV(id)).all().catch(() => null);
+    const refs = ((ds && ds.results) || []).map(r => ({ ma: r.ma, mime: r.mime }));
+    if (!refs.length) continue;
+    const nv = NHAN_VAT_CHUAN[id];
+    ra.push({ id, ten: nv.ten, vai: nv.vai, giong: nv.giong, promptEn: nv.promptEn, refs });
+  }
+  return ra;
 }
 
 /* Chuỗi 2–4 khung của cùng một cảnh. Máy GitHub nối từng cặp bằng RIFE.
@@ -262,7 +338,7 @@ export async function quayXem(y, env, db, hoSo) {
     const r = await db.prepare('SELECT rowid AS rid, ma, trangThai, taoLuc, loi, loai FROM quay_viec WHERE ma = ? AND uid = ?').bind(ma, uid).first();
     if (!r) { kq.push({ ma, trangThai: 'mat' }); continue; }
     const o = { ma, trangThai: r.trangThai, loai: r.loai || 'moi' };
-    if (r.trangThai === 'xong') o.url = '/quay/phim/' + ma + (r.loai === 'nv' ? '.png' : '.mp4');
+    if (r.trangThai === 'xong') o.url = '/quay/phim/' + ma + (r.loai === 'nv' ? '.png' : r.loai === 'tts' ? '.mp3' : '.mp4');
     if (r.trangThai === 'loi') o.loi = String(r.loi || 'Máy quay không làm được cảnh này.');
     if (r.trangThai === 'cho') {
       const t = await db.prepare("SELECT COUNT(*) AS n FROM quay_viec WHERE trangThai = 'cho' AND (taoLuc < ? OR (taoLuc = ? AND rowid < ?))").bind(r.taoLuc, r.taoLuc, r.rid).first();
@@ -315,6 +391,26 @@ export async function xuLyMayQuay(req, env, duong) {
     return traMay({ ok: true, can: k.can, cho: k.cho });
   }
 
+  /* Bộ nhân vật chuẩn đã khóa: máy Kaggle tải prompt + giọng + ảnh
+     tham chiếu để quay phim đúng danh tính (xem nhan-vat-chuan.js). */
+  if (req.method === 'GET' && duong === '/quay/nvchuan') {
+    if (!env.HOSO) return traMay({ ok: false, error: 'Máy chủ chưa gắn R2.' }, 503);
+    return traMay({ ok: true, ds: await danhSachNhanVatKhoa(env, db) });
+  }
+  let khopNV = duong.match(/^\/quay\/nvchuan\/([0-9a-f]{32})$/);
+  if (req.method === 'GET' && khopNV) {
+    if (!env.HOSO) return traMay({ ok: false, error: 'Máy chủ chưa gắn R2.' }, 503);
+    let hat = null;
+    try { hat = await db.prepare("SELECT bam, mime FROM phim_pt_hat WHERE ma = ? AND loai LIKE 'nvchuan-%'").bind(khopNV[1]).first(); } catch (e) { hat = null; }
+    if (!hat) return traMay({ ok: false, error: 'Không có ảnh khóa này.' }, 404);
+    const o = await env.HOSO.get('pt/' + hat.bam);
+    if (!o) return traMay({ ok: false, error: 'Kho thiếu ảnh.' }, 404);
+    return new Response(req.method === 'HEAD' ? null : o.body, {
+      status: 200,
+      headers: { 'Content-Type': hat.mime, 'Cache-Control': 'private, max-age=3600', 'X-Content-Type-Options': 'nosniff' }
+    });
+  }
+
   if (req.method === 'POST' && (duong === '/quay/song' || duong === '/quay/nhan')) {
     let y = {}; try { y = await req.json(); } catch (e) {}
     const may = RE_MAY.test(String(y.may || '')) ? String(y.may) : '';
@@ -325,7 +421,7 @@ export async function xuLyMayQuay(req, env, duong) {
     /* Máy khai loai ('vd' hoặc 'vd,nv') chỉ nhận đúng loại đó. Không
        khai thì nhận mọi loại — giữ nguyên hành vi máy GitHub cũ. */
     const locLoai = String(y.loai || '').split(',').map(s => s.trim())
-      .filter(s => ['moi', 'cd', 'vd', 'nv'].indexOf(s) >= 0);
+      .filter(s => ['moi', 'cd', 'vd', 'nv', 'tts', 'film'].indexOf(s) >= 0);
     for (let lan = 0; lan < 5; lan++) {
       const r = locLoai.length
         ? await db.prepare("SELECT ma, kieuAnh, kieuAm, loai, soKhung, phamVi FROM quay_viec WHERE trangThai = 'cho' AND loai IN (" +
@@ -368,6 +464,14 @@ export async function xuLyMayQuay(req, env, duong) {
       await db.prepare("UPDATE quay_viec SET trangThai = 'xong', xongLuc = ?, loi = NULL, kieuAm = ? WHERE ma = ?").bind(bay, png ? 'image/png' : 'image/jpeg', ma).run();
       return traMay({ ok: true });
     }
+    if (r.loai === 'tts') {
+      /* Việc đọc thoại trả về MP3 (edge-tts trên máy Kaggle, 0đ). */
+      const mp3 = buf.length > 3 && ((buf[0] === 0x49 && buf[1] === 0x44 && buf[2] === 0x33) || (buf[0] === 0xFF && (buf[1] & 0xE0) === 0xE0));
+      if (!mp3) return traMay({ ok: false, error: 'Không phải MP3.' }, 400);
+      await env.HOSO.put('quay/' + ma + '/kq.mp3', buf, { httpMetadata: { contentType: 'audio/mpeg' } });
+      await db.prepare("UPDATE quay_viec SET trangThai = 'xong', xongLuc = ?, loi = NULL, kieuAm = 'audio/mpeg' WHERE ma = ?").bind(bay, ma).run();
+      return traMay({ ok: true });
+    }
     if (buf.length < 1000 || !(buf[4] === 0x66 && buf[5] === 0x74 && buf[6] === 0x79 && buf[7] === 0x70))
       return traMay({ ok: false, error: 'Không phải MP4.' }, 400);
     await env.HOSO.put('quay/' + ma + '/kq.mp4', buf, { httpMetadata: { contentType: 'video/mp4' } });
@@ -387,10 +491,17 @@ export async function xuLyMayQuay(req, env, duong) {
 
 /* ── PHIM ĐÃ QUAY: công khai theo mã ngẫu nhiên 128 bit ── */
 export async function phucVuPhimQuay(req, env, duong) {
-  const m = /^\/quay\/phim\/([0-9a-f]{32})\.(mp4|png)$/.exec(duong);
+  const m = /^\/quay\/phim\/([0-9a-f]{32})\.(mp4|png|mp3)$/.exec(duong);
   const dau = { 'Access-Control-Allow-Origin': '*', 'Cross-Origin-Resource-Policy': 'cross-origin', 'X-Content-Type-Options': 'nosniff' };
   if (!m || !env.HOSO) return new Response('Không có phim này.', { status: 404, headers: dau });
   if (env.CSDL) await taoBangQuay(env.CSDL);
+  if (m[2] === 'mp3') {
+    const o = await env.HOSO.get('quay/' + m[1] + '/kq.mp3');
+    if (!o) return new Response('Không có âm thanh này.', { status: 404, headers: dau });
+    dau['Content-Type'] = 'audio/mpeg';
+    dau['Cache-Control'] = 'private, max-age=86400';
+    return new Response(req.method === 'HEAD' ? null : o.body, { status: 200, headers: dau });
+  }
   if (m[2] === 'png') {
     const db = env.CSDL;
     const r = await db.prepare('SELECT kieuAm FROM quay_viec WHERE ma = ?').bind(m[1]).first();
@@ -417,7 +528,7 @@ export async function donQuay(env) {
   const ma = ((ds && ds.results) || []).map(r => r.ma);
   if (env.HOSO && ma.length) {
     const khoa = [];
-    ma.forEach(m => khoa.push('quay/' + m + '/anh', 'quay/' + m + '/am', 'quay/' + m + '/cd', 'quay/' + m + '/loi', 'quay/' + m + '/k0', 'quay/' + m + '/k1', 'quay/' + m + '/k2', 'quay/' + m + '/k3', 'quay/' + m + '/kq.mp4', 'quay/' + m + '/kq.png'));
+    ma.forEach(m => khoa.push('quay/' + m + '/anh', 'quay/' + m + '/am', 'quay/' + m + '/cd', 'quay/' + m + '/loi', 'quay/' + m + '/k0', 'quay/' + m + '/k1', 'quay/' + m + '/k2', 'quay/' + m + '/k3', 'quay/' + m + '/kq.mp4', 'quay/' + m + '/kq.png', 'quay/' + m + '/kq.mp3'));
     for (let i = 0; i < khoa.length; i += 900) await env.HOSO.delete(khoa.slice(i, i + 900));
   }
   const r = await db.prepare('DELETE FROM quay_viec WHERE taoLuc < ?').bind(moc).run();

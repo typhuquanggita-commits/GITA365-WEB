@@ -53,6 +53,15 @@ jobs:
       - name: Thử hợp đồng shot xưởng phim (schema + route năng lực + 10 fixture phim thử)
         run: node tools/thu-hop-dong-shot.mjs
 
+      - name: Thử xưởng quay (khớp môi · chuyển động · nhân vật · tts · film · ảnh khóa)
+        run: node tools/thu-xuong-quay.mjs
+
+      - name: Thử nhân vật chuẩn được khóa (hồ sơ + bộ phân giải ảnh)
+        run: node tools/thu-nhan-vat-chuan.mjs
+
+      - name: Cú pháp máy quay Kaggle (Python)
+        run: python3 -m py_compile may-quay-kaggle/quay-kaggle.py may-quay-kaggle/tao-nhan-vat.py may-quay-kaggle/xuong-phim-studio.py
+
       - name: Thử trang trạng thái công khai (không phiên · chỉ tổng hợp số)
         run: node tools/thu-trang-thai.mjs
 

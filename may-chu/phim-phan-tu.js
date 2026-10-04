@@ -18,6 +18,7 @@
 import { laR01 } from './vai-tro.js';
 import { giuNeuron, chinhNeuron, neuronAnh, NEURON, MAU_ANH, MAU_ANH_DU, veFlux2 } from './phim-0d.js';
 import { quayVideoDong, taoBangQuay } from './xuong-quay.js';
+import { nhanVatHopLe, loaiHatNV } from './nhan-vat-chuan.js';
 
 export const MAY = {
   dung: { x: 0.5, y: 0.55, z: 1, x2: 0.5, y2: 0.54, z2: 1.06 },
@@ -226,6 +227,33 @@ async function layHatB64(env, db, ma) {
   return u8B64(u);
 }
 
+/* Bộ ảnh tham chiếu ĐÃ KHÓA của một nhân vật chuẩn (hạt loai
+   'nvchuan-<id>', đặt bằng tools/dat-nhan-vat-chuan.mjs từ ảnh chủ hệ
+   duyệt). Trả tối đa 4 ảnh base64 — klein nhận input_image_0..3, nhiều
+   góc nhìn giúp khóa danh tính chặt hơn một ảnh đơn. Nhân vật chưa
+   khóa ảnh (hoặc id lạ) trả mảng rỗng: lời gọi rơi về chuỗi tham
+   chiếu mặc định (nvmau-chu → nvmau<phiên bản>). */
+export async function layRefNhanVat(env, db, idNhanVat) {
+  const refs = [];
+  if (!env || !env.HOSO || !nhanVatHopLe(idNhanVat)) return refs;
+  const ds = await db.prepare('SELECT ma FROM phim_pt_hat WHERE loai = ? ORDER BY rowid LIMIT 4')
+    .bind(loaiHatNV(idNhanVat)).all().catch(() => null);
+  for (const r of ((ds && ds.results) || [])) {
+    const b64 = await layHatB64(env, db, r.ma);
+    if (b64) refs.push(b64);
+  }
+  return refs;
+}
+
+/* Mã hạt đầu tiên của bộ khóa nhân vật (làm dấu nvRef: đổi bộ khóa →
+   mã đổi → cảnh theo nhân vật đó được vẽ lại). '' nếu chưa khóa. */
+export async function maRefNhanVat(env, db, idNhanVat) {
+  if (!env || !env.HOSO || !nhanVatHopLe(idNhanVat)) return '';
+  const r = await db.prepare('SELECT ma FROM phim_pt_hat WHERE loai = ? ORDER BY rowid LIMIT 1')
+    .bind(loaiHatNV(idNhanVat)).first().catch(() => null);
+  return r ? chu(r.ma, 32) : '';
+}
+
 function chuanCanh(raw) {
   const ds = (Array.isArray(raw) ? raw : []).slice(0, 12);
   if (ds.length < 1) return loi('THIEU_CANH', 'Cần ít nhất một cảnh.');
@@ -236,6 +264,9 @@ function chuanCanh(raw) {
     const nen = NEN.indexOf(c.nen) >= 0 ? c.nen : 'phong';
     const giay = Math.min(8, Math.max(2, Math.round(Number(c.giay) || 4)));
     const mot = { giay, may, nen, nhip, nhan: chu(c.nhan, 40), loi: chu(c.loi, 180) };
+    /* Cảnh có thể gán một nhân vật chuẩn đã khóa (trainer, mc, ...) —
+       máy vẽ dùng bộ ảnh khóa của nhân vật đó để giữ danh tính. */
+    if (nhanVatHopLe(c.nv)) mot.nv = chu(c.nv, 40);
     const nenH = chu(c.hatNen, 32);
     const nguoiH = chu(c.hatNguoi, 32);
     if (nenH) mot.hatNen = nenH;
@@ -318,7 +349,15 @@ export async function damBaoMau(env, db) {
          tham chiếu hiện tại; ảnh bản cũ (không dấu pbAnh/nvRef hoặc
          số khác) sẽ được vẽ lại bằng máy ảnh mới. */
       const refCu = cu.canh[i] ? chu(cu.canh[i].nvRef, 32) : '';
-      const khopRef = nvChu ? refCu === nvMa : (!refCu || refCu === nvMa);
+      /* Cảnh gắn nhân vật chuẩn (canh.nv) so với bộ khóa CỦA NHÂN VẬT
+         ĐÓ; cảnh thường so với chuỗi chân dung mặc định như cũ. */
+      let khopRef;
+      if (canh[i].nv && nhanVatHopLe(canh[i].nv)) {
+        const maNV = await maRefNhanVat(env, db, canh[i].nv);
+        khopRef = maNV ? refCu === maNV : (!refCu || refCu === nvMa);
+      } else {
+        khopRef = nvChu ? refCu === nvMa : (!refCu || refCu === nvMa);
+      }
       if (/^[0-9a-f]{32}$/.test(h || '') && cu.canh[i].pbAnh === PHIEN_BAN_ANH && khopRef) {
         canh[i].hatNen = h;
         canh[i].pbAnh = PHIEN_BAN_ANH;   // giữ nguyên dấu, kẻo mất dấu rồi vẽ lại mãi
@@ -348,15 +387,23 @@ export async function damBaoMau(env, db) {
       }
     }
     const nvB64 = nvHat ? (await layHatB64(env, db, nvHat.ma)) : '';
-    const refs = nvB64 ? [nvB64] : [];
+    const refsMacDinh = nvB64 ? [nvB64] : [];
     for (let i = 0; i < canh.length && i < PROMPT_MAU.length; i++) {
       if (canh[i].hatNen) continue;
-      const anh = (await veCanhNgoai(env, PROMPT_MAU[i])) || (await veCanhAI(env, db, PROMPT_MAU[i], loiAI, refs));
+      /* Cảnh thuộc một nhân vật chuẩn đã khóa ảnh → dùng đúng bộ ảnh
+         khóa của nhân vật đó (tối đa 4 góc) thay chân dung mặc định. */
+      let refsCanh = refsMacDinh, maNV = '';
+      if (canh[i].nv && nhanVatHopLe(canh[i].nv)) {
+        const r2 = await layRefNhanVat(env, db, canh[i].nv);
+        if (r2.length) { refsCanh = r2; maNV = await maRefNhanVat(env, db, canh[i].nv); }
+      }
+      const anh = (await veCanhNgoai(env, PROMPT_MAU[i])) || (await veCanhAI(env, db, PROMPT_MAU[i], loiAI, refsCanh));
       if (anh) {
         const luu = await luuHat(env, db, anh, 'nen');
         if (luu.ok) {
           canh[i].hatNen = luu.ma; canh[i].pbAnh = PHIEN_BAN_ANH; veThem++;
-          if (nvHat) canh[i].nvRef = chu(nvHat.ma, 32);
+          if (maNV) canh[i].nvRef = maNV;
+          else if (nvHat) canh[i].nvRef = chu(nvHat.ma, 32);
           /* Ghi ngay sau mỗi cảnh: lỡ hết giờ giữa chừng thì lượt tải
              lại sau (trang xem tự tải lại) vẽ tiếp từ đúng cảnh dở. */
           await ghiCongThuc(db, 'he-thong', mau.ten, canh, MA_MAU);

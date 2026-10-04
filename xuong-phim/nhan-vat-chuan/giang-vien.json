@@ -1,0 +1,21 @@
+{
+  "id": "giang-vien",
+  "ten": "Giảng viên Thu Hà",
+  "khoaLuc": "2026-10-04T13:50:24.959Z",
+  "refs": [
+    {
+      "ma": "795297a3fc73509806f7e072a87ecdf9",
+      "bam": "129d3448dd44dcb5ffa92b3224a4e3986d1d1db19aa95a682a2520808a419704",
+      "mime": "image/png",
+      "byte": 1592532,
+      "tep": "2f28efbf-8f64-42eb-896a-86dff8a82cca-Nữ giảng viên GITA bên màn hình.png"
+    },
+    {
+      "ma": "2457fd453f1fb315bb9dc0388e769046",
+      "bam": "ac9076a079f1fa15779d19ee696c581a7a5a9a099bd81540d5fa6392244b5a80",
+      "mime": "image/png",
+      "byte": 1468897,
+      "tep": "e4d72791-a335-49a5-a3ef-19cab8ccfed7-Chân dung giảng viên bên bảng trắng-4.png"
+    }
+  ]
+}

@@ -50,7 +50,7 @@ export const NANG_LUC = {
   audio_dialogue: {
     trangThai: 'chua-xac-minh',
     bangChung: '',
-    gioiHan: 'Thiếu TTS tiếng Việt nội bộ (0đ: edge-tts trên máy Kaggle/GitHub — chưa đấu nối). Thoại hiện là phụ đề.'
+    gioiHan: 'Đã đấu nối TTS 0đ (edge-tts vi-VN trên máy Kaggle, việc loai tts/film trong xuong-quay.js + xuong-phim-studio.py) — chờ job live đầu tiên để lên da-xac-minh.'
   }
 };
 

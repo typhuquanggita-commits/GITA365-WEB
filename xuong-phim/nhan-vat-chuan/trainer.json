@@ -1,0 +1,35 @@
+{
+  "id": "trainer",
+  "ten": "Trainer Trương Nhật Quang",
+  "khoaLuc": "2026-10-04T13:42:12.219Z",
+  "refs": [
+    {
+      "ma": "e1511cf68238499bdca4f2bb5f6ec7d1",
+      "bam": "47383bcfde3ebbe59009851dc436730ee3bd2bbeabcf64885a65f97d70de5fff",
+      "mime": "image/png",
+      "byte": 2052873,
+      "tep": "75566885-84ff-4f89-af28-8c6853b2b1b0-Chân dung huấn luyện viên rõ nét tự nhiên-2.png"
+    },
+    {
+      "ma": "0284712766b141f127c43bb50be04fdf",
+      "bam": "9c56fd84cce360dfc03ad68790f9099b8305e906e9fc29852edb66a61d20acca",
+      "mime": "image/png",
+      "byte": 1640353,
+      "tep": "58198136-bffe-494a-81ba-3aa3ed6c35ce-Chân dung huấn luyện viên GITA365-1.png"
+    },
+    {
+      "ma": "01c6b78d61a092ba84a750e6b2b91d62",
+      "bam": "d673c0d59e40bae48dc368ddb3fbc84cd8baabc9d4b12bc97350dee2b7183a7a",
+      "mime": "image/png",
+      "byte": 2221808,
+      "tep": "3d31e822-3a7f-4a50-a3b5-d4516bbee27c-Chân dung huấn luyện viên rõ nét-8.png"
+    },
+    {
+      "ma": "3903b2d6a7fccafed92dbfd660277d9f",
+      "bam": "e66dc105cddda5698afaff3044207bd0bd4f1e064aac6c91962ea050d86a3ecd",
+      "mime": "image/png",
+      "byte": 1996770,
+      "tep": "2b338e55-f33b-4db5-821e-c6374b483e3f-Chân dung huấn luyện viên tự nhiên-9.png"
+    }
+  ]
+}
