@@ -160,3 +160,14 @@ curl -sf "https://gita365.typhuquanggita.workers.dev/?fn=status" -X POST \
 ```
 
 Hoặc dùng màn **Nối máy chủ** trong app và bấm **Gọi thử**.
+
+## Phim phân tử
+
+Phim không lưu thành file video. `may-chu/phim-phan-tu.js` ghi một công thức ngắn vào D1 (thứ tự cảnh, câu thoại, mã nhịp, mã máy quay). Ảnh dùng chung nằm một lần trong R2, theo mã băm: cùng một ảnh không lưu hai lần.
+
+- Xem mẫu: `GET /phim/mau` chuyển tới `/phim/xem/mau-gita-365`. Trình duyệt ghép cảnh tại máy người xem. Xem lại vẫn là link đó.
+- Đóng gói phim riêng (chỉ chủ hệ): `fn: dongGoiPhanTu`.
+- Nhịp có sẵn: thở, giơ tay, quay đầu, một bước. Không có chạy, đánh, nhảy.
+- Cloudflare Workers AI vẽ được ảnh, không có mô hình quay video. Lúc xem không cần GPU.
+
+Kiểm: `node tools/thu-phim-phan-tu.mjs`. Đổi mã xong phải deploy lại Worker.
