@@ -62,10 +62,17 @@ assert len(KHOA) >= 32, "Thiếu khoá. Vào Add-ons → Secrets, thêm GITA_KHO
 
 import urllib.request
 
+# Cloudflare Bot Fight Mode chặn UA mặc định "Python-urllib/3.x" (lỗi 403,
+# mã 1010) trước cả khi tới kiểm tra khoá — phải mang UA giống trình duyệt.
+UA_TRINH_DUYET = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                  "AppleWebKit/537.36 (KHTML, like Gecko) "
+                  "Chrome/124.0.0.0 Safari/537.36")
+
 def goi(duong, phuong_thuc="GET", than=None, kieu=None):
     req = urllib.request.Request(
         MAY_CHU + duong, data=than, method=phuong_thuc,
         headers={"X-Khoa-Quay": KHOA,
+                 "User-Agent": UA_TRINH_DUYET,
                  "Content-Type": kieu or "application/json"})
     with urllib.request.urlopen(req, timeout=300) as r:
         return r.status, r.read()
