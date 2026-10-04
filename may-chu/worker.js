@@ -51,6 +51,7 @@ import { tongNgayDoanhThu } from './bao-doanh-thu.js';
 import { thuGuiThu } from './thu.js';
 import { phucVuTaiNguyen } from './tai-nguyen.js';
 import { quayKhopMoi, quayChuyenDong, quayXem, xuLyMayQuay, phucVuPhimQuay, donQuay } from './xuong-quay.js';
+import { dongGoiPhanTu, xemPhanTu, phucVuPhimPhanTu } from './phim-phan-tu.js';
 import { chamKpiTaiChinh } from './kpi-tai-chinh.js';
 import { dangTinTaiChinh, bangTinTaiChinh,
   xuLyTinTaiChinh } from './tin-tai-chinh.js';
@@ -321,7 +322,7 @@ const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau'
   'hoiDaTri', 'hoiDongDaTri', 'chamDaTri', 'soDaTri',
   'luuGiaiPhap', 'duyetGiaiPhap', 'dsGiaiPhap', 'boSungGiaiPhap', 'canhMauDaTri', 'thuMauDaTri', 'docVongKhoaHoc',
   'taoTuyenDaTri', 'chayChangDaTri', 'docTuyenDaTri', 'docKpiCayTien', 'docDongChay',
-  'phimTrangThai', 'phimGuiViec', 'phimXemViec', 'phimTinhHuong', 'phimMienPhi', 'quayKhopMoi', 'quayChuyenDong', 'quayXem',
+  'phimTrangThai', 'phimGuiViec', 'phimXemViec', 'phimTinhHuong', 'phimMienPhi', 'quayKhopMoi', 'quayChuyenDong', 'quayXem', 'dongGoiPhanTu', 'xemPhanTu',
   'guiBaoCaoNgay', 'tongHopBaoCao', 'dsBaoCaoNgay'];
 
 async function lam(fn, y, env, db) {
@@ -703,6 +704,8 @@ async function lam(fn, y, env, db) {
   if (fn === 'quayKhopMoi')       return await quayKhopMoi(y, env, db, hoSo);
   if (fn === 'quayChuyenDong')    return await quayChuyenDong(y, env, db, hoSo);
   if (fn === 'quayXem')           return await quayXem(y, env, db, hoSo);
+  if (fn === 'dongGoiPhanTu')     return await dongGoiPhanTu(y, env, db, hoSo);
+  if (fn === 'xemPhanTu')         return await xemPhanTu(y, env, db, hoSo);
   if (fn === 'phimGuiViec')       return await phimGuiViec(y, env, db, hoSo);
   if (fn === 'phimXemViec')       return await phimXemViec(y, env, db, hoSo);
   if (fn === 'phimTinhHuong')     return await phimTinhHuong(y, env, db, hoSo);
@@ -1137,6 +1140,13 @@ export default {
       return phucVuTaiNguyen(req, env);
     /* Xưởng quay khớp môi: phim đã quay (công khai theo mã) + lời gọi của máy quay GitHub Actions. */
     const duongQ = new URL(req.url).pathname;
+    if (duongQ.startsWith('/phim/')) {
+      try { return await phucVuPhimPhanTu(req, env, duongQ); }
+      catch (e) {
+        console.error('PHIM_PT_LOI', String(e && e.message || e));
+        return new Response('Không ghép được phim.', { status: 500 });
+      }
+    }
     if (duongQ.startsWith('/quay/')) {
       try {
         if ((req.method === 'GET' || req.method === 'HEAD') && duongQ.startsWith('/quay/phim/')) return await phucVuPhimQuay(req, env, duongQ);
