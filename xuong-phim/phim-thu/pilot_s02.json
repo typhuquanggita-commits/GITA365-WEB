@@ -1,0 +1,63 @@
+{
+  "revision": 1,
+  "durationMs": 8000,
+  "fps": {
+    "num": 24,
+    "den": 1
+  },
+  "aspectRatio": "16:9",
+  "locationRevisionId": "living_room_v1",
+  "maxAttempts": 3,
+  "shotId": "pilot_s02",
+  "camera": {
+    "framing": "medium_two_shot",
+    "movement": "locked",
+    "axis": "living_room_axis_A"
+  },
+  "characters": [
+    {
+      "characterId": "trainer",
+      "referenceSetId": "trainer_refs_v1",
+      "outfitId": "trainer_outfit_01"
+    },
+    {
+      "characterId": "con-trai",
+      "referenceSetId": "contrai_refs_v1",
+      "outfitId": "contrai_outfit_01"
+    }
+  ],
+  "actions": [
+    {
+      "actorId": "trainer",
+      "verb": "ask",
+      "targetId": "con-trai",
+      "startMs": 0,
+      "endMs": 4000
+    },
+    {
+      "actorId": "con-trai",
+      "verb": "listen",
+      "startMs": 0,
+      "endMs": 8000
+    }
+  ],
+  "dialogues": [
+    {
+      "characterId": "trainer",
+      "text": "Con ơi, dạo này môn nào làm con thấy khó nhất?",
+      "audioAssetId": "trainer_line_02",
+      "startMs": 0,
+      "endMs": 4000
+    }
+  ],
+  "requiredCapabilities": [
+    "reference_identity",
+    "lip_sync",
+    "audio_dialogue"
+  ],
+  "qaRequirements": [
+    "identity",
+    "lip_sync"
+  ],
+  "ghiChu": "Người nói đúng khẩu hình, người nghe phản ứng; audio stem WAV riêng cho trainer."
+}

@@ -1,0 +1,51 @@
+{
+  "revision": 1,
+  "durationMs": 8000,
+  "fps": {
+    "num": 24,
+    "den": 1
+  },
+  "aspectRatio": "16:9",
+  "locationRevisionId": "living_room_v1",
+  "maxAttempts": 3,
+  "shotId": "pilot_s03",
+  "camera": {
+    "framing": "close_up",
+    "movement": "locked",
+    "axis": "living_room_axis_A"
+  },
+  "characters": [
+    {
+      "characterId": "con-trai",
+      "referenceSetId": "contrai_refs_v1",
+      "outfitId": "contrai_outfit_01"
+    }
+  ],
+  "actions": [
+    {
+      "actorId": "con-trai",
+      "verb": "answer",
+      "startMs": 500,
+      "endMs": 5500
+    }
+  ],
+  "dialogues": [
+    {
+      "characterId": "con-trai",
+      "text": "Dạ, môn toán ạ. Con làm bài chậm nên hay mất bình tĩnh.",
+      "audioAssetId": "contrai_line_03",
+      "startMs": 500,
+      "endMs": 5500
+    }
+  ],
+  "requiredCapabilities": [
+    "reference_identity",
+    "lip_sync",
+    "audio_dialogue"
+  ],
+  "qaRequirements": [
+    "identity",
+    "lip_sync"
+  ],
+  "ghiChu": "Đúng mặt/tuổi con trai lớp 6, phản ứng cảm xúc thật."
+}

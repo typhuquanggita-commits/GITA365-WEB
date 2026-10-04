@@ -1,0 +1,56 @@
+{
+  "revision": 1,
+  "durationMs": 8000,
+  "fps": {
+    "num": 24,
+    "den": 1
+  },
+  "aspectRatio": "16:9",
+  "locationRevisionId": "living_room_v1",
+  "maxAttempts": 3,
+  "shotId": "pilot_s05",
+  "camera": {
+    "framing": "full",
+    "movement": "tracking",
+    "axis": "living_room_axis_A"
+  },
+  "characters": [
+    {
+      "characterId": "bo",
+      "referenceSetId": "bo_refs_v1",
+      "outfitId": "bo_outfit_01"
+    }
+  ],
+  "actions": [
+    {
+      "actorId": "bo",
+      "verb": "stand_up",
+      "startMs": 1000,
+      "endMs": 2500
+    },
+    {
+      "actorId": "bo",
+      "verb": "walk_to",
+      "objectId": "bang_muc_tieu",
+      "startMs": 2500,
+      "endMs": 7000
+    }
+  ],
+  "dialogues": [],
+  "requiredCapabilities": [
+    "reference_identity",
+    "chuyen_dong_nhe"
+  ],
+  "qaRequirements": [
+    "identity",
+    "continuity",
+    "no_major_anatomy_errors"
+  ],
+  "continuityIn": {
+    "propOwner": {}
+  },
+  "continuityOut": {
+    "propOwner": {}
+  },
+  "ghiChu": "Chuyển động toàn thân đi lại — route LTX-Video (đã xác minh bước nhẹ); giữ continuity khung đầu/cuối làm anchor."
+}

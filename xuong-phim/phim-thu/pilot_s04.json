@@ -1,0 +1,63 @@
+{
+  "revision": 1,
+  "durationMs": 8000,
+  "fps": {
+    "num": 24,
+    "den": 1
+  },
+  "aspectRatio": "16:9",
+  "locationRevisionId": "living_room_v1",
+  "maxAttempts": 3,
+  "shotId": "pilot_s04",
+  "camera": {
+    "framing": "medium_two_shot",
+    "movement": "locked",
+    "axis": "living_room_axis_A"
+  },
+  "characters": [
+    {
+      "characterId": "me",
+      "referenceSetId": "me_refs_v1",
+      "outfitId": "me_outfit_01"
+    },
+    {
+      "characterId": "con-trai",
+      "referenceSetId": "contrai_refs_v1",
+      "outfitId": "contrai_outfit_01"
+    }
+  ],
+  "actions": [
+    {
+      "actorId": "me",
+      "verb": "share",
+      "targetId": "con-trai",
+      "startMs": 500,
+      "endMs": 5000
+    },
+    {
+      "actorId": "con-trai",
+      "verb": "listen",
+      "startMs": 0,
+      "endMs": 8000
+    }
+  ],
+  "dialogues": [
+    {
+      "characterId": "me",
+      "text": "Mẹ hiểu. Nhà mình sẽ cùng con sửa từng chút một.",
+      "audioAssetId": "me_line_04",
+      "startMs": 500,
+      "endMs": 5000
+    }
+  ],
+  "requiredCapabilities": [
+    "reference_identity",
+    "lip_sync",
+    "audio_dialogue"
+  ],
+  "qaRequirements": [
+    "identity",
+    "lip_sync"
+  ],
+  "ghiChu": "Chuyển lượt thoại tự nhiên; người nghe phản ứng (con trai gật nhẹ)."
+}

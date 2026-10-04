@@ -1,0 +1,67 @@
+{
+  "revision": 1,
+  "durationMs": 8000,
+  "fps": {
+    "num": 24,
+    "den": 1
+  },
+  "aspectRatio": "16:9",
+  "locationRevisionId": "living_room_v1",
+  "maxAttempts": 3,
+  "shotId": "pilot_s01",
+  "camera": {
+    "framing": "wide",
+    "movement": "gimbal",
+    "axis": "living_room_axis_A"
+  },
+  "characters": [
+    {
+      "characterId": "trainer",
+      "referenceSetId": "trainer_refs_v1",
+      "outfitId": "trainer_outfit_01"
+    },
+    {
+      "characterId": "bo",
+      "referenceSetId": "bo_refs_v1",
+      "outfitId": "bo_outfit_01"
+    },
+    {
+      "characterId": "me",
+      "referenceSetId": "me_refs_v1",
+      "outfitId": "me_outfit_01"
+    },
+    {
+      "characterId": "con-gai",
+      "referenceSetId": "congai_refs_v1",
+      "outfitId": "congai_outfit_01"
+    },
+    {
+      "characterId": "con-trai",
+      "referenceSetId": "contrai_refs_v1",
+      "outfitId": "contrai_outfit_01"
+    }
+  ],
+  "actions": [
+    {
+      "actorId": "trainer",
+      "verb": "greet",
+      "targetId": "con-trai",
+      "startMs": 500,
+      "endMs": 3000
+    },
+    {
+      "actorId": "bo",
+      "verb": "nod",
+      "startMs": 3000,
+      "endMs": 5000
+    }
+  ],
+  "dialogues": [],
+  "requiredCapabilities": [
+    "reference_identity"
+  ],
+  "qaRequirements": [
+    "identity"
+  ],
+  "ghiChu": "Toàn cảnh gia đình + Trainer trong phòng khách; đủ 5 danh tính, bố cục được duyệt. Cảnh 5 người dựng tổ hợp rộng + cận (klein nhận tối đa 4 ref/lần)."
+}
