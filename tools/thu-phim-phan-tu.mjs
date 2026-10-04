@@ -92,6 +92,12 @@ const nang = await damBaoMau(envCu, envCu.CSDL);
 const ctCu = await (await phucVuPhimPhanTu(new Request('https://w.test/phim/cong-thuc/mau-gita-365'), envCu, '/phim/cong-thuc/mau-gita-365')).json();
 kiem(nang.ok && ctCu.ten === 'Hành trình GITA 365 — phim phân tử' && ctCu.canh.every(c => c.hatNen), 'mẫu cũ được viết lại thoại và gắn ảnh');
 
+/* ── Binding trả luồng byte (bản cũ) vẫn được nhận ── */
+const jpgU = Uint8Array.from(atob(jpg), c => c.charCodeAt(0));
+const envStream = { CSDL: taoD1(), HOSO: taoR2(), AI: { async run() { return new Response(jpgU).body; } } };
+const mauStream = await damBaoMau(envStream, envStream.CSDL);
+kiem(mauStream.ok && mauStream.duAnh === true, 'nhận cả kết quả AI dạng luồng byte');
+
 /* ── Dịch vụ vẽ ngoài (chủ hệ tự gắn khoá) được ưu tiên ── */
 const fetchGoc = globalThis.fetch;
 let goiNgoai = 0;

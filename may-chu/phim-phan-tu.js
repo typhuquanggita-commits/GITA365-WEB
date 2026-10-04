@@ -118,21 +118,47 @@ async function veCanhNgoai(env, prompt) {
   return null;
 }
 
-async function veCanhSchnell(env, db, prompt) {
+/* Kết quả AI.run của mẫu vẽ ảnh có thể là { image: base64 } HOẶC một
+   luồng byte ảnh (ReadableStream) tuỳ phiên bản binding — nhận cả hai. */
+async function anhTuKetQuaAI(o, toiDa) {
+  if (!o) return null;
+  if (typeof o.image === 'string' && o.image) return anhTuB64(o.image, toiDa);
+  if (o instanceof Uint8Array) return anhHopLe(o, toiDa);
+  if (o instanceof ArrayBuffer) return anhHopLe(new Uint8Array(o), toiDa);
+  if (typeof o.getReader === 'function') {
+    const rd = o.getReader(), cac = [];
+    let n = 0;
+    for (;;) {
+      const d = await rd.read();
+      if (d.done) break;
+      if (d.value && d.value.length) { cac.push(d.value); n += d.value.length; }
+      if (n > (toiDa || 350000)) return null;
+    }
+    const u = new Uint8Array(n);
+    let p = 0;
+    for (const c of cac) { u.set(c, p); p += c.length; }
+    return anhHopLe(u, toiDa);
+  }
+  return null;
+}
+
+async function veCanhSchnell(env, db, prompt, loiRa) {
   if (!env || !env.AI || typeof env.AI.run !== 'function') return null;
   const [w, h] = KICH_MAU, buoc = 4;
   const can = Math.ceil(NEURON.schnellO * Math.ceil(w / 512) * Math.ceil(h / 512) + NEURON.schnellBuoc * buoc);
   let giu = null;
   try { giu = await giuNeuron(db, env, can); } catch (e) { giu = null; }
-  if (giu && giu.duoc === false) return null;
+  if (giu && giu.duoc === false) { if (loiRa) loiRa.loi = 'het neuron mien phi hom nay'; return null; }
   let o = null;
   try { o = await env.AI.run(MAU_ANH_DU, { prompt: prompt.slice(0, 2048), steps: buoc, width: w, height: h, seed: SEED_MAU }); }
   catch (e) {
     /* Bản binding cũ không nhận width/height — vẽ khung vuông, máy khách tự cắt 9:16. */
     try { o = await env.AI.run(MAU_ANH_DU, { prompt: prompt.slice(0, 2048), steps: buoc, seed: SEED_MAU }); }
-    catch (e2) { o = null; }
+    catch (e2) { if (loiRa) loiRa.loi = chu(e2 && e2.message || e2, 200); o = null; }
   }
-  return anhTuB64(String((o && o.image) || ''), 350000);
+  const anh = await anhTuKetQuaAI(o, 350000);
+  if (!anh && o && loiRa && !loiRa.loi) loiRa.loi = 'ket qua AI khong phai anh';
+  return anh;
 }
 
 function chuanCanh(raw) {
@@ -218,10 +244,11 @@ export async function damBaoMau(env, db) {
   /* Cảnh chưa có ảnh → vẽ bằng AI rồi gắn hạt. Không vẽ được thì để
      trống: trình xem báo "đang vẽ" chứ KHÔNG vẽ người que. */
   let veThem = 0;
+  const loiAI = { loi: '' };
   if (env && env.HOSO && canh.some(c => !c.hatNen)) {
     for (let i = 0; i < canh.length && i < PROMPT_MAU.length; i++) {
       if (canh[i].hatNen) continue;
-      const anh = (await veCanhNgoai(env, PROMPT_MAU[i])) || (await veCanhSchnell(env, db, PROMPT_MAU[i]));
+      const anh = (await veCanhNgoai(env, PROMPT_MAU[i])) || (await veCanhSchnell(env, db, PROMPT_MAU[i], loiAI));
       if (anh) {
         const luu = await luuHat(env, db, anh, 'nen');
         if (luu.ok) {
@@ -235,7 +262,7 @@ export async function damBaoMau(env, db) {
   }
   if (cu && (cu.ten !== mau.ten || JSON.stringify(cu.canh) !== JSON.stringify(canh)))
     await ghiCongThuc(db, 'he-thong', mau.ten, canh, MA_MAU);
-  return { ok: true, ma: MA_MAU, link: '/phim/xem/' + MA_MAU, daCo: !!co, anhVuaVe: veThem, duAnh: canh.every(c => !!c.hatNen) };
+  return { ok: true, ma: MA_MAU, link: '/phim/xem/' + MA_MAU, daCo: !!co, anhVuaVe: veThem, duAnh: canh.every(c => !!c.hatNen), loiAI: loiAI.loi || undefined };
 }
 
 export async function dongGoiPhanTu(y, env, db, hoSo) {
