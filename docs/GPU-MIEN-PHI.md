@@ -59,8 +59,9 @@ mất vài phút trên T4.
   người, cử chỉ tay, biểu cảm mặt.
 - Hết 30 giờ/tuần thì chờ tuần sau hoặc thêm tài khoản Kaggle khác
   (mỗi tài khoản một khoá riêng, cùng nối vào một máy chủ).
-- Không có GPU → không có clip; hệ thống phim phân tử (ảnh + công thức)
-  vẫn chạy bình thường.
+- Không có GPU → không có clip; hệ thống phim phân tử (ảnh cảnh do AI
+  vẽ + công thức) vẫn chạy bình thường. Hình người que bị cấm tuyệt
+  đối: cảnh chưa có ảnh chỉ báo "đang vẽ", không vẽ hình tạm.
 
 Kiểm cổng máy chủ: `node tools/thu-quay-video.mjs`.
 
