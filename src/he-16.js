@@ -101,7 +101,7 @@ G.H16_HE = [
   { ma: 'H15', ten: 'Quản trị mã nguồn · mã định dạng', ic: 'lock',
     troVao: ['v:ra-soat', 'v:soat-day-du', 'g:H16_MA', 't:tools/gop-src.js', 't:tools/ra-soat-day-du.js',
       't:tools/do-16-he.js', 't:.github/workflows/kiem-tra.yml',       't:.github/CODEOWNERS', 'd:docs/HE_16_TRU.md', 'v:la-chan-30', 'g:LC_TANG', 't:tools/soat-bi-mat.js',
-      'd:docs/LA_CHAN_30_TANG.md', 'd:docs/KIEN_TRUC_TONG_THE.md'],
+      'd:docs/LA_CHAN_30_TANG.md', 'd:docs/KIEN_TRUC_TONG_THE.md', 'v:ban-do-tong-the', 'd:docs/BAN_DO_TONG_THE.md'],
     trong: 'Trước bản này chỉ kiểm lúc deploy; PR không có cổng kiểm, chưa quét bảo mật mã.',
     ke: 'Cổng PR (kiem-tra.yml) · CodeQL · OpenSSF Scorecard · Dependabot cho Actions · CODEOWNERS.' },
   { ma: 'H16', ten: 'Chi phí · sức chứa', ic: 'pulse',
