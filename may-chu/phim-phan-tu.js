@@ -60,19 +60,23 @@ function mauCongThuc() {
 }
 
 /* ── ẢNH CẢNH DO AI VẼ ──
-   Một nhân vật duy nhất xuyên suốt bốn cảnh: cùng mô tả chi tiết +
-   cùng seed. Ưu tiên dịch vụ ngoài nếu chủ hệ tự gắn khoá
-   (GITA_VE_ANH_URL/KHOA/MAU — ví dụ OpenAI gpt-image); mặc định 0đ là
-   FLUX.1-schnell của Workers AI, trừ vào ngân sách neuron ngày. */
-const SEED_MAU = 20260365;
-const KICH_MAU = [576, 1024];
-const NHAN_VAT_MAU = 'A beautiful Vietnamese woman in her mid-30s, long silky black hair neatly tied back, warm gentle face with subtle natural makeup, elegant white silk ao dai, expressive kind eyes';
-const PHONG_CACH_MAU = ', vertical 9:16 cinematic film still from a high-budget Asian emotional short drama, warm cinematic lighting, golden rim light, shallow depth of field, creamy bokeh, photorealistic, detailed natural skin texture, subtle 35mm film grain, muted warm color grade, masterpiece quality';
+   Một nhân vật duy nhất xuyên suốt bốn cảnh nhờ CHUNG mô tả chi tiết
+   (binding Workers AI của schnell không nhận seed/width/height — lỗi
+   5006 — nên ảnh ra khung vuông và trình xem tự cắt 9:16). Ưu tiên
+   dịch vụ ngoài nếu chủ hệ tự gắn khoá (GITA_VE_ANH_URL/KHOA/MAU —
+   ví dụ OpenAI gpt-image); mặc định 0đ là FLUX.1-schnell của Workers
+   AI, trừ vào ngân sách neuron ngày. */
+const KICH_MAU = [1024, 1024];
+/* Prompt phải qua được cổng an toàn 8007 của Workers AI: luôn kèm
+   "wholesome, fully clothed, modest, family-friendly, safe for all
+   ages", tránh mọi từ ngữ mờ ám dù vô tình. */
+const NHAN_VAT_MAU = 'A graceful Vietnamese woman in her mid-30s, long black hair neatly tied back, warm gentle face, elegant traditional white ao dai, fully clothed modest attire, kind eyes';
+const PHONG_CACH_MAU = ', cinematic film still from a wholesome family drama, warm cinematic lighting, golden rim light, shallow depth of field, soft bokeh, photorealistic, detailed natural skin texture, subtle 35mm film grain, muted warm color grade, family-friendly, safe for all ages, masterpiece quality';
 const PROMPT_MAU = [
-  NHAN_VAT_MAU + ', standing peacefully in a lush green garden in soft early morning light, eyes gently closed, breathing calmly, serene expression' + PHONG_CACH_MAU,
-  NHAN_VAT_MAU + ', in a warm cozy family living room at dusk, gently raising one open hand as if softly guiding her loved ones, warm lamp light, heartfelt expression' + PHONG_CACH_MAU,
-  NHAN_VAT_MAU + ', on a balcony at golden sunset, gracefully turning her head to look back over her shoulder, wind softly blowing her hair, nostalgic emotional mood' + PHONG_CACH_MAU,
-  NHAN_VAT_MAU + ', walking alone on a quiet street at night under warm street lights, taking one confident hopeful step forward, gentle smile, glowing city bokeh behind' + PHONG_CACH_MAU
+  NHAN_VAT_MAU + ', standing peacefully in a lush green public garden in bright morning sunlight, eyes gently closed, breathing calmly, serene wholesome expression' + PHONG_CACH_MAU,
+  NHAN_VAT_MAU + ', standing in a bright cozy family living room in daytime, raising one open hand in a warm welcoming gesture, cheerful wholesome mood' + PHONG_CACH_MAU,
+  NHAN_VAT_MAU + ', standing on an open balcony at bright golden sunset, gracefully turning her head to look at the view, calm hopeful wholesome mood' + PHONG_CACH_MAU,
+  NHAN_VAT_MAU + ', walking on a clean quiet city street in early evening under bright warm street lights, taking one confident hopeful step forward, gentle wholesome smile' + PHONG_CACH_MAU
 ];
 
 function anhHopLe(u, toiDa) {
@@ -123,6 +127,7 @@ async function veCanhNgoai(env, prompt) {
 async function anhTuKetQuaAI(o, toiDa) {
   if (!o) return null;
   if (typeof o.image === 'string' && o.image) return anhTuB64(o.image, toiDa);
+  if (o.image && typeof o.image === 'object') return await anhTuKetQuaAI(o.image, toiDa);
   if (o instanceof Uint8Array) return anhHopLe(o, toiDa);
   if (o instanceof ArrayBuffer) return anhHopLe(new Uint8Array(o), toiDa);
   if (typeof o.getReader === 'function') {
@@ -150,14 +155,19 @@ async function veCanhSchnell(env, db, prompt, loiRa) {
   try { giu = await giuNeuron(db, env, can); } catch (e) { giu = null; }
   if (giu && giu.duoc === false) { if (loiRa) loiRa.loi = 'het neuron mien phi hom nay'; return null; }
   let o = null;
-  try { o = await env.AI.run(MAU_ANH_DU, { prompt: prompt.slice(0, 2048), steps: buoc, width: w, height: h, seed: SEED_MAU }); }
-  catch (e) {
-    /* Bản binding cũ không nhận width/height — vẽ khung vuông, máy khách tự cắt 9:16. */
-    try { o = await env.AI.run(MAU_ANH_DU, { prompt: prompt.slice(0, 2048), steps: buoc, seed: SEED_MAU }); }
-    catch (e2) { if (loiRa) loiRa.loi = chu(e2 && e2.message || e2, 200); o = null; }
+  try { o = await env.AI.run(MAU_ANH_DU, { prompt: prompt.slice(0, 2048), steps: buoc }); }
+  catch (e2) {
+    console.warn('[phim-mau] schnell loi:', chu(e2 && e2.message || e2, 300));
+    if (loiRa) loiRa.loi = chu(e2 && e2.message || e2, 200); o = null;
   }
-  const anh = await anhTuKetQuaAI(o, 350000);
-  if (!anh && o && loiRa && !loiRa.loi) loiRa.loi = 'ket qua AI khong phai anh';
+  /* Ảnh FLUX 1024×1024 thường 150-500 KB — nới trần riêng cho ảnh do
+     AI vẽ (trần 350 KB chỉ áp cho ảnh khách TẢI LÊN ở docAnh). */
+  const anh = await anhTuKetQuaAI(o, 1500000);
+  if (!anh && o && loiRa && !loiRa.loi) {
+    const khoa = typeof o === 'object' ? Object.keys(o).join(',') : typeof o;
+    console.warn('[phim-mau] ket qua khong phai anh:', khoa);
+    loiRa.loi = 'ket qua AI khong phai anh: ' + chu(khoa, 120);
+  }
   return anh;
 }
 

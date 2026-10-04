@@ -247,7 +247,9 @@ async function lamAnh(y, env, db, hoSo) {
     const du = Math.ceil(NEURON.schnellO * 4 + NEURON.schnellBuoc * 4);
     await chinhNeuron(db, giu.khoa, du - giu.n);
     try {
-      const o = await env.AI.run(MAU_ANH_DU, { prompt: prompt.slice(0, 2048), steps: 4, seed: y.seed != null && isFinite(+y.seed) ? Math.abs(Math.floor(+y.seed)) : undefined });
+      /* Binding của schnell từ chối mọi tham số ngoài prompt/steps (lỗi
+         5006) — không truyền seed/width/height. */
+      const o = await env.AI.run(MAU_ANH_DU, { prompt: prompt.slice(0, 2048), steps: 4 });
       anh = String((o && o.image) || '');
     } catch (e) { loi = loi || chu(e && e.message || e, 300); }
     if (!anh) { await chinhNeuron(db, giu.khoa, -du); return { ok: false, code: 'AI_LOI', error: 'Workers AI không vẽ được ảnh: ' + loi }; }

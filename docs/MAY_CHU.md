@@ -167,7 +167,7 @@ Phim không lưu thành file video. `may-chu/phim-phan-tu.js` ghi một công th
 
 - Xem mẫu: `GET /phim/mau` chuyển tới `/phim/xem/mau-gita-365`. Trình duyệt ghép cảnh tại máy người xem. Xem lại vẫn là link đó.
 - **Người que bị cấm tuyệt đối.** Trình xem không còn bộ vẽ người bằng nét. Mọi cảnh dùng ảnh điện ảnh do AI vẽ; cảnh chưa có ảnh chỉ báo "đang vẽ" và tự tải lại sau 45 giây.
-- Phim mẫu tự vẽ 4 cảnh (cùng một nhân vật: chung mô tả chi tiết + cùng seed) bằng FLUX.1-schnell của Workers AI, trừ ngân sách neuron ngày (`GITA_PHIM_TRAN_NEURON`). Ảnh lưu vào R2 như mọi hạt khác; vẽ xong thì không bao giờ vẽ lại.
+- Phim mẫu tự vẽ 4 cảnh (cùng một nhân vật nhờ chung mô tả chi tiết; binding Workers AI của schnell không nhận seed/width/height — lỗi 5006 — nên ảnh ra khung vuông và trình xem tự cắt 9:16) bằng FLUX.1-schnell, trừ ngân sách neuron ngày (`GITA_PHIM_TRAN_NEURON`). Ảnh lưu vào R2 như mọi hạt khác; vẽ xong thì không bao giờ vẽ lại.
 - Dịch vụ vẽ ngoài (tuỳ chọn, mặc định TẮT để giữ 0đ): chủ hệ tự gắn khoá OpenAI-tương-thích qua secret `GITA_VE_ANH_KHOA` + biến `GITA_VE_ANH_URL` (ví dụ `https://api.openai.com/v1/images/generations`), `GITA_VE_ANH_MAU` (mặc định `gpt-image-1`), `GITA_VE_ANH_CO` (mặc định `1024x1536`). Khi có, máy chủ ưu tiên dịch vụ này cho ảnh cảnh mẫu, lỗi thì tự về Workers AI. Khoá nạp bằng `npx wrangler secret put GITA_VE_ANH_KHOA`, không ghi trong kho mã.
 - Đóng gói phim riêng (chỉ chủ hệ): `fn: dongGoiPhanTu`.
 - Nhịp có sẵn: thở, giơ tay, quay đầu, một bước. Không có chạy, đánh, nhảy.
