@@ -50,7 +50,7 @@ import { soNgay, chotTuan, soatChot, tongHop, baoCaoKeToan, boSoKhaiThue,
 import { tongNgayDoanhThu } from './bao-doanh-thu.js';
 import { thuGuiThu } from './thu.js';
 import { phucVuTaiNguyen } from './tai-nguyen.js';
-import { quayKhopMoi, quayChuyenDong, quayXem, xuLyMayQuay, phucVuPhimQuay, donQuay } from './xuong-quay.js';
+import { quayKhopMoi, quayChuyenDong, quayVideoDong, quayXem, xuLyMayQuay, phucVuPhimQuay, donQuay } from './xuong-quay.js';
 import { dongGoiPhanTu, xemPhanTu, phucVuPhimPhanTu } from './phim-phan-tu.js';
 import { chamKpiTaiChinh } from './kpi-tai-chinh.js';
 import { dangTinTaiChinh, bangTinTaiChinh,
@@ -322,7 +322,7 @@ const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau'
   'hoiDaTri', 'hoiDongDaTri', 'chamDaTri', 'soDaTri',
   'luuGiaiPhap', 'duyetGiaiPhap', 'dsGiaiPhap', 'boSungGiaiPhap', 'canhMauDaTri', 'thuMauDaTri', 'docVongKhoaHoc',
   'taoTuyenDaTri', 'chayChangDaTri', 'docTuyenDaTri', 'docKpiCayTien', 'docDongChay',
-  'phimTrangThai', 'phimGuiViec', 'phimXemViec', 'phimTinhHuong', 'phimMienPhi', 'quayKhopMoi', 'quayChuyenDong', 'quayXem', 'dongGoiPhanTu', 'xemPhanTu',
+  'phimTrangThai', 'phimGuiViec', 'phimXemViec', 'phimTinhHuong', 'phimMienPhi', 'quayKhopMoi', 'quayChuyenDong', 'quayVideoDong', 'quayXem', 'dongGoiPhanTu', 'xemPhanTu',
   'guiBaoCaoNgay', 'tongHopBaoCao', 'dsBaoCaoNgay'];
 
 async function lam(fn, y, env, db) {
@@ -703,6 +703,7 @@ async function lam(fn, y, env, db) {
   if (fn === 'phimMienPhi')       return await phimMienPhi(y, env, db, hoSo);
   if (fn === 'quayKhopMoi')       return await quayKhopMoi(y, env, db, hoSo);
   if (fn === 'quayChuyenDong')    return await quayChuyenDong(y, env, db, hoSo);
+  if (fn === 'quayVideoDong')     return await quayVideoDong(y, env, db, hoSo);
   if (fn === 'quayXem')           return await quayXem(y, env, db, hoSo);
   if (fn === 'dongGoiPhanTu')     return await dongGoiPhanTu(y, env, db, hoSo);
   if (fn === 'xemPhanTu')         return await xemPhanTu(y, env, db, hoSo);

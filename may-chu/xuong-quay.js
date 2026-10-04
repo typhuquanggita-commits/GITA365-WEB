@@ -50,6 +50,8 @@ export async function taoBangQuay(db) {
     kieuAnh TEXT, kieuAm TEXT, taoLuc INTEGER NOT NULL, nhanLuc INTEGER, xongLuc INTEGER,
     may TEXT, lanThu INTEGER NOT NULL DEFAULT 0, loi TEXT, loai TEXT NOT NULL DEFAULT 'moi')`).run();
   await db.prepare('ALTER TABLE quay_viec ADD COLUMN loai TEXT').run().catch(() => {});
+  await db.prepare('ALTER TABLE quay_viec ADD COLUMN soKhung INTEGER').run().catch(() => {});
+  await db.prepare('ALTER TABLE quay_viec ADD COLUMN phamVi TEXT').run().catch(() => {});
   await db.prepare('CREATE INDEX IF NOT EXISTS ix_quay_tt ON quay_viec (trangThai, taoLuc)').run();
   await db.prepare('CREATE TABLE IF NOT EXISTS quay_may (ma TEXT PRIMARY KEY, luc INTEGER NOT NULL)').run();
   daTaoBang = true;
@@ -137,28 +139,86 @@ export async function quayKhopMoi(y, env, db, hoSo) {
   return { ok: true, ma };
 }
 
-/* Hai khung của cùng một cảnh (ảnh gốc + tư thế cuối). Máy GitHub nối
-   bằng RIFE thành clip người cử động. Không có tiếng. */
+/* Chuỗi 2–4 khung của cùng một cảnh. Máy GitHub nối từng cặp bằng RIFE.
+   Không có tiếng. Ảnh gốc luôn là khung đầu. */
+export function tachKhung(y) {
+  const raw = Array.isArray(y && y.khung) && y.khung.length >= 2
+    ? y.khung
+    : [y && y.anh].concat(Array.isArray(y && y.giua) ? y.giua : [], [y && y.sau]);
+  return raw.filter(x => x != null && String(x).length > 0).slice(0, 4);
+}
 export async function quayChuyenDong(y, env, db, hoSo) {
   if (!laR01(hoSo)) return { ok: false, code: 'NOPERM', error: 'Chỉ Super Admin được dùng xưởng quay.' };
   if (!env.HOSO) return { ok: false, code: 'CHUA_CO_R2', error: 'Máy chủ chưa gắn R2.' };
   if (!env.GITA_KHOA_XUONG_QUAY) return { ok: false, code: 'CHUA_CO_XUONG', error: 'Máy chủ chưa có khoá xưởng quay (GITA_KHOA_XUONG_QUAY).' };
   await taoBangQuay(db);
-  const anh = giaiB64(y && y.anh), sau = giaiB64(y && y.sau);
-  if (!anh || !anh.length || anh.length > QUAY.toiDaAnh) return { ok: false, error: 'Ảnh gốc thiếu hoặc quá lớn.' };
-  if (!sau || !sau.length || sau.length > QUAY.toiDaAnh) return { ok: false, error: 'Ảnh tư thế cuối thiếu hoặc quá lớn.' };
-  const ka = kieuAnh(anh), ks = kieuAnh(sau);
-  if (!ka || !ks) return { ok: false, error: 'Hai khung phải là JPEG/PNG/WEBP.' };
+  const raw = tachKhung(y);
+  if (raw.length < 2) return { ok: false, error: 'Cần ít nhất hai khung.' };
+  const khung = [];
+  for (const s of raw) {
+    const u = giaiB64(s);
+    if (!u || !u.length || u.length > QUAY.toiDaAnh) return { ok: false, error: 'Một khung thiếu hoặc quá lớn.' };
+    const k = kieuAnh(u);
+    if (!k) return { ok: false, error: 'Mỗi khung phải là JPEG/PNG/WEBP.' };
+    khung.push({ u, k });
+  }
+  const uid = String(hoSo.uid || '');
+  const dem = await db.prepare("SELECT COUNT(*) AS n FROM quay_viec WHERE uid = ? AND trangThai IN ('cho','dang')").bind(uid).first();
+  if (dem && +dem.n >= QUAY.toiDaCho) return { ok: false, code: 'DAY', error: 'Hàng chờ xưởng quay đã đầy, đợi bớt rồi gửi tiếp.' };
+  const ma = maMoi();
+  const dau = khung[0], cuoi = khung[khung.length - 1];
+  for (let i = 0; i < khung.length; i++)
+    await env.HOSO.put('quay/' + ma + '/k' + i, khung[i].u, { httpMetadata: { contentType: khung[i].k } });
+  await env.HOSO.put('quay/' + ma + '/anh', dau.u, { httpMetadata: { contentType: dau.k } });
+  await env.HOSO.put('quay/' + ma + '/cd', cuoi.u, { httpMetadata: { contentType: cuoi.k } });
+  await db.prepare("INSERT INTO quay_viec (ma, uid, trangThai, kieuAnh, kieuAm, taoLuc, loai, soKhung) VALUES (?, ?, 'cho', ?, ?, ?, 'cd', ?)")
+    .bind(ma, uid, dau.k, cuoi.k, Date.now(), khung.length).run();
+  await goiKhoQuay(env, db).catch(() => false);
+  return { ok: true, ma, soKhung: khung.length };
+}
+
+/* Từ khoáy nội bộ KHÔNG được xuất hiện trong phim dành cho khách.
+   Phim khách chỉ dùng nhân vật AI và cốt truyện gợi ý theo hành trình
+   5 tầng — không mang cơ chế Coach ra ngoài. Chủ hệ thêm từ vào đây. */
+export const TU_KHOA_NOI_BO = [
+  'hoa hồng', 'tỷ lệ chia', 'chiết khấu nội bộ', 'ma trận lương',
+  'sơ đồ tuyến', 'chính sách đại lý', 'câu chốt đơn', 'kịch bản ép',
+  'mã nội bộ', 'bảng giá sỉ', 'điểm hòa vốn', 'công thức chia'
+];
+export function soatLoiNhac(loi, phamVi) {
+  if (phamVi !== 'khach') return null;
+  const t = String(loi || '').toLowerCase();
+  for (const k of TU_KHOA_NOI_BO) if (t.indexOf(k) >= 0) return k;
+  return null;
+}
+
+/* Video chuyển động bằng GPU miễn phí bên ngoài (Kaggle T4 của Google).
+   Ảnh nhân vật AI + lời nhắc động tác → clip vài giây. Máy Kaggle tự
+   nhận việc loại 'vd' qua cùng khoá xưởng quay; máy GitHub vẫn lo 'moi'
+   và 'cd' như cũ. */
+export async function quayVideoDong(y, env, db, hoSo) {
+  if (!laR01(hoSo)) return { ok: false, code: 'NOPERM', error: 'Chỉ Super Admin được dùng xưởng quay.' };
+  if (!env.HOSO) return { ok: false, code: 'CHUA_CO_R2', error: 'Máy chủ chưa gắn R2.' };
+  if (!env.GITA_KHOA_XUONG_QUAY) return { ok: false, code: 'CHUA_CO_XUONG', error: 'Máy chủ chưa có khoá xưởng quay (GITA_KHOA_XUONG_QUAY).' };
+  await taoBangQuay(db);
+  const anh = giaiB64(y && y.anh);
+  if (!anh || !anh.length || anh.length > QUAY.toiDaAnh) return { ok: false, error: 'Ảnh nhân vật thiếu hoặc quá lớn.' };
+  const ka = kieuAnh(anh);
+  if (!ka) return { ok: false, error: 'Ảnh phải là JPEG/PNG/WEBP.' };
+  const loi = String(y && y.loiNhac || '').replace(/[\u0000-\u001F]/g, ' ').trim().slice(0, 400);
+  if (loi.length < 8) return { ok: false, error: 'Cần lời nhắc động tác (ít nhất 8 ký tự).' };
+  const phamVi = String(y && y.phamVi || '') === 'noi-bo' ? 'noi-bo' : 'khach';
+  const trung = soatLoiNhac(loi, phamVi);
+  if (trung) return { ok: false, code: 'BI_MAT', error: 'Phim khách không được chứa “' + trung + '”. Bỏ từ đó hoặc chọn phạm vi nội bộ.' };
   const uid = String(hoSo.uid || '');
   const dem = await db.prepare("SELECT COUNT(*) AS n FROM quay_viec WHERE uid = ? AND trangThai IN ('cho','dang')").bind(uid).first();
   if (dem && +dem.n >= QUAY.toiDaCho) return { ok: false, code: 'DAY', error: 'Hàng chờ xưởng quay đã đầy, đợi bớt rồi gửi tiếp.' };
   const ma = maMoi();
   await env.HOSO.put('quay/' + ma + '/anh', anh, { httpMetadata: { contentType: ka } });
-  await env.HOSO.put('quay/' + ma + '/cd', sau, { httpMetadata: { contentType: ks } });
-  await db.prepare("INSERT INTO quay_viec (ma, uid, trangThai, kieuAnh, kieuAm, taoLuc, loai) VALUES (?, ?, 'cho', ?, ?, ?, 'cd')")
-    .bind(ma, uid, ka, ks, Date.now()).run();
-  await goiKhoQuay(env, db).catch(() => false);
-  return { ok: true, ma };
+  await env.HOSO.put('quay/' + ma + '/loi', new TextEncoder().encode(loi), { httpMetadata: { contentType: 'text/plain; charset=utf-8' } });
+  await db.prepare("INSERT INTO quay_viec (ma, uid, trangThai, kieuAnh, taoLuc, loai, phamVi) VALUES (?, ?, 'cho', ?, ?, 'vd', ?)")
+    .bind(ma, uid, ka, Date.now(), phamVi).run();
+  return { ok: true, ma, phamVi, ghiChu: 'Việc nằm trong hàng chờ. Clip xong khi máy Kaggle đang mở nhận và quay xong.' };
 }
 
 export async function quayXem(y, env, db, hoSo) {
@@ -231,20 +291,26 @@ export async function xuLyMayQuay(req, env, duong) {
     await db.prepare('INSERT OR REPLACE INTO quay_may (ma, luc) VALUES (?, ?)').bind(may, bay).run();
     if (duong === '/quay/song') return traMay({ ok: true });
     await traVeHang(db);
+    /* Máy khai loai='vd' chỉ nhận việc video (máy Kaggle). Không khai
+       thì nhận mọi loại — giữ nguyên hành vi máy GitHub cũ. */
+    const chiLoai = ['moi', 'cd', 'vd'].indexOf(String(y.loai || '')) >= 0 ? String(y.loai) : '';
     for (let lan = 0; lan < 5; lan++) {
-      const r = await db.prepare("SELECT ma, kieuAnh, kieuAm, loai FROM quay_viec WHERE trangThai = 'cho' ORDER BY taoLuc, rowid LIMIT 1").first();
+      const r = chiLoai
+        ? await db.prepare("SELECT ma, kieuAnh, kieuAm, loai, soKhung, phamVi FROM quay_viec WHERE trangThai = 'cho' AND loai = ? ORDER BY taoLuc, rowid LIMIT 1").bind(chiLoai).first()
+        : await db.prepare("SELECT ma, kieuAnh, kieuAm, loai, soKhung, phamVi FROM quay_viec WHERE trangThai = 'cho' ORDER BY taoLuc, rowid LIMIT 1").first();
       if (!r) return traMay({ ok: true, ma: null });
       const u = await db.prepare("UPDATE quay_viec SET trangThai = 'dang', nhanLuc = ?, may = ?, lanThu = lanThu + 1 WHERE ma = ? AND trangThai = 'cho'")
         .bind(bay, may, r.ma).run();
       if (u && u.meta && u.meta.changes === 1) {
         const duoi = function (k) { return k === 'image/png' ? 'png' : k === 'image/webp' ? 'webp' : 'jpg'; };
-        return traMay({ ok: true, ma: r.ma, loai: r.loai || 'moi', duoiAnh: duoi(r.kieuAnh), duoiCd: duoi(r.kieuAm) });
+        return traMay({ ok: true, ma: r.ma, loai: r.loai || 'moi', soKhung: r.soKhung || 0, phamVi: r.phamVi || '',
+          duoiAnh: duoi(r.kieuAnh), duoiCd: duoi(r.kieuAm) });
       }
     }
     return traMay({ ok: true, ma: null });
   }
 
-  const m = /^\/quay\/(tep|kq|loi)\/([0-9a-f]{32})(?:\/(anh|am|cd))?$/.exec(duong);
+  const m = /^\/quay\/(tep|kq|loi)\/([0-9a-f]{32})(?:\/(anh|am|cd|loi|k[0-3]))?$/.exec(duong);
   if (!m) return traMay({ ok: false, error: 'Không có đường này.' }, 404);
   const [, viec, ma, tep] = m;
   const r = await db.prepare('SELECT trangThai FROM quay_viec WHERE ma = ?').bind(ma).first();
@@ -299,7 +365,7 @@ export async function donQuay(env) {
   const ma = ((ds && ds.results) || []).map(r => r.ma);
   if (env.HOSO && ma.length) {
     const khoa = [];
-    ma.forEach(m => khoa.push('quay/' + m + '/anh', 'quay/' + m + '/am', 'quay/' + m + '/cd', 'quay/' + m + '/kq.mp4'));
+    ma.forEach(m => khoa.push('quay/' + m + '/anh', 'quay/' + m + '/am', 'quay/' + m + '/cd', 'quay/' + m + '/loi', 'quay/' + m + '/k0', 'quay/' + m + '/k1', 'quay/' + m + '/k2', 'quay/' + m + '/k3', 'quay/' + m + '/kq.mp4'));
     for (let i = 0; i < khoa.length; i += 900) await env.HOSO.delete(khoa.slice(i, i + 900));
   }
   const r = await db.prepare('DELETE FROM quay_viec WHERE taoLuc < ?').bind(moc).run();
