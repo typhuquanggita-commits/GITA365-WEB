@@ -1,0 +1,28 @@
+{
+  "id": "mc",
+  "ten": "MC Minh Anh",
+  "khoaLuc": "2026-10-04T13:43:37.758Z",
+  "refs": [
+    {
+      "ma": "801a5e15e8a0277242a700e970e007bb",
+      "bam": "4a030647f6dd00d075a6b32d88fdf633abf24625acd0916f13f038df9d1290d3",
+      "mime": "image/png",
+      "byte": 1510388,
+      "tep": "2744238c-bc12-4751-b6b6-0fef61722687-MC giáo dục GITA365 thanh lịch-8.png"
+    },
+    {
+      "ma": "270ab9ac0516676f17aa5378f3d0167a",
+      "bam": "2dbe49b2dddf41b64d362958c891a705052272340b4e2246e6da6eae14bb9411",
+      "mime": "image/png",
+      "byte": 1498287,
+      "tep": "e7176862-3441-465d-8b25-39c04abaa026-Nữ MC giáo dục bên màn hình-2.png"
+    },
+    {
+      "ma": "5e299310f7f912b2bd2eee99cd9e3a24",
+      "bam": "010cd2b39ec0a64be94e7f51f6ee2c48e6b5b5c6d563cffc559d0367375e890e",
+      "mime": "image/png",
+      "byte": 1557865,
+      "tep": "c55aed8d-3da2-4d01-8cfd-2b26d5ccc16c-MC giáo dục bên màn hình trống-9.png"
+    }
+  ]
+}

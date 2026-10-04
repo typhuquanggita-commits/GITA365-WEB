@@ -17,7 +17,9 @@ Commit gốc trước đợt triển khai: `f91dfa3` (nhánh `phim-tu-dong`). To
 | Sổ năng lực thật + route thay thế/BLOCKED | IMPLEMENTED_NOT_LIVE_VERIFIED | `NANG_LUC` + `chonRoute()`; doctor liệt kê đúng 2 shot bị chặn |
 | Doctor (báo thiếu binding/secret/capability) | IMPLEMENTED_AND_VERIFIED | `node tools/bac-si-xuong.mjs` chạy thật trên máy triển khai |
 | Fixture phim thử 10 shot × 8 giây (gia đình + Trainer Trương Nhật Quang) | IMPLEMENTED_NOT_LIVE_VERIFIED | `xuong-phim/phim-thu/` qua hợp đồng 10/10, tổng đúng 80 giây |
-| TTS tiếng Việt nội bộ (stem WAV cho từng nhân vật) | BLOCKED | Thiếu nguồn TTS 0đ đã đấu nối. Gỡ: thêm bước edge-tts vào máy Kaggle/GitHub (đã có internet), đọc `dialogues[].text` → WAV từng nhân vật, sample rate thống nhất |
+| TTS tiếng Việt nội bộ (giọng theo nhân vật) | IMPLEMENTED_NOT_LIVE_VERIFIED | Việc `tts` (edge-tts vi-VN trên Kaggle, 0đ): `quayGiongNoi` + nhánh tts trong `xuong-phim-studio.py`; test 78/78. Chưa có job live → giữ mức này tới khi máy Kaggle chạy thật |
+| Phim hoàn chỉnh tự động (đề bài → kịch bản → cảnh LTX → thoại → khớp môi → ghép → SRT → branding) | IMPLEMENTED_NOT_LIVE_VERIFIED | Việc `film` (`quayPhimMoi`, 4 mẫu: dao_tao/huan_luyen/hotro_khach/gita_hanh_trinh) + notebook `may-quay-kaggle/xuong-phim-studio.py` theo chuẩn V21 (checkpoint resume, QC tự quay lại, MuseTalk/Wav2Lip tùy chọn). Chờ chạy live đầu tiên |
+| Nhân vật chuẩn được khóa (trainer/MC/giảng viên/gia đình) | IMPLEMENTED_NOT_LIVE_VERIFIED | `may-chu/nhan-vat-chuan.js` + `tools/dat-nhan-vat-chuan.mjs` + `GET /quay/nvchuan`; test 47/47. Ảnh khóa nằm R2, không commit kho mã |
 | Trao đồ/chạm nhiều người (shot 06, 09) | BLOCKED | `multi_person_contact` chưa có provider xác minh → route video diễn mẫu người thật (`handoff_master_take_01`) hoặc animatic 3D; cấm hạ xuống ảnh chuyển động |
 | Đám đông 100 người đúng danh tính | BLOCKED | Không nghiệm thu bằng prompt; route footage/diễn mẫu + cảnh rộng/cận |
 | Chạy/đánh/nhảy bằng LTX-Video | BLOCKED | Đo thực tế: máy chỉ rung nhẹ. Gỡ: video diễn mẫu hoặc provider performance transfer trả phí (chưa được cấp ngân sách) |
