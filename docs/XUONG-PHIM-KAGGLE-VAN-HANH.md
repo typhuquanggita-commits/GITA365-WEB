@@ -57,6 +57,42 @@ tự nộp.
 > Ba tệp `.ipynb` được dựng tự động từ `.py` bằng
 > `node tools/py-sang-ipynb.mjs` — hai bản luôn khớp.
 
+## 2b. Khoá xưởng quay — một giá trị, hai nơi phải TRÙNG nhau
+
+Máy Kaggle xác thực với máy chủ bằng **một khoá chung**. Khoá đó phải
+giống hệt ở hai nơi:
+
+| Nơi | Tên khoá | Dùng để |
+|---|---|---|
+| **Kaggle** (Add-ons → Secrets) | `GITA_KHOA_QUAY` | Máy Kaggle gửi kèm mỗi lời gọi (`X-Khoa-Quay`) |
+| **Cloudflare Worker** | `GITA_KHOA_XUONG_QUAY` | Máy chủ đối chiếu để chấp nhận máy Kaggle |
+
+Nguồn khoá cho Worker: **GitHub secret `GITA_KHOA_XUONG_QUAY`** của kho
+GITA365-WEB — khi deploy (`deploy.yml`) nó được nạp vào Worker tự động.
+
+**Lấy/đặt giá trị:**
+
+- *Đã có khoá cũ (lưu đâu đó)* → dán đúng giá trị đó vào Kaggle secret
+  `GITA_KHOA_QUAY`. Xong.
+- *Không nhớ khoá* (GitHub/Cloudflare secret **không đọc lại được**) →
+  sinh khoá mới rồi đặt vào **cả hai** nơi:
+  1. Sinh khoá (chạy ở máy anh chị, **không gửi qua chat**):
+     ```bash
+     openssl rand -hex 32        # hoặc:
+     python3 -c "import secrets; print(secrets.token_hex(32))"
+     ```
+  2. Dán vào **Kaggle** → Add-ons → Secrets → `GITA_KHOA_QUAY` (bật
+     Attach to notebook).
+  3. Đặt cùng giá trị cho **Worker**:
+     - Cách tự động: GitHub → kho GITA365-WEB → Settings → Secrets and
+       variables → Actions → `GITA_KHOA_XUONG_QUAY` (New/Update) → rồi
+       deploy lại (merge vào `main`, hoặc chạy lại workflow Deploy).
+     - Cách tay: `cd may-chu && npx wrangler secret put GITA_KHOA_XUONG_QUAY`
+       (dán cùng giá trị) → `npx wrangler deploy`.
+
+> Hai nơi lệch nhau → máy Kaggle bị `401 Sai khoá`. Thiếu hẳn ở Kaggle →
+> `AssertionError: Thiếu khoá GITA_KHOA_QUAY`.
+
 ---
 
 ## 3. Vòng đời sản xuất — 2 cổng xác nhận
@@ -182,6 +218,8 @@ Sau khi lập trình xong (hoặc nhận bản cập nhật này):
 | **“Phiên đã hết hạn”** khi đặt/dọn | Token 12 giờ hết. Dùng ô “🔒 Phiên máy chủ đã hết hạn” ngay trong xưởng để đăng nhập lại — việc tự chạy tiếp. Máy Kaggle không ảnh hưởng. |
 | **“Chưa thấy máy Kaggle nào đang mở”** | Notebook Kaggle chưa Run hoặc phiên đã hết. Phim vẫn vào hàng chờ; mở lại notebook là quay ngay. |
 | **`NameError: name 'null' is not defined`** trên Kaggle | Đã dán nội dung JSON của tệp `.ipynb` vào ô code. Làm theo **Cách A** (tải `xuong-phim-studio.ipynb` lên), hoặc **Cách B** (dán tệp `.py`, không phải `.ipynb`). Xem mục 2. |
+| **`AssertionError: Thiếu khoá GITA_KHOA_QUAY`** | Kaggle chưa đọc được secret. (1) Panel phải → **Add-ons → Secrets** → thêm secret tên **`GITA_KHOA_QUAY`**; (2) **BẬT công tắc “Attach to notebook”** cho secret đó (chỗ hay quên nhất); (3) Run All lại. Giá trị khoá phải **TRÙNG `GITA_KHOA_XUONG_QUAY`** của Worker. Xem mục 2b. |
+| **Kaggle in `Sai khoá` / `401`** khi gọi máy chủ | Khoá Kaggle ≠ khoá Worker. Đặt lại cùng một giá trị cho GitHub secret `GITA_KHOA_XUONG_QUAY` (Worker lấy khi deploy) và Kaggle secret `GITA_KHOA_QUAY`. Xem mục 2b. |
 | **Kaggle lỗi 403 (mã 1010)** lúc gọi máy chủ | Cloudflare Bot Fight chặn User-Agent mặc định. Notebook đã mang UA trình duyệt — nếu vẫn lỗi, kiểm `MAY_CHU` đúng địa chỉ Worker. |
 | **“No space left on device”** trên Kaggle | Đĩa 20GB đầy. Bản mới đã bật `DON_SAU_KHI_NOP`; nếu vẫn đầy, Factory reset notebook rồi Run lại. |
 | **Nhân vật đổi mặt giữa phim** | Nhân vật chưa khoá ảnh → đang quay text-to-video. Khoá ảnh bằng `tools/dat-nhan-vat-chuan.mjs`. |

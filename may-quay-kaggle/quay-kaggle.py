@@ -41,7 +41,11 @@ def lay_khoa():
         return ""
 
 KHOA = lay_khoa()
-assert len(KHOA) >= 32, "Thiếu khoá. Vào Add-ons → Secrets, thêm GITA_KHOA_QUAY rồi Run lại."
+assert len(KHOA) >= 32, (
+    "Thiếu khoá GITA_KHOA_QUAY. Panel phải → Add-ons → Secrets: "
+    "(1) thêm secret tên GITA_KHOA_QUAY, giá trị = khoá xưởng quay "
+    "(TRÙNG GITA_KHOA_XUONG_QUAY của Worker Cloudflare); "
+    "(2) BẬT công tắc Attach-to-notebook cho secret đó; rồi Run All lại.")
 
 # Cloudflare Bot Fight Mode chặn UA mặc định "Python-urllib/3.x" (lỗi 403,
 # mã 1010) trước cả khi tới kiểm tra khoá — phải mang UA giống trình duyệt.
