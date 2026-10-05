@@ -27,20 +27,35 @@ liên tục (0 đồng)”**. Chỉ Super Admin (R01) thấy và dùng được.
 
 ## 2. Bật máy Kaggle (làm một lần mỗi phiên, ~10 phút)
 
-1. Vào **kaggle.com** → New Notebook.
-2. Phải: **Settings → Accelerator → GPU T4 x2**, **Internet → On**.
-3. Phải: **Add-ons → Secrets → Add**
-   - Tên: `GITA_KHOA_QUAY`
-   - Giá trị: khoá xưởng quay (chính là GitHub secret
-     `GITA_KHOA_XUONG_QUAY` của kho GITA365-WEB).
-4. Mở `may-quay-kaggle/xuong-phim-studio.py` trong kho này, **dán TOÀN BỘ**
-   vào ô code đầu → **Run All**.
-5. In `🏭 Xưởng phim sẵn sàng…` là máy đã nhận việc. Để yên — máy tự quay,
-   tự nộp.
+> ⚠️ **ĐỪNG copy nội dung tệp `.ipynb` rồi dán vào ô code.** Tệp `.ipynb`
+> là JSON; dán vào ô code rồi Run sẽ báo
+> `NameError: name 'null' is not defined` (vì `null` là từ của JSON, không
+> phải Python). Có hai cách ĐÚNG dưới đây — **cách A (tải tệp) là chắc
+> nhất.**
 
-> Notebook cũ `quay-kaggle.py` chỉ quay **clip đơn lẻ** (việc `vd`), KHÔNG
-> quay phim nguyên bộ. Muốn phim trọn bộ phải chạy `xuong-phim-studio.py`
-> (máy báo tên `kaggle-studio-…`).
+**Cách A — Tải tệp notebook lên (khuyên dùng, không copy-paste):**
+1. Tải `may-quay-kaggle/xuong-phim-studio.ipynb` từ kho này về máy.
+2. Vào **kaggle.com → Create → New Notebook → File → Import Notebook →
+   Upload** (hoặc kéo-thả tệp `.ipynb`).
+3. Phải: **Settings → Accelerator → GPU T4 x2**, **Internet → On**.
+4. Phải: **Add-ons → Secrets → Add** → tên `GITA_KHOA_QUAY` = khoá xưởng
+   quay (GitHub secret `GITA_KHOA_XUONG_QUAY`).
+5. **Run All**.
+
+**Cách B — Dán mã Python (nếu không tải tệp):**
+1. New Notebook → đặt GPU T4 + Internet On + Secret `GITA_KHOA_QUAY` như trên.
+2. Mở `may-quay-kaggle/xuong-phim-studio.py` (tệp **`.py`**, KHÔNG phải
+   `.ipynb`) → **chọn tất cả → copy → dán vào MỘT ô code** → **Run All**.
+
+In `🏭 Xưởng phim sẵn sàng…` là máy đã nhận việc. Để yên — máy tự quay,
+tự nộp.
+
+> Notebook cũ `quay-kaggle.ipynb`/`.py` chỉ quay **clip đơn lẻ** (việc
+> `vd`), KHÔNG quay phim nguyên bộ. Muốn phim trọn bộ phải chạy
+> `xuong-phim-studio` (máy báo tên `kaggle-studio-…`).
+>
+> Ba tệp `.ipynb` được dựng tự động từ `.py` bằng
+> `node tools/py-sang-ipynb.mjs` — hai bản luôn khớp.
 
 ---
 
@@ -152,9 +167,11 @@ Sau khi lập trình xong (hoặc nhận bản cập nhật này):
 2. **Cloudflare** — **tự động**: khi PR merge vào `main`, GitHub Actions
    (`deploy.yml`) triển khai Pages + Worker. Không phải chạy tay. (Thủ
    công khi cần: `cd may-chu && npx wrangler deploy`.)
-3. **Kaggle** — **thủ công**: dừng notebook cũ, dán lại TOÀN BỘ
-   `may-quay-kaggle/xuong-phim-studio.py` bản mới → Run All. (Kaggle không
-   tự kéo từ GitHub.)
+3. **Kaggle** — **thủ công** (Kaggle không tự kéo từ GitHub): dừng
+   notebook cũ, rồi **tải lại `may-quay-kaggle/xuong-phim-studio.ipynb`**
+   bản mới (File → Import Notebook) → Run All. Nếu muốn giữ notebook cũ:
+   xoá hết ô, dán lại toàn bộ `xuong-phim-studio.py` bản mới → Run All.
+   (Tệp `.ipynb` dựng lại bằng `node tools/py-sang-ipynb.mjs`.)
 
 ---
 
@@ -164,6 +181,7 @@ Sau khi lập trình xong (hoặc nhận bản cập nhật này):
 |---|---|
 | **“Phiên đã hết hạn”** khi đặt/dọn | Token 12 giờ hết. Dùng ô “🔒 Phiên máy chủ đã hết hạn” ngay trong xưởng để đăng nhập lại — việc tự chạy tiếp. Máy Kaggle không ảnh hưởng. |
 | **“Chưa thấy máy Kaggle nào đang mở”** | Notebook Kaggle chưa Run hoặc phiên đã hết. Phim vẫn vào hàng chờ; mở lại notebook là quay ngay. |
+| **`NameError: name 'null' is not defined`** trên Kaggle | Đã dán nội dung JSON của tệp `.ipynb` vào ô code. Làm theo **Cách A** (tải `xuong-phim-studio.ipynb` lên), hoặc **Cách B** (dán tệp `.py`, không phải `.ipynb`). Xem mục 2. |
 | **Kaggle lỗi 403 (mã 1010)** lúc gọi máy chủ | Cloudflare Bot Fight chặn User-Agent mặc định. Notebook đã mang UA trình duyệt — nếu vẫn lỗi, kiểm `MAY_CHU` đúng địa chỉ Worker. |
 | **“No space left on device”** trên Kaggle | Đĩa 20GB đầy. Bản mới đã bật `DON_SAU_KHI_NOP`; nếu vẫn đầy, Factory reset notebook rồi Run lại. |
 | **Nhân vật đổi mặt giữa phim** | Nhân vật chưa khoá ảnh → đang quay text-to-video. Khoá ảnh bằng `tools/dat-nhan-vat-chuan.mjs`. |

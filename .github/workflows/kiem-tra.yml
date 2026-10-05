@@ -62,6 +62,9 @@ jobs:
       - name: Cú pháp máy quay Kaggle (Python)
         run: python3 -m py_compile may-quay-kaggle/quay-kaggle.py may-quay-kaggle/tao-nhan-vat.py may-quay-kaggle/xuong-phim-studio.py
 
+      - name: Notebook .ipynb khớp .py (py-sang-ipynb --kiem)
+        run: node tools/py-sang-ipynb.mjs --kiem
+
       - name: Thử trang trạng thái công khai (không phiên · chỉ tổng hợp số)
         run: node tools/thu-trang-thai.mjs
 
