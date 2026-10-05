@@ -5,6 +5,11 @@ dùng GPU miễn phí bên ngoài để quay video có chuyển động thật. 
 **Kaggle** — máy GPU T4 của Google, miễn phí khoảng 30 giờ/tuần, tài khoản
 chính chủ, không phải máy lạ của người lạ.
 
+> **Sản xuất phim nguyên bộ liên tục (vòng đời 2 cổng xác nhận):** xem
+> `docs/XUONG-PHIM-KAGGLE-VAN-HANH.md` — đặt đề bài → Kaggle quay trọn bộ
+> → tải về máy → dọn kho → quay việc tiếp theo, cùng cách quay dựng chuẩn
+> và luật phiên/quota Kaggle. Trang này mô tả clip đơn lẻ và vẽ nhân vật.
+
 ## Luật nội dung (bảo mật)
 
 - **Phim cho khách hàng**: nội dung theo thị hiếu và nhu cầu thị trường;

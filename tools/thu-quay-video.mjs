@@ -1,7 +1,7 @@
 /* Kiểm việc video chuyển động loại 'vd' (quay bằng Kaggle GPU) trong
    may-chu/xuong-quay.js. Chạy: node tools/thu-quay-video.mjs */
 import { DatabaseSync } from 'node:sqlite';
-import { quayVideoDong, quayKhopMoi, quayXem, xuLyMayQuay, soatLoiNhac } from '../may-chu/xuong-quay.js';
+import { quayVideoDong, quayKhopMoi, quayXem, quayXoa, xuLyMayQuay, soatLoiNhac } from '../may-chu/xuong-quay.js';
 
 let dat = 0, hong = 0;
 function kiem(dk, ten) { if (dk) dat++; else { hong++; console.error('✗ ' + ten); } }
@@ -84,6 +84,28 @@ t = await may('/quay/kq/' + g.ma, { method: 'PUT', body: mp4, headers: { 'Conten
 kiem(t.status === 200 && t.j.ok, 'nộp MP4 thành công');
 const x = await quayXem({ ds: [g.ma] }, env, env.CSDL, R01);
 kiem(x.ds[0].trangThai === 'xong' && x.ds[0].url === '/quay/phim/' + g.ma + '.mp4', 'xem: việc vd xong có link phim');
+kiem(typeof x.ds[0].xongLuc === 'number' && x.ds[0].xongLuc > 0, 'xem: việc xong kèm thời điểm quay xong');
+
+// Làm sạch khi có xác nhận (vòng đời sản xuất liên tục)
+kiem((await quayXoa({ ma: g.ma }, env, env.CSDL, KHAC)).code === 'NOPERM', 'dọn: chặn người không phải R01');
+kiem(!(await quayXoa({ ds: [] }, env, env.CSDL, R01)).ok, 'dọn: thiếu mã bị từ chối');
+// nb vừa được máy Kaggle nhận ở trên (trạng thái 'dang') → không được dọn
+const xoaDang = await quayXoa({ ma: nb.ma }, env, env.CSDL, R01);
+kiem(xoaDang.ok && xoaDang.xoa === 0 && xoaDang.boQua.indexOf(nb.ma) >= 0, 'dọn: không đụng việc đang quay');
+kiem(env.HOSO._m.has('quay/' + nb.ma + '/anh'), 'dọn: tệp việc đang quay vẫn còn');
+// g đã xong → dọn thật: xoá tệp R2 + dòng D1
+const xoaXong = await quayXoa({ ma: g.ma }, env, env.CSDL, R01);
+kiem(xoaXong.ok && xoaXong.xoa === 1, 'dọn: việc xong được dọn');
+kiem(!env.HOSO._m.has('quay/' + g.ma + '/kq.mp4') && !env.HOSO._m.has('quay/' + g.ma + '/anh'), 'dọn: tệp phim đã bị xoá khỏi R2');
+kiem((await quayXem({ ds: [g.ma] }, env, env.CSDL, R01)).ds[0].trangThai === 'mat', 'dọn: dòng việc đã biến khỏi D1');
+// R01 khác (uid khác) không dọn được phim của người khác (lọc theo uid)
+const R01B = { uid: 'u3', role: 'R01' };
+const g2 = await quayVideoDong({ anh: jpg, loiNhac: 'nhân vật mỉm cười trong vườn chiều' }, env, env.CSDL, R01);
+await may('/quay/nhan', { method: 'POST', body: JSON.stringify({ may: 'kg-x', loai: 'vd' }) });
+await may('/quay/kq/' + g2.ma, { method: 'PUT', body: mp4, headers: { 'Content-Length': String(mp4.length) } });
+const xoaKhac = await quayXoa({ ma: g2.ma }, env, env.CSDL, R01B);
+kiem(xoaKhac.ok && xoaKhac.xoa === 0, 'dọn: Super Admin khác không dọn được phim của người khác');
+kiem(env.HOSO._m.has('quay/' + g2.ma + '/kq.mp4'), 'dọn: phim của người khác vẫn còn nguyên');
 
 console.log(hong ? ('Hỏng ' + hong + '/' + (dat + hong)) : ('Đạt ' + dat + '/' + dat));
 process.exit(hong ? 1 : 0);

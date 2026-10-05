@@ -335,10 +335,10 @@ export async function quayXem(y, env, db, hoSo) {
   const uid = String(hoSo.uid || '');
   const kq = [];
   for (const ma of ds) {
-    const r = await db.prepare('SELECT rowid AS rid, ma, trangThai, taoLuc, loi, loai FROM quay_viec WHERE ma = ? AND uid = ?').bind(ma, uid).first();
+    const r = await db.prepare('SELECT rowid AS rid, ma, trangThai, taoLuc, xongLuc, loi, loai FROM quay_viec WHERE ma = ? AND uid = ?').bind(ma, uid).first();
     if (!r) { kq.push({ ma, trangThai: 'mat' }); continue; }
     const o = { ma, trangThai: r.trangThai, loai: r.loai || 'moi' };
-    if (r.trangThai === 'xong') o.url = '/quay/phim/' + ma + (r.loai === 'nv' ? '.png' : r.loai === 'tts' ? '.mp3' : '.mp4');
+    if (r.trangThai === 'xong') { o.url = '/quay/phim/' + ma + (r.loai === 'nv' ? '.png' : r.loai === 'tts' ? '.mp3' : '.mp4'); if (r.xongLuc) o.xongLuc = +r.xongLuc; }
     if (r.trangThai === 'loi') o.loi = String(r.loi || 'Máy quay không làm được cảnh này.');
     if (r.trangThai === 'cho') {
       const t = await db.prepare("SELECT COUNT(*) AS n FROM quay_viec WHERE trangThai = 'cho' AND (taoLuc < ? OR (taoLuc = ? AND rowid < ?))").bind(r.taoLuc, r.taoLuc, r.rid).first();
@@ -348,6 +348,34 @@ export async function quayXem(y, env, db, hoSo) {
   }
   const may = await db.prepare('SELECT COUNT(*) AS n FROM quay_may WHERE luc > ?').bind(Date.now() - QUAY.songTrong).first();
   return { ok: true, ds: kq, mayDangChay: may ? +may.n : 0 };
+}
+
+/* ── LÀM SẠCH KHI CÓ XÁC NHẬN (vòng đời sản xuất liên tục) ──
+   Chủ hệ tải phim về máy xong, bấm "Đã tải — Dọn" → xoá ngay tệp trong
+   R2 và dòng việc trong D1 để giải phóng dung lượng, không phải đợi lịch
+   dọn 7 ngày. Chỉ dọn việc ĐÃ XONG hoặc ĐÃ LỖI của chính tài khoản mình;
+   KHÔNG đụng việc đang chờ/đang quay (tránh xoá nhầm phim đang sản xuất).
+   Nhận một mã (y.ma) hoặc danh sách (y.ds), tối đa 50 mã mỗi lượt. */
+export async function quayXoa(y, env, db, hoSo) {
+  if (!laR01(hoSo)) return { ok: false, code: 'NOPERM', error: 'Chỉ Super Admin được dọn phim.' };
+  if (!env.HOSO) return { ok: false, code: 'CHUA_CO_R2', error: 'Máy chủ chưa gắn R2.' };
+  await taoBangQuay(db);
+  const ds = (Array.isArray(y && y.ds) ? y.ds : [y && y.ma]).map(String).filter(m => RE_MA.test(m)).slice(0, 50);
+  if (!ds.length) return { ok: false, error: 'Thiếu mã việc cần dọn.' };
+  const uid = String(hoSo.uid || '');
+  let xoa = 0; const boQua = [];
+  for (const ma of ds) {
+    const r = await db.prepare('SELECT trangThai FROM quay_viec WHERE ma = ? AND uid = ?').bind(ma, uid).first();
+    if (!r) { boQua.push(ma); continue; }
+    if (r.trangThai !== 'xong' && r.trangThai !== 'loi') { boQua.push(ma); continue; }
+    if (env.HOSO) {
+      const khoa = ['anh', 'am', 'cd', 'loi', 'k0', 'k1', 'k2', 'k3', 'kq.mp4', 'kq.png', 'kq.mp3'].map(t => 'quay/' + ma + '/' + t);
+      await env.HOSO.delete(khoa).catch(() => {});
+    }
+    await db.prepare('DELETE FROM quay_viec WHERE ma = ? AND uid = ?').bind(ma, uid).run();
+    xoa++;
+  }
+  return { ok: true, xoa, boQua, ghiChu: xoa ? ('Đã dọn ' + xoa + ' phim khỏi kho — dung lượng được giải phóng ngay.') : 'Không có việc nào ở trạng thái xong/lỗi để dọn (việc đang chờ/đang quay không bị đụng tới).' };
 }
 
 /* ── LỜI GỌI CỦA MÁY QUAY (GitHub Actions) ── */
