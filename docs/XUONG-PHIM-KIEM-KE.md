@@ -42,3 +42,16 @@ Commit gốc trước đợt triển khai: `f91dfa3` (nhánh `phim-tu-dong`). To
 - **M3 — tương tác**: shot 06 trao giấy bằng video diễn mẫu; giải occlusion trước khi nhân lên 5 người.
 - **M4 — pilot**: render MP4 80 giây từ 10 shot fixture đã duyệt + báo cáo chi phí.
 - **M5/M6**: serial 5 tập × 10 phút, hardening vận hành.
+
+## 4. Bổ sung — Vòng đời sản xuất liên tục trên Kaggle (05/10/2026)
+
+Thêm mới thuần tuý, không xoá/sửa chức năng cũ. Tài liệu vận hành:
+`docs/XUONG-PHIM-KAGGLE-VAN-HANH.md`.
+
+| Chức năng | Trạng thái | Chứng cứ |
+|---|---|---|
+| Làm sạch khi xác nhận (`quayXoa`): dọn R2 + D1 ngay sau khi tải về | IMPLEMENTED_AND_VERIFIED | `may-chu/xuong-quay.js` + worker route; test `tools/thu-quay-video.mjs` 28/28 (gồm: chỉ dọn việc xong/lỗi, không đụng việc đang quay, lọc theo uid) |
+| Hàng đợi sản xuất + cổng “Quay việc tiếp theo” (mỗi lúc một việc) | IMPLEMENTED_NOT_LIVE_VERIFIED | `src/xuong-phim-tu-dong.js` (console Kaggle); bundle khớp; chờ chạy live |
+| Tải phim về máy thật (blob) + hiện trên web | IMPLEMENTED_NOT_LIVE_VERIFIED | `G.xpKgTai`; `/quay/phim/<ma>.mp4` công khai theo mã |
+| Khôi phục phiên tại chỗ khi token 12h hết hạn (đăng nhập lại + tự chạy tiếp) | IMPLEMENTED_NOT_LIVE_VERIFIED | `G.xpKgDangNhapLai` + `kgGoi` bắt code AUTH |
+| Dừng sạch theo giờ phiên + dọn tệp tạm sau nộp (notebook) | IMPLEMENTED_NOT_LIVE_VERIFIED | `xuong-phim-studio.py`: `GIO_PHIEN_TOI_DA`, `don_viec`; py_compile OK |

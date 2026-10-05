@@ -914,16 +914,69 @@ var G = window.G || {}; window.G = G;
     return o;
   };
 
-  /* ══ ĐẶT PHIM TRÊN MÁY KAGGLE (xưởng studio V21) ══
-     Khác dây chuyền tự động bên dưới (vẽ từng cảnh rồi lắp trên máy
-     này): việc 'film' giao TRỌN bộ phim cho máy Kaggle — máy tự viết
-     kịch bản từ đề bài, quay chuyển động thật bằng LTX-Video với ảnh
-     nhân vật ĐÃ KHÓA, đọc thoại edge-tts, khớp môi MuseTalk, chấm QC,
-     ghép FFmpeg + phụ đề + intro/outro rồi nộp MP4 về máy chủ. */
+  /* ══ XƯỞNG KAGGLE — SẢN XUẤT PHIM LIÊN TỤC (studio V22) ══
+     Việc 'film' giao TRỌN bộ phim cho máy Kaggle — máy tự viết kịch bản
+     từ đề bài, quay chuyển động thật bằng LTX-Video với ảnh nhân vật ĐÃ
+     KHÓA, đọc thoại edge-tts, khớp môi MuseTalk, chấm QC, ghép FFmpeg +
+     phụ đề + intro/outro rồi nộp MP4 về máy chủ.
+
+     VÒNG ĐỜI 2 CỔNG XÁC NHẬN (anh Quang duyệt từng bước):
+       1. Đặt phim (ngay) hoặc thêm vào HÀNG ĐỢI SẢN XUẤT (quay dần).
+       2. Máy Kaggle quay xong → phim TỰ hiện trên web + nút TẢI VỀ MÁY.
+       3. Tải xong → bấm "Đã tải — Dọn kho" (quayXoa) giải phóng R2 ngay.
+       4. Dọn xong → bấm "Quay việc tiếp theo" để thả việc kế trong hàng
+          đợi lên Kaggle (mỗi lúc chỉ một việc đang quay — gác cổng).
+
+     Máy Kaggle dùng khoá xưởng (X-Khoa-Quay), KHÔNG dùng phiên web, nên
+     phim đã đặt vẫn quay dù phiên web hết hạn. Khi phiên web hết hạn,
+     console hiện ô ĐĂNG NHẬP LẠI tại chỗ rồi tự chạy tiếp việc đang dở. */
   var KG_KHOA = 'gita.xuongKaggle.v1';
-  var kg = { viec: [], tt: null, dangHoi: false, nhac: 0 };
+  var KG_PLAN_KHOA = 'gita.xuongKaggle.plan.v1';
+  var kg = { viec: [], plan: [], tt: null, dangHoi: false, nhac: 0, phienHet: false, choLam: null };
   try { kg.viec = JSON.parse(localStorage.getItem(KG_KHOA) || '[]') || []; } catch (eKg) { kg.viec = []; }
+  try { kg.plan = JSON.parse(localStorage.getItem(KG_PLAN_KHOA) || '[]') || []; } catch (eKg2) { kg.plan = []; }
   function kgLuu() { try { localStorage.setItem(KG_KHOA, JSON.stringify(kg.viec.slice(-30))); } catch (eKg) {} }
+  function kgPlanLuu() { try { localStorage.setItem(KG_PLAN_KHOA, JSON.stringify(kg.plan.slice(-40))); } catch (eKg) {} }
+
+  /* Gọi máy chủ có bắt phiên hết hạn: AUTH → bật ô đăng nhập lại, giữ
+     việc đang làm để chạy tiếp sau khi đăng nhập. */
+  function kgGoi(fn, y) {
+    return goi(fn, y).then(function (x) {
+      x = x || { ok: false, error: 'Máy chủ không trả lời.' };
+      if (!x.ok && x.code === 'AUTH') { if (!kg.phienHet) { kg.phienHet = true; if (G.xpVeLai) G.xpVeLai(); } }
+      else if (kg.phienHet) { kg.phienHet = false; if (G.xpVeLai) G.xpVeLai(); }
+      return x;
+    });
+  }
+  function kgTenDangNhap() {
+    var u = (G.S && G.S.acc && G.S.acc.u) || '';
+    if (u) return u;
+    try { var p = JSON.parse(sessionStorage.getItem('gita365_phien_may_chu') || 'null'); if (p && p.u) return p.u; } catch (e) {}
+    return '';
+  }
+  G.xpKgDangNhapLai = function () {
+    var mk = document.getElementById('kg-dn-mk'), pw = mk ? String(mk.value || '') : '';
+    var u = kgTenDangNhap();
+    if (!u) { U.toast('Chưa rõ tài khoản. Vào Quản trị trang → Nối máy chủ để đăng nhập lại.', 'err'); return; }
+    if (!pw) { U.toast('Nhập mật khẩu máy chủ để đăng nhập lại.', 'err'); return; }
+    var box = document.getElementById('kg-dn-kq');
+    if (box) box.innerHTML = '<p class="note">Đang đăng nhập lại…</p>';
+    fetch(apiGoc(), { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn: 'dangNhap', u: u, mk: pw }) })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d && d.ok && d.token) {
+          kg.phienHet = false;
+          if (G.vaoBangPhienMayChu) G.vaoBangPhienMayChu(d);
+          U.toast('Đã đăng nhập lại — tiếp tục sản xuất.', 'ok');
+          if (G.go) G.go('xuong-phim'); else if (G.render) G.render();
+          var lam = kg.choLam; kg.choLam = null;
+          if (typeof lam === 'function') setTimeout(lam, 400);
+        } else if (box) {
+          box.innerHTML = '<p class="note" style="color:#b00">' + h((d && d.error) || 'Đăng nhập không thành công.') + '</p>';
+        }
+      })
+      .catch(function () { if (box) box.innerHTML = '<p class="note" style="color:#b00">Không gọi được máy chủ.</p>'; });
+  };
   var KG_NV = [
     ['trainer', 'Trainer Trương Nhật Quang (đã khóa ảnh)'],
     ['mc', 'MC Minh Anh (đã khóa ảnh)'],
@@ -947,28 +1000,113 @@ var G = window.G || {}; window.G = G;
     kgLuu(); kg.tt = null; kgHoi(true);
     if (G.xpVeLai) G.xpVeLai();
   }
+  function kgThongTinPhim() {
+    return { tieuDe: kgFm.tieuDe, chuDe: kgFm.chuDe, loaiPhim: kgFm.loaiPhim,
+      nhanVat: kgFm.nhanVat, soCanhToiDa: kgFm.soCanhToiDa, phamVi: kgFm.phamVi };
+  }
   G.xpKgDat = function () {
     if (String(kgFm.chuDe || '').trim().length < 8) { U.toast('Cần đề bài phim ít nhất 8 ký tự.', 'err'); return; }
-    goi('quayPhimMoi', {
-      tieuDe: kgFm.tieuDe, chuDe: kgFm.chuDe, loaiPhim: kgFm.loaiPhim,
-      nhanVat: kgFm.nhanVat, soCanhToiDa: kgFm.soCanhToiDa, phamVi: kgFm.phamVi
-    }).then(function (x) {
-      if (x && x.ok) { kgThem(x.ma, 'film', kgFm.tieuDe || kgFm.chuDe.slice(0, 60)); U.toast('Đã đặt phim — máy Kaggle sẽ tự quay.', 'ok'); }
-      else U.toast((x && x.error) || 'Không đặt được phim.', 'err');
+    var tt = kgThongTinPhim(), ten = kgFm.tieuDe || kgFm.chuDe.slice(0, 60);
+    kg.choLam = function () { G.xpKgDat(); };
+    kgGoi('quayPhimMoi', tt).then(function (x) {
+      if (x.code === 'AUTH') return;
+      kg.choLam = null;
+      if (x.ok) { kgThem(x.ma, 'film', ten); U.toast('Đã đặt phim — máy Kaggle sẽ tự quay.', 'ok'); }
+      else U.toast(x.error || 'Không đặt được phim.', 'err');
     });
   };
   G.xpKgTts = function () {
     if (String(kgFm.thoai || '').trim().length < 8) { U.toast('Cần lời thoại ít nhất 8 ký tự.', 'err'); return; }
-    goi('quayGiongNoi', { thoai: kgFm.thoai, giong: kgFm.giong }).then(function (x) {
-      if (x && x.ok) { kgThem(x.ma, 'tts', kgFm.thoai.slice(0, 60)); U.toast('Đã đặt đọc thoại — MP3 về khi máy Kaggle đọc xong.', 'ok'); }
-      else U.toast((x && x.error) || 'Không đặt được.', 'err');
+    var thoai = kgFm.thoai, giong = kgFm.giong;
+    kg.choLam = function () { G.xpKgTts(); };
+    kgGoi('quayGiongNoi', { thoai: thoai, giong: giong }).then(function (x) {
+      if (x.code === 'AUTH') return;
+      kg.choLam = null;
+      if (x.ok) { kgThem(x.ma, 'tts', thoai.slice(0, 60)); U.toast('Đã đặt đọc thoại — MP3 về khi máy Kaggle đọc xong.', 'ok'); }
+      else U.toast(x.error || 'Không đặt được.', 'err');
     });
   };
+
+  /* ── HÀNG ĐỢI SẢN XUẤT (quay dần, gác cổng 2 bước) ── */
+  function kgChoPlan() { return kg.plan.filter(function (p) { return p.trangThai === 'cho'; }); }
+  function kgTrangThai(ma) {
+    var ds = (kg.tt && kg.tt.ds) || [];
+    for (var i = 0; i < ds.length; i++) if (ds[i].ma === ma) return ds[i].trangThai;
+    return '';   // chưa rõ (vừa đặt, chưa poll) → coi như đang chạy
+  }
+  /* "Đang bận" = còn phim đang chờ/đang quay HOẶC đã xong mà CHƯA dọn kho.
+     Cổng 2 bước: phải tải về + dọn kho (phim rời khỏi danh sách) rồi mới
+     được "Quay việc tiếp theo". 'loi'/'mat' là trạng thái cuối, không chặn. */
+  function kgDangLam() {
+    if (kg.plan.some(function (p) { return p.trangThai === 'dangDat'; })) return true;
+    return kg.viec.some(function (v) {
+      var tt = kgTrangThai(v.ma);
+      return tt === '' || tt === 'cho' || tt === 'dang' || tt === 'xong';
+    });
+  }
+  G.xpKgPlanThem = function () {
+    if (String(kgFm.chuDe || '').trim().length < 8) { U.toast('Cần đề bài phim ít nhất 8 ký tự.', 'err'); return; }
+    var tt = kgThongTinPhim(); tt.trangThai = 'cho';
+    kg.plan.push(tt); kgPlanLuu();
+    U.toast('Đã thêm vào hàng đợi sản xuất (' + kgChoPlan().length + ' việc chờ).', 'ok');
+    if (G.xpVeLai) G.xpVeLai();
+  };
+  G.xpKgPlanXoa = function (i) {
+    if (kg.plan[i] && kg.plan[i].trangThai === 'cho') { kg.plan.splice(i, 1); kgPlanLuu(); if (G.xpVeLai) G.xpVeLai(); }
+  };
+  G.xpKgPlanTiep = function () {
+    if (kgDangLam()) { U.toast('Còn phim đang chờ/đang quay. Đợi xong → tải về → dọn kho rồi mới quay việc tiếp theo.', 'err'); return; }
+    var it = kgChoPlan()[0];
+    if (!it) { U.toast('Hết việc trong hàng đợi. Thêm đề bài mới để tiếp tục.', 'ok'); return; }
+    it.trangThai = 'dangDat'; kgPlanLuu(); if (G.xpVeLai) G.xpVeLai();
+    kg.choLam = function () { it.trangThai = 'cho'; kgPlanLuu(); G.xpKgPlanTiep(); };
+    kgGoi('quayPhimMoi', { tieuDe: it.tieuDe, chuDe: it.chuDe, loaiPhim: it.loaiPhim,
+      nhanVat: it.nhanVat, soCanhToiDa: it.soCanhToiDa, phamVi: it.phamVi }).then(function (x) {
+      if (x.code === 'AUTH') { it.trangThai = 'cho'; kgPlanLuu(); return; }
+      kg.choLam = null;
+      if (x.ok) { it.trangThai = 'daDat'; it.ma = x.ma; kgPlanLuu(); kgThem(x.ma, 'film', it.tieuDe || it.chuDe.slice(0, 60)); U.toast('Đã quay việc tiếp theo — máy Kaggle đang xử lý.', 'ok'); }
+      else { it.trangThai = 'cho'; kgPlanLuu(); U.toast(x.error || 'Không đặt được.', 'err'); }
+    });
+  };
+
+  /* ── CỔNG 1: TẢI PHIM VỀ MÁY (tải thật qua blob, không chỉ mở tab) ── */
+  function kgTenViec(ma) { for (var i = 0; i < kg.viec.length; i++) if (kg.viec[i].ma === ma) return kg.viec[i].ten; return ''; }
+  G.xpKgTai = function (ma, loai) {
+    var duoi = loai === 'tts' ? '.mp3' : loai === 'nv' ? '.png' : '.mp4';
+    var url = apiGoc() + '/quay/phim/' + ma + duoi;
+    var ten = (kgTenViec(ma) || ma).replace(/[^\w\-. ]+/g, '_').replace(/\s+/g, '-').slice(0, 60) + '-' + ma.slice(0, 6) + duoi;
+    U.toast('Đang tải phim về máy…', 'ok');
+    fetch(url).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.blob(); })
+      .then(function (b) {
+        var a = document.createElement('a'), ou = URL.createObjectURL(b);
+        a.href = ou; a.download = ten; document.body.appendChild(a); a.click();
+        setTimeout(function () { URL.revokeObjectURL(ou); a.remove(); }, 5000);
+        U.toast('Đã tải xuống: ' + ten, 'ok');
+      })
+      .catch(function (e) { U.toast('Chưa tải được (' + ((e && e.message) || 'lỗi') + ') — mở link để tải tay.', 'err'); window.open(url, '_blank', 'noopener'); });
+  };
+  /* ── CỔNG 2: ĐÃ TẢI — DỌN KHO (giải phóng R2 ngay) ── */
+  G.xpKgDon = function (ma) {
+    if (!confirm('Đã tải phim này về máy chưa?\n\nBấm OK để DỌN khỏi kho máy chủ (giải phóng dung lượng R2 ngay). Sau khi dọn, phim KHÔNG mở lại trên web được nữa — chỉ còn bản đã tải trên máy anh chị.')) return;
+    kg.choLam = function () { G.xpKgDon(ma); };
+    kgGoi('quayXoa', { ma: ma }).then(function (x) {
+      if (x.code === 'AUTH') return;
+      kg.choLam = null;
+      if (x.ok) {
+        kg.viec = kg.viec.filter(function (v) { return v.ma !== ma; });
+        kgLuu(); kg.tt = null;
+        U.toast(x.ghiChu || 'Đã dọn kho.', 'ok');
+        if (kgChoPlan().length) U.toast('Còn ' + kgChoPlan().length + ' việc trong hàng đợi — bấm "Quay việc tiếp theo" để quay tập sau.', 'ok');
+        if (G.xpVeLai) G.xpVeLai();
+      } else U.toast(x.error || 'Không dọn được.', 'err');
+    });
+  };
+
   function kgHoi(ngay) {
     if (!laR01() || !G.goiMayChu || kg.dangHoi || !kg.viec.length) return;
     if (!ngay && kg.nhac && Date.now() - kg.nhac < 15000) return;
     kg.dangHoi = true;
-    goi('quayXem', { ds: kg.viec.map(function (v) { return v.ma; }) }).then(function (x) {
+    kgGoi('quayXem', { ds: kg.viec.map(function (v) { return v.ma; }) }).then(function (x) {
       kg.dangHoi = false; kg.nhac = Date.now();
       if (x && x.ok) { kg.tt = x; if (G.xpVeLai) G.xpVeLai(); }
     }, function () { kg.dangHoi = false; });
@@ -976,11 +1114,29 @@ var G = window.G || {}; window.G = G;
   G.xpKgHoi = function () { kgHoi(true); if (G.xpVeLai) G.xpVeLai(); };
   setInterval(function () { if (document.getElementById('xp-kg')) kgHoi(); }, 20000);
 
+  function kgGio(ts) {
+    if (!ts) return '';
+    try { var d = new Date(+ts); return d.toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' }); }
+    catch (e) { return ''; }
+  }
+
   G.xpKaggleView = function () {
     if (!laR01()) return '';
-    var o = '<div class="giay" id="xp-kg" style="border:2px solid #2a7dc5"><h3>🎥 Quay phim nguyên bộ — máy Kaggle (0 đồng)</h3>';
-    o += '<p class="note">Chỉ cần ghi <b>đề bài</b>: máy Kaggle tự viết kịch bản, quay chuyển động thật bằng ảnh nhân vật đã khóa, ' +
-      'đọc thoại, khớp môi, ghép phim rồi trả MP4 về đây. Nhớ giữ notebook Kaggle đang Run.</p>';
+    var o = '<div class="giay" id="xp-kg" style="border:2px solid #2a7dc5"><h3>🎥 Xưởng Kaggle — sản xuất phim liên tục (0 đồng)</h3>';
+    o += '<p class="note">Ghi <b>đề bài</b> → máy Kaggle tự viết kịch bản, quay chuyển động thật bằng ảnh nhân vật đã khóa, ' +
+      'đọc thoại, khớp môi, ghép phim rồi trả MP4 về đây. Quay xong anh chị <b>tải về máy</b> → <b>dọn kho</b> → <b>quay việc tiếp theo</b>. Giữ notebook Kaggle đang Run.</p>';
+
+    /* Phiên web hết hạn → đăng nhập lại tại chỗ, không rời xưởng; việc đang dở tự chạy tiếp. */
+    if (kg.phienHet) {
+      o += '<div class="giay" style="border:2px solid #b00;background:#fff5f5">' +
+        '<b style="color:#b00">🔒 Phiên máy chủ đã hết hạn</b>' +
+        '<p class="note">Máy Kaggle vẫn đang quay bình thường (dùng khoá xưởng, không cần phiên web). Chỉ việc đặt/dọn từ trang này cần đăng nhập lại. Nhập mật khẩu máy chủ của <b>' + h(kgTenDangNhap() || '(tài khoản)') + '</b> rồi bấm — việc đang làm sẽ tự tiếp tục.</p>' +
+        '<div class="row"><input id="kg-dn-mk" type="password" placeholder="Mật khẩu máy chủ" autocomplete="current-password" style="width:220px" ' +
+        'onkeydown="if(event.key===\'Enter\')G.xpKgDangNhapLai()">' +
+        '<button class="btn btn-chinh" onclick="G.xpKgDangNhapLai()">Đăng nhập lại &amp; tiếp tục</button></div>' +
+        '<div id="kg-dn-kq" class="note"></div></div>';
+    }
+
     var may = kg.tt && typeof kg.tt.mayDangChay === 'number' ? kg.tt.mayDangChay : null;
     o += '<p class="note">' + (may === null ? 'Đang hỏi máy chủ…' :
       may > 0 ? '💚 Máy Kaggle đang mở: <b>' + may + '</b> máy.' :
@@ -999,29 +1155,56 @@ var G = window.G || {}; window.G = G;
       '<option value="khach"' + (kgFm.phamVi !== 'noi-bo' ? ' selected' : '') + '>Cho khách (tự giảm bí mật)</option>' +
       '<option value="noi-bo"' + (kgFm.phamVi === 'noi-bo' ? ' selected' : '') + '>Nội bộ (đào tạo, huấn luyện)</option></select></label></div>';
     o += '<textarea rows="3" style="width:100%;box-sizing:border-box" placeholder="Đề bài phim — ví dụ: Huấn luyện 100 học viên bứt phá giới hạn tại hội trường lớn…" oninput="G.xpKgSua(\'chuDe\',this.value)">' + h(kgFm.chuDe) + '</textarea>';
-    o += '<div class="row"><button class="btn btn-chinh" onclick="G.xpKgDat()">🎬 Đặt phim</button></div>';
+    o += '<div class="row"><button class="btn btn-chinh" onclick="G.xpKgDat()">🎬 Đặt &amp; quay ngay</button>' +
+      '<button class="btn" onclick="G.xpKgPlanThem()">➕ Thêm vào hàng đợi</button></div>';
+
+    /* HÀNG ĐỢI SẢN XUẤT — quay dần, gác cổng 2 bước */
+    if (kg.plan.length) {
+      var cho = kgChoPlan().length, dangLam = kgDangLam();
+      o += '<h4>📋 Hàng đợi sản xuất (' + cho + ' việc chờ)</h4><ol class="note">';
+      for (var pi = 0; pi < kg.plan.length; pi++) {
+        var p = kg.plan[pi];
+        var ptt = p.trangThai === 'daDat' ? '✅ đã đưa lên Kaggle' : p.trangThai === 'dangDat' ? '⏳ đang đặt…' : '• chờ';
+        o += '<li>' + h(p.tieuDe || p.chuDe.slice(0, 50)) + ' — ' + ptt +
+          (p.trangThai === 'cho' ? ' <button class="btn" style="padding:0 6px" onclick="G.xpKgPlanXoa(' + pi + ')">Bỏ</button>' : '') + '</li>';
+      }
+      o += '</ol>';
+      o += '<div class="row"><button class="btn btn-chinh"' + (dangLam || !cho ? ' disabled' : '') + ' onclick="G.xpKgPlanTiep()">▶ Quay việc tiếp theo</button>' +
+        (dangLam ? '<span class="note">Đang còn phim trong hàng chờ/đang quay — đợi tải về và dọn kho rồi mới quay tiếp (gác cổng để không tràn dung lượng).</span>'
+          : !cho ? '<span class="note">Hết việc trong hàng đợi — thêm đề bài mới ở trên.</span>' : '') + '</div>';
+    }
+
     o += '<details><summary><b>🗣️ Chỉ đọc thoại (TTS, không quay hình)</b></summary>' +
       '<textarea rows="2" style="width:100%;box-sizing:border-box" placeholder="Lời thoại cần đọc…" oninput="G.xpKgSua(\'thoai\',this.value)">' + h(kgFm.thoai) + '</textarea>' +
       '<div class="row"><label>Giọng <select onchange="G.xpKgSua(\'giong\',this.value)">' +
       '<option value="vi-VN-NamMinhNeural"' + (kgFm.giong === 'vi-VN-NamMinhNeural' ? ' selected' : '') + '>Nam Minh (nam, miền Nam)</option>' +
       '<option value="vi-VN-HoaiMyNeural"' + (kgFm.giong === 'vi-VN-HoaiMyNeural' ? ' selected' : '') + '>Hoài My (nữ, miền Bắc)</option></select></label>' +
       '<button class="btn" onclick="G.xpKgTts()">🗣️ Đặt đọc thoại</button></div></details>';
+
     if (kg.viec.length) {
       var dsTt = (kg.tt && kg.tt.ds) || [], goc = kgGocMay();
-      o += '<h4>Việc đã đặt</h4><ol class="note">';
+      o += '<h4>Việc đã đặt — tải về &amp; dọn kho</h4><ol class="note">';
       for (var i = kg.viec.length - 1; i >= 0; i--) {
         var v = kg.viec[i], t = null;
         for (var j = 0; j < dsTt.length; j++) if (dsTt[j].ma === v.ma) { t = dsTt[j]; break; }
         var chu = !t ? '…' :
-          t.trangThai === 'xong' ? '✅ xong' :
+          t.trangThai === 'xong' ? '✅ xong' + (t.xongLuc ? ' lúc ' + kgGio(t.xongLuc) : '') :
           t.trangThai === 'cho' ? '⏳ chờ' + (t.truoc ? ' (trước còn ' + t.truoc + ' việc)' : '') :
           t.trangThai === 'dang' ? '🎬 đang quay' :
-          t.trangThai === 'loi' ? '❌ ' + h(t.loi || 'lỗi') : h(t.trangThai);
+          t.trangThai === 'loi' ? '❌ ' + h(t.loi || 'lỗi') :
+          t.trangThai === 'mat' ? '🗑️ đã dọn' : h(t.trangThai);
         o += '<li>' + (v.loai === 'tts' ? '🗣️' : '🎬') + ' ' + h(v.ten || v.ma) + ' — ' + chu;
-        if (t && t.url) o += ' — <a href="' + h(goc + t.url) + '" target="_blank" rel="noopener">Mở kết quả</a>';
+        if (t && t.url) {
+          o += ' — <a href="' + h(goc + t.url) + '" target="_blank" rel="noopener">Mở</a>' +
+            ' <button class="btn" style="padding:0 8px" onclick="G.xpKgTai(\'' + v.ma + '\',\'' + h(v.loai || 'film') + '\')">⬇ Tải về máy</button>' +
+            ' <button class="btn" style="padding:0 8px" onclick="G.xpKgDon(\'' + v.ma + '\')">✅ Đã tải — Dọn kho</button>';
+        } else if (t && t.trangThai === 'loi') {
+          o += ' <button class="btn" style="padding:0 8px" onclick="G.xpKgDon(\'' + v.ma + '\')">🧹 Dọn</button>';
+        }
         o += '</li>';
       }
       o += '</ol>';
+      o += '<p class="note">Vòng đời: phim xong → <b>Tải về máy</b> (lưu bản gốc trên máy anh chị) → <b>Đã tải — Dọn kho</b> (giải phóng dung lượng máy chủ ngay, không đợi 7 ngày) → <b>Quay việc tiếp theo</b> trong hàng đợi. Phim chưa dọn tự xoá sau 7 ngày.</p>';
     }
     o += '</div>';
     kgHoi();

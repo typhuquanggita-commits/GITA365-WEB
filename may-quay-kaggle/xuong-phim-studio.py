@@ -32,6 +32,7 @@ from pathlib import Path
 
 MAY_CHU = "https://gita365.typhuquanggita.workers.dev"
 TEN_MAY = "kaggle-studio-" + str(int(time.time()))
+T_BAT = time.time()       # mốc bắt đầu phiên — đếm giờ để dừng sạch trước giới hạn Kaggle
 STUDIO = Path("/kaggle/working/xuong-phim")
 for d in ("jobs", "clips", "audio", "subs", "final", "assets/nvchuan"):
     (STUDIO / d).mkdir(parents=True, exist_ok=True)
@@ -41,6 +42,13 @@ LLM_ON = False            # True = Qwen2.5-7B (4-bit) viết kịch bản thay m
 LIPSYNC_ENGINE = "musetalk"   # "musetalk" | "wav2lip" | "off"
 QC_ON = True              # chấm điểm nét/chuyển động, tự quay lại cảnh xấu
 BRAND = {"ten": "GITA365", "slogan": "Đánh thức tiềm năng — Bứt phá giới hạn"}
+
+# Luật Kaggle: phiên GPU tối đa ~12 giờ, quota ~30 giờ/tuần. Để sản xuất
+# LIÊN TỤC mà không bị Kaggle cắt ngang (mất phần render dở), máy tự dừng
+# SẠCH trước giới hạn: nộp xong việc đang làm rồi in hướng dẫn Run lại.
+# Việc dở có checkpoint từng cảnh nên Run lại là chạy tiếp, không quay lại.
+GIO_PHIEN_TOI_DA = 11.0   # giờ: quá mốc này thì không nhận việc mới nữa
+DON_SAU_KHI_NOP = True    # xoá tệp tạm của phim sau khi nộp (giữ đĩa 20GB)
 
 CFG = dict(width=768, height=416, fps=24, frames=73, steps=8, guidance=3.0)
 NEG = "blurry, low quality, distorted face, watermark, text, subtitles, glitch, deformed hands"
@@ -642,11 +650,42 @@ def lam_tts(ma):
     print("🔊 Đọc xong việc", ma)
 
 
-# ── VÒNG LẶP CHÍNH ──
+# ── DỌN TỆP TẠM MỘT VIỆC (sau khi đã nộp — giữ đĩa Kaggle 20GB) ──
+def don_viec(ma):
+    """Xoá mọi tệp trung gian của một việc sau khi NỘP thành công: khung
+    cảnh, giọng, phụ đề, bản ghép, checkpoint. Máy chủ đã giữ bản MP4 cuối."""
+    if not DON_SAU_KHI_NOP:
+        return
+    n = 0
+    for thu_muc in ("clips", "audio", "subs", "final", "jobs"):
+        for p in (STUDIO / thu_muc).glob(ma + "*"):
+            try:
+                p.unlink()
+                n += 1
+            except Exception:
+                pass
+    if n:
+        print("   🧹 Dọn %d tệp tạm của việc %s." % (n, ma[:8]), flush=True)
+
+
+# ── VÒNG LẶP CHÍNH (sản xuất liên tục, dừng sạch trước giới hạn Kaggle) ──
 CAST = tai_nhan_vat()
 SO_VIEC = 0
-print("🏭 Xưởng phim sẵn sàng. Đang chờ việc (film/tts)...", flush=True)
+print("🏭 Xưởng phim sẵn sàng. Đang chờ việc (film/tts)... Mốc dừng an toàn: %.1f giờ/phiên." % GIO_PHIEN_TOI_DA, flush=True)
 while True:
+    gio_da_chay = (time.time() - T_BAT) / 3600.0
+    if gio_da_chay >= GIO_PHIEN_TOI_DA:
+        bao_song()
+        print("=" * 56, flush=True)
+        print("⏰ Phiên đã chạy %.1f giờ — tới mốc an toàn %.1f giờ." % (gio_da_chay, GIO_PHIEN_TOI_DA), flush=True)
+        print("   DỪNG SẠCH để Kaggle không cắt ngang giữa lúc render.", flush=True)
+        print("   → Bấm RUN lại (cùng notebook) để quay tiếp. Việc dở có", flush=True)
+        print("     checkpoint từng cảnh nên chạy tiếp, không làm lại từ đầu.", flush=True)
+        print("   → Nhớ quota Kaggle ~30 giờ GPU/tuần; hết thì chờ tuần sau", flush=True)
+        print("     hoặc mở notebook ở tài khoản Kaggle khác (cùng khoá xưởng).", flush=True)
+        print("   Đã làm %d việc trong phiên này." % SO_VIEC, flush=True)
+        print("=" * 56, flush=True)
+        break
     try:
         v = nhan_viec()
     except Exception as e:
@@ -656,7 +695,7 @@ while True:
     if not v.get("ma"):
         bao_song()
         if SO_VIEC:
-            print("Đã làm", SO_VIEC, "việc. Hàng chờ trống — ngủ 3 phút.", flush=True)
+            print("Đã làm %d việc (%.1f giờ). Hàng chờ trống — ngủ 3 phút." % (SO_VIEC, gio_da_chay), flush=True)
         time.sleep(180)
         continue
     try:
@@ -670,6 +709,7 @@ while True:
                 CAST = tai_nhan_vat()   # có thể vừa khóa thêm ảnh
             cuoi = lam_phim(v["ma"], job, CAST)
             nop_ket_qua(v["ma"], cuoi, "video/mp4")
+        don_viec(v["ma"])
         SO_VIEC += 1
     except Exception as e:
         print("Hỏng việc", v["ma"], ":", e, flush=True)
