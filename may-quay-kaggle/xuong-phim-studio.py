@@ -132,6 +132,13 @@ def tai_nhan_vat():
 
 
 # ── NẠP THƯ VIỆN + MÔ HÌNH VIDEO ──
+# Dọn cache cũ để tránh "No space left on device" trên Kaggle (20GB)
+subprocess.run([sys.executable, "-m", "pip", "cache", "purge"], capture_output=True)
+subprocess.run(["rm", "-rf", "/root/.cache/huggingface"], capture_output=True)
+subprocess.run(["rm", "-rf", "/root/.cache/torch"], capture_output=True)
+os.environ["HF_HOME"] = "/kaggle/working/.cache/huggingface"
+os.environ["TORCH_HOME"] = "/kaggle/working/.cache/torch"
+
 subprocess.run([sys.executable, "-m", "pip", "install", "-q",
                 "diffusers>=0.32", "transformers", "accelerate", "sentencepiece",
                 "imageio[ffmpeg]", "edge-tts", "opencv-python-headless", "numpy"], check=True)
