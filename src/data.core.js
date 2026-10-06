@@ -746,6 +746,10 @@ G.NAV = [
        hệ hỗ trợ nối tới màn sâu. Mở cho Tư vấn trở lên; tab Dòng chảy
        chỉ hiện với cấp quản trị CRM. Màn nằm gói app (luôn dựng được). */
     {v:'tt-cskh',     t:'Trung tâm Tư vấn & CSKH', h:'Việc hôm nay · 4 loại khách · phễu → 95% · 5 hệ hỗ trợ · dòng chảy', ic:'users', star:1, perm:'pro_consult', capMo:'chung'},
+    /* Nghề Tư vấn — chuyên môn hoá sâu: khung nghề · 30 đầu việc/KPI · lộ
+       trình khách 5 giai đoạn · lộ trình đào tạo. Mở cho Tư vấn trở lên;
+       màn nằm gói app (luôn dựng được), nối thẳng các màn chuyên sâu. */
+    {v:'nghe-tu-van', t:'Nghề Tư vấn (chuyên môn hoá)', h:'Khung nghề · 30 đầu việc/KPI · lộ trình khách · đào tạo nâng cấp', ic:'crown', star:1, perm:'pro_consult', capMo:'chung'},
     /* Bảng đăng ký hoạt động — khoá ở pro_coach vì nó phơi toàn bộ quy
        trình nội bộ: ai làm gì, hạn bao lâu, không ai làm thì rơi đi đâu. */
     /* Diễn thử — khoá pro_coach. Cột phải của mỗi lượt là câu người
