@@ -50476,15 +50476,20 @@ G.nhaMoChang = function (el) {
       var idx = tu + i;
       var mau = BD_MAU[idx % BD_MAU.length];
       var ten = b.ten || b.t || ('Bánh đà ' + (idx + 1));
-      /* 9.99.253 — Mỗi bánh là một HUY HIỆU gọn (icon tròn màu + tên),
-         xếp phẳng thành hàng ngay trên ngôi nhà. Bỏ cách đặt quanh một
-         vòng rồi quay: vòng quay làm CHỮ LỘN NGƯỢC (góc giữ-chữ là hằng
-         số, không triệt được animation quay liên tục) và nhồi cả ngôi nhà
-         vào khung vuông làm tám ô phình to, tràn ra ngoài. Huy hiệu phẳng
-         thì chữ luôn thẳng, đọc được và bấm được. */
-      return '<button class="nha-bd-o" style="--ac:' + mau + '" data-v="banh-da">' +
+      /* 9.99.254 — Mười bánh đà GẮN TRÊN VÒNG TRÒN, quay quanh ngôi nhà.
+         Vị trí đặt bằng số lúc render (cos/sin): -90° = đỉnh, mỗi bánh
+         +36°. Vòng (.nha-ring-nodes) quay; CSS cho mỗi bánh COUNTER-QUAY
+         cùng tốc độ ngược chiều (animation nhaGiu) nên CHỮ LUÔN THẲNG khi
+         vòng quay — sửa đúng lỗi lần trước (chỉ xoay tĩnh một lần → lộn
+         ngược). Khổ hẹp: CSS cho slot về luồng thường → bánh thành hàng
+         huy hiệu phẳng, vẫn đọc & bấm được. */
+      var goc = (idx * 36 - 90) * Math.PI / 180;
+      var x = (50 + 37 * Math.cos(goc)).toFixed(2);
+      var y = (50 + 37 * Math.sin(goc)).toFixed(2);
+      return '<span class="nha-bd-slot" style="left:' + x + '%;top:' + y + '%">' +
+        '<button class="nha-bd-o" style="--ac:' + mau + '" data-v="banh-da">' +
         '<span class="nha-bd-ic">' + ic(b.ic) + '</span>' +
-        '<span class="nha-bd-ten">' + h(ten) + '</span></button>';
+        '<span class="nha-bd-ten">' + h(ten) + '</span></button></span>';
     }).join('');
   }
 
@@ -50499,8 +50504,16 @@ G.nhaMoChang = function (el) {
       ' GITA 365</span>';
     /* Có bánh đà (kho nền đã mở) thì mới treo nhãn — nhãn mà không có
        bánh nào bên dưới là một lời hứa trống. */
-    if (bdHtml) o += '<p class="nha-bd-nhan">Mười bánh đà vận hành cả nhà</p>';
+    if (bdHtml) o += '<p class="nha-bd-nhan">Mười bánh đà quay quanh vận hành cả nhà</p>';
     o += '<div class="nha-ring">';
+    /* VÒNG NGOÀI — khẩu hiệu chạy quanh con dấu thịnh vượng. Dùng SVG
+       textPath (một vòng tròn, chữ bám theo), ĐỨNG YÊN để đọc được; chỉ
+       vòng bánh đà bên trong mới quay. Chỉ dựng khi đã có bánh đà. */
+    if (bdHtml) o += '<svg class="nha-khauhieu" viewBox="0 0 1000 1000" aria-hidden="true" focusable="false">' +
+      '<defs><path id="nhaVongChu" fill="none" d="M500,500 m-470,0 a470,470 0 1,1 940,0 a470,470 0 1,1 -940,0"/></defs>' +
+      '<text><textPath href="#nhaVongChu" startOffset="0">' +
+      'KIẾN TẠO GIA ĐÌNH THỊNH VƯỢNG ★ LÀM CHỦ KỶ NGUYÊN VƯƠN MÌNH ★ NÂNG TẦM TRÍ TUỆ VÀNG VIỆT NAM ★ ' +
+      '</textPath></text></svg>';
     o += '<div class="nha-bd nha-ring-nodes">' + bdHtml + '</div>';
 
     o += '<div class="nha">';

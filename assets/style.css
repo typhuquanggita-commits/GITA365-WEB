@@ -2141,26 +2141,36 @@ button.nha-bd-o:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
     linear-gradient(180deg, var(--gita-mo-1), transparent 62%);
   border-radius:var(--r-lg) var(--r-lg) 0 0;
 }
+/* MÁI 3D — mái dốc (clip-path hình thang) với dải sáng đỉnh + bóng đổ sâu
+   để nổi khối. Nhà dựng khối bằng SẮC & BÓNG, không bằng transform (giữ
+   được khi ngôi nhà đặt ở tâm vòng bằng translate). */
 .nha-mai{
   display:flex;flex-wrap:wrap;justify-content:center;gap:10px;
-  padding:20px 18px 18px;margin:0 2px;
-  background:linear-gradient(155deg,var(--gita-sang),var(--gita) 45%,var(--gita-sau));
+  padding:22px 18px 18px;margin:0 2px;
+  background:linear-gradient(158deg,var(--gita-sang),var(--gita) 44%,var(--gita-sau));
   clip-path:polygon(12% 0,88% 0,100% 100%,0 100%);
-  filter:drop-shadow(0 8px 16px var(--phu-5));
+  filter:drop-shadow(0 14px 20px var(--phu-5));
+  box-shadow:inset 0 3px 0 color-mix(in srgb,#fff 26%,transparent);
 }
 .nha-than{
   border:2px solid var(--gita-vien-2);border-top:none;
-  background:var(--bg-1);border-radius:0 0 var(--r-lg) var(--r-lg);
+  background:linear-gradient(180deg,var(--surface),var(--bg-1));
+  border-radius:0 0 var(--r-lg) var(--r-lg);
   padding:18px;display:flex;flex-direction:column;gap:14px;
-  box-shadow:0 16px 40px var(--phu-3);
+  box-shadow:0 30px 54px -20px var(--phu-4),
+    inset 0 2px 0 color-mix(in srgb,#fff 14%,transparent);
 }
 .nha-luoi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
 .nha-cua-hang{display:flex;justify-content:center;margin-top:2px}
+/* NỀN MÓNG — bệ đỡ RỘNG hơn thân nhà (chạm & vượt nhẹ hai mép ngoài) để
+   đọc ra "vững chãi". Bóng đổ sâu bên dưới cho cảm giác khối bê-tông
+   đang đỡ cả ngôi nhà. */
 .nha-nen{
-  max-width:620px;margin:0 auto;padding:12px 8px;
+  width:calc(100% + 30px);margin:0 -15px;padding:15px 12px 17px;
   background:linear-gradient(180deg,var(--bg-2),var(--bg-0));
-  border:1px solid var(--line-2);border-top:none;
-  border-radius:0 0 var(--r-lg) var(--r-lg);
+  border:2px solid var(--line-2);border-top:none;
+  border-radius:0 0 28px 28px;
+  box-shadow:0 20px 32px -14px var(--phu-4);
 }
 /* THẺ PHÒNG — vạch sắc trên đỉnh, nền ánh nhẹ sắc phòng, huy hiệu icon
    MÀU ĐẶC. --ac là sắc riêng; thiếu thì rơi về xanh GITA. */
@@ -2570,11 +2580,69 @@ button.nha-o-nen:hover .nha-ic{transform:scale(1.06)}
 /* 9.99.253 — Bỏ vòng quay (chữ lộn ngược) và khung vuông nhồi nhà (tám ô
    phình/tràn). Mười bánh đà xếp PHẲNG thành hàng huy hiệu ngay trên ngôi
    nhà; ngôi nhà về luồng thường nên các ô vừa khít, không tràn. */
+/* ── 9.99.254 — CON DẤU THỊNH VƯỢNG: nhà 3D ở tâm · 10 bánh đà quay trên
+   vòng tròn · vòng khẩu hiệu đứng yên bên ngoài ──
+   BASE (khổ hẹp, điện thoại): xếp PHẲNG, chữ thẳng, bấm được — luôn dùng
+   được. Khổ rộng (@container ≥ 820px): dựng con dấu tròn đầy đủ. */
+.nha{position:relative}
 .nha-ring{position:relative;margin:0 auto}
 .nha-ring .nha{position:static;inset:auto}
 .nha-ring::before{display:none}
 .nha-ring-nodes{position:static;animation:none;display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:0 auto 16px}
+.nha-bd-slot{position:static;display:inline-flex}
 .nha-ring-nodes .nha-bd-o{pointer-events:auto}
+.nha-khauhieu{display:none}
+
+/* vòng quay (ngoài) + bánh counter-quay (trong) — cùng 60s, ngược chiều,
+   nên bánh ĐI THEO VÒNG mà CHỮ ĐỨNG YÊN thẳng đứng. */
+@keyframes nhaQuay{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes nhaGiu{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(-360deg)}}
+
+@container nhaVong (min-width:760px){
+  /* .nha-ring là CONTAINER riêng → mọi kích thước bên trong tính bằng cqi
+     (1cqi = 1% bề ngang vòng). Nhờ vậy CẢ CON DẤU co giãn theo tỉ lệ:
+     nhà luôn chiếm đúng một phần nhỏ của vòng ở MỌI khổ (máy tính · iPad
+     · điện thoại), không bao giờ chạm chữ vòng ngoài. */
+  .nha-ring{width:min(1000px,100%);aspect-ratio:1/1;margin:22px auto 10px;container:nhaRing / inline-size}
+  /* VÒNG KHẨU HIỆU (ngoài, ~47%) — chữ bám vòng, đứng yên, đọc được */
+  .nha-khauhieu{display:block;position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:0}
+  .nha-khauhieu text{font-family:var(--font);font-weight:800;font-size:3cqi;letter-spacing:.5cqi;fill:var(--gita-ink)}
+  /* VÒNG BÁNH ĐÀ (trong, bán kính 37%) — cách vòng khẩu hiệu ~10% (~2 cm) */
+  .nha-ring::before{content:"";display:block;position:absolute;inset:13%;
+    border:2px dashed var(--gita-vien-2);border-radius:50%;pointer-events:none}
+  .nha-ring-nodes{position:absolute;inset:0;display:block;margin:0;z-index:3;animation:nhaQuay 60s linear infinite}
+  .nha-ring-nodes .nha-bd-slot{position:absolute;display:block;width:0;height:0}
+  .nha-ring-nodes .nha-bd-o{position:absolute;left:0;top:0;margin:0;max-width:13.5cqi;white-space:normal;text-align:left;
+    min-height:4cqi;padding:.55cqi 1.3cqi .55cqi .55cqi;gap:.8cqi;font-size:1.2cqi;border-radius:99px;
+    transform:translate(-50%,-50%);animation:nhaGiu 60s linear infinite}
+  .nha-ring-nodes .nha-bd-ic{width:3cqi;height:3cqi}
+  .nha-ring-nodes .nha-bd-ic svg{width:1.7cqi;height:1.7cqi}
+  /* NGÔI NHÀ 3D Ở TÂM — thu gọn (chỉ icon + tên), nằm trọn giữa vòng.
+     Lớp: khẩu hiệu (0) < nhà (1) < bánh đà (3). */
+  .nha-ring .nha{position:absolute;top:50%;left:50%;width:42cqi;margin:0;z-index:1;
+    transform:translate(-50%,-50%);filter:drop-shadow(0 2.2cqi 2.8cqi var(--phu-4))}
+  .nha-ring .nha small{display:none}
+  .nha-ring .nha-mai{padding:1.1cqi 1.4cqi 1cqi}
+  .nha-ring .nha-than{padding:1.1cqi;gap:.7cqi}
+  .nha-ring .nha-luoi-8{grid-template-columns:repeat(4,1fr);gap:.6cqi}
+  .nha-ring .nha-o{min-height:5cqi;padding:.8cqi .5cqi;gap:.4cqi;border-radius:1.2cqi}
+  .nha-ring .nha-o .nha-ic{width:3cqi;height:3cqi}
+  .nha-ring .nha-o .nha-ic svg{width:1.6cqi;height:1.6cqi}
+  .nha-ring .nha-o b{font-size:1.02cqi;line-height:1.14}
+  .nha-ring .nha-luoi-8>button.nha-o::after{font-size:1.1cqi;margin-top:0}
+  .nha-ring .nha-o-mai{min-height:3.8cqi}
+  .nha-ring .nha-o-mai b{font-size:1.2cqi}
+  .nha-ring .nha-o-cua{min-height:3.8cqi;padding:.8cqi}
+  .nha-ring .nha-o-cua b{font-size:1.2cqi}
+  .nha-ring .nha-o-cua .nha-ic{width:3.2cqi;height:3.2cqi}
+  .nha-ring .nha-o-cua .nha-ic svg{width:1.8cqi;height:1.8cqi}
+  /* NỀN MÓNG bệ rộng — vượt hai mép tường để đỡ cả nhà (bền vững) */
+  .nha-ring .nha-nen{width:calc(100% + 4cqi);margin:0 -2cqi;padding:.9cqi 1.2cqi 1cqi;border-radius:0 0 2cqi 2cqi}
+  .nha-ring .nha-o-nen{min-height:3.6cqi;gap:.8cqi}
+  .nha-ring .nha-o-nen .nha-ic{width:2.8cqi;height:2.8cqi}
+  .nha-ring .nha-o-nen .nha-ic svg{width:1.5cqi;height:1.5cqi}
+  @media(prefers-reduced-motion:reduce){.nha-ring-nodes,.nha-ring-nodes .nha-bd-o{animation:none}}
+}
 @media(prefers-reduced-motion:reduce){.nha-ring-nodes{animation:none}}
 
 /* ── TỔNG QUAN (tong-quan.js) — thẻ ít chữ, số to, lưới co giãn ── */
