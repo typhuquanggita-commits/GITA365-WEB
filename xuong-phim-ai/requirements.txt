@@ -1,0 +1,33 @@
+# GITA xưởng phim AI — thư viện (cài trên Kaggle GPU)
+# Cài theo nhu cầu từng bước để tiết kiệm thời gian/giờ GPU.
+
+# Lõi
+torch>=2.1
+diffusers>=0.30.0
+transformers>=4.44
+accelerate>=0.33
+safetensors
+imageio[ffmpeg]
+opencv-python-headless
+numpy
+pillow
+
+# Ảnh nhân vật nhất quán (InstantID) — tuỳ chọn, cần thêm assets InstantID
+insightface
+onnxruntime-gpu
+
+# Giọng tiếng Việt
+TTS>=0.22.0            # Coqui XTTS v2
+
+# Phụ đề
+faster-whisper
+
+# Lip-sync / nâng nét: dùng repo ngoài (clone riêng), không qua pip:
+#   Wav2Lip   : https://github.com/Rudrabha/Wav2Lip
+#   LatentSync: https://github.com/bytedance/LatentSync
+#   Real-ESRGAN: https://github.com/xinntao/Real-ESRGAN
+#   CodeFormer: https://github.com/sczhou/CodeFormer
+#   RIFE      : https://github.com/hzwer/Practical-RIFE
+
+# Đẩy kết quả lên Cloudflare R2 (tuỳ chọn)
+boto3

@@ -1,0 +1,94 @@
+{
+  "phim": {
+    "id": "phim-1",
+    "ten": "Tập 1 — Hành trình GITA 365",
+    "mota": "Giới thiệu hành trình 5 tầng, dạng người dẫn + cảnh minh hoạ"
+  },
+  "pipeline": {
+    "anh": "instantid_sdxl",
+    "i2v": "wan2.2_i2v",
+    "tts": "vixtts",
+    "lipsync": "latentsync",
+    "nang_net": "realesrgan_codeformer",
+    "muot": "rife",
+    "phu_de": "faster_whisper",
+    "rap": "ffmpeg",
+    "khung": "1080x1920",
+    "fps_xuat": 30
+  },
+  "nhan_vat": [
+    {
+      "id": "nv-nam",
+      "ten": "Người dẫn nam",
+      "loai": "nguoi",
+      "mo_ta": "Nam doanh nhân Á Đông khoảng 35 tuổi, tóc ngắn đen gọn, đeo kính gọng đen, da sáng, gương mặt điềm đạm tin cậy",
+      "trang_phuc": "Vest xanh navy hoặc đỏ đô, sơ mi trắng",
+      "giong": "Nam trầm ấm, rõ ràng",
+      "seed": "101",
+      "lora": "(chưa train)"
+    },
+    {
+      "id": "nv-nu",
+      "ten": "Nữ MC",
+      "loai": "nguoi",
+      "mo_ta": "Nữ MC Á Đông khoảng 30 tuổi, tóc ngang vai, trang điểm nhẹ, nụ cười thân thiện, chuyên nghiệp",
+      "trang_phuc": "Vest navy hoặc xanh nhạt/kem, áo lụa",
+      "giong": "Nữ tươi sáng, truyền cảm",
+      "seed": "202",
+      "lora": "(chưa train)"
+    }
+  ],
+  "canh": [
+    {
+      "thu_tu": 1,
+      "id": "c4ccgjs",
+      "nhan_vat": "nv-nam",
+      "loai": "nguoi",
+      "boi_canh": "Phòng khách ấm cúng, cây xanh, ánh sáng tự nhiên",
+      "may_quay": "Cận cảnh ngang mặt, tĩnh",
+      "prompt_anh": "Nam doanh nhân Á Đông khoảng 35 tuổi, tóc ngắn đen gọn, đeo kính gọng đen, da sáng, gương mặt điềm đạm tin cậy, Vest xanh navy hoặc đỏ đô, sơ mi trắng, Phòng khách ấm cúng, cây xanh, ánh sáng tự nhiên, Cận cảnh ngang mặt, tĩnh, khung dọc 9:16, ánh sáng điện ảnh, ảnh thực, chi tiết cao, chân dung nhất quán",
+      "prompt_video": "Người ngồi nói, gật đầu nhẹ, tay đан, đang nói, cử động đầu và tay tự nhiên, Cận cảnh ngang mặt, tĩnh, máy quay mượt, 5 giây",
+      "thoai": "Chào anh chị, hành trình thịnh vượng của gia đình bắt đầu từ một quyết định.",
+      "giong": "Nam trầm ấm, rõ ràng",
+      "seed": "101",
+      "lora": "(chưa train)",
+      "giay": 5,
+      "lip_sync": true,
+      "trang_thai": ""
+    },
+    {
+      "thu_tu": 2,
+      "id": "clqnvux",
+      "nhan_vat": "nv-nu",
+      "loai": "nguoi",
+      "boi_canh": "Trường quay sáng, màn hình lớn phía sau",
+      "may_quay": "Trung cảnh, máy lia nhẹ sang phải",
+      "prompt_anh": "Nữ MC Á Đông khoảng 30 tuổi, tóc ngang vai, trang điểm nhẹ, nụ cười thân thiện, chuyên nghiệp, Vest navy hoặc xanh nhạt/kem, áo lụa, Trường quay sáng, màn hình lớn phía sau, Trung cảnh, máy lia nhẹ sang phải, khung dọc 9:16, ánh sáng điện ảnh, ảnh thực, chi tiết cao, chân dung nhất quán",
+      "prompt_video": "Đứng thuyết trình, tay chỉ về màn hình, đang nói, cử động đầu và tay tự nhiên, Trung cảnh, máy lia nhẹ sang phải, máy quay mượt, 5 giây",
+      "thoai": "GITA đồng hành cùng gia đình qua năm tầng phát triển.",
+      "giong": "Nữ tươi sáng, truyền cảm",
+      "seed": "202",
+      "lora": "(chưa train)",
+      "giay": 5,
+      "lip_sync": true,
+      "trang_thai": ""
+    },
+    {
+      "thu_tu": 3,
+      "id": "cz9j17d",
+      "nhan_vat": "nv-nam",
+      "loai": "canh",
+      "boi_canh": "Bàn học, cùng hai bạn trẻ xem thẻ học tập",
+      "may_quay": "Toàn cảnh, máy tiến chậm vào",
+      "prompt_anh": "Nam doanh nhân Á Đông khoảng 35 tuổi, tóc ngắn đen gọn, đeo kính gọng đen, da sáng, gương mặt điềm đạm tin cậy, Vest xanh navy hoặc đỏ đô, sơ mi trắng, Bàn học, cùng hai bạn trẻ xem thẻ học tập, Toàn cảnh, máy tiến chậm vào, khung dọc 9:16, ánh sáng điện ảnh, ảnh thực, chi tiết cao, chân dung nhất quán",
+      "prompt_video": "Trò chuyện, trao đổi thẻ, cùng cười, diễn theo cảnh, chuyển động tự nhiên, Toàn cảnh, máy tiến chậm vào, máy quay mượt, 5 giây",
+      "thoai": "",
+      "giong": "Nam trầm ấm, rõ ràng",
+      "seed": "101",
+      "lora": "(chưa train)",
+      "giay": 5,
+      "lip_sync": false,
+      "trang_thai": ""
+    }
+  ]
+}
