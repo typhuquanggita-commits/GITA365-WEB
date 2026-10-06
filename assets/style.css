@@ -3398,3 +3398,21 @@ html[data-may="yeu"] *,html[data-may="yeu"] *::before,html[data-may="yeu"] *::af
 .lt-loi-done{opacity:.72;background:var(--okbg,rgba(11,115,80,.08))}
 .lt-xong{margin-top:6px}
 .lt-xong summary{cursor:pointer;color:var(--ink-3);font-weight:700;padding:4px 0}
+
+/* Cột mới của bảng công việc CRM */
+.cvt-rong{min-width:1560px}
+.cvt-chuoi{display:flex;align-items:center;gap:8px;background:linear-gradient(120deg,#FFF3DC,#FDE8C8);
+  border:1px solid #E7CE97;border-radius:12px;padding:10px 14px;margin:0 0 12px;font-size:13px;color:#8A4A08}
+.cvt-chuoi b{color:#8A4A08}
+.cvt-chuoi-0{background:var(--phu-2);border-color:var(--line);color:var(--ink-3)}
+:root[data-nen="toi"] .cvt-chuoi,html[data-nen="toi"] .cvt-chuoi{background:#2A2410;border-color:#5A4A1E;color:#E7CE97}
+.cvt-ut{display:inline-block;font-size:11px;font-weight:800;color:#fff;background:var(--uc);
+  border-radius:20px;padding:4px 11px;white-space:nowrap;letter-spacing:.3px}
+.cvt-nv{margin:0;padding-left:16px}
+.cvt-nv li{font-size:11px;color:var(--ink-2);line-height:1.45;margin-bottom:3px}
+.cvt-gt{display:inline-block;font-size:10.5px;font-weight:800;color:#fff;background:var(--gc);
+  border-radius:20px;padding:3px 9px;white-space:nowrap;letter-spacing:.2px}
+.cvt-gt-mo{margin-top:5px;line-height:1.5;max-width:180px}
+.cvt-table td:nth-child(5){min-width:190px;max-width:230px}
+.cvt-table td:nth-child(11){min-width:150px;max-width:200px}
+.cvt-table td:nth-child(12){min-width:150px;max-width:200px}

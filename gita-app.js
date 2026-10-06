@@ -35188,61 +35188,135 @@ G.VIEWS = G.VIEWS || {};
     return b;
   }
 
+  /* ══ THUẬT TOÁN CÁC CỘT THÔNG MINH ══ */
+  function nhipCuaMuc(m) { return (G.TG_NHIEMVU || []).filter(function (x) { return x.ma === m.nhip; })[0] || {}; }
+
+  /* ƯU TIÊN — điểm gộp từ trạng thái + độ gấp của hạn + giá trị việc,
+     rồi xếp bậc. Để nhân sự biết làm gì TRƯỚC, không bỏ sót việc gấp. */
+  function uuTien(m, v, tk) {
+    if (tk === 'xong') return { bac: 'XONG', c: '#0B7350', s: 0 };
+    var s = 0;
+    if (tk === 'tre') s += 100;
+    else if (v && !v.xongLuc) { var con = (v.hanLuc - Date.now()) / 3600000; if (con <= 4) s += 60; else if (con <= 24) s += 30; }
+    else if (tk === 'chua') { var nh = nhipCuaMuc(m); if (nh.han && nh.han <= 24) s += 25; }
+    s += Math.min(40, (m.diem || 0) * 2);
+    if (s >= 100) return { bac: 'KHẨN', c: '#BE0E16', s: s };
+    if (s >= 50) return { bac: 'CAO', c: '#B4720F', s: s };
+    if (s >= 20) return { bac: 'THƯỜNG', c: '#185AB4', s: s };
+    return { bac: 'THẤP', c: 'var(--ink-4)', s: s };
+  }
+
+  /* NHIỆM VỤ CỤ THỂ — checklist thao tác chuẩn, để làm chuyên nghiệp và
+     không bỏ sót bước nào. Bước cuối tự đổi theo có luân chuyển hay không. */
+  function nhiemVuChecklist(m) {
+    var b = ['Chuẩn bị: đọc rõ yêu cầu & hồ sơ liên quan', 'Thực hiện đúng nội dung công việc', 'Ghi bằng chứng: số liệu · mốc giờ · tên việc'];
+    b.push(m.chuyen ? ('Bàn giao ' + tenVai(m.chuyen) + ' kèm ghi chú') : 'Đóng việc kèm bằng chứng');
+    return '<ol class="cvt-nv">' + b.map(function (x) { return '<li>' + h(x) + '</li>'; }).join('') + '</ol>';
+  }
+
+  /* HẠN CHÓT — ngày giờ + đếm ngược, màu theo độ gấp. */
+  function hanChot(m, v, tk) {
+    if (tk === 'xong') return '<span class="tiny" style="color:#0B7350;font-weight:700">đã đóng</span>';
+    if (v && v.hanLuc) {
+      var d = new Date(v.hanLuc), con = (v.hanLuc - Date.now()) / 3600000;
+      var c = con < 0 ? '#BE0E16' : (con <= 24 ? '#B4720F' : 'var(--ink-2)');
+      var dt = ('0' + d.getDate()).slice(-2) + '/' + ('0' + (d.getMonth() + 1)).slice(-2) + ' ' + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+      return '<b style="color:' + c + '">' + dt + '</b><div class="tiny ' + (con < 0 ? 'cvt-tre' : 'muted') + '" style="margin-top:2px">' + h(conLai(v)) + '</div>';
+    }
+    var nh = nhipCuaMuc(m);
+    return '<span class="tiny muted">+' + (nh.han || 24) + 'h kể từ khi nhận</span>';
+  }
+
+  /* GIÁ TRỊ · TÁC ĐỘNG — vì sao việc này quan trọng, suy từ nhịp/điểm/
+     luân chuyển. Cho nhân sự thấy việc mình nối vào kinh doanh & chăm
+     sóc khách ở đâu — hiểu lý do thì làm tự giác hơn. */
+  function giaTri(m) {
+    var nh = nhipCuaMuc(m), han = nh.han || 24;
+    if (m.chuyen) return { chip: 'VẬN HÀNH', c: '#5140B4', mo: 'Bàn giao sạch để giữ chất lượng dịch vụ.' };
+    if (han <= 24) return { chip: 'CHĂM SÓC KH', c: '#0B7350', mo: 'Giữ chân & tăng hài lòng của nhà đang phục vụ.' };
+    if ((m.diem || 0) >= 12) return { chip: 'KINH DOANH', c: '#BE0E16', mo: 'Đóng góp trực tiếp vào tăng trưởng & doanh thu.' };
+    return { chip: 'CHUYÊN MÔN', c: '#185AB4', mo: 'Nâng chuẩn nghề của đội ngũ.' };
+  }
+
+  /* Chuỗi đóng đúng hạn gần nhất — đòn bẩy động lực tự giác. */
+  function chuoiDungHan() {
+    var s = G.cvSo() || {}, arr = []; for (var k in s) { if (s[k].xongLuc) arr.push(s[k]); }
+    arr.sort(function (a, b) { return b.xongLuc - a.xongLuc; });
+    var n = 0; for (var i = 0; i < arr.length; i++) { if (arr[i].xongLuc <= arr[i].hanLuc) n++; else break; }
+    return n;
+  }
+
+  /* ĐỘNG LỰC · THƯỞNG — nối việc với phần thưởng cụ thể. */
+  function dongLuc(m, v, tk) {
+    if (tk === 'xong') {
+      var ok = v && v.xongLuc <= v.hanLuc;
+      return '<b style="color:' + (ok ? '#0B7350' : '#B4720F') + '">' + (ok ? '✓ +' + (m.diem || 0) + ' điểm' : '+' + (m.diem || 0) + ' điểm') + '</b>' +
+        '<div class="tiny" style="color:' + (ok ? '#0B7350' : 'var(--ink-4)') + ';margin-top:2px">' + (ok ? 'đúng hạn — giữ chuỗi!' : 'trễ — lần sau đúng hạn') + '</div>';
+    }
+    return '<div class="tiny" style="line-height:1.5"><b style="color:#185AB4">Đóng đúng hạn → +' + (m.diem || 0) + ' điểm</b><br>vào KPI tháng & xếp hạng lương thưởng</div>';
+  }
+
   function veBangChiTiet() {
     var ds = G.cvMucCuaToi();
     if (!ds.length) return '<div class="card center" style="padding:28px">' +
       '<b>Vị trí này chưa có đầu việc chuẩn</b>' +
       '<p class="sm muted mt">Danh mục mở cho tài khoản chưa gắn đầu việc nào cho vị trí đang đăng nhập.</p></div>';
 
-    var COT = ['STT', 'Đầu mục', 'Nội dung công việc', 'Quy trình', 'Tiến độ', 'Báo cáo kết quả', 'KPI', 'Sáng kiến', 'Trợ lý GITA'];
-    var MAU = ['var(--ink-4)', 'var(--gita-sau)', 'var(--ink)', '#5140B4', '#B4720F', '#0B6675', '#0B7350', 'var(--gita-ink)', 'var(--gita)'];
+    var COT = ['STT', 'Ưu tiên', 'Đầu mục', 'Nội dung công việc', 'Nhiệm vụ cụ thể', 'Quy trình', 'Hạn chót', 'Tiến độ', 'Báo cáo kết quả', 'KPI', 'Giá trị · Tác động', 'Động lực', 'Sáng kiến', 'Trợ lý GITA'];
+    var MAU = ['var(--ink-4)', '#BE0E16', 'var(--gita-sau)', 'var(--ink)', '#0B6675', '#5140B4', '#B4720F', '#185AB4', '#0E7490', '#0B7350', '#9333EA', '#7A5BE0', 'var(--gita-ink)', 'var(--gita)'];
     var head = '<tr>' + COT.map(function (c, i) {
       return '<th style="--cc:' + MAU[i] + '">' + h(c) + '</th>';
     }).join('') + '</tr>';
 
     var body = ds.map(function (m, i) {
       var v = recCua(m.ma), tk = trangKey(v), tr = trangGon(tk);
-      var nhip = (G.TG_NHIEMVU || []).filter(function (x) { return x.ma === m.nhip; })[0] || {};
+      var nhip = nhipCuaMuc(m);
       var sk = ((G.S && G.S.cvSangKien) || {})[m.ma] || '';
       var muon = v && v.xongLuc && v.xongLuc > v.hanLuc;
+      var ut = uuTien(m, v, tk), gt = giaTri(m);
 
+      var cUt = '<span class="cvt-ut" style="--uc:' + ut.c + '">' + h(ut.bac) + '</span>';
       var cTien = '<span class="cvt-trang" style="--tc:' + tr.c + '">' + ic(tr.ic, 'w-3 h-3') + ' ' + h(tr.ten) + '</span>' +
-        (v && tk !== 'chua' && tk !== 'xong' ? '<div class="tiny ' + (tk === 'tre' ? 'cvt-tre' : 'muted') + '" style="margin-top:3px">' + h(conLai(v)) + '</div>' : '') +
         (tk === 'xong' ? '<div class="tiny" style="margin-top:3px;color:' + (muon ? '#BE0E16' : '#0B7350') + '">' + (muon ? 'đóng muộn' : 'đúng hạn') + '</div>' : '') +
         '<div class="cvt-acts">' + oHanhDong(tk, v, m) + '</div>';
-
-      var cBao = (v && v.bangChung)
-        ? '<div class="cvt-bc">' + h(v.bangChung) + '</div>'
-        : '<span class="tiny" style="color:var(--ink-4)">— chưa có —</span>';
-
+      var cBao = (v && v.bangChung) ? '<div class="cvt-bc">' + h(v.bangChung) + '</div>' : '<span class="tiny" style="color:var(--ink-4)">— chưa có —</span>';
       var cKpi = '<b style="color:#0B7350">' + (m.diem || 0) + '</b> <span class="tiny muted">điểm</span>' +
-        (tk === 'xong' ? '<div class="tiny" style="color:#0B7350;margin-top:2px">✓ đã tính</div>'
-          : '<div class="tiny muted" style="margin-top:2px">khi đóng</div>');
-
+        (tk === 'xong' ? '<div class="tiny" style="color:#0B7350;margin-top:2px">✓ đã tính</div>' : '<div class="tiny muted" style="margin-top:2px">khi đóng</div>');
+      var cGt = '<span class="cvt-gt" style="--gc:' + gt.c + '">' + h(gt.chip) + '</span><div class="tiny muted cvt-gt-mo">' + h(gt.mo) + '</div>';
       var cSk = (sk ? '<div class="cvt-sk">' + h(sk) + '</div>' : '<span class="tiny" style="color:var(--ink-4)">chưa có</span>') +
         '<button class="btn ghost sm cvt-act" style="margin-top:5px" data-cvsk="' + h(m.ma) + '">' + ic('edit', 'w-3 h-3') + (sk ? ' Sửa' : ' Thêm') + '</button>';
-
       var cTro = '<div class="tiny cvt-tip">' + h(troLyGoi(tk, m)) + '</div>' +
         '<button class="btn ghost sm cvt-act" style="margin-top:5px" data-v="tro-ly-ai">' + ic('chat', 'w-3 h-3') + ' Hỏi Trợ lý</button>';
 
       return '<tr>' +
         '<td class="cvt-stt">' + (i + 1) + '</td>' +
+        '<td>' + cUt + '</td>' +
         '<td><span class="chip" style="color:var(--gita-ink);border-color:var(--gita-vien-1)">' + h(m.ma) + '</span>' +
           (nhip.ten ? '<div class="tiny muted" style="margin-top:4px">' + h(nhip.ten) + '</div>' : '') + '</td>' +
         '<td><b class="cvt-ten">' + h(m.ten || '') + '</b>' + (m.mo ? '<div class="tiny muted cvt-mo">' + h(m.mo) + '</div>' : '') + '</td>' +
+        '<td>' + nhiemVuChecklist(m) + '</td>' +
         '<td><div class="tiny"><b>Đóng khi:</b> ' + h(m.xong || '—') + '</div>' +
           (m.chuyen ? '<div class="tiny" style="color:#5140B4;margin-top:3px">→ chuyển ' + h(tenVai(m.chuyen)) + '</div>' : '') + '</td>' +
+        '<td>' + hanChot(m, v, tk) + '</td>' +
         '<td>' + cTien + '</td>' +
         '<td>' + cBao + '</td>' +
         '<td class="cvt-kpi">' + cKpi + '</td>' +
+        '<td>' + cGt + '</td>' +
+        '<td>' + dongLuc(m, v, tk) + '</td>' +
         '<td>' + cSk + '</td>' +
         '<td>' + cTro + '</td>' +
       '</tr>';
     }).join('');
 
-    return '<div class="cvt-wrap"><table class="cvt-table"><thead>' + head + '</thead><tbody>' + body + '</tbody></table></div>' +
+    var chuoi = chuoiDungHan();
+    var banner = '<div class="cvt-chuoi' + (chuoi ? '' : ' cvt-chuoi-0') + '">' +
+      (chuoi ? '🔥 <b>Chuỗi ' + chuoi + ' việc đóng đúng hạn</b> — giữ chuỗi để lên hạng thưởng!'
+             : 'Chưa có chuỗi — đóng việc đầu tiên đúng hạn để bắt đầu chuỗi 🔥') + '</div>';
+
+    return banner + '<div class="cvt-wrap"><table class="cvt-table cvt-rong"><thead>' + head + '</thead><tbody>' + body + '</tbody></table></div>' +
       '<p class="tiny muted" style="margin-top:8px;line-height:1.6">' + ic('shield', 'w-3 h-3') +
-      ' Bảng chỉ hiện đầu việc của vị trí bạn — không thấy việc của vai khác. Cuộn ngang để xem đủ cột trên màn hẹp.</p>';
+      ' Bảng chỉ hiện đầu việc của vị trí bạn — không thấy việc của vai khác. Cuộn ngang để xem đủ cột. ' +
+      'Ưu tiên · Hạn chót · Giá trị · Động lực do hệ tự tính từ dữ liệu việc.</p>';
   }
 
   /* ─── Sáng kiến cho một đầu việc (lưu theo máy, bền qua tải lại) ─── */
