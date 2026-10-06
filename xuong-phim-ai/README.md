@@ -84,3 +84,28 @@ Kết quả nằm trong `ket-qua/<id_phim>/`:
   `rclone`/`boto3` (R2 dùng S3-API). Xem cuối `gita_xuong_phim.py`.
 - Phát: đưa `phim-cuoi.mp4` lên Facebook/YouTube trực tiếp, hoặc Cloudflare
   Stream nếu muốn host riêng.
+
+## Ba phương án chi phí (giá tra tháng 10/2026 — kiểm lại khi mua)
+
+Chọn trong app: **Sản xuất phim AI → Kỹ xảo & Động cơ**. App tự định tuyến từng cảnh và
+dự toán theo sản lượng phút/tháng.
+
+| | A · Free | B · Có phí tối ưu | C · Lai (khuyên dùng) |
+|---|---|---|---|
+| Người dẫn nói | InfiniteTalk (tự chạy) | InfiniteTalk API ~$0.06/s | InfiniteTalk (tự chạy, GPU thuê) |
+| Cảnh thường | Wan 2.2 (tự chạy) | Seedance 1.0 Pro ~$0.03/s | Seedance 1.0 Pro ~$0.03/s |
+| Cảnh then chốt | Wan 2.2 | Veo 3.1 Fast ~$0.10/s | Veo 3.1 Fast ~$0.10/s |
+| Giọng | XTTS (free) | ElevenLabs Creator $22/tháng | XTTS nháp · ElevenLabs bản cuối |
+
+### GPU nào để tự chạy model mở
+- **Kaggle**: free ~30 giờ/tuần T4/P100. **Không có gói trả phí GPU mạnh hơn.** Colab Pro
+  ($9.99) / Pro+ ($49.99) chỉ cộng thêm 15 / 30 giờ/tuần trên Kaggle, vẫn là T4/P100.
+- **Runpod** (rẻ nhất cho sản xuất): RTX 4090 ~ $0.34/giờ (Community Cloud).
+- **Colab Pro**: A100 40GB ~ $0.54/giờ (tính theo compute unit) — hợp chạy InfiniteTalk/Wan 14B.
+- GPU mạnh hơn không đổi "chất" của model, nhưng cho chạy **bản model lớn hơn (14B) và độ phân
+  giải 720p** thay vì bản nhỏ 480p trên T4 — chất lượng tăng rõ.
+
+### Nối động cơ có phí
+Đặt khoá vào biến môi trường (`SEEDANCE_API_KEY`, `VEO_API_KEY`, `INFINITETALK_API_KEY`…) và
+viết hàm `_goi_api()` theo tài liệu của nhà cung cấp đã chọn. Chưa nối thì cảnh tự hạ về động
+cơ mở, không vỡ tập.

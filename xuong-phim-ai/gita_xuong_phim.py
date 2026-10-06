@@ -122,7 +122,15 @@ def buoc_anh(cfg, base):
 # Mỗi cảnh mang "dong_co" do app quyết (cảnh chọn riêng > tập > tự chọn). Động cơ MỞ chạy ngay trên
 # GPU; động cơ CÓ PHÍ (veo3/kling/runway/heygen) là ĐIỂM NỐI API — chưa có khoá hoặc chưa nối thì tự
 # hạ về động cơ mở, KHÔNG bao giờ làm hỏng cả tập.
-DONG_CO_PHI = {"veo3": "VEO_API_KEY", "kling": "KLING_API_KEY", "runway": "RUNWAY_API_KEY", "heygen": "HEYGEN_API_KEY"}
+DONG_CO_PHI = {"veo3": "VEO_API_KEY", "veo3fast": "VEO_API_KEY", "kling": "KLING_API_KEY", "runway": "RUNWAY_API_KEY",
+               "heygen": "HEYGEN_API_KEY", "seedance": "SEEDANCE_API_KEY", "wan_api": "FAL_KEY",
+               "infinitetalk_api": "INFINITETALK_API_KEY"}
+# Đường rẻ nhất đã tra (10/2026) — dùng khi nối _goi_api():
+DUONG_RE = {"seedance": "Kie.ai Seedance 1.0 Pro ~ $0.03/s 720p", "wan_api": "fal.ai Wan 2.2 A14B ~ $0.08/s 720p",
+            "infinitetalk_api": "WaveSpeed/Kie InfiniteTalk ~ $0.06/s 720p (fal đắt hơn ~3 lần)",
+            "veo3fast": "Gemini API Veo 3.1 Fast ~ $0.10/s 720p", "kling": "Kling 3.0 I2V ~ $0.075/s",
+            "heygen": "HeyGen API Digital Twin ~ $4/phút"}
+TU_KHOP_MOI = {"infinitetalk", "infinitetalk_api", "veo3", "veo3fast", "heygen"}   # không cần lip-sync thêm
 
 def _cogvideox():
     import torch
@@ -158,15 +166,43 @@ def _ltx():
 
 TAO_DONG_CO = {"cogvideox": _cogvideox, "wan": _wan, "ltx": _ltx}
 # FramePack là repo riêng (lllyasviel/FramePack): chưa cài thì dùng Wan cho cảnh dài.
-HA_CAP = {"framepack": "wan", "veo3": "wan", "kling": "wan", "runway": "wan", "heygen": "wan", "auto": "wan"}
+HA_CAP = {"framepack": "wan", "veo3": "wan", "veo3fast": "wan", "kling": "wan", "runway": "wan", "auto": "wan",
+          "seedance": "wan", "wan_api": "wan", "heygen": "infinitetalk", "infinitetalk_api": "infinitetalk",
+          "infinitetalk": "wan"}   # InfiniteTalk chưa cài → Wan + lip-sync
 
 def _goi_api(dc, anh, prompt, giay, out):
     """ĐIỂM NỐI động cơ có phí. Viết hàm gọi API thật của nhà cung cấp vào đây khi có khoá.
     Trả True nếu đã tạo được `out`; False để hạ về động cơ mở."""
     if not os.environ.get(DONG_CO_PHI[dc]):
-        log(f"  {dc}: chưa có {DONG_CO_PHI[dc]} → hạ về động cơ mở"); return False
+        log(f"  {dc}: chưa có {DONG_CO_PHI[dc]} → hạ về động cơ mở. Đường rẻ nhất: {DUONG_RE.get(dc,'-')}"); return False
     log(f"  {dc}: có khoá nhưng CHƯA NỐI API trong mã — điền hàm _goi_api() theo tài liệu nhà cung cấp."
         " Tạm hạ về động cơ mở."); return False
+
+def _infinitetalk(anh, wav, prompt, out):
+    """InfiniteTalk (MeiGen-AI, mở, Apache-2.0): ảnh + giọng → người nói cả thân, khớp môi, cử động
+    đầu/tay. Cần: git clone https://github.com/MeiGen-AI/InfiniteTalk + tải trọng số theo README.
+    Chạy được trên GPU 16GB ở chế độ tiết kiệm VRAM nhưng chậm; RTX 4090 nhanh hơn nhiều."""
+    goc = Path("InfiniteTalk")
+    w = goc / "weights"
+    if not (goc / "generate_infinitetalk.py").exists() or not w.exists():
+        log("  InfiniteTalk chưa cài (repo + weights) → hạ về Wan + lip-sync"); return False
+    vao = base_tmp = out.parent.parent / "tmp" / f"it-{out.stem}.json"
+    vao.write_text(json.dumps({"prompt": prompt, "cond_video": str(Path(anh).resolve()),
+                               "cond_audio": {"person1": str(Path(wav).resolve())}}, ensure_ascii=False), encoding="utf-8")
+    ra = out.with_suffix("")
+    cmd = [sys.executable, str(goc / "generate_infinitetalk.py"),
+           "--ckpt_dir", str(w / "Wan2.1-I2V-14B-480P"), "--wav2vec_dir", str(w / "chinese-wav2vec2-base"),
+           "--infinitetalk_dir", str(w / "InfiniteTalk/single/infinitetalk.safetensors"),
+           "--input_json", str(vao), "--size", "infinitetalk-480", "--sample_steps", "40",
+           "--mode", "streaming", "--motion_frame", "9", "--num_persistent_param_in_dit", "0",
+           "--save_file", str(ra)]
+    try:
+        subprocess.run(cmd, check=True)
+        if Path(str(ra) + ".mp4").exists():
+            shutil.move(str(ra) + ".mp4", str(out)); return True
+    except Exception as e:
+        log("  InfiniteTalk lỗi (", str(e)[:100], ") → hạ về Wan + lip-sync")
+    return False
 
 def buoc_video(cfg, base):
     from diffusers.utils import load_image, export_to_video
@@ -188,7 +224,14 @@ def buoc_video(cfg, base):
         dc = c.get("dong_co") or cfg.get("dong_co") or "auto"
         prompt = c.get("prompt_video", "chuyển động tự nhiên"); giay = c.get("giay", 5)
         log(f"cảnh {c['id']} · động cơ: {dc}")
-        if dc in DONG_CO_PHI and _goi_api(dc, anh, prompt, giay, out): continue
+        if dc in DONG_CO_PHI and _goi_api(dc, anh, prompt, giay, out):
+            c["_da_khop_moi"] = dc in TU_KHOP_MOI; continue
+        if dc in ("infinitetalk", "infinitetalk_api", "heygen"):
+            wav = base / "giong" / f"{c['id']}.wav"
+            if wav.exists() and _infinitetalk(anh, wav, prompt, out):
+                c["_da_khop_moi"] = True; (base / "clip" / f"{c['id']}.ok-sync").touch()
+                log("clip xong (InfiniteTalk):", out.name); continue
+            if not wav.exists(): log("  chưa có giọng cảnh này → chạy --run giong trước; tạm dùng Wan")
         frames, fps = lay(dc)(load_image(str(anh)), prompt, giay)
         export_to_video(frames, str(out), fps=fps)
         log("clip xong:", out.name)
@@ -219,6 +262,8 @@ def buoc_lipsync(cfg, base):
     Đây là ĐIỂM NỐI: cần cài repo trước; lệnh dưới là mẫu cho Wav2Lip."""
     for c in cfg["canh"]:
         if not c.get("lip_sync"): continue
+        if c.get("_da_khop_moi") or ((c.get("dong_co") in TU_KHOP_MOI) and (base / "clip" / f"{c['id']}.ok-sync").exists()):
+            log("bỏ lip-sync (động cơ đã khớp môi):", c["id"]); continue
         clip = base / "clip" / f"{c['id']}.mp4"
         wav = base / "giong" / f"{c['id']}.wav"
         out = base / "clip" / f"{c['id']}-lip.mp4"
@@ -346,7 +391,7 @@ def buoc_rap(cfg, base, W=1080, Hh=1920, fps=None):
 # ───────────────────────── Điều phối ─────────────────────────
 BUOC = {"anh":buoc_anh, "video":buoc_video, "giong":buoc_giong,
         "lipsync":buoc_lipsync, "nang_net":buoc_nang_net, "phu_de":buoc_phu_de, "rap":buoc_rap}
-THU_TU = ["anh","video","giong","lipsync","nang_net","phu_de","rap"]
+THU_TU = ["anh","giong","video","lipsync","nang_net","phu_de","rap"]   # giọng TRƯỚC video: InfiniteTalk cần giọng
 
 def plan(cfg, base):
     log("PHIM:", cfg["phim"]["ten"], "| cảnh:", len(cfg["canh"]),

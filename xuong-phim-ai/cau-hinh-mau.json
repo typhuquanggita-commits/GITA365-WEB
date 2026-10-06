@@ -6,6 +6,7 @@
   },
   "ngon_ngu": "vi",
   "dong_co": "auto",
+  "phuong_an": "A",
   "hau_ky": {
     "giuMat": true,
     "napNet": true,
@@ -148,7 +149,7 @@
   "canh": [
     {
       "thu_tu": 1,
-      "id": "ckatpbv",
+      "id": "ceztzhr",
       "nhan_vat": "nv-trainer",
       "loai": "nguoi",
       "boi_canh": "Bục giảng studio GITA, màn hình lớn phía sau, vách gỗ, ánh sáng điện ảnh ấm",
@@ -165,14 +166,15 @@
       "trigger": "gitanvtrainer",
       "khoa_mat": true,
       "ngon_ngu": "vi",
-      "dong_co": "wan",
+      "dong_co": "infinitetalk",
+      "hero": false,
       "giay": 5,
       "lip_sync": true,
       "trang_thai": ""
     },
     {
       "thu_tu": 2,
-      "id": "c3c2n31",
+      "id": "c030c95",
       "nhan_vat": "nv-mc",
       "loai": "nguoi",
       "boi_canh": "Trường quay sáng, màn hình lớn phía sau",
@@ -189,14 +191,15 @@
       "trigger": "gitanvmc",
       "khoa_mat": true,
       "ngon_ngu": "vi",
-      "dong_co": "wan",
+      "dong_co": "infinitetalk",
+      "hero": false,
       "giay": 5,
       "lip_sync": true,
       "trang_thai": ""
     },
     {
       "thu_tu": 3,
-      "id": "cm6cveh",
+      "id": "cevi1yl",
       "nhan_vat": "nv-bo",
       "loai": "canh",
       "boi_canh": "Vườn tre, cả gia đình cùng đi dạo trò chuyện",
@@ -214,6 +217,7 @@
       "khoa_mat": false,
       "ngon_ngu": "vi",
       "dong_co": "wan",
+      "hero": true,
       "giay": 5,
       "lip_sync": false,
       "trang_thai": ""
