@@ -10,7 +10,7 @@
 # Chạy lại an toàn: phần nào có rồi thì bỏ qua. Không cần khoá bí mật nào (model đều công khai).
 #
 # GIẤY PHÉP (đọc trước khi dùng thương mại):
-#   · Wan 2.2 (+Animate), InfiniteTalk, GFPGAN, VieNeu-TTS: Apache-2.0 · Real-ESRGAN: BSD-3 · RIFE, Chatterbox,
+#   · Wan 2.2 (+Animate), FastWan, InfiniteTalk, GFPGAN, VieNeu-TTS: Apache-2.0 · MuseTalk: MIT · Real-ESRGAN: BSD-3 · RIFE, Chatterbox,
 #     OpenVoice V2, LongCat-Video, faster-whisper: MIT · Be Vietnam Pro: OFL · SDXL: OpenRAIL++-M · opus-mt-vi-en: CC-BY-4.0  → dùng thương mại được.
 #   · Mô hình mặt antelopev2 (InsightFace) mà InstantID cần: CHỈ cho nghiên cứu phi thương mại.
 #     Vì vậy mặc định KHÔNG cài; xưởng khoá mặt bằng LoRA tự train (sạch bản quyền).
@@ -112,6 +112,39 @@ if [ "$MUC" = "nhe" ]; then echo "  (mức nhẹ: Wan tải lúc chạy lần đ
   python -c "from huggingface_hub import snapshot_download as s; s('$WAN'); print('  ✓ $WAN')" || echo "  ⚠ chưa tải được $WAN (động cơ sẽ tải lúc chạy)"
 fi
 
+# ── 5b · FastWan 2.2 (3 bước, Apache-2.0) + MuseTalk 1.5 (khớp môi, MIT) — đường 100% AI MIỄN PHÍ trên T4 ──
+log "5b FastWan 2.2 (nhanh ~10 lần) + MuseTalk 1.5 (khớp môi tiếng Việt)"
+if [ "$MUC" != "nhe" ]; then
+  python -c "from huggingface_hub import snapshot_download as s; s('FastVideo/FastWan2.2-TI2V-5B-FullAttn-Diffusers'); print('  ✓ FastWan')" || echo "  ⚠ chưa tải được FastWan (động cơ dùng Wan 2.2 thường)"
+fi
+cai_musetalk(){
+  [ -d MuseTalk ] || git clone -q --depth 1 https://github.com/TMElyralab/MuseTalk || return 1
+  # MuseTalk cần torch 2.0 + mmcv 2.0.1 → môi trường RIÊNG, không đụng thư viện của Wan/diffusers
+  [ -x mt-venv/bin/python ] || python -m venv mt-venv || return 1
+  local MP="$GOC/mt-venv/bin/python"
+  $MP -m pip install -q --upgrade pip
+  $MP -m pip install -q torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 --index-url https://download.pytorch.org/whl/cu118 || return 1
+  grep -vE "^(tensorflow|tensorboard|gradio)" MuseTalk/requirements.txt > "$GOC/mt-req.txt"
+  $MP -m pip install -q -r "$GOC/mt-req.txt" huggingface_hub gdown || true
+  $MP -m pip install -q -U openmim && "$GOC/mt-venv/bin/mim" install -q mmengine "mmcv==2.0.1" "mmdet==3.1.0" "mmpose==1.1.0" \
+    || echo "  ⚠ mmcv/mmpose chưa cài được"
+  mkdir -p "$GOC/MuseTalk/models/face-parse-bisent"
+  ( cd "$GOC/MuseTalk" && $MP -c "
+from huggingface_hub import hf_hub_download as d
+for r, f, dich in [('TMElyralab/MuseTalk','musetalkV15/musetalk.json','models'), ('TMElyralab/MuseTalk','musetalkV15/unet.pth','models'),
+                   ('stabilityai/sd-vae-ft-mse','config.json','models/sd-vae'), ('stabilityai/sd-vae-ft-mse','diffusion_pytorch_model.bin','models/sd-vae'),
+                   ('openai/whisper-tiny','config.json','models/whisper'), ('openai/whisper-tiny','pytorch_model.bin','models/whisper'),
+                   ('openai/whisper-tiny','preprocessor_config.json','models/whisper'), ('yzd-v/DWPose','dw-ll_ucoco_384.pth','models/dwpose')]:
+    d(r, f, local_dir=dich); print('  ✓', f)
+" ) || return 1
+  "$GOC/mt-venv/bin/gdown" -q --id 154JgKpzCPW82qINcVieuPH3fZ2e0P812 -O "$GOC/MuseTalk/models/face-parse-bisent/79999_iter.pth" \
+    || echo "  ⚠ chưa tải được face-parse (Google Drive giới hạn lượt) — chạy lại bộ cài sau"
+  curl -fsSL https://download.pytorch.org/models/resnet18-5c106cde.pth -o "$GOC/MuseTalk/models/face-parse-bisent/resnet18-5c106cde.pth" || true
+}
+if [ "$MUC" != "nhe" ] && { [ ! -f MuseTalk/models/musetalkV15/unet.pth ] || [ ! -x mt-venv/bin/python ]; }; then
+  cai_musetalk || echo "  ⚠ MuseTalk chưa cài xong — cảnh nói sẽ ở dạng lồng tiếng (không giả khẩu hình)"
+fi
+
 # ── 6 · Người dẫn nói cả thân: InfiniteTalk (khớp môi thật, không "ảnh mấp máy") ──
 log "6/7 InfiniteTalk (MeiGen-AI, Apache-2.0)"
 if [ "$MUC" = "day_du" ]; then
@@ -147,6 +180,7 @@ def ok(x): return "✓" if x else "✗"
 print(f"  {ok(u.find_spec('diffusers'))} diffusers   {ok(u.find_spec('vieneu'))} VieNeu-TTS   {ok(u.find_spec('chatterbox'))} Chatterbox")
 print(f"  {ok(P.Path('models/GFPGANv1.4.pth').exists())} GFPGAN   {ok(P.Path('models/RealESRGAN_x2plus.pth').exists())} Real-ESRGAN   {ok(P.Path('Practical-RIFE/train_log').exists())} RIFE")
 print(f"  {ok(P.Path('OpenVoice/checkpoints_v2/converter/checkpoint.pth').exists())} OpenVoice   {ok(P.Path('fonts/BeVietnamPro-Bold.ttf').exists())} phông Việt   {ok(P.Path('InstantID/checkpoints/ip-adapter.bin').exists())} InstantID (tuỳ chọn)")
+print(f"  {ok(P.Path('MuseTalk/models/musetalkV15/unet.pth').exists() and P.Path('mt-venv/bin/python').exists())} MuseTalk (khớp môi)   {ok(P.Path('MuseTalk/models/face-parse-bisent/79999_iter.pth').exists())} face-parse")
 print(f"  {ok(P.Path('InfiniteTalk/weights/InfiniteTalk').exists())} InfiniteTalk   {ok(P.Path('LongCat-Video/weights/LongCat-Video').exists())} LongCat-Video   {ok(P.Path('Wan2.2/Wan2.2-Animate-14B').exists())} Wan-Animate")
 PY
 echo

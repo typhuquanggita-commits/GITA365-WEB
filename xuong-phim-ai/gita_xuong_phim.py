@@ -54,10 +54,11 @@ def tu_ke_hoach(kh):
                      "boi_canh_en": c.get("boi_canh_en", ""), "may_quay_ao": c.get("may") or {},
                      "nv_phu": ({"id": phu["id"], "giong_key": phu.get("giong_key")} if phu else None),
                      "giong_key": (nv.get(ds[0]) or {}).get("giong_key") if ds else None,
-                     "dong_co": "infinitetalk" if c.get("loai") == "noi" else "wan",
+                     "dong_co": "fastwan" if kh.get("mien_phi") else ("infinitetalk" if c.get("loai") == "noi" else "wan"),
                      "lip_sync": c.get("loai") == "noi", "ngon_ngu": kh.get("ngon_ngu", "vi")})
     return {"phim": {"id": kh.get("jobid") or "nhanh", "ten": kh.get("tieu_de", "Phim GITA")},
             "ngon_ngu": kh.get("ngon_ngu", "vi"), "khung": kh.get("khung", "doc"), "khung_tu_anh_mau": True,
+            "mien_phi": bool(kh.get("mien_phi")),
             "hau_ky": {"giuMat": True, "napNet": False, "muot60": False, "chinhMau": True, "masterGiong": True,
                        "khopGiong": False, "theTen": True, "phuDe": True, "nhacNen": True},
             "nhan_vat": list(nv.values()), "canh": canh}
@@ -268,8 +269,9 @@ def buoc_anh(cfg, base):
         out = base / "anh" / f"{c['id']}.png"
         if out.exists(): log("bỏ qua ảnh (đã có):", out.name); continue
         if cfg.get("khung_tu_anh_mau"):                    # dùng chính ảnh người thật làm khung đầu
-            mau = next((Path("nhan-vat") / f"{c.get('nhan_vat')}{d}" for d in (".png", ".jpg", ".jpeg")
-                        if (Path("nhan-vat") / f"{c.get('nhan_vat')}{d}").exists()), None)
+            # ưu tiên ảnh RIÊNG của cảnh (anh-canh/05.jpg — chủ hệ chụp/tạo đúng bối cảnh, tư thế), rồi ảnh nhân vật
+            mau = next((p for p in [Path("anh-canh") / f"{c['id']}{d}" for d in (".jpg", ".jpeg", ".png")] +
+                        [Path("nhan-vat") / f"{c.get('nhan_vat')}{d}" for d in (".png", ".jpg", ".jpeg")] if p.exists()), None)
             if mau:
                 w, h = (H_ANH, W_ANH) if NGANG else (W_ANH, H_ANH)
                 im = Image.open(mau).convert("RGB"); k = max(w / im.width, h / im.height)
@@ -379,11 +381,32 @@ def _ltx():
                     num_inference_steps=40).frames[0], 24
     return chay
 
-TAO_DONG_CO = {"cogvideox": _cogvideox, "wan": _wan, "ltx": _ltx}
+def _fastwan():
+    """FastWan 2.2 TI2V-5B (FastVideo, Apache-2.0): bản Wan 2.2 5B rút gọn còn 3 bước (DMD) → nhanh ~10 lần,
+    chạy được trên T4 16GB miễn phí của Kaggle. Lỗi thì động cơ tự quay về Wan 2.2 thường."""
+    import torch
+    from diffusers import WanImageToVideoPipeline, AutoencoderKLWan
+    mid = "FastVideo/FastWan2.2-TI2V-5B-FullAttn-Diffusers"
+    dt = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16      # T4 không có bf16 thật
+    vae = AutoencoderKLWan.from_pretrained(mid, subfolder="vae", torch_dtype=torch.float32)
+    pipe = WanImageToVideoPipeline.from_pretrained(mid, vae=vae, torch_dtype=dt)
+    pipe.enable_model_cpu_offload()
+    try: pipe.vae.enable_tiling()
+    except Exception: pass
+    v = vram_gb(); w, h = (704, 1280) if v >= 20 else (480, 832)
+    log(f"  FastWan 2.2 · 3 bước · card {v:.0f}GB · {w}x{h} · 24fps")
+    def chay(image, prompt, giay):
+        n = max(49, min(121, int(24 * float(giay)) // 4 * 4 + 1))
+        ww, hh = (h, w) if NGANG else (w, h)
+        return pipe(image=image.resize((ww, hh)), prompt=prompt, negative_prompt=NEG_EN, height=hh, width=ww,
+                    num_frames=n, num_inference_steps=3, guidance_scale=1.0).frames[0], 24
+    return chay
+
+TAO_DONG_CO = {"cogvideox": _cogvideox, "wan": _wan, "ltx": _ltx, "fastwan": _fastwan}
 # FramePack là repo riêng (lllyasviel/FramePack): chưa cài thì dùng Wan cho cảnh dài.
 HA_CAP = {"framepack": "wan", "veo3": "wan", "veo3fast": "wan", "kling": "wan", "runway": "wan", "auto": "wan",
           "seedance": "wan", "wan_api": "wan", "heygen": "infinitetalk", "infinitetalk_api": "infinitetalk",
-          "infinitetalk": "wan", "longcat": "wan", "wan_animate": "wan"}   # chưa cài → Wan (+ lip-sync)
+          "infinitetalk": "wan", "longcat": "wan", "wan_animate": "wan", "fastwan": "wan"}   # chưa cài → Wan (+ lip-sync)
 
 def _goi_api(dc, anh, prompt, giay, out):
     """ĐIỂM NỐI động cơ có phí. Viết hàm gọi API thật của nhà cung cấp vào đây khi có khoá.
@@ -498,9 +521,10 @@ def buoc_video(cfg, base):
         if dc not in nap:
             try: log("nạp động cơ:", dc); nap[dc] = TAO_DONG_CO[dc]()
             except Exception as e:
-                log(f"  không nạp được {dc} ({str(e)[:100]}) → dùng CogVideoX")
+                du_phong = "wan" if dc == "fastwan" else "cogvideox"
+                log(f"  không nạp được {dc} ({str(e)[:100]}) → dùng {du_phong}")
                 if dc == "cogvideox": raise
-                nap[dc] = lay("cogvideox")
+                nap[dc] = lay(du_phong)
         return nap[dc]
     for c in cfg["canh"]:
         anh = base / "anh" / f"{c['id']}.png"
@@ -509,6 +533,10 @@ def buoc_video(cfg, base):
         if not anh.exists(): log("THIẾU ảnh cho cảnh", c["id"], "→ chạy bước --run anh trước."); continue
         dc = c.get("dong_co") or cfg.get("dong_co") or "auto"
         prompt = prompt_video_en(c); giay = c.get("giay", 5)
+        if dc == "fastwan" and c.get("loai") == "nguoi":
+            # nền cho MuseTalk: mặt tự nhiên, miệng thả lỏng — MuseTalk vẽ lại khẩu hình theo giọng thật
+            prompt = "calm natural expression, mouth relaxed, subtle head movement, gentle hand gestures, " + prompt
+            giay = min(float(giay), 5.0)                      # MuseTalk tự lặp khung cho đủ dài theo giọng
         log(f"cảnh {c['id']} · động cơ: {dc}")
         if dc in DONG_CO_PHI and _goi_api(dc, anh, prompt, giay, out):
             c["_da_khop_moi"] = dc in TU_KHOP_MOI; continue
@@ -628,6 +656,20 @@ def noi_hai_giong(w1, w2, out, nghi=0.3):
                     f"[0:a]aresample=48000,apad=pad_dur={nghi}[a];[1:a]aresample=48000[b];[a][b]concat=n=2:v=0:a=1",
                     "-ac", "1", "-c:a", "pcm_s16le", str(out)], check=True)
 
+def giong_co_san(thoai, key, lang, out):
+    """Giọng đọc có sẵn của VieNeu theo giới tính (nam-…/nu-…) khi chủ hệ chưa gửi giọng mẫu."""
+    if lang != "vi": return None
+    try:
+        m = _vieneu()
+        try: co = [v if isinstance(v, str) else (v.get("name") or v.get("id")) for v in m.list_preset_voices()]
+        except Exception: co = []
+        thich = ["Mai Anh", "Trúc Ly"] if str(key or "").startswith("nu") else ["Thiện Minh", "Hải Đăng"]
+        ten = next((x for x in thich if x in co), None)
+        m.save(m.infer(thoai, voice=ten) if ten else m.infer(thoai), str(out))
+        return f"VieNeu-TTS · giọng có sẵn {ten or 'mặc định'}"
+    except Exception as e:
+        log("  VieNeu chưa dùng được (", str(e)[:90], ")"); return None
+
 def _mau_giong(key, nv_id):
     mau = Path("giong") / f"{key}.wav"
     if not mau.exists(): mau = Path("giong") / f"{nv_id}.wav"      # dự phòng theo nhân vật
@@ -643,7 +685,11 @@ def buoc_giong(cfg, base):
         else:
             mau = _mau_giong(key, nv_id)
             if not mau.exists():
-                log("THIẾU giọng mẫu:", mau, "→ bỏ qua", out.name); return False
+                bo = giong_co_san(thoai, key, lang, out)          # chưa có giọng mẫu → giọng có sẵn theo giới tính
+                if not bo: log("THIẾU giọng mẫu:", mau, "→ bỏ qua", out.name); return False
+                log("giọng xong:", out.name, "(", lang, "·", bo, ")")
+                if hk.get("masterGiong", True) and master_giong(out): log("  ✓ xử lý giọng chuẩn phát sóng")
+                return True
             bo = doc_mot_cau(thoai, mau, lang, out)
             if not bo:
                 log("KHÔNG sinh được", out.name, "→ chạy cai-dat-noi-bo.sh, hoặc đặt thu-am/" + ten_thu_am + ".wav"); return False
@@ -653,7 +699,7 @@ def buoc_giong(cfg, base):
         return True
     for c in cfg["canh"]:
         thoai = (c.get("thoai") or "").strip()
-        if not thoai or c.get("am_goc"): continue          # cảnh quay thật: lời đã nằm trong tiếng gốc
+        if not thoai or (c.get("am_goc") and _co_tieng(base / "clip" / f"{c['id']}.mp4")): continue   # lời đã nằm trong tiếng gốc
         out = base / "giong" / f"{c['id']}.wav"
         if out.exists(): log("bỏ qua giọng (đã có):", out.name); continue
         lang = c.get("ngon_ngu") or lang_tap                 # khoá ngôn ngữ: vi / en
@@ -669,27 +715,39 @@ def buoc_giong(cfg, base):
 
 # ───────────────────────── 4 · LIP-SYNC (repo ngoài) ─────────────────────────
 def buoc_lipsync(cfg, base):
-    """Khớp môi người dẫn với giọng. Dùng LatentSync hoặc Wav2Lip (clone repo ngoài).
-    Đây là ĐIỂM NỐI: cần cài repo trước; lệnh dưới là mẫu cho Wav2Lip."""
+    """Khớp môi bằng MuseTalk 1.5 (Tencent, MIT — dùng thương mại được): vẽ lại vùng miệng theo giọng THẬT,
+    nói tiếng Việt được (nghe âm thanh, không cần biết chữ). Chạy trong môi trường riêng ./mt-venv (bộ cài nội bộ
+    dựng sẵn) vì MuseTalk cần phiên bản thư viện khác. Gom mọi cảnh vào MỘT lần chạy để nạp mô hình một lần.
+    Không khớp được thì cảnh giữ mặt tự nhiên + lồng tiếng — KHÔNG BAO GIỜ giả khẩu hình."""
+    viec = []
     for c in cfg["canh"]:
         if not c.get("lip_sync"): continue
-        if c.get("_da_khop_moi") or ((c.get("dong_co") in TU_KHOP_MOI) and (base / "clip" / f"{c['id']}.ok-sync").exists()):
-            log("bỏ lip-sync (động cơ đã khớp môi):", c["id"]); continue
-        clip = base / "clip" / f"{c['id']}.mp4"
-        wav = base / "giong" / f"{c['id']}.wav"
-        out = base / "clip" / f"{c['id']}-lip.mp4"
-        if not (clip.exists() and wav.exists()): continue
-        if out.exists(): continue
-        # Mẫu Wav2Lip (cần: git clone https://github.com/Rudrabha/Wav2Lip + checkpoint):
-        cmd = ["python", "Wav2Lip/inference.py", "--checkpoint_path", "Wav2Lip/checkpoints/wav2lip_gan.pth",
-               "--face", str(clip), "--audio", str(wav), "--outfile", str(out)]
-        log("lip-sync (nếu đã cài Wav2Lip):", " ".join(cmd))
-        try:
-            subprocess.run(cmd, check=True)
-            shutil.move(str(out), str(clip))  # thay clip gốc bằng bản đã khớp môi
-            log("lip-sync xong:", c["id"])
-        except Exception as e:
-            log("bỏ qua lip-sync cảnh", c["id"], "(", str(e)[:80], ")")
+        if c.get("_da_khop_moi") or (base / "clip" / f"{c['id']}.ok-sync").exists():
+            log("bỏ lip-sync (đã khớp môi):", c["id"]); continue
+        clip, wav = base / "clip" / f"{c['id']}.mp4", base / "giong" / f"{c['id']}.wav"
+        if clip.exists() and wav.exists(): viec.append((c, clip, wav))
+    if not viec: return
+    goc, py = Path("MuseTalk").resolve(), Path("mt-venv/bin/python").resolve()
+    if not (goc / "models" / "musetalkV15" / "unet.pth").exists() or not py.exists():
+        log("MuseTalk chưa cài (cai-dat-noi-bo.sh) → các cảnh nói giữ dạng lồng tiếng"); return
+    ra = (base / "tmp" / "musetalk").resolve(); ra.mkdir(parents=True, exist_ok=True)
+    cau = "".join(f'task_{i}:\n  video_path: "{clip.resolve()}"\n  audio_path: "{wav.resolve()}"\n  result_name: "{c["id"]}.mp4"\n'
+                  for i, (c, clip, wav) in enumerate(viec))
+    (ra / "viec.yaml").write_text(cau, encoding="utf-8")
+    fps = round(_fps(viec[0][1])) or 25
+    try:
+        subprocess.run([str(py), "-m", "scripts.inference", "--inference_config", str(ra / "viec.yaml"),
+                        "--result_dir", str(ra), "--unet_model_path", "models/musetalkV15/unet.pth",
+                        "--unet_config", "models/musetalkV15/musetalk.json", "--version", "v15",
+                        "--fps", str(fps), "--use_float16"], check=True, cwd=str(goc))
+    except Exception as e:
+        log("MuseTalk lỗi (", str(e)[:100], ") → các cảnh nói giữ dạng lồng tiếng")
+    for c, clip, wav in viec:
+        kq = ra / "v15" / f"{c['id']}.mp4"
+        if kq.exists():
+            shutil.move(str(kq), str(clip)); (base / "clip" / f"{c['id']}.ok-sync").touch()
+            c["_da_khop_moi"] = True; log("khớp môi xong (MuseTalk):", c["id"])
+        else: log("  cảnh", c["id"], "chưa khớp môi → lồng tiếng")
 
 # ───────────────────────── 5 · HẬU KỲ CAO CẤP NỘI BỘ (theo hau_ky của app) ─────────────────────────
 # AI theo TỪNG KHUNG HÌNH: GFPGAN phục hồi mặt + Real-ESRGAN nâng nét x2 (gộp một lượt: GFPGAN dùng

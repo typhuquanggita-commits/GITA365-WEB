@@ -55,43 +55,74 @@ jobs:
           printf '{"username":"%s","key":"%s"}' "$KAGGLE_USERNAME" "$KAGGLE_KEY" > ~/.kaggle/kaggle.json
           chmod 600 ~/.kaggle/kaggle.json
 
-      - name: Lấy kế hoạch + ảnh mẫu từ Drive
+      - name: Lấy kế hoạch + ảnh từ Drive → bộ dữ liệu Kaggle RIÊNG TƯ
         run: |
+          set -e
           python $KD bao "$JOBID" running "Máy dựng miễn phí đã nhận việc — chuẩn bị Kaggle GPU" 5
           python $KD doc-viec "$JOBID" viec
-          python - <<'PY'
-          # thu ảnh mẫu về ≤1024px để nhét gọn vào kernel
-          from pathlib import Path
-          from PIL import Image
-          for f in Path("viec/nhan-vat").glob("*.jpg"):
-              im = Image.open(f).convert("RGB"); im.thumbnail((1024, 1024)); im.save(f, quality=88)
-          PY
-          tar -czf viec.tgz -C viec .
-          ls -la viec viec/nhan-vat
-          # Dự án phim: chỉ dựng các cảnh AI (không ráp) → từng clip về thư mục dự án trên Drive
           python - <<'PY'
           import json, os
           kh = json.load(open("viec/ke-hoach.json", encoding="utf-8"))
           with open(os.environ["GITHUB_ENV"], "a") as f:
               f.write(f"CHI_CLIP={'1' if kh.get('chi_clip') else ''}\n")
-              if kh.get("chi_clip"): f.write(f"DU_AN={kh['du_an']}\n")
+              f.write(f"DU_AN={kh.get('du_an') or ''}\n")
           PY
+          # Dự án: ảnh khung đầu từng cảnh (Anh/05.jpg) + giọng mẫu (Giong/<tên>.wav) — link tạm, xong khoá lại
+          if [ -n "$(grep -o '"du_an": *"[^"]*"' viec/ke-hoach.json)" ]; then
+            python $KD tai-ve-du-an "$JOBID" duan anh,giong || echo "không có ảnh/giọng riêng của dự án"
+          fi
+          python - <<'PY'
+          # Gom phẳng vào ds/: ke-hoach.json · nv-<id>.jpg · canh-<số>.jpg · giong-<id>.<đuôi>
+          import json, os, shutil, unicodedata
+          from pathlib import Path
+          from PIL import Image
+          ds = Path("ds"); ds.mkdir(exist_ok=True)
+          kh = json.load(open("viec/ke-hoach.json", encoding="utf-8"))
+          shutil.copy("viec/ke-hoach.json", ds / "ke-hoach.json")
+          def nho(src, dst, canh):
+              im = Image.open(src).convert("RGB"); im.thumbnail((canh, canh)); im.save(dst, quality=90)
+          for f in Path("viec/nhan-vat").glob("*.jpg"): nho(f, ds / f"nv-{f.stem}.jpg", 1280)
+          bd = lambda t: unicodedata.normalize("NFD", t.lower()).encode("ascii", "ignore").decode().replace(" ", "")
+          for f in sorted(Path("duan/nguon").glob("*")) if Path("duan/nguon").exists() else []:
+              if f.suffix.lower() in (".jpg", ".jpeg", ".png") and f.stem.isdigit():
+                  nho(f, ds / f"canh-{f.stem}.jpg", 1600)
+              elif f.suffix.lower() in (".wav", ".mp3", ".m4a"):
+                  k = bd(f.stem)
+                  nv = next((n for n in kh.get("nhan_vat", []) if k and (k == bd(n["id"]) or k == bd(n.get("ten", "")) or k in bd(n.get("ten", "")))), None)
+                  if nv: shutil.copy(f, ds / f"giong-{nv['id']}{f.suffix.lower()}")
+          print(sorted(os.listdir(ds)))
+          PY
+          DS="${KAGGLE_USERNAME}/gita-in-${JOBID}"
+          echo "DS=$DS" >> "$GITHUB_ENV"
+          printf '{"title":"gita-in-%s","id":"%s","licenses":[{"name":"CC0-1.0"}]}' "$JOBID" "$DS" > ds/dataset-metadata.json
+          kaggle datasets create -p ds -q      # mặc định RIÊNG TƯ (không có cờ -u)
+          for i in $(seq 1 40); do
+            S=$(kaggle datasets status "$DS" 2>/dev/null || true); echo "dataset: $S"
+            case "$S" in *ready*) break ;; esac; sleep 15
+          done
 
       - name: Dựng kernel Kaggle
         run: |
           set -e
           SLUG="${KAGGLE_USERNAME}/gita-drive-${JOBID}"
           echo "SLUG=$SLUG" >> "$GITHUB_ENV"
-          B64=$(base64 -w0 viec.tgz)
           mkdir -p kernel
           cat > kernel/gita_kernel.py <<PY
-          import base64, io, tarfile, subprocess, glob, shutil, os
-          tarfile.open(fileobj=io.BytesIO(base64.b64decode("${B64}"))).extractall(".")
+          import subprocess, glob, shutil, os
+          from pathlib import Path
+          vao = next(Path("/kaggle/input").glob("gita-in-${JOBID}*"))
+          for d in ("nhan-vat", "anh-canh", "giong"): os.makedirs(d, exist_ok=True)
+          shutil.copy(vao / "ke-hoach.json", "ke-hoach.json")
+          for f in vao.iterdir():
+              if f.name.startswith("nv-"): shutil.copy(f, f"nhan-vat/{f.name[3:]}")
+              elif f.name.startswith("canh-"): shutil.copy(f, f"anh-canh/{f.name[5:]}")
+              elif f.name.startswith("giong-"):
+                  subprocess.run(["ffmpeg","-y","-loglevel","error","-i",str(f),"-ac","1","-ar","24000",f"giong/{f.stem[6:]}.wav"], check=False)
           subprocess.run(["git","clone","--depth","1","https://github.com/${{ github.repository }}","repo"], check=True)
           subprocess.run(["bash","repo/xuong-phim-ai/cai-dat-noi-bo.sh"], check=False, env={**os.environ, "MUC": "vua"})
           CHI_CLIP = "${CHI_CLIP}" == "1"
           subprocess.run(["python","repo/xuong-phim-ai/gita_xuong_phim.py","--ke-hoach","ke-hoach.json",
-                          "--run", "anh,video,nang_net,may_quay" if CHI_CLIP else "all","--root","/kaggle/working/ket-qua"], check=True)
+                          "--run", "anh,giong,video,lipsync,nang_net,may_quay" if CHI_CLIP else "all","--root","/kaggle/working/ket-qua"], check=True)
           if CHI_CLIP:
               os.makedirs("/kaggle/working/clips", exist_ok=True)
               for f in glob.glob("/kaggle/working/ket-qua/*/clip/*.mp4"):
@@ -106,7 +137,7 @@ jobs:
           cat > kernel/kernel-metadata.json <<JSON
           {"id": "${SLUG}", "title": "GITA drive ${JOBID}", "code_file": "gita_kernel.py", "language": "python",
            "kernel_type": "script", "is_private": true, "enable_gpu": true, "enable_internet": true,
-           "dataset_sources": [], "competition_sources": [], "kernel_sources": []}
+           "dataset_sources": ["${DS}"], "competition_sources": [], "kernel_sources": []}
           JSON
 
       - name: Đẩy lên Kaggle và chờ dựng
@@ -149,6 +180,10 @@ jobs:
           PD=$(find out -name 'phim-cuoi-phude.mp4' | head -1)
           [ -n "$PD" ] && python $KD tai-len "$JOBID" "$PD" phude "$TEN" || true
           python $KD bao "$JOBID" done "Hoàn tất — phim đã nằm trong Drive: GITA365 · Kho phim/Phim" 100
+
+      - name: Xoá bộ dữ liệu tạm trên Kaggle
+        if: always()
+        run: '[ -n "$DS" ] && (yes | kaggle datasets delete "$DS" 2>/dev/null || echo "giữ bộ dữ liệu riêng tư $DS — xoá tay nếu muốn") || true'
 
       - name: Báo lỗi nếu hỏng giữa chừng
         if: failure()

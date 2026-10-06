@@ -20,6 +20,8 @@ mua RTX 5090 hơn $3.000, còn thuê 4090 ~ $0,34/giờ. Thuê ngoài dịch v�
 | Dịch kịch bản vi→en cho model | opus-mt-vi-en (chạy trên máy) | CC-BY-4.0 | `dich_en()` |
 | Ảnh nhân vật đúng mặt | SDXL + **LoRA nhân vật** tự train (+ LoRA phim trường) | OpenRAIL++-M | `buoc_anh()` |
 | Cảnh diễn chuyển động | **Wan 2.2** (A14B 720p trên card ≥70GB · TI2V-5B 720p ≥20GB · 480p trên T4) | Apache-2.0 | `_wan()` |
+| Video nhanh trên máy miễn phí (T4) | **FastWan 2.2 TI2V-5B** — rút gọn 3 bước, nhanh ~10 lần | Apache-2.0 | `_fastwan()` |
+| Khớp môi trên máy miễn phí | **MuseTalk 1.5** (vẽ lại khẩu hình theo giọng thật, nói tiếng Việt được) | MIT | `buoc_lipsync()` |
 | Cảnh dài 10–30s, nối tiếp liền mạch (đi, chạy, tương tác) | **LongCat-Video** 13,6B — nối đoạn 13 khung điều kiện | MIT | `_longcat()` · `chay_longcat.py` |
 | **Máy quay nội bộ**: quay người thật bằng điện thoại → nhân vật GITA diễn y hệt / thay người giữ bối cảnh thật | **Wan 2.2 Animate-14B** | Apache-2.0 | `_wan_animate()` |
 | Người dẫn nói cả thân, khớp môi · **hội thoại 2 người** | **InfiniteTalk** single / multi | Apache-2.0 | `_infinitetalk()` |

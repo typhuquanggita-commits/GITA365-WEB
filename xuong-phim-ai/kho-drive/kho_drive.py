@@ -3,7 +3,7 @@
   python kho_drive.py doc-viec  <jobid> <thư_mục_ra>     # lấy kế hoạch + ảnh mẫu
   python kho_drive.py bao       <jobid> <trangThai> "<bước>" [phanTram]
   python kho_drive.py tai-len   <jobid> <tệp.mp4> [chinh|phude] ["Tên phim"]
-  python kho_drive.py tai-ve-du-an <jobid> <thư_mục>     # dự án: kế hoạch + mọi tệp cảnh (mở link tạm, xong khoá lại)
+  python kho_drive.py tai-ve-du-an <jobid> <thư_mục> [anh,giong]   # dự án: kế hoạch + tệp (mở link tạm, xong khoá lại)
   python kho_drive.py tai-len-canh <jobid> <mã_dự_án> <tệp.mp4> <05.mp4>   # cảnh AI → Du-an/<tên>/AI/
 
 Cần biến môi trường: KHO_DRIVE_URL (địa chỉ Web app Apps Script) · KHO_DRIVE_KHOA (KHOA_MAY).
@@ -51,10 +51,10 @@ class KhoDrive:
             (ra / "nhan-vat" / f"{nv}.jpg").write_bytes(base64.b64decode(b64))
         return d["ke_hoach"]
 
-    def tai_ve_du_an(self, jobid, ra):
+    def tai_ve_du_an(self, jobid, ra, nhom=None):
         """Tải kế hoạch + mọi tệp cảnh của dự án. Kho mở link tạm thời; dù lỗi giữa chừng vẫn khoá lại."""
         ra = Path(ra); (ra / "nguon").mkdir(parents=True, exist_ok=True)
-        d = self.goi("moTai", jobid=jobid)
+        d = self.goi("moTai", jobid=jobid, **({"nhom": nhom} if nhom else {}))
         try:
             (ra / "du-an.json").write_text(json.dumps(d["ke_hoach"], ensure_ascii=False), encoding="utf-8")
             for t in d["tep"]:
@@ -115,7 +115,7 @@ def main(a):
     if a[:1] == ["doc-viec"] and len(a) == 3: k.doc_viec(a[1], a[2]); print("đã lấy kế hoạch", a[1])
     elif a[:1] == ["bao"] and len(a) >= 4: k.bao(a[1], a[2], a[3], int(a[4]) if len(a) > 4 else None)
     elif a[:1] == ["tai-len"] and len(a) >= 3: k.tai_len(a[1], a[2], a[3] if len(a) > 3 else "chinh", a[4] if len(a) > 4 else None)
-    elif a[:1] == ["tai-ve-du-an"] and len(a) == 3: k.tai_ve_du_an(a[1], a[2])
+    elif a[:1] == ["tai-ve-du-an"] and len(a) in (3, 4): k.tai_ve_du_an(a[1], a[2], a[3].split(",") if len(a) == 4 else None)
     elif a[:1] == ["tai-len-canh"] and len(a) == 5: k.tai_len(a[1], a[3], "ai", a[4], du_an=a[2])
     else: print(__doc__); sys.exit(2)
 

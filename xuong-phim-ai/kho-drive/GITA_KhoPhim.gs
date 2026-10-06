@@ -75,7 +75,7 @@ function doPost(e) {
       case 'dsDuAn': return tra_({ tep: dsDuAn_(tm, b.duAn) });
       case 'datAI': if (app) return tra_(datViec_(tm, b, 'dung-phim-drive', true)); break;
       case 'datRap': if (app) return tra_(datViec_(tm, b, 'rap-phim-drive', true)); break;
-      case 'moTai': if (may) return tra_(moTai_(tm, b.jobid)); break;
+      case 'moTai': if (may) return tra_(moTai_(tm, b.jobid, b.nhom)); break;
       case 'dongTai': if (may) return tra_(dongTai_(tm, b.jobid)); break;
     }
     return tra_({ loi: 'Việc không hợp lệ hoặc khoá không đủ quyền.' });
@@ -156,7 +156,7 @@ function ghiTT_(tm, jobid, them) {
 }
 function datViec_(tm, b, suKien, laDuAn) {
   const kh = b.ke_hoach;
-  if (laDuAn) { duAn_(tm, kh && kh.du_an); kh.chi_clip = suKien === 'dung-phim-drive'; }
+  if (laDuAn) { duAn_(tm, kh && kh.du_an); kh.chi_clip = suKien === 'dung-phim-drive' && !b.tron; kh.tron = !!b.tron; }
   if (!kh || !Array.isArray(kh.canh) || !kh.canh.length || kh.canh.length > 20 || !Array.isArray(kh.nhan_vat))
     throw new Error('Kế hoạch phim không hợp lệ (1–20 cảnh).');
   kh.nhan_vat.forEach(function (n) { if (!MA.test(String(n.id || ''))) throw new Error('Nhân vật không hợp lệ.'); if (n.anh) tepKho_(tm, n.anh, 'Cast'); });
@@ -239,7 +239,7 @@ function duAn_(tm, id) {
   while (cha.hasNext()) if (cha.next().getId() === goc) return d;
   throw new Error('Thư mục không thuộc Du-an của kho.');
 }
-const NHOM_ = { 'Quay-that': 'quay', 'Stock': 'stock', 'AI': 'ai', 'Nhac': 'nhac' };
+const NHOM_ = { 'Quay-that': 'quay', 'Stock': 'stock', 'AI': 'ai', 'Nhac': 'nhac', 'Anh': 'anh', 'Giong': 'giong' };
 function taoDuAn_(tm, ten) {
   const t = String(ten || '').replace(/[\\/:*?"<>|]+/g, ' ').trim().slice(0, 80);
   if (!t) throw new Error('Thiếu tên dự án.');
@@ -254,8 +254,10 @@ function dsDuAn_(tm, id) {
     const it = f.getFiles();
     while (it.hasNext()) {
       const x = it.next();
-      const m = nhom === 'nhac' ? (/^[^\\/]{1,100}\.(mp3|wav|m4a)$/i.test(x.getName()) ? [0, 'nhac'] : null)
-                                : x.getName().match(/^(\d{2,3})\.(mp4|mov|m4v|mkv|webm)$/i);
+      const ten = x.getName();
+      const m = nhom === 'nhac' || nhom === 'giong' ? (/^[^\\/]{1,100}\.(mp3|wav|m4a)$/i.test(ten) ? [0, nhom] : null)
+              : nhom === 'anh' ? ten.match(/^(\d{2,3})\.(jpg|jpeg|png)$/i)          // ảnh khung đầu của cảnh
+              : ten.match(/^(\d{2,3})\.(mp4|mov|m4v|mkv|webm)$/i);
       if (m) ra.push({ id: x.getId(), ten: x.getName(), so: m[1], nhom: nhom, kichThuoc: x.getSize(),
                        congKhai: x.getSharingAccess() === DriveApp.Access.ANYONE_WITH_LINK });
     }
@@ -263,8 +265,9 @@ function dsDuAn_(tm, id) {
   return ra.sort(function (a, b) { return a.so < b.so ? -1 : 1; });
 }
 /* Máy ráp tải tệp cảnh về: mở "ai có link" TẠM THỜI cho đúng các tệp đang riêng tư, ghi lại để khoá lại sau */
-function moTai_(tm, jobid) {
-  const kh = JSON.parse(docTep_(tm, jobid + '.json')), tep = dsDuAn_(tm, kh.du_an), mo = [];
+function moTai_(tm, jobid, nhom) {
+  const kh = JSON.parse(docTep_(tm, jobid + '.json')), mo = [];
+  const tep = dsDuAn_(tm, kh.du_an).filter(function (t) { return !Array.isArray(nhom) || nhom.indexOf(t.nhom) >= 0; });
   tep.forEach(function (t) {
     if (!t.congKhai) { DriveApp.getFileById(t.id).setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW); mo.push(t.id); }
   });

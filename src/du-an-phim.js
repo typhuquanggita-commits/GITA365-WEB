@@ -44,6 +44,7 @@ var G = window.G || {}; window.G = G;
 
   function st(){
     if(!G.S.axDA) G.S.axDA = { ten:'Dự án phim GITA', kichBan:MAU, khung:'doc', chongRung:false, nhom:{}, duAn:'', link:'', tep:null, jobAI:'', ttAI:null, jobRap:'', ttRap:null };
+    if(!G.S.axDA.cheDo) G.S.axDA.cheDo = 'ai100';     /* mặc định: 100% AI từ ảnh chủ hệ cung cấp */
     return G.S.axDA;
   }
   function cast(){ return (G.axn && G.axn.st ? G.axn.st().nv : (G.S.axN && G.S.axN.nv)) || []; }
@@ -58,28 +59,32 @@ var G = window.G || {}; window.G = G;
     if(!c.hanh_dong && !(G.axn.nguoiTrong(c.mo_ta||'', ds).length)) return 'stock';
     return 'ai';
   }
+  function ai100(){ return st().cheDo === 'ai100'; }
   da.keHoach = function(){
-    var s=st(), ds=cast(), kh=G.axn.doc(s.kichBan, ds);
+    var s=st(), ds=cast(), kh=G.axn.doc(s.kichBan, ds, ai100() ? 14 : 34);   /* 100% AI: câu nói ≤ ~5 giây/cảnh */
     kh.canh.forEach(function(c,i){
       c.id = (i+1<10?'0':'')+(i+1);
-      c.tuDong = tuDong(c, ds);
+      c.tuDong = ai100() ? 'ai' : tuDong(c, ds);
       c.khoa = c.id+'-'+bam(c.thoai||c.mo_ta||'');
-      c.nhom = s.nhom[c.khoa] || c.tuDong;
+      c.nhom = ai100() ? 'ai' : (s.nhom[c.khoa] || c.tuDong);
       c.khongRo = c.loai==='dien' && c.nhom!=='stock' && !G.axn.nguoiTrong(c.mo_ta||'', ds).length;
       if(c.nhom==='stock') c.nv = [];
+      if(ai100() && c.loai==='dien' && !c.hanh_dong && !G.axn.nguoiTrong(c.mo_ta||'', ds).length){ c.nv = []; c.khongRo = false; }   /* cảnh không người (toàn cảnh…) */
     });
     return kh;
   };
   function tenNv(id){ return (cast().filter(function(n){ return n.id===id; })[0]||{}).ten || id; }
   function uocTinh(kh){
     var g={quay:0,stock:0,ai:0}; kh.canh.forEach(function(c){ g[c.nhom]+=c.giay; });
-    var gioGPU = g.ai*1.3/5*18/60;                 /* T4 Kaggle: ~18 phút / 5 giây cảnh, gồm làm lại */
+    /* T4 Kaggle: FastWan 3 bước ~4 phút/cảnh + khớp môi ~1,5 phút/cảnh nói + hậu kỳ ~1 phút (ước tính, chưa đo) */
+    var gioGPU = kh.canh.filter(function(c){ return c.nhom==='ai'; }).reduce(function(t,c){ return t + 5 + (c.loai==='noi'?1.5:0); }, 0)/60;
     var phimThang = gioGPU>0 ? Math.floor(120/gioGPU) : 99;
     return { g:g, gioGPU:gioGPU, phimThang:Math.min(phimThang, 40) };
   }
 
   /* ── thao tác ── */
   da.dat = function(k,v){ st()[k]=v; luu(); ve(); };
+  da.cheDo = function(v){ st().cheDo=v; luu(); ve(); };
   da.kichBan = function(v){ st().kichBan=v; luu(); var el=document.getElementById('da-bang'); if(el) el.innerHTML=veBang(da.keHoach()); };
   da.doiNhom = function(khoa, v){ st().nhom[khoa]=v; luu(); ve(); };
   da.mau = function(){ var s=st(); s.kichBan=MAU; s.nhom={}; luu(); ve(); };
@@ -94,9 +99,10 @@ var G = window.G || {}; window.G = G;
   };
   function goiKeHoach(kh, chiAI){
     var s=st(), dung={};
+    /* mien_phi: động cơ chạy FastWan + MuseTalk trên Kaggle T4 */
     var canh = kh.canh.filter(function(c){ return !chiAI || c.nhom==='ai'; });
     canh.forEach(function(c){ c.nv.forEach(function(id){ dung[id]=1; }); });
-    return { du_an:s.duAn, tieu_de:s.ten, khung:s.khung, ngon_ngu:(G.S.axN||{}).ngonNgu||'vi', chong_rung:!!s.chongRung,
+    return { du_an:s.duAn, tieu_de:s.ten, khung:s.khung, ngon_ngu:(G.S.axN||{}).ngonNgu||'vi', chong_rung:!!s.chongRung, mien_phi:true,
       nhan_vat: cast().filter(function(n){ return dung[n.id]; }).map(function(n){
         return {id:n.id, ten:n.ten, vai:n.vai, gioi:n.gioi, tuoi:n.tuoi, giong_key:(n.gioi||'nam')+'-'+(n.tuoi||'lon'), anh:n.anhDrive||''}; }),
       canh: canh.map(function(c){ return {id:c.id, nhom:c.nhom, loai:c.loai, nv:c.nv, thoai:c.thoai||'', mo_ta:c.mo_ta||'',
@@ -110,6 +116,18 @@ var G = window.G || {}; window.G = G;
     var thieu = {}; ai.forEach(function(c){ c.nv.forEach(function(id){ var n=cast().filter(function(x){return x.id===id;})[0]; if(!n||!n.anhDrive) thieu[tenNv(id)]=1; }); });
     if(Object.keys(thieu).length) return U.toast('Cảnh AI cần ảnh mẫu của: '+Object.keys(thieu).join(', ')+' (gửi ở tab Làm phim nhanh).','err');
     k.goi('datAI',{ke_hoach:goiKeHoach(kh,true)}).then(function(d){ s.jobAI=d.jobid; s.ttAI={trangThai:'queued',buoc:'Đã gửi'}; luu(); ve(); da.theoDoi(); })
+      .catch(function(e){ U.toast(e.message,'err'); });
+  };
+  /* 100% AI: một lần chạy Kaggle làm hết — ảnh → video → giọng → khớp môi → hậu kỳ → ráp → phim về Drive */
+  da.lamAI100 = function(){
+    var k=kd(), s=st(), kh=da.keHoach();
+    if(!k||!s.duAn) return U.toast('Tạo thư mục dự án trên Drive trước.','err');
+    if(!s.tep) return U.toast('Bấm "Kiểm tra tệp" để xưởng thấy ảnh anh/chị đã đưa vào.','err');
+    var coAnh={}; s.tep.forEach(function(t){ if(t.nhom==='anh') coAnh[t.so]=1; });
+    var thieu = kh.canh.filter(function(c){ return !coAnh[c.id] && !(c.nv[0] && (cast().filter(function(n){ return n.id===c.nv[0]; })[0]||{}).anhDrive); })
+      .map(function(c){ return c.id; });
+    if(thieu.length) return U.toast('Còn thiếu ảnh cho cảnh: '+thieu.join(', ')+' (đặt Anh/'+thieu[0]+'.jpg, hoặc gửi ảnh nhân vật ở tab Làm phim nhanh).','err');
+    k.goi('datAI',{ke_hoach:goiKeHoach(kh,false), tron:true}).then(function(d){ s.jobAI=d.jobid; s.ttAI={trangThai:'queued',buoc:'Đã gửi việc'}; luu(); ve(); da.theoDoi(); })
       .catch(function(e){ U.toast(e.message,'err'); });
   };
   da.rap = function(){
@@ -136,7 +154,40 @@ var G = window.G || {}; window.G = G;
 
   /* ── giao diện ── */
   function chip(n){ return '<span class="bd-chip" style="border-color:'+NHOM[n][1]+';color:'+NHOM[n][1]+'">'+NHOM[n][0]+'</span>'; }
+  function tenNoi(c){
+    var b=(G.S.axBC||[]).filter(function(x){ return x.id===c.bc_id; })[0];
+    return b ? b.ten : '';
+  }
+  function goiYAnh(c){
+    if(!c.nv.length) return 'cảnh không người — '+(c.mo_ta||'toàn cảnh')+' (ảnh chụp hoặc ảnh tạo bằng Gemini)';
+    var ai = c.nv.map(tenNv).join(' và '), noi = tenNoi(c);
+    if(c.loai==='noi') return ai+(noi?' tại '+noi:'')+', '+((c.may&&c.may.co)==='can'?'cận mặt':'trung cảnh (ngang hông)')+', nhìn vào máy, miệng khép';
+    return ai+(noi?' tại '+noi:'')+' — tư thế ĐẦU cảnh: '+(c.mo_ta||'');
+  }
+  function veBangAI(kh){
+    var s=st(), u=uocTinh(kh), coAnh={}, coNv={};
+    (s.tep||[]).forEach(function(t){ if(t.nhom==='anh') coAnh[t.so]=1; });
+    cast().forEach(function(n){ if(n.anhDrive) coNv[n.id]=1; });
+    var noi = kh.canh.filter(function(c){ return c.loai==='noi'; }).length;
+    var o = '<div class="row" style="gap:8px;flex-wrap:wrap;align-items:center">'+
+      '<span class="bd-chip">'+kh.canh.length+' cảnh · ~'+Math.round(kh.tongGiay/6)/10+' phút</span>'+
+      '<span class="bd-chip">'+noi+' cảnh nói (khớp môi)</span><span class="bd-chip">'+(kh.canh.length-noi)+' cảnh diễn</span></div>'+
+      '<p class="bd-tip" style="margin-top:6px">≈ '+(Math.round(u.gioGPU*10)/10)+' giờ GPU Kaggle cho phim này (ước tính, chưa đo thật) · Kaggle cho ~30 giờ/tuần → khoảng <b>'+u.phimThang+' phim/tháng</b>.</p>'+
+      (kh.canhBao.length?'<p class="bd-tip" style="color:#B4720F">'+kh.canhBao.map(h).join('<br>')+'</p>':'');
+    o += '<div class="gd-wrap" style="margin-top:8px"><table class="gd-tb"><thead><tr><th>#</th><th>Loại</th><th>Nội dung</th><th>Giây</th><th>Ảnh khung đầu (Anh/số.jpg)</th></tr></thead><tbody>'+
+      kh.canh.map(function(c){
+        var nd = (c.nv.length?h(c.nv.map(tenNv).join(' + '))+' · ':'')+(c.thoai?'“'+h(c.thoai)+'”':h(c.mo_ta||''))+
+          '<br><span class="tiny muted">Ảnh nên có: '+h(goiYAnh(c))+'</span>'+
+          (c.khongRo?'<br><span class="tiny" style="color:#B4720F">⚠ Mô tả không nhắc ai trong dàn nhân vật — đang dùng '+h(tenNv(c.nv[0]))+'. Ảnh Anh/'+c.id+'.jpg của anh/chị sẽ quyết định ai xuất hiện.</span>':'');
+        var anh = coAnh[c.id] ? '<span style="color:#0B7350">✓ Anh/'+c.id+'.jpg</span>'
+          : (c.nv[0] && coNv[c.nv[0]] ? '<span style="color:#B4720F">dùng ảnh nhân vật</span><br><span class="tiny muted">nên thêm Anh/'+c.id+'.jpg</span>'
+          : '<span style="color:#B42318">thiếu Anh/'+c.id+'.jpg</span>');
+        return '<tr><td>'+c.id+'</td><td>'+(c.loai==='noi'?'🗣 Nói':'🎬 Diễn')+'</td><td style="min-width:240px">'+nd+'</td><td>'+c.giay+'</td><td>'+(s.tep?anh:'<span class="tiny muted">Anh/'+c.id+'.jpg</span>')+'</td></tr>'; }).join('')+
+      '</tbody></table></div>';
+    return o;
+  }
   function veBang(kh){
+    if(ai100()) return veBangAI(kh);
     var s=st(), co={}, u=uocTinh(kh);
     (s.tep||[]).forEach(function(t){ co[t.so]=t.nhom; });
     var o = '<div class="row" style="gap:8px;flex-wrap:wrap;align-items:center">'+
@@ -164,22 +215,41 @@ var G = window.G || {}; window.G = G;
   da.ve = function(){
     var s=st(), kh=da.keHoach(), k=kd(), doc=s.khung!=='ngang';
     if((s.jobAI && s.ttAI && !/done|error/.test(s.ttAI.trangThai)) || (s.jobRap && s.ttRap && !/done|error/.test(s.ttRap.trangThai))) setTimeout(da.theoDoi, 0);
-    var o = U.sec('Dự án phim','Video 4–8 phút cao cấp, miễn phí: quay thật phần chính · video nền miễn phí · AI cho phần không quay được → ráp tự động, lưu Google Drive');
+    var A = ai100();
+    var o = U.sec('Dự án phim', A ? 'Video 4–8 phút 100% AI từ ảnh anh/chị cung cấp · miễn phí (Kaggle) · khớp môi tiếng Việt · tự ráp, lưu Google Drive'
+                                  : 'Video 4–8 phút cao cấp, miễn phí: quay thật phần chính · video nền miễn phí · AI cho phần không quay được → ráp tự động, lưu Google Drive');
+    o += '<div class="row mb" style="gap:8px;flex-wrap:wrap">'+
+      '<button class="btn sm '+(A?'':'ghost')+'" onclick="G.axda.cheDo(\'ai100\')">✨ 100% AI từ ảnh</button>'+
+      '<button class="btn sm '+(A?'ghost':'')+'" onclick="G.axda.cheDo(\'lai\')">🎥 Quay thật + AI</button></div>';
     if(!k) o += '<div class="card pad-sm mb"><p class="tiny" style="color:#B4720F">Cần nối kho Google Drive trước (tab 🗄 Kho phim → Cài đặt kho Drive).</p></div>';
     /* 1 · kịch bản */
     o += '<div class="card pad-sm mb"><b class="sm">① Kịch bản</b>'+
       '<div class="row mt" style="gap:8px;flex-wrap:wrap"><input type="text" value="'+h(s.ten)+'" onchange="G.axda.dat(\'ten\',this.value)" placeholder="Tên dự án" style="flex:1;min-width:200px;padding:8px;border:1px solid var(--line);border-radius:8px">'+
       '<select onchange="G.axda.dat(\'khung\',this.value)" style="padding:6px;border:1px solid var(--line);border-radius:8px"><option value="doc"'+(doc?' selected':'')+'>Dọc 9:16</option><option value="ngang"'+(doc?'':' selected')+'>Ngang 16:9</option></select>'+
       '<button class="btn ghost sm" onclick="G.axda.mau()">Kịch bản mẫu</button></div>'+
-      '<p class="tiny muted" style="margin:6px 0">Viết như tab Làm phim nhanh: <b>[Nơi quay]</b> · <b>Tên: lời thoại</b> · câu hành động. Đoạn chỉ có <b>[cảnh]</b> không người → video nền.</p>'+
+      '<p class="tiny muted" style="margin:6px 0">Viết như tab Làm phim nhanh: <b>[Nơi quay]</b> · <b>Tên: lời thoại</b> · câu hành động. Đoạn chỉ có <b>[cảnh]</b> không người → '+(A?'cảnh toàn cảnh (cần ảnh riêng)':'video nền')+'.</p>'+
       '<textarea rows="9" oninput="G.axda.kichBan(this.value)" style="width:100%;box-sizing:border-box;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px;line-height:1.5">'+h(s.kichBan)+'</textarea></div>';
     /* 2 · phân loại */
-    o += '<div class="card pad-sm mb"><b class="sm">② Xưởng chia việc từng cảnh</b> <span class="tiny muted">(đổi được ở cột "Làm bằng")</span><div id="da-bang" style="margin-top:8px">'+veBang(kh)+'</div></div>';
+    o += '<div class="card pad-sm mb"><b class="sm">② '+(A?'Phân cảnh & ảnh cần có':'Xưởng chia việc từng cảnh')+'</b> <span class="tiny muted">'+(A?'(câu nói dài được tách cảnh ≤ ~5 giây)':'(đổi được ở cột "Làm bằng")')+'</span><div id="da-bang" style="margin-top:8px">'+veBang(kh)+'</div></div>';
     /* 3 · thư mục Drive */
     o += '<div class="card pad-sm mb"><b class="sm">③ Thư mục dự án trên Google Drive</b><div class="row mt" style="gap:8px;flex-wrap:wrap">'+
       (s.duAn ? '<a class="btn sm" target="_blank" rel="noopener" href="'+h(s.link)+'">📁 Mở thư mục dự án</a><button class="btn ghost sm" onclick="G.axda.kiemTep()">↻ Kiểm tra tệp</button>'
               : '<button class="btn sm" onclick="G.axda.taoThuMuc()">📁 Tạo thư mục dự án</button>')+'</div>'+
-      '<p class="bd-tip" style="margin-top:6px">Trong thư mục có <b>Quay-that · Stock · AI · Nhac</b>. Đặt tên tệp đúng số cảnh: <b>01.mp4, 02.mov…</b> (điện thoại quay xong đổi tên rồi kéo vào). Thư mục Nhac: thả 1 tệp nhạc nền mp3.</p></div>';
+      (A ? '<p class="bd-tip" style="margin-top:6px"><b>Anh/</b>: ảnh khung đầu từng cảnh, đặt tên đúng số cảnh <b>01.jpg, 02.jpg…</b> — đúng người, đúng nơi, đúng tư thế lúc bắt đầu cảnh (ảnh chụp, hoặc ảnh tạo bằng ứng dụng Gemini rồi tải về). '+
+             '<b>Giong/</b> (tuỳ chọn): mỗi nhân vật 1 tệp đọc rõ 10–20 giây, đặt tên theo nhân vật, vd <b>'+h(((cast()[0]||{}).ten)||'Trainer')+'.wav</b> — thiếu thì dùng giọng có sẵn theo giới tính. <b>Nhac/</b>: 1 tệp nhạc nền mp3.</p></div>'
+         : '<p class="bd-tip" style="margin-top:6px">Trong thư mục có <b>Quay-that · Stock · AI · Nhac</b>. Đặt tên tệp đúng số cảnh: <b>01.mp4, 02.mov…</b> (điện thoại quay xong đổi tên rồi kéo vào). Thư mục Nhac: thả 1 tệp nhạc nền mp3.</p></div>');
+    if(A){
+      var xongA = s.ttAI && s.ttAI.trangThai==='done' && s.ttAI.phimId;
+      o += '<div class="card pad-sm mb"><b class="sm">④ Làm phim 100% AI</b> <span class="tiny muted">· Kaggle GPU miễn phí · FastWan 2.2 + khớp môi MuseTalk · 1080p · thường vài giờ</span>'+
+        '<div class="row mt"><button class="btn" onclick="G.axda.lamAI100()">🎬 Làm phim</button></div>'+veTT(s.ttAI,'Tiến độ')+
+        (xongA && G.khoDrive ? '<div style="position:relative;width:100%;max-width:'+(doc?'420px':'720px')+';aspect-ratio:'+(doc?'9/16':'16/9')+';margin:10px auto 0;max-height:75vh">'+
+          '<iframe src="'+h(G.khoDrive.xem(s.ttAI.phimId))+'" allow="autoplay; fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:12px;background:#000"></iframe></div>'+
+          '<div class="row mt" style="gap:8px;flex-wrap:wrap"><a class="btn" target="_blank" rel="noopener" href="'+h(G.khoDrive.link(s.ttAI.phimId))+'">⬇ Mở / tải trên Drive</a>'+
+          (s.ttAI.phimPhuDeId?'<a class="btn ghost" target="_blank" rel="noopener" href="'+h(G.khoDrive.link(s.ttAI.phimPhuDeId))+'">Bản có phụ đề</a>':'')+'</div>' : '')+
+        '<p class="bd-tip" style="margin-top:6px">Xưởng tự: giọng nói từng câu → video từ ảnh của anh/chị → khớp môi tiếng Việt → giữ mặt, làm nét → phụ đề, thẻ tên, nhạc → phim 1080p vào Drive/Phim. '+
+          'Cảnh nào không khớp môi được sẽ để mặt tự nhiên + lồng tiếng, không giả khẩu hình.</p></div>';
+      return o;
+    }
     /* 4 · danh sách quay */
     var quay = kh.canh.filter(function(c){ return c.nhom==='quay'; });
     o += '<details class="card pad-sm mb"'+(quay.length?' open':'')+'><summary class="sm" style="cursor:pointer"><b>④ Danh sách quay điện thoại</b> <span class="tiny muted">· '+quay.length+' cảnh · một buổi quay</span></summary>'+

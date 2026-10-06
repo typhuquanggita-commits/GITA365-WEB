@@ -96,7 +96,7 @@ var G = window.G || {}; window.G = G;
   axn.st = st;                                   /* tab Dự án phim dùng chung dàn nhân vật + ảnh mẫu */
   axn.nguoiTrong = nguoiTrongMoTa;              /* dùng chung cho tab Dự án phim */
   axn.BOI_CANH = BOI_CANH;
-  axn.doc = function(kichBan, ds){
+  axn.doc = function(kichBan, ds, toiDaTu){
     var canh=[], canhBao=[], bc=null, bcTruoc=null;
     var khoi = (kichBan||'').replace(/\r/g,'').split(/\n\s*\n/);
     khoi.forEach(function(k){
@@ -123,7 +123,7 @@ var G = window.G || {}; window.G = G;
       }
       bcTruoc=bc;
       thoai.forEach(function(t){
-        catCau(t.text, 34).forEach(function(doan){
+        catCau(t.text, toiDaTu || 34).forEach(function(doan){
           var i = canh.filter(function(c){ return c.loai==='noi'; }).length;
           canh.push({ loai:'noi', nv:[t.nv], thoai:doan, mo_ta:mt, hanh_dong: hd==='thuyet_trinh'?'thuyet_trinh':'', bc_id:bc[0], boi_canh_en:bc[2],
             giay: giayNoi(doan), may: i%2 ? {co:'can',goc:'ngang_mat',chuyen:'tinh'} : {co:'trung',goc:'ngang_mat',chuyen:'day_vao',cuong:0.3} });

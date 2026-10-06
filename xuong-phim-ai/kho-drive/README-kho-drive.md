@@ -37,7 +37,20 @@ Xong bước 5 là kho đã chạy: xem phim, chia sẻ, và màn **Làm phim nh
 Chưa làm phần này thì việc vẫn được lưu vào Drive; muốn dựng thì vào GitHub → Actions →
 **Dựng phim từ kho Drive** → Run workflow → nhập mã việc.
 
-## Dự án phim 4–8 phút cao cấp, miễn phí (tab 🎬 Dự án phim)
+## Phim 100% AI từ ảnh của anh/chị, miễn phí (tab 🎬 Dự án phim → "100% AI từ ảnh")
+
+1. Dán kịch bản → app tách cảnh (câu nói dài tách thành cảnh ≤ ~5 giây) và ghi rõ **ảnh nên có** cho từng cảnh.
+2. **Tạo thư mục dự án** → đưa ảnh vào `Anh/` đặt tên đúng số cảnh `01.jpg, 02.jpg…`: đúng người, đúng nơi, đúng tư thế
+   lúc bắt đầu cảnh (ảnh chụp, hoặc ảnh tạo bằng ứng dụng Gemini rồi tải về). Cảnh thiếu ảnh riêng sẽ dùng ảnh nhân vật.
+3. (Tuỳ chọn) `Giong/<Tên nhân vật>.wav` — 10–20 giây đọc rõ để nhân bản giọng; thiếu thì dùng giọng có sẵn theo giới tính.
+   `Nhac/` — 1 tệp nhạc nền.
+4. **Kiểm tra tệp** → **Làm phim**: Kaggle GPU miễn phí làm trọn — giọng → video từ ảnh (FastWan 2.2, 3 bước) →
+   khớp môi tiếng Việt (MuseTalk 1.5) → giữ mặt, làm nét → phụ đề, thẻ tên, nhạc → phim 1080p vào `Phim/<tháng>/`.
+
+Ảnh và giọng đi vào Kaggle bằng **bộ dữ liệu riêng tư** (không công khai), link Drive chỉ mở vài phút rồi khoá lại.
+Ước tính (chưa đo): ~5–6,5 phút GPU mỗi cảnh → phim 6 phút (~80 cảnh) ≈ 8 giờ → **khoảng 10–15 phim/tháng** với 30 giờ/tuần.
+
+## Dự án phim 4–8 phút cao cấp, miễn phí (tab 🎬 Dự án phim → "Quay thật + AI")
 
 AI chỉ làm phần không quay được — vừa đẹp nhất vừa không tốn tiền, làm được nhiều phim/tháng:
 
