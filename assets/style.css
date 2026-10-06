@@ -2567,12 +2567,14 @@ button.nha-o-nen:hover .nha-ic{transform:scale(1.06)}
    vì CSS chỉ cần: position absolute + % + animation rotate — ba thứ có từ
    rất lâu. Bỏ hẳn container query và cos/sin trong calc (nguyên nhân vòng
    không dựng/không quay trên nhiều máy). */
-.nha-ring{position:relative;width:min(680px,100%);aspect-ratio:1/1;margin:0 auto}
-.nha-ring .nha{position:absolute;inset:15%;display:flex;flex-direction:column;justify-content:center}
-.nha-ring::before{content:"";position:absolute;inset:2%;border:2px dashed var(--line-2);border-radius:50%;pointer-events:none}
-.nha-ring-nodes{position:absolute;inset:0;animation:nhaQuay 80s linear infinite}
-.nha-ring-nodes .nha-bd-slot{position:absolute;pointer-events:none}
-.nha-ring-nodes .nha-bd-o{pointer-events:auto;max-width:110px;text-align:left;display:flex;gap:6px;align-items:center}
+/* 9.99.253 — Bỏ vòng quay (chữ lộn ngược) và khung vuông nhồi nhà (tám ô
+   phình/tràn). Mười bánh đà xếp PHẲNG thành hàng huy hiệu ngay trên ngôi
+   nhà; ngôi nhà về luồng thường nên các ô vừa khít, không tràn. */
+.nha-ring{position:relative;margin:0 auto}
+.nha-ring .nha{position:static;inset:auto}
+.nha-ring::before{display:none}
+.nha-ring-nodes{position:static;animation:none;display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:0 auto 16px}
+.nha-ring-nodes .nha-bd-o{pointer-events:auto}
 @media(prefers-reduced-motion:reduce){.nha-ring-nodes{animation:none}}
 
 /* ── TỔNG QUAN (tong-quan.js) — thẻ ít chữ, số to, lưới co giãn ── */

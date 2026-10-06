@@ -134,21 +134,15 @@ G.nhaMoChang = function (el) {
       var idx = tu + i;
       var mau = BD_MAU[idx % BD_MAU.length];
       var ten = b.ten || b.t || ('Bánh đà ' + (idx + 1));
-      /* Vị trí trên vòng tròn tính BẰNG SỐ lúc render (Math.cos/sin trong
-         JS — không phải trig trong CSS), nên chạy MỌI trình duyệt, kể cả
-         trình duyệt không hiểu cos() trong calc(). Góc -90° = đỉnh, mỗi
-         nút +36°. Bán kính 46% theo trục ngang / 46% theo trục dọc của
-         khung vòng (khung là hình vuông nên vòng TRÒN CHUẨN). */
-      var goc = (idx * 36 - 90) * Math.PI / 180;
-      var x = 50 + 46 * Math.cos(goc);
-      var y = 50 + 46 * Math.sin(goc);
-      /* Góc giữ chữ thẳng là HẰNG SỐ (-(idx*36-90)) — khi wrapper quay, nút
-         đi theo vòng và chữ vẫn đứng vì góc đặt đã được triệt. */
-      var giuThang = (idx * 36 - 90) * -1;
-      return '<span class="nha-bd-slot" style="left:' + x.toFixed(2) + '%;top:' + y.toFixed(2) + '%">' +
-        '<button class="nha-bd-o" style="--ac:' + mau + ';transform:translate(-50%,-50%) rotate(' + giuThang + 'deg)" data-v="banh-da">' +
+      /* 9.99.253 — Mỗi bánh là một HUY HIỆU gọn (icon tròn màu + tên),
+         xếp phẳng thành hàng ngay trên ngôi nhà. Bỏ cách đặt quanh một
+         vòng rồi quay: vòng quay làm CHỮ LỘN NGƯỢC (góc giữ-chữ là hằng
+         số, không triệt được animation quay liên tục) và nhồi cả ngôi nhà
+         vào khung vuông làm tám ô phình to, tràn ra ngoài. Huy hiệu phẳng
+         thì chữ luôn thẳng, đọc được và bấm được. */
+      return '<button class="nha-bd-o" style="--ac:' + mau + '" data-v="banh-da">' +
         '<span class="nha-bd-ic">' + ic(b.ic) + '</span>' +
-        '<span class="nha-bd-ten">' + h(ten) + '</span></button></span>';
+        '<span class="nha-bd-ten">' + h(ten) + '</span></button>';
     }).join('');
   }
 
@@ -158,11 +152,14 @@ G.nhaMoChang = function (el) {
 
     /* VÒNG GITA365 bao quanh cả ngôi nhà, và MƯỜI BÁNH ĐÀ quay quanh —
        năm bánh trên, năm bánh dưới, ôm lấy ngôi nhà. */
+    var bdHtml = veBanhDa(0, 10);
     o += '<div class="nha-vong"><span class="nha-vong-nhan">' + ic('star') +
       ' GITA 365</span>';
-    o += '<p class="nha-bd-nhan">Mười bánh đà quay quanh vận hành cả nhà</p>';
+    /* Có bánh đà (kho nền đã mở) thì mới treo nhãn — nhãn mà không có
+       bánh nào bên dưới là một lời hứa trống. */
+    if (bdHtml) o += '<p class="nha-bd-nhan">Mười bánh đà vận hành cả nhà</p>';
     o += '<div class="nha-ring">';
-    o += '<div class="nha-bd nha-ring-nodes">' + veBanhDa(0, 10) + '</div>';
+    o += '<div class="nha-bd nha-ring-nodes">' + bdHtml + '</div>';
 
     o += '<div class="nha">';
 
