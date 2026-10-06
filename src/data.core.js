@@ -933,6 +933,10 @@ G.NAV = [
     {v:'an-toan-du-lieu',t:'Lá chắn dữ liệu',          h:'Chống sao chép · chống giả khách',    ic:'lock', perm:'qt_trang', capMo:'quantri'},
     {v:'hoc-tu-lon',  t:'Học từ những hệ thống lớn',   h:'TikTok · Google · Toyota · Apple…',   ic:'target', perm:'qt_trang', capMo:'quantri'},
     {v:'ra-soat',     t:'Rà soát hệ thống',            h:'Bảo mật · mã · dữ liệu · thương hiệu',ic:'shield', perm:'qt_trang', capMo:'quantri'},
+    /* Liên thống & toàn vẹn dữ liệu: đo các MỐI NỐI giữa dữ liệu (menu↔
+       màn↔quyền, vai↔quyền↔bậc, việc↔KPI) + con số từng kho; chấm điểm,
+       chỉ chỗ sai, theo dõi xử lý tới khi sạch. Chỉ Super Admin/Admin. */
+    {v:'lien-thong',  t:'Liên thống & toàn vẹn dữ liệu', h:'Đo từng mối nối · chấm điểm · xử lý tới khi sạch', ic:'orbit', star:1, perm:'qt_trang', capMo:'quantri'},
    ]},
 
   /* ══════════ 06 · QUẢN TRỊ TRANG — CHỈ R01 VÀ R02 ══════════

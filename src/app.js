@@ -34,7 +34,7 @@ function save(){
        văn phòng thì Coach đăng xuất, phụ huynh đăng nhập vào cùng trình
        duyệt — không ghi tên chủ sổ thì bằng chứng đóng việc của Coach,
        viết về nhà nào có chuyện gì, nằm lại trong máy cho người sau. */
-    viec:G.S.viec, chotNgay:G.S.chotNgay, chotKhNgay:G.S.chotKhNgay, caiTien:G.S.caiTien, mua:G.S.mua, vet:G.S.vet, viecCua:G.S.viecCua, cvSangKien:G.S.cvSangKien,
+    viec:G.S.viec, chotNgay:G.S.chotNgay, chotKhNgay:G.S.chotKhNgay, caiTien:G.S.caiTien, mua:G.S.mua, vet:G.S.vet, viecCua:G.S.viecCua, cvSangKien:G.S.cvSangKien, ltXuLy:G.S.ltXuLy, ltLichSu:G.S.ltLichSu,
     /* Bàn cờ hành trình. Thiếu dòng này thì mọi quân nhà mình đặt bay
        hết khi tải lại trang — và một bàn cờ xoá được mỗi lần F5 thì
        nhìn nó không còn nghĩa gì. */
@@ -80,6 +80,8 @@ function load(){
     G.S.chotKhNgay = d.chotKhNgay || {};
     G.S.caiTien = d.caiTien || {};
     G.S.cvSangKien = d.cvSangKien || {};
+    G.S.ltXuLy = d.ltXuLy || {};
+    G.S.ltLichSu = d.ltLichSu || [];
     G.S.mua = d.mua || null;
     G.S.vet = d.vet || [];
     G.S.viecCua = d.viecCua || null;
@@ -1423,6 +1425,13 @@ on('[data-cvchuyenthat]', function(el){ G.cvChuyenThat(el.getAttribute('data-cvc
 on('[data-cvchot]',   function(){ G.cvChotHoiDap(); });
 on('[data-cvsk]',     function(el){ G.cvMoSangKien(el.getAttribute('data-cvsk')); });
 on('[data-cvsklu]',   function(el){ G.cvLuuSangKien(el.getAttribute('data-cvsklu')); });
+/* ── Liên thống & toàn vẹn dữ liệu ── */
+on('[data-ltghi]',    function(){ G.ltGhiMoc(); });
+on('[data-ltbaocao]', function(){ G.ltMoBaoCao(); });
+on('[data-ltxong]',   function(el){ G.ltDanhDau(el.getAttribute('data-ltxong'), 'xong'); });
+on('[data-ltngoaile]',function(el){ G.ltMoGhiChu(el.getAttribute('data-ltngoaile')); });
+on('[data-ltngoaile-luu]', function(el){ G.ltLuuNgoaiLe(el.getAttribute('data-ltngoaile-luu')); });
+on('[data-ltmo]',     function(el){ G.ltDanhDau(el.getAttribute('data-ltmo'), 'mo'); });
 on('[data-khchot]',   function(){ G.khChotHoiDap(); });
 on('[data-v]', function(el){ G.go(el.getAttribute('data-v')); });
 on('[data-go]', function(el){ document.getElementById('cmd').classList.remove('on'); G.go(el.getAttribute('data-go')); });
