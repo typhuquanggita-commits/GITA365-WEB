@@ -85,6 +85,10 @@ jobs:
           for f in glob.glob("/kaggle/input/*/lora/*")+glob.glob("/kaggle/input/*/*.safetensors"):
               try: shutil.copy(f, "lora/")
               except Exception: pass
+          os.makedirs("nhac",exist_ok=True)
+          for f in glob.glob("/kaggle/input/*/nhac/*"):
+              try: shutil.copy(f, "nhac/")
+              except Exception: pass
           subprocess.run(["pip","install","-q","diffusers>=0.30","transformers","accelerate",
               "TTS","imageio[ffmpeg]","opencv-python-headless","insightface","onnxruntime-gpu",
               "faster-whisper"], check=False)

@@ -48,6 +48,39 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     ['Phòng coach 1-1 ấm cúng, ghế sofa, cây xanh, ánh sáng mềm','Phòng coach 1-1'],
     ['Phòng khách sang trọng, kệ sách, cây xanh, đèn ấm','Phòng khách']
   ];
+  /* Động cơ sinh video — mở (free) + cao cấp (API, phí). Chọn đúng động cơ mạnh nhất mỗi cảnh. */
+  var DONGCO = [
+    ['auto','Tự chọn tốt nhất theo cảnh'],
+    ['wan','Wan 2.2 — mở · free · người thật chuyển động'],
+    ['cogvideox','CogVideoX — mở · free'],
+    ['framepack','FramePack — mở · free · clip dài, GPU yếu'],
+    ['ltx','LTX-Video — mở · free · nhanh'],
+    ['veo3','Google Veo 3 — API · phí · cao cấp nhất'],
+    ['kling','Kling 2.x — API · phí · cao cấp'],
+    ['runway','Runway Gen-4 — API · phí'],
+    ['heygen','HeyGen — API · phí · avatar người dẫn nói']
+  ];
+  /* Dây chuyền hậu kỳ cao cấp (bật/tắt) */
+  var HAUKY = [
+    ['giuMat','Giữ & phục hồi khuôn mặt (CodeFormer/GFPGAN)',true],
+    ['napNet','Nâng nét 1080p+ (Real-ESRGAN)',true],
+    ['muot60','Làm mượt 60fps (RIFE)',true],
+    ['chinhMau','Chỉnh màu điện ảnh',true],
+    ['khuNhieu','Khử nhiễu',false],
+    ['onDinh','Ổn định khung (giảm rung)',false],
+    ['phuDe','Phụ đề tự động',true],
+    ['nhacNen','Nhạc nền',true]
+  ];
+  function hauMacDinh(){ var o={}; HAUKY.forEach(function(x){o[x[0]]=x[2];}); return o; }
+  function hauCua(p){ return (p&&p.hauKy)?p.hauKy:hauMacDinh(); }
+  function tenDC(k){ var f=DONGCO.filter(function(x){return x[0]===k;})[0]; return f?f[1]:k; }
+  /* Định tuyến: cảnh chọn riêng > tập chọn > tự chọn. "Tự chọn" chỉ dùng động cơ MỞ (free):
+     cảnh dài > 6s → FramePack (giữ mạch dài, GPU yếu); còn lại → Wan 2.2 (người thật chuyển động). */
+  function chonDongCo(c,p){
+    var k = c.dongCo || (p&&p.dongCo) || 'auto';
+    if(k!=='auto') return k;
+    return (+c.giay||5) > 6 ? 'framepack' : 'wan';
+  }
 
   function initData(){
     if(!G.S.axNV){ G.S.axNV = [
@@ -73,7 +106,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     ]; }
     if(!G.S.axPhim){ G.S.axPhim = [
       { id:'phim-1', ten:'Tập 1 — Hành trình GITA 365', mota:'Giới thiệu hành trình 5 tầng, dạng người dẫn + cảnh minh hoạ',
-        ngonNgu:'vi', phongCachGita:true,
+        ngonNgu:'vi', phongCachGita:true, dongCo:'auto', hauKy:hauMacDinh(),
         canh:[
           { id:uid('c'), nvId:'nv-trainer', loai:'nguoi', boiCanh:'Bục giảng studio GITA, màn hình lớn phía sau, vách gỗ, ánh sáng điện ảnh ấm', may:'Trung cảnh, máy tĩnh ngang ngực', chuyenDong:'Đứng dẫn, cử động tay truyền cảm hứng, gật đầu nhẹ', thoai:'Chào anh chị, hành trình thịnh vượng của gia đình bắt đầu từ một quyết định.', giay:5, tt:'' },
           { id:uid('c'), nvId:'nv-mc', loai:'nguoi', boiCanh:'Trường quay sáng, màn hình lớn phía sau', may:'Trung cảnh, máy lia nhẹ sang phải', chuyenDong:'Đứng thuyết trình, tay chỉ về màn hình', thoai:'GITA đồng hành cùng gia đình qua năm tầng phát triển.', giay:5, tt:'' },
@@ -131,6 +164,8 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   G.ax.phimChon = function(id){ G.S.axActive=id; if(G.render) G.render(); };
   G.ax.phimNgon = function(v){ var p=phimActive(); if(p){ p.ngonNgu=v; luu(); } };
   G.ax.phimGita = function(){ var p=phimActive(); if(p){ p.phongCachGita = (p.phongCachGita===false); luu(); } };
+  G.ax.phimDongCo = function(v){ var p=phimActive(); if(p){ p.dongCo=v; luu(); } };
+  G.ax.hauToggle = function(k){ var p=phimActive(); if(!p) return; p.hauKy=hauCua(p); p.hauKy[k]=!p.hauKy[k]; luu(); };
   G.ax.canhKgita = function(){ var el=document.getElementById('f-bc'); if(el) el.value=KGITA_CANH; };
   G.ax.phimThem = function(){
     U.modal('<h3 class="mb">Thêm tập phim</h3>'+
@@ -141,7 +176,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   G.ax.phimLuu = function(){
     var t=(document.getElementById('f-pten')||{}).value||'Tập mới';
     var m=(document.getElementById('f-pmota')||{}).value||'';
-    var p={id:uid('phim'),ten:t.trim(),mota:m.trim(),ngonNgu:'vi',phongCachGita:true,canh:[]}; G.S.axPhim.push(p); G.S.axActive=p.id;
+    var p={id:uid('phim'),ten:t.trim(),mota:m.trim(),ngonNgu:'vi',phongCachGita:true,dongCo:'auto',hauKy:hauMacDinh(),canh:[]}; G.S.axPhim.push(p); G.S.axActive=p.id;
     U.closeModal(); luu();
   };
   G.ax.phimXoa = function(id){ if(G.S.axPhim.length<=1) return U.toast('Giữ lại ít nhất một tập.','err');
@@ -162,6 +197,8 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       '<div class="bd-field"><span>Chuyển động nhân vật</span><input type="text" id="f-cd" value="'+h(e.chuyenDong)+'" placeholder="VD: đứng nói, tay chỉ màn hình"></div>'+
       '<div class="bd-field"><span>Thoại (để trống nếu cảnh không lời)</span><textarea id="f-thoai" rows="2">'+h(e.thoai)+'</textarea></div>'+
       '<div class="bd-field"><span>Thời lượng (giây)</span><input type="number" id="f-giay" min="2" max="10" value="'+(e.giay||5)+'" style="width:90px"></div>'+
+      '<div class="bd-field"><span>Động cơ cho cảnh này (để trống = theo tập)</span><select id="f-dongco" style="padding:8px;border:1px solid var(--line);border-radius:9px">'+
+        '<option value="">— theo cài đặt của tập —</option>'+DONGCO.map(function(x){return '<option value="'+x[0]+'"'+(e.dongCo===x[0]?' selected':'')+'>'+h(x[1])+'</option>';}).join('')+'</select></div>'+
       '<div class="row mt" style="gap:8px"><button class="btn" onclick="G.ax.canhLuu(\''+(e.id||'')+'\')">Lưu</button><button class="btn ghost" onclick="U.closeModal()">Huỷ</button></div>';
   }
   G.ax.canhThem = function(){ window.__cloai='nguoi'; U.modal(formCanh(null)); };
@@ -169,7 +206,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   G.ax.canhLuu = function(id){
     function v(x){var el=document.getElementById(x);return el?el.value:'';}
     var o={ nvId:v('f-nv'), loai:window.__cloai||'nguoi', boiCanh:v('f-bc').trim(), may:v('f-may').trim(),
-      chuyenDong:v('f-cd').trim(), thoai:v('f-thoai').trim(), giay:Math.max(2,Math.min(10,+v('f-giay')||5)) };
+      chuyenDong:v('f-cd').trim(), thoai:v('f-thoai').trim(), giay:Math.max(2,Math.min(10,+v('f-giay')||5)), dongCo:v('f-dongco') };
     var p=phimActive();
     if(id){ var c=p.canh.filter(function(x){return x.id===id;})[0]; if(c) Object.assign(c,o); }
     else { o.id=uid('c'); o.tt=''; p.canh.push(o); }
@@ -198,10 +235,12 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     return {
       phim:{ id:p.id, ten:p.ten, mota:p.mota },
       ngon_ngu: p.ngonNgu||'vi',
+      dong_co: p.dongCo||'auto',
+      hau_ky: hauCua(p),
       cam:['khong-hoat-hinh','khong-nguoi-que','khong-anh-tinh-map-moi','phai-nguoi-that-chuyen-dong-sac-net'],
       chuan:{ negative_chung:QNEG, phong_cach:'ảnh thật điện ảnh 9:16, nét căng, khớp khẩu hình với giọng',
         phong_cach_gita: p.phongCachGita!==false, phong_cach_khong_gian:KGITA_STYLE },
-      pipeline:{ anh:'instantid_sdxl', i2v:'wan2.2_i2v', tts:'vixtts', lipsync:'latentsync', nang_net:'realesrgan_codeformer', muot:'rife', phu_de:'faster_whisper', rap:'ffmpeg', khung:'1080x1920', fps_xuat:30 },
+      pipeline:{ anh:'instantid_sdxl', i2v:'wan2.2_i2v', tts:'vixtts', lipsync:'latentsync', nang_net:'realesrgan_codeformer', muot:'rife', phu_de:'faster_whisper', rap:'ffmpeg', khung:'1080x1920', fps_xuat:(hauCua(p).muot60?60:30) },
       nhan_vat: (G.S.axNV||[]).map(function(n){ return {id:n.id,ten:n.ten,vai:n.vai,gioi:n.gioi,tuoi:n.tuoi,loai:n.loai,
         mo_ta:n.mota,phong_cach:n.phongCach,trang_phuc:n.trangPhuc,giong:n.giong,giong_key:giongKey(n.gioi,n.tuoi),seed:n.seed,
         lora:n.lora, co_lora:coLora(n.lora), trigger:trigger(n.id), khoa_mat:!!n.khoaMat}; }),
@@ -211,6 +250,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
           giong:nv.giong, giong_key:giongKey(nv.gioi,nv.tuoi), seed:nv.seed,
           lora:nv.lora, co_lora:coLora(nv.lora), trigger:trigger(nv.id), khoa_mat:!!nv.khoaMat,
           ngon_ngu: p.ngonNgu||'vi',
+          dong_co: chonDongCo(c, p),
           giay:c.giay||5, lip_sync: c.loai==='nguoi' && !!(c.thoai&&c.thoai.trim()), trang_thai:c.tt||'' }; })
     };
   }
@@ -353,6 +393,26 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     return o;
   }
 
+  function veKyXao(){
+    var p=phimActive(), hk=hauCua(p);
+    var o=U.sec('Kỹ xảo & Động cơ','Chọn động cơ mạnh nhất cho từng cảnh · bật dây chuyền hậu kỳ cao cấp');
+    o += '<div class="card pad-sm mb"><b class="sm">Động cơ mặc định của tập</b>'+
+      '<div class="row mt" style="gap:8px;flex-wrap:wrap;align-items:center">'+
+      '<select onchange="G.ax.phimDongCo(this.value)" style="padding:8px;border:1px solid var(--line);border-radius:9px;min-width:300px">'+
+        DONGCO.map(function(x){return '<option value="'+x[0]+'"'+((p.dongCo||'auto')===x[0]?' selected':'')+'>'+h(x[1])+'</option>';}).join('')+'</select></div>'+
+      '<p class="bd-tip">"Tự chọn" chỉ dùng động cơ MỞ (free): cảnh dài &gt; 6 giây → FramePack, còn lại → Wan 2.2. Động cơ có phí (Veo 3 · Kling · Runway · HeyGen) chỉ chạy khi anh/chị chọn và đã có API key — dùng cho cảnh then chốt.</p></div>';
+    o += '<div class="gd-wrap mb"><table class="gd-tb"><thead><tr><th>#</th><th>Cảnh</th><th>Động cơ sẽ chạy</th><th>Loại</th></tr></thead><tbody>'+
+      p.canh.map(function(c,i){ var nv=nvById(c.nvId)||{}; var k=chonDongCo(c,p); var phi=['veo3','kling','runway','heygen'].indexOf(k)>=0;
+        return '<tr><td>'+(i+1)+'</td><td>'+h(nv.ten||'?')+' · '+h((c.boiCanh||'').slice(0,40))+'</td><td>'+h(tenDC(k))+(c.dongCo?' <span class="bd-chip">riêng</span>':'')+'</td>'+
+          '<td><span class="bd-chip" style="'+(phi?'border-color:#B4720F;color:#B4720F':'')+'">'+(phi?'Có phí':'Free')+'</span></td></tr>'; }).join('')+
+      '</tbody></table></div>';
+    o += '<div class="card pad-sm"><b class="sm">Dây chuyền hậu kỳ cao cấp</b><div style="margin-top:8px">'+
+      HAUKY.map(function(x){ return '<label style="display:flex;gap:9px;align-items:center;padding:6px 0;font-size:13px;color:var(--ink-2)">'+
+        '<input type="checkbox"'+(hk[x[0]]?' checked':'')+' onchange="G.ax.hauToggle(\''+x[0]+'\')"> '+h(x[1])+'</label>'; }).join('')+
+      '</div><p class="bd-tip">Thứ tự chạy thật: sinh clip → giọng → lip-sync → giữ mặt → nâng nét → ổn định/khử nhiễu/chỉnh màu → mượt 60fps → phụ đề → ráp + nhạc nền (đặt tệp nhạc vào nhac/). Bật càng nhiều càng nét nhưng tốn thêm giờ GPU.</p></div>';
+    return o;
+  }
+
   function veBang(){
     var p=phimActive();
     var dem={}; TT.forEach(function(t){dem[t.k]=0;}); p.canh.forEach(function(c){dem[c.tt||'']++;});
@@ -386,12 +446,13 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       '</div>';
 
     o += '<div class="row mb" style="gap:6px;flex-wrap:wrap">'+
-      tabBtn('nv','Kho nhân vật')+tabBtn('phim','Phim & phân cảnh')+tabBtn('prompt','Prompt & cấu hình')+tabBtn('bang','Bảng sản xuất')+tabBtn('tudong','Tự động')+'</div>';
+      tabBtn('nv','Kho nhân vật')+tabBtn('phim','Phim & phân cảnh')+tabBtn('prompt','Prompt & cấu hình')+tabBtn('bang','Bảng sản xuất')+tabBtn('kyxao','Kỹ xảo & Động cơ')+tabBtn('tudong','Tự động')+'</div>';
 
     if(G.S.axTab==='nv') o += veNhanVat();
     else if(G.S.axTab==='phim') o += vePhanCanh();
     else if(G.S.axTab==='prompt') o += vePrompt();
     else if(G.S.axTab==='bang') o += veBang();
+    else if(G.S.axTab==='kyxao') o += veKyXao();
     else { o += veTuDong(); var _j=tdCfg().job; if(_j) setTimeout(function(){ try{ G.ax.tdTheoDoi(_j); }catch(e){} }, 0); }
 
     o += '<p class="tiny muted" style="margin-top:14px">'+ic('shield','w-3 h-3')+' Dữ liệu nhân vật & phân cảnh lưu trên máy anh/chị, giữ qua phiên. App không gửi gì ra ngoài; việc sinh video do notebook Kaggle (model mở) thực hiện bằng cấu hình .json tải ở tab "Prompt & cấu hình".</p>';

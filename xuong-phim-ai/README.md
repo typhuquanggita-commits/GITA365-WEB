@@ -44,7 +44,11 @@ cấu hình .json"**. File `.json` đó là đầu vào cho động cơ này.
    `giong/nu-teen.wav`, `giong/nam-treem.wav`, `giong/nu-treem.wav`
    (mỗi file 10–20 giây). Mọi nhân vật cùng giới+tuổi dùng chung một giọng;
    muốn giọng riêng cho một người thì thêm `giong/<id-nhân-vật>.wav`.
-4. Chạy:
+4. (Tuỳ chọn) nhạc nền có bản quyền: đặt vào `nhac/` (mp3/wav). Hậu kỳ trộn ở âm lượng thấp.
+5. Động cơ từng cảnh do app quyết (tab **Kỹ xảo & Động cơ**): mở/free = Wan 2.2 · CogVideoX ·
+   LTX · FramePack; có phí = Veo 3 · Kling · Runway · HeyGen (cần khoá `VEO_API_KEY`…
+   và nối hàm `_goi_api()`; chưa có thì tự hạ về động cơ mở).
+6. Chạy:
 
 ```bash
 # Kiểm tra cấu hình + dựng khung thư mục (KHÔNG cần GPU) — chạy được mọi nơi

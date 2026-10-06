@@ -17,7 +17,7 @@ kiểm cấu hình, dựng khung thư mục và RÁP phim từ các clip đã c�
 Thư mục chuẩn bị:  nhan-vat/<id>.png (ảnh mặt mẫu) · giong/<id>.wav (giọng mẫu)
 Kết quả:           ket-qua/<id_phim>/{anh,clip,giong,phim-cuoi.mp4}
 """
-import os, sys, json, argparse, subprocess, shutil
+import os, sys, json, argparse, subprocess, shutil, glob
 from pathlib import Path
 
 # ───────────────────────── Tiện ích ─────────────────────────
@@ -118,25 +118,78 @@ def buoc_anh(cfg, base):
             try: pipe_id.unload_lora_weights()
             except Exception: pass
 
-# ───────────────────────── 2 · ẢNH → VIDEO ─────────────────────────
-def buoc_video(cfg, base):
-    """CogVideoX-5b I2V: mỗi khung ảnh → clip chuyển động theo prompt_video."""
+# ───────────────────────── 2 · ẢNH → VIDEO (định tuyến nhiều động cơ) ─────────────────────────
+# Mỗi cảnh mang "dong_co" do app quyết (cảnh chọn riêng > tập > tự chọn). Động cơ MỞ chạy ngay trên
+# GPU; động cơ CÓ PHÍ (veo3/kling/runway/heygen) là ĐIỂM NỐI API — chưa có khoá hoặc chưa nối thì tự
+# hạ về động cơ mở, KHÔNG bao giờ làm hỏng cả tập.
+DONG_CO_PHI = {"veo3": "VEO_API_KEY", "kling": "KLING_API_KEY", "runway": "RUNWAY_API_KEY", "heygen": "HEYGEN_API_KEY"}
+
+def _cogvideox():
     import torch
     from diffusers import CogVideoXImageToVideoPipeline
+    pipe = CogVideoXImageToVideoPipeline.from_pretrained("THUDM/CogVideoX-5b-I2V", torch_dtype=torch.bfloat16)
+    pipe.enable_sequential_cpu_offload(); pipe.vae.enable_tiling(); pipe.vae.enable_slicing()
+    def chay(image, prompt, giay):
+        return pipe(image=image, prompt=prompt, num_frames=49, guidance_scale=6,
+                    num_inference_steps=50).frames[0], 8
+    return chay
+
+def _wan():
+    import torch
+    from diffusers import WanImageToVideoPipeline          # cần diffusers >= 0.33
+    pipe = WanImageToVideoPipeline.from_pretrained("Wan-AI/Wan2.1-I2V-14B-480P-Diffusers", torch_dtype=torch.bfloat16)
+    pipe.enable_model_cpu_offload()
+    def chay(image, prompt, giay):
+        n = max(33, min(81, int(16 * float(giay)) // 4 * 4 + 1))
+        return pipe(image=image, prompt=prompt, height=832, width=480, num_frames=n,
+                    guidance_scale=5.0).frames[0], 16
+    return chay
+
+def _ltx():
+    import torch
+    from diffusers import LTXImageToVideoPipeline
+    pipe = LTXImageToVideoPipeline.from_pretrained("Lightricks/LTX-Video", torch_dtype=torch.bfloat16)
+    pipe.enable_model_cpu_offload()
+    def chay(image, prompt, giay):
+        n = max(41, min(161, int(24 * float(giay)) // 8 * 8 + 1))
+        return pipe(image=image, prompt=prompt, width=512, height=768, num_frames=n,
+                    num_inference_steps=40).frames[0], 24
+    return chay
+
+TAO_DONG_CO = {"cogvideox": _cogvideox, "wan": _wan, "ltx": _ltx}
+# FramePack là repo riêng (lllyasviel/FramePack): chưa cài thì dùng Wan cho cảnh dài.
+HA_CAP = {"framepack": "wan", "veo3": "wan", "kling": "wan", "runway": "wan", "heygen": "wan", "auto": "wan"}
+
+def _goi_api(dc, anh, prompt, giay, out):
+    """ĐIỂM NỐI động cơ có phí. Viết hàm gọi API thật của nhà cung cấp vào đây khi có khoá.
+    Trả True nếu đã tạo được `out`; False để hạ về động cơ mở."""
+    if not os.environ.get(DONG_CO_PHI[dc]):
+        log(f"  {dc}: chưa có {DONG_CO_PHI[dc]} → hạ về động cơ mở"); return False
+    log(f"  {dc}: có khoá nhưng CHƯA NỐI API trong mã — điền hàm _goi_api() theo tài liệu nhà cung cấp."
+        " Tạm hạ về động cơ mở."); return False
+
+def buoc_video(cfg, base):
     from diffusers.utils import load_image, export_to_video
-    pipe = CogVideoXImageToVideoPipeline.from_pretrained(
-        "THUDM/CogVideoX-5b-I2V", torch_dtype=torch.bfloat16)
-    pipe.enable_sequential_cpu_offload()   # chạy vừa 16GB VRAM (T4/P100)
-    pipe.vae.enable_tiling(); pipe.vae.enable_slicing()
+    nap = {}                                              # nạp mỗi động cơ một lần
+    def lay(dc):
+        while dc not in TAO_DONG_CO: dc = HA_CAP.get(dc, "cogvideox")
+        if dc not in nap:
+            try: log("nạp động cơ:", dc); nap[dc] = TAO_DONG_CO[dc]()
+            except Exception as e:
+                log(f"  không nạp được {dc} ({str(e)[:100]}) → dùng CogVideoX")
+                if dc == "cogvideox": raise
+                nap[dc] = lay("cogvideox")
+        return nap[dc]
     for c in cfg["canh"]:
         anh = base / "anh" / f"{c['id']}.png"
         out = base / "clip" / f"{c['id']}.mp4"
         if out.exists(): log("bỏ qua clip (đã có):", out.name); continue
         if not anh.exists(): log("THIẾU ảnh cho cảnh", c["id"], "→ chạy bước --run anh trước."); continue
-        image = load_image(str(anh))
-        fps = 8
-        frames = pipe(image=image, prompt=c.get("prompt_video", "chuyển động tự nhiên"),
-                      num_frames=49, guidance_scale=6, num_inference_steps=50).frames[0]
+        dc = c.get("dong_co") or cfg.get("dong_co") or "auto"
+        prompt = c.get("prompt_video", "chuyển động tự nhiên"); giay = c.get("giay", 5)
+        log(f"cảnh {c['id']} · động cơ: {dc}")
+        if dc in DONG_CO_PHI and _goi_api(dc, anh, prompt, giay, out): continue
+        frames, fps = lay(dc)(load_image(str(anh)), prompt, giay)
         export_to_video(frames, str(out), fps=fps)
         log("clip xong:", out.name)
 
@@ -182,14 +235,47 @@ def buoc_lipsync(cfg, base):
         except Exception as e:
             log("bỏ qua lip-sync cảnh", c["id"], "(", str(e)[:80], ")")
 
-# ───────────────────────── 5 · NÂNG NÉT / GIỮ MẶT (tuỳ chọn) ─────────────────────────
+# ───────────────────────── 5 · HẬU KỲ CAO CẤP (theo hau_ky của app) ─────────────────────────
+# Chạy trên từng clip, tại chỗ. Ưu tiên công cụ AI nếu đã cài (GFPGAN/CodeFormer, Real-ESRGAN, RIFE);
+# chưa cài thì dùng bộ lọc ffmpeg tương đương (luôn có trên Kaggle) và NÓI RÕ là bản thay thế.
+def _ff(src, vf, dst):
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-vf", vf,
+                    "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "16", "-c:a", "copy", str(dst)], check=True)
+
+def _thu_ai(lenh, ten):
+    try: subprocess.run(lenh, check=True); return True
+    except Exception: log(f"  {ten}: chưa cài → dùng bản thay thế"); return False
+
 def buoc_nang_net(cfg, base):
-    """Real-ESRGAN + CodeFormer: nâng nét & ổn định khuôn mặt. Điểm nối repo ngoài."""
-    log("Nâng nét: cài Real-ESRGAN/CodeFormer rồi chạy trên từng clip trong", base / "clip",
-        "— bỏ qua nếu chưa cài.")
+    hk = cfg.get("hau_ky") or {}
+    if not co_lenh("ffmpeg"): log("THIẾU ffmpeg — bỏ qua hậu kỳ."); return
+    for c in cfg["canh"]:
+        clip = base / "clip" / f"{c['id']}.mp4"
+        if not clip.exists(): continue
+        tmp = base / "tmp" / f"hk-{c['id']}.mp4"
+        log("hậu kỳ cảnh", c["id"])
+        if hk.get("giuMat", True):            # phục hồi khuôn mặt (AI) — sửa mặt mờ sau I2V/lip-sync
+            if _thu_ai(["python", "GFPGAN/inference_gfpgan_video.py", "-i", str(clip), "-o", str(tmp)], "GFPGAN"):
+                shutil.move(str(tmp), str(clip))
+        if hk.get("napNet", True):            # nâng nét
+            if _thu_ai(["realesrgan-ncnn-vulkan", "-i", str(clip), "-o", str(tmp), "-s", "2"], "Real-ESRGAN"):
+                shutil.move(str(tmp), str(clip))
+            else:
+                _ff(clip, "scale=1080:1920:flags=lanczos:force_original_aspect_ratio=increase,crop=1080:1920,unsharp=5:5:0.6", tmp)
+                shutil.move(str(tmp), str(clip))
+        loc = []
+        if hk.get("onDinh"):   loc.append("deshake")
+        if hk.get("khuNhieu"): loc.append("hqdn3d=1.5:1.5:6:6")
+        if hk.get("chinhMau", True): loc.append("eq=contrast=1.06:saturation=1.08:gamma=0.98,curves=preset=medium_contrast")
+        if hk.get("muot60", True):   loc.append("minterpolate=fps=60:mi_mode=mci:mc_mode=aobmc:vsbmc=1")
+        if loc:
+            _ff(clip, ",".join(loc), tmp); shutil.move(str(tmp), str(clip))
+        log("  hậu kỳ xong:", clip.name)
 
 # ───────────────────────── 6 · PHỤ ĐỀ (faster-whisper) ─────────────────────────
 def buoc_phu_de(cfg, base):
+    if (cfg.get("hau_ky") or {}).get("phuDe") is False:
+        log("Phụ đề: tắt theo cài đặt hậu kỳ."); return
     try:
         from faster_whisper import WhisperModel
     except Exception:
@@ -210,7 +296,8 @@ def buoc_phu_de(cfg, base):
     log("phụ đề (từ thoại) xong:", srt)
 
 # ───────────────────────── 7 · RÁP PHIM (ffmpeg) ─────────────────────────
-def buoc_rap(cfg, base, W=1080, Hh=1920, fps=30):
+def buoc_rap(cfg, base, W=1080, Hh=1920, fps=None):
+    fps = fps or (60 if (cfg.get("hau_ky") or {}).get("muot60") else 30)
     if not co_lenh("ffmpeg"):
         log("THIẾU ffmpeg — cài ffmpeg rồi chạy lại bước ráp."); return
     segs=[]; tmp=base/"tmp"
@@ -237,6 +324,16 @@ def buoc_rap(cfg, base, W=1080, Hh=1920, fps=30):
     lst.write_text("".join(f"file '{s.resolve()}'\n" for s in segs), encoding="utf-8")
     out=base/"phim-cuoi.mp4"
     subprocess.run(["ffmpeg","-y","-f","concat","-safe","0","-i",str(lst),"-c","copy",str(out)], check=True)
+    # Nhạc nền (hau_ky.nhacNen): trộn tệp đầu tiên trong nhac/ ở âm lượng thấp, giữ nguyên giọng
+    nhac = sorted(glob.glob("nhac/*.mp3") + glob.glob("nhac/*.wav") + glob.glob("nhac/*.m4a"))
+    if (cfg.get("hau_ky") or {}).get("nhacNen", True) and nhac:
+        mix = base/"tmp"/"phim-nhac.mp4"
+        subprocess.run(["ffmpeg","-y","-loglevel","error","-i",str(out),"-stream_loop","-1","-i",nhac[0],
+            "-filter_complex","[1:a]volume=0.18[n];[0:a][n]amix=inputs=2:duration=first:dropout_transition=2[a]",
+            "-map","0:v","-map","[a]","-c:v","copy","-c:a","aac","-shortest",str(mix)], check=True)
+        shutil.move(str(mix), str(out)); log("đã trộn nhạc nền:", Path(nhac[0]).name)
+    elif (cfg.get("hau_ky") or {}).get("nhacNen", True):
+        log("Nhạc nền: bật nhưng chưa có tệp trong nhac/ — bỏ qua.")
     # Phụ đề (nếu có) — khắc cứng vào bản phụ đề riêng
     srt=tmp/"phu-de.srt"
     if srt.exists():
@@ -255,9 +352,10 @@ def plan(cfg, base):
     log("PHIM:", cfg["phim"]["ten"], "| cảnh:", len(cfg["canh"]),
         "| tổng ~", sum(c.get("giay",5) for c in cfg["canh"]), "giây")
     log("Pipeline:", json.dumps(cfg.get("pipeline",{}), ensure_ascii=False))
+    log("Hậu kỳ:", json.dumps(cfg.get("hau_ky",{}), ensure_ascii=False))
     for c in cfg["canh"]:
         print(f"   #{c.get('thu_tu')} [{c.get('nhan_vat')}] {c.get('loai')} · {c.get('giay')}s"
-              f" · lip-sync={bool(c.get('lip_sync'))}")
+              f" · lip-sync={bool(c.get('lip_sync'))} · động cơ={c.get('dong_co') or cfg.get('dong_co','auto')}")
         print(f"      ẢNH : {c.get('prompt_anh','')[:90]}")
         print(f"      VIDEO: {c.get('prompt_video','')[:90]}")
         if c.get("thoai"): print(f"      THOẠI: {c['thoai'][:90]}")
