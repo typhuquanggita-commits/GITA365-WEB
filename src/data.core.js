@@ -967,6 +967,7 @@ G.NAV = [
    essence:'Nơi cấp quyền, mở và khoá tài khoản. Mọi thao tác ở đây đều vào nhật ký kèm tên người làm.',
    items:[
     {v:'noi-may-chu', t:'Nối máy chủ',                 h:'Dán địa chỉ · gọi thử · sáu bước dựng', ic:'orbit', perm:'qt_trang', capMo:'chung', star:1},
+    {v:'van-hanh-10', t:'Bảng điều khiển vận hành',      h:'10 màn quản trị A–Z · người & tổ chức · kinh doanh · sản xuất & an toàn', ic:'grid', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'phong-ban',   t:'Hệ thống Phòng ban',          h:'16 ban · nhân sự theo vai · Agent (bấm xem lý lịch) · báo cáo · kho · nội quy', ic:'grid', star:1, perm:'dh_toan_he', capMo:'chung'},
     {v:'nang-luc-ns', t:'Năng lực & Thăng hạng',        h:'Test đầu vào · thi tháng · thăng hạng · lương · cảnh báo năng suất · vinh danh', ic:'chart', star:1, perm:'dh_toan_he', capMo:'chung'},
     /* Khoá khuôn mặt — an ninh tài khoản CỦA MỖI NGƯỜI, nên KHÔNG khoá ở

@@ -3717,3 +3717,24 @@ html[data-may="yeu"] *,html[data-may="yeu"] *::before,html[data-may="yeu"] *::af
   background:var(--surface);color:var(--ink);font-size:14px;font-family:inherit;width:100%}
 .nl-f input:focus,.nl-f select:focus{outline:2px solid var(--gita);outline-offset:-1px;border-color:var(--gita)}
 @media(max-width:560px){.nl-form{grid-template-columns:1fr}}
+
+/* ═══ BẢNG ĐIỀU KHIỂN VẬN HÀNH · 10 MÀN ═══ */
+.vh-luoi{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:14px;margin-bottom:10px}
+.vh-the{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:16px 16px 14px;
+  display:flex;flex-direction:column;gap:9px;transition:.2s;position:relative;overflow:hidden}
+.vh-the::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c)}
+.vh-the:hover{border-color:var(--c);transform:translateY(-2px);box-shadow:0 10px 30px rgba(20,20,60,.09)}
+.vh-the.off{opacity:.62}
+.vh-top{display:flex;align-items:center;justify-content:space-between}
+.vh-so{font-size:14px;font-weight:800;color:var(--c);letter-spacing:.06em;font-variant-numeric:tabular-nums}
+.vh-ic{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;color:var(--c);
+  background:color-mix(in srgb,var(--c) 13%,transparent);border:1px solid color-mix(in srgb,var(--c) 30%,var(--line))}
+.vh-ic svg{width:20px;height:20px}
+.vh-t{font-size:15.5px;font-weight:700;line-height:1.3}
+.vh-mt{margin:0;font-size:12.5px;color:var(--ink-3);line-height:1.5;flex:1}
+.vh-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;
+  margin-top:3px;padding-top:11px;border-top:1px solid var(--line)}
+.vh-stat{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:var(--c)}
+.vh-stat svg{width:13px;height:13px;flex:none}
+.vh-khoa{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;color:var(--ink-4)}
+.vh-khoa svg{width:13px;height:13px}

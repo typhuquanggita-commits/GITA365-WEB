@@ -51,7 +51,7 @@ var G = window.G || {}; window.G = G;
 
   /* ── KHỐI NGHIỆP VỤ — ứng viên theo vai, renderer cắt theo cap ──
      Ứng viên luôn nhiều hơn cap một chút, để sau khi lọc quyền vẫn đủ. */
-  var AZ10 = ['nghe-quantri','phan-quyen','phong-ban','tai-chinh-qt','nang-luc-ns','studio',
+  var AZ10 = ['van-hanh-10','nghe-quantri','phan-quyen','phong-ban','tai-chinh-qt','nang-luc-ns','studio',
               'crm','noi-dung-tiep-thi','bang-gia','la-chan-30','khoa-dao-tao',
               'bang-viec','dieu-hanh','truy-van-da-chieu','tang-truong'];
   G.KG_VIEC = {
