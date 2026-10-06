@@ -34,7 +34,7 @@ function save(){
        văn phòng thì Coach đăng xuất, phụ huynh đăng nhập vào cùng trình
        duyệt — không ghi tên chủ sổ thì bằng chứng đóng việc của Coach,
        viết về nhà nào có chuyện gì, nằm lại trong máy cho người sau. */
-    viec:G.S.viec, chotNgay:G.S.chotNgay, chotKhNgay:G.S.chotKhNgay, caiTien:G.S.caiTien, mua:G.S.mua, vet:G.S.vet, viecCua:G.S.viecCua,
+    viec:G.S.viec, chotNgay:G.S.chotNgay, chotKhNgay:G.S.chotKhNgay, caiTien:G.S.caiTien, mua:G.S.mua, vet:G.S.vet, viecCua:G.S.viecCua, cvSangKien:G.S.cvSangKien,
     /* Bàn cờ hành trình. Thiếu dòng này thì mọi quân nhà mình đặt bay
        hết khi tải lại trang — và một bàn cờ xoá được mỗi lần F5 thì
        nhìn nó không còn nghĩa gì. */
@@ -79,6 +79,7 @@ function load(){
     G.S.chotNgay = d.chotNgay || {};
     G.S.chotKhNgay = d.chotKhNgay || {};
     G.S.caiTien = d.caiTien || {};
+    G.S.cvSangKien = d.cvSangKien || {};
     G.S.mua = d.mua || null;
     G.S.vet = d.vet || [];
     G.S.viecCua = d.viecCua || null;
@@ -1420,6 +1421,8 @@ on('[data-cvduong]',  function(el){ G.cvMoDuongDi(el.getAttribute('data-cvduong'
 on('[data-cvdong]',   function(el){ G.cvDongThat(el.getAttribute('data-cvdong')); });
 on('[data-cvchuyenthat]', function(el){ G.cvChuyenThat(el.getAttribute('data-cvchuyenthat')); });
 on('[data-cvchot]',   function(){ G.cvChotHoiDap(); });
+on('[data-cvsk]',     function(el){ G.cvMoSangKien(el.getAttribute('data-cvsk')); });
+on('[data-cvsklu]',   function(el){ G.cvLuuSangKien(el.getAttribute('data-cvsklu')); });
 on('[data-khchot]',   function(){ G.khChotHoiDap(); });
 on('[data-v]', function(el){ G.go(el.getAttribute('data-v')); });
 on('[data-go]', function(el){ document.getElementById('cmd').classList.remove('on'); G.go(el.getAttribute('data-go')); });

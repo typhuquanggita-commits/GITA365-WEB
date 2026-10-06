@@ -79,20 +79,17 @@ G.VIEWS = G.VIEWS || {};
         '<button class="btn pri" data-cvchot="1">' + ic('check') + 'Chốt ngày hôm nay</button>') +
       '</div></div>';
 
-    /* Bốn cột — trễ đứng đầu */
-    var thuTu = ['tre', 'dang', 'moi', 'xong'];
-    o += '<div class="grid g2">' + thuTu.map(function (t) {
-      var tr = trangCua(t), ds = bo[t];
-      return '<div class="card mb" style="border-color:' + tr.c + '2e">' +
-        '<div class="row wrap mb" style="gap:8px;align-items:center">' +
-        '<span style="color:' + tr.c + ';flex:none">' + ic(tr.ic, 'w-4 h-4') + '</span>' +
-        '<b style="color:' + tr.c + ';font-size:16px">' + h(tr.ten) + '</b>' +
-        '<span class="chip" style="color:' + tr.c + ';border-color:' + tr.c + '40">' + ds.length + '</span></div>' +
-        '<p class="tiny muted mb" style="line-height:1.6">' + h(tr.y) + '</p>' +
-        (ds.length ? ds.map(function (v) { return the(v, t, tr); }).join('')
-          : '<p class="tiny" style="color:var(--ink-4);padding:8px 0">Không có việc nào ở cột này.</p>') +
-        '</div>';
-    }).join('') + '</div>';
+    /* HAI DẠNG XEM — Bảng chi tiết (CRM) mặc định · Dạng cột (kanban cũ).
+       Chọn bằng ô radio ẩn (CSS thuần), không thêm trạng thái, không sửa
+       app.js. Radio và hai panel là anh em cùng cấp để bộ chọn ~ chạy. */
+    o += '<input type="radio" name="cvDang" id="cvDang-bang" class="cvt-radio" checked>' +
+      '<input type="radio" name="cvDang" id="cvDang-cot" class="cvt-radio">' +
+      '<div class="cvt-seg">' +
+        '<label for="cvDang-bang">' + ic('grid', 'w-4 h-4') + ' Bảng chi tiết</label>' +
+        '<label for="cvDang-cot">' + ic('list', 'w-4 h-4') + ' Dạng cột</label>' +
+      '</div>';
+    o += '<div class="cvt-panel" id="cvt-p-bang">' + veBangChiTiet() + '</div>';
+    o += '<div class="cvt-panel" id="cvt-p-cot">' + veCot(bo) + '</div>';
 
     /* Liên đới */
     if (lienDoi.length) {
@@ -143,6 +140,153 @@ G.VIEWS = G.VIEWS || {};
     }
     return o + '</div>';
   }
+
+  /* ═══════════ DẠNG CỘT (kanban cũ, tách ra để dùng lại) ═══════════ */
+  function veCot(bo) {
+    var thuTu = ['tre', 'dang', 'moi', 'xong'];
+    return '<div class="grid g2">' + thuTu.map(function (t) {
+      var tr = trangCua(t), ds = bo[t];
+      return '<div class="card mb" style="border-color:' + tr.c + '2e">' +
+        '<div class="row wrap mb" style="gap:8px;align-items:center">' +
+        '<span style="color:' + tr.c + ';flex:none">' + ic(tr.ic, 'w-4 h-4') + '</span>' +
+        '<b style="color:' + tr.c + ';font-size:16px">' + h(tr.ten) + '</b>' +
+        '<span class="chip" style="color:' + tr.c + ';border-color:' + tr.c + '40">' + ds.length + '</span></div>' +
+        '<p class="tiny muted mb" style="line-height:1.6">' + h(tr.y) + '</p>' +
+        (ds.length ? ds.map(function (v) { return the(v, t, tr); }).join('')
+          : '<p class="tiny" style="color:var(--ink-4);padding:8px 0">Không có việc nào ở cột này.</p>') +
+        '</div>';
+    }).join('') + '</div>';
+  }
+
+  /* ═══════════ BẢNG CHI TIẾT KIỂU CRM ═══════════
+     Mỗi đầu việc của vai đang đăng nhập là MỘT DÒNG. Cột theo yêu cầu:
+     STT · Đầu mục · Nội dung · Quy trình · Tiến độ · Báo cáo · KPI ·
+     Sáng kiến · Trợ lý GITA. Đọc dữ liệu sống (cvMucCuaToi + sổ việc),
+     mọi nút tái dùng handler cũ (data-cvnhan/batdau/xong/chuyen/duong).
+     Chỉ hiện cho vai CÓ đầu việc — gia đình không vào đây. */
+
+  /* Bản ghi để hiện cho một đầu mục: ưu tiên bản đang mở, không thì bản mới nhất. */
+  function recCua(ma) {
+    var s = G.cvSo() || {}, mo = null, moi = null;
+    for (var k in s) {
+      if (s[k].ma !== ma) continue;
+      if (!s[k].xongLuc && !mo) mo = s[k];
+      if (!moi || s[k].nhanLuc > moi.nhanLuc) moi = s[k];
+    }
+    return mo || moi;
+  }
+  function trangKey(v) {
+    if (!v) return 'chua';
+    if (v.xongLuc) return 'xong';
+    if (v.hanLuc < Date.now()) return 'tre';
+    if (v.batDauLuc) return 'dang';
+    return 'moi';
+  }
+  function trangGon(tk) {
+    if (tk === 'chua') return { ten: 'Chưa nhận', c: 'var(--ink-4)', ic: 'dot' };
+    return trangCua(tk);
+  }
+  /* Gợi ý ngắn của Trợ lý GITA theo trạng thái — một câu, dẫn việc. */
+  function troLyGoi(tk, m) {
+    if (tk === 'tre') return 'Trễ hạn — ưu tiên đóng ngay kèm bằng chứng trước mọi việc khác.';
+    if (tk === 'dang') return 'Đang làm — gom đúng bằng chứng cho "' + (m.xong ? 'điều kiện đóng' : 'việc này') + '" để đóng gọn.';
+    if (tk === 'moi') return 'Mới nhận — bấm Bắt đầu để đồng hồ minh bạch, rồi làm theo quy trình.';
+    if (tk === 'xong') return 'Đã đóng — ghi một sáng kiến để lần sau nhanh hơn.';
+    return 'Nhận việc này khi tới nhịp; Trợ lý sẽ dẫn từng bước.';
+  }
+
+  function oHanhDong(tk, v, m) {
+    if (tk === 'chua') return '<button class="btn pri sm cvt-act" data-cvnhan="' + h(m.ma) + '">Nhận</button>';
+    if (tk === 'xong') return '<span class="tiny" style="color:#0B7350;font-weight:700">✓ đã đóng</span>';
+    var b = '';
+    if (tk === 'moi') b += '<button class="btn ghost sm cvt-act" data-cvbatdau="' + h(v.id) + '">Bắt đầu</button>';
+    b += '<button class="btn ' + (tk === 'tre' ? 'pri' : 'ghost') + ' sm cvt-act" data-cvxong="' + h(v.id) + '">Đóng</button>';
+    if (m.chuyen) b += '<button class="btn ghost sm cvt-act" data-cvchuyen="' + h(v.id) + '">Chuyển</button>';
+    b += '<button class="btn ghost sm cvt-act" data-cvduong="' + h(v.id) + '">Đường đi</button>';
+    return b;
+  }
+
+  function veBangChiTiet() {
+    var ds = G.cvMucCuaToi();
+    if (!ds.length) return '<div class="card center" style="padding:28px">' +
+      '<b>Vị trí này chưa có đầu việc chuẩn</b>' +
+      '<p class="sm muted mt">Danh mục mở cho tài khoản chưa gắn đầu việc nào cho vị trí đang đăng nhập.</p></div>';
+
+    var COT = ['STT', 'Đầu mục', 'Nội dung công việc', 'Quy trình', 'Tiến độ', 'Báo cáo kết quả', 'KPI', 'Sáng kiến', 'Trợ lý GITA'];
+    var MAU = ['var(--ink-4)', 'var(--gita-sau)', 'var(--ink)', '#5140B4', '#B4720F', '#0B6675', '#0B7350', 'var(--gita-ink)', 'var(--gita)'];
+    var head = '<tr>' + COT.map(function (c, i) {
+      return '<th style="--cc:' + MAU[i] + '">' + h(c) + '</th>';
+    }).join('') + '</tr>';
+
+    var body = ds.map(function (m, i) {
+      var v = recCua(m.ma), tk = trangKey(v), tr = trangGon(tk);
+      var nhip = (G.TG_NHIEMVU || []).filter(function (x) { return x.ma === m.nhip; })[0] || {};
+      var sk = ((G.S && G.S.cvSangKien) || {})[m.ma] || '';
+      var muon = v && v.xongLuc && v.xongLuc > v.hanLuc;
+
+      var cTien = '<span class="cvt-trang" style="--tc:' + tr.c + '">' + ic(tr.ic, 'w-3 h-3') + ' ' + h(tr.ten) + '</span>' +
+        (v && tk !== 'chua' && tk !== 'xong' ? '<div class="tiny ' + (tk === 'tre' ? 'cvt-tre' : 'muted') + '" style="margin-top:3px">' + h(conLai(v)) + '</div>' : '') +
+        (tk === 'xong' ? '<div class="tiny" style="margin-top:3px;color:' + (muon ? '#BE0E16' : '#0B7350') + '">' + (muon ? 'đóng muộn' : 'đúng hạn') + '</div>' : '') +
+        '<div class="cvt-acts">' + oHanhDong(tk, v, m) + '</div>';
+
+      var cBao = (v && v.bangChung)
+        ? '<div class="cvt-bc">' + h(v.bangChung) + '</div>'
+        : '<span class="tiny" style="color:var(--ink-4)">— chưa có —</span>';
+
+      var cKpi = '<b style="color:#0B7350">' + (m.diem || 0) + '</b> <span class="tiny muted">điểm</span>' +
+        (tk === 'xong' ? '<div class="tiny" style="color:#0B7350;margin-top:2px">✓ đã tính</div>'
+          : '<div class="tiny muted" style="margin-top:2px">khi đóng</div>');
+
+      var cSk = (sk ? '<div class="cvt-sk">' + h(sk) + '</div>' : '<span class="tiny" style="color:var(--ink-4)">chưa có</span>') +
+        '<button class="btn ghost sm cvt-act" style="margin-top:5px" data-cvsk="' + h(m.ma) + '">' + ic('edit', 'w-3 h-3') + (sk ? ' Sửa' : ' Thêm') + '</button>';
+
+      var cTro = '<div class="tiny cvt-tip">' + h(troLyGoi(tk, m)) + '</div>' +
+        '<button class="btn ghost sm cvt-act" style="margin-top:5px" data-v="tro-ly-ai">' + ic('chat', 'w-3 h-3') + ' Hỏi Trợ lý</button>';
+
+      return '<tr>' +
+        '<td class="cvt-stt">' + (i + 1) + '</td>' +
+        '<td><span class="chip" style="color:var(--gita-ink);border-color:var(--gita-vien-1)">' + h(m.ma) + '</span>' +
+          (nhip.ten ? '<div class="tiny muted" style="margin-top:4px">' + h(nhip.ten) + '</div>' : '') + '</td>' +
+        '<td><b class="cvt-ten">' + h(m.ten || '') + '</b>' + (m.mo ? '<div class="tiny muted cvt-mo">' + h(m.mo) + '</div>' : '') + '</td>' +
+        '<td><div class="tiny"><b>Đóng khi:</b> ' + h(m.xong || '—') + '</div>' +
+          (m.chuyen ? '<div class="tiny" style="color:#5140B4;margin-top:3px">→ chuyển ' + h(tenVai(m.chuyen)) + '</div>' : '') + '</td>' +
+        '<td>' + cTien + '</td>' +
+        '<td>' + cBao + '</td>' +
+        '<td class="cvt-kpi">' + cKpi + '</td>' +
+        '<td>' + cSk + '</td>' +
+        '<td>' + cTro + '</td>' +
+      '</tr>';
+    }).join('');
+
+    return '<div class="cvt-wrap"><table class="cvt-table"><thead>' + head + '</thead><tbody>' + body + '</tbody></table></div>' +
+      '<p class="tiny muted" style="margin-top:8px;line-height:1.6">' + ic('shield', 'w-3 h-3') +
+      ' Bảng chỉ hiện đầu việc của vị trí bạn — không thấy việc của vai khác. Cuộn ngang để xem đủ cột trên màn hẹp.</p>';
+  }
+
+  /* ─── Sáng kiến cho một đầu việc (lưu theo máy, bền qua tải lại) ─── */
+  G.cvMoSangKien = function (ma) {
+    var m = G.cvMuc(ma) || {};
+    var cur = ((G.S && G.S.cvSangKien) || {})[ma] || '';
+    U.modal(
+      '<h2 style="font-size:21px;font-weight:800;margin-bottom:4px">Sáng kiến · ' + h(ma) + '</h2>' +
+      '<p class="sm muted" style="margin-bottom:12px">' + h(m.ten || '') + '</p>' +
+      '<label class="tiny up muted">Ý TƯỞNG LÀM NHANH HƠN / TỐT HƠN</label>' +
+      '<textarea id="cvSk" class="inp blk" rows="4" style="resize:vertical" ' +
+      'placeholder="Cách rút gọn bước nào, mẫu nào dùng lại được, chỗ nào hay vướng...">' + h(cur) + '</textarea>' +
+      '<button class="btn pri blk mt" data-cvsklu="' + h(ma) + '">Lưu sáng kiến</button>' +
+      '<button class="btn ghost blk mt" data-act="dong-modal">Để sau</button>'
+    );
+  };
+  G.cvLuuSangKien = function (ma) {
+    var el = document.getElementById('cvSk');
+    if (!G.S.cvSangKien) G.S.cvSangKien = {};
+    var t = el ? el.value.trim() : '';
+    if (t) G.S.cvSangKien[ma] = t; else delete G.S.cvSangKien[ma];
+    if (G.save) G.save();
+    U.closeModal();
+    bao('Đã lưu sáng kiến.', 'ok');
+    veLai();
+  };
 
   /* ═══════════ DANH MỤC ĐẦU VIỆC ═══════════ */
   G.VIEWS['danh-muc-viec'] = function () {
