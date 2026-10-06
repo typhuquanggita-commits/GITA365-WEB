@@ -198,6 +198,20 @@ G.nhaMoChang = function (el) {
     o += '<p class="note nha-nhac">' + ic('lock') +
       ' Phần mờ là phòng của vai khác — đăng nhập đúng vai thì mở.</p>';
 
+    /* BÀN CỜ 365 NGÀY — đặt NGAY DƯỚI ngôi nhà. Gia đình mở nhà ra là
+       thấy hành trình của mình ngay bên dưới; các vai khác thấy bàn cờ
+       điều hướng theo phạm vi của mình. Thân bàn cờ tự lọc theo quyền
+       (G.allowed), nên không lộ màn ngoài quyền. */
+    if (typeof G.banCoThan === 'function') {
+      var lvNha = ((G.S && G.S.roleObj) || {}).lv || 15;
+      o += '<div class="hd nha-banco-hd"><h2>' + ic('grid') + ' ' +
+        (lvNha >= 13 ? 'Bàn cờ 365 ngày — hành trình của nhà mình' : 'Bàn cờ điều hướng') + '</h2>' +
+        '<p class="sub">' + (lvNha >= 13
+          ? 'Năm chặng theo 365 ngày — bấm một ô để mở đúng màn.'
+          : 'Mở từng tab một, theo đúng phạm vi của bạn.') + '</p></div>';
+      o += '<div class="nha-banco">' + G.banCoThan() + '</div>';
+    }
+
     return o;
   };
 })();

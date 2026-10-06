@@ -50545,6 +50545,20 @@ G.nhaMoChang = function (el) {
     o += '<p class="note nha-nhac">' + ic('lock') +
       ' Phần mờ là phòng của vai khác — đăng nhập đúng vai thì mở.</p>';
 
+    /* BÀN CỜ 365 NGÀY — đặt NGAY DƯỚI ngôi nhà. Gia đình mở nhà ra là
+       thấy hành trình của mình ngay bên dưới; các vai khác thấy bàn cờ
+       điều hướng theo phạm vi của mình. Thân bàn cờ tự lọc theo quyền
+       (G.allowed), nên không lộ màn ngoài quyền. */
+    if (typeof G.banCoThan === 'function') {
+      var lvNha = ((G.S && G.S.roleObj) || {}).lv || 15;
+      o += '<div class="hd nha-banco-hd"><h2>' + ic('grid') + ' ' +
+        (lvNha >= 13 ? 'Bàn cờ 365 ngày — hành trình của nhà mình' : 'Bàn cờ điều hướng') + '</h2>' +
+        '<p class="sub">' + (lvNha >= 13
+          ? 'Năm chặng theo 365 ngày — bấm một ô để mở đúng màn.'
+          : 'Mở từng tab một, theo đúng phạm vi của bạn.') + '</p></div>';
+      o += '<div class="nha-banco">' + G.banCoThan() + '</div>';
+    }
+
     return o;
   };
 })();
@@ -50675,7 +50689,9 @@ G.VIEWS = G.VIEWS || {};
     return '<section class="bct-tabwrap">' + radios + bar + body + '</section>';
   }
 
-  G.VIEWS['ban-co-tong'] = function () {
+  /* Thân bàn cờ (thanh vai + lời bảo mật + thanh Tab) — KHÔNG kèm tiêu đề
+     màn, để nhúng được ngay dưới ngôi nhà mà không đụng U.ph. */
+  G.banCoThan = function () {
     var r = (G.S && G.S.roleObj) || { lv: 15, n: 'Khách' };
     var lv = r.lv || 15;
     var isAdmin = lv <= 2;
@@ -50683,18 +50699,8 @@ G.VIEWS = G.VIEWS || {};
     var ds = khoangThay();
     var thay = ds.reduce(function (a, b) { return a + b.vis.length; }, 0);
     var tong = (G.NAV || []).reduce(function (a, b) { return a + (b.items ? b.items.length : 0); }, 0);
-
-    var head = U.ph({
-      eyebrow: 'BÀN CỜ TỔNG · HỆ SINH THÁI GITA 365', ic: 'grid', grad: 1,
-      t: isCust ? 'Hành trình của nhà mình' : 'Bàn cờ điều hướng',
-      lead: isAdmin
-        ? ('Bấm từng tab để mở một khoang — mỗi lần một phần, không đổ hết ra màn hình. Bấm một ô là mở thẳng màn đó.')
-        : (isCust
-            ? ('Hành trình chia năm chặng — mỗi chặng một tab, mở dần theo tầng. Bấm một ô để mở màn.')
-            : ('Các khoang trong phạm vi vai của bạn — mở từng tab một. Bấm một ô để mở màn.'))
-    });
-
     var pct = tong ? Math.round(thay / tong * 100) : 0;
+
     var bar = '<div class="bct-rolebar">' +
       '<div class="bct-rb-who"><b>' + h(r.n || 'Khách') + '</b>' +
         '<span>Bậc ' + h(lv) + ' · ' + (isAdmin ? 'toàn quyền hệ thống' : (isCust ? 'gia đình' : 'đội ngũ')) + '</span></div>' +
@@ -50715,7 +50721,25 @@ G.VIEWS = G.VIEWS || {};
       '</p></div>';
 
     var than = isCust ? tabChang(ds) : tabKhoang(ds, isAdmin);
-    return head + bar + note + than;
+    return bar + note + than;
+  };
+
+  /* Tiêu đề màn theo vai — dùng cho màn đứng riêng và khi nhúng dưới nhà. */
+  G.banCoTieuDe = function () {
+    var lv = ((G.S && G.S.roleObj) || {}).lv || 15;
+    return {
+      eyebrow: 'BÀN CỜ 365 NGÀY · HỆ SINH THÁI GITA 365', ic: 'grid', grad: 1,
+      t: lv >= 13 ? 'Hành trình của nhà mình' : 'Bàn cờ điều hướng',
+      lead: lv <= 2
+        ? 'Bấm từng tab để mở một khoang — mỗi lần một phần, không đổ hết ra màn hình. Bấm một ô là mở thẳng màn đó.'
+        : (lv >= 13
+            ? 'Hành trình chia năm chặng — mỗi chặng một tab, mở dần theo tầng. Bấm một ô để mở màn.'
+            : 'Các khoang trong phạm vi vai của bạn — mở từng tab một. Bấm một ô để mở màn.')
+    };
+  };
+
+  G.VIEWS['ban-co-tong'] = function () {
+    return U.ph(G.banCoTieuDe()) + G.banCoThan();
   };
 })();
 

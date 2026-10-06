@@ -3325,3 +3325,6 @@ html[data-may="yeu"] *,html[data-may="yeu"] *::before,html[data-may="yeu"] *::af
 #bct-c3:checked ~ .bct-tabbar label[for="bct-c3"] .bct-tab-no,#bct-c4:checked ~ .bct-tabbar label[for="bct-c4"] .bct-tab-no,
 #bct-c5:checked ~ .bct-tabbar label[for="bct-c5"] .bct-tab-no{background:rgba(255,255,255,.26)}
 @media(max-width:640px){.bct-tab-t{max-width:33vw}}
+/* Bàn cờ 365 ngày nhúng dưới ngôi nhà */
+.nha-banco-hd{margin-top:34px}
+.nha-banco{margin-top:4px}
