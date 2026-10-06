@@ -65462,12 +65462,24 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   var NGON = [['vi','Tiếng Việt'],['en','Tiếng Anh']];
   var KGITA_STYLE = 'phong cách thương hiệu GITA365 cao cấp, sang trọng hiện đại, tông xanh dương và vàng gold, ánh sáng điện ảnh ấm, chất lượng điện ảnh';
   var KGITA_CANH  = 'sảnh hệ sinh thái giáo dục GITA365 sang trọng, bảng LED lớn phát sáng logo GITA365, sàn đá cẩm thạch bóng, cây xanh, nội thất hiện đại tông xanh dương – vàng gold';
+  /* Bối cảnh chuẩn cho chương trình ĐÀO TẠO / COACH của GITA (khớp bộ ảnh Trainer) */
+  var COACH_CANH = [
+    ['','— chọn bối cảnh đào tạo / coach —'],
+    ['Phòng hội thảo GITA sáng, hàng ghế gọn gàng, cửa kính, cây xanh, ánh sáng tự nhiên','Phòng hội thảo'],
+    ['Bục giảng studio GITA, màn hình lớn phía sau, vách gỗ, ánh sáng điện ảnh ấm','Bục giảng studio'],
+    ['Lớp học bảng trắng, không gian đào tạo hiện đại, cây xanh, ánh sáng tự nhiên','Lớp học bảng trắng'],
+    ['Văn phòng điều hành GITA cao cấp, kệ sách gỗ, cửa kính nhìn thành phố, đèn ấm','Văn phòng điều hành'],
+    ['Sân khấu sự kiện GITA, nền xanh dương – vàng gold, đèn sân khấu, mic cài tai','Sân khấu sự kiện'],
+    ['Phòng coach 1-1 ấm cúng, ghế sofa, cây xanh, ánh sáng mềm','Phòng coach 1-1'],
+    ['Phòng khách sang trọng, kệ sách, cây xanh, đèn ấm','Phòng khách']
+  ];
 
   function initData(){
     if(!G.S.axNV){ G.S.axNV = [
-      { id:'nv-trainer', ten:'Chuyên gia GITA (Trainer)', loai:'nguoi', vai:'trainer', gioi:'nam', tuoi:'lon',
-        mota:'Nam chuyên gia Á Đông ~35 tuổi, tóc ngắn đen gọn, đeo kính gọng đen, da sáng, gương mặt điềm đạm tin cậy',
-        trangPhuc:'Vest xanh navy, sơ mi trắng', giong:'Nam trầm ấm', seed:'101', lora:'(chưa train)', ghiChu:'Dẫn dắt, tư vấn' },
+      { id:'nv-trainer', ten:'Trainer Trương Nhật Quang', loai:'nguoi', vai:'trainer', gioi:'nam', tuoi:'lon', khoaMat:true,
+        mota:'Nam trainer/giảng viên Á Đông ~35–40 tuổi, tóc ngắn đen gọn, đeo kính gọng đen, gương mặt điềm đạm trí tuệ, ánh mắt cuốn hút',
+        phongCach:'phong thái tự tin, chuyên nghiệp, truyền cảm hứng; blazer lịch lãm (xám / navy / đỏ đô) phối sơ mi trắng hoặc polo tối màu',
+        trangPhuc:'Blazer xám hoặc navy hoặc đỏ đô, sơ mi trắng (hoặc polo)', giong:'Nam trầm ấm', seed:'101', lora:'(chưa train)', ghiChu:'Trainer thương hiệu GITA · chương trình đào tạo & coach · KHOÁ MẶT + PHONG CÁCH (train LoRA nv-trainer)' },
       { id:'nv-mc', ten:'MC GITA (thương hiệu)', loai:'nguoi', vai:'mc', gioi:'nu', tuoi:'lon', khoaMat:true,
         mota:'Nữ MC thương hiệu GITA Á Đông ~28–30 tuổi, tóc dài gợn sóng nâu đen, gương mặt thanh tú, nụ cười rạng rỡ, khí chất sang trọng chuyên nghiệp, phù hiệu GITA trên ngực áo',
         trangPhuc:'Vest nữ kem/trắng thanh lịch (hoặc xanh nhạt), chân váy, giày cao gót', giong:'Nữ truyền cảm', seed:'202', lora:'(chưa train)', ghiChu:'MC dẫn chương trình & nhân vật phim · KHOÁ MẶT (train LoRA nv-mc)' },
@@ -65488,7 +65500,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       { id:'phim-1', ten:'Tập 1 — Hành trình GITA 365', mota:'Giới thiệu hành trình 5 tầng, dạng người dẫn + cảnh minh hoạ',
         ngonNgu:'vi', phongCachGita:true,
         canh:[
-          { id:uid('c'), nvId:'nv-trainer', loai:'nguoi', boiCanh:'Phòng khách ấm cúng, cây xanh, ánh sáng tự nhiên', may:'Cận cảnh ngang mặt, tĩnh', chuyenDong:'Người ngồi nói, gật đầu nhẹ, tay đan', thoai:'Chào anh chị, hành trình thịnh vượng của gia đình bắt đầu từ một quyết định.', giay:5, tt:'' },
+          { id:uid('c'), nvId:'nv-trainer', loai:'nguoi', boiCanh:'Bục giảng studio GITA, màn hình lớn phía sau, vách gỗ, ánh sáng điện ảnh ấm', may:'Trung cảnh, máy tĩnh ngang ngực', chuyenDong:'Đứng dẫn, cử động tay truyền cảm hứng, gật đầu nhẹ', thoai:'Chào anh chị, hành trình thịnh vượng của gia đình bắt đầu từ một quyết định.', giay:5, tt:'' },
           { id:uid('c'), nvId:'nv-mc', loai:'nguoi', boiCanh:'Trường quay sáng, màn hình lớn phía sau', may:'Trung cảnh, máy lia nhẹ sang phải', chuyenDong:'Đứng thuyết trình, tay chỉ về màn hình', thoai:'GITA đồng hành cùng gia đình qua năm tầng phát triển.', giay:5, tt:'' },
           { id:uid('c'), nvId:'nv-bo', loai:'canh', boiCanh:'Vườn tre, cả gia đình cùng đi dạo trò chuyện', may:'Toàn cảnh, máy đi lùi theo bước chân', chuyenDong:'Cả nhà đi bộ, trò chuyện, cùng cười', thoai:'', giay:5, tt:'' }
         ] }
@@ -65517,6 +65529,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       '</div>'+
       '<p class="bd-tip">Giọng tự chọn theo giới tính + độ tuổi (vd Nam người lớn → "Nam trầm ấm"). Dùng mẫu giọng <b>giong/&lt;giới-tuổi&gt;.wav</b> trên Kaggle.</p>'+
       '<div class="bd-field"><span>Mô tả ngoại hình (giữ nhân vật nhất quán)</span><textarea id="f-mota" rows="3" style="'+ss+'">'+h(e.mota)+'</textarea></div>'+
+      '<div class="bd-field"><span>Phong cách (thần thái + wardrobe — khoá chất riêng)</span><input type="text" id="f-phongcach" value="'+h(e.phongCach||'')+'" placeholder="VD: tự tin, truyền cảm hứng; blazer xám/navy/đỏ đô phối sơ mi"></div>'+
       '<div class="bd-field"><span>Trang phục mặc định</span><input type="text" id="f-tp" value="'+h(e.trangPhuc)+'"></div>'+
       '<div class="grid g2"><div class="bd-field"><span>Seed (giữ khuôn mặt)</span><input type="text" id="f-seed" value="'+h(e.seed)+'"></div>'+
       '<div class="bd-field"><span>Tên LoRA (nếu có)</span><input type="text" id="f-lora" value="'+h(e.lora)+'"></div></div>'+
@@ -65531,7 +65544,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     function v(x){ var el=document.getElementById(x); return el?(el.value||'').trim():''; }
     var gioi=v('f-gioi')||'nam', tuoi=v('f-tuoi')||'lon';
     var o = { ten:v('f-ten')||'Nhân vật', vai:v('f-vai')||'dienvien', gioi:gioi, tuoi:tuoi, loai:'nguoi',
-      mota:v('f-mota'), trangPhuc:v('f-tp'), giong:giongTen(gioi,tuoi), seed:v('f-seed'), lora:v('f-lora'),
+      mota:v('f-mota'), phongCach:v('f-phongcach'), trangPhuc:v('f-tp'), giong:giongTen(gioi,tuoi), seed:v('f-seed'), lora:v('f-lora'),
       khoaMat:!!(document.getElementById('f-khoamat')||{}).checked, ghiChu:v('f-gc') };
     if(id){ var nv=nvById(id); if(nv) Object.assign(nv,o); }
     else { o.id=uid('nv'); G.S.axNV.push(o); }
@@ -65566,7 +65579,10 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     return '<h3 class="mb">'+(c?'Sửa cảnh':'Thêm cảnh')+'</h3>'+
       '<div class="grid g2"><div class="bd-field"><span>Nhân vật</span><select id="f-nv" style="padding:8px;border:1px solid var(--line);border-radius:9px">'+opts+'</select></div>'+
       '<div class="bd-field"><span>Loại cảnh</span><div class="bd-seg"><button type="button" class="'+(e.loai==='nguoi'?'on':'')+'" onclick="this.parentNode.querySelectorAll(\'button\').forEach(function(b){b.classList.remove(\'on\')});this.classList.add(\'on\');window.__cloai=\'nguoi\'">Người dẫn nói</button><button type="button" class="'+(e.loai==='canh'?'on':'')+'" onclick="this.parentNode.querySelectorAll(\'button\').forEach(function(b){b.classList.remove(\'on\')});this.classList.add(\'on\');window.__cloai=\'canh\'">Cảnh diễn</button></div></div></div>'+
-      '<div class="bd-field"><span>Bối cảnh</span><input type="text" id="f-bc" value="'+h(e.boiCanh)+'" placeholder="VD: trường quay sáng, màn hình lớn"><button type="button" class="btn ghost sm" style="margin-top:6px;align-self:flex-start" onclick="G.ax.canhKgita()">+ Dùng không gian GITA</button></div>'+
+      '<div class="bd-field"><span>Bối cảnh</span><input type="text" id="f-bc" value="'+h(e.boiCanh)+'" placeholder="VD: trường quay sáng, màn hình lớn">'+
+        '<div class="row" style="gap:6px;margin-top:6px;flex-wrap:wrap"><select onchange="if(this.value)document.getElementById(\'f-bc\').value=this.value" style="padding:7px;border:1px solid var(--line);border-radius:9px">'+
+          COACH_CANH.map(function(x){return '<option value="'+h(x[0])+'">'+h(x[1])+'</option>';}).join('')+'</select>'+
+          '<button type="button" class="btn ghost sm" onclick="G.ax.canhKgita()">+ Không gian GITA</button></div></div>'+
       '<div class="bd-field"><span>Máy quay (góc · chuyển động)</span><input type="text" id="f-may" value="'+h(e.may)+'" placeholder="VD: trung cảnh, máy lia nhẹ sang phải"></div>'+
       '<div class="bd-field"><span>Chuyển động nhân vật</span><input type="text" id="f-cd" value="'+h(e.chuyenDong)+'" placeholder="VD: đứng nói, tay chỉ màn hình"></div>'+
       '<div class="bd-field"><span>Thoại (để trống nếu cảnh không lời)</span><textarea id="f-thoai" rows="2">'+h(e.thoai)+'</textarea></div>'+
@@ -65594,7 +65610,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   function promptCanh(c){
     var nv=nvById(c.nvId)||{};
     var noi = c.loai==='nguoi' && (c.thoai||'').trim();
-    var img = [nv.mota, nv.trangPhuc, c.boiCanh, c.may, 'khung dọc 9:16', QPROM].filter(Boolean).join(', ');
+    var img = [nv.mota, nv.phongCach, nv.trangPhuc, c.boiCanh, c.may, 'khung dọc 9:16', QPROM].filter(Boolean).join(', ');
     if(coLora(nv.lora)) img = trigger(nv.id)+', '+img;   /* từ khoá LoRA khoá đúng mặt */
     if((phimActive()||{}).phongCachGita!==false) img = img + ', ' + KGITA_STYLE;  /* khoá phong cách không gian GITA */
     var vid = [c.chuyenDong||'(giữ tư thế tự nhiên)',
@@ -65612,7 +65628,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
         phong_cach_gita: p.phongCachGita!==false, phong_cach_khong_gian:KGITA_STYLE },
       pipeline:{ anh:'instantid_sdxl', i2v:'wan2.2_i2v', tts:'vixtts', lipsync:'latentsync', nang_net:'realesrgan_codeformer', muot:'rife', phu_de:'faster_whisper', rap:'ffmpeg', khung:'1080x1920', fps_xuat:30 },
       nhan_vat: (G.S.axNV||[]).map(function(n){ return {id:n.id,ten:n.ten,vai:n.vai,gioi:n.gioi,tuoi:n.tuoi,loai:n.loai,
-        mo_ta:n.mota,trang_phuc:n.trangPhuc,giong:n.giong,giong_key:giongKey(n.gioi,n.tuoi),seed:n.seed,
+        mo_ta:n.mota,phong_cach:n.phongCach,trang_phuc:n.trangPhuc,giong:n.giong,giong_key:giongKey(n.gioi,n.tuoi),seed:n.seed,
         lora:n.lora, co_lora:coLora(n.lora), trigger:trigger(n.id), khoa_mat:!!n.khoaMat}; }),
       canh: p.canh.map(function(c,i){ var pr=promptCanh(c); var nv=nvById(c.nvId)||{};
         return { thu_tu:i+1, id:c.id, nhan_vat:c.nvId, loai:c.loai, boi_canh:c.boiCanh, may_quay:c.may,
