@@ -661,10 +661,11 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       '</div>';
 
     o += '<div class="row mb" style="gap:6px;flex-wrap:wrap">'+
-      tabBtn('nhanh','⚡ Làm phim nhanh')+tabBtn('khophim','🗄 Kho phim')+tabBtn('nv','Kho nhân vật')+tabBtn('phim','Phim & phân cảnh')+tabBtn('prompt','Prompt & cấu hình')+tabBtn('bang','Bảng sản xuất')+tabBtn('phimtruong','Phim trường')+tabBtn('kyxao','Kỹ xảo & Động cơ')+tabBtn('tudong','Tự động')+'</div>';
+      tabBtn('nhanh','⚡ Làm phim nhanh')+tabBtn('duan','🎬 Dự án phim')+tabBtn('khophim','🗄 Kho phim')+tabBtn('nv','Kho nhân vật')+tabBtn('phim','Phim & phân cảnh')+tabBtn('prompt','Prompt & cấu hình')+tabBtn('bang','Bảng sản xuất')+tabBtn('phimtruong','Phim trường')+tabBtn('kyxao','Kỹ xảo & Động cơ')+tabBtn('tudong','Tự động')+'</div>';
 
     if(G.S.axTab==='nhanh') o += (G.axn && G.axn.ve ? G.axn.ve() : '');
     else if(G.S.axTab==='khophim') o += (G.khoDrive && G.khoDrive.ve ? G.khoDrive.ve() : '');
+    else if(G.S.axTab==='duan') o += (G.axda && G.axda.ve ? G.axda.ve() : '');
     else if(G.S.axTab==='nv') o += veNhanVat();
     else if(G.S.axTab==='phim') o += vePhanCanh();
     else if(G.S.axTab==='prompt') o += vePrompt();

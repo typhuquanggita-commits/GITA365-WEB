@@ -7,6 +7,8 @@
      · nhận việc làm phim từ app → Viec/ → gọi GitHub Action (Kaggle GPU miễn phí) nếu đã nối
      · mở "phiên tải lên" cho máy dựng phim → phim đi THẲNG vào Drive (không giới hạn 50MB)
      · liệt kê phim cho app, bật/tắt chia sẻ link
+     · DỰ ÁN PHIM: Du-an/<tên>/{Quay-that, Stock, AI} — chủ hệ thả tệp cảnh 01.mp4, 02.mov…; máy ráp
+       tải về (mở link tạm thời, ráp xong khoá lại) → phim thành phẩm vào Phim/<tháng>/
 
    Hai khoá (tạo tự động khi chạy caiDat):
      KHOA_APP — app GITA dùng (xem kho, gửi ảnh, gửi việc)
@@ -69,6 +71,12 @@ function doPost(e) {
       case 'baoViec': if (may) return tra_(baoViec_(tm, b)); break;
       case 'phienTaiLen': if (may) return tra_(phienTaiLen_(tm, b)); break;
       case 'xongTaiLen': if (may) return tra_(xongTaiLen_(tm, b)); break;
+      case 'taoDuAn': if (app) return tra_(taoDuAn_(tm, b.ten)); break;
+      case 'dsDuAn': return tra_({ tep: dsDuAn_(tm, b.duAn) });
+      case 'datAI': if (app) return tra_(datViec_(tm, b, 'dung-phim-drive', true)); break;
+      case 'datRap': if (app) return tra_(datViec_(tm, b, 'rap-phim-drive', true)); break;
+      case 'moTai': if (may) return tra_(moTai_(tm, b.jobid)); break;
+      case 'dongTai': if (may) return tra_(dongTai_(tm, b.jobid)); break;
     }
     return tra_({ loi: 'Việc không hợp lệ hoặc khoá không đủ quyền.' });
   } catch (x) {
@@ -146,8 +154,9 @@ function ghiTT_(tm, jobid, them) {
     return moi;
   } finally { lock.releaseLock(); }
 }
-function datViec_(tm, b) {
+function datViec_(tm, b, suKien, laDuAn) {
   const kh = b.ke_hoach;
+  if (laDuAn) { duAn_(tm, kh && kh.du_an); kh.chi_clip = suKien === 'dung-phim-drive'; }
   if (!kh || !Array.isArray(kh.canh) || !kh.canh.length || kh.canh.length > 20 || !Array.isArray(kh.nhan_vat))
     throw new Error('Kế hoạch phim không hợp lệ (1–20 cảnh).');
   kh.nhan_vat.forEach(function (n) { if (!MA.test(String(n.id || ''))) throw new Error('Nhân vật không hợp lệ.'); if (n.anh) tepKho_(tm, n.anh, 'Cast'); });
@@ -156,13 +165,13 @@ function datViec_(tm, b) {
   ghiTT_(tm, jobid, { trangThai: 'queued', buoc: 'Đã nhận kịch bản, đang gọi máy dựng…', phanTram: 2, tao: new Date().toISOString(), tieuDe: kh.tieu_de || '' });
   const p = props_(), tok = p.getProperty('GH_TOKEN'), repo = p.getProperty('GH_REPO');
   if (!tok || !repo) {
-    ghiTT_(tm, jobid, { buoc: 'Đã lưu việc vào Drive. Chưa nối máy dựng tự động — chạy Action "Dựng phim từ kho Drive" với mã ' + jobid });
+    ghiTT_(tm, jobid, { buoc: 'Đã lưu việc vào Drive. Chưa nối máy dựng tự động — chạy Action "' + (suKien === 'rap-phim-drive' ? 'Ráp phim dự án từ Drive' : 'Dựng phim từ kho Drive') + '" với mã ' + jobid });
     return { jobid: jobid, trangThai: 'queued', noiMay: false };
   }
   const r = UrlFetchApp.fetch('https://api.github.com/repos/' + repo + '/dispatches', {
     method: 'post', contentType: 'application/json', muteHttpExceptions: true,
     headers: { Authorization: 'Bearer ' + tok, Accept: 'application/vnd.github+json', 'User-Agent': 'gita-kho-phim' },
-    payload: JSON.stringify({ event_type: 'dung-phim-drive', client_payload: { jobid: jobid } })
+    payload: JSON.stringify({ event_type: suKien || 'dung-phim-drive', client_payload: { jobid: jobid } })
   });
   if (r.getResponseCode() !== 204) {
     ghiTT_(tm, jobid, { trangThai: 'error', buoc: 'Không gọi được GitHub Action (mã ' + r.getResponseCode() + ') — kiểm tra GH_TOKEN/GH_REPO.' });
@@ -191,9 +200,15 @@ function phienTaiLen_(tm, b) {
   if (!MA_VIEC.test(String(b.jobid || ''))) throw new Error('Mã việc không hợp lệ.');
   const co = Number(b.kichThuoc);
   if (!(co > 0 && co < 20e9)) throw new Error('Kích thước tệp không hợp lệ.');
-  const thang = Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'yyyy-MM');
-  const thu = layHoacTao_(DriveApp.getFolderById(tm.Phim), thang);
-  const ten = String(b.ten || ('gita-' + b.jobid + '.mp4')).replace(/[\\/:*?"<>|]+/g, ' ').slice(0, 120);
+  let thu, ten;
+  if (b.duAn) {                                     // cảnh AI của dự án → Du-an/<tên>/AI/<số>.mp4
+    if (!/^\d{2,3}\.mp4$/.test(String(b.ten || ''))) throw new Error('Tên cảnh AI phải dạng 05.mp4');
+    thu = layHoacTao_(duAn_(tm, b.duAn), 'AI'); ten = b.ten;
+    const cu = thu.getFilesByName(ten); while (cu.hasNext()) cu.next().setTrashed(true);
+  } else {
+    thu = layHoacTao_(DriveApp.getFolderById(tm.Phim), Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'yyyy-MM'));
+    ten = String(b.ten || ('gita-' + b.jobid + '.mp4')).replace(/[\\/:*?"<>|]+/g, ' ').slice(0, 120);
+  }
   const r = UrlFetchApp.fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable', {
     method: 'post', contentType: 'application/json; charset=UTF-8', muteHttpExceptions: true,
     headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken(), 'X-Upload-Content-Type': 'video/mp4', 'X-Upload-Content-Length': String(co) },
@@ -204,7 +219,73 @@ function phienTaiLen_(tm, b) {
   return { uploadUrl: loc };
 }
 function xongTaiLen_(tm, b) {
+  if (b.ban === 'ai') { tepKho_(tm, b.fileId, 'Du-an'); return ghiTT_(tm, b.jobid, { canhAI: (docTT_(tm, b.jobid).canhAI || 0) + 1 }); }
   const f = tepKho_(tm, b.fileId, 'Phim');
   const k = b.ban === 'phude' ? 'phimPhuDeId' : 'phimId', o = {}; o[k] = f.getId();
   return ghiTT_(tm, b.jobid, o);
+}
+
+/* ── DỰ ÁN PHIM ── */
+function gocDuAn_(tm) {
+  if (!tm['Du-an']) {
+    tm['Du-an'] = layHoacTao_(DriveApp.getFolderById(tm.goc), 'Du-an').getId();
+    props_().setProperty('THU_MUC', JSON.stringify(tm));
+  }
+  return DriveApp.getFolderById(tm['Du-an']);
+}
+function duAn_(tm, id) {
+  if (!/^[A-Za-z0-9_-]{10,80}$/.test(String(id || ''))) throw new Error('Mã dự án không hợp lệ.');
+  const d = DriveApp.getFolderById(id), goc = gocDuAn_(tm).getId(), cha = d.getParents();
+  while (cha.hasNext()) if (cha.next().getId() === goc) return d;
+  throw new Error('Thư mục không thuộc Du-an của kho.');
+}
+const NHOM_ = { 'Quay-that': 'quay', 'Stock': 'stock', 'AI': 'ai', 'Nhac': 'nhac' };
+function taoDuAn_(tm, ten) {
+  const t = String(ten || '').replace(/[\\/:*?"<>|]+/g, ' ').trim().slice(0, 80);
+  if (!t) throw new Error('Thiếu tên dự án.');
+  const d = layHoacTao_(gocDuAn_(tm), t);
+  Object.keys(NHOM_).forEach(function (x) { layHoacTao_(d, x); });
+  return { id: d.getId(), ten: t, link: 'https://drive.google.com/drive/folders/' + d.getId() };
+}
+function dsDuAn_(tm, id) {
+  const d = duAn_(tm, id), ra = [], con = d.getFolders();
+  while (con.hasNext()) {
+    const f = con.next(), nhom = NHOM_[f.getName()]; if (!nhom) continue;
+    const it = f.getFiles();
+    while (it.hasNext()) {
+      const x = it.next();
+      const m = nhom === 'nhac' ? (/^[^\\/]{1,100}\.(mp3|wav|m4a)$/i.test(x.getName()) ? [0, 'nhac'] : null)
+                                : x.getName().match(/^(\d{2,3})\.(mp4|mov|m4v|mkv|webm)$/i);
+      if (m) ra.push({ id: x.getId(), ten: x.getName(), so: m[1], nhom: nhom, kichThuoc: x.getSize(),
+                       congKhai: x.getSharingAccess() === DriveApp.Access.ANYONE_WITH_LINK });
+    }
+  }
+  return ra.sort(function (a, b) { return a.so < b.so ? -1 : 1; });
+}
+/* Máy ráp tải tệp cảnh về: mở "ai có link" TẠM THỜI cho đúng các tệp đang riêng tư, ghi lại để khoá lại sau */
+function moTai_(tm, jobid) {
+  const kh = JSON.parse(docTep_(tm, jobid + '.json')), tep = dsDuAn_(tm, kh.du_an), mo = [];
+  tep.forEach(function (t) {
+    if (!t.congKhai) { DriveApp.getFileById(t.id).setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW); mo.push(t.id); }
+  });
+  DriveApp.getFolderById(tm.Viec).createFile(jobid + '.mo.json', JSON.stringify(mo), 'application/json');
+  return { ke_hoach: kh, tep: tep.map(function (t) { return { id: t.id, ten: t.ten, so: t.so, nhom: t.nhom }; }) };
+}
+function dongTai_(tm, jobid) {
+  const it = DriveApp.getFolderById(tm.Viec).getFilesByName(jobid + '.mo.json');
+  let n = 0;
+  while (it.hasNext()) {
+    const f = it.next();
+    JSON.parse(f.getBlob().getDataAsString()).forEach(function (id) {
+      const x = tepKho_(tm, id, 'Du-an'); x.setSharing(DriveApp.Access.PRIVATE, DriveApp.Permission.NONE); n++;
+    });
+    f.setTrashed(true);
+  }
+  return { ok: true, daKhoa: n };
+}
+function docTep_(tm, ten) {
+  if (!/^[a-z0-9]{8,40}\.json$/.test(ten)) throw new Error('Mã việc không hợp lệ.');
+  const it = DriveApp.getFolderById(tm.Viec).getFilesByName(ten);
+  if (!it.hasNext()) throw new Error('Không thấy việc.');
+  return it.next().getBlob().getDataAsString();
 }

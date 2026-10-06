@@ -175,6 +175,7 @@
     "src/studio-ban-dung.js",
     "src/kho-phim-drive.js",
     "src/phim-nhanh.js",
+    "src/du-an-phim.js",
     "src/san-xuat-ai.js",
     "src/app.js",
     "src/chuyen-long-ghep.js",

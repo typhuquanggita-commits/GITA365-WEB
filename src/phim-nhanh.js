@@ -93,6 +93,9 @@ var G = window.G || {}; window.G = G;
   }
   function giayNoi(t){ return Math.max(3, Math.min(14, Math.round((t.split(/\s+/).length/3.0 + 0.8)*10)/10)); }
 
+  axn.st = st;                                   /* tab Dự án phim dùng chung dàn nhân vật + ảnh mẫu */
+  axn.nguoiTrong = nguoiTrongMoTa;              /* dùng chung cho tab Dự án phim */
+  axn.BOI_CANH = BOI_CANH;
   axn.doc = function(kichBan, ds){
     var canh=[], canhBao=[], bc=null, bcTruoc=null;
     var khoi = (kichBan||'').replace(/\r/g,'').split(/\n\s*\n/);

@@ -68,6 +68,14 @@ jobs:
           PY
           tar -czf viec.tgz -C viec .
           ls -la viec viec/nhan-vat
+          # Dự án phim: chỉ dựng các cảnh AI (không ráp) → từng clip về thư mục dự án trên Drive
+          python - <<'PY'
+          import json, os
+          kh = json.load(open("viec/ke-hoach.json", encoding="utf-8"))
+          with open(os.environ["GITHUB_ENV"], "a") as f:
+              f.write(f"CHI_CLIP={'1' if kh.get('chi_clip') else ''}\n")
+              if kh.get("chi_clip"): f.write(f"DU_AN={kh['du_an']}\n")
+          PY
 
       - name: Dựng kernel Kaggle
         run: |
@@ -81,12 +89,19 @@ jobs:
           tarfile.open(fileobj=io.BytesIO(base64.b64decode("${B64}"))).extractall(".")
           subprocess.run(["git","clone","--depth","1","https://github.com/${{ github.repository }}","repo"], check=True)
           subprocess.run(["bash","repo/xuong-phim-ai/cai-dat-noi-bo.sh"], check=False, env={**os.environ, "MUC": "vua"})
+          CHI_CLIP = "${CHI_CLIP}" == "1"
           subprocess.run(["python","repo/xuong-phim-ai/gita_xuong_phim.py","--ke-hoach","ke-hoach.json",
-                          "--run","all","--root","/kaggle/working/ket-qua"], check=True)
-          for ten in ("phim-cuoi.mp4", "phim-cuoi-phude.mp4"):
-              f = glob.glob(f"/kaggle/working/ket-qua/**/{ten}", recursive=True)
-              if f: shutil.copy(f[0], f"/kaggle/working/{ten}")
-          if not os.path.exists("/kaggle/working/phim-cuoi.mp4"): raise SystemExit("Không thấy phim-cuoi.mp4")
+                          "--run", "anh,video,nang_net,may_quay" if CHI_CLIP else "all","--root","/kaggle/working/ket-qua"], check=True)
+          if CHI_CLIP:
+              os.makedirs("/kaggle/working/clips", exist_ok=True)
+              for f in glob.glob("/kaggle/working/ket-qua/*/clip/*.mp4"):
+                  if "-" not in os.path.basename(f): shutil.copy(f, "/kaggle/working/clips/")
+              if not os.listdir("/kaggle/working/clips"): raise SystemExit("Không dựng được cảnh AI nào")
+          else:
+              for ten in ("phim-cuoi.mp4", "phim-cuoi-phude.mp4"):
+                  f = glob.glob(f"/kaggle/working/ket-qua/**/{ten}", recursive=True)
+                  if f: shutil.copy(f[0], f"/kaggle/working/{ten}")
+              if not os.path.exists("/kaggle/working/phim-cuoi.mp4"): raise SystemExit("Không thấy phim-cuoi.mp4")
           PY
           cat > kernel/kernel-metadata.json <<JSON
           {"id": "${SLUG}", "title": "GITA drive ${JOBID}", "code_file": "gita_kernel.py", "language": "python",
@@ -117,6 +132,16 @@ jobs:
           set -e
           python $KD bao "$JOBID" running "Đưa phim về kho Google Drive…" 92
           mkdir -p out && kaggle kernels output "$SLUG" -p out
+          if [ "$CHI_CLIP" = "1" ]; then
+            N=0
+            for f in $(find out -path '*clips/*.mp4' | sort); do
+              b=$(basename "$f"); [[ "$b" =~ ^[0-9]{2,3}\.mp4$ ]] || continue
+              python $KD tai-len-canh "$JOBID" "$DU_AN" "$f" "$b"; N=$((N+1))
+            done
+            [ "$N" -gt 0 ] || { python $KD bao "$JOBID" error "Không có cảnh AI nào để đưa về Drive" 0; exit 1; }
+            python $KD bao "$JOBID" done "Xong $N cảnh AI — đã vào thư mục AI của dự án trên Drive" 100
+            exit 0
+          fi
           FILM=$(find out -name 'phim-cuoi.mp4' | head -1)
           [ -n "$FILM" ] || { python $KD bao "$JOBID" error "Không tải được phim từ Kaggle" 0; exit 1; }
           TEN=$(python -c "import json;print(json.load(open('viec/ke-hoach.json',encoding='utf-8')).get('tieu_de') or 'Phim GITA365')")

@@ -34,7 +34,7 @@ function save(){
        văn phòng thì Coach đăng xuất, phụ huynh đăng nhập vào cùng trình
        duyệt — không ghi tên chủ sổ thì bằng chứng đóng việc của Coach,
        viết về nhà nào có chuyện gì, nằm lại trong máy cho người sau. */
-    viec:G.S.viec, chotNgay:G.S.chotNgay, chotKhNgay:G.S.chotKhNgay, caiTien:G.S.caiTien, mua:G.S.mua, vet:G.S.vet, viecCua:G.S.viecCua, cvSangKien:G.S.cvSangKien, ltXuLy:G.S.ltXuLy, ltLichSu:G.S.ltLichSu, nlDiem:G.S.nlDiem, gdNV:G.S.gdNV, axNV:G.S.axNV, axPhim:G.S.axPhim, axActive:G.S.axActive, axBC:G.S.axBC, axN:G.S.axN,
+    viec:G.S.viec, chotNgay:G.S.chotNgay, chotKhNgay:G.S.chotKhNgay, caiTien:G.S.caiTien, mua:G.S.mua, vet:G.S.vet, viecCua:G.S.viecCua, cvSangKien:G.S.cvSangKien, ltXuLy:G.S.ltXuLy, ltLichSu:G.S.ltLichSu, nlDiem:G.S.nlDiem, gdNV:G.S.gdNV, axNV:G.S.axNV, axPhim:G.S.axPhim, axActive:G.S.axActive, axBC:G.S.axBC, axN:G.S.axN, axDA:G.S.axDA,
     /* Bàn cờ hành trình. Thiếu dòng này thì mọi quân nhà mình đặt bay
        hết khi tải lại trang — và một bàn cờ xoá được mỗi lần F5 thì
        nhìn nó không còn nghĩa gì. */
@@ -89,6 +89,7 @@ function load(){
     G.S.axActive = d.axActive || null;
     G.S.axBC = d.axBC || null;
     G.S.axN = d.axN || null;
+    G.S.axDA = d.axDA || null;
     G.S.mua = d.mua || null;
     G.S.vet = d.vet || [];
     G.S.viecCua = d.viecCua || null;

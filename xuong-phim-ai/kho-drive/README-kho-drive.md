@@ -37,6 +37,26 @@ Xong bước 5 là kho đã chạy: xem phim, chia sẻ, và màn **Làm phim nh
 Chưa làm phần này thì việc vẫn được lưu vào Drive; muốn dựng thì vào GitHub → Actions →
 **Dựng phim từ kho Drive** → Run workflow → nhập mã việc.
 
+## Dự án phim 4–8 phút cao cấp, miễn phí (tab 🎬 Dự án phim)
+
+AI chỉ làm phần không quay được — vừa đẹp nhất vừa không tốn tiền, làm được nhiều phim/tháng:
+
+| Loại cảnh | Làm bằng | Ghi chú |
+|---|---|---|
+| Trainer/MC nói, nhiều người chạm nhau | **Quay thật bằng điện thoại** | đúng mặt, đúng giọng, khớp môi tuyệt đối, không hình mờ |
+| Cảnh nền không có nhân vật | **Video miễn phí Pexels/Pixabay** | app gợi ý từ khoá + link tìm |
+| Một nhân vật hành động không quay được | **AI trên Kaggle** (miễn phí) | ~0,4 giờ GPU cho phim có ~10% cảnh AI |
+
+1. Dán kịch bản → app tự chia việc từng cảnh (đổi được), in **danh sách quay**.
+2. Bấm **Tạo thư mục dự án** → trên Drive có `Du-an/<tên>/{Quay-that, Stock, AI, Nhac}`.
+3. Quay / tải video nền → đổi tên đúng số cảnh `01.mp4, 02.mov…` → kéo vào đúng thư mục. Nhạc nền: 1 tệp mp3 vào `Nhac`.
+4. (Nếu có cảnh AI) bấm **Dựng cảnh AI** → Kaggle dựng, cảnh tự vào thư mục AI.
+5. Bấm **Kiểm tra tệp** → **Ráp phim** → máy GitHub (miễn phí) ráp 1080p: giọng chuẩn phát sóng, chỉnh màu, chống rung
+   (tuỳ chọn), lồng tiếng cảnh AI/nền, phụ đề, thẻ tên, nhạc tự hạ khi có lời, -14 LUFS → phim vào `Phim/<tháng>/`.
+
+Khi ráp, kho mở link "ai có link" **tạm thời** cho đúng các tệp cảnh để máy GitHub tải về, xong **khoá lại ngay**
+(tệp anh/chị đã chia sẻ từ trước giữ nguyên). GitHub miễn phí ~2.000 phút/tháng cho repo riêng ≈ 60–100 lần ráp.
+
 ## Đường đi của một phim (miễn phí hoàn toàn)
 
 ```

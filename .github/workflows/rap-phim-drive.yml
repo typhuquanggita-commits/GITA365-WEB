@@ -1,0 +1,87 @@
+# ═══════════════════════════════════════════════════════════════
+# GITA 365 · Xưởng phim — RÁP PHIM DỰ ÁN TỪ GOOGLE DRIVE (miễn phí, không cần GPU)
+#
+# App → tab "Dự án phim" → bấm "Ráp phim" → Kho Drive gọi Action này (repository_dispatch: rap-phim-drive).
+#   Drive/Du-an/<tên>/{Quay-that, Stock, AI}/01.mp4, 02.mov…  →  máy GitHub tải về (link tạm, xong khoá lại)
+#   → giọng chuẩn phát sóng · chỉnh màu · lồng tiếng cảnh AI/stock · phụ đề · thẻ tên · nhạc · -14 LUFS
+#   → phim 1080p về Drive/Phim/<tháng>/
+# SECRET: KHO_DRIVE_URL, KHO_DRIVE_KHOA (giống "Dựng phim từ kho Drive").
+# ═══════════════════════════════════════════════════════════════
+name: Ráp phim dự án từ Drive
+
+on:
+  repository_dispatch:
+    types: [rap-phim-drive]
+  workflow_dispatch:
+    inputs:
+      jobid:
+        description: "Mã việc ráp (hiện trong app, tab Dự án phim)"
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  rap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      JOBID_VAO: ${{ github.event.client_payload.jobid || inputs.jobid }}
+      KHO_DRIVE_URL: ${{ secrets.KHO_DRIVE_URL }}
+      KHO_DRIVE_KHOA: ${{ secrets.KHO_DRIVE_KHOA }}
+      KD: xuong-phim-ai/kho-drive/kho_drive.py
+      DC: xuong-phim-ai/gita_xuong_phim.py
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Kiểm mã việc & cài công cụ
+        run: |
+          [[ "$JOBID_VAO" =~ ^[a-z0-9]{8,40}$ ]] || { echo "Mã việc không hợp lệ"; exit 1; }
+          echo "JOBID=$JOBID_VAO" >> "$GITHUB_ENV"
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-dejavu-core >/dev/null
+          python -m pip install --quiet requests
+          python $KD bao "$JOBID_VAO" running "Máy ráp đã nhận việc — tải tệp cảnh từ Drive" 5
+
+      - name: Tải tệp cảnh từ Drive
+        run: python $KD tai-ve-du-an "$JOBID" lam
+
+      - name: Giọng lồng tiếng + phông chữ + nhạc
+        working-directory: lam
+        run: |
+          # Lồng tiếng chỉ cần cho cảnh AI/stock có lời. Cài VieNeu-TTS (Apache-2.0, chạy CPU); lỗi thì vẫn ráp, bỏ lồng tiếng.
+          python - <<'PY' > can_tts.txt
+          import json
+          kh = json.load(open("du-an.json", encoding="utf-8"))
+          print(any(c.get("nhom") != "quay" and (c.get("thoai") or "").strip() for c in kh["canh"]))
+          PY
+          if grep -q True can_tts.txt; then python -m pip install --quiet vieneu || echo "⚠ không cài được VieNeu — bỏ lồng tiếng"; fi
+          mkdir -p fonts
+          for w in Bold Regular; do curl -fsSL -o fonts/BeVietnamPro-$w.ttf "https://github.com/google/fonts/raw/main/ofl/bevietnampro/BeVietnamPro-$w.ttf" || true; done
+          mkdir -p nhac && find nguon -maxdepth 1 -iregex '.*\.\(mp3\|wav\|m4a\)' -exec mv {} nhac/ \; || true   # nhạc nền từ thư mục Nhac của dự án
+
+      - name: Ráp phim 1080p
+        working-directory: lam
+        run: |
+          python ../$KD bao "$JOBID" running "Đang ráp phim 1080p: giọng, màu, phụ đề, thẻ tên, nhạc…" 40
+          cp ../$DC .
+          python gita_xuong_phim.py --du-an du-an.json --nguon nguon --root ket-qua
+          ls -la ket-qua/*/
+
+      - name: Đưa phim về Drive
+        working-directory: lam
+        run: |
+          python ../$KD bao "$JOBID" running "Đưa phim về kho Google Drive…" 90
+          TEN=$(python -c "import json;print(json.load(open('du-an.json',encoding='utf-8')).get('tieu_de') or 'Phim GITA365')")
+          FILM=$(find ket-qua -name 'phim-cuoi.mp4' | head -1)
+          [ -n "$FILM" ] || { python ../$KD bao "$JOBID" error "Ráp không ra phim — xem log Action" 0; exit 1; }
+          python ../$KD tai-len "$JOBID" "$FILM" chinh "$TEN"
+          PD=$(find ket-qua -name 'phim-cuoi-phude.mp4' | head -1)
+          [ -n "$PD" ] && python ../$KD tai-len "$JOBID" "$PD" phude "$TEN" || true
+          python ../$KD bao "$JOBID" done "Hoàn tất — phim đã nằm trong Drive: GITA365 · Kho phim/Phim" 100
+
+      - name: Báo lỗi nếu hỏng giữa chừng
+        if: failure()
+        run: python $KD bao "$JOBID_VAO" error "Ráp dừng giữa chừng — xem log GitHub Action" 0 || true

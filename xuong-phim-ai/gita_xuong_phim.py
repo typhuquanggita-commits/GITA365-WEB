@@ -62,6 +62,31 @@ def tu_ke_hoach(kh):
                        "khopGiong": False, "theTen": True, "phuDe": True, "nhacNen": True},
             "nhan_vat": list(nv.values()), "canh": canh}
 
+def tu_du_an(kh):
+    """Dự án phim (app → Drive): mỗi cảnh một tệp do chủ hệ đưa vào thư mục dự án —
+    "quay"  = quay thật bằng điện thoại (giữ TIẾNG GỐC, chỉ xử lý cho chuẩn phát sóng)
+    "stock" = video có sẵn miễn phí · "ai" = cảnh AI dựng trên Kaggle (lồng tiếng nếu có lời)."""
+    nv = {n["id"]: n for n in kh.get("nhan_vat", [])}
+    canh = []
+    for i, c in enumerate(kh.get("canh", [])):
+        ds = c.get("nv") or []
+        quay = c.get("nhom") == "quay"
+        canh.append({"id": c["id"], "thu_tu": i + 1, "nhan_vat": ds[0] if ds else "", "nhom": c.get("nhom"),
+                     "loai": "nguoi" if c.get("loai") == "noi" else "canh", "giay": c.get("giay", 5),
+                     "thoai": c.get("thoai", ""), "am_goc": quay,
+                     "giong_key": (nv.get(ds[0]) or {}).get("giong_key") if ds else None,
+                     # máy quay ảo chỉ cho cảnh video có sẵn (cảnh AI đã di máy trên Kaggle; cảnh quay thật giữ nguyên)
+                     "may_quay_ao": (c.get("may") or {}) if c.get("nhom") == "stock" else {"chuyen": "tinh"}})
+    return {"phim": {"id": kh.get("jobid") or "du-an", "ten": kh.get("tieu_de", "Phim GITA")},
+            "ngon_ngu": kh.get("ngon_ngu", "vi"), "khung": kh.get("khung", "doc"),
+            "hau_ky": {"chinhMau": True, "onDinh": bool(kh.get("chong_rung")), "masterGiong": True, "khopGiong": False,
+                       "theTen": True, "phuDe": True, "nhacNen": True, "muot60": False},
+            "nhan_vat": list(nv.values()), "canh": canh}
+
+def _co_tieng(f):
+    r = subprocess.run(["ffmpeg", "-hide_banner", "-i", str(f)], capture_output=True, text=True)
+    return "Audio:" in r.stderr
+
 def thu_muc(cfg, root="ket-qua"):
     base = Path(root) / str(cfg["phim"]["id"])
     for d in ("anh", "clip", "giong", "tmp"):
@@ -628,7 +653,7 @@ def buoc_giong(cfg, base):
         return True
     for c in cfg["canh"]:
         thoai = (c.get("thoai") or "").strip()
-        if not thoai: continue
+        if not thoai or c.get("am_goc"): continue          # cảnh quay thật: lời đã nằm trong tiếng gốc
         out = base / "giong" / f"{c['id']}.wav"
         if out.exists(): log("bỏ qua giọng (đã có):", out.name); continue
         lang = c.get("ngon_ngu") or lang_tap                 # khoá ngôn ngữ: vi / en
@@ -847,27 +872,39 @@ def _do_dai(f):
     m = re.search(r"Duration: (\d+):(\d+):([\d.]+)", r.stderr)
     return int(m.group(1)) * 3600 + int(m.group(2)) * 60 + float(m.group(3)) if m else 0.0
 
+def _chia_deu(ws, L, toi_da):
+    """Chia danh sách từ thành đúng L dòng ≤ toi_da, dài đều nhau, ưu tiên ngắt sau dấu phẩy (quy hoạch động)."""
+    n = len(ws); tong = len(" ".join(ws)); muc = tong / L
+    dai = lambda i, j: len(" ".join(ws[i:j]))
+    INF = float("inf"); f = [[INF] * (n + 1) for _ in range(L + 1)]; tr = [[0] * (n + 1) for _ in range(L + 1)]
+    f[0][0] = 0
+    for k in range(1, L + 1):
+        for j in range(1, n + 1):
+            for i in range(k - 1, j):
+                if f[k - 1][i] == INF: continue
+                d = dai(i, j)
+                if d > toi_da: continue
+                c = f[k - 1][i] + (d - muc) ** 2 - (0.2 * muc * muc if (j < n and ws[j - 1][-1] in ",:;") else 0)
+                if c < f[k][j]: f[k][j], tr[k][j] = c, i
+    if f[L][n] == INF: return None
+    dong, j = [], n
+    for k in range(L, 0, -1):
+        i = tr[k][j]; dong.append(" ".join(ws[i:j])); j = i
+    return dong[::-1]
+
 def cat_cau(text, toi_da=TOI_DA_DONG):
     """Cắt thoại thành các khung phụ đề: mỗi câu tách riêng, mỗi khung ≤ 2 dòng, mỗi dòng ≤ toi_da ký tự,
-    ngắt ưu tiên ở dấu phẩy, và CÂN hai dòng cuối để không còn chữ lẻ trơ trọi (vd "đình.")."""
-    import re
+    các dòng dài đều nhau và ưu tiên ngắt sau dấu phẩy (không còn chữ lẻ trơ trọi như "đình.")."""
+    import re, math
     khung = []
     for cau in [x for x in re.split(r"(?<=[.!?…;])\s+", text.strip()) if x]:
-        dong, cur = [], ""
-        for w in cau.split():
-            if cur and len(cur) + 1 + len(w) > toi_da: dong.append(cur); cur = ""
-            cur = (cur + " " + w).strip()
-            if w[-1] in ",:" and len(cur) > toi_da * 0.6: dong.append(cur); cur = ""
-        if cur: dong.append(cur)
-        if len(dong) >= 2 and len(dong[-1]) < toi_da * 0.35:          # cân lại hai dòng cuối
-            ws = (dong[-2] + " " + dong[-1]).split()
-            tot, i = None, 1
-            for j in range(1, len(ws)):
-                a1, a2 = " ".join(ws[:j]), " ".join(ws[j:])
-                if len(a1) <= toi_da and len(a2) <= toi_da:
-                    lech = abs(len(a1) - len(a2))
-                    if tot is None or lech < tot: tot, i = lech, j
-            if tot is not None: dong[-2:] = [" ".join(ws[:i]), " ".join(ws[i:])]
+        ws = cau.split()
+        L = max(1, math.ceil(len(cau) / toi_da))
+        if L > 1 and L % 2: L += 1                         # khung nào cũng đủ 2 dòng → ngắt tự nhiên hơn
+        dong = None
+        while dong is None and L <= len(ws):
+            dong = _chia_deu(ws, L, toi_da); L += 1
+        dong = dong or [cau]
         for k in range(0, len(dong), 2): khung.append(dong[k:k + 2])
     return khung
 
@@ -944,13 +981,21 @@ def buoc_rap(cfg, base, W=None, Hh=None, fps=None):
         dv = _do_dai(clip)
         gl = _do_dai(wav) if wav.exists() else 0.0
         # Không bao giờ cắt mất lời: cảnh dài ít nhất bằng giọng + 0,3s; clip ngắn hơn thì giữ khung cuối.
-        if (base / "clip" / f"{c['id']}.ok-sync").exists(): T = max(dv, gl + 0.1)   # clip khớp môi = dài bằng giọng
+        goc = bool(c.get("am_goc")) and _co_tieng(clip)       # cảnh quay thật: dùng tiếng gốc
+        if goc: T, gl = dv, dv
+        elif (base / "clip" / f"{c['id']}.ok-sync").exists(): T = max(dv, gl + 0.1)   # clip khớp môi = dài bằng giọng
         else: T = max(d, gl + 0.3 if gl else 0)
-        vf = (f"scale={W}:{Hh}:force_original_aspect_ratio=increase,crop={W}:{Hh},fps={fps},"
-              f"tpad=stop_mode=clone:stop_duration={max(0.0, T - dv) + 0.1:.2f}")
-        am = ["-i", str(wav)] if wav.exists() else ["-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo"]
+        loc = (["deshake"] if (hk.get("onDinh") and c.get("am_goc")) else []) + \
+              [f"scale={W}:{Hh}:force_original_aspect_ratio=increase,crop={W}:{Hh}", f"fps={fps}"] + \
+              (["eq=contrast=1.04:saturation=1.07"] if hk.get("chinhMau", True) else []) + \
+              [f"tpad=stop_mode=clone:stop_duration={max(0.0, T - dv) + 0.1:.2f}", "setsar=1"]
+        vf = ",".join(loc)
+        if goc: am, map_a, af = [], "0:a:0", ("aresample=48000," + MASTER_GIONG + ",apad") if hk.get("masterGiong", True) else "aresample=48000,apad"
+        else:
+            am = ["-i", str(wav)] if wav.exists() else ["-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo"]
+            map_a, af = "1:a:0", "aresample=48000,apad"
         subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(clip)] + am +
-                       ["-vf", vf, "-af", "aresample=48000,apad", "-t", f"{T:.3f}", "-map", "0:v:0", "-map", "1:a:0",
+                       ["-vf", vf, "-af", af, "-t", f"{T:.3f}", "-map", "0:v:0", "-map", map_a,
                         "-c:v", "libx264", "-preset", "medium", "-crf", "16", "-pix_fmt", "yuv420p",
                         "-c:a", "aac", "-b:a", "192k", "-ac", "2", str(seg)], check=True)
         segs.append(seg)
@@ -1045,6 +1090,8 @@ def main():
     ap=argparse.ArgumentParser(description="GITA xưởng phim AI — động cơ Kaggle")
     ap.add_argument("--config", help="file .json xuất từ app GITA (tab Prompt & cấu hình)")
     ap.add_argument("--ke-hoach", dest="ke_hoach", help="kế hoạch từ màn Làm phim nhanh (kho Drive)")
+    ap.add_argument("--du-an", dest="du_an", help="dự án phim (app → Drive): ráp các tệp cảnh trong --nguon")
+    ap.add_argument("--nguon", default="nguon", help="thư mục chứa tệp cảnh 01.mp4, 02.mov… của dự án")
     ap.add_argument("--plan", action="store_true", help="chỉ kiểm & dựng khung (không GPU); ráp nếu có clip")
     ap.add_argument("--run", default="", help="all | " + " | ".join(THU_TU))
     ap.add_argument("--root", default="ket-qua")
@@ -1055,9 +1102,19 @@ def main():
         p_.parent.mkdir(parents=True, exist_ok=True)
         p_.write_text(json.dumps(tu_ke_hoach(json.loads(Path(a.ke_hoach).read_text(encoding="utf-8"))), ensure_ascii=False), encoding="utf-8")
         a.config = str(p_)
-    if not a.config: ap.error("cần --config hoặc --ke-hoach")
+    if a.du_an:
+        p_ = Path(a.root).parent / "cau-hinh-du-an.json"
+        p_.parent.mkdir(parents=True, exist_ok=True)
+        p_.write_text(json.dumps(tu_du_an(json.loads(Path(a.du_an).read_text(encoding="utf-8"))), ensure_ascii=False), encoding="utf-8")
+        a.config = str(p_); a.run = a.run or "giong,may_quay,rap"
+    if not a.config: ap.error("cần --config, --ke-hoach hoặc --du-an")
     cfg=doc_cfg(a.config); base=thu_muc(cfg, a.root)
     NGANG = cfg.get("khung") == "ngang"
+    if a.du_an:                                            # đưa tệp cảnh vào khung làm việc
+        for c in cfg["canh"]:
+            f = next((x for x in sorted(Path(a.nguon).glob(f"{c['id']}.*")) if x.suffix.lower() in (".mp4", ".mov", ".m4v", ".mkv", ".webm")), None)
+            if f: shutil.copy(f, base / "clip" / f"{c['id']}.mp4")
+            else: log("THIẾU tệp cảnh", c["id"], "trong", a.nguon, "→ bỏ cảnh này")
     giu_tran_ngoai(cfg)                                  # xưởng nội bộ: giữ trần thuê ngoài
     if a.plan or not a.run:
         plan(cfg, base);
