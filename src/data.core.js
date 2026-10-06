@@ -610,6 +610,11 @@ G.NAV = [
        thấy; phần nào vai không mở được thì hiện mờ có khoá, không dẫn
        tới màn xin cấp phép. */
     {v:'ngoi-nha',    t:'Ngôi nhà thịnh vượng',       h:'Kích vào từng phần của ngôi nhà để xây gia đình thịnh vượng', ic:'home', star:1, capMo:'chung'},
+    /* Bàn cờ tổng: một hình sáu khoang, mỗi ô một màn thật, bấm là mở
+       thẳng màn đó. capMo:'chung' + không perm — mọi vai thấy MỤC này,
+       nhưng bên trong chỉ vẽ ra ô mà vai được phép (hỏi G.allowed), nên
+       nhân sự và khách không đọc được tên màn ngoài quyền. */
+    {v:'ban-co-tong', t:'Bàn cờ tổng',                h:'Sáu khoang · bấm một ô mở thẳng màn · hiện đúng theo vai', ic:'grid', star:1, capMo:'chung'},
     /* Bảng việc và KPI đứng ngay đầu nhóm 01: đây là màn người đi làm mở
        đầu ngày, trước cả bản đồ. Không gắn perm — mọi vị trí đều có việc
        của mình, và danh mục tự lọc theo vai ngay trên màn hình. Khách

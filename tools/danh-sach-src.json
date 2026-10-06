@@ -124,6 +124,7 @@
     "src/luat-giao-dien.js",
     "src/hom-nay.js",
     "src/ngoi-nha.js",
+    "src/ban-co-tong.js",
     "src/nhan-vat.js",
     "src/con-duong.js",
     "src/cay-vip.js",
