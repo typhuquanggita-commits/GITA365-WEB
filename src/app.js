@@ -1540,6 +1540,8 @@ on('[data-qf]', function(el){
 on('[data-mood]', function(el){ G.S.mood = el.getAttribute('data-mood'); save(); if(G.danhDau) G.danhDau('mood','mood'); render(); });
 on('[data-kh]', function(el){ G.khoangModal(el.getAttribute('data-kh')); });
 on('[data-vai]', function(el){ G.vaiModal(el.getAttribute('data-vai')); });
+on('[data-pbban]', function(el){ if(G.pbMoBan) G.pbMoBan(el.getAttribute('data-pbban')); });
+on('[data-pbag]', function(el){ if(G.pbAgent) G.pbAgent(el.getAttribute('data-pbag'), +el.getAttribute('data-pbagi')); });
 on('[data-pd]', function(el){ G.phacDoModal(el.getAttribute('data-pd')); });
 on('[data-kb]', function(el){ document.getElementById('cmd').classList.remove('on'); G.kichBanModal(el.getAttribute('data-kb')); });
 on('[data-mt]', function(el){ document.getElementById('cmd').classList.remove('on'); G.moThucModal(el.getAttribute('data-mt')); });

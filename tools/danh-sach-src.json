@@ -158,6 +158,7 @@
     "src/bien-soan-noi-dung.js",
     "src/cua-truoc.js",
     "src/khong-gian.js",
+    "src/phong-ban.js",
     "src/app.js",
     "src/chuyen-long-ghep.js",
     "src/may-khach.js",
