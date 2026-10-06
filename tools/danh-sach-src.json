@@ -172,6 +172,7 @@
     "src/va.js",
     "src/studio-he.js",
     "src/studio-lam-phim.js",
+    "src/studio-ban-dung.js",
     "src/app.js",
     "src/chuyen-long-ghep.js",
     "src/may-khach.js",

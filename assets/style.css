@@ -3830,3 +3830,50 @@ html[data-may="yeu"] *,html[data-may="yeu"] *::before,html[data-may="yeu"] *::af
 .lp-mau{padding:10px 12px;border-radius:10px;background:var(--surface-2);border:1px dashed var(--line);font-size:12px;color:var(--ink-2);line-height:1.65;margin-top:7px}
 .lp-mau b{color:var(--ink)}
 .lp-out{margin-top:11px;font-size:12.5px;color:var(--ok);font-weight:600;display:flex;align-items:center;gap:6px}
+
+/* ═══════════════ BÀN DỰNG GITA STUDIO · biên tập ảnh·màu·chữ·âm·phim ═══════════════ */
+.bd-wrap{display:grid;grid-template-columns:minmax(260px,360px) 1fr;gap:18px;align-items:start}
+@media(max-width:760px){.bd-wrap{grid-template-columns:1fr}}
+.bd-stage{position:sticky;top:12px;min-width:0;background:#0c1118;border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.bd-cv{width:100%;max-width:100%;min-width:0;aspect-ratio:9/16;border-radius:10px;background:#11161f;display:block;max-height:72vh;margin:0 auto;object-fit:contain}
+.bd-stage .btn{width:100%;justify-content:center}
+.bd-ctrl{min-width:0}
+.bd-radio{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;margin:0}
+.bd-tabbar{display:flex;gap:6px;overflow-x:auto;flex-wrap:wrap;padding:2px 2px 12px}
+.bd-tabbar label{display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:11px;border:1px solid var(--line);
+  font-size:12px;font-weight:700;color:var(--ink-3);background:var(--surface);cursor:pointer;white-space:nowrap}
+.bd-tabbar label:hover{color:var(--ink)}
+.bd-pan{display:none}
+#bd-anh:checked~#bd-p-anh,#bd-mau:checked~#bd-p-mau,#bd-ht:checked~#bd-p-ht,
+#bd-chu:checked~#bd-p-chu,#bd-am:checked~#bd-p-am,#bd-phim:checked~#bd-p-phim{display:block}
+#bd-anh:checked~.bd-tabbar label[for="bd-anh"],#bd-mau:checked~.bd-tabbar label[for="bd-mau"],
+#bd-ht:checked~.bd-tabbar label[for="bd-ht"],#bd-chu:checked~.bd-tabbar label[for="bd-chu"],
+#bd-am:checked~.bd-tabbar label[for="bd-am"],#bd-phim:checked~.bd-tabbar label[for="bd-phim"]{
+  background:var(--gita);color:#fff;border-color:var(--gita)}
+.bd-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.bd-row:last-child{border-bottom:0}
+.bd-lbl{flex:none;width:92px;font-size:12px;font-weight:600;color:var(--ink-2)}
+.bd-row input[type=range]{flex:1;accent-color:var(--gita)}
+.bd-val{flex:none;width:40px;text-align:right;font-size:11.5px;font-weight:700;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.bd-presets{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+.bd-ps{padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);
+  font-size:12px;font-weight:700;color:var(--ink-2);cursor:pointer}
+.bd-ps:hover{border-color:var(--gita);color:var(--gita)}
+.bd-ps.on{background:var(--gita);color:#fff;border-color:var(--gita)}
+.bd-field{display:flex;flex-direction:column;gap:5px;padding:9px 0;border-bottom:1px solid var(--line)}
+.bd-field>span{font-size:11px;font-weight:700;color:var(--ink-3)}
+.bd-field input[type=text],.bd-field textarea{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:9px;
+  background:var(--surface);color:var(--ink);font:inherit;font-size:13px;box-sizing:border-box}
+.bd-seg{display:flex;gap:5px;flex-wrap:wrap}
+.bd-seg button{padding:6px 11px;border-radius:9px;border:1px solid var(--line);background:var(--surface);
+  font-size:11.5px;font-weight:600;color:var(--ink-3);cursor:pointer}
+.bd-seg button.on{background:var(--gita);color:#fff;border-color:var(--gita)}
+.bd-file{display:inline-flex;align-items:center;gap:6px;padding:9px 13px;border-radius:10px;border:1px dashed var(--line);
+  background:var(--surface);font-size:12.5px;font-weight:700;color:var(--gita);cursor:pointer}
+.bd-file input{display:none}
+.bd-tip{font-size:11.5px;color:var(--ink-4);line-height:1.55;margin-top:7px}
+.bd-strip{display:flex;gap:8px;overflow-x:auto;padding:8px 2px}
+.bd-frame{flex:none;width:58px;height:103px;border-radius:7px;border:2px solid var(--line);object-fit:cover;background:#11161f;position:relative}
+.bd-frame.on{border-color:var(--gita)}
+.bd-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.bd-chip{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--surface-2);color:var(--ink-3);border:1px solid var(--line)}

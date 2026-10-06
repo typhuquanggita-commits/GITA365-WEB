@@ -112,7 +112,8 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
 
     o += '<div class="row mb" style="gap:8px;flex-wrap:wrap">'+
       '<button class="btn ghost sm" data-v="studio-he">'+ic('arrow','w-3 h-3')+'Hệ điều hành xưởng</button>'+
-      (G.allowed && G.allowed('studio') ? '<button class="btn sm" data-v="studio">'+ic('spark','w-3 h-3')+'Mở xưởng dựng video</button>' : '')+
+      '<button class="btn sm" data-v="ban-dung">'+ic('tools','w-3 h-3')+'Bàn dựng (biên tập tại máy)</button>'+
+      (G.allowed && G.allowed('studio') ? '<button class="btn ghost sm" data-v="studio">'+ic('spark','w-3 h-3')+'Mở xưởng dựng video</button>' : '')+
       '</div>';
 
     o += '<div class="lp-prog"><div class="lp-prog-bar"><div class="lp-prog-fill" style="width:'+pct+'%"></div></div>'+
