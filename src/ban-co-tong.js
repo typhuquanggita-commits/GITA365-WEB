@@ -1,25 +1,27 @@
 /* ═══════════════════════════════════════════════════════════════
-   GITA 365 — BÀN CỜ TỔNG (màn điều hướng toàn hệ)
+   GITA 365 — BÀN CỜ TỔNG (màn điều hướng toàn hệ, dạng THANH TAB)
 
-   Một hình bàn cờ: sáu khoang đúng theo sáu nhóm của thanh trái, mỗi ô
-   là một màn thật. Bấm vào ô là đi thẳng tới màn đó (data-v → G.go).
+   Một thanh Tab gọn: mỗi tab là một khoang (hoặc một chặng với gia đình).
+   MỖI LẦN CHỈ MỞ MỘT TAB — tuyệt đối không đổ hết mọi màn ra một lượt,
+   kể cả với Super Admin. Muốn xem khoang khác thì bấm tab khác.
 
-   AN TOÀN LÀ GỐC — KHÔNG LỘ BÍ MẬT KINH DOANH
+   AN TOÀN LÀ GỐC — GIỚI HẠN THEO VAI · CẤP · TẦNG
 
    Màn này KHÔNG tự quyết ai thấy gì. Nó hỏi đúng một cửa: G.allowed(v)
    — chính cửa mà thanh trái và G.go dùng. Vai nào không được một màn thì
-   ô ấy KHÔNG được vẽ ra (không hiện tên, không hiện số) — nên nhân sự và
-   khách không đọc được cả kiến trúc của những màn ngoài quyền.
+   ô ấy KHÔNG vẽ ra (không tên, không số); khoang nào không còn ô nào thì
+   tab ấy cũng biến mất. Nên nhân sự và khách không đọc được cả kiến trúc
+   của những màn ngoài quyền.
 
-     · Super Admin · Admin (bậc ≤ 2) : thấy đủ toàn hệ — để hiểu và vận hành.
-     · Đội ngũ nghề (bậc 3–12)        : chỉ các màn trong phạm vi của mình.
-     · Gia đình · CTV (bậc ≥ 13)      : hành trình của nhà mình, chia 5 chặng.
+     · Super Admin · Admin (bậc <= 2) : đủ các khoang — nhưng vẫn mở từng
+                                        tab một, không đổ hết ra màn hình.
+     · Đội ngũ nghề (bậc 3-12)        : chỉ các màn trong phạm vi của mình.
+     · Gia đình · CTV (bậc >= 13)     : hành trình 365 ngày, mỗi chặng một tab.
 
-   Số đếm tổng (chỉ Super Admin/Admin thấy mẫu số toàn hệ) — các vai khác
-   chỉ thấy số màn CỦA MÌNH, không thấy còn bao nhiêu màn bị giấu.
+   Tab chạy bằng CSS thuần (ô radio ẩn) — không thêm trạng thái, không
+   sửa app.js. Bấm một ô vẫn đi qua data-v -> G.go (gác quyền lần nữa).
 
-   KHÔNG đụng giấy phép · mã hoá · CRM · máy chủ. Màn này chỉ ĐỌC G.NAV
-   và hỏi G.allowed; không nắm dữ liệu, không mở khoá gì.
+   KHÔNG đụng giấy phép · mã hoá · CRM · máy chủ. Chỉ ĐỌC G.NAV + G.allowed.
    ═══════════════════════════════════════════════════════════════ */
 'use strict';
 var G = window.G || {}; window.G = G;
@@ -28,92 +30,94 @@ G.VIEWS = G.VIEWS || {};
 (function () {
   var U = G.U, h = U.h, ic = U.ic;
 
-  /* Năm chặng của hành trình gia đình — mốc ngày lấy từ tinh thần
-     "7 · 21 · 90 · 365" của nhóm Hành trình 5 tầng. Ô dồn dần về
-     chặng sau: chặng 1 khởi động nhẹ, chặng 3–4–5 nhiều và cao cấp hơn. */
   var CHANG = [
-    { no: 1, ten: 'Khởi động',       ngay: 'Ngày 1–7',     mau: '#0B7350', w: 0.10,
+    { id: 'c1', no: 1, ten: 'Khởi động',      ngay: 'Ngày 1–7',     mau: '#0B7350', w: 0.10,
       y: 'Nhìn cho đúng. Làm quen nhà mình, định vị điểm xuất phát — nhẹ, cơ bản.' },
-    { no: 2, ten: 'Vào hành trình',  ngay: 'Ngày 8–30',    mau: '#185AB4', w: 0.16,
+    { id: 'c2', no: 2, ten: 'Vào hành trình', ngay: 'Ngày 8–30',    mau: '#185AB4', w: 0.16,
       y: 'Vào hành trình chính. Hiểu cơ chế năm tầng, nhận nhiệm vụ đầu tiên.' },
-    { no: 3, ten: 'Dựng hệ thống',   ngay: 'Ngày 31–120',  mau: '#5140B4', w: 0.22,
+    { id: 'c3', no: 3, ten: 'Dựng hệ thống',  ngay: 'Ngày 31–120',  mau: '#5140B4', w: 0.22,
       y: 'Dựng thói quen và hệ thống gia đình. Nhiều việc hơn, chất lượng nâng dần.' },
-    { no: 4, ten: 'Tăng tốc',        ngay: 'Ngày 121–240', mau: '#0B6675', w: 0.25,
+    { id: 'c4', no: 4, ten: 'Tăng tốc',       ngay: 'Ngày 121–240', mau: '#0B6675', w: 0.25,
       y: 'Tăng tốc — bí kíp chuyên sâu, cú hích lớn, giá trị cao cấp.' },
-    { no: 5, ten: 'Làm chủ',         ngay: 'Ngày 241–365', mau: '#BE0E16', w: 0.27,
+    { id: 'c5', no: 5, ten: 'Làm chủ',        ngay: 'Ngày 241–365', mau: '#BE0E16', w: 0.27,
       y: 'Làm chủ và trao quyền. Nội dung cao cấp nhất, dẫn dắt nhà khác.' }
   ];
 
-  /* Gom màn theo nhóm, LỌC đúng theo quyền — dùng chung một cửa G.allowed
-     với thanh trái, để không bao giờ lệch nhau. */
+  /* Gom màn theo nhóm, LỌC đúng theo quyền — chung một cửa G.allowed. */
   function khoangThay() {
     return (G.NAV || []).map(function (g) {
       var vis = (g.items || []).filter(function (it) { return G.allowed(it.v); });
       return { g: g, vis: vis };
-    });
+    }).filter(function (k) { return k.vis.length > 0; }); /* khoang rỗng → bỏ tab */
   }
 
-  function oCard(it, so, mau, star) {
+  function oCard(it, so, mau) {
     return '<button class="bct-o" style="--kc:' + mau + '" data-v="' + h(it.v) + '" ' +
       'title="' + h(it.h || it.t) + '">' +
-      (star && it.star ? '<span class="bct-star">★</span>' : '') +
+      (it.star ? '<span class="bct-star">★</span>' : '') +
       '<span class="bct-no">' + (so < 10 ? '00' : so < 100 ? '0' : '') + so + '</span>' +
       '<span class="bct-ct">' + h(it.t) + '</span></button>';
   }
 
-  /* ── Bàn cờ 6 khoang (admin + đội ngũ nghề) ── */
-  function banCo(dsKhoang, isAdmin) {
-    var so = 0, html = '<div class="bct-board">';
-    dsKhoang.forEach(function (k) {
-      var g = k.g, vis = k.vis;
-      if (!vis.length) return; /* khoang không có màn nào trong quyền → ẩn hẳn */
-      var cnt = isAdmin
-        ? (vis.length === g.items.length
-            ? '<span class="bct-cnt" style="background:' + g.c + '">' + vis.length + '</span>'
-            : '<span class="bct-cnt" style="background:' + g.c + '">' + vis.length + '/' + g.items.length + '</span>')
-        : '<span class="bct-cnt bct-cnt-mo">' + vis.length + ' màn</span>';
-      html += '<section class="bct-kh" style="--kc:' + g.c + '">' +
-        '<div class="bct-kh-top">' +
-          '<span class="bct-kh-no">' + h(g.no) + '</span>' +
-          '<span class="bct-kh-ti"><b>' + h(g.t) + '</b><small>' + h(g.essence || g.s || '') + '</small></span>' +
-          cnt +
-        '</div><div class="bct-os">';
-      vis.forEach(function (it) { so++; html += oCard(it, so, g.c, true); });
-      html += '</div></section>';
+  /* ── Thanh Tab theo KHOANG (admin + đội ngũ nghề) ── */
+  function tabKhoang(ds, isAdmin) {
+    var radios = '', bar = '<div class="bct-tabbar" role="tablist">', body = '<div class="bct-panels">';
+    var so = 0;
+    ds.forEach(function (k, i) {
+      var g = k.g, rid = 'bct-' + g.id, on = (i === 0);
+      radios += '<input type="radio" name="bctTab" class="bct-radio" id="' + rid + '"' + (on ? ' checked' : '') + '>';
+      var dem = isAdmin
+        ? (k.vis.length === g.items.length ? k.vis.length : (k.vis.length + '/' + g.items.length))
+        : k.vis.length;
+      bar += '<label class="bct-tab" for="' + rid + '" style="--kc:' + g.c + '" role="tab">' +
+        '<span class="bct-tab-no">' + h(g.no) + '</span>' +
+        '<span class="bct-tab-t">' + h(g.t) + '</span>' +
+        '<span class="bct-tab-c">' + dem + '</span></label>';
+      var cells = '';
+      k.vis.forEach(function (it) { so++; cells += oCard(it, so, g.c); });
+      body += '<div class="bct-panel" id="p-' + g.id + '">' +
+        '<div class="bct-panel-h" style="--kc:' + g.c + '"><b>' + h(g.t) + '</b>' +
+          '<small>' + h(g.essence || g.s || '') + '</small></div>' +
+        '<div class="bct-os">' + cells + '</div></div>';
     });
-    html += '</div>';
-    return html;
+    bar += '</div>'; body += '</div>';
+    return '<section class="bct-tabwrap">' + radios + bar + body + '</section>';
   }
 
-  /* ── Hành trình 365 ngày · 5 chặng (gia đình · CTV) ── */
-  function hanhTrinh(dsKhoang) {
-    /* Gộp mọi màn trong quyền theo thứ tự nhóm, rồi chia vào 5 chặng
-       với số ô tăng dần. */
+  /* ── Thanh Tab theo CHẶNG (gia đình · CTV) ── */
+  function tabChang(ds) {
     var cells = [];
-    dsKhoang.forEach(function (k) { k.vis.forEach(function (it) { cells.push(it); }); });
+    ds.forEach(function (k) { k.vis.forEach(function (it) { cells.push(it); }); });
     var N = cells.length;
     var sizes = CHANG.map(function (c) { return Math.max(1, Math.round(c.w * N)); });
     var tong = sizes.reduce(function (a, b) { return a + b; }, 0);
     sizes[4] += (N - tong); if (sizes[4] < 0) sizes[4] = 0;
-    var idx = 0, so = 0, html = '<div class="bct-arc">';
+
+    var radios = '', bar = '<div class="bct-tabbar" role="tablist">', body = '<div class="bct-panels">';
+    var idx = 0, so = 0;
     CHANG.forEach(function (c, i) {
       var phan = cells.slice(idx, idx + sizes[i]); idx += sizes[i];
-      var sao = '';
-      for (var s = 0; s < 5; s++) sao += (s < c.no ? '★' : '☆');
-      html += '<div class="bct-chang" style="--cc:' + c.mau + '">' +
-        '<div class="bct-ch-top"><div class="bct-ch-day">CHẶNG ' + c.no + ' · ' + c.ngay + '</div>' +
-          '<b>' + h(c.ten) + '</b><div class="bct-ch-prem">Cao cấp: ' + sao + '</div></div>' +
-        '<div class="bct-ch-y">' + h(c.y) + '</div><div class="bct-ch-os">';
+      var rid = 'bct-' + c.id, on = (i === 0);
+      var sao = ''; for (var s = 0; s < 5; s++) sao += (s < c.no ? '★' : '☆');
+      radios += '<input type="radio" name="bctTab" class="bct-radio" id="' + rid + '"' + (on ? ' checked' : '') + '>';
+      bar += '<label class="bct-tab" for="' + rid + '" style="--kc:' + c.mau + '" role="tab">' +
+        '<span class="bct-tab-no">' + c.no + '</span>' +
+        '<span class="bct-tab-t">' + h(c.ten) + '</span>' +
+        '<span class="bct-tab-c">' + phan.length + '</span></label>';
+      var cl = '';
       phan.forEach(function (it) {
         so++;
-        html += '<button class="bct-mo" style="--cc:' + c.mau + '" data-v="' + h(it.v) + '" ' +
-          'title="' + h(it.h || it.t) + '"><span class="bct-mn">' + so + '</span>' +
-          '<span class="bct-mt">' + h(it.t) + '</span></button>';
+        cl += '<button class="bct-o" style="--kc:' + c.mau + '" data-v="' + h(it.v) + '" ' +
+          'title="' + h(it.h || it.t) + '"><span class="bct-no">' + (so < 10 ? '00' : so < 100 ? '0' : '') + so + '</span>' +
+          '<span class="bct-ct">' + h(it.t) + '</span></button>';
       });
-      html += '</div><div class="bct-ch-foot">' + phan.length + ' màn</div></div>';
+      body += '<div class="bct-panel" id="p-' + c.id + '">' +
+        '<div class="bct-panel-h" style="--kc:' + c.mau + '"><b>Chặng ' + c.no + ' · ' + h(c.ten) +
+          ' <span class="bct-prem">' + sao + '</span></b><small>' + h(c.ngay) + ' — ' + h(c.y) + '</small></div>' +
+        '<div class="bct-os">' + cl + '</div></div>';
     });
-    html += '</div>';
-    return html;
+    bar += '</div>'; body += '</div>';
+    return '<section class="bct-tabwrap">' + radios + bar + body + '</section>';
   }
 
   G.VIEWS['ban-co-tong'] = function () {
@@ -127,12 +131,12 @@ G.VIEWS = G.VIEWS || {};
 
     var head = U.ph({
       eyebrow: 'BÀN CỜ TỔNG · HỆ SINH THÁI GITA 365', ic: 'grid', grad: 1,
-      t: isAdmin ? ('Bàn cờ ' + tong + ' màn') : (isCust ? 'Hành trình của nhà mình' : 'Bàn cờ phần việc của bạn'),
+      t: isCust ? 'Hành trình của nhà mình' : 'Bàn cờ điều hướng',
       lead: isAdmin
-        ? ('Toàn bộ ' + tong + ' màn của hệ thống, chia sáu khoang — để Super Admin và Admin hiểu và vận hành cả hệ. Bấm vào một ô để mở màn đó.')
+        ? ('Bấm từng tab để mở một khoang — mỗi lần một phần, không đổ hết ra màn hình. Bấm một ô là mở thẳng màn đó.')
         : (isCust
-            ? ('Hành trình của gia đình chia năm chặng theo 365 ngày — ' + thay + ' màn mở dần theo tầng. Bấm một ô để mở màn.')
-            : ('Các màn trong phạm vi vai của bạn — ' + thay + ' màn phục vụ khách và việc được giao. Bấm một ô để mở màn.'))
+            ? ('Hành trình chia năm chặng — mỗi chặng một tab, mở dần theo tầng. Bấm một ô để mở màn.')
+            : ('Các khoang trong phạm vi vai của bạn — mở từng tab một. Bấm một ô để mở màn.'))
     });
 
     var pct = tong ? Math.round(thay / tong * 100) : 0;
@@ -149,13 +153,13 @@ G.VIEWS = G.VIEWS || {};
 
     var note = '<div class="bct-note"><span class="bct-note-i">' + ic('shield') + '</span>' +
       '<p>' + (isAdmin
-        ? 'Bạn thấy đủ toàn hệ để hiểu và vận hành. Các vai khác chỉ thấy phần của mình — <b>không màn nào ngoài quyền bị lộ tên</b>.'
+        ? 'Màn chỉ mở <b>một tab mỗi lần</b> — không đổ hết mọi màn ra một lượt. Các vai khác chỉ thấy phần của mình; <b>không màn nào ngoài quyền bị lộ tên</b>.'
         : (isCust
-          ? 'Bạn thấy đúng hành trình của nhà mình. Các màn nghề và quản trị được giữ kín.'
-          : 'Bạn thấy đúng phần việc của mình. Màn quản trị và bí mật kinh doanh được giữ kín — Trợ lý GITA sẽ hướng dẫn phần cần thiết.')) +
+          ? 'Bạn thấy đúng hành trình của nhà mình, theo từng chặng. Các màn nghề và quản trị được giữ kín.'
+          : 'Bạn thấy đúng phần việc của mình, theo từng khoang. Màn quản trị và bí mật kinh doanh được giữ kín.')) +
       '</p></div>';
 
-    var than = isCust ? hanhTrinh(ds) : banCo(ds, isAdmin);
+    var than = isCust ? tabChang(ds) : tabKhoang(ds, isAdmin);
     return head + bar + note + than;
   };
 })();
