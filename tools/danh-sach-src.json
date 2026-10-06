@@ -168,6 +168,8 @@
     "src/van-hanh-gd.js",
     "src/data-gd.js",
     "src/gd.js",
+    "src/data-va.js",
+    "src/va.js",
     "src/app.js",
     "src/chuyen-long-ghep.js",
     "src/may-khach.js",
