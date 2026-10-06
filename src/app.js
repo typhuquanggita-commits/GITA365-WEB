@@ -812,8 +812,17 @@ function leftNav(){
   function khoiKG(){
     if(!G.khongGian) return '';
     var kg = G.khongGian();
-    function loc(ds, cap){ var o=[]; for(var i=0;i<ds.length && o.length<cap;i++){ var b=nutV(ds[i]); if(b) o.push(b); } return o; }
-    var kh = loc(kg.khach, kg.khachCap), vc = loc(kg.viec, kg.viecCap);
+    /* Lọc qua visible(); cắt theo cap. `tru` = tập khoá đã dùng ở khối
+       trước, để một màn chỉ nằm ở MỘT khối — tách khách/nghiệp vụ cho
+       thật rõ, không trùng. */
+    function loc(ds, cap, tru){ var o=[], d=[]; for(var i=0;i<ds.length && o.length<cap;i++){
+      var v=ds[i]; if(tru && tru[v]) continue; var b=nutV(v); if(b){ o.push(b); d.push(v); } } return {html:o, vs:d}; }
+    /* Nghiệp vụ dựng trước (là việc lõi của vai); Khách hàng loại bỏ màn
+       đã nằm trong Nghiệp vụ. */
+    var rV = loc(kg.viec, kg.viecCap, null), daDung = {};
+    rV.vs.forEach(function(v){ daDung[v]=1; });
+    var rK = loc(kg.khach, kg.khachCap, daDung);
+    var kh = rK.html, vc = rV.html;
     if(!kh.length && !vc.length) return '';
     var o = '<div class="kg">'+
       '<div class="nav-eyebrow kg-lbl">'+h(G.LANG==='en'?'Workspace':'Không gian làm việc')+'</div>';

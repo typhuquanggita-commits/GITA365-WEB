@@ -62147,8 +62147,10 @@ var G = window.G || {}; window.G = G;
     R09:{cap:5, ds:['xu-ly-ca','do-luong-kh','ra-soat-kh','bang-viec','assessment','tt-cskh']},
     /* R10 Chuyên gia đánh giá */
     R10:{cap:5, ds:['assessment','do-luong-kh','ra-soat-kh','bang-viec','sat-hach','trai-nghiem-kh']},
-    /* R11 Chuyên gia tư vấn */
-    R11:{cap:5, ds:['nghe-tu-van','tt-cskh','ban-tu-van','pheu-chot','bang-viec','do-luong-kh']},
+    /* R11 Chuyên gia tư vấn — CRM là CÔNG CỤ CHĂM SÓC KHÁCH của Tư vấn,
+       đặt trong Nghiệp vụ; chỉ hiện khi tài khoản được cấp CRM (G.S.crmMuc
+       qua màn Phân quyền CRM) — cấp từng người, không mở đại trà. */
+    R11:{cap:5, ds:['nghe-tu-van','tt-cskh','crm','ban-tu-van','pheu-chot','bang-viec','do-luong-kh']},
     /* R12 Phân tích dữ liệu (lv12 — bộ màn phân tích nghe_chung) */
     R12:{cap:5, ds:['chieu-sau','ma-tran','giam-sat','tu-dong','phuong-phap','bo-nao','ra-soat']}
   };
@@ -62995,8 +62997,17 @@ function leftNav(){
   function khoiKG(){
     if(!G.khongGian) return '';
     var kg = G.khongGian();
-    function loc(ds, cap){ var o=[]; for(var i=0;i<ds.length && o.length<cap;i++){ var b=nutV(ds[i]); if(b) o.push(b); } return o; }
-    var kh = loc(kg.khach, kg.khachCap), vc = loc(kg.viec, kg.viecCap);
+    /* Lọc qua visible(); cắt theo cap. `tru` = tập khoá đã dùng ở khối
+       trước, để một màn chỉ nằm ở MỘT khối — tách khách/nghiệp vụ cho
+       thật rõ, không trùng. */
+    function loc(ds, cap, tru){ var o=[], d=[]; for(var i=0;i<ds.length && o.length<cap;i++){
+      var v=ds[i]; if(tru && tru[v]) continue; var b=nutV(v); if(b){ o.push(b); d.push(v); } } return {html:o, vs:d}; }
+    /* Nghiệp vụ dựng trước (là việc lõi của vai); Khách hàng loại bỏ màn
+       đã nằm trong Nghiệp vụ. */
+    var rV = loc(kg.viec, kg.viecCap, null), daDung = {};
+    rV.vs.forEach(function(v){ daDung[v]=1; });
+    var rK = loc(kg.khach, kg.khachCap, daDung);
+    var kh = rK.html, vc = rV.html;
     if(!kh.length && !vc.length) return '';
     var o = '<div class="kg">'+
       '<div class="nav-eyebrow kg-lbl">'+h(G.LANG==='en'?'Workspace':'Không gian làm việc')+'</div>';
