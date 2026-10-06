@@ -65428,8 +65428,8 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
 
    App GITA KHÔNG sinh video (việc đó ở notebook Kaggle · model mở). Màn
    này là BỘ ĐIỀU KHIỂN: giữ dàn nhân vật nhất quán, phân cảnh kịch bản,
-   SINH PROMPT + FILE CẤU HÌNH chuẩn cho các công cụ free (InstantID/SDXL ·
-   Wan I2V · viXTTS · LatentSync), và theo dõi sản xuất từng cảnh/tập.
+   SINH PROMPT + FILE CẤU HÌNH chuẩn cho các công cụ free (SDXL + LoRA ·
+   Wan I2V · VieNeu-TTS · InfiniteTalk), và theo dõi sản xuất từng cảnh/tập.
 
    Tải "cấu hình .json" → đưa vào notebook Kaggle để sinh. KHÔNG slideshow,
    KHÔNG ảnh mấp môi — mô tả cảnh người thật chuyển động. View: san-xuat-ai.
@@ -65498,12 +65498,26 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     wan:1.2, infinitetalk:2.0, framepack:1.0, ltx:0.3, cogvideox:1.4 };
   var MO = ['wan','infinitetalk','framepack','ltx','cogvideox'];
   var GPU_GIO = 0.34, TY_GIA = 26000;   /* $/giờ RTX 4090 Runpod Community · đ/USD (xấp xỉ) */
+  /* Máy GPU thuê theo giờ cho xưởng nội bộ. he = hệ số phút GPU so với 4090 (A100 80GB chạy được
+     Wan 2.2 A14B 720p — chất cao hơn nhưng nặng hơn, nên mỗi giây video tốn nhiều phút hơn). */
+  var GPU = { r4090:{ten:'RTX 4090 24GB', gio:0.34, he:1.0, chat:'Wan 2.2 TI2V-5B 720p · InfiniteTalk 480p'},
+              a100:{ten:'A100 80GB', gio:1.19, he:1.5, chat:'Wan 2.2 A14B 720p (chất cao nhất bản mở) · InfiniteTalk 480p'} };
+  var NGOAI_TOI_DA = 0.10;              /* Phương án D: thuê ngoài tối đa 10% thời lượng */
+  function gpuCua(p){ return GPU[(p&&p.gpu)||'r4090'] || GPU.r4090; }
   function laMo(k){ return MO.indexOf(k)>=0; }
-  function giaGiay(k){ if(laMo(k)) return GIA[k]/60*GPU_GIO; return GIA[k]; }   /* $ / giây */
+  function giaGiay(k,p){ var g=gpuCua(p); if(laMo(k)) return GIA[k]*g.he/60*g.gio; return GIA[k]; }   /* $ / giây */
   function heSoLam(c){ return (c.loai==='nguoi' && (c.thoai||'').trim()) ? 1.3 : 2.0; }  /* làm lại trung bình */
+  /* Máy quay ảo nội bộ: cỡ cảnh · góc máy · chuyển động máy (di máy làm CHÍNH XÁC ở hậu kỳ trên video) */
+  var MQ_CO = [['dac_ta','Đặc tả'],['can','Cận cảnh'],['trung','Trung cảnh'],['trung_rong','Trung rộng'],['toan','Toàn cảnh']];
+  var MQ_GOC = [['ngang_mat','Ngang mắt'],['thap','Góc thấp (uy lực)'],['cao','Góc cao'],['qua_vai','Qua vai'],['nghieng','Nghiêng (kịch tính)']];
+  var MQ_CHUYEN = [['tinh','Máy tĩnh'],['day_vao','Đẩy vào (dolly in)'],['keo_ra','Kéo ra (dolly out)'],['lia_trai','Lia trái'],
+    ['lia_phai','Lia phải'],['nghieng_len','Nghiêng lên (tilt up)'],['nghieng_xuong','Nghiêng xuống'],['cam_tay','Cầm tay (sống động)'],['ai','Để mô hình tự di máy']];
+  function mqMacDinh(c){ var noi=c&&c.loai==='nguoi'; return {co: noi?'trung':'toan', goc:'ngang_mat', chuyen: noi?'day_vao':'lia_phai', cuong:0.4}; }
+  function mqCua(c){ return (c&&c.mq) ? c.mq : mqMacDinh(c); }
+  function mqChu(c){ var m=mqCua(c); return [nhan(m.co,MQ_CO), nhan(m.goc,MQ_GOC), nhan(m.chuyen,MQ_CHUYEN)].filter(Boolean).join(' · '); }
   /* Dây chuyền hậu kỳ cao cấp (bật/tắt) */
   var HAUKY = [
-    ['giuMat','Giữ & phục hồi khuôn mặt (CodeFormer/GFPGAN)',true],
+    ['giuMat','Giữ & phục hồi khuôn mặt (GFPGAN v1.4)',true],
     ['napNet','Nâng nét 1080p+ (Real-ESRGAN)',true],
     ['muot60','Làm mượt 60fps (RIFE)',true],
     ['chinhMau','Chỉnh màu điện ảnh',true],
@@ -65518,26 +65532,35 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   /* Định tuyến: cảnh chọn riêng > tập chọn > PHƯƠNG ÁN.
      A · Free: người dẫn nói → InfiniteTalk · cảnh > 6s → FramePack · còn lại → Wan 2.2.
      B · Tối ưu có phí: người dẫn nói → InfiniteTalk API · cảnh then chốt → Veo 3.1 Fast · còn lại → Seedance.
-     C · Lai (khuyên dùng): người dẫn nói → InfiniteTalk tự chạy GPU thuê · cảnh → Seedance · then chốt → Veo 3.1 Fast. */
+     C · Lai: người dẫn nói → InfiniteTalk tự chạy GPU thuê · cảnh → Seedance · then chốt → Veo 3.1 Fast.
+     D · Nội bộ 90% (mặc định): mọi cảnh chạy model mở trên máy GITA; chỉ cảnh then chốt được thuê
+         Veo 3.1 Fast, và chỉ khi tổng giây thuê ngoài vẫn ≤ 10% thời lượng tập (xét theo thứ tự cảnh). */
+  function ngoaiDuocPhep(p){
+    var tong=0, dung=0, ok={};
+    (p.canh||[]).forEach(function(c){ tong+=(+c.giay||5); });
+    (p.canh||[]).forEach(function(c){ var g=(+c.giay||5);
+      if(c.hero && !(c.loai==='nguoi' && (c.thoai||'').trim()) && dung+g <= tong*NGOAI_TOI_DA){ ok[c.id]=1; dung+=g; } });
+    return ok;
+  }
   function chonDongCo(c,p,pa){
     var k = c.dongCo || (p&&p.dongCo) || 'auto';
     if(k!=='auto') return k;
     var noi = c.loai==='nguoi' && (c.thoai||'').trim();
-    var P=(pa||(p&&p.phuongAn)||'A');
+    var P=(pa||(p&&p.phuongAn)||'D');
     if(P==='B'){ if(noi) return 'infinitetalk_api'; if(c.hero) return 'veo3fast'; return 'seedance'; }
     if(P==='C'){ if(noi) return 'infinitetalk'; if(c.hero) return 'veo3fast'; return 'seedance'; }
+    if(P==='D'){ if(noi) return 'infinitetalk'; if(c.hero && ngoaiDuocPhep(p)[c.id]) return 'veo3fast'; return 'wan'; }
     if(noi) return 'infinitetalk';
     return (+c.giay||5) > 6 ? 'framepack' : 'wan';
   }
   /* Dự toán một phương án cho tập hiện tại: $ thuê/API · giờ GPU (động cơ mở) · giây thành phẩm */
   function duToan(p,pa){
-    var r={usd:0, gpuPhut:0, giay:0, chuaGia:0};
+    var r={usd:0, gpuPhut:0, giay:0, chuaGia:0, giayNgoai:0};
     (p.canh||[]).forEach(function(c){
-      var k=chonDongCo(pa?{dongCo:'',loai:c.loai,thoai:c.thoai,giay:c.giay,hero:c.hero}:c,p,pa);
+      var k=chonDongCo(pa?{id:c.id,dongCo:'',loai:c.loai,thoai:c.thoai,giay:c.giay,hero:c.hero}:c,p,pa);
       var g=(+c.giay||5), sinh=g*heSoLam(c); r.giay+=g;
-      if(laMo(k)){ r.gpuPhut+=sinh*GIA[k]; r.usd+=sinh*giaGiay(k); }
-      else if(GIA[k]==null) r.chuaGia+=1;
-      else r.usd+=sinh*GIA[k];
+      if(laMo(k)){ r.gpuPhut+=sinh*GIA[k]*gpuCua(p).he; r.usd+=sinh*giaGiay(k,p); }
+      else { r.giayNgoai+=g; if(GIA[k]==null) r.chuaGia+=1; else r.usd+=sinh*GIA[k]; }
     });
     return r;
   }
@@ -65566,16 +65589,32 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     ]; }
     if(!G.S.axPhim){ G.S.axPhim = [
       { id:'phim-1', ten:'Tập 1 — Hành trình GITA 365', mota:'Giới thiệu hành trình 5 tầng, dạng người dẫn + cảnh minh hoạ',
-        ngonNgu:'vi', phongCachGita:true, dongCo:'auto', phuongAn:'A', phutThang:20, hauKy:hauMacDinh(),
+        ngonNgu:'vi', phongCachGita:true, dongCo:'auto', phuongAn:'D', gpu:'r4090', phutThang:20, hauKy:hauMacDinh(),
         canh:[
-          { id:uid('c'), nvId:'nv-trainer', loai:'nguoi', boiCanh:'Bục giảng studio GITA, màn hình lớn phía sau, vách gỗ, ánh sáng điện ảnh ấm', may:'Trung cảnh, máy tĩnh ngang ngực', chuyenDong:'Đứng dẫn, cử động tay truyền cảm hứng, gật đầu nhẹ', thoai:'Chào anh chị, hành trình thịnh vượng của gia đình bắt đầu từ một quyết định.', giay:5, tt:'' },
+          { id:uid('c'), nvId:'nv-trainer', loai:'nguoi', bcId:'bc-bucgiang', boiCanh:'Bục giảng studio GITA, màn hình lớn phía sau, vách gỗ, ánh sáng điện ảnh ấm', may:'Trung cảnh, máy tĩnh ngang ngực', chuyenDong:'Đứng dẫn, cử động tay truyền cảm hứng, gật đầu nhẹ', thoai:'Chào anh chị, hành trình thịnh vượng của gia đình bắt đầu từ một quyết định.', giay:5, tt:'' },
           { id:uid('c'), nvId:'nv-mc', loai:'nguoi', boiCanh:'Trường quay sáng, màn hình lớn phía sau', may:'Trung cảnh, máy lia nhẹ sang phải', chuyenDong:'Đứng thuyết trình, tay chỉ về màn hình', thoai:'GITA đồng hành cùng gia đình qua năm tầng phát triển.', giay:5, tt:'' },
-          { id:uid('c'), nvId:'nv-bo', loai:'canh', boiCanh:'Vườn tre, cả gia đình cùng đi dạo trò chuyện', may:'Toàn cảnh, máy đi lùi theo bước chân', chuyenDong:'Cả nhà đi bộ, trò chuyện, cùng cười', thoai:'', giay:5, hero:true, tt:'' }
+          { id:uid('c'), nvId:'nv-bo', loai:'canh', bcId:'bc-vuontre', boiCanh:'Vườn tre, cả gia đình cùng đi dạo trò chuyện', may:'Toàn cảnh, máy đi lùi theo bước chân', chuyenDong:'Cả nhà đi bộ, trò chuyện, cùng cười', thoai:'', giay:5, hero:true, tt:'' }
         ] }
     ]; }
+    /* Nâng tập cũ (trước khi có xưởng nội bộ) lên phương án D · Nội bộ 90% — một lần */
+    (G.S.axPhim||[]).forEach(function(p){ if(!p.gpu){ p.gpu='r4090'; p.phuongAn='D'; } });
+    if(!G.S.axBC){ G.S.axBC = [
+      {id:'bc-sanh', ten:'Sảnh hệ sinh thái GITA365', mota:KGITA_CANH, seed:'501'},
+      {id:'bc-bucgiang', ten:'Bục giảng studio GITA', mota:'Bục giảng studio GITA, màn hình lớn phía sau, vách gỗ, ánh sáng điện ảnh ấm', seed:'502'},
+      {id:'bc-hoithao', ten:'Phòng hội thảo GITA', mota:'Phòng hội thảo GITA sáng, hàng ghế gọn gàng, cửa kính, cây xanh, ánh sáng tự nhiên', seed:'503'},
+      {id:'bc-lophoc', ten:'Lớp học bảng trắng', mota:'Lớp học bảng trắng, không gian đào tạo hiện đại, cây xanh, ánh sáng tự nhiên', seed:'504'},
+      {id:'bc-vanphong', ten:'Văn phòng điều hành', mota:'Văn phòng điều hành GITA cao cấp, kệ sách gỗ, cửa kính nhìn thành phố, đèn ấm', seed:'505'},
+      {id:'bc-sankhau', ten:'Sân khấu sự kiện GITA', mota:'Sân khấu sự kiện GITA, nền xanh dương – vàng gold, đèn sân khấu', seed:'506'},
+      {id:'bc-coach', ten:'Phòng coach 1-1', mota:'Phòng coach 1-1 ấm cúng, ghế sofa, cây xanh, ánh sáng mềm', seed:'507'},
+      {id:'bc-phongkhach', ten:'Phòng khách gia đình', mota:'Phòng khách gia đình sang trọng, sofa, kệ sách, cây xanh, nắng chiều ấm', seed:'508'},
+      {id:'bc-vuontre', ten:'Vườn tre', mota:'Lối đi vườn tre xanh, nhà gỗ truyền thống phía xa, nắng xuyên lá', seed:'509'},
+      {id:'bc-bep', ten:'Bếp gia đình', mota:'Bếp gia đình hiện đại, đảo bếp inox, rau củ tươi, cửa kính lớn, cây xanh', seed:'510'},
+      {id:'bc-bien', ten:'Bãi biển hoàng hôn', mota:'Bãi biển hoàng hôn, sóng nhẹ, thành phố ven biển phía xa, cát vàng', seed:'511'}
+    ].map(function(b){ b.lora='(chưa train)'; return b; }); }
     if(!G.S.axActive) G.S.axActive = G.S.axPhim[0].id;
     if(!G.S.axTab) G.S.axTab = 'nv';
   }
+  function bcById(id){ return (G.S.axBC||[]).filter(function(x){return x.id===id;})[0]; }
   function nvById(id){ return (G.S.axNV||[]).filter(function(x){return x.id===id;})[0]; }
   function phimActive(){ return (G.S.axPhim||[]).filter(function(x){return x.id===G.S.axActive;})[0] || (G.S.axPhim||[])[0]; }
   function luu(){ if(G.save) G.save(); if(G.render) G.render(); }
@@ -65595,7 +65634,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
         '<div class="bd-field"><span>Giới tính</span><select id="f-gioi" style="'+ss+'">'+selOpts(GIOI,e.gioi||'nam')+'</select></div>'+
         '<div class="bd-field"><span>Độ tuổi</span><select id="f-tuoi" style="'+ss+'">'+selOpts(TUOI,e.tuoi||'lon')+'</select></div>'+
       '</div>'+
-      '<p class="bd-tip">Giọng tự chọn theo giới tính + độ tuổi (vd Nam người lớn → "Nam trầm ấm"). Dùng mẫu giọng <b>giong/&lt;giới-tuổi&gt;.wav</b> trên Kaggle.</p>'+
+      '<p class="bd-tip">Giọng tự chọn theo giới tính + độ tuổi (vd Nam người lớn → "Nam trầm ấm"). Dùng mẫu giọng <b>giong/&lt;giới-tuổi&gt;.wav</b> trong bộ cast. Hay nhất: Trainer/MC <b>thu âm thật</b> từng câu thoại → đặt <b>thu-am/&lt;mã cảnh&gt;.wav</b>, động cơ dùng thẳng giọng thật.</p>'+
       '<div class="bd-field"><span>Mô tả ngoại hình (giữ nhân vật nhất quán)</span><textarea id="f-mota" rows="3" style="'+ss+'">'+h(e.mota)+'</textarea></div>'+
       '<div class="bd-field"><span>Phong cách (thần thái + wardrobe — khoá chất riêng)</span><input type="text" id="f-phongcach" value="'+h(e.phongCach||'')+'" placeholder="VD: tự tin, truyền cảm hứng; blazer xám/navy/đỏ đô phối sơ mi"></div>'+
       '<div class="bd-field"><span>Trang phục mặc định</span><input type="text" id="f-tp" value="'+h(e.trangPhuc)+'"></div>'+
@@ -65625,9 +65664,27 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   G.ax.phimNgon = function(v){ var p=phimActive(); if(p){ p.ngonNgu=v; luu(); } };
   G.ax.phimGita = function(){ var p=phimActive(); if(p){ p.phongCachGita = (p.phongCachGita===false); luu(); } };
   G.ax.phuongAn = function(v){ var p=phimActive(); if(p){ p.phuongAn=v; p.dongCo='auto'; luu(); } };
+  G.ax.gpu = function(v){ var p=phimActive(); if(p && GPU[v]){ p.gpu=v; luu(); } };
   G.ax.phutThang = function(v){ var p=phimActive(); if(p){ p.phutThang=Math.max(1,Math.min(600,+v||20)); luu(); } };
   G.ax.phimDongCo = function(v){ var p=phimActive(); if(p){ p.dongCo=v; luu(); } };
   G.ax.hauToggle = function(k){ var p=phimActive(); if(!p) return; p.hauKy=hauCua(p); p.hauKy[k]=!p.hauKy[k]; luu(); };
+  G.ax.bcMo = function(id){
+    var b = id ? bcById(id) : {id:'',ten:'',mota:'',seed:'',lora:'(chưa train)'};
+    U.modal('<h3 class="mb">'+(id?'Sửa phim trường':'Thêm phim trường')+'</h3>'+
+      '<div class="bd-field"><span>Tên phim trường</span><input type="text" id="f-bten" value="'+h(b.ten)+'"></div>'+
+      '<div class="bd-field"><span>Mô tả bối cảnh (cố định cho mọi cảnh quay ở đây)</span><textarea id="f-bmota" rows="3" style="padding:8px;border:1px solid var(--line);border-radius:9px;width:100%;box-sizing:border-box">'+h(b.mota)+'</textarea></div>'+
+      '<div class="grid g2"><div class="bd-field"><span>Seed</span><input type="text" id="f-bseed" value="'+h(b.seed)+'"></div>'+
+      '<div class="bd-field"><span>LoRA phim trường (id sau khi train)</span><input type="text" id="f-blora" value="'+h(b.lora)+'"></div></div>'+
+      '<p class="bd-tip">Train LoRA phim trường giống train nhân vật: 15–30 ảnh của bối cảnh → <code>train_lora.py --nhan-vat '+h(b.id||'bc-...')+'</code>.</p>'+
+      '<div class="row mt" style="gap:8px"><button class="btn" onclick="G.ax.bcLuu(\''+(b.id||'')+'\')">Lưu</button><button class="btn ghost" onclick="U.closeModal()">Huỷ</button></div>');
+  };
+  G.ax.bcLuu = function(id){
+    function v(x){ var el=document.getElementById(x); return el?(el.value||'').trim():''; }
+    var o={ ten:v('f-bten')||'Phim trường', mota:v('f-bmota'), seed:v('f-bseed'), lora:v('f-blora')||'(chưa train)' };
+    if(id){ Object.assign(bcById(id),o); } else { o.id=uid('bc-'); G.S.axBC.push(o); }
+    U.closeModal(); luu();
+  };
+  G.ax.bcXoa = function(id){ G.S.axBC=G.S.axBC.filter(function(x){return x.id!==id;}); luu(); };
   G.ax.canhKgita = function(){ var el=document.getElementById('f-bc'); if(el) el.value=KGITA_CANH; };
   G.ax.phimThem = function(){
     U.modal('<h3 class="mb">Thêm tập phim</h3>'+
@@ -65638,7 +65695,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   G.ax.phimLuu = function(){
     var t=(document.getElementById('f-pten')||{}).value||'Tập mới';
     var m=(document.getElementById('f-pmota')||{}).value||'';
-    var p={id:uid('phim'),ten:t.trim(),mota:m.trim(),ngonNgu:'vi',phongCachGita:true,dongCo:'auto',phuongAn:'A',phutThang:20,hauKy:hauMacDinh(),canh:[]}; G.S.axPhim.push(p); G.S.axActive=p.id;
+    var p={id:uid('phim'),ten:t.trim(),mota:m.trim(),ngonNgu:'vi',phongCachGita:true,dongCo:'auto',phuongAn:'D',gpu:'r4090',phutThang:20,hauKy:hauMacDinh(),canh:[]}; G.S.axPhim.push(p); G.S.axActive=p.id;
     U.closeModal(); luu();
   };
   G.ax.phimXoa = function(id){ if(G.S.axPhim.length<=1) return U.toast('Giữ lại ít nhất một tập.','err');
@@ -65652,10 +65709,16 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       '<div class="grid g2"><div class="bd-field"><span>Nhân vật</span><select id="f-nv" style="padding:8px;border:1px solid var(--line);border-radius:9px">'+opts+'</select></div>'+
       '<div class="bd-field"><span>Loại cảnh</span><div class="bd-seg"><button type="button" class="'+(e.loai==='nguoi'?'on':'')+'" onclick="this.parentNode.querySelectorAll(\'button\').forEach(function(b){b.classList.remove(\'on\')});this.classList.add(\'on\');window.__cloai=\'nguoi\'">Người dẫn nói</button><button type="button" class="'+(e.loai==='canh'?'on':'')+'" onclick="this.parentNode.querySelectorAll(\'button\').forEach(function(b){b.classList.remove(\'on\')});this.classList.add(\'on\');window.__cloai=\'canh\'">Cảnh diễn</button></div></div></div>'+
       '<div class="bd-field"><span>Bối cảnh</span><input type="text" id="f-bc" value="'+h(e.boiCanh)+'" placeholder="VD: trường quay sáng, màn hình lớn">'+
-        '<div class="row" style="gap:6px;margin-top:6px;flex-wrap:wrap"><select onchange="if(this.value)document.getElementById(\'f-bc\').value=this.value" style="padding:7px;border:1px solid var(--line);border-radius:9px">'+
-          COACH_CANH.map(function(x){return '<option value="'+h(x[0])+'">'+h(x[1])+'</option>';}).join('')+'</select>'+
+        '<div class="row" style="gap:6px;margin-top:6px;flex-wrap:wrap"><select id="f-bcid" onchange="var b=(G.S.axBC||[]).filter(function(x){return x.id===this.value;},this)[0]; if(b)document.getElementById(\'f-bc\').value=b.mota;" style="padding:7px;border:1px solid var(--line);border-radius:9px">'+
+          '<option value="">— phim trường nội bộ —</option>'+(G.S.axBC||[]).map(function(x){return '<option value="'+x.id+'"'+(e.bcId===x.id?' selected':'')+'>🏛 '+h(x.ten)+(coLora(x.lora)?' · LoRA':'')+'</option>';}).join('')+'</select>'+
           '<button type="button" class="btn ghost sm" onclick="G.ax.canhKgita()">+ Không gian GITA</button></div></div>'+
-      '<div class="bd-field"><span>Máy quay (góc · chuyển động)</span><input type="text" id="f-may" value="'+h(e.may)+'" placeholder="VD: trung cảnh, máy lia nhẹ sang phải"></div>'+
+      (function(){ var m=mqCua(e.id?e:{loai:'nguoi'}); var ss='padding:8px;border:1px solid var(--line);border-radius:9px;width:100%;box-sizing:border-box';
+        function sel(id,arr,v){ return '<select id="'+id+'" style="'+ss+'">'+arr.map(function(x){return '<option value="'+x[0]+'"'+(x[0]===v?' selected':'')+'>'+h(x[1])+'</option>';}).join('')+'</select>'; }
+        return '<div class="bd-field"><span>🎥 Máy quay ảo nội bộ</span><div class="grid g3">'+
+          '<div>'+sel('f-mq-co',MQ_CO,m.co)+'</div><div>'+sel('f-mq-goc',MQ_GOC,m.goc)+'</div><div>'+sel('f-mq-ch',MQ_CHUYEN,m.chuyen)+'</div></div>'+
+          '<div class="row" style="gap:8px;align-items:center;margin-top:6px"><span class="tiny muted">Biên độ di máy</span>'+
+          '<input type="range" id="f-mq-cuong" min="0" max="1" step="0.1" value="'+(m.cuong!=null?m.cuong:0.4)+'" style="flex:1"></div>'+
+          '<input type="text" id="f-may" value="'+h(e.may||'')+'" placeholder="Ghi chú thêm cho máy quay (tuỳ chọn)" style="margin-top:6px"></div>'; })()+
       '<div class="bd-field"><span>Chuyển động nhân vật</span><input type="text" id="f-cd" value="'+h(e.chuyenDong)+'" placeholder="VD: đứng nói, tay chỉ màn hình"></div>'+
       '<div class="bd-field"><span>Thoại (để trống nếu cảnh không lời)</span><textarea id="f-thoai" rows="2">'+h(e.thoai)+'</textarea></div>'+
       '<div class="bd-field"><span>Thời lượng (giây)</span><input type="number" id="f-giay" min="2" max="10" value="'+(e.giay||5)+'" style="width:90px"></div>'+
@@ -65669,6 +65732,8 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   G.ax.canhLuu = function(id){
     function v(x){var el=document.getElementById(x);return el?el.value:'';}
     var o={ nvId:v('f-nv'), loai:window.__cloai||'nguoi', boiCanh:v('f-bc').trim(), may:v('f-may').trim(),
+      bcId:v('f-bcid'),
+      mq:{ co:v('f-mq-co')||'trung', goc:v('f-mq-goc')||'ngang_mat', chuyen:v('f-mq-ch')||'tinh', cuong:+(v('f-mq-cuong')||0.4) },
       chuyenDong:v('f-cd').trim(), thoai:v('f-thoai').trim(), giay:Math.max(2,Math.min(10,+v('f-giay')||5)), dongCo:v('f-dongco'), hero:!!(document.getElementById('f-hero')||{}).checked };
     var p=phimActive();
     if(id){ var c=p.canh.filter(function(x){return x.id===id;})[0]; if(c) Object.assign(c,o); }
@@ -65685,12 +65750,13 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   function promptCanh(c){
     var nv=nvById(c.nvId)||{};
     var noi = c.loai==='nguoi' && (c.thoai||'').trim();
-    var img = [nv.mota, nv.phongCach, nv.trangPhuc, c.boiCanh, c.may, 'khung dọc 9:16', QPROM].filter(Boolean).join(', ');
+    var m = mqCua(c);
+    var img = [nv.mota, nv.phongCach, nv.trangPhuc, c.boiCanh, nhan(m.co,MQ_CO), nhan(m.goc,MQ_GOC), c.may, 'khung dọc 9:16', QPROM].filter(Boolean).join(', ');
     if(coLora(nv.lora)) img = trigger(nv.id)+', '+img;   /* từ khoá LoRA khoá đúng mặt */
     if((phimActive()||{}).phongCachGita!==false) img = img + ', ' + KGITA_STYLE;  /* khoá phong cách không gian GITA */
     var vid = [c.chuyenDong||'(giữ tư thế tự nhiên)',
       noi?'đang nói, khẩu hình khớp lời, cử động đầu và tay tự nhiên':'diễn theo cảnh, chuyển động cơ thể tự nhiên',
-      c.may, 'quay chuyển động mượt, sắc nét, người thật, không hoạt hình', (c.giay||5)+' giây'].filter(Boolean).join(', ');
+      m.chuyen==='ai' ? nhan(m.chuyen,MQ_CHUYEN) : 'máy giữ yên (di máy làm ở hậu kỳ)', 'chuyển động mượt, sắc nét, người thật, không hoạt hình', (c.giay||5)+' giây'].filter(Boolean).join(', ');
     return {img:img, vid:vid, neg:QNEG};
   }
   function configPhim(){
@@ -65699,7 +65765,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       phim:{ id:p.id, ten:p.ten, mota:p.mota },
       ngon_ngu: p.ngonNgu||'vi',
       dong_co: p.dongCo||'auto',
-      phuong_an: p.phuongAn||'A',
+      phuong_an: p.phuongAn||'D', gpu: (p.gpu||'r4090'), ngoai_toi_da: (p.phuongAn||'D')==='D' ? NGOAI_TOI_DA : 1,
       hau_ky: hauCua(p),
       cam:['khong-hoat-hinh','khong-nguoi-que','khong-anh-tinh-map-moi','phai-nguoi-that-chuyen-dong-sac-net'],
       chuan:{ negative_chung:QNEG, phong_cach:'ảnh thật điện ảnh 9:16, nét căng, khớp khẩu hình với giọng',
@@ -65709,7 +65775,8 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
         mo_ta:n.mota,phong_cach:n.phongCach,trang_phuc:n.trangPhuc,giong:n.giong,giong_key:giongKey(n.gioi,n.tuoi),seed:n.seed,
         lora:n.lora, co_lora:coLora(n.lora), trigger:trigger(n.id), khoa_mat:!!n.khoaMat}; }),
       canh: p.canh.map(function(c,i){ var pr=promptCanh(c); var nv=nvById(c.nvId)||{};
-        return { thu_tu:i+1, id:c.id, nhan_vat:c.nvId, loai:c.loai, boi_canh:c.boiCanh, may_quay:c.may,
+        return { thu_tu:i+1, id:c.id, nhan_vat:c.nvId, loai:c.loai, boi_canh:c.boiCanh, may_quay:c.may, may_quay_ao:mqCua(c),
+          boi_canh_id:c.bcId||'', boi_canh_lora:!!(bcById(c.bcId)&&coLora(bcById(c.bcId).lora)), boi_canh_trigger:c.bcId?trigger(c.bcId):'',
           prompt_anh:pr.img, prompt_video:pr.vid, negative:pr.neg, thoai:c.thoai,
           giong:nv.giong, giong_key:giongKey(nv.gioi,nv.tuoi), seed:nv.seed,
           lora:nv.lora, co_lora:coLora(nv.lora), trigger:trigger(nv.id), khoa_mat:!!nv.khoaMat,
@@ -65835,7 +65902,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
         '<button class="btn ghost sm" onclick="G.ax.canhDoi(\''+c.id+'\',1)" title="Xuống">▼</button>'+
         '<button class="btn ghost sm" onclick="G.ax.canhSuaMo(\''+c.id+'\')">Sửa</button>'+
         '<button class="btn ghost sm" onclick="G.ax.canhXoa(\''+c.id+'\')">Xoá</button></div></div>'+
-        '<p class="tiny muted" style="margin-top:6px">🎬 '+h(c.boiCanh||'—')+' · 📷 '+h(c.may||'—')+'</p>'+
+        '<p class="tiny muted" style="margin-top:6px">🎬 '+h(c.boiCanh||'—')+' · 🎥 '+h(mqChu(c))+(c.may?' · '+h(c.may):'')+'</p>'+
         (c.thoai?'<p class="sm" style="margin-top:4px">🗣 "'+h(c.thoai)+'"</p>':'')+
         '</div>';
     }).join('');
@@ -65847,7 +65914,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     var o=U.sec('Prompt & cấu hình','Sinh sẵn prompt + file .json cho notebook Kaggle (model mở, free)')+
       '<div class="row mb" style="gap:8px;flex-wrap:wrap"><button class="btn" onclick="G.ax.taiConfig()">'+ic('arrow','w-3 h-3')+'Tải cấu hình .json cho Kaggle</button>'+
       '<span class="bd-chip">Tập: '+h(p.ten)+' · '+p.canh.length+' cảnh</span></div>';
-    o += '<div class="gd-wrap"><table class="gd-tb"><thead><tr><th>#</th><th>Nhân vật</th><th>Prompt ảnh (InstantID/SDXL)</th><th>Prompt video (Wan I2V)</th><th>Thoại · giọng</th><th>Lip-sync</th></tr></thead><tbody>'+
+    o += '<div class="gd-wrap"><table class="gd-tb"><thead><tr><th>#</th><th>Nhân vật</th><th>Prompt ảnh (SDXL + LoRA)</th><th>Prompt video (Wan I2V)</th><th>Thoại · giọng</th><th>Lip-sync</th></tr></thead><tbody>'+
       p.canh.map(function(c,i){ var nv=nvById(c.nvId)||{}; var pr=promptCanh(c);
         return '<tr><td>'+(i+1)+'</td><td>'+h(nv.ten||'?')+'</td><td style="min-width:220px">'+h(pr.img)+'</td>'+
         '<td style="min-width:200px">'+h(pr.vid)+'</td><td>'+(c.thoai?h(c.thoai)+' <span class="tiny muted">('+h(nv.giong||'—')+')</span>':'<span class="muted">—</span>')+'</td>'+
@@ -65857,31 +65924,64 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     return o;
   }
 
+  function vePhimTruong(){
+    var o=U.sec('Phim trường nội bộ','Bối cảnh cố định của GITA — mọi tập quay cùng một nơi đều giống hệt nhau')+
+      '<div class="row mb"><button class="btn sm" onclick="G.ax.bcMo()">'+ic('spark','w-3 h-3')+'Thêm phim trường</button></div>';
+    o += '<div class="grid g2">'+(G.S.axBC||[]).map(function(b){
+      var dung=0; (G.S.axPhim||[]).forEach(function(p){ p.canh.forEach(function(c){ if(c.bcId===b.id) dung++; }); });
+      return '<div class="card pad-sm"><div class="row" style="justify-content:space-between"><b>🏛 '+h(b.ten)+'</b>'+
+        '<span class="bd-chip"'+(coLora(b.lora)?' style="border-color:var(--ok);color:var(--ok)"':'')+'>'+(coLora(b.lora)?'🔒 LoRA '+h(b.lora):'chưa train LoRA')+'</span></div>'+
+        '<p class="sm muted" style="line-height:1.5;margin:6px 0">'+h(b.mota)+'</p>'+
+        '<p class="tiny muted">seed '+h(b.seed||'—')+' · trigger '+h(trigger(b.id))+' · dùng trong '+dung+' cảnh</p>'+
+        '<div class="row mt" style="gap:6px"><button class="btn ghost sm" onclick="G.ax.bcMo(\''+b.id+'\')">Sửa</button>'+
+        '<button class="btn ghost sm" onclick="G.ax.bcXoa(\''+b.id+'\')">Xoá</button></div></div>'; }).join('')+'</div>';
+    o += '<p class="bd-tip" style="margin-top:10px">Khoá phim trường chắc nhất: chụp/sinh 15–30 ảnh của bối cảnh → train LoRA như nhân vật → điền ô LoRA. Động cơ nạp đồng thời LoRA nhân vật + LoRA phim trường.</p>';
+    return o;
+  }
+
   function veKyXao(){
     var p=phimActive(), hk=hauCua(p);
     var o=U.sec('Kỹ xảo & Động cơ','Chọn phương án sản xuất · dự toán chi phí · động cơ từng cảnh · hậu kỳ');
-    var pa=p.phuongAn||'A', phut=p.phutThang||20;
+    var pa=p.phuongAn||'D', phut=p.phutThang||20, gp=gpuCua(p);
     function usd(x){ return '$'+(x<10?x.toFixed(2):Math.round(x)); }
     function vnd(x){ return Math.round(x*TY_GIA/1000).toLocaleString('vi-VN')+'k đ'; }
-    var A=duToan(p,'A'), B=duToan(p,'B'), C=duToan(p,'C'), giayTap=A.giay||1;
+    var A=duToan(p,'A'), B=duToan(p,'B'), C=duToan(p,'C'), D=duToan(p,'D'), giayTap=A.giay||1;
     var heso=phut*60/giayTap;                      /* quy tập hiện tại ra sản lượng tháng */
-    var gioGPU=A.gpuPhut*heso/60, gioT4=gioGPU*4.5;  /* T4 Kaggle chậm hơn 4090 khoảng 4–5 lần */
+    var gioGPU=A.gpuPhut*heso/60, gioT4=gioGPU/gp.he*4.5;  /* T4 Kaggle chậm hơn 4090 khoảng 4–5 lần */
     var aThue=A.usd*heso, bApi=B.usd*heso, bTong=bApi+22, cMix=C.usd*heso, cGio=C.gpuPhut*heso/60;
-    function nut(k,t,d){ return '<button class="btn '+(pa===k?'':'ghost ')+'sm" style="text-align:left;flex:1;min-width:240px;white-space:normal;line-height:1.4" onclick="G.ax.phuongAn(\''+k+'\')"><b>'+t+'</b><br><span class="tiny" style="opacity:.85">'+d+'</span></button>'; }
+    var dMix=D.usd*heso, dGio=D.gpuPhut*heso/60;
+    /* % thuê ngoài của tập theo phương án đang chọn (tính cả cảnh chọn động cơ riêng) */
+    var hien=duToan(p), ngoaiPct=hien.giay? Math.round(hien.giayNgoai/hien.giay*100) : 0;
+    function nut(k,t,d){ return '<button class="btn '+(pa===k?'':'ghost ')+'sm" style="text-align:left;flex:1;min-width:220px;white-space:normal;line-height:1.4;border-radius:14px;display:block;padding:10px 12px" onclick="G.ax.phuongAn(\''+k+'\')"><b style="display:block">'+t+'</b><span class="tiny" style="display:block;opacity:.85;margin-top:3px">'+d+'</span></button>'; }
     o += '<div class="card pad-sm mb"><b class="sm">Phương án sản xuất của tập</b>'+
       '<div class="row mt" style="gap:8px;flex-wrap:wrap">'+
+        nut('D','D · Nội bộ 90% — khuyên dùng','Mọi cảnh chạy model mở trên máy GITA · chỉ cảnh then chốt thuê Veo 3.1 Fast, trần 10% thời lượng')+
         nut('A','A · Free (model mở)','Người dẫn nói: InfiniteTalk · cảnh: Wan 2.2 · cảnh dài: FramePack')+
-        nut('B','B · Tối ưu có phí','Người dẫn nói: InfiniteTalk API · cảnh: Seedance · cảnh then chốt: Veo 3.1 Fast')+
-        nut('C','C · Lai — khuyên dùng','Người dẫn nói: InfiniteTalk tự chạy (GPU thuê) · cảnh: Seedance · then chốt: Veo 3.1 Fast')+
+        nut('C','C · Lai','Người dẫn nói: InfiniteTalk tự chạy · cảnh: Seedance · then chốt: Veo 3.1 Fast')+
+        nut('B','B · Tối ưu có phí','Người dẫn nói: InfiniteTalk API · cảnh: Seedance · then chốt: Veo 3.1 Fast')+
       '</div>'+
       '<div class="row mt" style="gap:8px;align-items:center;flex-wrap:wrap"><span class="tiny muted">Sản lượng dự kiến:</span>'+
-        '<input type="number" min="1" max="600" value="'+phut+'" onchange="G.ax.phutThang(this.value)" style="width:80px;padding:6px;border:1px solid var(--line);border-radius:8px"> <span class="tiny muted">phút phim thành phẩm / tháng</span></div></div>';
-    o += '<div class="gd-wrap mb"><table class="gd-tb"><thead><tr><th>Dự toán / tháng ('+phut+' phút)</th><th>A · Free trên Kaggle</th><th>A · Thuê GPU 4090</th><th>B · Tối ưu có phí</th><th>C · Lai (khuyên dùng)</th></tr></thead><tbody>'+
-      '<tr><td>Sinh video (gồm làm lại)</td><td>0 đ</td><td>'+usd(aThue)+' · '+vnd(aThue)+'</td><td>'+usd(bApi)+' · '+vnd(bApi)+'</td><td>'+usd(cMix)+' · '+vnd(cMix)+'</td></tr>'+
-      '<tr><td>Giọng đọc</td><td>0 đ (XTTS)</td><td>0 đ (XTTS)</td><td>$22 · '+vnd(22)+' (ElevenLabs Creator)</td><td>0 đ nháp (XTTS) · $22 nếu cần giọng bản cuối hay hơn</td></tr>'+
-      '<tr><td><b>Tổng</b></td><td><b>0 đ</b></td><td><b>'+usd(aThue)+' · '+vnd(aThue)+'</b></td><td><b>'+usd(bTong)+' · '+vnd(bTong)+'</b></td><td><b>'+usd(cMix)+'–'+usd(cMix+22)+'</b></td></tr>'+
-      '<tr><td>Mỗi phút thành phẩm</td><td>0 đ</td><td>'+usd(aThue/phut)+'</td><td>'+usd(bTong/phut)+'</td><td>'+usd(cMix/phut)+'–'+usd((cMix+22)/phut)+'</td></tr>'+
-      '<tr><td>Thời gian máy</td><td>≈ '+Math.round(gioT4)+' giờ T4 (Kaggle cho ~120 giờ/tháng)</td><td>≈ '+Math.round(gioGPU)+' giờ 4090</td><td>Gần như tức thì (máy của nhà cung cấp)</td><td>≈ '+Math.round(cGio)+' giờ 4090 (chỉ cảnh người dẫn)</td></tr>'+
+        '<input type="number" min="1" max="600" value="'+phut+'" onchange="G.ax.phutThang(this.value)" style="width:80px;padding:6px;border:1px solid var(--line);border-radius:8px"> <span class="tiny muted">phút phim thành phẩm / tháng</span>'+
+        '<span class="tiny muted" style="margin-left:10px">Máy GPU thuê theo giờ:</span>'+
+        '<select onchange="G.ax.gpu(this.value)" style="padding:6px;border:1px solid var(--line);border-radius:8px">'+
+          Object.keys(GPU).map(function(k){ return '<option value="'+k+'"'+(GPU[k]===gp?' selected':'')+'>'+h(GPU[k].ten)+' · ~$'+GPU[k].gio+'/giờ</option>'; }).join('')+
+        '</select></div>'+
+      '<p class="bd-tip" style="margin-top:6px">'+h(gp.ten)+' chạy được: '+h(gp.chat)+'.</p></div>';
+    var mau = ngoaiPct<=10 ? '#0B7350' : (ngoaiPct<=30 ? '#B4720F' : '#B42318');
+    o += '<div class="card pad-sm mb"><div class="row" style="justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px">'+
+        '<b class="sm">Tỉ lệ nội bộ của tập</b><span class="tiny" style="color:'+mau+'"><b>'+(100-ngoaiPct)+'% nội bộ · '+ngoaiPct+'% thuê ngoài</b> (mục tiêu ≤ 10%)</span></div>'+
+      '<div style="height:10px;border-radius:6px;background:var(--line);overflow:hidden;margin-top:8px;display:flex">'+
+        '<div style="width:'+(100-ngoaiPct)+'%;background:#0B7350"></div><div style="width:'+ngoaiPct+'%;background:'+mau+'"></div></div>'+
+      '<p class="bd-tip" style="margin-top:6px">Tính theo giây thành phẩm: '+hien.giayNgoai+'s / '+hien.giay+'s chạy động cơ thuê ngoài. '+
+        (ngoaiPct>10 ? '<b>Đang vượt trần 10%</b> — chọn phương án D, hoặc bỏ bớt ô "Cảnh then chốt" / động cơ có phí chọn riêng ở từng cảnh.' :
+         'Đạt chuẩn xưởng nội bộ. Động cơ cũng tự giữ trần này khi dựng (cảnh vượt trần tự chạy model mở).')+'</p></div>';
+    o += '<div class="gd-wrap mb"><table class="gd-tb"><thead><tr><th>Dự toán / tháng ('+phut+' phút)</th><th>D · Nội bộ 90%</th><th>A · Free trên Kaggle</th><th>A · Thuê '+h(gp.ten)+'</th><th>C · Lai</th><th>B · Tối ưu có phí</th></tr></thead><tbody>'+
+      '<tr><td>Sinh video (gồm làm lại)</td><td>'+usd(dMix)+' · '+vnd(dMix)+'</td><td>0 đ</td><td>'+usd(aThue)+' · '+vnd(aThue)+'</td><td>'+usd(cMix)+' · '+vnd(cMix)+'</td><td>'+usd(bApi)+' · '+vnd(bApi)+'</td></tr>'+
+      '<tr><td>Giọng đọc</td><td>0 đ (thu âm thật / VieNeu-TTS nội bộ)</td><td>0 đ (VieNeu-TTS)</td><td>0 đ (VieNeu-TTS)</td><td>0 đ nội bộ · $22 nếu thuê giọng ngoài</td><td>$22 · '+vnd(22)+' (ElevenLabs Creator)</td></tr>'+
+      '<tr><td><b>Tổng</b></td><td><b>'+usd(dMix)+' · '+vnd(dMix)+'</b></td><td><b>0 đ</b></td><td><b>'+usd(aThue)+' · '+vnd(aThue)+'</b></td><td><b>'+usd(cMix)+'–'+usd(cMix+22)+'</b></td><td><b>'+usd(bTong)+' · '+vnd(bTong)+'</b></td></tr>'+
+      '<tr><td>Mỗi phút thành phẩm</td><td>'+usd(dMix/phut)+'</td><td>0 đ</td><td>'+usd(aThue/phut)+'</td><td>'+usd(cMix/phut)+'–'+usd((cMix+22)/phut)+'</td><td>'+usd(bTong/phut)+'</td></tr>'+
+      '<tr><td>Thuê ngoài</td><td>'+(D.giay?Math.round(D.giayNgoai/D.giay*100):0)+'%</td><td>0%</td><td>0%</td><td>'+(C.giay?Math.round(C.giayNgoai/C.giay*100):0)+'%</td><td>100%</td></tr>'+
+      '<tr><td>Thời gian máy</td><td>≈ '+Math.round(dGio)+' giờ '+h(gp.ten)+'</td><td>≈ '+Math.round(gioT4)+' giờ T4 (Kaggle cho ~120 giờ/tháng)</td><td>≈ '+Math.round(gioGPU)+' giờ '+h(gp.ten)+'</td><td>≈ '+Math.round(cGio)+' giờ (chỉ cảnh người dẫn)</td><td>Gần như tức thì (máy nhà cung cấp)</td></tr>'+
       '</tbody></table></div>'+
       '<p class="bd-tip">Tính theo đúng tỉ lệ cảnh của tập này, nhân lên '+phut+' phút/tháng, đã gồm làm lại (cảnh diễn ×2, người dẫn ×1,3). Giá API tra tháng 10/2026; giờ GPU của động cơ mở là ước tính — chạy thử 1 tập để đo thật. '+
         (gioT4>120?'<b>Sản lượng này vượt hạn mức Kaggle free</b> → cần thuê GPU hoặc giảm sản lượng.':'Sản lượng này nằm trong hạn mức Kaggle free.')+(B.chuaGia?' Có '+B.chuaGia+' cảnh dùng động cơ chưa có giá.':'')+'</p>';
@@ -65927,7 +66027,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
 
     var o = U.ph({ eyebrow:'XƯỞNG PHIM AI · BỘ ĐIỀU KHIỂN', ic:'orbit', grad:1,
       t:'Bộ điều khiển sản xuất phim AI',
-      lead:'App GITA là bộ não: giữ dàn nhân vật nhất quán, phân cảnh kịch bản, sinh prompt + cấu hình chuẩn cho công cụ AI free (Kaggle), và theo dõi sản xuất từng tập. Phần sinh video người thật chuyển động chạy ở notebook Kaggle — không slideshow, không ảnh mấp môi.' });
+      lead:'App GITA là bộ não của xưởng nội bộ: dàn nhân vật khoá mặt, phim trường, phân cảnh, máy quay ảo, kỹ xảo — rồi xuất cấu hình cho động cơ model mở chạy trên GPU (Kaggle hoặc máy thuê theo giờ). Thuê ngoài tối đa 10% — không slideshow, không ảnh mấp máy môi.' });
 
     o += '<div class="row mb" style="gap:8px;flex-wrap:wrap">'+
       '<button class="btn ghost sm" data-v="studio-he">'+ic('arrow','w-3 h-3')+'Hệ điều hành xưởng</button>'+
@@ -65935,13 +66035,14 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       '</div>';
 
     o += '<div class="row mb" style="gap:6px;flex-wrap:wrap">'+
-      tabBtn('nv','Kho nhân vật')+tabBtn('phim','Phim & phân cảnh')+tabBtn('prompt','Prompt & cấu hình')+tabBtn('bang','Bảng sản xuất')+tabBtn('kyxao','Kỹ xảo & Động cơ')+tabBtn('tudong','Tự động')+'</div>';
+      tabBtn('nv','Kho nhân vật')+tabBtn('phim','Phim & phân cảnh')+tabBtn('prompt','Prompt & cấu hình')+tabBtn('bang','Bảng sản xuất')+tabBtn('phimtruong','Phim trường')+tabBtn('kyxao','Kỹ xảo & Động cơ')+tabBtn('tudong','Tự động')+'</div>';
 
     if(G.S.axTab==='nv') o += veNhanVat();
     else if(G.S.axTab==='phim') o += vePhanCanh();
     else if(G.S.axTab==='prompt') o += vePrompt();
     else if(G.S.axTab==='bang') o += veBang();
     else if(G.S.axTab==='kyxao') o += veKyXao();
+    else if(G.S.axTab==='phimtruong') o += vePhimTruong();
     else { o += veTuDong(); var _j=tdCfg().job; if(_j) setTimeout(function(){ try{ G.ax.tdTheoDoi(_j); }catch(e){} }, 0); }
 
     o += '<p class="tiny muted" style="margin-top:14px">'+ic('shield','w-3 h-3')+' Dữ liệu nhân vật & phân cảnh lưu trên máy anh/chị, giữ qua phiên. App không gửi gì ra ngoài; việc sinh video do notebook Kaggle (model mở) thực hiện bằng cấu hình .json tải ở tab "Prompt & cấu hình".</p>';
@@ -65989,7 +66090,7 @@ function save(){
        văn phòng thì Coach đăng xuất, phụ huynh đăng nhập vào cùng trình
        duyệt — không ghi tên chủ sổ thì bằng chứng đóng việc của Coach,
        viết về nhà nào có chuyện gì, nằm lại trong máy cho người sau. */
-    viec:G.S.viec, chotNgay:G.S.chotNgay, chotKhNgay:G.S.chotKhNgay, caiTien:G.S.caiTien, mua:G.S.mua, vet:G.S.vet, viecCua:G.S.viecCua, cvSangKien:G.S.cvSangKien, ltXuLy:G.S.ltXuLy, ltLichSu:G.S.ltLichSu, nlDiem:G.S.nlDiem, gdNV:G.S.gdNV, axNV:G.S.axNV, axPhim:G.S.axPhim, axActive:G.S.axActive,
+    viec:G.S.viec, chotNgay:G.S.chotNgay, chotKhNgay:G.S.chotKhNgay, caiTien:G.S.caiTien, mua:G.S.mua, vet:G.S.vet, viecCua:G.S.viecCua, cvSangKien:G.S.cvSangKien, ltXuLy:G.S.ltXuLy, ltLichSu:G.S.ltLichSu, nlDiem:G.S.nlDiem, gdNV:G.S.gdNV, axNV:G.S.axNV, axPhim:G.S.axPhim, axActive:G.S.axActive, axBC:G.S.axBC,
     /* Bàn cờ hành trình. Thiếu dòng này thì mọi quân nhà mình đặt bay
        hết khi tải lại trang — và một bàn cờ xoá được mỗi lần F5 thì
        nhìn nó không còn nghĩa gì. */
@@ -66042,6 +66143,7 @@ function load(){
     G.S.axNV = d.axNV || null;
     G.S.axPhim = d.axPhim || null;
     G.S.axActive = d.axActive || null;
+    G.S.axBC = d.axBC || null;
     G.S.mua = d.mua || null;
     G.S.vet = d.vet || [];
     G.S.viecCua = d.viecCua || null;

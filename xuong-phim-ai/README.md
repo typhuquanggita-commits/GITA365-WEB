@@ -1,111 +1,97 @@
-# GITA 365 · Xưởng phim AI — Động cơ Kaggle (model mở, free)
+# GITA 365 · Xưởng phim AI nội bộ — Động cơ (model mở, chạy trên GPU)
 
-Đây là **phần 2** của xưởng phim AI. Phần 1 (bộ điều khiển) nằm trong app
-GITA: màn **Sản xuất phim AI** → tạo nhân vật, phân cảnh, rồi bấm **"Tải
-cấu hình .json"**. File `.json` đó là đầu vào cho động cơ này.
+Đây là **phần 2** của xưởng phim AI. Phần 1 (bộ điều khiển) nằm trong app GITA: màn **Sản xuất
+phim AI** → nhân vật, phim trường, phân cảnh, máy quay, kỹ xảo → **"Tải cấu hình .json"** (hoặc bấm
+**Dựng tự động** nếu đã nối Cloudflare + GitHub + Kaggle). File `.json` là đầu vào cho động cơ này.
 
-> ⚠️ **Nói thẳng:** đây là mã chạy trên GPU (Kaggle), **không chạy trong
-> trình duyệt**. Toàn bộ dùng **model mở, miễn phí**. Chất lượng khá —
-> giống reel Facebook tạm ổn; chưa bằng phim AI top YouTube (phần lớn hàng
-> đó dùng Veo/Kling có phí). Mã này **chưa được chạy thử trên GPU ở đây**
-> (môi trường dựng app không có GPU); khi chạy trên Kaggle gặp lỗi phiên
-> bản thư viện là chuyện bình thường — báo lỗi, sẽ sửa cùng.
+> ⚠️ **Nói thẳng:** đây là mã chạy trên GPU, **không chạy trong trình duyệt**. Phần hậu kỳ, máy quay
+> ảo và ráp phim **đã chạy thử thật** (ffmpeg, CPU). Các khâu cần GPU (ảnh, video, giọng, InfiniteTalk)
+> **chưa chạy thử được ở đây** vì môi trường dựng app không có GPU — lần chạy GPU đầu tiên gặp lỗi
+> phiên bản thư viện là chuyện bình thường; gửi log, sẽ sửa cùng.
 
-## Dây chuyền (tất cả model mở)
+## Xưởng nội bộ 90% — cái gì là "của GITA"
 
-| Khâu | Model | File/hàm |
-|---|---|---|
-| Ảnh nhân vật nhất quán | SDXL + **InstantID** (giữ khuôn mặt từ 1 ảnh) | `buoc_anh()` |
-| Ảnh → video chuyển động | **CogVideoX-5b I2V** (mặc định) · có thể đổi Wan 2.2 | `buoc_video()` |
-| Giọng Việt | **XTTS v2** (clone từ giọng mẫu) | `buoc_giong()` |
-| Lip-sync (người nói) | LatentSync / Wav2Lip (repo ngoài) | `buoc_lipsync()` |
-| Nâng nét · giữ mặt | Real-ESRGAN + CodeFormer | `buoc_nang_net()` |
-| Mượt 60fps | RIFE | (tuỳ chọn) |
-| Phụ đề | faster-whisper | `buoc_phu_de()` |
-| Ráp phim | ffmpeg | `buoc_rap()` |
+"Nội bộ" nghĩa là **mô hình, quy trình, dữ liệu, khuôn mặt, giọng, phim trường đều nằm trong tay GITA**
+(mã nguồn trong repo, model mở tải về máy, LoRA tự train). Chỉ **sức máy (GPU) là thuê theo giờ** —
+mua RTX 5090 hơn $3.000, còn thuê 4090 ~ $0,34/giờ. Thuê ngoài dịch vụ (Veo…) bị **khoá trần 10%**.
 
-## Chuẩn bị trên Kaggle (một lần)
+| Khâu | Nội bộ (model mở) | Giấy phép | Hàm |
+|---|---|---|---|
+| Dịch kịch bản vi→en cho model | opus-mt-vi-en (chạy trên máy) | CC-BY-4.0 | `dich_en()` |
+| Ảnh nhân vật đúng mặt | SDXL + **LoRA nhân vật** tự train (+ LoRA phim trường) | OpenRAIL++-M | `buoc_anh()` |
+| Cảnh diễn chuyển động | **Wan 2.2** (A14B 720p trên card ≥70GB · TI2V-5B 720p ≥20GB · 480p trên T4) | Apache-2.0 | `_wan()` |
+| Người dẫn nói cả thân, khớp môi | **InfiniteTalk** (ảnh + giọng → video) | Apache-2.0 | `_infinitetalk()` |
+| Giọng | **Thu âm thật** `thu-am/<mã cảnh>.wav` → **VieNeu-TTS** (Việt) → **Chatterbox** (Anh) | Apache-2.0 · MIT | `buoc_giong()` |
+| Giữ mặt + nâng nét | GFPGAN v1.4 + Real-ESRGAN x2 (từng khung hình) | Apache-2.0 · BSD-3 | `_khung_ai()` |
+| Mượt 60fps | RIFE (thiếu thì ffmpeg minterpolate) | MIT | `_rife()` |
+| **Máy quay ảo** | Đẩy vào/kéo ra/lia/nghiêng/cầm tay — di máy chính xác ở hậu kỳ trên khung 4K | (mã GITA) | `buoc_may_quay()` |
+| Phụ đề | faster-whisper / theo thoại | MIT | `buoc_phu_de()` |
+| Ráp + nhạc nền | ffmpeg | LGPL/GPL | `buoc_rap()` |
+| Thuê ngoài ≤10% | Veo 3.1 Fast cho cảnh then chốt (điểm nối `_goi_api()`) | có phí | `giu_tran_ngoai()` |
 
-1. Tạo tài khoản Kaggle, **xác minh số điện thoại** để mở GPU.
-2. Tạo Notebook mới → Settings → **Accelerator = GPU T4 x2** (hoặc P100).
-3. Internet = **On** (để tải model từ HuggingFace).
-4. Tải mã này lên: kéo cả thư mục `xuong-phim-ai/` vào, hoặc
-   `!git clone` repo GITA rồi `cd xuong-phim-ai`.
+**Không dùng cho thương mại:** XTTS v2 (giấy phép CPML phi thương mại, lại không có tiếng Việt) và mô hình
+mặt antelopev2 của InstantID (chỉ nghiên cứu). Hai thứ này **mặc định tắt**; khoá mặt bằng LoRA tự train.
 
-## Cách chạy một tập
-
-1. Trong app GITA → **Sản xuất phim AI** → dựng nhân vật & phân cảnh →
-   **Tải cấu hình .json**. Upload file đó lên Kaggle (vd `cau-hinh.json`).
-2. Chuẩn bị **ảnh khuôn mặt mẫu** cho từng nhân vật, đặt trong thư mục
-   `nhan-vat/<id_nhan_vat>.png` (id lấy trong file .json, vd `nv-nam.png`,
-   `nv-nu.png`). Dùng chính bộ ảnh mẫu anh/chị đã có.
-3. (Người dẫn nói) chuẩn bị **giọng mẫu chia theo giới tính + độ tuổi**:
-   `giong/nam-lon.wav`, `giong/nu-lon.wav`, `giong/nam-teen.wav`,
-   `giong/nu-teen.wav`, `giong/nam-treem.wav`, `giong/nu-treem.wav`
-   (mỗi file 10–20 giây). Mọi nhân vật cùng giới+tuổi dùng chung một giọng;
-   muốn giọng riêng cho một người thì thêm `giong/<id-nhân-vật>.wav`.
-4. (Tuỳ chọn) nhạc nền có bản quyền: đặt vào `nhac/` (mp3/wav). Hậu kỳ trộn ở âm lượng thấp.
-5. Động cơ từng cảnh do app quyết (tab **Kỹ xảo & Động cơ**): mở/free = Wan 2.2 · CogVideoX ·
-   LTX · FramePack; có phí = Veo 3 · Kling · Runway · HeyGen (cần khoá `VEO_API_KEY`…
-   và nối hàm `_goi_api()`; chưa có thì tự hạ về động cơ mở).
-6. Chạy:
+## Cài một lệnh
 
 ```bash
-# Kiểm tra cấu hình + dựng khung thư mục (KHÔNG cần GPU) — chạy được mọi nơi
-python gita_xuong_phim.py --config cau-hinh.json --plan
-
-# Chạy full trên GPU (ảnh → video → giọng → lip-sync → ráp)
-python gita_xuong_phim.py --config cau-hinh.json --run all
-
-# Hoặc chạy từng khâu để tiết kiệm giờ GPU
-python gita_xuong_phim.py --config cau-hinh.json --run anh
-python gita_xuong_phim.py --config cau-hinh.json --run video
-python gita_xuong_phim.py --config cau-hinh.json --run giong
-python gita_xuong_phim.py --config cau-hinh.json --run rap
+git clone <repo GITA> repo && bash repo/xuong-phim-ai/cai-dat-noi-bo.sh
 ```
 
-Kết quả nằm trong `ket-qua/<id_phim>/`:
-`anh/` (khung tĩnh) · `clip/` (video từng cảnh) · `giong/` · `phim-cuoi.mp4`.
+Bộ cài tự dò cỡ card và đĩa trống rồi chọn mức:
 
-## Giới hạn & mẹo (thật)
+| Mức | Khi nào | Cài gì |
+|---|---|---|
+| `nhe` | thử nhanh | thư viện, giọng, hậu kỳ, SDXL (Wan tải lúc chạy) |
+| `vua` (mặc định trên T4/4090) | Kaggle, RTX 4090 | + Wan 2.2 hợp cỡ card |
+| `day_du` | card ≥ 40GB và ≥ 120GB đĩa (A100 80GB) | + InfiniteTalk 14B |
 
-- **Chậm:** mỗi clip 5 giây ~3–10 phút trên T4. 1 phút phim ~ 12 clip ~
-  1–3 giờ. Kaggle cho ~9–12h/phiên, ~30h/tuần → làm theo mẻ, chạy từng khâu.
-- **Giữ mặt nhất quán:** dùng **cùng ảnh mẫu + cùng seed** cho một nhân vật;
-  bật CodeFormer để ổn định khuôn mặt sau khi dựng video.
-- **Muốn đẹp hơn nữa:** train một **LoRA** cho mỗi nhân vật (10–20 ảnh) rồi
-  điền tên LoRA trong app → prompt sẽ gọi LoRA đó.
-- Kaggle là nền học/nghiên cứu, có giới hạn TOS — hợp R&D và làm mẻ nhỏ.
-  Sản xuất đều/nhiều nên chuyển GPU trả phí (Runpod/Modal/Colab Pro).
+Chạy lại an toàn (bỏ qua phần đã có). Trọng số RIFE phát hành qua link ngoài → đặt `RIFE_URL=<link .zip>`.
+Thử nghiệm InstantID (phi thương mại): `CAI_INSTANTID=1 ANTELOPE_REPO=<repo HF> bash cai-dat-noi-bo.sh`.
 
-## Lưu trữ & phát (tuỳ chọn, Cloudflare)
+## Chuẩn bị bộ cast (một lần)
 
-- Đẩy `ket-qua/` lên **Cloudflare R2** (free 10GB, không phí tải về) bằng
-  `rclone`/`boto3` (R2 dùng S3-API). Xem cuối `gita_xuong_phim.py`.
-- Phát: đưa `phim-cuoi.mp4` lên Facebook/YouTube trực tiếp, hoặc Cloudflare
-  Stream nếu muốn host riêng.
+Đặt trong dataset Kaggle (hoặc cạnh thư mục chạy):
 
-## Ba phương án chi phí (giá tra tháng 10/2026 — kiểm lại khi mua)
+- `lora/<id nhân vật>.safetensors` — LoRA khuôn mặt (train bằng `train-lora/`). Trigger = `gita` + id.
+- `lora/<id phim trường>.safetensors` — LoRA phim trường (tuỳ chọn, cùng cách train).
+- `nhan-vat/<id>.png` — ảnh mặt mẫu.
+- `giong/nam-lon.wav`, `nu-lon.wav`, `nam-teen.wav`, `nu-teen.wav`, `nam-treem.wav`, `nu-treem.wav`
+  (3–10 giây mỗi file) · giọng riêng: `giong/<id nhân vật>.wav`.
+- `thu-am/<mã cảnh>.wav` — **giọng thật** Trainer/MC đọc câu thoại (ưu tiên số 1).
+- `nhac/` — nhạc nền có bản quyền (hậu kỳ trộn ở âm lượng thấp).
 
-Chọn trong app: **Sản xuất phim AI → Kỹ xảo & Động cơ**. App tự định tuyến từng cảnh và
-dự toán theo sản lượng phút/tháng.
+## Chạy
 
-| | A · Free | B · Có phí tối ưu | C · Lai (khuyên dùng) |
-|---|---|---|---|
-| Người dẫn nói | InfiniteTalk (tự chạy) | InfiniteTalk API ~$0.06/s | InfiniteTalk (tự chạy, GPU thuê) |
-| Cảnh thường | Wan 2.2 (tự chạy) | Seedance 1.0 Pro ~$0.03/s | Seedance 1.0 Pro ~$0.03/s |
-| Cảnh then chốt | Wan 2.2 | Veo 3.1 Fast ~$0.10/s | Veo 3.1 Fast ~$0.10/s |
-| Giọng | XTTS (free) | ElevenLabs Creator $22/tháng | XTTS nháp · ElevenLabs bản cuối |
+```bash
+python gita_xuong_phim.py --config cau-hinh.json --plan          # kiểm, không cần GPU
+python gita_xuong_phim.py --config cau-hinh.json --run all       # full
+python gita_xuong_phim.py --config cau-hinh.json --run anh,giong,video   # từng khâu
+```
 
-### GPU nào để tự chạy model mở
-- **Kaggle**: free ~30 giờ/tuần T4/P100. **Không có gói trả phí GPU mạnh hơn.** Colab Pro
-  ($9.99) / Pro+ ($49.99) chỉ cộng thêm 15 / 30 giờ/tuần trên Kaggle, vẫn là T4/P100.
-- **Runpod** (rẻ nhất cho sản xuất): RTX 4090 ~ $0.34/giờ (Community Cloud).
-- **Colab Pro**: A100 40GB ~ $0.54/giờ (tính theo compute unit) — hợp chạy InfiniteTalk/Wan 14B.
-- GPU mạnh hơn không đổi "chất" của model, nhưng cho chạy **bản model lớn hơn (14B) và độ phân
-  giải 720p** thay vì bản nhỏ 480p trên T4 — chất lượng tăng rõ.
+Thứ tự: `anh → giong → video → lipsync → nang_net → may_quay → phu_de → rap`.
+Kết quả: `ket-qua/<id phim>/phim-cuoi.mp4` (1080×1920, 60fps nếu bật Làm mượt).
 
-### Nối động cơ có phí
-Đặt khoá vào biến môi trường (`SEEDANCE_API_KEY`, `VEO_API_KEY`, `INFINITETALK_API_KEY`…) và
-viết hàm `_goi_api()` theo tài liệu của nhà cung cấp đã chọn. Chưa nối thì cảnh tự hạ về động
-cơ mở, không vỡ tập.
+## Bốn phương án (chọn trong app → Kỹ xảo & Động cơ)
+
+| | **D · Nội bộ 90%** (mặc định) | A · Free | C · Lai | B · Có phí |
+|---|---|---|---|---|
+| Người dẫn nói | InfiniteTalk (máy GITA) | InfiniteTalk | InfiniteTalk | InfiniteTalk API |
+| Cảnh diễn | Wan 2.2 (máy GITA) | Wan 2.2 / FramePack | Seedance API | Seedance API |
+| Cảnh then chốt | Veo 3.1 Fast, **trần 10% thời lượng** | Wan 2.2 | Veo 3.1 Fast | Veo 3.1 Fast |
+| Thuê ngoài | ≤ 10% | 0% | phần lớn cảnh | 100% |
+
+App có **đồng hồ "% nội bộ"** cho từng tập, và động cơ **tự giữ trần** (`ngoai_toi_da` trong cấu hình):
+cảnh vượt trần tự chạy model mở, không vỡ tập.
+
+### Máy GPU thuê theo giờ (giá tra 10/2026, kiểm lại khi thuê)
+- **Kaggle**: free ~30 giờ/tuần T4/P100 — không có gói trả phí GPU mạnh hơn. Hợp thử nghiệm, mẻ nhỏ.
+- **RTX 4090 24GB** (Runpod Community) ~ $0,34/giờ — Wan 2.2 TI2V-5B 720p.
+- **A100 80GB** ~ $1,19/giờ — Wan 2.2 A14B 720p (chất cao nhất bản mở) + InfiniteTalk 14B.
+
+### Nối dịch vụ thuê ngoài (≤10%)
+Đặt khoá vào biến môi trường (`VEO_API_KEY`…) và viết hàm `_goi_api()` theo tài liệu nhà cung cấp.
+Chưa nối thì cảnh tự chạy model mở.
+
+## Lưu trữ & phát
+Đẩy `ket-qua/` lên **Cloudflare R2** (S3-API). Dây chuyền tự động: xem `../tu-dong/README-tu-dong.md`.

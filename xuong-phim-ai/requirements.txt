@@ -12,17 +12,27 @@ opencv-python-headless
 numpy
 pillow
 
-# Ảnh nhân vật nhất quán (InstantID) — tuỳ chọn, cần thêm assets InstantID
-insightface
-onnxruntime-gpu
+peft                   # nạp LoRA nhân vật + LoRA phim trường
+sentencepiece          # bộ dịch vi→en nội bộ (opus-mt-vi-en)
+sacremoses
 
-# Giọng tiếng Việt
-TTS>=0.22.0            # Coqui XTTS v2
+# Giọng nội bộ — dùng thương mại được
+vieneu                 # VieNeu-TTS · tiếng Việt · Apache-2.0
+chatterbox-tts         # Chatterbox · tiếng Anh · MIT
+
+# Hậu kỳ AI
+basicsr
+facexlib
+gfpgan
+realesrgan
+
+# InstantID (tuỳ chọn, CHỈ thử nghiệm phi thương mại — mô hình mặt antelopev2):
+#   insightface onnxruntime-gpu  → cài bằng: CAI_INSTANTID=1 bash cai-dat-noi-bo.sh
 
 # Phụ đề
 faster-whisper
 
-# Lip-sync / nâng nét: dùng repo ngoài (clone riêng), không qua pip:
+# Repo ngoài — cai-dat-noi-bo.sh tự clone InfiniteTalk, Practical-RIFE (và InstantID nếu bật):
 #   Wav2Lip   : https://github.com/Rudrabha/Wav2Lip
 #   LatentSync: https://github.com/bytedance/LatentSync
 #   Real-ESRGAN: https://github.com/xinntao/Real-ESRGAN
