@@ -226,7 +226,14 @@ G.can = function(perm){
      nên một bộ phận được cấp bật crm_view qua G.S.crmMuc, dù bậc vai của
      họ nằm ngoài lv≤3 mặc định. Máy chủ vẫn gác mọi thao tác (mucCua ở
      từng cửa); đây chỉ bật MỤC trên máy khách. */
-  if(perm==='crm_view' && G.S && G.S.crmMuc) return true;
+  if(perm==='crm_view' && G.S){
+    if(G.S.crmMuc) return true;                       /* cấp theo người (vai khác) */
+    /* Tư vấn (R11): chăm sóc khách là NGHỀ của họ → bật CRM mặc định.
+       Super Admin vẫn chặn được từng người bằng cờ crmChan. Máy chủ vẫn
+       gác mọi thao tác thật (mucCua ở từng cửa) — đây chỉ bật MỤC. */
+    var rCRM = G.S.roleObj;
+    if(rCRM && rCRM.id === 'R11' && !G.S.crmChan) return true;
+  }
   return G.vaiCo(G.S.roleObj, perm);
 };
 
@@ -1542,6 +1549,7 @@ on('[data-kh]', function(el){ G.khoangModal(el.getAttribute('data-kh')); });
 on('[data-vai]', function(el){ G.vaiModal(el.getAttribute('data-vai')); });
 on('[data-pbban]', function(el){ if(G.pbMoBan) G.pbMoBan(el.getAttribute('data-pbban')); });
 on('[data-pbag]', function(el){ if(G.pbAgent) G.pbAgent(el.getAttribute('data-pbag'), +el.getAttribute('data-pbagi')); });
+on('[data-nlhs]', function(el){ if(G.nlHoSo) G.nlHoSo(+el.getAttribute('data-nlhs')); });
 on('[data-pd]', function(el){ G.phacDoModal(el.getAttribute('data-pd')); });
 on('[data-kb]', function(el){ document.getElementById('cmd').classList.remove('on'); G.kichBanModal(el.getAttribute('data-kb')); });
 on('[data-mt]', function(el){ document.getElementById('cmd').classList.remove('on'); G.moThucModal(el.getAttribute('data-mt')); });

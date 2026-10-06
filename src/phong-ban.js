@@ -235,7 +235,12 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     var hoso = chon ? hoSoBan(chon)
       : '<div class="card center pad" style="margin-top:14px"><p class="dim sm">'+ic('grid','w-5 h-5')+'<br>Bấm một ban ở trên để mở hồ sơ: nhân sự · Agent · báo cáo · kho · nội quy.</p></div>';
 
-    return head + thongke +
+    var sangNL = G.allowed && G.allowed('nang-luc-ns')
+      ? '<div class="pb-cta"><button class="btn sm" data-v="nang-luc-ns">'+ic('chart','w-3 h-3')+'Năng lực &amp; Thăng hạng nhân sự</button>'+
+        '<span class="tiny dim">Đánh giá đầu vào · thi tháng · thăng hạng · lương · cảnh báo · vinh danh</span></div>'
+      : '';
+
+    return head + thongke + sangNL +
       (U.sec?U.sec('Mười sáu ban','Bấm để mở hồ sơ từng ban'):'<h3>Mười sáu ban</h3>') +
       luoi + hoso;
   };

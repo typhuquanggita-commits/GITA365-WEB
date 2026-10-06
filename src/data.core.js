@@ -958,6 +958,7 @@ G.NAV = [
    items:[
     {v:'noi-may-chu', t:'Nối máy chủ',                 h:'Dán địa chỉ · gọi thử · sáu bước dựng', ic:'orbit', perm:'qt_trang', capMo:'chung', star:1},
     {v:'phong-ban',   t:'Hệ thống Phòng ban',          h:'16 ban · nhân sự theo vai · Agent (bấm xem lý lịch) · báo cáo · kho · nội quy', ic:'grid', star:1, perm:'dh_toan_he', capMo:'chung'},
+    {v:'nang-luc-ns', t:'Năng lực & Thăng hạng',        h:'Test đầu vào · thi tháng · thăng hạng · lương · cảnh báo năng suất · vinh danh', ic:'chart', star:1, perm:'dh_toan_he', capMo:'chung'},
     /* Khoá khuôn mặt — an ninh tài khoản CỦA MỖI NGƯỜI, nên KHÔNG khoá ở
        qt_trang: ai đăng nhập cũng tự bật/gỡ khuôn mặt cho tài khoản mình.
        Không perm, không gói — hiện với mọi vai. Khuôn mặt ở lại thiết bị;

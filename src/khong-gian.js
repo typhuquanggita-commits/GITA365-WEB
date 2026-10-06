@@ -51,19 +51,19 @@ var G = window.G || {}; window.G = G;
 
   /* ── KHỐI NGHIỆP VỤ — ứng viên theo vai, renderer cắt theo cap ──
      Ứng viên luôn nhiều hơn cap một chút, để sau khi lọc quyền vẫn đủ. */
-  var AZ10 = ['phan-quyen','phong-ban','tai-chinh-qt','bang-viec','studio',
+  var AZ10 = ['phan-quyen','phong-ban','tai-chinh-qt','nang-luc-ns','studio',
               'crm','noi-dung-tiep-thi','bang-gia','la-chan-30','khoa-dao-tao',
-              'dieu-hanh','truy-van-da-chieu','tang-truong'];
+              'bang-viec','dieu-hanh','truy-van-da-chieu','tang-truong'];
   G.KG_VIEC = {
     /* R01 Super Admin · R02 Admin — 10 màn quản trị A→Z */
     R01:{cap:10, ds:AZ10},
     R02:{cap:10, ds:AZ10},
     /* R03 Giám đốc — 8 màn điều hành (đều là màn lv3 mở được) */
-    R03:{cap:8, ds:['phong-ban','dieu-hanh','crm','tai-chinh-ceo','con-nguoi',
+    R03:{cap:8, ds:['phong-ban','nang-luc-ns','dieu-hanh','crm','tai-chinh-ceo','con-nguoi',
                     'khoa-dao-tao','bang-viec','do-luong-kh','giam-sat','tang-truong']},
     /* R04 Quản lý chuyên môn — giữ chuẩn nghề toàn đội */
-    R04:{cap:5, ds:['tt-cskh','do-luong-kh','ra-soat-kh','bang-viec',
-                    'phong-ban','assessment','trai-nghiem-kh']},
+    R04:{cap:5, ds:['tt-cskh','nang-luc-ns','do-luong-kh','ra-soat-kh',
+                    'phong-ban','bang-viec','assessment','trai-nghiem-kh']},
     /* R05 Trưởng nhóm Coach */
     R05:{cap:5, ds:['ban-coach','doi-ngu','bando-coach','bang-viec','xu-ly-ca','coach-deck']},
     /* R06 Senior Coach · R07 Coach */
