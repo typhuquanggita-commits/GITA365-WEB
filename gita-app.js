@@ -65458,15 +65458,19 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   /* Ép chất lượng + chặn hoạt hình/người que/mấp môi */
   var QPROM = 'ảnh chụp thật, máy ảnh DSLR, 4K, nét căng, điện ảnh, ánh sáng tự nhiên, da người thật, chân dung nhất quán';
   var QNEG  = 'hoạt hình, anime, cartoon, hoạt hoạ, 2D, tranh vẽ, phác thảo, người que, hình que, ảnh tĩnh, mấp máy môi, mặt méo, biến dạng, thừa ngón tay, mờ nhoè, răng cưa, chất lượng thấp, sai tỉ lệ cơ thể';
+  /* Khoá ngôn ngữ giọng · khoá phong cách không gian thương hiệu GITA */
+  var NGON = [['vi','Tiếng Việt'],['en','Tiếng Anh']];
+  var KGITA_STYLE = 'phong cách thương hiệu GITA365 cao cấp, sang trọng hiện đại, tông xanh dương và vàng gold, ánh sáng điện ảnh ấm, chất lượng điện ảnh';
+  var KGITA_CANH  = 'sảnh hệ sinh thái giáo dục GITA365 sang trọng, bảng LED lớn phát sáng logo GITA365, sàn đá cẩm thạch bóng, cây xanh, nội thất hiện đại tông xanh dương – vàng gold';
 
   function initData(){
     if(!G.S.axNV){ G.S.axNV = [
       { id:'nv-trainer', ten:'Chuyên gia GITA (Trainer)', loai:'nguoi', vai:'trainer', gioi:'nam', tuoi:'lon',
         mota:'Nam chuyên gia Á Đông ~35 tuổi, tóc ngắn đen gọn, đeo kính gọng đen, da sáng, gương mặt điềm đạm tin cậy',
         trangPhuc:'Vest xanh navy, sơ mi trắng', giong:'Nam trầm ấm', seed:'101', lora:'(chưa train)', ghiChu:'Dẫn dắt, tư vấn' },
-      { id:'nv-mc', ten:'MC nữ', loai:'nguoi', vai:'mc', gioi:'nu', tuoi:'lon',
-        mota:'Nữ MC Á Đông ~30 tuổi, tóc dài, trang điểm nhẹ, nụ cười thân thiện, chuyên nghiệp',
-        trangPhuc:'Vest xanh nhạt hoặc kem', giong:'Nữ truyền cảm', seed:'202', lora:'(chưa train)', ghiChu:'Dẫn chương trình' },
+      { id:'nv-mc', ten:'MC GITA (thương hiệu)', loai:'nguoi', vai:'mc', gioi:'nu', tuoi:'lon', khoaMat:true,
+        mota:'Nữ MC thương hiệu GITA Á Đông ~28–30 tuổi, tóc dài gợn sóng nâu đen, gương mặt thanh tú, nụ cười rạng rỡ, khí chất sang trọng chuyên nghiệp, phù hiệu GITA trên ngực áo',
+        trangPhuc:'Vest nữ kem/trắng thanh lịch (hoặc xanh nhạt), chân váy, giày cao gót', giong:'Nữ truyền cảm', seed:'202', lora:'(chưa train)', ghiChu:'MC dẫn chương trình & nhân vật phim · KHOÁ MẶT (train LoRA nv-mc)' },
       { id:'nv-bo', ten:'Bố', loai:'nguoi', vai:'dienvien', gioi:'nam', tuoi:'lon',
         mota:'Người bố Á Đông ~40 tuổi, tóc đen, gương mặt hiền, khoẻ khoắn',
         trangPhuc:'Sơ mi xanh nhạt, quần kaki', giong:'Nam trầm ấm', seed:'301', lora:'(chưa train)', ghiChu:'Nhân vật gia đình' },
@@ -65482,6 +65486,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     ]; }
     if(!G.S.axPhim){ G.S.axPhim = [
       { id:'phim-1', ten:'Tập 1 — Hành trình GITA 365', mota:'Giới thiệu hành trình 5 tầng, dạng người dẫn + cảnh minh hoạ',
+        ngonNgu:'vi', phongCachGita:true,
         canh:[
           { id:uid('c'), nvId:'nv-trainer', loai:'nguoi', boiCanh:'Phòng khách ấm cúng, cây xanh, ánh sáng tự nhiên', may:'Cận cảnh ngang mặt, tĩnh', chuyenDong:'Người ngồi nói, gật đầu nhẹ, tay đan', thoai:'Chào anh chị, hành trình thịnh vượng của gia đình bắt đầu từ một quyết định.', giay:5, tt:'' },
           { id:uid('c'), nvId:'nv-mc', loai:'nguoi', boiCanh:'Trường quay sáng, màn hình lớn phía sau', may:'Trung cảnh, máy lia nhẹ sang phải', chuyenDong:'Đứng thuyết trình, tay chỉ về màn hình', thoai:'GITA đồng hành cùng gia đình qua năm tầng phát triển.', giay:5, tt:'' },
@@ -65515,6 +65520,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       '<div class="bd-field"><span>Trang phục mặc định</span><input type="text" id="f-tp" value="'+h(e.trangPhuc)+'"></div>'+
       '<div class="grid g2"><div class="bd-field"><span>Seed (giữ khuôn mặt)</span><input type="text" id="f-seed" value="'+h(e.seed)+'"></div>'+
       '<div class="bd-field"><span>Tên LoRA (nếu có)</span><input type="text" id="f-lora" value="'+h(e.lora)+'"></div></div>'+
+      '<div class="bd-field"><label style="display:flex;gap:8px;align-items:center;font-size:12.5px;color:var(--ink-2)"><input type="checkbox" id="f-khoamat"'+(e.khoaMat?' checked':'')+'> Khoá mặt (nhân vật thương hiệu — train LoRA để ra đúng một gương mặt)</label></div>'+
       '<div class="bd-field"><span>Ghi chú</span><input type="text" id="f-gc" value="'+h(e.ghiChu)+'"></div>'+
       '<div class="row mt" style="gap:8px"><button class="btn" onclick="G.ax.nvLuu(\''+(e.id||'')+'\')">Lưu</button>'+
       '<button class="btn ghost" onclick="U.closeModal()">Huỷ</button></div>';
@@ -65525,7 +65531,8 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     function v(x){ var el=document.getElementById(x); return el?(el.value||'').trim():''; }
     var gioi=v('f-gioi')||'nam', tuoi=v('f-tuoi')||'lon';
     var o = { ten:v('f-ten')||'Nhân vật', vai:v('f-vai')||'dienvien', gioi:gioi, tuoi:tuoi, loai:'nguoi',
-      mota:v('f-mota'), trangPhuc:v('f-tp'), giong:giongTen(gioi,tuoi), seed:v('f-seed'), lora:v('f-lora'), ghiChu:v('f-gc') };
+      mota:v('f-mota'), trangPhuc:v('f-tp'), giong:giongTen(gioi,tuoi), seed:v('f-seed'), lora:v('f-lora'),
+      khoaMat:!!(document.getElementById('f-khoamat')||{}).checked, ghiChu:v('f-gc') };
     if(id){ var nv=nvById(id); if(nv) Object.assign(nv,o); }
     else { o.id=uid('nv'); G.S.axNV.push(o); }
     U.closeModal(); luu();
@@ -65534,6 +65541,9 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
 
   /* ── PHIM / TẬP ── */
   G.ax.phimChon = function(id){ G.S.axActive=id; if(G.render) G.render(); };
+  G.ax.phimNgon = function(v){ var p=phimActive(); if(p){ p.ngonNgu=v; luu(); } };
+  G.ax.phimGita = function(){ var p=phimActive(); if(p){ p.phongCachGita = (p.phongCachGita===false); luu(); } };
+  G.ax.canhKgita = function(){ var el=document.getElementById('f-bc'); if(el) el.value=KGITA_CANH; };
   G.ax.phimThem = function(){
     U.modal('<h3 class="mb">Thêm tập phim</h3>'+
       '<div class="bd-field"><span>Tên tập</span><input type="text" id="f-pten" placeholder="VD: Tập 2 — Tầng Nền"></div>'+
@@ -65543,7 +65553,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   G.ax.phimLuu = function(){
     var t=(document.getElementById('f-pten')||{}).value||'Tập mới';
     var m=(document.getElementById('f-pmota')||{}).value||'';
-    var p={id:uid('phim'),ten:t.trim(),mota:m.trim(),canh:[]}; G.S.axPhim.push(p); G.S.axActive=p.id;
+    var p={id:uid('phim'),ten:t.trim(),mota:m.trim(),ngonNgu:'vi',phongCachGita:true,canh:[]}; G.S.axPhim.push(p); G.S.axActive=p.id;
     U.closeModal(); luu();
   };
   G.ax.phimXoa = function(id){ if(G.S.axPhim.length<=1) return U.toast('Giữ lại ít nhất một tập.','err');
@@ -65556,7 +65566,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     return '<h3 class="mb">'+(c?'Sửa cảnh':'Thêm cảnh')+'</h3>'+
       '<div class="grid g2"><div class="bd-field"><span>Nhân vật</span><select id="f-nv" style="padding:8px;border:1px solid var(--line);border-radius:9px">'+opts+'</select></div>'+
       '<div class="bd-field"><span>Loại cảnh</span><div class="bd-seg"><button type="button" class="'+(e.loai==='nguoi'?'on':'')+'" onclick="this.parentNode.querySelectorAll(\'button\').forEach(function(b){b.classList.remove(\'on\')});this.classList.add(\'on\');window.__cloai=\'nguoi\'">Người dẫn nói</button><button type="button" class="'+(e.loai==='canh'?'on':'')+'" onclick="this.parentNode.querySelectorAll(\'button\').forEach(function(b){b.classList.remove(\'on\')});this.classList.add(\'on\');window.__cloai=\'canh\'">Cảnh diễn</button></div></div></div>'+
-      '<div class="bd-field"><span>Bối cảnh</span><input type="text" id="f-bc" value="'+h(e.boiCanh)+'" placeholder="VD: trường quay sáng, màn hình lớn"></div>'+
+      '<div class="bd-field"><span>Bối cảnh</span><input type="text" id="f-bc" value="'+h(e.boiCanh)+'" placeholder="VD: trường quay sáng, màn hình lớn"><button type="button" class="btn ghost sm" style="margin-top:6px;align-self:flex-start" onclick="G.ax.canhKgita()">+ Dùng không gian GITA</button></div>'+
       '<div class="bd-field"><span>Máy quay (góc · chuyển động)</span><input type="text" id="f-may" value="'+h(e.may)+'" placeholder="VD: trung cảnh, máy lia nhẹ sang phải"></div>'+
       '<div class="bd-field"><span>Chuyển động nhân vật</span><input type="text" id="f-cd" value="'+h(e.chuyenDong)+'" placeholder="VD: đứng nói, tay chỉ màn hình"></div>'+
       '<div class="bd-field"><span>Thoại (để trống nếu cảnh không lời)</span><textarea id="f-thoai" rows="2">'+h(e.thoai)+'</textarea></div>'+
@@ -65586,6 +65596,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     var noi = c.loai==='nguoi' && (c.thoai||'').trim();
     var img = [nv.mota, nv.trangPhuc, c.boiCanh, c.may, 'khung dọc 9:16', QPROM].filter(Boolean).join(', ');
     if(coLora(nv.lora)) img = trigger(nv.id)+', '+img;   /* từ khoá LoRA khoá đúng mặt */
+    if((phimActive()||{}).phongCachGita!==false) img = img + ', ' + KGITA_STYLE;  /* khoá phong cách không gian GITA */
     var vid = [c.chuyenDong||'(giữ tư thế tự nhiên)',
       noi?'đang nói, khẩu hình khớp lời, cử động đầu và tay tự nhiên':'diễn theo cảnh, chuyển động cơ thể tự nhiên',
       c.may, 'quay chuyển động mượt, sắc nét, người thật, không hoạt hình', (c.giay||5)+' giây'].filter(Boolean).join(', ');
@@ -65595,17 +65606,20 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     var p=phimActive();
     return {
       phim:{ id:p.id, ten:p.ten, mota:p.mota },
+      ngon_ngu: p.ngonNgu||'vi',
       cam:['khong-hoat-hinh','khong-nguoi-que','khong-anh-tinh-map-moi','phai-nguoi-that-chuyen-dong-sac-net'],
-      chuan:{ negative_chung:QNEG, phong_cach:'ảnh thật điện ảnh 9:16, nét căng, khớp khẩu hình với giọng' },
+      chuan:{ negative_chung:QNEG, phong_cach:'ảnh thật điện ảnh 9:16, nét căng, khớp khẩu hình với giọng',
+        phong_cach_gita: p.phongCachGita!==false, phong_cach_khong_gian:KGITA_STYLE },
       pipeline:{ anh:'instantid_sdxl', i2v:'wan2.2_i2v', tts:'vixtts', lipsync:'latentsync', nang_net:'realesrgan_codeformer', muot:'rife', phu_de:'faster_whisper', rap:'ffmpeg', khung:'1080x1920', fps_xuat:30 },
       nhan_vat: (G.S.axNV||[]).map(function(n){ return {id:n.id,ten:n.ten,vai:n.vai,gioi:n.gioi,tuoi:n.tuoi,loai:n.loai,
         mo_ta:n.mota,trang_phuc:n.trangPhuc,giong:n.giong,giong_key:giongKey(n.gioi,n.tuoi),seed:n.seed,
-        lora:n.lora, co_lora:coLora(n.lora), trigger:trigger(n.id)}; }),
+        lora:n.lora, co_lora:coLora(n.lora), trigger:trigger(n.id), khoa_mat:!!n.khoaMat}; }),
       canh: p.canh.map(function(c,i){ var pr=promptCanh(c); var nv=nvById(c.nvId)||{};
         return { thu_tu:i+1, id:c.id, nhan_vat:c.nvId, loai:c.loai, boi_canh:c.boiCanh, may_quay:c.may,
           prompt_anh:pr.img, prompt_video:pr.vid, negative:pr.neg, thoai:c.thoai,
           giong:nv.giong, giong_key:giongKey(nv.gioi,nv.tuoi), seed:nv.seed,
-          lora:nv.lora, co_lora:coLora(nv.lora), trigger:trigger(nv.id),
+          lora:nv.lora, co_lora:coLora(nv.lora), trigger:trigger(nv.id), khoa_mat:!!nv.khoaMat,
+          ngon_ngu: p.ngonNgu||'vi',
           giay:c.giay||5, lip_sync: c.loai==='nguoi' && !!(c.thoai&&c.thoai.trim()), trang_thai:c.tt||'' }; })
     };
   }
@@ -65691,7 +65705,8 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     o += '<div class="grid g2">'+ (G.S.axNV||[]).map(function(n){
       return '<div class="card pad-sm"><div class="row" style="justify-content:space-between"><b>'+h(n.ten)+'</b>'+
         '<span class="bd-chip">'+h(nhan(n.vai,VAI)||'Diễn viên')+'</span></div>'+
-        '<div class="bd-chips" style="margin:5px 0"><span class="bd-chip">'+h(nhan(n.gioi,GIOI)||'—')+'</span><span class="bd-chip">'+h(nhan(n.tuoi,TUOI)||'—')+'</span></div>'+
+        '<div class="bd-chips" style="margin:5px 0"><span class="bd-chip">'+h(nhan(n.gioi,GIOI)||'—')+'</span><span class="bd-chip">'+h(nhan(n.tuoi,TUOI)||'—')+'</span>'+
+          (n.khoaMat?'<span class="bd-chip" style="border-color:var(--gita);color:var(--gita)">🔒 Khoá mặt'+(coLora(n.lora)?'':' · chưa train LoRA')+'</span>':'')+'</div>'+
         '<p class="sm muted" style="line-height:1.5;margin:6px 0">'+h(n.mota)+'</p>'+
         '<p class="tiny muted">👔 '+h(n.trangPhuc||'—')+'</p>'+
         '<p class="tiny muted">🎙 '+h(n.giong||'—')+' ('+h(giongKey(n.gioi,n.tuoi))+') · seed '+h(n.seed||'—')+'</p>'+
@@ -65710,6 +65725,12 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
         '<button class="btn sm" onclick="G.ax.phimThem()">'+ic('spark','w-3 h-3')+'Thêm tập</button>'+
         '<button class="btn ghost sm" onclick="G.ax.phimXoa(\''+p.id+'\')">Xoá tập</button>'+
         '<button class="btn sm" onclick="G.ax.canhThem()">'+ic('check','w-3 h-3')+'Thêm cảnh</button></div>';
+    o += '<div class="row mb" style="gap:8px;flex-wrap:wrap;align-items:center">'+
+        '<span class="tiny muted">🔒 Ngôn ngữ giọng:</span>'+
+        '<select onchange="G.ax.phimNgon(this.value)" style="padding:7px;border:1px solid var(--line);border-radius:9px">'+
+          NGON.map(function(x){return '<option value="'+x[0]+'"'+((p.ngonNgu||'vi')===x[0]?' selected':'')+'>'+h(x[1])+'</option>';}).join('')+'</select>'+
+        '<button class="btn '+(p.phongCachGita!==false?'sm':'ghost sm')+'" onclick="G.ax.phimGita()">'+ic('sparkle','w-3 h-3')+(p.phongCachGita!==false?'🔒 Khoá không gian GITA: BẬT':'Khoá không gian GITA: tắt')+'</button>'+
+      '</div>';
     o += '<p class="sm muted mb">'+h(p.mota||'')+'</p>';
     if(!p.canh.length) o += '<p class="bd-tip">Chưa có cảnh. Bấm "Thêm cảnh" để bắt đầu phân cảnh.</p>';
     o += p.canh.map(function(c,i){ var nv=nvById(c.nvId)||{}; var pr=promptCanh(c);

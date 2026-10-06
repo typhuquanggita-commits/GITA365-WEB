@@ -156,8 +156,9 @@ def buoc_giong(cfg, base):
         if not mau.exists(): mau = Path("giong") / f"{c.get('nhan_vat')}.wav"   # dự phòng theo nhân vật
         if not mau.exists():
             log("THIẾU giọng mẫu:", mau, "→ bỏ qua giọng cảnh", c["id"]); continue
-        tts.tts_to_file(text=thoai, speaker_wav=str(mau), language="vi", file_path=str(out))
-        log("giọng xong:", out.name)
+        lang = c.get("ngon_ngu") or cfg.get("ngon_ngu") or "vi"   # khoá ngôn ngữ: vi / en
+        tts.tts_to_file(text=thoai, speaker_wav=str(mau), language=lang, file_path=str(out))
+        log("giọng xong:", out.name, "(", lang, ")")
 
 # ───────────────────────── 4 · LIP-SYNC (repo ngoài) ─────────────────────────
 def buoc_lipsync(cfg, base):
