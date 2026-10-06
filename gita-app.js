@@ -51373,8 +51373,51 @@ G.VIEWS = G.VIEWS || {};
     { ten: 'Nhà Quốc Bảo', ma: 'GITA-0170', loai: 'moi', gd: 'moi', band: 'VANG', gt: 16000000, cham: 0, chot: 7, dn: 9, nv: 30, tb: 15, ca: 0, tt: 100, ref: 0, buoc: 0 },
     { ten: 'Nhà An Nhiên', ma: 'GITA-0145', loai: 'cham', gd: 'baogia', band: 'DO', gt: 25000000, cham: 15, chot: 3, dn: 1, nv: 8, tb: 12, ca: 3, tt: 40, ref: 0, buoc: 0 }
   ];
-  G.ttKhach = G.ttKhach || function () { return null; };
-  function dsKhach() { var real = G.ttKhach(); return (real && real.length) ? { ds: real, that: true } : { ds: MAU, that: false }; }
+  /* ── NỐI KHÁCH THẬT từ máy chủ CRM (cùng cửa 'crmDanhSach' màn CRM dùng) ──
+     Chỉ ĐỌC phía client, KHÔNG sửa máy chủ. Nạp bất đồng bộ rồi vẽ lại một
+     lần; chưa nối / lỗi / rỗng → dùng danh sách minh hoạ (nhãn rõ). */
+  function num(x) { var n = Number(x); return isNaN(n) ? 0 : n; }
+  function soNgayToi(v) { if (!v) return 7; var d = new Date(v); if (isNaN(d.getTime())) return 7; return Math.max(0, Math.ceil((d - Date.now()) / 86400000)); }
+  function suyLoai(gdMa, band, cham, nhan) {
+    if (nhan && /tái|gia hạn|renew/i.test(String(nhan))) return 'tai';
+    if (band === 'DO' || cham >= 10) return 'cham';
+    if (gdMa === 'moi' || gdMa === 'tuvan') return 'moi';
+    return 'cu';
+  }
+  function mapKhach(x) {
+    var gdMa = ['moi', 'tuvan', 'baogia', 'damphan', 'chotky'].indexOf(x.giaiDoan) >= 0 ? x.giaiDoan : 'tuvan';
+    var band = String(x.band || x.den || '').toUpperCase(); if (['DO', 'VANG', 'XANH'].indexOf(band) < 0) band = 'VANG';
+    var cham = (x.lanCham != null) ? num(x.lanCham)
+      : (x.chamCuoi ? Math.max(0, Math.ceil((Date.now() - new Date(x.chamCuoi)) / 86400000))
+        : (band === 'DO' ? 11 : band === 'VANG' ? 4 : 1));
+    var loai = (x.loai && ['moi', 'cu', 'tai', 'cham'].indexOf(x.loai) >= 0) ? x.loai : suyLoai(gdMa, band, cham, x.nhan);
+    return {
+      ten: x.ten || x.nha || x.maKH || '—', ma: x.maKH || x.ma || '', gt: num(x.giaTri),
+      gd: gdMa, band: band, cham: cham, chot: soNgayToi(x.duKienChot || x.chot || x.henTiep),
+      loai: loai, phuTrach: x.nguoiPhuTrach || x.phuTrach || '', buoc: num(x.buoc), that: true
+    };
+  }
+  if (typeof G.ttKho === 'undefined') G.ttKho = null;
+  G.ttTai = false; G.ttDaThu = (typeof G.ttDaThu !== 'undefined') ? G.ttDaThu : false;
+  G.ttKhach = function () { return G.ttKho; };
+  G.ttNapKhach = function () {
+    if (G.ttTai || G.ttDaThu || typeof G.goiMayChu !== 'function') return;
+    G.ttTai = true;
+    try {
+      G.goiMayChu('crmDanhSach', { q: '', chang: '', trang: 1 }).then(function (x) {
+        G.ttTai = false; G.ttDaThu = true;
+        if (x && x.ok && x.ds && x.ds.length) G.ttKho = x.ds.map(mapKhach);
+        if (G.render) G.render();
+      }, function () { G.ttTai = false; G.ttDaThu = true; if (G.render) G.render(); });
+    } catch (e) { G.ttTai = false; G.ttDaThu = true; }
+  };
+  /* Người dùng bấm "Tải lại khách thật" → thử nạp lại từ máy chủ. */
+  G.ttTaiLai = function () { G.ttKho = null; G.ttDaThu = false; G.ttNapKhach(); if (G.render) G.render(); };
+  function dsKhach() {
+    var real = G.ttKhach();
+    if (real && real.length) return { ds: real, that: true };
+    return { ds: MAU, that: false };
+  }
 
   var BAND = { DO: { ten: 'Đỏ', c: '#BE0E16' }, VANG: { ten: 'Vàng', c: '#B4720F' }, XANH: { ten: 'Xanh', c: '#0B7350' } };
   function tien(n) { return (n >= 1e6 ? (n / 1e6).toFixed(n % 1e6 ? 1 : 0) + ' tr' : (n || 0).toLocaleString('vi-VN')); }
@@ -51398,12 +51441,25 @@ G.VIEWS = G.VIEWS || {};
       quanHe: kep((k.tt || 0) * 0.7 + Math.min(5, k.ref || 0) / 5 * 100 * 0.3)
     };
   }
+  function coTinHieu(k) { return k.dn !== undefined || k.nv !== undefined; }
+  function bandSK(d) { return d >= 80 ? { t: 'Khoẻ', c: '#0B7350' } : d >= 50 ? { t: 'Theo dõi', c: '#B4720F' } : { t: 'Yếu', c: '#BE0E16' }; }
+  function gdChiSo(ma) { for (var i = 0; i < GD.length; i++) if (GD[i].ma === ma) return i; return 1; }
   function diemSK(k) {
-    var c = chieuCua(k), d = 0;
-    CHIEU.forEach(function (x) { d += c[x.ma] * x.w; });
-    d = kep(d);
-    var band = d >= 80 ? { t: 'Khoẻ', c: '#0B7350' } : d >= 50 ? { t: 'Theo dõi', c: '#B4720F' } : { t: 'Yếu', c: '#BE0E16' };
-    return { diem: d, chieu: c, band: band };
+    if (coTinHieu(k)) {
+      var c = chieuCua(k), d = 0;
+      CHIEU.forEach(function (x) { d += c[x.ma] * x.w; });
+      d = kep(d);
+      return { diem: d, chieu: c, band: bandSK(d), uoc: false };
+    }
+    /* Khách THẬT từ danh sách CRM chưa kèm tín hiệu sản phẩm → ƯỚC LƯỢNG
+       từ đèn + độ mới của lần chạm + vị trí trong phễu (minh bạch là ước
+       lượng tới khi máy chủ đổ về dữ liệu sử dụng/kết quả). */
+    var base = k.band === 'XANH' ? 85 : k.band === 'DO' ? 30 : 60;
+    base -= Math.min(30, (k.cham || 0) * 2);
+    base += gdChiSo(k.gd) * 2;
+    var dd = kep(base);
+    var chieu = { suDung: kep(100 - (k.cham || 0) * 7), ganBo: dd, ketQua: kep(gdChiSo(k.gd) * 20 + 20), hoTro: 70, quanHe: dd };
+    return { diem: dd, chieu: chieu, band: bandSK(dd), uoc: true };
   }
   /* ══ ĐIỂM RỦI RO RỜI (0–100) ══ */
   function ruiRo(k) {
@@ -51675,13 +51731,26 @@ G.VIEWS = G.VIEWS || {};
   }
 
   G.VIEWS['tt-cskh'] = function () {
+    /* Thử nạp khách thật từ máy chủ CRM một lần khi mở màn (nếu có nối). */
+    if (!G.ttKho && !G.ttDaThu && !G.ttTai && typeof G.goiMayChu === 'function') G.ttNapKhach();
     var kq = dsKhach();
     var admin = typeof G.can === 'function' && G.can('crm_view');
     var o = U.ph({ eyebrow: 'TRUNG TÂM TƯ VẤN & CHĂM SÓC KHÁCH HÀNG', ic: 'users', grad: 1,
       t: 'Làm trọn một ngày — chấm điểm, bám chuyển đổi, không bỏ sót khách',
       lead: 'Điểm sức khoẻ 0–100 & rủi ro rời cho từng nhà · việc hôm nay lấy từ bước kế của chuỗi chạm · phễu bám chốt 95% · playbook bật theo tình huống · năm hệ hỗ trợ nối thẳng màn sâu.' });
-    if (!kq.that) o += '<div class="tvc-note" style="background:var(--gita-mo-1);border-color:var(--gita-vien-1)">' + ic('alert', 'w-4 h-4') +
-      ' Đang hiện <b>danh sách minh hoạ</b> để xem cấu trúc & thuật toán. Nối máy chủ CRM thì mọi bảng chạy trên khách thật.</div>';
+    if (kq.that) {
+      o += '<div class="tvc-note" style="background:var(--okbg,rgba(11,115,80,.08));border-color:#0B735044">' + ic('check', 'w-4 h-4') +
+        ' Đang chạy trên <b>' + kq.ds.length + ' khách THẬT</b> từ máy chủ CRM (trang 1). ' +
+        'Điểm sức khoẻ là <b>ước lượng từ tín hiệu CRM</b> (đèn · lần chạm · phễu) tới khi máy chủ đổ về dữ liệu sử dụng/kết quả. ' +
+        '<button class="btn ghost sm tvc-act" data-ttlai="1" style="margin-left:6px">Tải lại</button></div>';
+    } else if (typeof G.goiMayChu === 'function' && G.ttTai) {
+      o += '<div class="tvc-note">' + ic('orbit', 'w-4 h-4') + ' Đang tải khách thật từ máy chủ CRM…</div>';
+    } else {
+      o += '<div class="tvc-note" style="background:var(--gita-mo-1);border-color:var(--gita-vien-1)">' + ic('alert', 'w-4 h-4') +
+        ' Đang hiện <b>danh sách minh hoạ</b> để xem cấu trúc & thuật toán. ' +
+        (typeof G.goiMayChu === 'function' ? 'Chưa lấy được khách thật — ' : 'Chưa nối máy chủ CRM — ') +
+        '<button class="btn ghost sm tvc-act" data-ttlai="1">Thử nối khách thật</button></div>';
+    }
 
     var tabs = [['homnay', 'Hôm nay'], ['khach', 'Khách (4 loại)'], ['sk', 'Sức khoẻ & Rủi ro'], ['pheu', 'Phễu → 95%'], ['cadence', 'Chuỗi chạm & Playbook'], ['hotro', 'Hỗ trợ']];
     if (admin) tabs.push(['dongchay', 'Dòng chảy']);
@@ -63171,6 +63240,8 @@ on('[data-ltxong]',   function(el){ G.ltDanhDau(el.getAttribute('data-ltxong'), 
 on('[data-ltngoaile]',function(el){ G.ltMoGhiChu(el.getAttribute('data-ltngoaile')); });
 on('[data-ltngoaile-luu]', function(el){ G.ltLuuNgoaiLe(el.getAttribute('data-ltngoaile-luu')); });
 on('[data-ltmo]',     function(el){ G.ltDanhDau(el.getAttribute('data-ltmo'), 'mo'); });
+/* ── Trung tâm Tư vấn & CSKH: nối khách thật ── */
+on('[data-ttlai]',    function(){ if(G.ttTaiLai) G.ttTaiLai(); });
 on('[data-khchot]',   function(){ G.khChotHoiDap(); });
 on('[data-v]', function(el){ G.go(el.getAttribute('data-v')); });
 on('[data-go]', function(el){ document.getElementById('cmd').classList.remove('on'); G.go(el.getAttribute('data-go')); });

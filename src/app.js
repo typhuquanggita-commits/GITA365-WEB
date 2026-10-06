@@ -1432,6 +1432,8 @@ on('[data-ltxong]',   function(el){ G.ltDanhDau(el.getAttribute('data-ltxong'), 
 on('[data-ltngoaile]',function(el){ G.ltMoGhiChu(el.getAttribute('data-ltngoaile')); });
 on('[data-ltngoaile-luu]', function(el){ G.ltLuuNgoaiLe(el.getAttribute('data-ltngoaile-luu')); });
 on('[data-ltmo]',     function(el){ G.ltDanhDau(el.getAttribute('data-ltmo'), 'mo'); });
+/* ── Trung tâm Tư vấn & CSKH: nối khách thật ── */
+on('[data-ttlai]',    function(){ if(G.ttTaiLai) G.ttTaiLai(); });
 on('[data-khchot]',   function(){ G.khChotHoiDap(); });
 on('[data-v]', function(el){ G.go(el.getAttribute('data-v')); });
 on('[data-go]', function(el){ document.getElementById('cmd').classList.remove('on'); G.go(el.getAttribute('data-go')); });
