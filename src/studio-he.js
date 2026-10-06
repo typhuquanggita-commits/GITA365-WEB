@@ -169,6 +169,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       '<button class="btn ghost sm" data-v="van-hanh-10">'+ic('arrow','w-3 h-3')+'Bảng điều khiển vận hành</button>'+
       '<button class="btn sm" data-v="lam-phim-10">'+ic('sparkle','w-3 h-3')+'Chương trình 10 bước làm phim</button>'+
       '<button class="btn sm" data-v="ban-dung">'+ic('tools','w-3 h-3')+'Bàn dựng (biên tập tại máy)</button>'+
+      '<button class="btn sm" data-v="san-xuat-ai">'+ic('orbit','w-3 h-3')+'Sản xuất phim AI (bộ điều khiển)</button>'+
       (G.allowed && G.allowed('studio') ? '<button class="btn ghost sm" data-v="studio">'+ic('spark','w-3 h-3')+'Mở xưởng dựng video</button>' : '')+
       '</div>';
 
