@@ -7,7 +7,7 @@
 #
 # SECRET cần đặt (Settings → Secrets and variables → Actions):
 #   KAGGLE_USERNAME, KAGGLE_KEY           — khoá API Kaggle
-#   KAGGLE_CAST_DATASET                   — dataset cast: nhan-vat/ giong/ lora/ nhac/ thu-am/, vd: user/gita-cast
+#   KAGGLE_CAST_DATASET                   — dataset cast: nhan-vat/ giong/ lora/ nhac/ thu-am/ dong-tac/, vd: user/gita-cast
 #   R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET
 #   (tuỳ chọn) GITA_REPO_URL              — mặc định lấy repo hiện tại
 # ═══════════════════════════════════════════════════════════════
@@ -85,7 +85,7 @@ jobs:
           for f in glob.glob("/kaggle/input/*/lora/*")+glob.glob("/kaggle/input/*/*.safetensors"):
               try: shutil.copy(f, "lora/")
               except Exception: pass
-          for thu in ("nhac","thu-am"):            # nhạc nền · giọng THẬT thu sẵn theo mã cảnh
+          for thu in ("nhac","thu-am","dong-tac"):  # nhạc nền · giọng THẬT · video động tác quay bằng điện thoại
               os.makedirs(thu,exist_ok=True)
               for f in glob.glob(f"/kaggle/input/*/{thu}/*"):
                   try: shutil.copy(f, thu + "/")

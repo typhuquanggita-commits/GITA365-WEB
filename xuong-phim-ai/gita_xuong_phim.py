@@ -84,18 +84,62 @@ QUALITY_EN = ("photorealistic, cinematic film still, shot on ARRI Alexa, 35mm le
 NEG_EN = ("cartoon, anime, 3d render, illustration, painting, drawing, stick figure, static photo, "
           "deformed face, distorted, extra fingers, blurry, low quality, watermark, text")
 
+# Ngữ pháp diễn xuất: viết sẵn bằng tiếng Anh điện ảnh để mô hình diễn đúng cơ học cơ thể người thật
+HANH_DONG_EN = {
+    "di_bo": "walks naturally toward the camera, realistic gait, weight shifting from foot to foot, arms swinging slightly",
+    "di_ngang": "walks across the frame from left to right at a natural pace, realistic gait",
+    "chay": "runs with a dynamic natural stride, arms pumping, clothes and hair reacting to motion",
+    "ngoi_xuong": "sits down onto the chair naturally, bending knees, hands resting on the armrest",
+    "dung_len": "stands up from the chair naturally, pushing up with the hands",
+    "cam_do": "reaches out and picks up {obj}, fingers wrapping around it correctly, natural grip",
+    "dua_do": "hands {obj} to the other person, who reaches out and receives it with both hands",
+    "bat_tay": "two people step closer and shake hands warmly, steady eye contact, genuine smiles",
+    "om": "two people embrace in a warm hug, natural arm placement",
+    "tro_chuyen": "two people talk face to face, natural hand gestures, nodding, taking turns to speak",
+    "thuyet_trinh": "presents confidently to the audience with open-hand gestures, turning to point at the screen",
+    "rot_tra": "pours tea from the teapot into a small cup, steady hands, liquid flowing realistically",
+    "go_may": "types on a laptop keyboard, fingers moving naturally, glancing at the screen",
+    "vay_tay": "waves hello toward the camera with a friendly smile",
+    "gat_dau": "listens attentively and nods slowly, subtle facial expressions",
+}
+# Di máy do MÔ HÌNH quay trong không gian 3D (hậu kỳ không làm được)
+MAY_MO_HINH_EN = {
+    "bam_theo": "smooth tracking shot following the subject, gimbal stabilized",
+    "xoay_quanh": "slow orbiting shot circling around the subject, parallax background",
+    "cau_len": "crane shot rising up and revealing the scene",
+    "truot_ngang": "lateral truck shot moving sideways with depth parallax",
+    "dolly_zoom": "dolly zoom vertigo effect, background stretching while the subject stays the same size",
+    "doi_net": "rack focus from the foreground to the subject, shallow depth of field",
+    "fpv": "smooth FPV drone shot flying through the space",
+    "ai": "dynamic cinematic camera movement",
+}
+CHAT_NGUOI = "anatomically correct hands and fingers, consistent face identity, realistic body mechanics, natural skin"
+
+def _hanh_dong_en(c):
+    k = c.get("hanh_dong") or ""
+    if k not in HANH_DONG_EN: return ""
+    return HANH_DONG_EN[k].replace("{obj}", dich_en(c.get("do_vat") or "") or "the object")
+
 def prompt_anh_en(c):
     mq = c.get("may_quay_ao") or {}
-    phan = [c.get("trigger") if c.get("co_lora") else "", c.get("boi_canh_trigger") if c.get("boi_canh_lora") else "",
+    phu = c.get("nv_phu") or {}
+    phan = [c.get("trigger") if c.get("co_lora") else "",
+            phu.get("trigger") if phu.get("co_lora") else "",
+            c.get("boi_canh_trigger") if c.get("boi_canh_lora") else "",
+            "two people in the frame" if phu else "",
             dich_en(c.get("prompt_anh", "")), CO_CANH.get(mq.get("co"), ""), GOC_MAY.get(mq.get("goc"), ""), QUALITY_EN]
     return ", ".join(x for x in phan if x)
 
 def prompt_video_en(c):
-    # Máy quay do bước "máy quay ảo" điều khiển chính xác ở hậu kỳ → mô hình giữ máy đứng yên,
-    # chỉ lo chuyển động của người/cảnh (tránh máy rung lắc ngẫu nhiên, tránh di máy hai lần).
+    # Di máy 2D (đẩy/kéo/lia/nghiêng/cầm tay/zoom giật) làm CHÍNH XÁC ở hậu kỳ → mô hình giữ máy yên.
+    # Di máy 3D (bám theo, xoay vòng, cẩu, dolly zoom, flycam…) giao cho mô hình bằng ngữ pháp điện ảnh.
     mq = c.get("may_quay_ao") or {}
-    giu = "steady locked-off camera" if mq.get("chuyen", "tinh") != "ai" else ""
-    return ", ".join(x for x in [dich_en(c.get("prompt_video", "")), giu, "natural realistic motion, cinematic"] if x)
+    chuyen = mq.get("chuyen", "tinh")
+    may = MAY_MO_HINH_EN.get(chuyen) or "steady locked-off camera"
+    phan = [_hanh_dong_en(c), dich_en(c.get("prompt_video", "")), may,
+            "seamless continuation of the previous shot" if c.get("noi_tiep") else "",
+            CHAT_NGUOI, "natural realistic motion, cinematic"]
+    return ", ".join(x for x in phan if x)
 
 def negative_en(c):
     return NEG_EN + ((", " + dich_en(c.get("negative", ""))) if c.get("negative") else "")
@@ -278,7 +322,7 @@ TAO_DONG_CO = {"cogvideox": _cogvideox, "wan": _wan, "ltx": _ltx}
 # FramePack là repo riêng (lllyasviel/FramePack): chưa cài thì dùng Wan cho cảnh dài.
 HA_CAP = {"framepack": "wan", "veo3": "wan", "veo3fast": "wan", "kling": "wan", "runway": "wan", "auto": "wan",
           "seedance": "wan", "wan_api": "wan", "heygen": "infinitetalk", "infinitetalk_api": "infinitetalk",
-          "infinitetalk": "wan"}   # InfiniteTalk chưa cài → Wan + lip-sync
+          "infinitetalk": "wan", "longcat": "wan", "wan_animate": "wan"}   # chưa cài → Wan (+ lip-sync)
 
 def _goi_api(dc, anh, prompt, giay, out):
     """ĐIỂM NỐI động cơ có phí. Viết hàm gọi API thật của nhà cung cấp vào đây khi có khoá.
@@ -288,22 +332,28 @@ def _goi_api(dc, anh, prompt, giay, out):
     log(f"  {dc}: có khoá nhưng CHƯA NỐI API trong mã — điền hàm _goi_api() theo tài liệu nhà cung cấp."
         " Tạm hạ về động cơ mở."); return False
 
-def _infinitetalk(anh, wav, prompt, out):
+def _infinitetalk(anh, wav, prompt, out, wav2=None):
     """InfiniteTalk (MeiGen-AI, mở, Apache-2.0): ảnh + giọng → người nói cả thân, khớp môi, cử động
-    đầu/tay. Cần: git clone https://github.com/MeiGen-AI/InfiniteTalk + tải trọng số theo README.
-    Chạy được trên GPU 16GB ở chế độ tiết kiệm VRAM nhưng chậm; RTX 4090 nhanh hơn nhiều."""
+    đầu/tay. Có wav2 → bản HAI NGƯỜI (multi/infinitetalk.safetensors): người 1 nói, rồi người 2 đáp
+    (audio_type "para"), cả hai cùng diễn trong một khung. Cần: bộ cài nội bộ mức day_du."""
     goc = Path("InfiniteTalk")
     w = goc / "weights"
-    if not (goc / "generate_infinitetalk.py").exists() or not w.exists():
-        log("  InfiniteTalk chưa cài (repo + weights) → hạ về Wan + lip-sync"); return False
-    vao = base_tmp = out.parent.parent / "tmp" / f"it-{out.stem}.json"
-    vao.write_text(json.dumps({"prompt": prompt, "cond_video": str(Path(anh).resolve()),
-                               "cond_audio": {"person1": str(Path(wav).resolve())}}, ensure_ascii=False), encoding="utf-8")
+    loai = "multi" if wav2 else "single"
+    trong_so = w / "InfiniteTalk" / loai / "infinitetalk.safetensors"
+    if not (goc / "generate_infinitetalk.py").exists() or not trong_so.exists():
+        log(f"  InfiniteTalk ({loai}) chưa cài → hạ về Wan + lip-sync"); return False
+    vao = out.parent.parent / "tmp" / f"it-{out.stem}.json"
+    am = {"person1": str(Path(wav).resolve())}
+    if wav2: am["person2"] = str(Path(wav2).resolve())
+    j = {"prompt": prompt, "cond_video": str(Path(anh).resolve()), "cond_audio": am}
+    if wav2: j["audio_type"] = "para"
+    vao.write_text(json.dumps(j, ensure_ascii=False), encoding="utf-8")
     ra = out.with_suffix("")
+    co = "infinitetalk-480"            # bản 480p (đã có trọng số); hậu kỳ GFPGAN + Real-ESRGAN nâng lên 1080p
     cmd = [sys.executable, str(goc / "generate_infinitetalk.py"),
            "--ckpt_dir", str(w / "Wan2.1-I2V-14B-480P"), "--wav2vec_dir", str(w / "chinese-wav2vec2-base"),
-           "--infinitetalk_dir", str(w / "InfiniteTalk/single/infinitetalk.safetensors"),
-           "--input_json", str(vao), "--size", "infinitetalk-480", "--sample_steps", "40",
+           "--infinitetalk_dir", str(trong_so),
+           "--input_json", str(vao), "--size", co, "--sample_steps", "40",
            "--mode", "streaming", "--motion_frame", "9", "--num_persistent_param_in_dit", "0",
            "--save_file", str(ra)]
     try:
@@ -313,6 +363,52 @@ def _infinitetalk(anh, wav, prompt, out):
     except Exception as e:
         log("  InfiniteTalk lỗi (", str(e)[:100], ") → hạ về Wan + lip-sync")
     return False
+
+def _longcat(anh, prompt, neg, giay, out, truoc=None):
+    """LongCat-Video (Meituan, MIT): cảnh dài liền mạch — đi, chạy, tương tác — bằng cách nối đoạn;
+    `truoc` = clip cảnh trước để NỐI TIẾP. Cần card ~80GB và bộ cài mức day_du."""
+    goc = Path("LongCat-Video").resolve(); ck = goc / "weights" / "LongCat-Video"
+    if not (goc / "longcat_video").exists() or not ck.exists():
+        log("  LongCat-Video chưa cài → hạ về Wan"); return False
+    if vram_gb() < 40:
+        log(f"  LongCat-Video cần card ~80GB (đang {vram_gb():.0f}GB) → hạ về Wan"); return False
+    cmd = ["torchrun", "--nproc_per_node=1", str(Path(__file__).resolve().parent / "chay_longcat.py"),
+           "--checkpoint_dir", str(ck), "--image", str(Path(anh).resolve()), "--prompt", prompt,
+           "--negative", neg, "--out", str(out.resolve()), "--giay", str(giay),
+           "--resolution", "720p" if vram_gb() >= 70 else "480p"]
+    if truoc and Path(truoc).exists():
+        cmd += ["--cond_video", str(Path(truoc).resolve()), "--stride", str(max(1, round(_fps(truoc) / 15)))]
+    env = dict(os.environ, PYTHONPATH=str(goc) + os.pathsep + os.environ.get("PYTHONPATH", ""))
+    try:
+        subprocess.run(cmd, check=True, env=env)
+        return out.exists()
+    except Exception as e:
+        log("  LongCat-Video lỗi (", str(e)[:100], ") → hạ về Wan"); return False
+
+def _wan_animate(anh, video_mau, out, che_do="dien"):
+    """Wan 2.2 Animate-14B (Apache-2.0) — MÁY QUAY NỘI BỘ: quay người thật làm động tác bằng điện thoại
+      · che_do "dien": nhân vật GITA (ảnh khoá mặt) diễn y hệt động tác trong video mẫu
+      · che_do "thay": thay người trong video quay thật bằng nhân vật GITA, giữ nguyên bối cảnh thật + chỉnh sáng
+    Dùng repo chính chủ Wan-Video/Wan2.2 (tiền xử lý tư thế/khuôn mặt + generate.py)."""
+    goc = Path("Wan2.2").resolve(); ck = goc / "Wan2.2-Animate-14B"
+    if not (goc / "generate.py").exists() or not ck.exists():
+        log("  Wan-Animate chưa cài → hạ về Wan"); return False
+    xu_ly = out.parent.parent / "tmp" / f"animate-{out.stem}"
+    xu_ly.mkdir(parents=True, exist_ok=True)
+    tien = [sys.executable, "./wan/modules/animate/preprocess/preprocess_data.py",
+            "--ckpt_path", str(ck / "process_checkpoint"), "--video_path", str(Path(video_mau).resolve()),
+            "--refer_path", str(Path(anh).resolve()), "--save_path", str(xu_ly.resolve()),
+            "--resolution_area", "1280", "720"]
+    tien += (["--iterations", "3", "--k", "7", "--w_len", "1", "--h_len", "1", "--replace_flag"]
+             if che_do == "thay" else ["--retarget_flag"])
+    sinh = [sys.executable, "generate.py", "--task", "animate-14B", "--ckpt_dir", str(ck),
+            "--src_root_path", str(xu_ly.resolve()), "--refert_num", "1", "--save_file", str(out.resolve())]
+    if che_do == "thay": sinh += ["--replace_flag", "--use_relighting_lora"]
+    try:
+        subprocess.run(tien, check=True, cwd=str(goc)); subprocess.run(sinh, check=True, cwd=str(goc))
+        return out.exists()
+    except Exception as e:
+        log("  Wan-Animate lỗi (", str(e)[:100], ") → hạ về Wan"); return False
 
 def giu_tran_ngoai(cfg):
     """Xưởng nội bộ 90%: tổng giây cảnh chạy động cơ thuê ngoài không vượt `ngoai_toi_da` (mặc định
@@ -355,12 +451,26 @@ def buoc_video(cfg, base):
         log(f"cảnh {c['id']} · động cơ: {dc}")
         if dc in DONG_CO_PHI and _goi_api(dc, anh, prompt, giay, out):
             c["_da_khop_moi"] = dc in TU_KHOP_MOI; continue
+        mau = Path("dong-tac") / f"{c['id']}.mp4"                # video động tác quay thật (nếu có)
+        if c.get("dong_tac") or dc == "wan_animate":
+            if mau.exists() and _wan_animate(anh, mau, out, c.get("dong_tac") or "dien"):
+                log("clip xong (Wan-Animate · diễn theo video thật):", out.name); continue
+            if not mau.exists(): log("  chưa có", mau, "→ quay động tác bằng điện thoại rồi đặt vào; tạm dùng mô hình tự diễn")
         if dc in ("infinitetalk", "infinitetalk_api", "heygen"):
+            w1, w2 = base / "giong" / f"{c['id']}-1.wav", base / "giong" / f"{c['id']}-2.wav"
             wav = base / "giong" / f"{c['id']}.wav"
-            if wav.exists() and _infinitetalk(anh, wav, prompt, out):
+            hai = w1.exists() and w2.exists()
+            if (hai and _infinitetalk(anh, w1, prompt, out, w2)) or (not hai and wav.exists() and _infinitetalk(anh, wav, prompt, out)):
                 c["_da_khop_moi"] = True; (base / "clip" / f"{c['id']}.ok-sync").touch()
-                log("clip xong (InfiniteTalk):", out.name); continue
+                log("clip xong (InfiniteTalk" + (" · 2 người" if hai else "") + "):", out.name); continue
             if not wav.exists(): log("  chưa có giọng cảnh này → chạy --run giong trước; tạm dùng Wan")
+        truoc = None
+        if c.get("noi_tiep"):
+            i = cfg["canh"].index(c)
+            if i > 0: truoc = base / "clip" / f"{cfg['canh'][i-1]['id']}.mp4"
+        if dc == "longcat" or (truoc is not None and truoc.exists() and vram_gb() >= 40):
+            if _longcat(anh, prompt, negative_en(c), giay, out, truoc):
+                log("clip xong (LongCat" + (" · nối tiếp cảnh trước" if truoc else "") + "):", out.name); continue
         frames, fps = lay(dc)(load_image(str(anh)), prompt, giay)
         export_to_video(frames, str(out), fps=fps)
         log("clip xong:", out.name)
@@ -409,25 +519,87 @@ def doc_mot_cau(thoai, mau, lang, out):
         except Exception as e: log("  XTTS lỗi (", str(e)[:100], ")")
     return None
 
+# Khớp CHẤT GIỌNG (OpenVoice V2, MIT): giữ nội dung + ngữ điệu bản đọc, chuyển âm sắc về đúng giọng mẫu
+# của nhân vật — áp được cho tiếng Việt vì bộ chuyển âm sắc không phụ thuộc ngôn ngữ.
+def _openvoice():
+    if "ov" not in _TTS:
+        from openvoice import se_extractor
+        from openvoice.api import ToneColorConverter
+        ck = Path("OpenVoice/checkpoints_v2/converter")
+        if not (ck / "checkpoint.pth").exists(): raise FileNotFoundError("thiếu OpenVoice/checkpoints_v2")
+        tc = ToneColorConverter(str(ck / "config.json"), device="cuda:0" if vram_gb() else "cpu")
+        tc.load_ckpt(str(ck / "checkpoint.pth"))
+        _TTS["ov"] = (tc, se_extractor, {})
+    return _TTS["ov"]
+
+def khop_chat_giong(wav, mau):
+    try:
+        tc, se, nho = _openvoice()
+        if str(mau) not in nho: nho[str(mau)] = se.get_se(str(mau), tc, vad=True)[0]
+        src = se.get_se(str(wav), tc, vad=True)[0]
+        tmp = wav.with_name(wav.stem + "-ov.wav")
+        tc.convert(audio_src_path=str(wav), src_se=src, tgt_se=nho[str(mau)], output_path=str(tmp))
+        shutil.move(str(tmp), str(wav)); return True
+    except Exception as e:
+        log("  khớp chất giọng bỏ qua (", str(e)[:90], ")"); return False
+
+# Chuỗi xử lý giọng chuẩn phát sóng (ffmpeg, chạy CPU): cắt ù trầm → khử ồn → bớt đục 200Hz → sáng rõ
+# 3,5kHz → giảm xì → nén động → chuẩn âm lượng -16 LUFS (giọng) · cả phim chốt -14 LUFS (chuẩn Reels/YouTube)
+MASTER_GIONG = ("highpass=f=75,afftdn=nf=-25,equalizer=f=200:t=q:w=1:g=-2,equalizer=f=3500:t=q:w=1.2:g=2.5,"
+                "deesser=i=0.4,acompressor=threshold=-20dB:ratio=3:attack=5:release=80:makeup=2,"
+                "loudnorm=I=-16:TP=-1.5:LRA=9,aresample=48000")
+
+def master_giong(wav):
+    if not co_lenh("ffmpeg"): return False
+    tmp = wav.with_name(wav.stem + "-m.wav")
+    r = subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(wav), "-af", MASTER_GIONG,
+                        "-ac", "1", "-c:a", "pcm_s16le", str(tmp)])
+    if r.returncode == 0 and tmp.exists(): shutil.move(str(tmp), str(wav)); return True
+    log("  xử lý giọng lỗi — giữ bản gốc"); return False
+
+def noi_hai_giong(w1, w2, out, nghi=0.3):
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(w1), "-i", str(w2), "-filter_complex",
+                    f"[0:a]aresample=48000,apad=pad_dur={nghi}[a];[1:a]aresample=48000[b];[a][b]concat=n=2:v=0:a=1",
+                    "-ac", "1", "-c:a", "pcm_s16le", str(out)], check=True)
+
+def _mau_giong(key, nv_id):
+    mau = Path("giong") / f"{key}.wav"
+    if not mau.exists(): mau = Path("giong") / f"{nv_id}.wav"      # dự phòng theo nhân vật
+    return mau
+
 def buoc_giong(cfg, base):
+    hk = cfg.get("hau_ky") or {}
+    lang_tap = cfg.get("ngon_ngu") or "vi"
+    def mot_cau(thoai, ten_thu_am, key, nv_id, out, lang):
+        that = Path("thu-am") / f"{ten_thu_am}.wav"
+        if that.exists():
+            shutil.copy(that, out); log("giọng THẬT (thu âm):", out.name)
+        else:
+            mau = _mau_giong(key, nv_id)
+            if not mau.exists():
+                log("THIẾU giọng mẫu:", mau, "→ bỏ qua", out.name); return False
+            bo = doc_mot_cau(thoai, mau, lang, out)
+            if not bo:
+                log("KHÔNG sinh được", out.name, "→ chạy cai-dat-noi-bo.sh, hoặc đặt thu-am/" + ten_thu_am + ".wav"); return False
+            log("giọng xong:", out.name, "(", lang, "·", bo, ")")
+            if hk.get("khopGiong", True) and khop_chat_giong(out, mau): log("  ✓ khớp chất giọng", mau.name)
+        if hk.get("masterGiong", True) and master_giong(out): log("  ✓ xử lý giọng chuẩn phát sóng")
+        return True
     for c in cfg["canh"]:
         thoai = (c.get("thoai") or "").strip()
         if not thoai: continue
         out = base / "giong" / f"{c['id']}.wav"
         if out.exists(): log("bỏ qua giọng (đã có):", out.name); continue
-        that = Path("thu-am") / f"{c['id']}.wav"
-        if that.exists():
-            shutil.copy(that, out); log("giọng THẬT (thu âm):", out.name); continue
-        # Giọng mẫu chia theo giới tính + độ tuổi: giong/<gioi-tuoi>.wav (vd nam-lon.wav, nu-teen.wav)
+        lang = c.get("ngon_ngu") or lang_tap                 # khoá ngôn ngữ: vi / en
+        phu, thoai2 = c.get("nv_phu") or {}, (c.get("thoai2") or "").strip()
         key = c.get("giong_key") or c.get("nhan_vat")
-        mau = Path("giong") / f"{key}.wav"
-        if not mau.exists(): mau = Path("giong") / f"{c.get('nhan_vat')}.wav"   # dự phòng theo nhân vật
-        if not mau.exists():
-            log("THIẾU giọng mẫu:", mau, "→ bỏ qua giọng cảnh", c["id"]); continue
-        lang = c.get("ngon_ngu") or cfg.get("ngon_ngu") or "vi"   # khoá ngôn ngữ: vi / en
-        bo = doc_mot_cau(thoai, mau, lang, out)
-        if bo: log("giọng xong:", out.name, "(", lang, "·", bo, ")")
-        else: log("KHÔNG sinh được giọng cảnh", c["id"], "→ chạy cai-dat-noi-bo.sh, hoặc đặt thu-am/"+c["id"]+".wav")
+        if phu and thoai2:                                   # hội thoại hai người: người 1 nói, người 2 đáp
+            w1, w2 = base / "giong" / f"{c['id']}-1.wav", base / "giong" / f"{c['id']}-2.wav"
+            ok1 = w1.exists() or mot_cau(thoai, c["id"], key, c.get("nhan_vat"), w1, lang)
+            ok2 = w2.exists() or mot_cau(thoai2, c["id"] + "-2", phu.get("giong_key") or phu.get("id"), phu.get("id"), w2, lang)
+            if ok1 and ok2: noi_hai_giong(w1, w2, out); log("hội thoại 2 người:", out.name)
+        else:
+            mot_cau(thoai, c["id"], key, c.get("nhan_vat"), out, lang)
 
 # ───────────────────────── 4 · LIP-SYNC (repo ngoài) ─────────────────────────
 def buoc_lipsync(cfg, base):
@@ -589,6 +761,8 @@ def bieu_thuc_may(chuyen, cuong, N):
     if chuyen == "lia_trai":  return f"{1+K}", f"(iw-iw/zoom)*(1-{ease})", cy
     if chuyen == "nghieng_len":   return f"{1+K}", cx, f"(ih-ih/zoom)*(1-{ease})"
     if chuyen == "nghieng_xuong": return f"{1+K}", cx, f"(ih-ih/zoom)*{ease}"
+    if chuyen == "zoom_giat":                                 # crash zoom: lao vào trong 1/4 đầu rồi giữ
+        return f"1+{2*K}*(1-pow(1-min(1,{t}*4),3))", cx, cy
     if chuyen == "cam_tay":
         return ("1.07", f"(iw-iw/zoom)/2+(iw-iw/zoom)/2*{0.35+0.4*float(cuong)}*sin(on/9)",
                 f"(ih-ih/zoom)/2+(ih-ih/zoom)/2*{0.35+0.4*float(cuong)}*cos(on/13)")
@@ -600,7 +774,7 @@ def buoc_may_quay(cfg, base, W=1080, Hh=1920):
         mq = c.get("may_quay_ao") or {}
         chuyen = mq.get("chuyen", "tinh")
         clip = base / "clip" / f"{c['id']}.mp4"
-        if chuyen in ("tinh", "ai") or not clip.exists(): continue
+        if chuyen == "tinh" or chuyen in MAY_MO_HINH_EN or not clip.exists(): continue
         N, fps = _so_khung(clip), _fps(clip)
         bt = bieu_thuc_may(chuyen, mq.get("cuong", 0.5), N)
         if not bt: continue
@@ -613,76 +787,175 @@ def buoc_may_quay(cfg, base, W=1080, Hh=1920):
         except Exception as e:
             log("  máy quay ảo lỗi cảnh", c["id"], "(", str(e)[:80], ")")
 
-# ───────────────────────── 6 · PHỤ ĐỀ (faster-whisper) ─────────────────────────
+# ───────────────────────── 6 · PHỤ ĐỀ + THẺ TÊN (ASS, chuẩn Reels) ─────────────────────────
+# Phụ đề lấy từ CHÍNH thoại đã duyệt (không nghe lại → không sai chính tả), cắt theo chuẩn phát sóng:
+# tối đa 2 dòng × 32 ký tự (khổ dọc), ngắt ở dấu câu, thời gian chia theo độ dài giọng THẬT của từng cảnh.
+TOI_DA_DONG = 32          # khổ dọc 9:16 (chuẩn 42 ký tự của Netflix là cho khổ ngang)
+CHUC_DANH = {"trainer": "Chuyên gia đào tạo · GITA365", "mc": "Dẫn chương trình · GITA365"}
+
+def _do_dai(f):
+    """Thời lượng (giây) của tệp âm thanh/video — ffprobe nếu có, không thì đọc dòng Duration của ffmpeg."""
+    if co_lenh("ffprobe"):
+        r = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(f)],
+                           capture_output=True, text=True)
+        try: return float(r.stdout.strip())
+        except ValueError: pass
+    r = subprocess.run(["ffmpeg", "-hide_banner", "-i", str(f)], capture_output=True, text=True)
+    import re
+    m = re.search(r"Duration: (\d+):(\d+):([\d.]+)", r.stderr)
+    return int(m.group(1)) * 3600 + int(m.group(2)) * 60 + float(m.group(3)) if m else 0.0
+
+def cat_cau(text, toi_da=TOI_DA_DONG):
+    """Cắt thoại thành các khung phụ đề: mỗi câu tách riêng, mỗi khung ≤ 2 dòng, mỗi dòng ≤ toi_da ký tự,
+    ngắt ưu tiên ở dấu phẩy, và CÂN hai dòng cuối để không còn chữ lẻ trơ trọi (vd "đình.")."""
+    import re
+    khung = []
+    for cau in [x for x in re.split(r"(?<=[.!?…;])\s+", text.strip()) if x]:
+        dong, cur = [], ""
+        for w in cau.split():
+            if cur and len(cur) + 1 + len(w) > toi_da: dong.append(cur); cur = ""
+            cur = (cur + " " + w).strip()
+            if w[-1] in ",:" and len(cur) > toi_da * 0.6: dong.append(cur); cur = ""
+        if cur: dong.append(cur)
+        if len(dong) >= 2 and len(dong[-1]) < toi_da * 0.35:          # cân lại hai dòng cuối
+            ws = (dong[-2] + " " + dong[-1]).split()
+            tot, i = None, 1
+            for j in range(1, len(ws)):
+                a1, a2 = " ".join(ws[:j]), " ".join(ws[j:])
+                if len(a1) <= toi_da and len(a2) <= toi_da:
+                    lech = abs(len(a1) - len(a2))
+                    if tot is None or lech < tot: tot, i = lech, j
+            if tot is not None: dong[-2:] = [" ".join(ws[:i]), " ".join(ws[i:])]
+        for k in range(0, len(dong), 2): khung.append(dong[k:k + 2])
+    return khung
+
+def _ass_t(t):
+    t = max(0.0, t); h = int(t // 3600); m = int(t % 3600 // 60); s = t % 60
+    return f"{h}:{m:02d}:{s:05.2f}"
+
+def _ass_txt(x): return x.replace("\\", "").replace("{", "(").replace("}", ")")
+
+def _font():
+    for f in ["fonts/BeVietnamPro-Bold.ttf"]:
+        if Path(f).exists(): return "Be Vietnam Pro"
+    return "DejaVu Sans"
+
+def dung_ass(cfg, lich, out, phu_de=True, the_ten=True):
+    """lich = [(cảnh, bắt đầu, thời lượng, [(thoại, giây giọng)…])] theo thời lượng THẬT sau khi ráp."""
+    f = _font()
+    dau = ("[Script Info]\nScriptType: v4.00+\nPlayResX: 1080\nPlayResY: 1920\nWrapStyle: 2\n\n"
+           "[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, "
+           "Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, "
+           "Alignment, MarginL, MarginR, MarginV, Encoding\n"
+           f"Style: PhuDe,{f},56,&H00FFFFFF,&H00FFFFFF,&H00101010,&H64000000,-1,0,0,0,100,100,0,0,1,4,1,2,80,80,330,1\n"
+           f"Style: TenNV,{f},46,&H00FFFFFF,&H00FFFFFF,&H005A2E0F,&H005A2E0F,-1,0,0,0,100,100,0,0,3,16,0,1,70,70,560,1\n\n"
+           "[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n")
+    ev, da_gioi_thieu = [], set()
+    nvs = nv_map(cfg)
+    for c, bd, dd, cau in lich:
+        if the_ten:
+            for ai in [c.get("nhan_vat")] + ([(c.get("nv_phu") or {}).get("id")] if c.get("nv_phu") else []):
+                n = nvs.get(ai) or {}
+                if ai and ai not in da_gioi_thieu and n.get("vai") in CHUC_DANH:
+                    da_gioi_thieu.add(ai)
+                    t0 = bd + 0.4; t1 = min(bd + dd - 0.2, t0 + 3.2)
+                    ev.append(f"Dialogue: 1,{_ass_t(t0)},{_ass_t(t1)},TenNV,,0,0,0,,{{\\fad(250,250)}}"
+                              f"{_ass_txt(n.get('ten',''))}\\N{{\\fs32\\b0}}{CHUC_DANH[n['vai']]}")
+                    break
+        if not phu_de: continue
+        t = bd + 0.1
+        for thoai, gl in cau:
+            k = cat_cau(thoai)
+            tong = sum(len(" ".join(x)) for x in k) or 1
+            for x in k:
+                d = max(0.8, gl * len(" ".join(x)) / tong)
+                chu = "\\N".join(_ass_txt(l) for l in x)
+                ev.append(f"Dialogue: 0,{_ass_t(t)},{_ass_t(min(t + d, bd + dd))},PhuDe,,0,0,0,,{chu}")
+                t += d
+            t += 0.3
+    Path(out).write_text(dau + "\n".join(ev) + "\n", encoding="utf-8")
+    return len(ev)
+
 def buoc_phu_de(cfg, base):
     if (cfg.get("hau_ky") or {}).get("phuDe") is False:
         log("Phụ đề: tắt theo cài đặt hậu kỳ."); return
-    try:
-        from faster_whisper import WhisperModel
-    except Exception:
-        log("Chưa cài faster-whisper → bỏ qua phụ đề."); return
-    model = WhisperModel("small", device="cuda", compute_type="float16")
-    srt = base / "tmp" / "phu-de.srt"
-    # Phụ đề ghép từ thoại đã biết (chính xác hơn là nghe lại):
-    def ts(t):
-        h=int(t//3600); m=int((t%3600)//60); s=t%60
-        return f"{h:02d}:{m:02d}:{s:06.3f}".replace(".",",")
-    lines=[]; t=0.0; i=1
-    for c in cfg["canh"]:
-        d=float(c.get("giay",5)); thoai=(c.get("thoai") or "").strip()
-        if thoai:
-            lines.append(f"{i}\n{ts(t)} --> {ts(t+d)}\n{thoai}\n"); i+=1
-        t+=d
-    srt.write_text("\n".join(lines), encoding="utf-8")
-    log("phụ đề (từ thoại) xong:", srt)
+    log("Phụ đề + thẻ tên được dựng trong bước ráp, theo thời lượng THẬT của từng cảnh (2 dòng × 32 ký tự, khổ dọc).")
 
 # ───────────────────────── 7 · RÁP PHIM (ffmpeg) ─────────────────────────
 def buoc_rap(cfg, base, W=1080, Hh=1920, fps=None):
-    fps = fps or (60 if (cfg.get("hau_ky") or {}).get("muot60") else 30)
+    hk = cfg.get("hau_ky") or {}
+    fps = fps or (60 if hk.get("muot60") else 30)
     if not co_lenh("ffmpeg"):
         log("THIẾU ffmpeg — cài ffmpeg rồi chạy lại bước ráp."); return
-    segs=[]; tmp=base/"tmp"
+    segs, lich, t = [], [], 0.0
+    tmp = base / "tmp"
     for c in cfg["canh"]:
-        clip = base/"clip"/f"{c['id']}.mp4"
+        clip = base / "clip" / f"{c['id']}.mp4"
         if not clip.exists():
             log("bỏ cảnh (chưa có clip):", c["id"]); continue
-        d=float(c.get("giay",5)); wav=base/"giong"/f"{c['id']}.wav"
-        seg=tmp/f"seg-{c['id']}.mp4"
-        # Chuẩn hoá: vừa khung 9:16, đúng fps; ghép tiếng (giọng hoặc im lặng), cắt đúng thời lượng
-        vf=f"scale={W}:{Hh}:force_original_aspect_ratio=increase,crop={W}:{Hh},fps={fps}"
-        if wav.exists():
-            cmd=["ffmpeg","-y","-i",str(clip),"-i",str(wav),"-vf",vf,"-t",str(d),
-                 "-c:v","libx264","-pix_fmt","yuv420p","-c:a","aac","-ar","48000",
-                 "-map","0:v:0","-map","1:a:0","-shortest",str(seg)]
-        else:
-            cmd=["ffmpeg","-y","-i",str(clip),"-f","lavfi","-i","anullsrc=r=48000:cl=stereo",
-                 "-vf",vf,"-t",str(d),"-c:v","libx264","-pix_fmt","yuv420p","-c:a","aac",
-                 "-map","0:v:0","-map","1:a:0","-shortest",str(seg)]
-        subprocess.run(cmd, check=True); segs.append(seg)
+        d = float(c.get("giay", 5)); wav = base / "giong" / f"{c['id']}.wav"
+        seg = tmp / f"seg-{c['id']}.mp4"
+        dv = _do_dai(clip)
+        gl = _do_dai(wav) if wav.exists() else 0.0
+        # Không bao giờ cắt mất lời: cảnh dài ít nhất bằng giọng + 0,3s; clip ngắn hơn thì giữ khung cuối.
+        if (base / "clip" / f"{c['id']}.ok-sync").exists(): T = max(dv, gl + 0.1)   # clip khớp môi = dài bằng giọng
+        else: T = max(d, gl + 0.3 if gl else 0)
+        vf = (f"scale={W}:{Hh}:force_original_aspect_ratio=increase,crop={W}:{Hh},fps={fps},"
+              f"tpad=stop_mode=clone:stop_duration={max(0.0, T - dv) + 0.1:.2f}")
+        am = ["-i", str(wav)] if wav.exists() else ["-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo"]
+        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(clip)] + am +
+                       ["-vf", vf, "-af", "aresample=48000,apad", "-t", f"{T:.3f}", "-map", "0:v:0", "-map", "1:a:0",
+                        "-c:v", "libx264", "-preset", "medium", "-crf", "16", "-pix_fmt", "yuv420p",
+                        "-c:a", "aac", "-b:a", "192k", "-ac", "2", str(seg)], check=True)
+        segs.append(seg)
+        cau = []
+        w1, w2 = base / "giong" / f"{c['id']}-1.wav", base / "giong" / f"{c['id']}-2.wav"
+        if (c.get("thoai") or "").strip():
+            if w1.exists() and w2.exists() and (c.get("thoai2") or "").strip():
+                cau = [(c["thoai"].strip(), _do_dai(w1)), (c["thoai2"].strip(), _do_dai(w2))]
+            else:
+                cau = [(c["thoai"].strip(), gl or T - 0.3)]
+        dt = _do_dai(seg) or T
+        lich.append((c, t, dt, cau)); t += dt
     if not segs:
         log("Không có cảnh nào để ráp."); return
-    lst=tmp/"danh-sach.txt"
+    lst = tmp / "danh-sach.txt"
     lst.write_text("".join(f"file '{s.resolve()}'\n" for s in segs), encoding="utf-8")
-    out=base/"phim-cuoi.mp4"
-    subprocess.run(["ffmpeg","-y","-f","concat","-safe","0","-i",str(lst),"-c","copy",str(out)], check=True)
-    # Nhạc nền (hau_ky.nhacNen): trộn tệp đầu tiên trong nhac/ ở âm lượng thấp, giữ nguyên giọng
+    tho = tmp / "phim-tho.mp4"
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", str(lst), "-c", "copy", str(tho)], check=True)
+    # Tiếng: nhạc nền tự HẠ khi có lời (sidechain) → chốt cả phim -14 LUFS, đỉnh -1 dBTP (chuẩn Reels/YouTube)
     nhac = sorted(glob.glob("nhac/*.mp3") + glob.glob("nhac/*.wav") + glob.glob("nhac/*.m4a"))
-    if (cfg.get("hau_ky") or {}).get("nhacNen", True) and nhac:
-        mix = base/"tmp"/"phim-nhac.mp4"
-        subprocess.run(["ffmpeg","-y","-loglevel","error","-i",str(out),"-stream_loop","-1","-i",nhac[0],
-            "-filter_complex","[1:a]volume=0.18[n];[0:a][n]amix=inputs=2:duration=first:dropout_transition=2[a]",
-            "-map","0:v","-map","[a]","-c:v","copy","-c:a","aac","-shortest",str(mix)], check=True)
-        shutil.move(str(mix), str(out)); log("đã trộn nhạc nền:", Path(nhac[0]).name)
-    elif (cfg.get("hau_ky") or {}).get("nhacNen", True):
-        log("Nhạc nền: bật nhưng chưa có tệp trong nhac/ — bỏ qua.")
-    # Phụ đề (nếu có) — khắc cứng vào bản phụ đề riêng
-    srt=tmp/"phu-de.srt"
-    if srt.exists():
-        out2=base/"phim-cuoi-phude.mp4"
-        subprocess.run(["ffmpeg","-y","-i",str(out),"-vf",f"subtitles='{srt.as_posix()}'",
-                        "-c:a","copy",str(out2)], check=False)
-        log("phim có phụ đề:", out2)
-    log("✅ PHIM CUỐI:", out)
+    chot = "loudnorm=I=-14:TP=-1.0:LRA=11,aresample=48000"
+    tron = tmp / "phim-tieng.mp4"
+    if hk.get("nhacNen", True) and nhac:
+        fc = ("[0:a]asplit=2[v1][v2];[1:a]aresample=48000,volume=0.5[m];"
+              "[m][v2]sidechaincompress=threshold=0.02:ratio=10:attack=15:release=350[md];"
+              f"[v1][md]amix=inputs=2:duration=first:dropout_transition=0,{chot}[a]")
+        cmd = ["ffmpeg", "-y", "-loglevel", "error", "-i", str(tho), "-stream_loop", "-1", "-i", nhac[0],
+               "-filter_complex", fc, "-map", "0:v", "-map", "[a]"]
+        log("nhạc nền:", Path(nhac[0]).name, "· tự hạ khi có lời")
+    else:
+        if hk.get("nhacNen", True): log("Nhạc nền: bật nhưng chưa có tệp trong nhac/ — bỏ qua.")
+        cmd = ["ffmpeg", "-y", "-loglevel", "error", "-i", str(tho), "-af", chot, "-map", "0:v", "-map", "0:a"]
+    subprocess.run(cmd + ["-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-shortest", str(tron)], check=True)
+    out = base / "phim-cuoi.mp4"
+    fd = ["fontsdir=fonts"] if Path("fonts").exists() else []
+    def khac(ass, dich):
+        loc = ":".join([f"filename='{Path(ass).resolve().as_posix()}'"] + fd)
+        r = subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(tron), "-vf", f"ass={loc}",
+                            "-c:v", "libx264", "-crf", "16", "-pix_fmt", "yuv420p", "-c:a", "copy", str(dich)])
+        return r.returncode == 0
+    the = hk.get("theTen", True)
+    ass_ten = tmp / "the-ten.ass"
+    if the and dung_ass(cfg, lich, ass_ten, phu_de=False, the_ten=True) and khac(ass_ten, out):
+        log("đã gắn thẻ tên nhân vật")
+    else:
+        shutil.copy(tron, out)
+    if hk.get("phuDe", True):
+        ass_pd = tmp / "phu-de.ass"
+        if dung_ass(cfg, lich, ass_pd, phu_de=True, the_ten=the) and khac(ass_pd, base / "phim-cuoi-phude.mp4"):
+            log("phim có phụ đề:", base / "phim-cuoi-phude.mp4")
+    log("✅ PHIM CUỐI:", out, f"· {t:.1f}s")
 
 # ───────────────────────── Điều phối ─────────────────────────
 BUOC = {"anh":buoc_anh, "video":buoc_video, "giong":buoc_giong, "may_quay":buoc_may_quay,

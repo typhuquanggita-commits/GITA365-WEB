@@ -4,14 +4,14 @@
 #
 #   bash xuong-phim-ai/cai-dat-noi-bo.sh            # cài theo cỡ card tự dò
 #   MUC=nhe   bash xuong-phim-ai/cai-dat-noi-bo.sh  # chỉ phần nhẹ (ảnh + giọng + hậu kỳ)
-#   MUC=day_du bash xuong-phim-ai/cai-dat-noi-bo.sh # thêm InfiniteTalk 14B (cần ≥ 120GB đĩa trống)
+#   MUC=day_du bash xuong-phim-ai/cai-dat-noi-bo.sh # + InfiniteTalk, LongCat-Video, Wan-Animate (card ~80GB, ≥ 250GB đĩa)
 #
 # Cài vào THƯ MỤC ĐANG ĐỨNG (động cơ tìm InstantID/, InfiniteTalk/, Practical-RIFE/, models/ ở đây).
 # Chạy lại an toàn: phần nào có rồi thì bỏ qua. Không cần khoá bí mật nào (model đều công khai).
 #
 # GIẤY PHÉP (đọc trước khi dùng thương mại):
-#   · Wan 2.2, InfiniteTalk, GFPGAN, VieNeu-TTS: Apache-2.0 · Real-ESRGAN: BSD-3 · RIFE, Chatterbox,
-#     faster-whisper: MIT · SDXL: OpenRAIL++-M · opus-mt-vi-en: CC-BY-4.0  → dùng thương mại được.
+#   · Wan 2.2 (+Animate), InfiniteTalk, GFPGAN, VieNeu-TTS: Apache-2.0 · Real-ESRGAN: BSD-3 · RIFE, Chatterbox,
+#     OpenVoice V2, LongCat-Video, faster-whisper: MIT · Be Vietnam Pro: OFL · SDXL: OpenRAIL++-M · opus-mt-vi-en: CC-BY-4.0  → dùng thương mại được.
 #   · Mô hình mặt antelopev2 (InsightFace) mà InstantID cần: CHỈ cho nghiên cứu phi thương mại.
 #     Vì vậy mặc định KHÔNG cài; xưởng khoá mặt bằng LoRA tự train (sạch bản quyền).
 #     Muốn thử nghiệm nội bộ: CAI_INSTANTID=1 bash cai-dat-noi-bo.sh
@@ -31,7 +31,7 @@ fi
 DIA=$(df -Pk "$GOC" | awk 'NR==2{print int($4/1048576)}')
 log "Card GPU: ${VRAM}GB · Đĩa trống: ${DIA}GB · Mức cài: ${MUC}"
 if [ "$MUC" = "tu_dong" ]; then
-  if [ "$VRAM" -ge 40 ] && [ "$DIA" -ge 120 ]; then MUC=day_du; else MUC=vua; fi
+  if [ "$VRAM" -ge 70 ] && [ "$DIA" -ge 250 ]; then MUC=day_du; else MUC=vua; fi
   log "Tự chọn mức: $MUC"
 fi
 
@@ -60,6 +60,15 @@ $PIP "diffusers>=0.33" "transformers>=4.44" accelerate safetensors peft huggingf
 log "2/7 Giọng: VieNeu-TTS (tiếng Việt, Apache-2.0) + Chatterbox (tiếng Anh, MIT)"
 $PIP vieneu || echo "  ⚠ chưa cài được vieneu — xem https://github.com/pnnbao97/VieNeu-TTS"
 $PIP chatterbox-tts || echo "  ⚠ chưa cài được chatterbox-tts"
+# Khớp chất giọng: OpenVoice V2 (MIT) — chuyển âm sắc về đúng giọng mẫu nhân vật
+[ -d OpenVoice ] || git clone -q --depth 1 https://github.com/myshell-ai/OpenVoice
+( cd OpenVoice && $PIP -e . --no-deps && $PIP librosa pydub wavmark faster-whisper whisper-timestamped ) || true
+if [ ! -f OpenVoice/checkpoints_v2/converter/checkpoint.pth ]; then
+  curl -fL --retry 3 -o /tmp/ov2.zip https://myshell-public-repo-host.s3.amazonaws.com/openvoice/checkpoints_v2_0417.zip \
+    && (cd OpenVoice && python -m zipfile -e /tmp/ov2.zip .) && echo "  ✓ OpenVoice V2" || echo "  ⚠ chưa tải được OpenVoice V2"
+fi
+# Phông chữ tiếng Việt cho phụ đề / thẻ tên (Be Vietnam Pro, OFL)
+for w in Bold Regular; do tai "https://github.com/google/fonts/raw/main/ofl/bevietnampro/BeVietnamPro-$w.ttf" "fonts/BeVietnamPro-$w.ttf"; done
 python -c "from transformers import MarianMTModel,MarianTokenizer as T; T.from_pretrained('Helsinki-NLP/opus-mt-vi-en'); MarianMTModel.from_pretrained('Helsinki-NLP/opus-mt-vi-en'); print('  ✓ bộ dịch vi→en nội bộ')" || true
 
 # ── 3 · Hậu kỳ AI: giữ mặt + nâng nét + mượt 60fps ─────────────────────────
@@ -113,10 +122,21 @@ if [ "$MUC" = "day_du" ]; then
   tai_hf Wan-AI/Wan2.1-I2V-14B-480P "$W/Wan2.1-I2V-14B-480P" || true
   tai_hf TencentGameMate/chinese-wav2vec2-base "$W/chinese-wav2vec2-base" || true
   tai_hf TencentGameMate/chinese-wav2vec2-base "$W/chinese-wav2vec2-base" "model.safetensors" "refs/pr/1" || true
-  tai_hf MeiGen-AI/InfiniteTalk "$W/InfiniteTalk" "single/*" || true
+  tai_hf MeiGen-AI/InfiniteTalk "$W/InfiniteTalk" "single/*,multi/*" || true      # 1 người + 2 người hội thoại
+
+  log "6b · LongCat-Video (Meituan, MIT) — cảnh dài 10–30s, nối tiếp liền mạch"
+  [ -d LongCat-Video ] || git clone -q --depth 1 https://github.com/meituan-longcat/LongCat-Video
+  $PIP -r LongCat-Video/requirements.txt || true
+  tai_hf meituan-longcat/LongCat-Video LongCat-Video/weights/LongCat-Video || true
+
+  log "6c · Wan 2.2 Animate-14B (Apache-2.0) — diễn theo video động tác quay bằng điện thoại"
+  [ -d Wan2.2 ] || git clone -q --depth 1 https://github.com/Wan-Video/Wan2.2
+  $PIP -r Wan2.2/requirements.txt || true
+  [ -f Wan2.2/requirements_animate.txt ] && $PIP -r Wan2.2/requirements_animate.txt || true
+  tai_hf Wan-AI/Wan2.2-Animate-14B Wan2.2/Wan2.2-Animate-14B || true
 else
-  echo "  (bỏ qua — cần card ≥ 40GB và ≥ 120GB đĩa; chạy MUC=day_du trên A100 80GB / RTX 6000)"
-  echo "   Không có InfiniteTalk, cảnh người dẫn chạy Wan 2.2 + lip-sync."
+  echo "  (bỏ qua — cần card ~80GB và ≥ 250GB đĩa; chạy MUC=day_du trên A100/H100 80GB)"
+  echo "   Thiếu các bộ này, động cơ tự hạ: người dẫn → Wan + lip-sync · cảnh dài/động tác → Wan 2.2."
 fi
 
 # ── 7 · Kiểm tra cuối ──────────────────────────────────────────────────────
@@ -126,7 +146,8 @@ import importlib.util as u, pathlib as P
 def ok(x): return "✓" if x else "✗"
 print(f"  {ok(u.find_spec('diffusers'))} diffusers   {ok(u.find_spec('vieneu'))} VieNeu-TTS   {ok(u.find_spec('chatterbox'))} Chatterbox")
 print(f"  {ok(P.Path('models/GFPGANv1.4.pth').exists())} GFPGAN   {ok(P.Path('models/RealESRGAN_x2plus.pth').exists())} Real-ESRGAN   {ok(P.Path('Practical-RIFE/train_log').exists())} RIFE")
-print(f"  {ok(P.Path('InstantID/checkpoints/ip-adapter.bin').exists())} InstantID (tuỳ chọn)   {ok(P.Path('InfiniteTalk/weights/InfiniteTalk').exists())} InfiniteTalk")
+print(f"  {ok(P.Path('OpenVoice/checkpoints_v2/converter/checkpoint.pth').exists())} OpenVoice   {ok(P.Path('fonts/BeVietnamPro-Bold.ttf').exists())} phông Việt   {ok(P.Path('InstantID/checkpoints/ip-adapter.bin').exists())} InstantID (tuỳ chọn)")
+print(f"  {ok(P.Path('InfiniteTalk/weights/InfiniteTalk').exists())} InfiniteTalk   {ok(P.Path('LongCat-Video/weights/LongCat-Video').exists())} LongCat-Video   {ok(P.Path('Wan2.2/Wan2.2-Animate-14B').exists())} Wan-Animate")
 PY
 echo
 echo "Xong. Chạy thử: python xuong-phim-ai/gita_xuong_phim.py --config cau-hinh.json --plan"

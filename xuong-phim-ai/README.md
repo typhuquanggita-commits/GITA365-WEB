@@ -20,17 +20,45 @@ mua RTX 5090 hơn $3.000, còn thuê 4090 ~ $0,34/giờ. Thuê ngoài dịch v�
 | Dịch kịch bản vi→en cho model | opus-mt-vi-en (chạy trên máy) | CC-BY-4.0 | `dich_en()` |
 | Ảnh nhân vật đúng mặt | SDXL + **LoRA nhân vật** tự train (+ LoRA phim trường) | OpenRAIL++-M | `buoc_anh()` |
 | Cảnh diễn chuyển động | **Wan 2.2** (A14B 720p trên card ≥70GB · TI2V-5B 720p ≥20GB · 480p trên T4) | Apache-2.0 | `_wan()` |
-| Người dẫn nói cả thân, khớp môi | **InfiniteTalk** (ảnh + giọng → video) | Apache-2.0 | `_infinitetalk()` |
+| Cảnh dài 10–30s, nối tiếp liền mạch (đi, chạy, tương tác) | **LongCat-Video** 13,6B — nối đoạn 13 khung điều kiện | MIT | `_longcat()` · `chay_longcat.py` |
+| **Máy quay nội bộ**: quay người thật bằng điện thoại → nhân vật GITA diễn y hệt / thay người giữ bối cảnh thật | **Wan 2.2 Animate-14B** | Apache-2.0 | `_wan_animate()` |
+| Người dẫn nói cả thân, khớp môi · **hội thoại 2 người** | **InfiniteTalk** single / multi | Apache-2.0 | `_infinitetalk()` |
 | Giọng | **Thu âm thật** `thu-am/<mã cảnh>.wav` → **VieNeu-TTS** (Việt) → **Chatterbox** (Anh) | Apache-2.0 · MIT | `buoc_giong()` |
+| Khớp chất giọng nhân vật | **OpenVoice V2** — chuyển âm sắc về đúng giọng mẫu (áp được cho tiếng Việt) | MIT | `khop_chat_giong()` |
+| Giọng chuẩn phát sóng | lọc ù · khử ồn · EQ rõ tiếng · giảm xì · nén · -16 LUFS; cả phim -14 LUFS, nhạc tự hạ khi có lời | (mã GITA, ffmpeg) | `master_giong()` |
 | Giữ mặt + nâng nét | GFPGAN v1.4 + Real-ESRGAN x2 (từng khung hình) | Apache-2.0 · BSD-3 | `_khung_ai()` |
 | Mượt 60fps | RIFE (thiếu thì ffmpeg minterpolate) | MIT | `_rife()` |
 | **Máy quay ảo** | Đẩy vào/kéo ra/lia/nghiêng/cầm tay — di máy chính xác ở hậu kỳ trên khung 4K | (mã GITA) | `buoc_may_quay()` |
-| Phụ đề | faster-whisper / theo thoại | MIT | `buoc_phu_de()` |
+| Phụ đề + thẻ tên | từ thoại đã duyệt, 2 dòng × 32 ký tự (khổ dọc), cân dòng; thẻ tên Trainer/MC lần đầu xuất hiện | (mã GITA, libass) | `dung_ass()` |
 | Ráp + nhạc nền | ffmpeg | LGPL/GPL | `buoc_rap()` |
 | Thuê ngoài ≤10% | Veo 3.1 Fast cho cảnh then chốt (điểm nối `_goi_api()`) | có phí | `giu_tran_ngoai()` |
 
 **Không dùng cho thương mại:** XTTS v2 (giấy phép CPML phi thương mại, lại không có tiếng Việt) và mô hình
 mặt antelopev2 của InstantID (chỉ nghiên cứu). Hai thứ này **mặc định tắt**; khoá mặt bằng LoRA tự train.
+
+## Diễn xuất & máy quay điện ảnh (khai báo trong form cảnh)
+
+- **Diễn xuất:** chọn hành động có sẵn (đi bộ, chạy, ngồi xuống, đứng dậy, cầm/trao đồ vật, bắt tay, ôm,
+  trò chuyện, thuyết trình, rót trà…) — động cơ viết sẵn ngữ pháp chuyển động tiếng Anh điện ảnh cho mô hình.
+- **Diễn viên thứ hai** + thoại người thứ hai → hội thoại 2 người khớp môi (InfiniteTalk multi).
+- **Nối tiếp cảnh trước** → LongCat-Video lấy chính clip trước làm điểm xuất phát: giữ người, tư thế, ánh sáng.
+- **Video động tác quay thật** (`dong-tac/<mã cảnh>.mp4`): "diễn theo" hoặc "thay người, giữ bối cảnh thật".
+- **Máy quay:** di máy 2D (đẩy, kéo, lia, nghiêng, cầm tay, zoom giật) làm chính xác ở hậu kỳ; di máy 3D
+  (bám theo, xoay vòng, cẩu, trượt ngang, dolly zoom, đổi tiêu điểm, flycam) giao cho mô hình.
+
+## Các kho tham khảo đã xét (10/2026)
+
+| Kho | Dùng? | Lý do |
+|---|---|---|
+| meituan-longcat/LongCat-Video | ✅ đã nối | MIT, cảnh dài + nối tiếp liền mạch; có bản Avatar (âm thanh → người nói, nhiều người) để dùng sau |
+| myshell-ai/OpenVoice | ✅ đã nối | MIT, khớp âm sắc giọng nhân vật |
+| Wan-Video/Wan2.2 (Animate) | ✅ đã nối | Apache-2.0, diễn theo video động tác quay thật |
+| k4yt3x/video2x | ⚪ không cần | cùng thuật toán (Real-ESRGAN, RIFE) xưởng đã có; giấy phép AGPL-3.0 |
+| Huanshere/VideoLingo | ⚪ lấy ý tưởng | cắt phụ đề theo chuẩn, căn từng chữ; bản gốc cần API mô hình ngôn ngữ bên ngoài |
+| remotion-dev/remotion | ❌ | công ty trên 3 nhân sự phải mua giấy phép; thẻ tên/phụ đề đã làm nội bộ bằng libass |
+| coqui-ai/TTS (XTTS v2) | ❌ | mô hình giấy phép phi thương mại, không có tiếng Việt |
+| rhasspy/piper | ⚪ dự phòng | đã lưu trữ (10/2025), chuyển sang bản GPL; giọng Việt kém hơn VieNeu, không clone giọng |
+| topoteretes/cognee, openai/skills, cs-video-courses | ❌ | không phải công cụ dựng video/giọng |
 
 ## Cài một lệnh
 
@@ -44,7 +72,7 @@ Bộ cài tự dò cỡ card và đĩa trống rồi chọn mức:
 |---|---|---|
 | `nhe` | thử nhanh | thư viện, giọng, hậu kỳ, SDXL (Wan tải lúc chạy) |
 | `vua` (mặc định trên T4/4090) | Kaggle, RTX 4090 | + Wan 2.2 hợp cỡ card |
-| `day_du` | card ≥ 40GB và ≥ 120GB đĩa (A100 80GB) | + InfiniteTalk 14B |
+| `day_du` | card ~80GB và ≥ 250GB đĩa (A100/H100) | + InfiniteTalk (1 & 2 người), LongCat-Video, Wan-Animate |
 
 Chạy lại an toàn (bỏ qua phần đã có). Trọng số RIFE phát hành qua link ngoài → đặt `RIFE_URL=<link .zip>`.
 Thử nghiệm InstantID (phi thương mại): `CAI_INSTANTID=1 ANTELOPE_REPO=<repo HF> bash cai-dat-noi-bo.sh`.
@@ -58,7 +86,8 @@ Thử nghiệm InstantID (phi thương mại): `CAI_INSTANTID=1 ANTELOPE_REPO=<r
 - `nhan-vat/<id>.png` — ảnh mặt mẫu.
 - `giong/nam-lon.wav`, `nu-lon.wav`, `nam-teen.wav`, `nu-teen.wav`, `nam-treem.wav`, `nu-treem.wav`
   (3–10 giây mỗi file) · giọng riêng: `giong/<id nhân vật>.wav`.
-- `thu-am/<mã cảnh>.wav` — **giọng thật** Trainer/MC đọc câu thoại (ưu tiên số 1).
+- `thu-am/<mã cảnh>.wav` — **giọng thật** Trainer/MC đọc câu thoại (ưu tiên số 1); người thứ hai: `thu-am/<mã cảnh>-2.wav`.
+- `dong-tac/<mã cảnh>.mp4` — video động tác quay bằng điện thoại (cho cảnh chọn "Video động tác quay thật").
 - `nhac/` — nhạc nền có bản quyền (hậu kỳ trộn ở âm lượng thấp).
 
 ## Chạy

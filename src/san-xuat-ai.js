@@ -58,6 +58,8 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     ['framepack','FramePack — mở · free · clip dài, GPU yếu'],
     ['ltx','LTX-Video — mở · free · nhanh, nháp'],
     ['cogvideox','CogVideoX — mở · free'],
+    ['longcat','LongCat-Video — mở · MIT · cảnh dài, nối tiếp liền mạch (đi, chạy, tương tác)'],
+    ['wan_animate','Wan 2.2 Animate — mở · diễn theo video động tác quay thật'],
     ['seedance','Seedance 1.0 Pro — API · rẻ · cảnh điện ảnh'],
     ['wan_api','Wan 2.2 A14B (fal.ai) — API · rẻ'],
     ['infinitetalk_api','InfiniteTalk (API) — rẻ · người dẫn nói'],
@@ -70,8 +72,8 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   var GIA = { /* $ / giây video */
     seedance:0.03, wan_api:0.08, infinitetalk_api:0.06, kling:0.075, veo3fast:0.10, veo3:0.40, heygen:0.067, runway:null,
     /* động cơ mở: phút GPU 4090 cho 1 giây video (ước tính) → quy ra $ khi thuê */
-    wan:1.2, infinitetalk:2.0, framepack:1.0, ltx:0.3, cogvideox:1.4 };
-  var MO = ['wan','infinitetalk','framepack','ltx','cogvideox'];
+    wan:1.2, infinitetalk:2.0, framepack:1.0, ltx:0.3, cogvideox:1.4, longcat:2.0, wan_animate:2.5 };
+  var MO = ['wan','infinitetalk','framepack','ltx','cogvideox','longcat','wan_animate'];
   var GPU_GIO = 0.34, TY_GIA = 26000;   /* $/giờ RTX 4090 Runpod Community · đ/USD (xấp xỉ) */
   /* Máy GPU thuê theo giờ cho xưởng nội bộ. he = hệ số phút GPU so với 4090 (A100 80GB chạy được
      Wan 2.2 A14B 720p — chất cao hơn nhưng nặng hơn, nên mỗi giây video tốn nhiều phút hơn). */
@@ -86,7 +88,19 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   var MQ_CO = [['dac_ta','Đặc tả'],['can','Cận cảnh'],['trung','Trung cảnh'],['trung_rong','Trung rộng'],['toan','Toàn cảnh']];
   var MQ_GOC = [['ngang_mat','Ngang mắt'],['thap','Góc thấp (uy lực)'],['cao','Góc cao'],['qua_vai','Qua vai'],['nghieng','Nghiêng (kịch tính)']];
   var MQ_CHUYEN = [['tinh','Máy tĩnh'],['day_vao','Đẩy vào (dolly in)'],['keo_ra','Kéo ra (dolly out)'],['lia_trai','Lia trái'],
-    ['lia_phai','Lia phải'],['nghieng_len','Nghiêng lên (tilt up)'],['nghieng_xuong','Nghiêng xuống'],['cam_tay','Cầm tay (sống động)'],['ai','Để mô hình tự di máy']];
+    ['lia_phai','Lia phải'],['nghieng_len','Nghiêng lên (tilt up)'],['nghieng_xuong','Nghiêng xuống'],['cam_tay','Cầm tay (sống động)'],
+    ['zoom_giat','Zoom giật (crash zoom)'],
+    /* nhóm dưới: mô hình tự quay trong không gian 3D (hậu kỳ không làm được) */
+    ['bam_theo','✦ Bám theo nhân vật (tracking)'],['xoay_quanh','✦ Xoay vòng quanh (orbit)'],['cau_len','✦ Cẩu máy lên cao (crane)'],
+    ['truot_ngang','✦ Trượt ngang có chiều sâu (truck)'],['dolly_zoom','✦ Dolly zoom (hiệu ứng Vertigo)'],['doi_net','✦ Đổi tiêu điểm (rack focus)'],
+    ['fpv','✦ Flycam / FPV bay xuyên cảnh'],['ai','✦ Để mô hình tự chọn cách di máy']];
+  var MQ_MO_HINH = ['bam_theo','xoay_quanh','cau_len','truot_ngang','dolly_zoom','doi_net','fpv','ai'];
+  /* Hành động diễn viên — viết sẵn ngữ pháp chuyển động để mô hình diễn đúng cơ thể người thật */
+  var HANH_DONG = [['','— tự mô tả ở ô dưới —'],['di_bo','Đi bộ về phía máy'],['di_ngang','Đi ngang khung hình'],['chay','Chạy'],
+    ['ngoi_xuong','Ngồi xuống ghế'],['dung_len','Đứng dậy'],['cam_do','Cầm / nhấc đồ vật'],['dua_do','Trao đồ vật cho người kia'],
+    ['bat_tay','Bắt tay'],['om','Ôm'],['tro_chuyen','Hai người trò chuyện'],['thuyet_trinh','Thuyết trình, tay chỉ màn hình'],
+    ['rot_tra','Rót trà / cà phê'],['go_may','Gõ máy tính'],['vay_tay','Vẫy tay chào'],['gat_dau','Gật đầu lắng nghe']];
+  var DONG_TAC = [['','Không — mô hình tự diễn'],['dien','Diễn theo video động tác mẫu (nhân vật làm y hệt)'],['thay','Thay người trong video quay thật (giữ nguyên bối cảnh thật)']];
   function mqMacDinh(c){ var noi=c&&c.loai==='nguoi'; return {co: noi?'trung':'toan', goc:'ngang_mat', chuyen: noi?'day_vao':'lia_phai', cuong:0.4}; }
   function mqCua(c){ return (c&&c.mq) ? c.mq : mqMacDinh(c); }
   function mqChu(c){ var m=mqCua(c); return [nhan(m.co,MQ_CO), nhan(m.goc,MQ_GOC), nhan(m.chuyen,MQ_CHUYEN)].filter(Boolean).join(' · '); }
@@ -98,11 +112,14 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     ['chinhMau','Chỉnh màu điện ảnh',true],
     ['khuNhieu','Khử nhiễu',false],
     ['onDinh','Ổn định khung (giảm rung)',false],
-    ['phuDe','Phụ đề tự động',true],
-    ['nhacNen','Nhạc nền',true]
+    ['masterGiong','Xử lý giọng chuẩn phát sóng (lọc ồn, cân tiếng, -14 LUFS)',true],
+    ['khopGiong','Khớp chất giọng nhân vật (OpenVoice)',true],
+    ['theTen','Thẻ tên nhân vật khi xuất hiện lần đầu',true],
+    ['phuDe','Phụ đề tự động (chuẩn Reels dọc, 2 dòng ≤ 32 ký tự)',true],
+    ['nhacNen','Nhạc nền (tự hạ khi có lời thoại)',true]
   ];
   function hauMacDinh(){ var o={}; HAUKY.forEach(function(x){o[x[0]]=x[2];}); return o; }
-  function hauCua(p){ return (p&&p.hauKy)?p.hauKy:hauMacDinh(); }
+  function hauCua(p){ var d=hauMacDinh(); if(p&&p.hauKy) Object.keys(p.hauKy).forEach(function(k){ d[k]=p.hauKy[k]; }); return d; }
   function tenDC(k){ var f=DONGCO.filter(function(x){return x[0]===k;})[0]; return f?f[1]:k; }
   /* Định tuyến: cảnh chọn riêng > tập chọn > PHƯƠNG ÁN.
      A · Free: người dẫn nói → InfiniteTalk · cảnh > 6s → FramePack · còn lại → Wan 2.2.
@@ -124,7 +141,12 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     var P=(pa||(p&&p.phuongAn)||'D');
     if(P==='B'){ if(noi) return 'infinitetalk_api'; if(c.hero) return 'veo3fast'; return 'seedance'; }
     if(P==='C'){ if(noi) return 'infinitetalk'; if(c.hero) return 'veo3fast'; return 'seedance'; }
-    if(P==='D'){ if(noi) return 'infinitetalk'; if(c.hero && ngoaiDuocPhep(p)[c.id]) return 'veo3fast'; return 'wan'; }
+    if(P==='D'){
+      if(c.dongTac) return 'wan_animate';                       /* có video động tác quay thật → diễn y hệt */
+      if(noi) return 'infinitetalk';                            /* 1 hoặc 2 người nói */
+      if(c.hero && ngoaiDuocPhep(p)[c.id]) return 'veo3fast';
+      if((c.noiTiep || (+c.giay||5)>6) && gpuCua(p)===GPU.a100) return 'longcat';   /* cảnh dài / liền mạch */
+      return 'wan'; }
     if(noi) return 'infinitetalk';
     return (+c.giay||5) > 6 ? 'framepack' : 'wan';
   }
@@ -132,7 +154,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   function duToan(p,pa){
     var r={usd:0, gpuPhut:0, giay:0, chuaGia:0, giayNgoai:0};
     (p.canh||[]).forEach(function(c){
-      var k=chonDongCo(pa?{id:c.id,dongCo:'',loai:c.loai,thoai:c.thoai,giay:c.giay,hero:c.hero}:c,p,pa);
+      var k=chonDongCo(pa?{id:c.id,dongCo:'',loai:c.loai,thoai:c.thoai,giay:c.giay,hero:c.hero,dongTac:c.dongTac,noiTiep:c.noiTiep}:c,p,pa);
       var g=(+c.giay||5), sinh=g*heSoLam(c); r.giay+=g;
       if(laMo(k)){ r.gpuPhut+=sinh*GIA[k]*gpuCua(p).he; r.usd+=sinh*giaGiay(k,p); }
       else { r.giayNgoai+=g; if(GIA[k]==null) r.chuaGia+=1; else r.usd+=sinh*GIA[k]; }
@@ -293,13 +315,25 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
           '<div>'+sel('f-mq-co',MQ_CO,m.co)+'</div><div>'+sel('f-mq-goc',MQ_GOC,m.goc)+'</div><div>'+sel('f-mq-ch',MQ_CHUYEN,m.chuyen)+'</div></div>'+
           '<div class="row" style="gap:8px;align-items:center;margin-top:6px"><span class="tiny muted">Biên độ di máy</span>'+
           '<input type="range" id="f-mq-cuong" min="0" max="1" step="0.1" value="'+(m.cuong!=null?m.cuong:0.4)+'" style="flex:1"></div>'+
-          '<input type="text" id="f-may" value="'+h(e.may||'')+'" placeholder="Ghi chú thêm cho máy quay (tuỳ chọn)" style="margin-top:6px"></div>'; })()+
-      '<div class="bd-field"><span>Chuyển động nhân vật</span><input type="text" id="f-cd" value="'+h(e.chuyenDong)+'" placeholder="VD: đứng nói, tay chỉ màn hình"></div>'+
+          '<input type="text" id="f-may" value="'+h(e.may||'')+'" placeholder="Ghi chú thêm cho máy quay (tuỳ chọn)" style="margin-top:6px">'+
+          '<p class="bd-tip" style="margin-top:4px">Di máy thường làm chính xác ở hậu kỳ. Mục có dấu ✦ (bám theo, xoay vòng, cẩu, dolly zoom, flycam…) do mô hình quay trong không gian 3D.</p></div>'; })()+
+      (function(){ var ss='padding:8px;border:1px solid var(--line);border-radius:9px;width:100%;box-sizing:border-box';
+        function sel(id,arr,v){ return '<select id="'+id+'" style="'+ss+'">'+arr.map(function(x){return '<option value="'+x[0]+'"'+(x[0]===(v||'')?' selected':'')+'>'+h(x[1])+'</option>';}).join('')+'</select>'; }
+        var nv2=[['','— không có —']].concat((G.S.axNV||[]).map(function(n){return [n.id,n.ten];}));
+        return '<div class="bd-field"><span>🎬 Diễn xuất</span><div class="grid g2">'+
+            '<div>'+sel('f-hd',HANH_DONG,e.hanhDong)+'</div>'+
+            '<div><input type="text" id="f-dovat" value="'+h(e.doVat||'')+'" placeholder="Đồ vật (VD: tách trà, cuốn sách)" style="'+ss+'"></div></div>'+
+          '<input type="text" id="f-cd" value="'+h(e.chuyenDong)+'" placeholder="Mô tả thêm chuyển động (VD: vừa đi vừa nhìn sang người bên cạnh)" style="margin-top:6px"></div>'+
+          '<div class="bd-field"><span>👥 Diễn viên thứ hai trong cảnh (tương tác nhiều người)</span>'+sel('f-nv2',nv2,e.nv2Id)+'</div>'+
+          '<div class="bd-field"><span>📱 Video động tác quay thật (máy quay nội bộ)</span>'+sel('f-dt',DONG_TAC,e.dongTac)+
+            '<p class="bd-tip" style="margin-top:4px">Quay người thật làm động tác bằng điện thoại → đặt tệp <b>dong-tac/'+h(e.id||'&lt;mã cảnh&gt;')+'.mp4</b>. Nhân vật GITA sẽ diễn y hệt (đi, chạy, ngồi, cầm đồ vật). Cần máy A100.</p></div>'+
+          '<div class="bd-field"><label style="display:flex;gap:8px;align-items:center;font-size:12.5px;color:var(--ink-2)"><input type="checkbox" id="f-noitiep"'+(e.noiTiep?' checked':'')+'> Nối tiếp liền mạch từ cảnh trước (giữ nguyên người, tư thế, ánh sáng)</label></div>'; })()+
       '<div class="bd-field"><span>Thoại (để trống nếu cảnh không lời)</span><textarea id="f-thoai" rows="2">'+h(e.thoai)+'</textarea></div>'+
-      '<div class="bd-field"><span>Thời lượng (giây)</span><input type="number" id="f-giay" min="2" max="10" value="'+(e.giay||5)+'" style="width:90px"></div>'+
+      '<div class="bd-field"><span>Thoại của diễn viên thứ hai (nói sau, nếu có)</span><textarea id="f-thoai2" rows="2">'+h(e.thoai2||'')+'</textarea></div>'+
+      '<div class="bd-field"><span>Thời lượng (giây)</span><input type="number" id="f-giay" min="2" max="30" value="'+(e.giay||5)+'" style="width:90px"> <span class="tiny muted">tối đa 30s · trên 6s dùng LongCat nối đoạn (máy A100)</span></div>'+
       '<div class="bd-field"><span>Động cơ cho cảnh này (để trống = theo tập)</span><select id="f-dongco" style="padding:8px;border:1px solid var(--line);border-radius:9px">'+
         '<option value="">— theo cài đặt của tập —</option>'+DONGCO.map(function(x){return '<option value="'+x[0]+'"'+(e.dongCo===x[0]?' selected':'')+'>'+h(x[1])+'</option>';}).join('')+'</select></div>'+
-      '<div class="bd-field"><label style="display:flex;gap:8px;align-items:center;font-size:12.5px;color:var(--ink-2)"><input type="checkbox" id="f-hero"'+(e.hero?' checked':'')+'> Cảnh then chốt (phương án B dùng Veo 3.1 Fast cho cảnh này)</label></div>'+
+      '<div class="bd-field"><label style="display:flex;gap:8px;align-items:center;font-size:12.5px;color:var(--ink-2)"><input type="checkbox" id="f-hero"'+(e.hero?' checked':'')+'> Cảnh then chốt (B/C: thuê Veo 3.1 Fast · D: chỉ thuê khi còn trong trần 10%)</label></div>'+
       '<div class="row mt" style="gap:8px"><button class="btn" onclick="G.ax.canhLuu(\''+(e.id||'')+'\')">Lưu</button><button class="btn ghost" onclick="U.closeModal()">Huỷ</button></div>';
   }
   G.ax.canhThem = function(){ window.__cloai='nguoi'; U.modal(formCanh(null)); };
@@ -309,7 +343,10 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     var o={ nvId:v('f-nv'), loai:window.__cloai||'nguoi', boiCanh:v('f-bc').trim(), may:v('f-may').trim(),
       bcId:v('f-bcid'),
       mq:{ co:v('f-mq-co')||'trung', goc:v('f-mq-goc')||'ngang_mat', chuyen:v('f-mq-ch')||'tinh', cuong:+(v('f-mq-cuong')||0.4) },
-      chuyenDong:v('f-cd').trim(), thoai:v('f-thoai').trim(), giay:Math.max(2,Math.min(10,+v('f-giay')||5)), dongCo:v('f-dongco'), hero:!!(document.getElementById('f-hero')||{}).checked };
+      chuyenDong:v('f-cd').trim(), thoai:v('f-thoai').trim(), giay:Math.max(2,Math.min(30,+v('f-giay')||5)), dongCo:v('f-dongco'), hero:!!(document.getElementById('f-hero')||{}).checked,
+      hanhDong:v('f-hd'), doVat:v('f-dovat').trim(), nv2Id:v('f-nv2'), thoai2:v('f-thoai2').trim(), dongTac:v('f-dt'),
+      noiTiep:!!(document.getElementById('f-noitiep')||{}).checked };
+    if(o.nv2Id===o.nvId) o.nv2Id='';
     var p=phimActive();
     if(id){ var c=p.canh.filter(function(x){return x.id===id;})[0]; if(c) Object.assign(c,o); }
     else { o.id=uid('c'); o.tt=''; p.canh.push(o); }
@@ -326,12 +363,17 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     var nv=nvById(c.nvId)||{};
     var noi = c.loai==='nguoi' && (c.thoai||'').trim();
     var m = mqCua(c);
-    var img = [nv.mota, nv.phongCach, nv.trangPhuc, c.boiCanh, nhan(m.co,MQ_CO), nhan(m.goc,MQ_GOC), c.may, 'khung dọc 9:16', QPROM].filter(Boolean).join(', ');
+    var nv2 = c.nv2Id ? nvById(c.nv2Id) : null;
+    var img = [nv.mota, nv.phongCach, nv.trangPhuc, nv2 ? 'cùng '+[nv2.mota,nv2.trangPhuc].filter(Boolean).join(', ') : '', c.boiCanh, nhan(c.hanhDong||'',HANH_DONG)&&c.hanhDong ? nhan(c.hanhDong,HANH_DONG) : '', nhan(m.co,MQ_CO), nhan(m.goc,MQ_GOC), c.may, 'khung dọc 9:16', QPROM].filter(Boolean).join(', ');
     if(coLora(nv.lora)) img = trigger(nv.id)+', '+img;   /* từ khoá LoRA khoá đúng mặt */
     if((phimActive()||{}).phongCachGita!==false) img = img + ', ' + KGITA_STYLE;  /* khoá phong cách không gian GITA */
-    var vid = [c.chuyenDong||'(giữ tư thế tự nhiên)',
-      noi?'đang nói, khẩu hình khớp lời, cử động đầu và tay tự nhiên':'diễn theo cảnh, chuyển động cơ thể tự nhiên',
-      m.chuyen==='ai' ? nhan(m.chuyen,MQ_CHUYEN) : 'máy giữ yên (di máy làm ở hậu kỳ)', 'chuyển động mượt, sắc nét, người thật, không hoạt hình', (c.giay||5)+' giây'].filter(Boolean).join(', ');
+    var hd = c.hanhDong ? nhan(c.hanhDong,HANH_DONG) + (c.doVat?' ('+c.doVat+')':'') : '';
+    var vid = [hd, c.chuyenDong||(hd?'':'(giữ tư thế tự nhiên)'),
+      nv2 ? 'tương tác tự nhiên với '+(nv2.ten||'người thứ hai')+', ánh mắt nhìn nhau' : '',
+      noi?'đang nói, khẩu hình khớp lời, cử động đầu và tay tự nhiên':'diễn theo cảnh, cơ thể chuyển động tự nhiên, tay cầm đồ vật đúng',
+      MQ_MO_HINH.indexOf(m.chuyen)>=0 ? 'máy quay: '+nhan(m.chuyen,MQ_CHUYEN).replace('✦ ','') : 'máy giữ yên (di máy làm ở hậu kỳ)',
+      c.noiTiep ? 'nối tiếp liền mạch từ cảnh trước' : '',
+      'chuyển động mượt, sắc nét, người thật, không hoạt hình', (c.giay||5)+' giây'].filter(Boolean).join(', ');
     return {img:img, vid:vid, neg:QNEG};
   }
   function configPhim(){
@@ -345,7 +387,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       cam:['khong-hoat-hinh','khong-nguoi-que','khong-anh-tinh-map-moi','phai-nguoi-that-chuyen-dong-sac-net'],
       chuan:{ negative_chung:QNEG, phong_cach:'ảnh thật điện ảnh 9:16, nét căng, khớp khẩu hình với giọng',
         phong_cach_gita: p.phongCachGita!==false, phong_cach_khong_gian:KGITA_STYLE },
-      pipeline:{ anh:'instantid_sdxl', i2v:'wan2.2_i2v', tts:'vixtts', lipsync:'latentsync', nang_net:'realesrgan_codeformer', muot:'rife', phu_de:'faster_whisper', rap:'ffmpeg', khung:'1080x1920', fps_xuat:(hauCua(p).muot60?60:30) },
+      pipeline:{ anh:'sdxl_lora', i2v:'wan2.2 · longcat · wan_animate', tts:'thu_am · vieneu · chatterbox + openvoice', lipsync:'infinitetalk', nang_net:'gfpgan_realesrgan', muot:'rife', phu_de:'ass_tu_thoai', the_ten:'ass', rap:'ffmpeg_loudnorm_-14', khung:'1080x1920', fps_xuat:(hauCua(p).muot60?60:30) },
       nhan_vat: (G.S.axNV||[]).map(function(n){ return {id:n.id,ten:n.ten,vai:n.vai,gioi:n.gioi,tuoi:n.tuoi,loai:n.loai,
         mo_ta:n.mota,phong_cach:n.phongCach,trang_phuc:n.trangPhuc,giong:n.giong,giong_key:giongKey(n.gioi,n.tuoi),seed:n.seed,
         lora:n.lora, co_lora:coLora(n.lora), trigger:trigger(n.id), khoa_mat:!!n.khoaMat}; }),
@@ -357,7 +399,11 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
           lora:nv.lora, co_lora:coLora(nv.lora), trigger:trigger(nv.id), khoa_mat:!!nv.khoaMat,
           ngon_ngu: p.ngonNgu||'vi',
           dong_co: chonDongCo(c, p), hero: !!c.hero,
-          giay:c.giay||5, lip_sync: c.loai==='nguoi' && !!(c.thoai&&c.thoai.trim()), trang_thai:c.tt||'' }; })
+          giay:c.giay||5, lip_sync: c.loai==='nguoi' && !!(c.thoai&&c.thoai.trim()), trang_thai:c.tt||'',
+          hanh_dong:c.hanhDong||'', do_vat:c.doVat||'', noi_tiep:!!c.noiTiep, dong_tac:c.dongTac||'',
+          nv_phu: (function(){ var n=c.nv2Id?nvById(c.nv2Id):null; return n ? {id:n.id, ten:n.ten, vai:n.vai, mo_ta:n.mota, trang_phuc:n.trangPhuc,
+            giong_key:giongKey(n.gioi,n.tuoi), co_lora:coLora(n.lora), trigger:trigger(n.id)} : null; })(),
+          thoai2: c.nv2Id ? (c.thoai2||'') : '' }; })
     };
   }
   G.ax.taiConfig = function(){
@@ -478,6 +524,11 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
         '<button class="btn ghost sm" onclick="G.ax.canhSuaMo(\''+c.id+'\')">Sửa</button>'+
         '<button class="btn ghost sm" onclick="G.ax.canhXoa(\''+c.id+'\')">Xoá</button></div></div>'+
         '<p class="tiny muted" style="margin-top:6px">🎬 '+h(c.boiCanh||'—')+' · 🎥 '+h(mqChu(c))+(c.may?' · '+h(c.may):'')+'</p>'+
+        ((c.hanhDong||c.nv2Id||c.dongTac||c.noiTiep) ? '<p class="tiny" style="margin-top:4px;display:flex;gap:6px;flex-wrap:wrap">'+
+          (c.hanhDong?'<span class="bd-chip">🎭 '+h(nhan(c.hanhDong,HANH_DONG))+(c.doVat?' · '+h(c.doVat):'')+'</span>':'')+
+          (c.nv2Id?'<span class="bd-chip">👥 cùng '+h((nvById(c.nv2Id)||{}).ten||'')+'</span>':'')+
+          (c.dongTac?'<span class="bd-chip">📱 '+(c.dongTac==='thay'?'thay người trong video thật':'diễn theo video động tác')+'</span>':'')+
+          (c.noiTiep?'<span class="bd-chip">🔗 nối tiếp cảnh trước</span>':'')+'</p>' : '')+
         (c.thoai?'<p class="sm" style="margin-top:4px">🗣 "'+h(c.thoai)+'"</p>':'')+
         '</div>';
     }).join('');

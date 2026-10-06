@@ -16,6 +16,9 @@
     "chinhMau": true,
     "khuNhieu": false,
     "onDinh": false,
+    "masterGiong": true,
+    "khopGiong": true,
+    "theTen": true,
     "phuDe": true,
     "nhacNen": true
   },
@@ -32,14 +35,15 @@
     "phong_cach_khong_gian": "phong cách thương hiệu GITA365 cao cấp, sang trọng hiện đại, tông xanh dương và vàng gold, ánh sáng điện ảnh ấm, chất lượng điện ảnh"
   },
   "pipeline": {
-    "anh": "instantid_sdxl",
-    "i2v": "wan2.2_i2v",
-    "tts": "vixtts",
-    "lipsync": "latentsync",
-    "nang_net": "realesrgan_codeformer",
+    "anh": "sdxl_lora",
+    "i2v": "wan2.2 · longcat · wan_animate",
+    "tts": "thu_am · vieneu · chatterbox + openvoice",
+    "lipsync": "infinitetalk",
+    "nang_net": "gfpgan_realesrgan",
     "muot": "rife",
-    "phu_de": "faster_whisper",
-    "rap": "ffmpeg",
+    "phu_de": "ass_tu_thoai",
+    "the_ten": "ass",
+    "rap": "ffmpeg_loudnorm_-14",
     "khung": "1080x1920",
     "fps_xuat": 60
   },
@@ -151,7 +155,7 @@
   "canh": [
     {
       "thu_tu": 1,
-      "id": "cc6klnm",
+      "id": "czorzc9",
       "nhan_vat": "nv-trainer",
       "loai": "nguoi",
       "boi_canh": "Bục giảng studio GITA, màn hình lớn phía sau, vách gỗ, ánh sáng điện ảnh ấm",
@@ -181,11 +185,17 @@
       "hero": false,
       "giay": 5,
       "lip_sync": true,
-      "trang_thai": ""
+      "trang_thai": "",
+      "hanh_dong": "",
+      "do_vat": "",
+      "noi_tiep": false,
+      "dong_tac": "",
+      "nv_phu": null,
+      "thoai2": ""
     },
     {
       "thu_tu": 2,
-      "id": "czkz6mf",
+      "id": "cx8yvsx",
       "nhan_vat": "nv-mc",
       "loai": "nguoi",
       "boi_canh": "Trường quay sáng, màn hình lớn phía sau",
@@ -215,11 +225,17 @@
       "hero": false,
       "giay": 5,
       "lip_sync": true,
-      "trang_thai": ""
+      "trang_thai": "",
+      "hanh_dong": "",
+      "do_vat": "",
+      "noi_tiep": false,
+      "dong_tac": "",
+      "nv_phu": null,
+      "thoai2": ""
     },
     {
       "thu_tu": 3,
-      "id": "cbrkf4t",
+      "id": "cjp9av6",
       "nhan_vat": "nv-bo",
       "loai": "canh",
       "boi_canh": "Vườn tre, cả gia đình cùng đi dạo trò chuyện",
@@ -234,7 +250,7 @@
       "boi_canh_lora": false,
       "boi_canh_trigger": "gitabcvuontre",
       "prompt_anh": "Người bố Á Đông ~40 tuổi, tóc đen, gương mặt hiền, khoẻ khoắn, Sơ mi xanh nhạt, quần kaki, Vườn tre, cả gia đình cùng đi dạo trò chuyện, Toàn cảnh, Ngang mắt, Toàn cảnh, máy đi lùi theo bước chân, khung dọc 9:16, ảnh chụp thật, máy ảnh DSLR, 4K, nét căng, điện ảnh, ánh sáng tự nhiên, da người thật, chân dung nhất quán, phong cách thương hiệu GITA365 cao cấp, sang trọng hiện đại, tông xanh dương và vàng gold, ánh sáng điện ảnh ấm, chất lượng điện ảnh",
-      "prompt_video": "Cả nhà đi bộ, trò chuyện, cùng cười, diễn theo cảnh, chuyển động cơ thể tự nhiên, máy giữ yên (di máy làm ở hậu kỳ), chuyển động mượt, sắc nét, người thật, không hoạt hình, 5 giây",
+      "prompt_video": "Cả nhà đi bộ, trò chuyện, cùng cười, diễn theo cảnh, cơ thể chuyển động tự nhiên, tay cầm đồ vật đúng, máy giữ yên (di máy làm ở hậu kỳ), chuyển động mượt, sắc nét, người thật, không hoạt hình, 5 giây",
       "negative": "hoạt hình, anime, cartoon, hoạt hoạ, 2D, tranh vẽ, phác thảo, người que, hình que, ảnh tĩnh, mấp máy môi, mặt méo, biến dạng, thừa ngón tay, mờ nhoè, răng cưa, chất lượng thấp, sai tỉ lệ cơ thể",
       "thoai": "",
       "giong": "Nam trầm ấm",
@@ -249,7 +265,13 @@
       "hero": true,
       "giay": 5,
       "lip_sync": false,
-      "trang_thai": ""
+      "trang_thai": "",
+      "hanh_dong": "",
+      "do_vat": "",
+      "noi_tiep": false,
+      "dong_tac": "",
+      "nv_phu": null,
+      "thoai2": ""
     }
   ]
 }
