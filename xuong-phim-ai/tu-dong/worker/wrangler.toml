@@ -1,0 +1,16 @@
+# GITA xưởng phim AI — cấu hình Cloudflare Worker
+# Triển khai:  npm i -g wrangler  →  wrangler deploy
+name = "gita-xuong-phim"
+main = "src/index.js"
+compatibility_date = "2024-11-01"
+
+# Kho R2 giữ cấu hình · trạng thái · phim cuối (tạo bucket tên "gita-phim" trước)
+[[r2_buckets]]
+binding = "PHIM"
+bucket_name = "gita-phim"
+
+# Các SECRET đặt bằng lệnh (KHÔNG ghi vào file này):
+#   wrangler secret put SUBMIT_TOKEN   # mật khẩu web app gửi phim
+#   wrangler secret put GH_PAT         # GitHub token (repo scope)
+#   wrangler secret put GH_OWNER       # vd: typhuquanggita-commits
+#   wrangler secret put GH_REPO        # vd: GITA365-WEB

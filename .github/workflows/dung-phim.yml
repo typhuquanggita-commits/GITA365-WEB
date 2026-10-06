@@ -1,0 +1,147 @@
+# ═══════════════════════════════════════════════════════════════
+# GITA 365 · Xưởng phim AI — Runner (GitHub Action)
+#
+# Được Cloudflare Worker kích hoạt (repository_dispatch: dung-phim). Nó đẩy
+# một kernel lên Kaggle để sinh phim bằng GPU (model mở), chờ xong, tải phim
+# về và đưa lên Cloudflare R2; trạng thái ghi vào R2 để web app đọc.
+#
+# SECRET cần đặt (Settings → Secrets and variables → Actions):
+#   KAGGLE_USERNAME, KAGGLE_KEY           — khoá API Kaggle
+#   KAGGLE_CAST_DATASET                   — dataset ảnh/giọng cast, vd: user/gita-cast
+#   R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET
+#   (tuỳ chọn) GITA_REPO_URL              — mặc định lấy repo hiện tại
+# ═══════════════════════════════════════════════════════════════
+name: Dựng phim GITA (Kaggle)
+
+on:
+  repository_dispatch:
+    types: [dung-phim]
+
+concurrency:
+  group: dung-phim-${{ github.event.client_payload.jobid }}
+  cancel-in-progress: false
+
+jobs:
+  dung-phim:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330          # Kaggle chạy có thể lâu; để rộng
+    env:
+      JOBID: ${{ github.event.client_payload.jobid }}
+      CONFIG_JSON: ${{ toJSON(github.event.client_payload.config) }}
+      R2_ENDPOINT: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+      AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: auto
+      BUCKET: ${{ secrets.R2_BUCKET }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+      KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+      CAST: ${{ secrets.KAGGLE_CAST_DATASET }}
+    steps:
+      - name: Lấy mã
+        uses: actions/checkout@v4
+
+      - name: Chuẩn bị công cụ
+        run: |
+          python -m pip install --quiet kaggle
+          mkdir -p ~/.kaggle
+          printf '{"username":"%s","key":"%s"}' "$KAGGLE_USERNAME" "$KAGGLE_KEY" > ~/.kaggle/kaggle.json
+          chmod 600 ~/.kaggle/kaggle.json
+
+      - name: Hàm ghi trạng thái lên R2
+        run: |
+          cat > put_status.sh <<'SH'
+          #!/usr/bin/env bash
+          # $1 = trangThai, $2 = buoc, $3 = phim(optional)
+          now=$(date -u +%FT%TZ)
+          printf '{"jobid":"%s","trangThai":"%s","buoc":"%s","phim":"%s","capNhat":"%s"}' \
+            "$JOBID" "$1" "$2" "${3:-}" "$now" > trang-thai.json
+          aws s3 cp trang-thai.json "s3://$BUCKET/jobs/$JOBID/trang-thai.json" \
+            --endpoint-url "$R2_ENDPOINT" --content-type application/json --only-show-errors || true
+          SH
+          chmod +x put_status.sh
+          ./put_status.sh running "Bắt đầu dựng phim trên Kaggle"
+
+      - name: Dựng kernel Kaggle
+        run: |
+          set -e
+          REPO_URL="${GITA_REPO_URL:-https://github.com/${{ github.repository }}}"
+          printf '%s' "$CONFIG_JSON" > cfg.json
+          CFG_B64=$(base64 -w0 cfg.json)
+          SLUG="${KAGGLE_USERNAME}/gita-phim-${JOBID}"
+          echo "SLUG=$SLUG" >> "$GITHUB_ENV"
+          mkdir -p kernel
+          cat > kernel/gita_kernel.py <<PY
+          import base64, json, os, glob, shutil, subprocess, pathlib
+          cfg = base64.b64decode("${CFG_B64}").decode("utf-8")
+          pathlib.Path("cau-hinh.json").write_text(cfg, encoding="utf-8")
+          subprocess.run(["git","clone","--depth","1","${REPO_URL}","repo"], check=True)
+          os.makedirs("nhan-vat",exist_ok=True); os.makedirs("giong",exist_ok=True)
+          for f in glob.glob("/kaggle/input/*/nhan-vat/*")+glob.glob("/kaggle/input/*/*.png"):
+              try: shutil.copy(f, "nhan-vat/")
+              except Exception: pass
+          for f in glob.glob("/kaggle/input/*/giong/*")+glob.glob("/kaggle/input/*/*.wav"):
+              try: shutil.copy(f, "giong/")
+              except Exception: pass
+          subprocess.run(["pip","install","-q","diffusers>=0.30","transformers","accelerate",
+              "TTS","imageio[ffmpeg]","opencv-python-headless","insightface","onnxruntime-gpu",
+              "faster-whisper"], check=False)
+          subprocess.run(["python","repo/xuong-phim-ai/gita_xuong_phim.py","--config","cau-hinh.json",
+              "--run","all","--root","/kaggle/working/ket-qua"], check=True)
+          found = glob.glob("/kaggle/working/ket-qua/**/phim-cuoi.mp4", recursive=True)
+          if found: shutil.copy(found[0], "/kaggle/working/phim-cuoi.mp4"); print("PHIM:", found[0])
+          else: raise SystemExit("Không thấy phim-cuoi.mp4")
+          PY
+          cat > kernel/kernel-metadata.json <<JSON
+          {
+            "id": "${SLUG}",
+            "title": "GITA phim ${JOBID}",
+            "code_file": "gita_kernel.py",
+            "language": "python",
+            "kernel_type": "script",
+            "is_private": true,
+            "enable_gpu": true,
+            "enable_internet": true,
+            "dataset_sources": ["${CAST}"],
+            "competition_sources": [],
+            "kernel_sources": []
+          }
+          JSON
+
+      - name: Đẩy & chạy trên Kaggle
+        run: |
+          set -e
+          ./put_status.sh running "Đẩy kernel lên Kaggle (GPU)"
+          kaggle kernels push -p kernel
+          echo "Đã đẩy. Chờ chạy xong…"
+
+      - name: Chờ Kaggle chạy xong
+        run: |
+          set -e
+          for i in $(seq 1 110); do          # ~110 x 3 phút ≈ 5,5 giờ
+            sleep 180
+            S=$(kaggle kernels status "$SLUG" 2>/dev/null || echo "unknown")
+            echo "[$i] $S"
+            ./put_status.sh running "Kaggle đang dựng… ($(echo "$S" | grep -o '\"[a-zA-Z]*\"' | head -1))" || true
+            case "$S" in
+              *complete*) echo "XONG"; exit 0 ;;
+              *error*|*cancelAcknowledged*) echo "LỖI"; ./put_status.sh error "Kaggle báo lỗi khi dựng"; exit 1 ;;
+            esac
+          done
+          ./put_status.sh error "Hết thời gian chờ Kaggle"; exit 1
+
+      - name: Tải phim & đưa lên R2
+        run: |
+          set -e
+          ./put_status.sh running "Tải phim về và đưa lên kho"
+          mkdir -p out
+          kaggle kernels output "$SLUG" -p out
+          FILM=$(find out -name 'phim-cuoi.mp4' | head -1)
+          if [ -z "$FILM" ]; then ./put_status.sh error "Không tải được phim từ Kaggle"; exit 1; fi
+          aws s3 cp "$FILM" "s3://$BUCKET/jobs/$JOBID/phim-cuoi.mp4" \
+            --endpoint-url "$R2_ENDPOINT" --content-type video/mp4 --only-show-errors
+          ./put_status.sh done "Hoàn tất" "jobs/$JOBID/phim-cuoi.mp4"
+          echo "✅ Phim đã lên R2: jobs/$JOBID/phim-cuoi.mp4"
+
+      - name: Báo lỗi nếu hỏng giữa chừng
+        if: failure()
+        run: ./put_status.sh error "Dây chuyền dừng giữa chừng — xem log Action" || true

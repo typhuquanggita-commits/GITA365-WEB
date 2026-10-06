@@ -65573,8 +65573,73 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     }catch(e){ U.toast('Lỗi xuất cấu hình: '+(e&&e.message),'err'); }
   };
 
+  /* ════════ CHẠY TỰ ĐỘNG (Worker → GitHub → Kaggle → R2) ════════ */
+  var tdTimer=null;
+  function lsGet(k){ try{ return window.localStorage.getItem(k)||''; }catch(e){ return ''; } }
+  function lsSet(k,v){ try{ window.localStorage.setItem(k,v); }catch(e){} }
+  function tdCfg(){ return { worker:lsGet('axWorker').replace(/\/+$/,''), token:lsGet('axToken'), job:lsGet('axJob') }; }
+  var TDT = { queued:{t:'Đang xếp hàng',c:'--ink-4'}, running:{t:'Đang dựng…',c:'--warn'}, done:{t:'Xong',c:'--ok'}, error:{t:'Lỗi',c:'--gita-do-ink'} };
+
+  G.ax.tdLuuCaiDat = function(){
+    var w=(document.getElementById('f-worker')||{}).value||'';
+    var t=(document.getElementById('f-token')||{}).value||'';
+    lsSet('axWorker', w.trim()); lsSet('axToken', t.trim());
+    U.toast('Đã lưu cài đặt tự động trên máy.','ok'); if(G.render) G.render();
+  };
+  G.ax.tdGui = function(){
+    var cf=tdCfg(); if(!cf.worker||!cf.token){ U.toast('Chưa có URL Worker / mật khẩu.','err'); return; }
+    var cfg=configPhim();
+    G.ax.tdSetUI('queued','Đang gửi lên Worker…','');
+    fetch(cf.worker+'/api/phim',{ method:'POST', headers:{'content-type':'application/json','x-gita-token':cf.token}, body:JSON.stringify({config:cfg}) })
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if(d.jobid){ lsSet('axJob',d.jobid); G.ax.tdTheoDoi(d.jobid); U.toast('Đã gửi. Mã job: '+d.jobid,'ok'); }
+        else { G.ax.tdSetUI('error', d.loi||'Gửi thất bại', ''); } })
+      .catch(function(e){ G.ax.tdSetUI('error','Không gọi được Worker: '+(e&&e.message),''); });
+  };
+  G.ax.tdTheoDoi = function(jobid){
+    var cf=tdCfg(); if(!cf.worker||!jobid) return;
+    if(tdTimer) clearInterval(tdTimer);
+    function tick(){
+      fetch(cf.worker+'/api/phim/'+jobid).then(function(r){return r.json();}).then(function(s){
+        G.ax.tdSetUI(s.trangThai||'running', s.buoc||'', s.phim?jobid:'');
+        if(s.trangThai==='done'||s.trangThai==='error'){ if(tdTimer){clearInterval(tdTimer);tdTimer=null;} }
+      }).catch(function(){});
+    }
+    tick(); tdTimer=setInterval(tick, 8000);
+  };
+  G.ax.tdSetUI = function(tt,buoc,jobForVideo){
+    var box=document.getElementById('ax-td-status'); if(!box) return;
+    var m=TDT[tt]||TDT.running; var cf=tdCfg();
+    var vid = (tt==='done'&&jobForVideo)?
+      '<div class="mt"><video src="'+h(cf.worker+'/api/phim/'+jobForVideo+'/video')+'" controls style="width:100%;max-width:320px;border-radius:12px;background:#000"></video>'+
+      '<div class="row mt" style="gap:8px"><a class="btn sm" href="'+h(cf.worker+'/api/phim/'+jobForVideo+'/video')+'" target="_blank" rel="noopener">Tải / mở phim</a></div></div>' : '';
+    box.innerHTML = '<div class="row" style="gap:8px;align-items:center"><span class="gd-den" style="--m:var('+m.c+')"></span>'+
+      '<b style="color:var('+m.c+')">'+h(m.t)+'</b></div>'+
+      '<p class="sm muted" style="margin-top:4px">'+h(buoc||'')+'</p>'+vid;
+  };
+
   /* ════════ GIAO DIỆN ════════ */
   function tabBtn(k,t){ return '<button class="btn sm '+(G.S.axTab===k?'':'ghost')+'" onclick="G.ax.tab(\''+k+'\')">'+h(t)+'</button>'; }
+
+  function veTuDong(){
+    var cf=tdCfg();
+    var o=U.sec('Chạy tự động','Gửi một cái là Cloudflare → GitHub → Kaggle tự dựng ra phim, hiện lại ở đây');
+    if(!cf.worker || !cf.token){
+      o += '<div class="card pad-sm"><b class="sm">Cài đặt kết nối (một lần)</b>'+
+        '<p class="bd-tip">Dán URL Worker và mật khẩu (SUBMIT_TOKEN) đã tạo theo hướng dẫn xuong-phim-ai/tu-dong. Lưu trên máy anh/chị, không đẩy lên mạng.</p>'+
+        '<div class="bd-field"><span>URL Worker</span><input type="text" id="f-worker" value="'+h(cf.worker)+'" placeholder="https://gita-xuong-phim.xxx.workers.dev"></div>'+
+        '<div class="bd-field"><span>Mật khẩu gửi (SUBMIT_TOKEN)</span><input type="password" id="f-token" value="'+h(cf.token)+'"></div>'+
+        '<div class="row mt"><button class="btn sm" onclick="G.ax.tdLuuCaiDat()">Lưu cài đặt</button></div></div>';
+      return o;
+    }
+    o += '<div class="row mb" style="gap:8px;flex-wrap:wrap">'+
+      '<button class="btn" onclick="G.ax.tdGui()">'+ic('spark','w-3 h-3')+'Gửi sản xuất tự động</button>'+
+      '<button class="btn ghost sm" onclick="(function(){try{localStorage.removeItem(\'axWorker\')}catch(e){}; if(G.render)G.render();})()">Sửa cài đặt</button>'+
+      '<span class="bd-chip">Worker: đã kết nối</span></div>';
+    o += '<div class="card pad-sm" id="ax-td-status"><p class="sm muted">Chưa gửi tập nào. Bấm "Gửi sản xuất tự động" để bắt đầu.</p></div>';
+    o += '<p class="bd-tip" style="margin-top:8px">Dây chuyền: Web → Cloudflare Worker → GitHub Action → Kaggle (GPU, model mở) → phim về R2 → hiện ở đây. Mỗi phim mất ~30 phút đến vài giờ tuỳ hàng đợi Kaggle.</p>';
+    return o;
+  }
 
   function veNhanVat(){
     var o=U.sec('Kho nhân vật','Giữ đúng một dàn người qua mọi tập — nhất quán như bộ ảnh mẫu')+
@@ -65664,12 +65729,13 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       '</div>';
 
     o += '<div class="row mb" style="gap:6px;flex-wrap:wrap">'+
-      tabBtn('nv','Kho nhân vật')+tabBtn('phim','Phim & phân cảnh')+tabBtn('prompt','Prompt & cấu hình')+tabBtn('bang','Bảng sản xuất')+'</div>';
+      tabBtn('nv','Kho nhân vật')+tabBtn('phim','Phim & phân cảnh')+tabBtn('prompt','Prompt & cấu hình')+tabBtn('bang','Bảng sản xuất')+tabBtn('tudong','Tự động')+'</div>';
 
     if(G.S.axTab==='nv') o += veNhanVat();
     else if(G.S.axTab==='phim') o += vePhanCanh();
     else if(G.S.axTab==='prompt') o += vePrompt();
-    else o += veBang();
+    else if(G.S.axTab==='bang') o += veBang();
+    else { o += veTuDong(); var _j=tdCfg().job; if(_j) setTimeout(function(){ try{ G.ax.tdTheoDoi(_j); }catch(e){} }, 0); }
 
     o += '<p class="tiny muted" style="margin-top:14px">'+ic('shield','w-3 h-3')+' Dữ liệu nhân vật & phân cảnh lưu trên máy anh/chị, giữ qua phiên. App không gửi gì ra ngoài; việc sinh video do notebook Kaggle (model mở) thực hiện bằng cấu hình .json tải ở tab "Prompt & cấu hình".</p>';
     return o;
