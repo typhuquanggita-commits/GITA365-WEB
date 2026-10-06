@@ -2606,7 +2606,7 @@ button.nha-o-nen:hover .nha-ic{transform:scale(1.06)}
   .nha-ring{width:min(1000px,100%);aspect-ratio:1/1;margin:22px auto 10px;container:nhaRing / inline-size}
   /* VÒNG KHẨU HIỆU (ngoài, ~47%) — chữ bám vòng, đứng yên, đọc được */
   .nha-khauhieu{display:block;position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:0}
-  .nha-khauhieu text{font-family:var(--font);font-weight:800;font-size:3cqi;letter-spacing:.5cqi;fill:var(--gita-ink)}
+  .nha-khauhieu text{font-family:var(--font);font-weight:800;font-size:3cqi;fill:var(--gita-ink)}
   /* VÒNG BÁNH ĐÀ (trong, bán kính 37%) — cách vòng khẩu hiệu ~10% (~2 cm) */
   .nha-ring::before{content:"";display:block;position:absolute;inset:13%;
     border:2px dashed var(--gita-vien-2);border-radius:50%;pointer-events:none}

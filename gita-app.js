@@ -50511,8 +50511,11 @@ G.nhaMoChang = function (el) {
        vòng bánh đà bên trong mới quay. Chỉ dựng khi đã có bánh đà. */
     if (bdHtml) o += '<svg class="nha-khauhieu" viewBox="0 0 1000 1000" aria-hidden="true" focusable="false">' +
       '<defs><path id="nhaVongChu" fill="none" d="M500,500 m-470,0 a470,470 0 1,1 940,0 a470,470 0 1,1 -940,0"/></defs>' +
-      '<text><textPath href="#nhaVongChu" startOffset="0">' +
-      'KIẾN TẠO GIA ĐÌNH THỊNH VƯỢNG ★ LÀM CHỦ KỶ NGUYÊN VƯƠN MÌNH ★ NÂNG TẦM TRÍ TUỆ VÀNG VIỆT NAM ★ ' +
+      /* textLength = chu vi vòng (2·π·470 ≈ 2953) + lengthAdjust="spacing"
+         → chữ GIÃN ĐỀU phủ TRỌN 360°, không còn khoảng khuyết. Bốn cụm
+         (thêm HỆ SINH THÁI GITA) ngăn bằng sao, cụm cuối nối về cụm đầu. */
+      '<text><textPath href="#nhaVongChu" startOffset="0" textLength="2953" lengthAdjust="spacing">' +
+      'KIẾN TẠO GIA ĐÌNH THỊNH VƯỢNG ★ LÀM CHỦ KỶ NGUYÊN VƯƠN MÌNH ★ NÂNG TẦM TRÍ TUỆ VÀNG VIỆT NAM ★ HỆ SINH THÁI GITA ★ ' +
       '</textPath></text></svg>';
     o += '<div class="nha-bd nha-ring-nodes">' + bdHtml + '</div>';
 
