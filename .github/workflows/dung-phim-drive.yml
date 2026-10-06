@@ -1,0 +1,130 @@
+# ═══════════════════════════════════════════════════════════════
+# GITA 365 · Xưởng phim — DỰNG PHIM TỪ KHO GOOGLE DRIVE (đường MIỄN PHÍ)
+#
+# Kho phim Drive (Apps Script) gọi Action này khi app gửi "Làm phim nhanh" (repository_dispatch:
+# dung-phim-drive), hoặc bấm tay: Actions → "Dựng phim từ kho Drive" → nhập mã việc.
+#   Drive (kế hoạch + ảnh mẫu) → Kaggle GPU miễn phí dựng → phim 1080p về thẳng Drive/Phim/<tháng>/
+#
+# SECRET cần đặt (Settings → Secrets and variables → Actions):
+#   KAGGLE_USERNAME, KAGGLE_KEY        — khoá API Kaggle (kaggle.com → Settings → API)
+#   KHO_DRIVE_URL                      — địa chỉ Web app của Kho phim (Apps Script, đuôi /exec)
+#   KHO_DRIVE_KHOA                     — KHOA_MAY in ra khi chạy caiDat()
+# Khoá Drive KHÔNG đưa vào Kaggle: Action tự lấy việc và tự tải phim lên.
+# ═══════════════════════════════════════════════════════════════
+name: Dựng phim từ kho Drive
+
+on:
+  repository_dispatch:
+    types: [dung-phim-drive]
+  workflow_dispatch:
+    inputs:
+      jobid:
+        description: "Mã việc (hiện trong app, màn Làm phim nhanh)"
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dung-phim-drive
+  cancel-in-progress: false
+
+jobs:
+  dung:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    env:
+      JOBID_VAO: ${{ github.event.client_payload.jobid || inputs.jobid }}
+      KHO_DRIVE_URL: ${{ secrets.KHO_DRIVE_URL }}
+      KHO_DRIVE_KHOA: ${{ secrets.KHO_DRIVE_KHOA }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+      KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+      KD: xuong-phim-ai/kho-drive/kho_drive.py
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Kiểm mã việc & cài công cụ
+        run: |
+          [[ "$JOBID_VAO" =~ ^[a-z0-9]{8,40}$ ]] || { echo "Mã việc không hợp lệ"; exit 1; }
+          echo "JOBID=$JOBID_VAO" >> "$GITHUB_ENV"
+          python -m pip install --quiet kaggle requests pillow
+          mkdir -p ~/.kaggle
+          printf '{"username":"%s","key":"%s"}' "$KAGGLE_USERNAME" "$KAGGLE_KEY" > ~/.kaggle/kaggle.json
+          chmod 600 ~/.kaggle/kaggle.json
+
+      - name: Lấy kế hoạch + ảnh mẫu từ Drive
+        run: |
+          python $KD bao "$JOBID" running "Máy dựng miễn phí đã nhận việc — chuẩn bị Kaggle GPU" 5
+          python $KD doc-viec "$JOBID" viec
+          python - <<'PY'
+          # thu ảnh mẫu về ≤1024px để nhét gọn vào kernel
+          from pathlib import Path
+          from PIL import Image
+          for f in Path("viec/nhan-vat").glob("*.jpg"):
+              im = Image.open(f).convert("RGB"); im.thumbnail((1024, 1024)); im.save(f, quality=88)
+          PY
+          tar -czf viec.tgz -C viec .
+          ls -la viec viec/nhan-vat
+
+      - name: Dựng kernel Kaggle
+        run: |
+          set -e
+          SLUG="${KAGGLE_USERNAME}/gita-drive-${JOBID}"
+          echo "SLUG=$SLUG" >> "$GITHUB_ENV"
+          B64=$(base64 -w0 viec.tgz)
+          mkdir -p kernel
+          cat > kernel/gita_kernel.py <<PY
+          import base64, io, tarfile, subprocess, glob, shutil, os
+          tarfile.open(fileobj=io.BytesIO(base64.b64decode("${B64}"))).extractall(".")
+          subprocess.run(["git","clone","--depth","1","https://github.com/${{ github.repository }}","repo"], check=True)
+          subprocess.run(["bash","repo/xuong-phim-ai/cai-dat-noi-bo.sh"], check=False, env={**os.environ, "MUC": "vua"})
+          subprocess.run(["python","repo/xuong-phim-ai/gita_xuong_phim.py","--ke-hoach","ke-hoach.json",
+                          "--run","all","--root","/kaggle/working/ket-qua"], check=True)
+          for ten in ("phim-cuoi.mp4", "phim-cuoi-phude.mp4"):
+              f = glob.glob(f"/kaggle/working/ket-qua/**/{ten}", recursive=True)
+              if f: shutil.copy(f[0], f"/kaggle/working/{ten}")
+          if not os.path.exists("/kaggle/working/phim-cuoi.mp4"): raise SystemExit("Không thấy phim-cuoi.mp4")
+          PY
+          cat > kernel/kernel-metadata.json <<JSON
+          {"id": "${SLUG}", "title": "GITA drive ${JOBID}", "code_file": "gita_kernel.py", "language": "python",
+           "kernel_type": "script", "is_private": true, "enable_gpu": true, "enable_internet": true,
+           "dataset_sources": [], "competition_sources": [], "kernel_sources": []}
+          JSON
+
+      - name: Đẩy lên Kaggle và chờ dựng
+        run: |
+          set -e
+          kaggle kernels push -p kernel
+          python $KD bao "$JOBID" running "Kaggle GPU miễn phí đang dựng phim (có thể vài giờ)…" 10
+          for i in $(seq 1 105); do
+            sleep 180
+            S=$(kaggle kernels status "$SLUG" 2>/dev/null || echo "unknown")
+            echo "[$i] $S"
+            PT=$(( 10 + i * 75 / 105 ))
+            case "$S" in
+              *complete*) echo "XONG"; exit 0 ;;
+              *error*|*cancel*) python $KD bao "$JOBID" error "Kaggle báo lỗi khi dựng — xem log kernel $SLUG" 0; exit 1 ;;
+              *) python $KD bao "$JOBID" running "Kaggle đang dựng… ($(( i * 3 )) phút)" $PT ;;
+            esac
+          done
+          python $KD bao "$JOBID" error "Quá 5 giờ chưa xong — tách kịch bản ngắn hơn" 0; exit 1
+
+      - name: Đưa phim về Google Drive
+        run: |
+          set -e
+          python $KD bao "$JOBID" running "Đưa phim về kho Google Drive…" 92
+          mkdir -p out && kaggle kernels output "$SLUG" -p out
+          FILM=$(find out -name 'phim-cuoi.mp4' | head -1)
+          [ -n "$FILM" ] || { python $KD bao "$JOBID" error "Không tải được phim từ Kaggle" 0; exit 1; }
+          TEN=$(python -c "import json;print(json.load(open('viec/ke-hoach.json',encoding='utf-8')).get('tieu_de') or 'Phim GITA365')")
+          python $KD tai-len "$JOBID" "$FILM" chinh "$TEN"
+          PD=$(find out -name 'phim-cuoi-phude.mp4' | head -1)
+          [ -n "$PD" ] && python $KD tai-len "$JOBID" "$PD" phude "$TEN" || true
+          python $KD bao "$JOBID" done "Hoàn tất — phim đã nằm trong Drive: GITA365 · Kho phim/Phim" 100
+
+      - name: Báo lỗi nếu hỏng giữa chừng
+        if: failure()
+        run: python $KD bao "$JOBID" error "Dây chuyền dừng giữa chừng — xem log GitHub Action" 0 || true

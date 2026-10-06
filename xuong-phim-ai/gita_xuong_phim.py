@@ -38,6 +38,30 @@ def doc_cfg(p):
     cfg["canh"].sort(key=lambda c: c.get("thu_tu", 0))
     return cfg
 
+def tu_ke_hoach(kh):
+    """Kế hoạch từ màn "Làm phim nhanh" (app tự phân cảnh) → cấu hình động cơ.
+    Máy miễn phí (Kaggle/Colab T4) không chạy nổi mô hình đặt người vào cảnh 20B, nên dùng CHÍNH ảnh mẫu
+    làm khung đầu (khung_tu_anh_mau) → đúng mặt người thật; mẹo: chụp ảnh mẫu ngay tại nơi muốn quay."""
+    nv = {n["id"]: n for n in kh.get("nhan_vat", [])}
+    canh = []
+    for i, c in enumerate(kh.get("canh", [])):
+        ds = c.get("nv") or []
+        phu = nv.get(ds[1]) if c.get("loai") == "dien" and len(ds) > 1 else None
+        canh.append({"id": c.get("id") or f"s{i+1}", "thu_tu": i + 1, "nhan_vat": ds[0] if ds else "",
+                     "loai": "nguoi" if c.get("loai") == "noi" else "canh", "giay": c.get("giay", 5),
+                     "thoai": c.get("thoai", ""), "hanh_dong": c.get("hanh_dong", ""), "do_vat": "",
+                     "prompt_anh": c.get("mo_ta", ""), "prompt_video": c.get("mo_ta", "") if c.get("loai") == "dien" else "",
+                     "boi_canh_en": c.get("boi_canh_en", ""), "may_quay_ao": c.get("may") or {},
+                     "nv_phu": ({"id": phu["id"], "giong_key": phu.get("giong_key")} if phu else None),
+                     "giong_key": (nv.get(ds[0]) or {}).get("giong_key") if ds else None,
+                     "dong_co": "infinitetalk" if c.get("loai") == "noi" else "wan",
+                     "lip_sync": c.get("loai") == "noi", "ngon_ngu": kh.get("ngon_ngu", "vi")})
+    return {"phim": {"id": kh.get("jobid") or "nhanh", "ten": kh.get("tieu_de", "Phim GITA")},
+            "ngon_ngu": kh.get("ngon_ngu", "vi"), "khung": kh.get("khung", "doc"), "khung_tu_anh_mau": True,
+            "hau_ky": {"giuMat": True, "napNet": False, "muot60": False, "chinhMau": True, "masterGiong": True,
+                       "khopGiong": False, "theTen": True, "phuDe": True, "nhacNen": True},
+            "nhan_vat": list(nv.values()), "canh": canh}
+
 def thu_muc(cfg, root="ket-qua"):
     base = Path(root) / str(cfg["phim"]["id"])
     for d in ("anh", "clip", "giong", "tmp"):
@@ -127,7 +151,7 @@ def prompt_anh_en(c):
             phu.get("trigger") if phu.get("co_lora") else "",
             c.get("boi_canh_trigger") if c.get("boi_canh_lora") else "",
             "two people in the frame" if phu else "",
-            dich_en(c.get("prompt_anh", "")), CO_CANH.get(mq.get("co"), ""), GOC_MAY.get(mq.get("goc"), ""), QUALITY_EN]
+            dich_en(c.get("prompt_anh", "")), c.get("boi_canh_en", ""), CO_CANH.get(mq.get("co"), ""), GOC_MAY.get(mq.get("goc"), ""), QUALITY_EN]
     return ", ".join(x for x in phan if x)
 
 def prompt_video_en(c):
@@ -149,6 +173,8 @@ def negative_en(c):
 #   ảnh mặt mẫu → embedding + điểm mốc khuôn mặt → SDXL giữ đúng người. Cộng thêm tối đa 2 LoRA:
 #   LoRA nhân vật (lora/<id-nhân-vật>.safetensors) + LoRA phim trường (lora/<id-bối-cảnh>.safetensors).
 W_ANH, H_ANH = 768, 1344           # dọc 9:16 (SDXL chạy đẹp nhất quanh 1 megapixel)
+NGANG = False                      # khổ ngang 16:9 (YouTube) — đặt từ cấu hình "khung": "ngang"
+def khung_ra(): return (1920, 1080) if NGANG else (1080, 1920)
 NEG_MAC_DINH = ("hoạt hình, anime, cartoon, 2D, tranh vẽ, người que, ảnh tĩnh, mấp máy môi, "
                 "méo mặt, biến dạng, thừa ngón tay, mờ nhoè, chất lượng thấp")
 
@@ -216,6 +242,15 @@ def buoc_anh(cfg, base):
     for c in cfg["canh"]:
         out = base / "anh" / f"{c['id']}.png"
         if out.exists(): log("bỏ qua ảnh (đã có):", out.name); continue
+        if cfg.get("khung_tu_anh_mau"):                    # dùng chính ảnh người thật làm khung đầu
+            mau = next((Path("nhan-vat") / f"{c.get('nhan_vat')}{d}" for d in (".png", ".jpg", ".jpeg")
+                        if (Path("nhan-vat") / f"{c.get('nhan_vat')}{d}").exists()), None)
+            if mau:
+                w, h = (H_ANH, W_ANH) if NGANG else (W_ANH, H_ANH)
+                im = Image.open(mau).convert("RGB"); k = max(w / im.width, h / im.height)
+                im = im.resize((round(im.width * k), round(im.height * k)), Image.LANCZOS)
+                x, y = (im.width - w) // 2, max(0, (im.height - h) // 3)      # giữ phần đầu/mặt
+                im.crop((x, y, x + w, y + h)).save(out); log("khung từ ảnh mẫu:", out.name); continue
         prompt = prompt_anh_en(c); neg = negative_en(c)
         log(f"  prompt EN: {prompt[:140]}")
         seed = int(str(c.get("seed") or nvs.get(c.get("nhan_vat"), {}).get("seed") or 0) or 0)
@@ -302,8 +337,9 @@ def _wan():
     def chay(image, prompt, giay):
         n = int(fps * float(giay)) // 4 * 4 + 1          # Wan cần số khung = 4k+1
         n = max(33, min(161 if fps == 24 else 121, n))
-        img = image.resize((w, h))
-        return pipe(image=img, prompt=prompt, negative_prompt=NEG_EN, height=h, width=w,
+        ww, hh = (h, w) if NGANG else (w, h)
+        img = image.resize((ww, hh))
+        return pipe(image=img, prompt=prompt, negative_prompt=NEG_EN, height=hh, width=ww,
                     num_frames=n, num_inference_steps=buoc, guidance_scale=4.0).frames[0], fps
     return chay
 
@@ -464,6 +500,11 @@ def buoc_video(cfg, base):
                 c["_da_khop_moi"] = True; (base / "clip" / f"{c['id']}.ok-sync").touch()
                 log("clip xong (InfiniteTalk" + (" · 2 người" if hai else "") + "):", out.name); continue
             if not wav.exists(): log("  chưa có giọng cảnh này → chạy --run giong trước; tạm dùng Wan")
+            # Không khớp môi được → KHÔNG giả nói (cấm "mấp máy môi"): chuyển thành cảnh LỒNG TIẾNG —
+            # nhân vật lắng nghe/gật đầu, miệng khép, giọng đọc phát trên hình (thủ pháp voice-over).
+            prompt = prompt.replace("a person speaking naturally to the camera, expressive face, natural head and hand movement, ", "")
+            prompt = "mouth closed, not speaking, calm attentive expression, gentle nod, " + prompt
+            c["_long_tieng"] = True; log("  → cảnh lồng tiếng (không giả khẩu hình)")
         truoc = None
         if c.get("noi_tiep"):
             i = cfg["canh"].index(c)
@@ -768,7 +809,8 @@ def bieu_thuc_may(chuyen, cuong, N):
                 f"(ih-ih/zoom)/2+(ih-ih/zoom)/2*{0.35+0.4*float(cuong)}*cos(on/13)")
     return None
 
-def buoc_may_quay(cfg, base, W=1080, Hh=1920):
+def buoc_may_quay(cfg, base, W=None, Hh=None):
+    if W is None: W, Hh = khung_ra()
     if not co_lenh("ffmpeg"): return
     for c in cfg["canh"]:
         mq = c.get("may_quay_ao") or {}
@@ -885,7 +927,8 @@ def buoc_phu_de(cfg, base):
     log("Phụ đề + thẻ tên được dựng trong bước ráp, theo thời lượng THẬT của từng cảnh (2 dòng × 32 ký tự, khổ dọc).")
 
 # ───────────────────────── 7 · RÁP PHIM (ffmpeg) ─────────────────────────
-def buoc_rap(cfg, base, W=1080, Hh=1920, fps=None):
+def buoc_rap(cfg, base, W=None, Hh=None, fps=None):
+    if W is None: W, Hh = khung_ra()
     hk = cfg.get("hau_ky") or {}
     fps = fps or (60 if hk.get("muot60") else 30)
     if not co_lenh("ffmpeg"):
@@ -1000,12 +1043,21 @@ def buoc_phu_de_an_toan(cfg, base):
 
 def main():
     ap=argparse.ArgumentParser(description="GITA xưởng phim AI — động cơ Kaggle")
-    ap.add_argument("--config", required=True, help="file .json xuất từ app GITA")
+    ap.add_argument("--config", help="file .json xuất từ app GITA (tab Prompt & cấu hình)")
+    ap.add_argument("--ke-hoach", dest="ke_hoach", help="kế hoạch từ màn Làm phim nhanh (kho Drive)")
     ap.add_argument("--plan", action="store_true", help="chỉ kiểm & dựng khung (không GPU); ráp nếu có clip")
     ap.add_argument("--run", default="", help="all | " + " | ".join(THU_TU))
     ap.add_argument("--root", default="ket-qua")
     a=ap.parse_args()
+    global NGANG
+    if a.ke_hoach:
+        p_ = Path(a.root).parent / "cau-hinh-tu-ke-hoach.json"
+        p_.parent.mkdir(parents=True, exist_ok=True)
+        p_.write_text(json.dumps(tu_ke_hoach(json.loads(Path(a.ke_hoach).read_text(encoding="utf-8"))), ensure_ascii=False), encoding="utf-8")
+        a.config = str(p_)
+    if not a.config: ap.error("cần --config hoặc --ke-hoach")
     cfg=doc_cfg(a.config); base=thu_muc(cfg, a.root)
+    NGANG = cfg.get("khung") == "ngang"
     giu_tran_ngoai(cfg)                                  # xưởng nội bộ: giữ trần thuê ngoài
     if a.plan or not a.run:
         plan(cfg, base);

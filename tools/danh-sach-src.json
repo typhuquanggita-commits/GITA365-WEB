@@ -173,6 +173,7 @@
     "src/studio-he.js",
     "src/studio-lam-phim.js",
     "src/studio-ban-dung.js",
+    "src/kho-phim-drive.js",
     "src/phim-nhanh.js",
     "src/san-xuat-ai.js",
     "src/app.js",

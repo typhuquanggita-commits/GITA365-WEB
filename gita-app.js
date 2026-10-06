@@ -65421,6 +65421,122 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
 
 })();
 
+/* ═════════ src/kho-phim-drive.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 · XƯỞNG PHIM — KHO PHIM TRÊN GOOGLE DRIVE (gói 2TB của chủ hệ)
+
+   Mọi phim của hệ thống nằm trong Drive: "GITA365 · Kho phim/Phim/<năm-tháng>/".
+   Màn này đọc kho qua Web app Apps Script riêng (xuong-phim-ai/kho-drive/), chạy bằng
+   chính tài khoản Drive của chủ hệ — không qua dịch vụ trả phí nào.
+     · đồng hồ dung lượng Drive · danh sách phim · xem ngay (trình xem Drive)
+     · bật/tắt chia sẻ link · chép link · bỏ vào Thùng rác (giữ 30 ngày)
+   Phim làm ở đâu (máy dựng, điện thoại…) cứ kéo vào thư mục Phim trên Drive là màn này thấy.
+   Trình duyệt chỉ giữ địa chỉ Web app + KHOA_APP (localStorage). G.khoDrive dùng chung cho
+   màn "Làm phim nhanh" (đường miễn phí). View con của san-xuat-ai, tab "Kho phim".
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+(function(){
+  var U = G.U, h = U.h;
+  function lsGet(k){ try{ return window.localStorage.getItem(k)||''; }catch(e){ return ''; } }
+  function lsSet(k,v){ try{ window.localStorage.setItem(k,v); }catch(e){} }
+
+  var kd = G.khoDrive = G.khoDrive || {};
+  kd.cfg = function(){ return { url: lsGet('axDriveUrl'), khoa: lsGet('axDriveKhoa') }; };
+  kd.coKho = function(){ var c=kd.cfg(); return !!(c.url && c.khoa); };
+  kd.goi = function(viec, data){
+    var c = kd.cfg();
+    if(!c.url || !c.khoa) return Promise.reject(new Error('Chưa nối kho Drive — mở "Cài đặt kho" ở tab Kho phim.'));
+    var than = Object.assign({ khoa:c.khoa, viec:viec }, data||{});
+    return fetch(c.url, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(than) })
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if(d && d.loi) throw new Error(d.loi); return d; });
+  };
+  kd.xem = function(id){ return 'https://drive.google.com/file/d/'+encodeURIComponent(id)+'/preview'; };
+  kd.link = function(id){ return 'https://drive.google.com/file/d/'+encodeURIComponent(id)+'/view'; };
+
+  var st = { phim:null, dung:null, loi:'', dangTai:false, xem:'' };
+  function ve(){ if(G.render) G.render(); }
+  function gb(b){ return (b/1e9).toLocaleString('vi-VN',{maximumFractionDigits:1})+' GB'; }
+  function mb(b){ return b>=1e9 ? gb(b) : Math.max(1,Math.round(b/1e6))+' MB'; }
+
+  kd.tai = function(){
+    if(!kd.coKho() || st.dangTai) return;
+    st.dangTai=true; st.loi=''; ve();
+    Promise.all([kd.goi('kiemTra'), kd.goi('danhSach')]).then(function(kq){
+      st.dung = kq[0]; st.phim = kq[1].phim||[]; st.dangTai=false; ve();
+    }).catch(function(e){ st.loi=e.message||String(e); st.dangTai=false; ve(); });
+  };
+  kd.luuCaiDat = function(){
+    var u=((document.getElementById('kd-url')||{}).value||'').trim(), k=((document.getElementById('kd-khoa')||{}).value||'').trim();
+    if(!/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(u)) return U.toast('Địa chỉ phải dạng https://script.google.com/macros/s/…/exec','err');
+    if(k.length<24) return U.toast('KHOA_APP chưa đúng (chuỗi dài in ra khi chạy caiDat).','err');
+    lsSet('axDriveUrl',u); lsSet('axDriveKhoa',k); st.phim=null; U.toast('Đã nối kho Drive trên máy này.','ok'); kd.tai();
+  };
+  kd.moXem = function(id){ st.xem = (st.xem===id ? '' : id); ve(); };
+  kd.chiaSe = function(id, bat){
+    kd.goi('chiaSe',{id:id, congKhai:bat}).then(function(d){
+      (st.phim||[]).forEach(function(p){ if(p.id===id) p.congKhai=bat; });
+      U.toast(bat?'Đã bật chia sẻ: ai có link đều xem được.':'Đã tắt chia sẻ: chỉ chủ kho xem.','ok'); ve();
+      if(bat && navigator.clipboard) navigator.clipboard.writeText(d.link).catch(function(){});
+    }).catch(function(e){ U.toast(e.message,'err'); });
+  };
+  kd.chep = function(id){ var l=kd.link(id);
+    if(navigator.clipboard) navigator.clipboard.writeText(l).then(function(){ U.toast('Đã chép link.','ok'); }, function(){ U.toast(l,'ok'); });
+    else U.toast(l,'ok'); };
+  kd.xoa = function(id, ten){
+    if(!window.confirm('Bỏ phim "'+ten+'" vào Thùng rác Drive? (khôi phục được trong 30 ngày)')) return;
+    kd.goi('xoa',{id:id}).then(function(){ st.phim=(st.phim||[]).filter(function(p){ return p.id!==id; }); U.toast('Đã bỏ vào Thùng rác.','ok'); ve(); })
+      .catch(function(e){ U.toast(e.message,'err'); });
+  };
+
+  kd.ve = function(){
+    var c = kd.cfg();
+    var o = U.sec('Kho phim · Google Drive','Mọi phim GITA365 lưu trong Drive 2TB của anh/chị — xem, chia sẻ, tải về ở một chỗ');
+    if(kd.coKho()){
+      if(!st.phim && !st.dangTai && !st.loi) setTimeout(kd.tai, 0);
+      var d = st.dung, pt = d && d.toiDa ? Math.min(100, d.daDung/d.toiDa*100) : 0;
+      o += '<div class="card pad-sm mb"><div class="row" style="justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap">'+
+          '<b class="sm">Dung lượng Drive</b><span class="tiny muted">'+(d? gb(d.daDung)+' / '+gb(d.toiDa)+' · còn '+gb(Math.max(0,d.toiDa-d.daDung)) : (st.dangTai?'đang đọc…':''))+'</span></div>'+
+        '<div style="height:10px;border-radius:6px;background:var(--line);overflow:hidden;margin-top:8px"><div style="height:100%;width:'+pt.toFixed(1)+'%;background:'+(pt>90?'#B42318':(pt>75?'#B4720F':'#0B7350'))+'"></div></div>'+
+        '<p class="bd-tip" style="margin-top:6px">Một phim 60 giây 1080p ≈ 40–80 MB → 2TB chứa được hàng chục nghìn phim. '+
+          (d? (d.noiMay?'Máy dựng miễn phí: <b>đã nối</b>.':'Máy dựng miễn phí: <b>chưa nối</b> (GH_TOKEN) — phim vẫn lưu được, việc làm phim cần bấm tay trên GitHub.') : '')+'</p>'+
+        '<div class="row mt" style="gap:8px"><button class="btn ghost sm" onclick="G.khoDrive.tai()">'+(st.dangTai?'Đang tải…':'↻ Làm mới')+'</button>'+
+        '<a class="btn ghost sm" target="_blank" rel="noopener" href="'+(d&&/^[A-Za-z0-9_-]+$/.test(d.thuMuc||'')?'https://drive.google.com/drive/folders/'+d.thuMuc:'https://drive.google.com/drive/search?q=%22GITA365%20%C2%B7%20Kho%20phim%22')+'">Mở thư mục trên Drive</a></div></div>';
+      if(st.loi) o += '<p class="bd-tip" style="color:#B42318">'+h(st.loi)+'</p>';
+      if(st.phim){
+        if(!st.phim.length) o += '<div class="card pad-sm mb"><p class="tiny muted">Kho chưa có phim. Phim làm xong ở tab "Làm phim nhanh" sẽ tự vào đây; phim có sẵn thì kéo vào thư mục <b>GITA365 · Kho phim/Phim</b> trên Drive.</p></div>';
+        o += st.phim.map(function(p){
+          var dang = st.xem===p.id;
+          return '<div class="card pad-sm mb"><div class="row" style="justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center">'+
+              '<div style="min-width:0;flex:1"><b class="sm" style="word-break:break-word">🎬 '+h(p.ten)+'</b>'+
+                '<div class="tiny muted">'+h(new Date(p.ngay).toLocaleString('vi-VN'))+' · '+mb(p.kichThuoc)+(p.thuMuc?' · '+h(p.thuMuc):'')+' · '+
+                (p.congKhai?'<span style="color:#0B7350">đang chia sẻ link</span>':'riêng tư')+'</div></div>'+
+              '<div class="row" style="gap:6px;flex-wrap:wrap">'+
+                '<button class="btn sm" onclick="G.khoDrive.moXem(\''+h(p.id)+'\')">'+(dang?'Đóng':'▶ Xem')+'</button>'+
+                '<a class="btn ghost sm" target="_blank" rel="noopener" href="'+h(kd.link(p.id))+'">Mở Drive / Tải</a>'+
+                (p.congKhai ? '<button class="btn ghost sm" onclick="G.khoDrive.chep(\''+h(p.id)+'\')">Chép link</button><button class="btn ghost sm" onclick="G.khoDrive.chiaSe(\''+h(p.id)+'\',false)">Tắt chia sẻ</button>'
+                            : '<button class="btn ghost sm" onclick="G.khoDrive.chiaSe(\''+h(p.id)+'\',true)">Chia sẻ link</button>')+
+                '<button class="btn ghost sm" onclick="G.khoDrive.xoa(\''+h(p.id)+'\',\''+h(p.ten.replace(/[\'"\\]/g,''))+'\')">Bỏ</button></div></div>'+
+            (dang ? '<div style="position:relative;width:100%;max-width:520px;aspect-ratio:9/16;margin:10px auto 0;max-height:75vh">'+
+                '<iframe src="'+h(kd.xem(p.id))+'" allow="autoplay; fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:12px;background:#000"></iframe></div>'+
+                '<p class="tiny muted" style="text-align:center;margin-top:4px">Phim vừa tải lên cần vài phút để Drive xử lý trước khi xem được.</p>' : '')+
+            '</div>';
+        }).join('');
+      }
+    }
+    o += '<details class="card pad-sm"'+(kd.coKho()?'':' open')+'><summary class="sm" style="cursor:pointer"><b>Cài đặt kho Drive</b> <span class="tiny muted">'+(kd.coKho()?'· đã nối':'· làm một lần')+'</span></summary>'+
+      '<div class="grid g2 mt" style="gap:8px"><input id="kd-url" type="url" placeholder="https://script.google.com/macros/s/…/exec" value="'+h(c.url)+'" style="padding:8px;border:1px solid var(--line);border-radius:8px">'+
+      '<input id="kd-khoa" type="password" placeholder="KHOA_APP" value="'+h(c.khoa)+'" style="padding:8px;border:1px solid var(--line);border-radius:8px"></div>'+
+      '<div class="row mt"><button class="btn sm" onclick="G.khoDrive.luuCaiDat()">Lưu & kiểm tra</button></div>'+
+      '<p class="bd-tip">Hướng dẫn 10 phút: <b>xuong-phim-ai/kho-drive/README-kho-drive.md</b> — dán mã vào Apps Script, chạy <b>caiDat</b>, triển khai Web app, dán địa chỉ + KHOA_APP vào đây.</p></details>';
+    return o;
+  };
+})();
+
+})();
+
 /* ═════════ src/phim-nhanh.js ═════════ */
 (function(){
 /* ═══════════════════════════════════════════════════════════════
@@ -65478,6 +65594,10 @@ var G = window.G || {}; window.G = G;
   function lsSet(k,v){ try{ window.localStorage.setItem(k,v); }catch(e){} }
   function tram(){ return { worker:lsGet('axWorker').replace(/\/+$/,''), token:lsGet('axToken') }; }
   function luu(){ if(G.save) G.save(); }
+  /* Đường làm phim: đã nối kho Google Drive → MIỄN PHÍ (Drive + GitHub + Kaggle, vài giờ);
+     không thì trạm Cloudflare + máy GPU thuê (~15 phút). */
+  function kd(){ return G.khoDrive && G.khoDrive.coKho() ? G.khoDrive : null; }
+  function anhCua(n){ return kd() ? n.anhDrive : n.anh; }
 
   function st(){
     if(!G.S.axN){
@@ -65570,14 +65690,16 @@ var G = window.G || {}; window.G = G;
   }
   axn.chonAnh = function(i, input){
     var f = input.files && input.files[0]; if(!f) return;
-    var s = st(), n = s.nv[i], t = tram();
-    if(!t.worker){ return U.toast('Chưa có địa chỉ trạm — mở "Cài đặt một lần" ở cuối trang.','err'); }
+    var s = st(), n = s.nv[i], t = tram(), k = kd();
+    if(!k && !t.worker){ return U.toast('Chưa nối kho Drive hay trạm — mở tab "Kho phim" để nối Google Drive.','err'); }
     Promise.all([thuNho(f, 1280, 0.9), thuNho(f, 160, 0.8)]).then(function(kq){
       n.thumb = kq[1]; ve();
+      if(k) return k.goi('taiAnh', { id:n.id, data:kq[0] });
       return fetch(t.worker+'/api/anh', { method:'POST', headers:{'content-type':'application/json','x-gita-token':t.token},
         body: JSON.stringify({ id:n.id, data:kq[0] }) }).then(function(r){ return r.json(); });
     }).then(function(d){
-      if(d && d.key){ n.anh = d.key; luu(); ve(); U.toast('Đã gửi ảnh '+n.ten,'ok'); }
+      if(d && k && d.id){ n.anhDrive = d.id; luu(); ve(); U.toast('Đã lưu ảnh '+n.ten+' vào Drive','ok'); }
+      else if(d && d.key){ n.anh = d.key; luu(); ve(); U.toast('Đã gửi ảnh '+n.ten,'ok'); }
       else U.toast((d&&d.loi)||'Gửi ảnh thất bại','err');
     }).catch(function(e){ U.toast('Lỗi ảnh: '+(e&&e.message),'err'); });
   };
@@ -65592,32 +65714,38 @@ var G = window.G || {}; window.G = G;
   /* ════════ GỬI LÀM PHIM + THEO DÕI ════════ */
   function giongKey(n){ return (n.gioi||'nam')+'-'+(n.tuoi||'lon'); }
   axn.lamPhim = function(){
-    var s=st(), t=tram();
-    if(!t.worker || !t.token) return U.toast('Chưa cài trạm — mở "Cài đặt một lần" ở cuối trang.','err');
+    var s=st(), t=tram(), k=kd();
+    if(!k && (!t.worker || !t.token)) return U.toast('Chưa nối kho Drive — mở tab "Kho phim" để nối Google Drive.','err');
     var kh = axn.doc(s.kichBan, s.nv);
     if(!kh.canh.length) return U.toast('Kịch bản chưa có cảnh nào.','err');
     var dung = {}; kh.canh.forEach(function(c){ c.nv.forEach(function(id){ dung[id]=1; }); });
-    var thieu = s.nv.filter(function(n){ return dung[n.id] && !n.anh; });
+    var thieu = s.nv.filter(function(n){ return dung[n.id] && !anhCua(n); });
     if(thieu.length) return U.toast('Còn thiếu ảnh mẫu: '+thieu.map(function(n){return n.ten;}).join(', '),'err');
     var goi = { tieu_de: (s.kichBan.split('\n').filter(function(x){return x.trim();})[0]||'Phim GITA').slice(0,80),
       khung: s.khung, ngon_ngu: s.ngonNgu, kich_ban: s.kichBan,
-      nhan_vat: s.nv.filter(function(n){ return dung[n.id]; }).map(function(n){ return {id:n.id, ten:n.ten, vai:n.vai, gioi:n.gioi, tuoi:n.tuoi, giong_key:giongKey(n), anh:n.anh}; }),
+      nhan_vat: s.nv.filter(function(n){ return dung[n.id]; }).map(function(n){ return {id:n.id, ten:n.ten, vai:n.vai, gioi:n.gioi, tuoi:n.tuoi, giong_key:giongKey(n), anh:anhCua(n)}; }),
       canh: kh.canh };
-    s.job=''; s.tt={trangThai:'queued', buoc:'Đang gửi lên trạm…', phanTram:1}; s.batDau=Date.now(); luu(); ve();
+    s.job=''; s.duong = k ? 'drive' : 'tram';
+    s.tt={trangThai:'queued', buoc: k ? 'Đang gửi việc vào kho Drive…' : 'Đang gửi lên trạm…', phanTram:1}; s.batDau=Date.now(); luu(); ve();
+    var nhan = function(d){
+        if(!d.jobid){ s.tt={trangThai:'error', buoc:d.loi||'Gửi thất bại'}; luu(); ve(); return; }
+        s.job=d.jobid; s.lichSu.unshift({job:d.jobid, ten:goi.tieu_de, luc:new Date().toISOString(), canh:kh.canh.length, duong:s.duong});
+        s.lichSu=s.lichSu.slice(0,10); luu(); axn.theoDoi(); };
+    if(k){ k.goi('datViec', { ke_hoach:goi }).then(nhan).catch(function(e){ s.tt={trangThai:'error', buoc:e.message}; luu(); ve(); }); return; }
     fetch(t.worker+'/api/nhanh', { method:'POST', headers:{'content-type':'application/json','x-gita-token':t.token}, body:JSON.stringify(goi) })
       .then(function(r){ return r.json(); })
-      .then(function(d){
-        if(!d.jobid){ s.tt={trangThai:'error', buoc:d.loi||'Gửi thất bại'}; luu(); ve(); return; }
-        s.job=d.jobid; s.lichSu.unshift({job:d.jobid, ten:goi.tieu_de, luc:new Date().toISOString(), canh:kh.canh.length});
-        s.lichSu=s.lichSu.slice(0,10); luu(); axn.theoDoi(); })
+      .then(nhan)
       .catch(function(e){ s.tt={trangThai:'error', buoc:'Không gọi được trạm: '+(e&&e.message)}; luu(); ve(); });
   };
   axn.theoDoi = function(){
     var s=st(), t=tram(); clearTimeout(axn._t);
-    if(!s.job || !t.worker) return;
-    fetch(t.worker+'/api/phim/'+s.job).then(function(r){ return r.json(); }).then(function(d){
+    if(!s.job) return;
+    var hoi = s.duong==='drive' ? (kd() ? kd().goi('trangThai', {jobid:s.job}) : null)
+                                : (t.worker ? fetch(t.worker+'/api/phim/'+s.job).then(function(r){ return r.json(); }) : null);
+    if(!hoi) return;
+    hoi.then(function(d){
       s.tt=d; luu(); veTienDo();
-      if(d.trangThai!=='done' && d.trangThai!=='error') axn._t=setTimeout(axn.theoDoi, 6000);
+      if(d.trangThai!=='done' && d.trangThai!=='error') axn._t=setTimeout(axn.theoDoi, s.duong==='drive' ? 30000 : 6000);
       else ve();
     }).catch(function(){ axn._t=setTimeout(axn.theoDoi, 10000); });
   };
@@ -65652,10 +65780,17 @@ var G = window.G || {}; window.G = G;
     var mau = d.trangThai==='error' ? '#B42318' : (d.trangThai==='done' ? '#0B7350' : 'var(--gita)');
     var o = '<div class="row" style="justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap">'+
       '<b class="sm">'+(d.trangThai==='done'?'✅ Phim xong':(d.trangThai==='error'?'⚠ Dừng lại':'⏳ Xưởng đang làm'))+'</b>'+
-      '<span class="tiny muted">'+(s.batDau?'đã chạy '+mmss((d.xong?Date.parse(d.xong):Date.now())-s.batDau)+' · mốc 15:00':'')+'</span></div>'+
+      '<span class="tiny muted">'+(s.batDau?'đã chạy '+mmss((d.xong?Date.parse(d.xong):Date.now())-s.batDau)+(s.duong==='drive'?' · đường miễn phí, thường vài giờ':' · mốc 15:00'):'')+'</span></div>'+
       '<div style="height:10px;border-radius:6px;background:var(--line);overflow:hidden;margin-top:8px"><div style="height:100%;width:'+pt+'%;background:'+mau+';transition:width .6s"></div></div>'+
       '<p class="tiny" style="margin-top:6px;color:var(--ink-2)">'+h(d.buoc||'')+'</p>';
-    if(d.trangThai==='done' && s.job){
+    if(d.trangThai==='done' && s.duong==='drive' && d.phimId && G.khoDrive){
+      o += '<div style="position:relative;width:100%;max-width:480px;aspect-ratio:'+(s.khung==='ngang'?'16/9':'9/16')+';margin:10px auto 0;max-height:75vh">'+
+          '<iframe src="'+h(G.khoDrive.xem(d.phimId))+'" allow="autoplay; fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:12px;background:#000"></iframe></div>'+
+        '<div class="row mt" style="gap:8px;flex-wrap:wrap">'+
+          '<a class="btn" target="_blank" rel="noopener" href="'+h(G.khoDrive.link(d.phimId))+'">⬇ Mở / tải trên Drive</a>'+
+          (d.phimPhuDeId?'<a class="btn ghost" target="_blank" rel="noopener" href="'+h(G.khoDrive.link(d.phimPhuDeId))+'">Bản có phụ đề</a>':'')+
+          '<button class="btn ghost" onclick="G.ax.tab(\'khophim\')">Xem trong Kho phim</button></div>';
+    } else if(d.trangThai==='done' && s.job){
       var w=tram().worker;
       o += '<video controls playsinline style="width:100%;max-height:70vh;border-radius:12px;margin-top:10px;background:#000" src="'+h(w+'/api/phim/'+s.job+'/video')+'"></video>'+
         '<div class="row mt" style="gap:8px;flex-wrap:wrap">'+
@@ -65666,7 +65801,7 @@ var G = window.G || {}; window.G = G;
   }
   axn.ve = function(){
     var s=st(), t=tram();
-    var o = U.sec('Làm phim nhanh','Gửi ảnh mẫu + kịch bản → xưởng tự làm từ A đến Z → video 1080p (mục tiêu ~15 phút)');
+    var o = U.sec('Làm phim nhanh','Gửi ảnh mẫu + kịch bản → xưởng tự làm từ A đến Z → video 1080p lưu vào Google Drive');
     /* Bước 1 · ảnh mẫu */
     o += '<div class="card pad-sm mb"><b class="sm">① Ảnh mẫu nhân vật</b><p class="tiny muted" style="margin:4px 0 8px">Ảnh rõ mặt, nhìn thẳng, đủ sáng. Mỗi người một ảnh là đủ.</p>'+
       '<div class="grid g2" style="gap:10px">'+s.nv.map(function(n,i){
@@ -65678,7 +65813,7 @@ var G = window.G || {}; window.G = G;
             '<div class="row" style="gap:4px;flex-wrap:wrap">'+
               '<select onchange="G.axn.nvSua('+i+',\'gioi\',this.value)" style="padding:4px;border:1px solid var(--line);border-radius:8px"><option value="nam"'+(n.gioi==='nam'?' selected':'')+'>Nam</option><option value="nu"'+(n.gioi==='nu'?' selected':'')+'>Nữ</option></select>'+
               '<select onchange="G.axn.nvSua('+i+',\'tuoi\',this.value)" style="padding:4px;border:1px solid var(--line);border-radius:8px"><option value="lon"'+(n.tuoi==='lon'?' selected':'')+'>Người lớn</option><option value="teen"'+(n.tuoi==='teen'?' selected':'')+'>Thiếu niên</option><option value="treem"'+(n.tuoi==='treem'?' selected':'')+'>Trẻ em</option></select>'+
-              '<span class="tiny" style="color:'+(n.anh?'#0B7350':'#B4720F')+'">'+(n.anh?'✓ đã gửi ảnh':'chưa có ảnh')+'</span>'+
+              '<span class="tiny" style="color:'+(anhCua(n)?'#0B7350':'#B4720F')+'">'+(anhCua(n)?'✓ đã gửi ảnh':'chưa có ảnh')+'</span>'+
               (s.nv.length>1?'<button class="btn ghost sm" style="padding:2px 8px" onclick="G.axn.nvXoa('+i+')">Bỏ</button>':'')+'</div></div></div>';
       }).join('')+'</div>'+
       (s.nv.length<4?'<button class="btn ghost sm mt" onclick="G.axn.nvThem()">+ Thêm nhân vật</button>':'')+'</div>';
@@ -65695,16 +65830,16 @@ var G = window.G || {}; window.G = G;
     var dangChay = s.tt && s.job && s.tt.trangThai!=='done' && s.tt.trangThai!=='error';
     o += '<div class="card pad-sm mb"><b class="sm">③ Làm phim</b><div class="row mt" style="gap:8px;flex-wrap:wrap;align-items:center">'+
       '<button class="btn" '+(dangChay?'disabled':'')+' onclick="G.axn.lamPhim()">'+ic('spark','w-3 h-3')+(dangChay?'Đang làm…':'🎬 Làm phim')+'</button>'+
-      '<span class="tiny muted">Video 1080p · giọng chuẩn phát sóng · phụ đề · thẻ tên · nhạc nền</span></div>'+
+      '<span class="tiny muted">Video 1080p · giọng chuẩn phát sóng · phụ đề · thẻ tên · nhạc nền · '+(kd()?'<b>đường miễn phí</b>: lưu thẳng vào Google Drive (Kaggle GPU, thường vài giờ)':(t.worker?'máy GPU thuê, ~15 phút':'<b>chưa nối</b> — mở tab Kho phim để nối Google Drive'))+'</span></div>'+
       '<div id="axn-td" style="margin-top:10px">'+htmlTienDo()+'</div></div>';
     if(s.lichSu.length>1) o += '<div class="card pad-sm mb"><b class="sm">Phim đã làm</b><ul class="tiny" style="margin:6px 0 0 18px;line-height:1.7">'+
-      s.lichSu.map(function(x){ return '<li><a href="'+h(t.worker+'/api/phim/'+x.job+'/video?tai=1')+'">'+h(x.ten)+'</a> · '+x.canh+' cảnh · '+h(new Date(x.luc).toLocaleString('vi-VN'))+'</li>'; }).join('')+'</ul></div>';
+      s.lichSu.map(function(x){ return '<li>'+(x.duong==='drive' ? h(x.ten)+' · <a href="javascript:void 0" onclick="G.ax.tab(\'khophim\')">trong Kho phim</a>' : '<a href="'+h(t.worker+'/api/phim/'+x.job+'/video?tai=1')+'">'+h(x.ten)+'</a>')+' · '+x.canh+' cảnh · '+h(new Date(x.luc).toLocaleString('vi-VN'))+'</li>'; }).join('')+'</ul></div>';
     /* Cài đặt một lần */
-    o += '<details class="card pad-sm"'+(t.worker?'':' open')+'><summary class="sm" style="cursor:pointer"><b>Cài đặt một lần</b> <span class="tiny muted">'+(t.worker?'· đã nối trạm':'· người kỹ thuật làm giúp')+'</span></summary>'+
+    o += '<details class="card pad-sm"><summary class="sm" style="cursor:pointer"><b>Máy GPU thuê (tuỳ chọn, ~15 phút)</b> <span class="tiny muted">'+(t.worker?'· đã nối trạm':'· chưa dùng — mặc định đi đường miễn phí qua Google Drive')+'</span></summary>'+
       '<div class="grid g2 mt" style="gap:8px"><input id="axn-w" type="url" placeholder="https://gita-xuong-phim….workers.dev" value="'+h(t.worker)+'" style="padding:8px;border:1px solid var(--line);border-radius:8px">'+
       '<input id="axn-k" type="password" placeholder="Mật khẩu gửi phim" value="'+h(t.token)+'" style="padding:8px;border:1px solid var(--line);border-radius:8px"></div>'+
       '<div class="row mt"><button class="btn sm" onclick="G.axn.luuTram()">Lưu</button></div>'+
-      '<p class="bd-tip">Hướng dẫn cho người kỹ thuật: <b>xuong-phim-ai/nhanh/README-nhanh.md</b> (tạo máy GPU, nối trạm Cloudflare — làm một lần, khoảng 30 phút).</p></details>';
+      '<p class="bd-tip">Chỉ dùng khi thuê máy GPU (Modal). Đã nối kho Google Drive thì xưởng ưu tiên đường miễn phí. Hướng dẫn: <b>xuong-phim-ai/nhanh/README-nhanh.md</b>.</p></details>';
     if(dangChay) setTimeout(axn.theoDoi, 0);
     return o;
   };
@@ -66377,9 +66512,10 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       '</div>';
 
     o += '<div class="row mb" style="gap:6px;flex-wrap:wrap">'+
-      tabBtn('nhanh','⚡ Làm phim nhanh')+tabBtn('nv','Kho nhân vật')+tabBtn('phim','Phim & phân cảnh')+tabBtn('prompt','Prompt & cấu hình')+tabBtn('bang','Bảng sản xuất')+tabBtn('phimtruong','Phim trường')+tabBtn('kyxao','Kỹ xảo & Động cơ')+tabBtn('tudong','Tự động')+'</div>';
+      tabBtn('nhanh','⚡ Làm phim nhanh')+tabBtn('khophim','🗄 Kho phim')+tabBtn('nv','Kho nhân vật')+tabBtn('phim','Phim & phân cảnh')+tabBtn('prompt','Prompt & cấu hình')+tabBtn('bang','Bảng sản xuất')+tabBtn('phimtruong','Phim trường')+tabBtn('kyxao','Kỹ xảo & Động cơ')+tabBtn('tudong','Tự động')+'</div>';
 
     if(G.S.axTab==='nhanh') o += (G.axn && G.axn.ve ? G.axn.ve() : '');
+    else if(G.S.axTab==='khophim') o += (G.khoDrive && G.khoDrive.ve ? G.khoDrive.ve() : '');
     else if(G.S.axTab==='nv') o += veNhanVat();
     else if(G.S.axTab==='phim') o += vePhanCanh();
     else if(G.S.axTab==='prompt') o += vePrompt();
@@ -66388,7 +66524,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     else if(G.S.axTab==='phimtruong') o += vePhimTruong();
     else { o += veTuDong(); var _j=tdCfg().job; if(_j) setTimeout(function(){ try{ G.ax.tdTheoDoi(_j); }catch(e){} }, 0); }
 
-    o += '<p class="tiny muted" style="margin-top:14px">'+ic('shield','w-3 h-3')+' Dữ liệu nhân vật & phân cảnh lưu trên máy anh/chị, giữ qua phiên. Ảnh mẫu và kịch bản chỉ được gửi tới trạm Cloudflare và máy GPU riêng của GITA khi anh/chị bấm gửi — không qua dịch vụ AI bên ngoài.</p>';
+    o += '<p class="tiny muted" style="margin-top:14px">'+ic('shield','w-3 h-3')+' Dữ liệu nhân vật & phân cảnh lưu trên máy anh/chị, giữ qua phiên. Ảnh mẫu, kịch bản và phim nằm trong Google Drive của anh/chị (hoặc trạm/máy GPU riêng của GITA nếu có thuê) — chỉ gửi khi anh/chị bấm, không qua dịch vụ AI bên ngoài.</p>';
     return o;
   };
 })();

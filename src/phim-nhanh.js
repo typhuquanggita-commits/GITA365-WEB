@@ -53,6 +53,10 @@ var G = window.G || {}; window.G = G;
   function lsSet(k,v){ try{ window.localStorage.setItem(k,v); }catch(e){} }
   function tram(){ return { worker:lsGet('axWorker').replace(/\/+$/,''), token:lsGet('axToken') }; }
   function luu(){ if(G.save) G.save(); }
+  /* Đường làm phim: đã nối kho Google Drive → MIỄN PHÍ (Drive + GitHub + Kaggle, vài giờ);
+     không thì trạm Cloudflare + máy GPU thuê (~15 phút). */
+  function kd(){ return G.khoDrive && G.khoDrive.coKho() ? G.khoDrive : null; }
+  function anhCua(n){ return kd() ? n.anhDrive : n.anh; }
 
   function st(){
     if(!G.S.axN){
@@ -145,14 +149,16 @@ var G = window.G || {}; window.G = G;
   }
   axn.chonAnh = function(i, input){
     var f = input.files && input.files[0]; if(!f) return;
-    var s = st(), n = s.nv[i], t = tram();
-    if(!t.worker){ return U.toast('Chưa có địa chỉ trạm — mở "Cài đặt một lần" ở cuối trang.','err'); }
+    var s = st(), n = s.nv[i], t = tram(), k = kd();
+    if(!k && !t.worker){ return U.toast('Chưa nối kho Drive hay trạm — mở tab "Kho phim" để nối Google Drive.','err'); }
     Promise.all([thuNho(f, 1280, 0.9), thuNho(f, 160, 0.8)]).then(function(kq){
       n.thumb = kq[1]; ve();
+      if(k) return k.goi('taiAnh', { id:n.id, data:kq[0] });
       return fetch(t.worker+'/api/anh', { method:'POST', headers:{'content-type':'application/json','x-gita-token':t.token},
         body: JSON.stringify({ id:n.id, data:kq[0] }) }).then(function(r){ return r.json(); });
     }).then(function(d){
-      if(d && d.key){ n.anh = d.key; luu(); ve(); U.toast('Đã gửi ảnh '+n.ten,'ok'); }
+      if(d && k && d.id){ n.anhDrive = d.id; luu(); ve(); U.toast('Đã lưu ảnh '+n.ten+' vào Drive','ok'); }
+      else if(d && d.key){ n.anh = d.key; luu(); ve(); U.toast('Đã gửi ảnh '+n.ten,'ok'); }
       else U.toast((d&&d.loi)||'Gửi ảnh thất bại','err');
     }).catch(function(e){ U.toast('Lỗi ảnh: '+(e&&e.message),'err'); });
   };
@@ -167,32 +173,38 @@ var G = window.G || {}; window.G = G;
   /* ════════ GỬI LÀM PHIM + THEO DÕI ════════ */
   function giongKey(n){ return (n.gioi||'nam')+'-'+(n.tuoi||'lon'); }
   axn.lamPhim = function(){
-    var s=st(), t=tram();
-    if(!t.worker || !t.token) return U.toast('Chưa cài trạm — mở "Cài đặt một lần" ở cuối trang.','err');
+    var s=st(), t=tram(), k=kd();
+    if(!k && (!t.worker || !t.token)) return U.toast('Chưa nối kho Drive — mở tab "Kho phim" để nối Google Drive.','err');
     var kh = axn.doc(s.kichBan, s.nv);
     if(!kh.canh.length) return U.toast('Kịch bản chưa có cảnh nào.','err');
     var dung = {}; kh.canh.forEach(function(c){ c.nv.forEach(function(id){ dung[id]=1; }); });
-    var thieu = s.nv.filter(function(n){ return dung[n.id] && !n.anh; });
+    var thieu = s.nv.filter(function(n){ return dung[n.id] && !anhCua(n); });
     if(thieu.length) return U.toast('Còn thiếu ảnh mẫu: '+thieu.map(function(n){return n.ten;}).join(', '),'err');
     var goi = { tieu_de: (s.kichBan.split('\n').filter(function(x){return x.trim();})[0]||'Phim GITA').slice(0,80),
       khung: s.khung, ngon_ngu: s.ngonNgu, kich_ban: s.kichBan,
-      nhan_vat: s.nv.filter(function(n){ return dung[n.id]; }).map(function(n){ return {id:n.id, ten:n.ten, vai:n.vai, gioi:n.gioi, tuoi:n.tuoi, giong_key:giongKey(n), anh:n.anh}; }),
+      nhan_vat: s.nv.filter(function(n){ return dung[n.id]; }).map(function(n){ return {id:n.id, ten:n.ten, vai:n.vai, gioi:n.gioi, tuoi:n.tuoi, giong_key:giongKey(n), anh:anhCua(n)}; }),
       canh: kh.canh };
-    s.job=''; s.tt={trangThai:'queued', buoc:'Đang gửi lên trạm…', phanTram:1}; s.batDau=Date.now(); luu(); ve();
+    s.job=''; s.duong = k ? 'drive' : 'tram';
+    s.tt={trangThai:'queued', buoc: k ? 'Đang gửi việc vào kho Drive…' : 'Đang gửi lên trạm…', phanTram:1}; s.batDau=Date.now(); luu(); ve();
+    var nhan = function(d){
+        if(!d.jobid){ s.tt={trangThai:'error', buoc:d.loi||'Gửi thất bại'}; luu(); ve(); return; }
+        s.job=d.jobid; s.lichSu.unshift({job:d.jobid, ten:goi.tieu_de, luc:new Date().toISOString(), canh:kh.canh.length, duong:s.duong});
+        s.lichSu=s.lichSu.slice(0,10); luu(); axn.theoDoi(); };
+    if(k){ k.goi('datViec', { ke_hoach:goi }).then(nhan).catch(function(e){ s.tt={trangThai:'error', buoc:e.message}; luu(); ve(); }); return; }
     fetch(t.worker+'/api/nhanh', { method:'POST', headers:{'content-type':'application/json','x-gita-token':t.token}, body:JSON.stringify(goi) })
       .then(function(r){ return r.json(); })
-      .then(function(d){
-        if(!d.jobid){ s.tt={trangThai:'error', buoc:d.loi||'Gửi thất bại'}; luu(); ve(); return; }
-        s.job=d.jobid; s.lichSu.unshift({job:d.jobid, ten:goi.tieu_de, luc:new Date().toISOString(), canh:kh.canh.length});
-        s.lichSu=s.lichSu.slice(0,10); luu(); axn.theoDoi(); })
+      .then(nhan)
       .catch(function(e){ s.tt={trangThai:'error', buoc:'Không gọi được trạm: '+(e&&e.message)}; luu(); ve(); });
   };
   axn.theoDoi = function(){
     var s=st(), t=tram(); clearTimeout(axn._t);
-    if(!s.job || !t.worker) return;
-    fetch(t.worker+'/api/phim/'+s.job).then(function(r){ return r.json(); }).then(function(d){
+    if(!s.job) return;
+    var hoi = s.duong==='drive' ? (kd() ? kd().goi('trangThai', {jobid:s.job}) : null)
+                                : (t.worker ? fetch(t.worker+'/api/phim/'+s.job).then(function(r){ return r.json(); }) : null);
+    if(!hoi) return;
+    hoi.then(function(d){
       s.tt=d; luu(); veTienDo();
-      if(d.trangThai!=='done' && d.trangThai!=='error') axn._t=setTimeout(axn.theoDoi, 6000);
+      if(d.trangThai!=='done' && d.trangThai!=='error') axn._t=setTimeout(axn.theoDoi, s.duong==='drive' ? 30000 : 6000);
       else ve();
     }).catch(function(){ axn._t=setTimeout(axn.theoDoi, 10000); });
   };
@@ -227,10 +239,17 @@ var G = window.G || {}; window.G = G;
     var mau = d.trangThai==='error' ? '#B42318' : (d.trangThai==='done' ? '#0B7350' : 'var(--gita)');
     var o = '<div class="row" style="justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap">'+
       '<b class="sm">'+(d.trangThai==='done'?'✅ Phim xong':(d.trangThai==='error'?'⚠ Dừng lại':'⏳ Xưởng đang làm'))+'</b>'+
-      '<span class="tiny muted">'+(s.batDau?'đã chạy '+mmss((d.xong?Date.parse(d.xong):Date.now())-s.batDau)+' · mốc 15:00':'')+'</span></div>'+
+      '<span class="tiny muted">'+(s.batDau?'đã chạy '+mmss((d.xong?Date.parse(d.xong):Date.now())-s.batDau)+(s.duong==='drive'?' · đường miễn phí, thường vài giờ':' · mốc 15:00'):'')+'</span></div>'+
       '<div style="height:10px;border-radius:6px;background:var(--line);overflow:hidden;margin-top:8px"><div style="height:100%;width:'+pt+'%;background:'+mau+';transition:width .6s"></div></div>'+
       '<p class="tiny" style="margin-top:6px;color:var(--ink-2)">'+h(d.buoc||'')+'</p>';
-    if(d.trangThai==='done' && s.job){
+    if(d.trangThai==='done' && s.duong==='drive' && d.phimId && G.khoDrive){
+      o += '<div style="position:relative;width:100%;max-width:480px;aspect-ratio:'+(s.khung==='ngang'?'16/9':'9/16')+';margin:10px auto 0;max-height:75vh">'+
+          '<iframe src="'+h(G.khoDrive.xem(d.phimId))+'" allow="autoplay; fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:12px;background:#000"></iframe></div>'+
+        '<div class="row mt" style="gap:8px;flex-wrap:wrap">'+
+          '<a class="btn" target="_blank" rel="noopener" href="'+h(G.khoDrive.link(d.phimId))+'">⬇ Mở / tải trên Drive</a>'+
+          (d.phimPhuDeId?'<a class="btn ghost" target="_blank" rel="noopener" href="'+h(G.khoDrive.link(d.phimPhuDeId))+'">Bản có phụ đề</a>':'')+
+          '<button class="btn ghost" onclick="G.ax.tab(\'khophim\')">Xem trong Kho phim</button></div>';
+    } else if(d.trangThai==='done' && s.job){
       var w=tram().worker;
       o += '<video controls playsinline style="width:100%;max-height:70vh;border-radius:12px;margin-top:10px;background:#000" src="'+h(w+'/api/phim/'+s.job+'/video')+'"></video>'+
         '<div class="row mt" style="gap:8px;flex-wrap:wrap">'+
@@ -241,7 +260,7 @@ var G = window.G || {}; window.G = G;
   }
   axn.ve = function(){
     var s=st(), t=tram();
-    var o = U.sec('Làm phim nhanh','Gửi ảnh mẫu + kịch bản → xưởng tự làm từ A đến Z → video 1080p (mục tiêu ~15 phút)');
+    var o = U.sec('Làm phim nhanh','Gửi ảnh mẫu + kịch bản → xưởng tự làm từ A đến Z → video 1080p lưu vào Google Drive');
     /* Bước 1 · ảnh mẫu */
     o += '<div class="card pad-sm mb"><b class="sm">① Ảnh mẫu nhân vật</b><p class="tiny muted" style="margin:4px 0 8px">Ảnh rõ mặt, nhìn thẳng, đủ sáng. Mỗi người một ảnh là đủ.</p>'+
       '<div class="grid g2" style="gap:10px">'+s.nv.map(function(n,i){
@@ -253,7 +272,7 @@ var G = window.G || {}; window.G = G;
             '<div class="row" style="gap:4px;flex-wrap:wrap">'+
               '<select onchange="G.axn.nvSua('+i+',\'gioi\',this.value)" style="padding:4px;border:1px solid var(--line);border-radius:8px"><option value="nam"'+(n.gioi==='nam'?' selected':'')+'>Nam</option><option value="nu"'+(n.gioi==='nu'?' selected':'')+'>Nữ</option></select>'+
               '<select onchange="G.axn.nvSua('+i+',\'tuoi\',this.value)" style="padding:4px;border:1px solid var(--line);border-radius:8px"><option value="lon"'+(n.tuoi==='lon'?' selected':'')+'>Người lớn</option><option value="teen"'+(n.tuoi==='teen'?' selected':'')+'>Thiếu niên</option><option value="treem"'+(n.tuoi==='treem'?' selected':'')+'>Trẻ em</option></select>'+
-              '<span class="tiny" style="color:'+(n.anh?'#0B7350':'#B4720F')+'">'+(n.anh?'✓ đã gửi ảnh':'chưa có ảnh')+'</span>'+
+              '<span class="tiny" style="color:'+(anhCua(n)?'#0B7350':'#B4720F')+'">'+(anhCua(n)?'✓ đã gửi ảnh':'chưa có ảnh')+'</span>'+
               (s.nv.length>1?'<button class="btn ghost sm" style="padding:2px 8px" onclick="G.axn.nvXoa('+i+')">Bỏ</button>':'')+'</div></div></div>';
       }).join('')+'</div>'+
       (s.nv.length<4?'<button class="btn ghost sm mt" onclick="G.axn.nvThem()">+ Thêm nhân vật</button>':'')+'</div>';
@@ -270,16 +289,16 @@ var G = window.G || {}; window.G = G;
     var dangChay = s.tt && s.job && s.tt.trangThai!=='done' && s.tt.trangThai!=='error';
     o += '<div class="card pad-sm mb"><b class="sm">③ Làm phim</b><div class="row mt" style="gap:8px;flex-wrap:wrap;align-items:center">'+
       '<button class="btn" '+(dangChay?'disabled':'')+' onclick="G.axn.lamPhim()">'+ic('spark','w-3 h-3')+(dangChay?'Đang làm…':'🎬 Làm phim')+'</button>'+
-      '<span class="tiny muted">Video 1080p · giọng chuẩn phát sóng · phụ đề · thẻ tên · nhạc nền</span></div>'+
+      '<span class="tiny muted">Video 1080p · giọng chuẩn phát sóng · phụ đề · thẻ tên · nhạc nền · '+(kd()?'<b>đường miễn phí</b>: lưu thẳng vào Google Drive (Kaggle GPU, thường vài giờ)':(t.worker?'máy GPU thuê, ~15 phút':'<b>chưa nối</b> — mở tab Kho phim để nối Google Drive'))+'</span></div>'+
       '<div id="axn-td" style="margin-top:10px">'+htmlTienDo()+'</div></div>';
     if(s.lichSu.length>1) o += '<div class="card pad-sm mb"><b class="sm">Phim đã làm</b><ul class="tiny" style="margin:6px 0 0 18px;line-height:1.7">'+
-      s.lichSu.map(function(x){ return '<li><a href="'+h(t.worker+'/api/phim/'+x.job+'/video?tai=1')+'">'+h(x.ten)+'</a> · '+x.canh+' cảnh · '+h(new Date(x.luc).toLocaleString('vi-VN'))+'</li>'; }).join('')+'</ul></div>';
+      s.lichSu.map(function(x){ return '<li>'+(x.duong==='drive' ? h(x.ten)+' · <a href="javascript:void 0" onclick="G.ax.tab(\'khophim\')">trong Kho phim</a>' : '<a href="'+h(t.worker+'/api/phim/'+x.job+'/video?tai=1')+'">'+h(x.ten)+'</a>')+' · '+x.canh+' cảnh · '+h(new Date(x.luc).toLocaleString('vi-VN'))+'</li>'; }).join('')+'</ul></div>';
     /* Cài đặt một lần */
-    o += '<details class="card pad-sm"'+(t.worker?'':' open')+'><summary class="sm" style="cursor:pointer"><b>Cài đặt một lần</b> <span class="tiny muted">'+(t.worker?'· đã nối trạm':'· người kỹ thuật làm giúp')+'</span></summary>'+
+    o += '<details class="card pad-sm"><summary class="sm" style="cursor:pointer"><b>Máy GPU thuê (tuỳ chọn, ~15 phút)</b> <span class="tiny muted">'+(t.worker?'· đã nối trạm':'· chưa dùng — mặc định đi đường miễn phí qua Google Drive')+'</span></summary>'+
       '<div class="grid g2 mt" style="gap:8px"><input id="axn-w" type="url" placeholder="https://gita-xuong-phim….workers.dev" value="'+h(t.worker)+'" style="padding:8px;border:1px solid var(--line);border-radius:8px">'+
       '<input id="axn-k" type="password" placeholder="Mật khẩu gửi phim" value="'+h(t.token)+'" style="padding:8px;border:1px solid var(--line);border-radius:8px"></div>'+
       '<div class="row mt"><button class="btn sm" onclick="G.axn.luuTram()">Lưu</button></div>'+
-      '<p class="bd-tip">Hướng dẫn cho người kỹ thuật: <b>xuong-phim-ai/nhanh/README-nhanh.md</b> (tạo máy GPU, nối trạm Cloudflare — làm một lần, khoảng 30 phút).</p></details>';
+      '<p class="bd-tip">Chỉ dùng khi thuê máy GPU (Modal). Đã nối kho Google Drive thì xưởng ưu tiên đường miễn phí. Hướng dẫn: <b>xuong-phim-ai/nhanh/README-nhanh.md</b>.</p></details>';
     if(dangChay) setTimeout(axn.theoDoi, 0);
     return o;
   };

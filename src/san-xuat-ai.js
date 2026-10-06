@@ -661,9 +661,10 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       '</div>';
 
     o += '<div class="row mb" style="gap:6px;flex-wrap:wrap">'+
-      tabBtn('nhanh','⚡ Làm phim nhanh')+tabBtn('nv','Kho nhân vật')+tabBtn('phim','Phim & phân cảnh')+tabBtn('prompt','Prompt & cấu hình')+tabBtn('bang','Bảng sản xuất')+tabBtn('phimtruong','Phim trường')+tabBtn('kyxao','Kỹ xảo & Động cơ')+tabBtn('tudong','Tự động')+'</div>';
+      tabBtn('nhanh','⚡ Làm phim nhanh')+tabBtn('khophim','🗄 Kho phim')+tabBtn('nv','Kho nhân vật')+tabBtn('phim','Phim & phân cảnh')+tabBtn('prompt','Prompt & cấu hình')+tabBtn('bang','Bảng sản xuất')+tabBtn('phimtruong','Phim trường')+tabBtn('kyxao','Kỹ xảo & Động cơ')+tabBtn('tudong','Tự động')+'</div>';
 
     if(G.S.axTab==='nhanh') o += (G.axn && G.axn.ve ? G.axn.ve() : '');
+    else if(G.S.axTab==='khophim') o += (G.khoDrive && G.khoDrive.ve ? G.khoDrive.ve() : '');
     else if(G.S.axTab==='nv') o += veNhanVat();
     else if(G.S.axTab==='phim') o += vePhanCanh();
     else if(G.S.axTab==='prompt') o += vePrompt();
@@ -672,7 +673,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     else if(G.S.axTab==='phimtruong') o += vePhimTruong();
     else { o += veTuDong(); var _j=tdCfg().job; if(_j) setTimeout(function(){ try{ G.ax.tdTheoDoi(_j); }catch(e){} }, 0); }
 
-    o += '<p class="tiny muted" style="margin-top:14px">'+ic('shield','w-3 h-3')+' Dữ liệu nhân vật & phân cảnh lưu trên máy anh/chị, giữ qua phiên. Ảnh mẫu và kịch bản chỉ được gửi tới trạm Cloudflare và máy GPU riêng của GITA khi anh/chị bấm gửi — không qua dịch vụ AI bên ngoài.</p>';
+    o += '<p class="tiny muted" style="margin-top:14px">'+ic('shield','w-3 h-3')+' Dữ liệu nhân vật & phân cảnh lưu trên máy anh/chị, giữ qua phiên. Ảnh mẫu, kịch bản và phim nằm trong Google Drive của anh/chị (hoặc trạm/máy GPU riêng của GITA nếu có thuê) — chỉ gửi khi anh/chị bấm, không qua dịch vụ AI bên ngoài.</p>';
     return o;
   };
 })();

@@ -122,5 +122,11 @@ cảnh vượt trần tự chạy model mở, không vỡ tập.
 Đặt khoá vào biến môi trường (`VEO_API_KEY`…) và viết hàm `_goi_api()` theo tài liệu nhà cung cấp.
 Chưa nối thì cảnh tự chạy model mở.
 
+## Kho phim Google Drive (2TB) — đường miễn phí
+
+Mọi phim lưu trong Drive của chủ hệ (`GITA365 · Kho phim/Phim/<tháng>/`), xem/chia sẻ ngay trong app (tab 🗄 Kho phim).
+Màn "Làm phim nhanh" khi đã nối kho sẽ đi đường miễn phí: Drive → GitHub Action → Kaggle GPU → phim về Drive.
+Cài 10 phút: `kho-drive/README-kho-drive.md`.
+
 ## Lưu trữ & phát
 Đẩy `ket-qua/` lên **Cloudflare R2** (S3-API). Dây chuyền tự động: xem `../tu-dong/README-tu-dong.md`.
