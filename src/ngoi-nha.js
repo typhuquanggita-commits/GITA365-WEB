@@ -166,8 +166,12 @@ G.nhaMoChang = function (el) {
     o += '<div class="nha-ring">';
     /* VÒNG NGOÀI — khẩu hiệu chạy quanh con dấu thịnh vượng. Dùng SVG
        textPath (một vòng tròn, chữ bám theo), ĐỨNG YÊN để đọc được; chỉ
-       vòng bánh đà bên trong mới quay. Chỉ dựng khi đã có bánh đà. */
-    if (bdHtml) o += '<svg class="nha-khauhieu" viewBox="0 0 1000 1000" aria-hidden="true" focusable="false">' +
+       vòng bánh đà bên trong mới quay.
+       LUÔN DỰNG — đây là nhận diện của ngôi nhà, không phụ thuộc kho nội
+       dung đã nạp hay chưa; thiếu kho thì chỉ thiếu MƯỜI BÁNH ĐÀ bên
+       trong, hai vòng tròn vẫn còn. (CSS @container vẫn ẩn vòng khi cột
+       quá hẹp để tránh tràn trên điện thoại.) */
+    o += '<svg class="nha-khauhieu" viewBox="0 0 1000 1000" aria-hidden="true" focusable="false">' +
       '<defs><path id="nhaVongChu" fill="none" d="M500,500 m-470,0 a470,470 0 1,1 940,0 a470,470 0 1,1 -940,0"/></defs>' +
       /* textLength = chu vi vòng (2·π·470 ≈ 2953) + lengthAdjust="spacing"
          → chữ GIÃN ĐỀU phủ TRỌN 360°, không còn khoảng khuyết. Bốn cụm
