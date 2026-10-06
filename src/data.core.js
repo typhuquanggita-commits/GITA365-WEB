@@ -741,6 +741,11 @@ G.NAV = [
        đây là hàng đợi nội bộ, và nhà mình đọc thì thấy mình là một dòng
        trong đó, kèm cả lý do chưa ai trả lời. */
     {v:'ban-tu-van',  t:'Bàn làm việc của Tư vấn', h:'5 ngăn vét cạn · 7 câu sàng lọc có 4 câu chặn · 9 ô hồ sơ · gói 6 ô đóng sẵn', ic:'compass', star:1, perm:'pro_consult', capMo:'nghe'},
+    /* Trung tâm Tư vấn & CSKH: việc hôm nay chia theo giai đoạn · khách
+       bốn loại (mới·cũ·tái·chăm lại) · phễu bám chuyển đổi tới 95% · năm
+       hệ hỗ trợ nối tới màn sâu. Mở cho Tư vấn trở lên; tab Dòng chảy
+       chỉ hiện với cấp quản trị CRM. Màn nằm gói app (luôn dựng được). */
+    {v:'tt-cskh',     t:'Trung tâm Tư vấn & CSKH', h:'Việc hôm nay · 4 loại khách · phễu → 95% · 5 hệ hỗ trợ · dòng chảy', ic:'users', star:1, perm:'pro_consult', capMo:'chung'},
     /* Bảng đăng ký hoạt động — khoá ở pro_coach vì nó phơi toàn bộ quy
        trình nội bộ: ai làm gì, hạn bao lâu, không ai làm thì rơi đi đâu. */
     /* Diễn thử — khoá pro_coach. Cột phải của mỗi lượt là câu người
