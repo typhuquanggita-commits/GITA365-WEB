@@ -65444,21 +65444,46 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   function ttOf(k){ for(var i=0;i<TT.length;i++) if(TT[i].k===k) return TT[i]; return TT[0]; }
   function uid(p){ return p+Math.random().toString(36).slice(2,8); }
 
+  /* Vai · giới · độ tuổi · giọng theo giới+tuổi */
+  var VAI = [['trainer','Trainer'],['mc','MC'],['dienvien','Diễn viên'],['phu','Vai phụ']];
+  var GIOI = [['nam','Nam'],['nu','Nữ']];
+  var TUOI = [['lon','Người lớn'],['teen','Thiếu niên'],['treem','Trẻ em']];
+  function nhan(o,arr){ var f=arr.filter(function(x){return x[0]===o;})[0]; return f?f[1]:''; }
+  function giongKey(gioi,tuoi){ return (gioi||'nam')+'-'+(tuoi||'lon'); }
+  function giongTen(gioi,tuoi){ var m={ 'nam-lon':'Nam trầm ấm','nu-lon':'Nữ truyền cảm',
+    'nam-teen':'Nam trẻ trong','nu-teen':'Nữ trẻ tươi','nam-treem':'Bé trai hồn nhiên','nu-treem':'Bé gái hồn nhiên' };
+    return m[giongKey(gioi,tuoi)] || 'Nam trầm ấm'; }
+  /* Ép chất lượng + chặn hoạt hình/người que/mấp môi */
+  var QPROM = 'ảnh chụp thật, máy ảnh DSLR, 4K, nét căng, điện ảnh, ánh sáng tự nhiên, da người thật, chân dung nhất quán';
+  var QNEG  = 'hoạt hình, anime, cartoon, hoạt hoạ, 2D, tranh vẽ, phác thảo, người que, hình que, ảnh tĩnh, mấp máy môi, mặt méo, biến dạng, thừa ngón tay, mờ nhoè, răng cưa, chất lượng thấp, sai tỉ lệ cơ thể';
+
   function initData(){
     if(!G.S.axNV){ G.S.axNV = [
-      { id:'nv-nam', ten:'Người dẫn nam', loai:'nguoi',
-        mota:'Nam doanh nhân Á Đông khoảng 35 tuổi, tóc ngắn đen gọn, đeo kính gọng đen, da sáng, gương mặt điềm đạm tin cậy',
-        trangPhuc:'Vest xanh navy hoặc đỏ đô, sơ mi trắng', giong:'Nam trầm ấm, rõ ràng', seed:'101', lora:'(chưa train)', ghiChu:'Nhân vật dẫn chính GITA' },
-      { id:'nv-nu', ten:'Nữ MC', loai:'nguoi',
-        mota:'Nữ MC Á Đông khoảng 30 tuổi, tóc ngang vai, trang điểm nhẹ, nụ cười thân thiện, chuyên nghiệp',
-        trangPhuc:'Vest navy hoặc xanh nhạt/kem, áo lụa', giong:'Nữ tươi sáng, truyền cảm', seed:'202', lora:'(chưa train)', ghiChu:'Dẫn chương trình, giới thiệu' }
+      { id:'nv-trainer', ten:'Chuyên gia GITA (Trainer)', loai:'nguoi', vai:'trainer', gioi:'nam', tuoi:'lon',
+        mota:'Nam chuyên gia Á Đông ~35 tuổi, tóc ngắn đen gọn, đeo kính gọng đen, da sáng, gương mặt điềm đạm tin cậy',
+        trangPhuc:'Vest xanh navy, sơ mi trắng', giong:'Nam trầm ấm', seed:'101', lora:'(chưa train)', ghiChu:'Dẫn dắt, tư vấn' },
+      { id:'nv-mc', ten:'MC nữ', loai:'nguoi', vai:'mc', gioi:'nu', tuoi:'lon',
+        mota:'Nữ MC Á Đông ~30 tuổi, tóc dài, trang điểm nhẹ, nụ cười thân thiện, chuyên nghiệp',
+        trangPhuc:'Vest xanh nhạt hoặc kem', giong:'Nữ truyền cảm', seed:'202', lora:'(chưa train)', ghiChu:'Dẫn chương trình' },
+      { id:'nv-bo', ten:'Bố', loai:'nguoi', vai:'dienvien', gioi:'nam', tuoi:'lon',
+        mota:'Người bố Á Đông ~40 tuổi, tóc đen, gương mặt hiền, khoẻ khoắn',
+        trangPhuc:'Sơ mi xanh nhạt, quần kaki', giong:'Nam trầm ấm', seed:'301', lora:'(chưa train)', ghiChu:'Nhân vật gia đình' },
+      { id:'nv-me', ten:'Mẹ', loai:'nguoi', vai:'dienvien', gioi:'nu', tuoi:'lon',
+        mota:'Người mẹ Á Đông ~38 tuổi, tóc nâu ngang vai, dịu dàng, ấm áp',
+        trangPhuc:'Áo blouse kem', giong:'Nữ truyền cảm', seed:'302', lora:'(chưa train)', ghiChu:'Nhân vật gia đình' },
+      { id:'nv-congai', ten:'Con gái (tuổi teen)', loai:'nguoi', vai:'dienvien', gioi:'nu', tuoi:'teen',
+        mota:'Thiếu nữ Á Đông ~16 tuổi, tóc dài đen, tươi tắn, năng động',
+        trangPhuc:'Áo thun tím, quần jeans', giong:'Nữ trẻ tươi', seed:'303', lora:'(chưa train)', ghiChu:'Nhân vật gia đình' },
+      { id:'nv-contrai', ten:'Con trai (thiếu niên)', loai:'nguoi', vai:'dienvien', gioi:'nam', tuoi:'teen',
+        mota:'Bé trai Á Đông ~11 tuổi, tóc đen, lanh lợi, vui vẻ',
+        trangPhuc:'Áo polo xanh teal, quần short', giong:'Nam trẻ trong', seed:'304', lora:'(chưa train)', ghiChu:'Nhân vật gia đình' }
     ]; }
     if(!G.S.axPhim){ G.S.axPhim = [
       { id:'phim-1', ten:'Tập 1 — Hành trình GITA 365', mota:'Giới thiệu hành trình 5 tầng, dạng người dẫn + cảnh minh hoạ',
         canh:[
-          { id:uid('c'), nvId:'nv-nam', loai:'nguoi', boiCanh:'Phòng khách ấm cúng, cây xanh, ánh sáng tự nhiên', may:'Cận cảnh ngang mặt, tĩnh', chuyenDong:'Người ngồi nói, gật đầu nhẹ, tay đан', thoai:'Chào anh chị, hành trình thịnh vượng của gia đình bắt đầu từ một quyết định.', giay:5, tt:'' },
-          { id:uid('c'), nvId:'nv-nu', loai:'nguoi', boiCanh:'Trường quay sáng, màn hình lớn phía sau', may:'Trung cảnh, máy lia nhẹ sang phải', chuyenDong:'Đứng thuyết trình, tay chỉ về màn hình', thoai:'GITA đồng hành cùng gia đình qua năm tầng phát triển.', giay:5, tt:'' },
-          { id:uid('c'), nvId:'nv-nam', loai:'canh', boiCanh:'Bàn học, cùng hai bạn trẻ xem thẻ học tập', may:'Toàn cảnh, máy tiến chậm vào', chuyenDong:'Trò chuyện, trao đổi thẻ, cùng cười', thoai:'', giay:5, tt:'' }
+          { id:uid('c'), nvId:'nv-trainer', loai:'nguoi', boiCanh:'Phòng khách ấm cúng, cây xanh, ánh sáng tự nhiên', may:'Cận cảnh ngang mặt, tĩnh', chuyenDong:'Người ngồi nói, gật đầu nhẹ, tay đan', thoai:'Chào anh chị, hành trình thịnh vượng của gia đình bắt đầu từ một quyết định.', giay:5, tt:'' },
+          { id:uid('c'), nvId:'nv-mc', loai:'nguoi', boiCanh:'Trường quay sáng, màn hình lớn phía sau', may:'Trung cảnh, máy lia nhẹ sang phải', chuyenDong:'Đứng thuyết trình, tay chỉ về màn hình', thoai:'GITA đồng hành cùng gia đình qua năm tầng phát triển.', giay:5, tt:'' },
+          { id:uid('c'), nvId:'nv-bo', loai:'canh', boiCanh:'Vườn tre, cả gia đình cùng đi dạo trò chuyện', may:'Toàn cảnh, máy đi lùi theo bước chân', chuyenDong:'Cả nhà đi bộ, trò chuyện, cùng cười', thoai:'', giay:5, tt:'' }
         ] }
     ]; }
     if(!G.S.axActive) G.S.axActive = G.S.axPhim[0].id;
@@ -65472,26 +65497,33 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   G.ax.tab = function(t){ G.S.axTab=t; if(G.render) G.render(); };
 
   /* ── NHÂN VẬT ── */
+  function selOpts(arr,cur){ return arr.map(function(x){ return '<option value="'+x[0]+'"'+(x[0]===cur?' selected':'')+'>'+h(x[1])+'</option>'; }).join(''); }
   function formNV(nv){
-    var e = nv||{id:'',ten:'',loai:'nguoi',mota:'',trangPhuc:'',giong:'',seed:'',lora:'',ghiChu:''};
+    var e = nv||{id:'',ten:'',vai:'dienvien',gioi:'nam',tuoi:'lon',mota:'',trangPhuc:'',seed:'',lora:'',ghiChu:''};
+    var ss='padding:8px;border:1px solid var(--line);border-radius:9px;width:100%;box-sizing:border-box';
     return '<h3 class="mb">'+(nv?'Sửa nhân vật':'Thêm nhân vật')+'</h3>'+
       '<div class="bd-field"><span>Tên vai</span><input type="text" id="f-ten" value="'+h(e.ten)+'"></div>'+
-      '<div class="bd-field"><span>Loại</span><div class="bd-seg"><button type="button" class="'+(e.loai==='nguoi'?'on':'')+'" onclick="this.parentNode.querySelectorAll(\'button\').forEach(function(b){b.classList.remove(\'on\')});this.classList.add(\'on\');window.__loai=\'nguoi\'">Người dẫn</button><button type="button" class="'+(e.loai==='canh'?'on':'')+'" onclick="this.parentNode.querySelectorAll(\'button\').forEach(function(b){b.classList.remove(\'on\')});this.classList.add(\'on\');window.__loai=\'canh\'">Diễn viên cảnh</button></div></div>'+
-      '<div class="bd-field"><span>Mô tả ngoại hình (prompt giữ nhân vật)</span><textarea id="f-mota" rows="3">'+h(e.mota)+'</textarea></div>'+
+      '<div class="grid g3">'+
+        '<div class="bd-field"><span>Vai trò</span><select id="f-vai" style="'+ss+'">'+selOpts(VAI,e.vai||'dienvien')+'</select></div>'+
+        '<div class="bd-field"><span>Giới tính</span><select id="f-gioi" style="'+ss+'">'+selOpts(GIOI,e.gioi||'nam')+'</select></div>'+
+        '<div class="bd-field"><span>Độ tuổi</span><select id="f-tuoi" style="'+ss+'">'+selOpts(TUOI,e.tuoi||'lon')+'</select></div>'+
+      '</div>'+
+      '<p class="bd-tip">Giọng tự chọn theo giới tính + độ tuổi (vd Nam người lớn → "Nam trầm ấm"). Dùng mẫu giọng <b>giong/&lt;giới-tuổi&gt;.wav</b> trên Kaggle.</p>'+
+      '<div class="bd-field"><span>Mô tả ngoại hình (giữ nhân vật nhất quán)</span><textarea id="f-mota" rows="3" style="'+ss+'">'+h(e.mota)+'</textarea></div>'+
       '<div class="bd-field"><span>Trang phục mặc định</span><input type="text" id="f-tp" value="'+h(e.trangPhuc)+'"></div>'+
-      '<div class="bd-field"><span>Giọng</span><input type="text" id="f-giong" value="'+h(e.giong)+'"></div>'+
       '<div class="grid g2"><div class="bd-field"><span>Seed (giữ khuôn mặt)</span><input type="text" id="f-seed" value="'+h(e.seed)+'"></div>'+
       '<div class="bd-field"><span>Tên LoRA (nếu có)</span><input type="text" id="f-lora" value="'+h(e.lora)+'"></div></div>'+
       '<div class="bd-field"><span>Ghi chú</span><input type="text" id="f-gc" value="'+h(e.ghiChu)+'"></div>'+
       '<div class="row mt" style="gap:8px"><button class="btn" onclick="G.ax.nvLuu(\''+(e.id||'')+'\')">Lưu</button>'+
       '<button class="btn ghost" onclick="U.closeModal()">Huỷ</button></div>';
   }
-  G.ax.nvThem = function(){ window.__loai='nguoi'; U.modal(formNV(null)); };
-  G.ax.nvSuaMo = function(id){ var nv=nvById(id); window.__loai=nv.loai; U.modal(formNV(nv)); };
+  G.ax.nvThem = function(){ U.modal(formNV(null)); };
+  G.ax.nvSuaMo = function(id){ U.modal(formNV(nvById(id))); };
   G.ax.nvLuu = function(id){
-    function v(x){ var el=document.getElementById(x); return el?el.value.trim():''; }
-    var o = { ten:v('f-ten')||'Nhân vật', loai:window.__loai||'nguoi', mota:v('f-mota'), trangPhuc:v('f-tp'),
-      giong:v('f-giong'), seed:v('f-seed'), lora:v('f-lora'), ghiChu:v('f-gc') };
+    function v(x){ var el=document.getElementById(x); return el?(el.value||'').trim():''; }
+    var gioi=v('f-gioi')||'nam', tuoi=v('f-tuoi')||'lon';
+    var o = { ten:v('f-ten')||'Nhân vật', vai:v('f-vai')||'dienvien', gioi:gioi, tuoi:tuoi, loai:'nguoi',
+      mota:v('f-mota'), trangPhuc:v('f-tp'), giong:giongTen(gioi,tuoi), seed:v('f-seed'), lora:v('f-lora'), ghiChu:v('f-gc') };
     if(id){ var nv=nvById(id); if(nv) Object.assign(nv,o); }
     else { o.id=uid('nv'); G.S.axNV.push(o); }
     U.closeModal(); luu();
@@ -65549,20 +65581,27 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   /* ── SINH PROMPT ── */
   function promptCanh(c){
     var nv=nvById(c.nvId)||{};
-    var img = [nv.mota, nv.trangPhuc, c.boiCanh, c.may, 'khung dọc 9:16', 'ánh sáng điện ảnh', 'ảnh thực, chi tiết cao, chân dung nhất quán'].filter(Boolean).join(', ');
-    var vid = [c.chuyenDong||'(giữ tư thế tự nhiên)', c.loai==='nguoi'?'đang nói, cử động đầu và tay tự nhiên':'diễn theo cảnh, chuyển động tự nhiên', c.may, 'máy quay mượt', (c.giay||5)+' giây'].filter(Boolean).join(', ');
-    return {img:img, vid:vid};
+    var noi = c.loai==='nguoi' && (c.thoai||'').trim();
+    var img = [nv.mota, nv.trangPhuc, c.boiCanh, c.may, 'khung dọc 9:16', QPROM].filter(Boolean).join(', ');
+    var vid = [c.chuyenDong||'(giữ tư thế tự nhiên)',
+      noi?'đang nói, khẩu hình khớp lời, cử động đầu và tay tự nhiên':'diễn theo cảnh, chuyển động cơ thể tự nhiên',
+      c.may, 'quay chuyển động mượt, sắc nét, người thật, không hoạt hình', (c.giay||5)+' giây'].filter(Boolean).join(', ');
+    return {img:img, vid:vid, neg:QNEG};
   }
   function configPhim(){
     var p=phimActive();
     return {
       phim:{ id:p.id, ten:p.ten, mota:p.mota },
+      cam:['khong-hoat-hinh','khong-nguoi-que','khong-anh-tinh-map-moi','phai-nguoi-that-chuyen-dong-sac-net'],
+      chuan:{ negative_chung:QNEG, phong_cach:'ảnh thật điện ảnh 9:16, nét căng, khớp khẩu hình với giọng' },
       pipeline:{ anh:'instantid_sdxl', i2v:'wan2.2_i2v', tts:'vixtts', lipsync:'latentsync', nang_net:'realesrgan_codeformer', muot:'rife', phu_de:'faster_whisper', rap:'ffmpeg', khung:'1080x1920', fps_xuat:30 },
-      nhan_vat: (G.S.axNV||[]).map(function(n){ return {id:n.id,ten:n.ten,loai:n.loai,mo_ta:n.mota,trang_phuc:n.trangPhuc,giong:n.giong,seed:n.seed,lora:n.lora}; }),
+      nhan_vat: (G.S.axNV||[]).map(function(n){ return {id:n.id,ten:n.ten,vai:n.vai,gioi:n.gioi,tuoi:n.tuoi,loai:n.loai,
+        mo_ta:n.mota,trang_phuc:n.trangPhuc,giong:n.giong,giong_key:giongKey(n.gioi,n.tuoi),seed:n.seed,lora:n.lora}; }),
       canh: p.canh.map(function(c,i){ var pr=promptCanh(c); var nv=nvById(c.nvId)||{};
         return { thu_tu:i+1, id:c.id, nhan_vat:c.nvId, loai:c.loai, boi_canh:c.boiCanh, may_quay:c.may,
-          prompt_anh:pr.img, prompt_video:pr.vid, thoai:c.thoai, giong:nv.giong, seed:nv.seed, lora:nv.lora,
-          giay:c.giay||5, lip_sync: c.loai==='nguoi' && !!c.thoai, trang_thai:c.tt||'' }; })
+          prompt_anh:pr.img, prompt_video:pr.vid, negative:pr.neg, thoai:c.thoai,
+          giong:nv.giong, giong_key:giongKey(nv.gioi,nv.tuoi), seed:nv.seed, lora:nv.lora,
+          giay:c.giay||5, lip_sync: c.loai==='nguoi' && !!(c.thoai&&c.thoai.trim()), trang_thai:c.tt||'' }; })
     };
   }
   G.ax.taiConfig = function(){
@@ -65646,10 +65685,11 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       '<div class="row mb"><button class="btn sm" onclick="G.ax.nvThem()">'+ic('spark','w-3 h-3')+'Thêm nhân vật</button></div>';
     o += '<div class="grid g2">'+ (G.S.axNV||[]).map(function(n){
       return '<div class="card pad-sm"><div class="row" style="justify-content:space-between"><b>'+h(n.ten)+'</b>'+
-        '<span class="bd-chip">'+(n.loai==='nguoi'?'Người dẫn':'Diễn viên')+'</span></div>'+
+        '<span class="bd-chip">'+h(nhan(n.vai,VAI)||'Diễn viên')+'</span></div>'+
+        '<div class="bd-chips" style="margin:5px 0"><span class="bd-chip">'+h(nhan(n.gioi,GIOI)||'—')+'</span><span class="bd-chip">'+h(nhan(n.tuoi,TUOI)||'—')+'</span></div>'+
         '<p class="sm muted" style="line-height:1.5;margin:6px 0">'+h(n.mota)+'</p>'+
         '<p class="tiny muted">👔 '+h(n.trangPhuc||'—')+'</p>'+
-        '<p class="tiny muted">🎙 '+h(n.giong||'—')+' · seed '+h(n.seed||'—')+' · LoRA '+h(n.lora||'—')+'</p>'+
+        '<p class="tiny muted">🎙 '+h(n.giong||'—')+' ('+h(giongKey(n.gioi,n.tuoi))+') · seed '+h(n.seed||'—')+'</p>'+
         '<div class="row mt" style="gap:6px"><button class="btn ghost sm" onclick="G.ax.nvSuaMo(\''+n.id+'\')">Sửa</button>'+
         '<button class="btn ghost sm" onclick="G.ax.nvXoa(\''+n.id+'\')">Xoá</button></div></div>';
     }).join('') +'</div>';

@@ -39,8 +39,11 @@ cấu hình .json"**. File `.json` đó là đầu vào cho động cơ này.
 2. Chuẩn bị **ảnh khuôn mặt mẫu** cho từng nhân vật, đặt trong thư mục
    `nhan-vat/<id_nhan_vat>.png` (id lấy trong file .json, vd `nv-nam.png`,
    `nv-nu.png`). Dùng chính bộ ảnh mẫu anh/chị đã có.
-3. (Người dẫn nói) chuẩn bị **giọng mẫu** `giong/<id>.wav` (10–20 giây) để
-   clone giọng.
+3. (Người dẫn nói) chuẩn bị **giọng mẫu chia theo giới tính + độ tuổi**:
+   `giong/nam-lon.wav`, `giong/nu-lon.wav`, `giong/nam-teen.wav`,
+   `giong/nu-teen.wav`, `giong/nam-treem.wav`, `giong/nu-treem.wav`
+   (mỗi file 10–20 giây). Mọi nhân vật cùng giới+tuổi dùng chung một giọng;
+   muốn giọng riêng cho một người thì thêm `giong/<id-nhân-vật>.wav`.
 4. Chạy:
 
 ```bash

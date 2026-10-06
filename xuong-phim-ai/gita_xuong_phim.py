@@ -83,7 +83,8 @@ def buoc_anh(cfg, base):
         if out.exists():
             log("bỏ qua ảnh (đã có):", out.name); continue
         prompt = c.get("prompt_anh", "")
-        neg = "ảnh mờ, méo mặt, thừa ngón tay, biến dạng, chữ, logo lạ, low quality, deformed"
+        neg = c.get("negative") or ("hoạt hình, anime, cartoon, 2D, tranh vẽ, người que, ảnh tĩnh, mấp máy môi, "
+                                    "méo mặt, biến dạng, thừa ngón tay, mờ nhoè, chất lượng thấp")
         seed = int(str(c.get("seed") or nvs.get(c.get("nhan_vat"), {}).get("seed") or 0) or 0)
         g = torch.Generator("cuda").manual_seed(seed)
         if instantid_ok:
@@ -137,7 +138,10 @@ def buoc_giong(cfg, base):
         if not thoai: continue
         out = base / "giong" / f"{c['id']}.wav"
         if out.exists(): log("bỏ qua giọng (đã có):", out.name); continue
-        mau = Path("giong") / f"{c.get('nhan_vat')}.wav"
+        # Giọng chia theo giới tính + độ tuổi: giong/<gioi-tuoi>.wav (vd nam-lon.wav, nu-teen.wav)
+        key = c.get("giong_key") or c.get("nhan_vat")
+        mau = Path("giong") / f"{key}.wav"
+        if not mau.exists(): mau = Path("giong") / f"{c.get('nhan_vat')}.wav"   # dự phòng theo nhân vật
         if not mau.exists():
             log("THIẾU giọng mẫu:", mau, "→ bỏ qua giọng cảnh", c["id"]); continue
         tts.tts_to_file(text=thoai, speaker_wav=str(mau), language="vi", file_path=str(out))
