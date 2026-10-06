@@ -3473,3 +3473,24 @@ html[data-may="yeu"] *,html[data-may="yeu"] *::before,html[data-may="yeu"] *::af
 .tvc-ht-ic{width:40px;height:40px;border-radius:11px;background:var(--gita-mo-2);color:var(--gita-ink);display:grid;place-items:center}
 .tvc-ht-card b{font-size:14px;color:var(--ink)}
 .tvc-ht-card p{margin:0;color:var(--ink-3);line-height:1.5;flex:1}
+
+/* Gói chiều sâu CRM — điểm sức khoẻ, chuỗi chạm, playbook (tt-cskh) */
+#tvc-sk:checked ~ #tvc-p-sk,#tvc-cadence:checked ~ #tvc-p-cadence{display:block}
+#tvc-sk:checked ~ .tvc-tabbar label[for="tvc-sk"],#tvc-cadence:checked ~ .tvc-tabbar label[for="tvc-cadence"]{background:var(--gita);color:#fff;border-color:var(--gita)}
+.tvc-sk{display:inline-block;min-width:30px;text-align:center;font-size:12px;font-weight:800;color:#fff;background:var(--kc);border-radius:20px;padding:3px 9px}
+.tvc-pb{display:inline-block;font-size:10px;font-weight:800;color:#fff;background:var(--pc);border-radius:20px;padding:3px 8px;white-space:nowrap}
+.tvc-chieu{display:flex;flex-direction:column;gap:9px;margin-bottom:6px}
+.tvc-chieu-row{display:flex;align-items:center;gap:12px}
+.tvc-chieu-ten{min-width:170px;flex:none}
+.tvc-chieu-ten b{font-size:12.5px;display:block;color:var(--ink)}
+.tvc-chieu-bar{height:16px;border-radius:9px;min-width:40px}
+.tvc-cad{display:grid;gap:12px;grid-template-columns:1fr}
+@media(min-width:640px){.tvc-cad{grid-template-columns:1fr 1fr}}
+@media(min-width:960px){.tvc-cad{grid-template-columns:repeat(4,1fr)}}
+.tvc-cad-card{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--sc);border-radius:14px;padding:14px;box-shadow:0 1px 2px var(--phu-1)}
+.tvc-cad-card>b{font-size:13.5px;color:var(--ink);display:block}
+.tvc-step{display:flex;gap:9px;align-items:flex-start;padding:6px 0;border-top:1px solid var(--line-2)}
+.tvc-step:first-of-type{border-top:0}
+.tvc-step-n{width:20px;height:20px;border-radius:50%;color:#fff;font-size:11px;font-weight:800;display:grid;place-items:center;flex:none;margin-top:1px}
+.tvc-pb-ol{margin:4px 0 0;padding-left:18px}
+.tvc-pb-ol li{font-size:12px;color:var(--ink-2);line-height:1.5;margin-bottom:4px}
