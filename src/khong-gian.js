@@ -65,12 +65,12 @@ var G = window.G || {}; window.G = G;
     R04:{cap:5, ds:['tt-cskh','nang-luc-ns','do-luong-kh','ra-soat-kh',
                     'phong-ban','bang-viec','assessment','trai-nghiem-kh']},
     /* R05 Trưởng nhóm Coach */
-    R05:{cap:5, ds:['ban-coach','doi-ngu','bando-coach','bang-viec','xu-ly-ca','coach-deck']},
+    R05:{cap:5, ds:['nghe-coach','ban-coach','doi-ngu','bando-coach','bang-viec','xu-ly-ca','coach-deck']},
     /* R06 Senior Coach · R07 Coach */
-    R06:{cap:5, ds:['ban-coach','coach-deck','bando-coach','xu-ly-ca','bang-viec','doi-ngu']},
-    R07:{cap:5, ds:['ban-coach','coach-deck','bando-coach','xu-ly-ca','bang-viec','doi-ngu']},
+    R06:{cap:5, ds:['nghe-coach','ban-coach','coach-deck','bando-coach','xu-ly-ca','bang-viec','doi-ngu']},
+    R07:{cap:5, ds:['nghe-coach','ban-coach','coach-deck','bando-coach','xu-ly-ca','bang-viec','doi-ngu']},
     /* R08 Giáo viên */
-    R08:{cap:5, ds:['khoa-dao-tao','ban-coach','xu-ly-ca','bang-viec','sat-hach','coach-deck']},
+    R08:{cap:5, ds:['nghe-coach','khoa-dao-tao','ban-coach','xu-ly-ca','bang-viec','sat-hach','coach-deck']},
     /* R09 Mentor (lv9 — không mở pro_coach, dùng consult/ca) */
     R09:{cap:5, ds:['xu-ly-ca','do-luong-kh','ra-soat-kh','bang-viec','assessment','tt-cskh']},
     /* R10 Chuyên gia đánh giá */

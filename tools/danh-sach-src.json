@@ -160,6 +160,7 @@
     "src/khong-gian.js",
     "src/phong-ban.js",
     "src/nang-luc-ns.js",
+    "src/nghe-coach.js",
     "src/app.js",
     "src/chuyen-long-ghep.js",
     "src/may-khach.js",
