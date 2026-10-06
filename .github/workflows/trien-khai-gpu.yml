@@ -1,0 +1,57 @@
+# ═══════════════════════════════════════════════════════════════
+# GITA 365 · Xưởng phim — TRIỂN KHAI MÁY GPU "LÀM PHIM NHANH" (Modal)
+#
+# Bấm một nút: Actions → "Triển khai máy GPU làm phim nhanh" → Run workflow.
+#   · Lần ĐẦU: tick "Tải mô hình" (1–2 giờ, chạy một lần).
+#   · Các lần sau (khi mã đổi): để trống ô đó.
+#
+# SECRET cần đặt (Settings → Secrets and variables → Actions):
+#   MODAL_TOKEN_ID, MODAL_TOKEN_SECRET   — modal.com → Settings → API Tokens
+#   GPU_TOKEN                            — một chuỗi dài ngẫu nhiên, ĐẶT GIỐNG secret GPU_TOKEN của trạm Cloudflare
+#   TRAM_URL                             — địa chỉ trạm, vd https://gita-xuong-phim.<tên>.workers.dev
+# Kết thúc, log in ra địa chỉ "bat_dau" → đặt làm MODAL_URL cho trạm (wrangler secret put MODAL_URL).
+# ═══════════════════════════════════════════════════════════════
+name: Triển khai máy GPU làm phim nhanh
+
+on:
+  workflow_dispatch:
+    inputs:
+      tai_mo_hinh:
+        description: "Tải mô hình vào kho (lần đầu, 1–2 giờ)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  trien-khai:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    env:
+      MODAL_TOKEN_ID: ${{ secrets.MODAL_TOKEN_ID }}
+      MODAL_TOKEN_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Cài Modal
+        run: python -m pip install --quiet modal==1.6.1
+      - name: Đặt mật khẩu máy GPU
+        env:
+          GPU_TOKEN: ${{ secrets.GPU_TOKEN }}
+          TRAM_URL: ${{ secrets.TRAM_URL }}
+        run: |
+          test -n "$GPU_TOKEN" && test -n "$TRAM_URL" || { echo "Thiếu secret GPU_TOKEN hoặc TRAM_URL"; exit 1; }
+          modal secret create gita-xuong-phim GITA_GPU_TOKEN="$GPU_TOKEN" GITA_TRAM="$TRAM_URL" --force >/dev/null
+          echo "Đã đặt secret gita-xuong-phim."
+      - name: Tải mô hình vào kho (lần đầu)
+        if: ${{ inputs.tai_mo_hinh }}
+        run: modal run xuong-phim-ai/nhanh/gita_nhanh.py::tai_mo_hinh
+      - name: Triển khai máy GPU
+        run: |
+          modal deploy xuong-phim-ai/nhanh/gita_nhanh.py | tee trien-khai.txt
+          echo "────────────────────────────────────────"
+          echo "Địa chỉ đặt làm MODAL_URL cho trạm Cloudflare:"
+          grep -oE 'https://[^ ]*bat-dau[^ ]*\.modal\.run' trien-khai.txt | head -1

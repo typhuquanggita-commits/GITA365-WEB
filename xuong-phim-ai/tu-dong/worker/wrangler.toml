@@ -14,3 +14,6 @@ bucket_name = "gita-phim"
 #   wrangler secret put GH_PAT         # GitHub token (repo scope)
 #   wrangler secret put GH_OWNER       # vd: typhuquanggita-commits
 #   wrangler secret put GH_REPO        # vd: GITA365-WEB
+# Làm phim nhanh (máy GPU song song — xem ../../nhanh/README-nhanh.md):
+#   wrangler secret put GPU_TOKEN      # mật khẩu riêng trạm ↔ máy GPU
+#   wrangler secret put MODAL_URL      # địa chỉ bat_dau sau khi triển khai máy GPU

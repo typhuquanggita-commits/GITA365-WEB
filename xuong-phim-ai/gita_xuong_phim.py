@@ -840,15 +840,18 @@ def _font():
         if Path(f).exists(): return "Be Vietnam Pro"
     return "DejaVu Sans"
 
-def dung_ass(cfg, lich, out, phu_de=True, the_ten=True):
+def dung_ass(cfg, lich, out, phu_de=True, the_ten=True, W=1080, H=1920):
     """lich = [(cảnh, bắt đầu, thời lượng, [(thoại, giây giọng)…])] theo thời lượng THẬT sau khi ráp."""
     f = _font()
-    dau = ("[Script Info]\nScriptType: v4.00+\nPlayResX: 1080\nPlayResY: 1920\nWrapStyle: 2\n\n"
+    doc = H >= W                                            # dọc 9:16 hay ngang 16:9
+    toi_da = TOI_DA_DONG if doc else 42
+    co_pd, mv_pd, mv_ten = (56, 330, 560) if doc else (48, 70, 170)
+    dau = (f"[Script Info]\nScriptType: v4.00+\nPlayResX: {W}\nPlayResY: {H}\nWrapStyle: 2\n\n"
            "[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, "
            "Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, "
            "Alignment, MarginL, MarginR, MarginV, Encoding\n"
-           f"Style: PhuDe,{f},56,&H00FFFFFF,&H00FFFFFF,&H00101010,&H64000000,-1,0,0,0,100,100,0,0,1,4,1,2,80,80,330,1\n"
-           f"Style: TenNV,{f},46,&H00FFFFFF,&H00FFFFFF,&H005A2E0F,&H005A2E0F,-1,0,0,0,100,100,0,0,3,16,0,1,70,70,560,1\n\n"
+           f"Style: PhuDe,{f},{co_pd},&H00FFFFFF,&H00FFFFFF,&H00101010,&H64000000,-1,0,0,0,100,100,0,0,1,4,1,2,80,80,{mv_pd},1\n"
+           f"Style: TenNV,{f},46,&H00FFFFFF,&H00FFFFFF,&H005A2E0F,&H005A2E0F,-1,0,0,0,100,100,0,0,3,16,0,1,70,70,{mv_ten},1\n\n"
            "[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n")
     ev, da_gioi_thieu = [], set()
     nvs = nv_map(cfg)
@@ -865,7 +868,7 @@ def dung_ass(cfg, lich, out, phu_de=True, the_ten=True):
         if not phu_de: continue
         t = bd + 0.1
         for thoai, gl in cau:
-            k = cat_cau(thoai)
+            k = cat_cau(thoai, toi_da)
             tong = sum(len(" ".join(x)) for x in k) or 1
             for x in k:
                 d = max(0.8, gl * len(" ".join(x)) / tong)
@@ -947,13 +950,13 @@ def buoc_rap(cfg, base, W=1080, Hh=1920, fps=None):
         return r.returncode == 0
     the = hk.get("theTen", True)
     ass_ten = tmp / "the-ten.ass"
-    if the and dung_ass(cfg, lich, ass_ten, phu_de=False, the_ten=True) and khac(ass_ten, out):
+    if the and dung_ass(cfg, lich, ass_ten, phu_de=False, the_ten=True, W=W, H=Hh) and khac(ass_ten, out):
         log("đã gắn thẻ tên nhân vật")
     else:
         shutil.copy(tron, out)
     if hk.get("phuDe", True):
         ass_pd = tmp / "phu-de.ass"
-        if dung_ass(cfg, lich, ass_pd, phu_de=True, the_ten=the) and khac(ass_pd, base / "phim-cuoi-phude.mp4"):
+        if dung_ass(cfg, lich, ass_pd, phu_de=True, the_ten=the, W=W, H=Hh) and khac(ass_pd, base / "phim-cuoi-phude.mp4"):
             log("phim có phụ đề:", base / "phim-cuoi-phude.mp4")
     log("✅ PHIM CUỐI:", out, f"· {t:.1f}s")
 
