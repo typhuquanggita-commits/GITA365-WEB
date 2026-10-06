@@ -41,7 +41,7 @@ G.VIEWS = G.VIEWS || {};
 
   function tabViec(S) {
     var tong = S.viec.reduce(function (s, v) { return s + v[2]; }, 0);
-    var o = '<div class="ntv-note">' + ic('pulse', 'w-4 h-4') + ' <b>30 đầu việc chuẩn</b> · tổng trọng số <b>' + tong + ' điểm</b>. ' +
+    var o = '<div class="ntv-note">' + ic('pulse', 'w-4 h-4') + ' <b>' + S.viec.length + ' đầu việc chuẩn</b> · tổng trọng số <b>' + tong + ' điểm</b>. ' +
       'Điểm việc đạt chuẩn trong ngày cộng vào KPI/lương. Mỗi việc nêu rõ tiêu chuẩn, quy trình, cẩm nang và dấu hiệu đạt — không ai mơ hồ.</div>';
     o += '<div class="ntv-wrap"><table class="ntv-table"><thead><tr>' +
       ['STT', 'Đầu việc', 'Trọng số', 'Nhóm', 'Tiêu chuẩn', 'Quy trình', 'Cẩm nang', 'Video', 'Nhận diện ĐẠT'].map(function (c) { return '<th>' + h(c) + '</th>'; }).join('') + '</tr></thead><tbody>';
@@ -152,7 +152,7 @@ G.VIEWS = G.VIEWS || {};
     if (!(typeof G.can === 'function' && G.can(S.perm)))
       return U.lockCard('Trang chuyên môn hoá ' + S.capTenL + ' mở cho ' + S.vaiTen + ' trở lên. Đăng nhập đúng vai để xem.');
     var o = U.ph({ eyebrow: S.eyebrow, ic: 'crown', grad: 1, t: S.pageT, lead: S.pageLead });
-    var tabs = [['khung', 'A · Khung nghề'], ['viec', 'B · 30 đầu việc / KPI'], ['khach', S.cTab], ['daotao', 'D · Lộ trình đào tạo']];
+    var tabs = [['khung', 'A · Khung nghề'], ['viec', 'B · ' + S.viec.length + ' đầu việc / KPI'], ['khach', S.cTab], ['daotao', 'D · Lộ trình đào tạo']];
     o += tabs.map(function (t, i) { return '<input type="radio" name="ntvTab" id="ntv-' + t[0] + '" class="ntv-radio"' + (i === 0 ? ' checked' : '') + '>'; }).join('');
     o += '<div class="ntv-tabbar">' + tabs.map(function (t) { return '<label for="ntv-' + t[0] + '">' + h(t[1]) + '</label>'; }).join('') + '</div>';
     o += '<div class="ntv-panel" id="ntv-p-khung">' + tabKhung(S) + '</div>';
@@ -163,7 +163,8 @@ G.VIEWS = G.VIEWS || {};
   };
 
   /* Đăng ký view cho từng vai (sau khi G.NGHE_SPEC nạp ở data-nghe-vai.js). */
-  ['nghe-qlcm', 'nghe-mentor', 'nghe-danhgia', 'nghe-phantich'].forEach(function (v) {
+  ['nghe-qlcm', 'nghe-mentor', 'nghe-danhgia', 'nghe-phantich',
+   'nghe-tncoach', 'nghe-giamdoc', 'nghe-giaovien', 'nghe-daisu', 'nghe-quantri'].forEach(function (v) {
     G.VIEWS[v] = (function (key) { return function () { return G.ngheVaiView(key); }; })(v);
   });
 })();

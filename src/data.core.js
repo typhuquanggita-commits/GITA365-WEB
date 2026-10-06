@@ -755,6 +755,11 @@ G.NAV = [
     {v:'nghe-mentor', t:'Nghề Mentor (chuyên môn hoá)',  h:'Khung nghề · 30 đầu việc/KPI · lộ trình gỡ ca · đào tạo nâng cấp', ic:'crown', star:1, perm:'pro_assess', capMo:'chung'},
     {v:'nghe-danhgia',t:'Nghề Chuyên gia đánh giá',       h:'Khung nghề · 30 đầu việc/KPI · lộ trình đánh giá · đào tạo nâng cấp', ic:'crown', star:1, perm:'pro_assess', capMo:'chung'},
     {v:'nghe-phantich',t:'Nghề Phân tích dữ liệu',        h:'Khung nghề · 30 đầu việc/KPI · lộ trình phân tích · đào tạo nâng cấp', ic:'crown', star:1, perm:'nghe_chung', capMo:'chung'},
+    {v:'nghe-tncoach', t:'Nghề Trưởng nhóm Coach',         h:'Khung nghề · 40 đầu việc/KPI · lộ trình đội · đào tạo nâng cấp', ic:'crown', star:1, perm:'pro_assign', capMo:'chung'},
+    {v:'nghe-giamdoc', t:'Nghề Giám đốc',                  h:'Khung nghề · 30 đầu việc điều hành · lộ trình kết quả · đào tạo', ic:'crown', star:1, perm:'dh_toan_he', capMo:'chung'},
+    {v:'nghe-giaovien',t:'Nghề Giáo viên',                 h:'Khung nghề · 30 đầu việc/KPI · lộ trình học viên · đào tạo', ic:'crown', star:1, perm:'mc_duyet', capMo:'chung'},
+    {v:'nghe-daisu',   t:'Nghề Đại sứ giới thiệu',          h:'Khung nghề · 30 đầu việc/hoa hồng · lộ trình giới thiệu · đào tạo', ic:'crown', star:1, perm:'ctv_hoa_hong', capMo:'chung'},
+    {v:'nghe-quantri', t:'Nghề Quản trị hệ thống',          h:'Khung nghề · 30 đầu việc vận hành · lộ trình vận hành · đào tạo', ic:'crown', star:1, perm:'qt_trang', capMo:'chung'},
     /* Bảng đăng ký hoạt động — khoá ở pro_coach vì nó phơi toàn bộ quy
        trình nội bộ: ai làm gì, hạn bao lâu, không ai làm thì rơi đi đâu. */
     /* Diễn thử — khoá pro_coach. Cột phải của mỗi lượt là câu người

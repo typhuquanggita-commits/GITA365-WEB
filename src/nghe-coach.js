@@ -66,43 +66,54 @@ G.VIEWS = G.VIEWS || {};
     { ten: 'Dẫn dắt & giao nhiệm vụ', c: '#0B6675' },
     { ten: 'Nghiệm thu & bằng chứng', c: '#0B7350' },
     { ten: 'Chăm sóc & giữ đèn', c: '#B4720F' },
-    { ten: 'Ghi nhận & cải tiến', c: '#5140B4' }
+    { ten: 'Ghi nhận & cải tiến', c: '#5140B4' },
+    { ten: 'Nâng cao & phối hợp', c: '#BE0E16' }
   ];
   var VIEC = [
-    [0, 'Rà soát gia đình cần đồng hành hôm nay', 3, 'Mở đúng danh sách, không sót nhà đèn đỏ', 'Mở Trung tâm CSKH → tab Hôm nay', 'tt-cskh', 'Đã xem hết, đánh dấu ưu tiên'],
-    [0, 'Xem đèn gia đình, ưu tiên đèn đỏ', 4, 'Nhà đèn đỏ lên đầu danh sách', 'Xem điểm đèn, xếp thứ tự', 'do-luong-kh', 'Danh sách đã xếp theo đèn'],
-    [0, 'Chuẩn bị giáo cụ / bản vẽ cho buổi', 3, 'Mỗi buổi có công cụ phù hợp', 'Chọn ô bản vẽ theo chủ đề', 'ban-ve', 'Có giáo cụ trước khi vào buổi'],
-    [1, 'Mở buổi đúng nhịp đã hẹn', 4, 'Đúng ngày giờ cadence 21/90', 'Mở buổi trên bàn Coach', 'ban-coach', 'Buổi mở đúng hạn, có log'],
+    [0, 'Rà soát gia đình cần đồng hành hôm nay', 2, 'Mở đúng danh sách, không sót nhà đèn đỏ', 'Mở Trung tâm CSKH → tab Hôm nay', 'tt-cskh', 'Đã xem hết, đánh dấu ưu tiên'],
+    [0, 'Xem đèn gia đình, ưu tiên đèn đỏ', 3, 'Nhà đèn đỏ lên đầu danh sách', 'Xem điểm đèn, xếp thứ tự', 'do-luong-kh', 'Danh sách đã xếp theo đèn'],
+    [0, 'Chuẩn bị giáo cụ / bản vẽ cho buổi', 2, 'Mỗi buổi có công cụ phù hợp', 'Chọn ô bản vẽ theo chủ đề', 'ban-ve', 'Có giáo cụ trước khi vào buổi'],
+    [1, 'Mở buổi đúng nhịp đã hẹn', 3, 'Đúng ngày giờ cadence 21/90', 'Mở buổi trên bàn Coach', 'ban-coach', 'Buổi mở đúng hạn, có log'],
     [1, 'Chẩn đoán hiện trạng gia đình', 5, 'Đọc đúng nút thắt thật của nhà', 'Soi theo bản đồ coaching', 'bando-coach', 'Nút thắt được gọi tên'],
-    [1, 'Định vị tầng của nhà', 3, 'Đúng tầng theo hiện trạng', 'Đối chiếu năm tầng', 'coach-5-tang', 'Tầng xác định có căn cứ'],
+    [1, 'Định vị tầng của nhà', 2, 'Đúng tầng theo hiện trạng', 'Đối chiếu năm tầng', 'coach-5-tang', 'Tầng xác định có căn cứ'],
     [1, 'Ghi mục tiêu buổi', 2, 'Mỗi buổi một mục tiêu đo được', 'Ghi mục tiêu vào bảng việc', 'bang-viec', 'Có mục tiêu rõ trước khi dẫn'],
-    [1, 'Lắng nghe không phán xét', 3, 'Để nhà nói, không áp đặt', 'Theo chuẩn ngôn ngữ dẫn dắt', 'chuan-ngon-ngu', 'Nhà cảm thấy được lắng nghe'],
-    [2, 'Dựng lộ trình cá nhân hoá 5 tầng', 6, 'Lộ trình bám đúng nhà', 'Dựng theo bản đồ coaching', 'bando-coach', 'Nhà thấy đúng đường của mình'],
-    [2, 'Giao nhiệm vụ đúng sức nhà', 6, 'Vừa sức, có hạn, đo được', 'Giao theo con đường nhiệm vụ', 'con-duong', 'Nhiệm vụ rõ, nhà nhận được'],
-    [2, 'Hướng dẫn công cụ / tài liệu', 3, 'Nhà biết dùng tài liệu đã giao', 'Mở kho tài liệu phù hợp', 'kho-tai-lieu', 'Nhà dùng được công cụ'],
-    [2, 'Điểm chạm WOW trong buổi', 3, 'Tối thiểu 1 điểm chạm/buổi', 'Chọn điểm chạm đúng nhịp', 'diem-cham-1000', 'Nhà phản hồi tích cực'],
-    [2, 'Chốt cam kết tuần / chu kỳ', 3, 'Nhà cam kết việc cụ thể', 'Chốt trên bảng việc', 'bang-viec', 'Có cam kết ghi lại'],
+    [1, 'Lắng nghe không phán xét', 2, 'Để nhà nói, không áp đặt', 'Theo chuẩn ngôn ngữ dẫn dắt', 'chuan-ngon-ngu', 'Nhà cảm thấy được lắng nghe'],
+    [2, 'Dựng lộ trình cá nhân hoá 5 tầng', 5, 'Lộ trình bám đúng nhà', 'Dựng theo bản đồ coaching', 'bando-coach', 'Nhà thấy đúng đường của mình'],
+    [2, 'Giao nhiệm vụ đúng sức nhà', 4, 'Vừa sức, có hạn, đo được', 'Giao theo con đường nhiệm vụ', 'con-duong', 'Nhiệm vụ rõ, nhà nhận được'],
+    [2, 'Hướng dẫn công cụ / tài liệu', 2, 'Nhà biết dùng tài liệu đã giao', 'Mở kho tài liệu phù hợp', 'kho-tai-lieu', 'Nhà dùng được công cụ'],
+    [2, 'Điểm chạm WOW trong buổi', 2, 'Tối thiểu 1 điểm chạm/buổi', 'Chọn điểm chạm đúng nhịp', 'diem-cham-1000', 'Nhà phản hồi tích cực'],
+    [2, 'Chốt cam kết tuần / chu kỳ', 2, 'Nhà cam kết việc cụ thể', 'Chốt trên bảng việc', 'bang-viec', 'Có cam kết ghi lại'],
     [2, 'Cập nhật giai đoạn coaching', 2, 'Giai đoạn phản ánh đúng thực tế', 'Đẩy giai đoạn sau mỗi buổi', 'bando-coach', 'Giai đoạn khớp thực tế'],
-    [3, 'Nghiệm thu nhiệm vụ bằng bằng chứng', 6, 'Không bằng chứng = chưa đạt', 'Nghiệm thu theo chuẩn điện tử', 'bang-chung', 'Nhiệm vụ đóng có bằng chứng'],
-    [3, 'Chấm kết quả theo chuẩn', 4, 'Điểm phản ánh đúng thực tế', 'Chấm theo khung đo lường', 'do-luong-kh', 'Điểm có căn cứ'],
-    [3, 'Ghi dữ liệu buổi coaching', 3, 'Mỗi buổi một bản ghi', 'Ghi ngay sau buổi', 'bang-viec', 'Buổi nào cũng có dữ liệu'],
-    [3, 'Thu bằng chứng khách xác nhận', 3, 'Có xác nhận của gia đình', 'Lưu xác nhận vào hồ sơ', 'bang-chung', 'Có bằng chứng nhà xác nhận'],
-    [3, 'Đóng việc kèm bằng chứng', 3, 'Bằng chứng ≥20 ký tự', 'Đóng trên bảng công việc', 'bang-viec', 'Việc đóng có bằng chứng'],
+    [3, 'Nghiệm thu nhiệm vụ bằng bằng chứng', 5, 'Không bằng chứng = chưa đạt', 'Nghiệm thu theo chuẩn điện tử', 'bang-chung', 'Nhiệm vụ đóng có bằng chứng'],
+    [3, 'Chấm kết quả theo chuẩn', 3, 'Điểm phản ánh đúng thực tế', 'Chấm theo khung đo lường', 'do-luong-kh', 'Điểm có căn cứ'],
+    [3, 'Ghi dữ liệu buổi coaching', 2, 'Mỗi buổi một bản ghi', 'Ghi ngay sau buổi', 'bang-viec', 'Buổi nào cũng có dữ liệu'],
+    [3, 'Thu bằng chứng khách xác nhận', 2, 'Có xác nhận của gia đình', 'Lưu xác nhận vào hồ sơ', 'bang-chung', 'Có bằng chứng nhà xác nhận'],
+    [3, 'Đóng việc kèm bằng chứng', 2, 'Bằng chứng ≥20 ký tự', 'Đóng trên bảng công việc', 'bang-viec', 'Việc đóng có bằng chứng'],
     [3, 'Cập nhật đèn gia đình', 2, 'Đèn phản ánh đúng sức khoẻ nhà', 'Chấm lại đèn sau buổi', 'do-luong-kh', 'Đèn được cập nhật'],
-    [4, 'Chăm gia đình đèn đỏ trong ngày', 6, 'Gọi trong ngày, có giải pháp', 'Bật playbook cứu nhà', 'van-hanh-cham-soc', 'Nhà được cứu, đèn cải thiện'],
-    [4, 'Chạm đúng nhịp 21/90', 4, 'Đúng bước, đúng ngày của vòng nhắc', 'Làm bước kế của vòng nhắc', 'vong-nhac', 'Bước chạm thực hiện đúng hạn'],
-    [4, 'Nhắc nhiệm vụ nhà chưa làm', 3, 'Nhắc nhẹ, giữ động lực', 'Theo bảng việc của nhà', 'bang-viec', 'Nhà quay lại làm nhiệm vụ'],
-    [4, 'Hỏi thăm tiến bộ, giữ lửa', 3, 'Chạm giữ đèn xanh', 'Theo nhịp chăm sóc', 'van-hanh-cham-soc', 'Nhà giữ động lực'],
+    [4, 'Chăm gia đình đèn đỏ trong ngày', 5, 'Gọi trong ngày, có giải pháp', 'Bật playbook cứu nhà', 'van-hanh-cham-soc', 'Nhà được cứu, đèn cải thiện'],
+    [4, 'Chạm đúng nhịp 21/90', 3, 'Đúng bước, đúng ngày của vòng nhắc', 'Làm bước kế của vòng nhắc', 'vong-nhac', 'Bước chạm thực hiện đúng hạn'],
+    [4, 'Nhắc nhiệm vụ nhà chưa làm', 2, 'Nhắc nhẹ, giữ động lực', 'Theo bảng việc của nhà', 'bang-viec', 'Nhà quay lại làm nhiệm vụ'],
+    [4, 'Hỏi thăm tiến bộ, giữ lửa', 2, 'Chạm giữ đèn xanh', 'Theo nhịp chăm sóc', 'van-hanh-cham-soc', 'Nhà giữ động lực'],
     [4, 'Xin giới thiệu khi nhà hài lòng', 2, 'Khi nhà hài lòng rõ', 'Hệ một nhà giới thiệu một nhà', 'tt-cskh', 'Có lời giới thiệu mới'],
-    [5, 'Cập nhật hồ sơ lộ trình nhà', 3, 'Hồ sơ phản ánh đúng chặng', 'Ghi vào bản đồ coaching', 'bando-coach', 'Hồ sơ lộ trình cập nhật'],
+    [5, 'Cập nhật hồ sơ lộ trình nhà', 2, 'Hồ sơ phản ánh đúng chặng', 'Ghi vào bản đồ coaching', 'bando-coach', 'Hồ sơ lộ trình cập nhật'],
     [5, 'Chốt ngày vào KPI', 2, 'Chốt cuối ngày', 'Bấm chốt ngày', 'kpi-toi', 'Ngày đã chốt vào KPI tháng'],
     [5, 'Ghi sáng kiến cải tiến', 2, 'Tối thiểu 1 ý/tuần', 'Ghi ở cột sáng kiến', 'bang-viec', 'Có sáng kiến được lưu'],
     [5, 'Học 1 kịch bản / điểm chạm mới', 2, 'Mỗi ngày học thêm', 'Đọc kho điểm chạm', 'diem-cham-1000', 'Áp được vào buổi thật'],
-    [5, 'Tự soi buổi khó qua Hành lang', 2, 'Buổi khó được soi lại', 'Mở Hành lang thành công', 'hanh-lang', 'Có bài học rút ra']
+    [5, 'Tự soi buổi khó qua Hành lang', 2, 'Buổi khó được soi lại', 'Mở Hành lang thành công', 'hanh-lang', 'Có bài học rút ra'],
+    [6, 'Phối hợp bàn giao với Tư vấn', 3, 'Bàn giao sạch, không mất thông tin', 'Nhận & đối chiếu hồ sơ từ Tư vấn', 'tt-cskh', 'Hồ sơ bàn giao đủ, không hỏi lại'],
+    [6, 'Đồng bộ với Mentor khi ca khó', 2, 'Ca khó chuyển đúng lúc', 'Đánh dấu ca cần Mentor', 'xu-ly-ca', 'Ca khó được phối hợp gỡ'],
+    [6, 'Dự giờ chéo, học Coach khác', 2, 'Mỗi tuần dự ≥1 buổi', 'Dự giờ theo lịch', 'ban-coach', 'Có ghi nhận học hỏi'],
+    [6, 'Dựng kịch bản riêng cho nhà khó', 3, 'Kịch bản bám đúng nhà', 'Soạn theo xương sống phương pháp', 'phuong-phap', 'Có kịch bản riêng cho nhà khó'],
+    [6, 'Đo mức độ gắn bó của nhà', 2, 'Phát hiện nguội sớm', 'Chấm theo khung đo lường', 'do-luong-kh', 'Có điểm gắn bó cập nhật'],
+    [6, 'Lập kế hoạch nâng tầng cho nhà', 2, 'Có lộ trình lên tầng rõ', 'Dựng theo năm tầng', 'coach-5-tang', 'Nhà có kế hoạch lên tầng'],
+    [6, 'Chuẩn hoá điểm chạm hiệu quả', 2, 'Điểm chạm tốt được lưu lại', 'Ghi vào kho điểm chạm', 'diem-cham-1000', 'Có điểm chạm chuẩn mới'],
+    [6, 'Theo dõi nhà sau khi lên tầng', 2, 'Không bỏ rơi sau khi lên tầng', 'Chạm giữ nhịp tầng mới', 'van-hanh-cham-soc', 'Nhà ổn định ở tầng mới'],
+    [6, 'Báo cáo tuần cho Trưởng nhóm', 2, 'Báo đúng, có đề xuất', 'Tổng hợp & gửi tuần', 'bang-viec', 'Báo cáo tuần được gửi'],
+    [6, 'Tự chấm năng lực theo 6 trụ', 2, 'Trung thực, có kế hoạch cải thiện', 'Mở màn Năng lực', 'nang-luc-ns', 'Có tự đánh giá tuần']
   ];
   function tabViec() {
     var tong = VIEC.reduce(function (s, v) { return s + v[2]; }, 0);
-    var o = '<div class="ntv-note">' + ic('pulse', 'w-4 h-4') + ' <b>30 đầu việc chuẩn</b> · tổng trọng số <b>' + tong + ' điểm</b>. ' +
+    var o = '<div class="ntv-note">' + ic('pulse', 'w-4 h-4') + ' <b>40 đầu việc chuẩn</b> · tổng trọng số <b>' + tong + ' điểm</b>. ' +
       'Điểm việc đạt chuẩn trong ngày cộng vào KPI/lương. Mỗi việc nêu rõ tiêu chuẩn, quy trình, cẩm nang và dấu hiệu đạt — không ai mơ hồ.</div>';
     o += '<div class="ntv-wrap"><table class="ntv-table"><thead><tr>' +
       ['STT', 'Đầu việc', 'Trọng số', 'Nhóm', 'Tiêu chuẩn', 'Quy trình', 'Cẩm nang', 'Video', 'Nhận diện ĐẠT'].map(function (c) { return '<th>' + h(c) + '</th>'; }).join('') + '</tr></thead><tbody>';
@@ -235,8 +246,8 @@ G.VIEWS = G.VIEWS || {};
       return U.lockCard('Trang chuyên môn hoá nghề Coach mở cho Coach trở lên. Đăng nhập đúng vai để xem.');
     var o = U.ph({ eyebrow: 'NGHỀ COACH · CHUYÊN MÔN HOÁ SÂU', ic: 'crown', grad: 1,
       t: 'Chuẩn nghề Coach — từ khung nghề tới việc hằng ngày, lộ trình gia đình và đào tạo',
-      lead: 'Bốn module: khung nghề (vai trò · quyền · hiến pháp · KPI · chứng nhận) · 30 đầu việc tính KPI/lương · lộ trình đồng hành gia đình 5 giai đoạn · lộ trình đào tạo nâng cấp. Phần nặng nối thẳng màn chuyên sâu.' });
-    var tabs = [['khung', 'A · Khung nghề'], ['viec', 'B · 30 đầu việc / KPI'], ['khach', 'C · Lộ trình gia đình'], ['daotao', 'D · Lộ trình đào tạo']];
+      lead: 'Bốn module: khung nghề (vai trò · quyền · hiến pháp · KPI · chứng nhận) · 40 đầu việc tính KPI/lương · lộ trình đồng hành gia đình 5 giai đoạn · lộ trình đào tạo nâng cấp. Phần nặng nối thẳng màn chuyên sâu.' });
+    var tabs = [['khung', 'A · Khung nghề'], ['viec', 'B · 40 đầu việc / KPI'], ['khach', 'C · Lộ trình gia đình'], ['daotao', 'D · Lộ trình đào tạo']];
     o += tabs.map(function (t, i) { return '<input type="radio" name="ntvTab" id="ntv-' + t[0] + '" class="ntv-radio"' + (i === 0 ? ' checked' : '') + '>'; }).join('');
     o += '<div class="ntv-tabbar">' + tabs.map(function (t) { return '<label for="ntv-' + t[0] + '">' + h(t[1]) + '</label>'; }).join('') + '</div>';
     o += '<div class="ntv-panel" id="ntv-p-khung">' + tabKhung() + '</div>';

@@ -51,7 +51,7 @@ var G = window.G || {}; window.G = G;
 
   /* ── KHỐI NGHIỆP VỤ — ứng viên theo vai, renderer cắt theo cap ──
      Ứng viên luôn nhiều hơn cap một chút, để sau khi lọc quyền vẫn đủ. */
-  var AZ10 = ['phan-quyen','phong-ban','tai-chinh-qt','nang-luc-ns','studio',
+  var AZ10 = ['nghe-quantri','phan-quyen','phong-ban','tai-chinh-qt','nang-luc-ns','studio',
               'crm','noi-dung-tiep-thi','bang-gia','la-chan-30','khoa-dao-tao',
               'bang-viec','dieu-hanh','truy-van-da-chieu','tang-truong'];
   G.KG_VIEC = {
@@ -59,18 +59,18 @@ var G = window.G || {}; window.G = G;
     R01:{cap:10, ds:AZ10},
     R02:{cap:10, ds:AZ10},
     /* R03 Giám đốc — 8 màn điều hành (đều là màn lv3 mở được) */
-    R03:{cap:8, ds:['phong-ban','nang-luc-ns','dieu-hanh','crm','tai-chinh-ceo','con-nguoi',
+    R03:{cap:8, ds:['nghe-giamdoc','phong-ban','nang-luc-ns','dieu-hanh','crm','tai-chinh-ceo','con-nguoi',
                     'khoa-dao-tao','bang-viec','do-luong-kh','giam-sat','tang-truong']},
     /* R04 Quản lý chuyên môn — giữ chuẩn nghề toàn đội */
     R04:{cap:5, ds:['nghe-qlcm','nang-luc-ns','tt-cskh','ra-soat-kh',
                     'phong-ban','do-luong-kh','bang-viec','assessment','trai-nghiem-kh']},
     /* R05 Trưởng nhóm Coach */
-    R05:{cap:5, ds:['nghe-coach','ban-coach','doi-ngu','bando-coach','bang-viec','xu-ly-ca','coach-deck']},
+    R05:{cap:5, ds:['nghe-tncoach','doi-ngu','ban-coach','bando-coach','bang-viec','xu-ly-ca','coach-deck']},
     /* R06 Senior Coach · R07 Coach */
     R06:{cap:5, ds:['nghe-coach','ban-coach','coach-deck','bando-coach','xu-ly-ca','bang-viec','doi-ngu']},
     R07:{cap:5, ds:['nghe-coach','ban-coach','coach-deck','bando-coach','xu-ly-ca','bang-viec','doi-ngu']},
     /* R08 Giáo viên */
-    R08:{cap:5, ds:['nghe-coach','khoa-dao-tao','ban-coach','xu-ly-ca','bang-viec','sat-hach','coach-deck']},
+    R08:{cap:5, ds:['nghe-giaovien','khoa-dao-tao','sat-hach','ban-coach','xu-ly-ca','bang-viec']},
     /* R09 Mentor (lv9 — không mở pro_coach, dùng consult/ca) */
     R09:{cap:5, ds:['nghe-mentor','xu-ly-ca','do-luong-kh','ra-soat-kh','bang-viec','assessment','tt-cskh']},
     /* R10 Chuyên gia đánh giá */
@@ -80,7 +80,9 @@ var G = window.G || {}; window.G = G;
        qua màn Phân quyền CRM) — cấp từng người, không mở đại trà. */
     R11:{cap:5, ds:['nghe-tu-van','tt-cskh','crm','ban-tu-van','pheu-chot','bang-viec','do-luong-kh']},
     /* R12 Phân tích dữ liệu (lv12 — bộ màn phân tích nghe_chung) */
-    R12:{cap:5, ds:['nghe-phantich','chieu-sau','ma-tran','giam-sat','tu-dong','phuong-phap','bo-nao','ra-soat']}
+    R12:{cap:5, ds:['nghe-phantich','chieu-sau','ma-tran','giam-sat','tu-dong','phuong-phap','bo-nao','ra-soat']},
+    /* R15 CTV / Đại sứ giới thiệu */
+    R15:{cap:5, ds:['nghe-daisu','dai-su','hoa-hong','su-kien','ket-noi','ve-tinh']}
   };
 
   /* Bộ mô tả cho cột trái. KHÔNG tự lọc quyền ở đây — chỉ trả danh sách
