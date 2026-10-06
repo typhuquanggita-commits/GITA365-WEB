@@ -65450,6 +65450,8 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   var TUOI = [['lon','Người lớn'],['teen','Thiếu niên'],['treem','Trẻ em']];
   function nhan(o,arr){ var f=arr.filter(function(x){return x[0]===o;})[0]; return f?f[1]:''; }
   function giongKey(gioi,tuoi){ return (gioi||'nam')+'-'+(tuoi||'lon'); }
+  function coLora(l){ return !!(l && String(l).trim() && String(l).indexOf('chưa')<0 && String(l).indexOf('(')!==0); }
+  function trigger(id){ return 'gita'+String(id||'').replace(/[^a-z0-9]/gi,'').toLowerCase(); }
   function giongTen(gioi,tuoi){ var m={ 'nam-lon':'Nam trầm ấm','nu-lon':'Nữ truyền cảm',
     'nam-teen':'Nam trẻ trong','nu-teen':'Nữ trẻ tươi','nam-treem':'Bé trai hồn nhiên','nu-treem':'Bé gái hồn nhiên' };
     return m[giongKey(gioi,tuoi)] || 'Nam trầm ấm'; }
@@ -65583,6 +65585,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     var nv=nvById(c.nvId)||{};
     var noi = c.loai==='nguoi' && (c.thoai||'').trim();
     var img = [nv.mota, nv.trangPhuc, c.boiCanh, c.may, 'khung dọc 9:16', QPROM].filter(Boolean).join(', ');
+    if(coLora(nv.lora)) img = trigger(nv.id)+', '+img;   /* từ khoá LoRA khoá đúng mặt */
     var vid = [c.chuyenDong||'(giữ tư thế tự nhiên)',
       noi?'đang nói, khẩu hình khớp lời, cử động đầu và tay tự nhiên':'diễn theo cảnh, chuyển động cơ thể tự nhiên',
       c.may, 'quay chuyển động mượt, sắc nét, người thật, không hoạt hình', (c.giay||5)+' giây'].filter(Boolean).join(', ');
@@ -65596,11 +65599,13 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       chuan:{ negative_chung:QNEG, phong_cach:'ảnh thật điện ảnh 9:16, nét căng, khớp khẩu hình với giọng' },
       pipeline:{ anh:'instantid_sdxl', i2v:'wan2.2_i2v', tts:'vixtts', lipsync:'latentsync', nang_net:'realesrgan_codeformer', muot:'rife', phu_de:'faster_whisper', rap:'ffmpeg', khung:'1080x1920', fps_xuat:30 },
       nhan_vat: (G.S.axNV||[]).map(function(n){ return {id:n.id,ten:n.ten,vai:n.vai,gioi:n.gioi,tuoi:n.tuoi,loai:n.loai,
-        mo_ta:n.mota,trang_phuc:n.trangPhuc,giong:n.giong,giong_key:giongKey(n.gioi,n.tuoi),seed:n.seed,lora:n.lora}; }),
+        mo_ta:n.mota,trang_phuc:n.trangPhuc,giong:n.giong,giong_key:giongKey(n.gioi,n.tuoi),seed:n.seed,
+        lora:n.lora, co_lora:coLora(n.lora), trigger:trigger(n.id)}; }),
       canh: p.canh.map(function(c,i){ var pr=promptCanh(c); var nv=nvById(c.nvId)||{};
         return { thu_tu:i+1, id:c.id, nhan_vat:c.nvId, loai:c.loai, boi_canh:c.boiCanh, may_quay:c.may,
           prompt_anh:pr.img, prompt_video:pr.vid, negative:pr.neg, thoai:c.thoai,
-          giong:nv.giong, giong_key:giongKey(nv.gioi,nv.tuoi), seed:nv.seed, lora:nv.lora,
+          giong:nv.giong, giong_key:giongKey(nv.gioi,nv.tuoi), seed:nv.seed,
+          lora:nv.lora, co_lora:coLora(nv.lora), trigger:trigger(nv.id),
           giay:c.giay||5, lip_sync: c.loai==='nguoi' && !!(c.thoai&&c.thoai.trim()), trang_thai:c.tt||'' }; })
     };
   }

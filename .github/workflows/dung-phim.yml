@@ -75,12 +75,15 @@ jobs:
           cfg = base64.b64decode("${CFG_B64}").decode("utf-8")
           pathlib.Path("cau-hinh.json").write_text(cfg, encoding="utf-8")
           subprocess.run(["git","clone","--depth","1","${REPO_URL}","repo"], check=True)
-          os.makedirs("nhan-vat",exist_ok=True); os.makedirs("giong",exist_ok=True)
+          os.makedirs("nhan-vat",exist_ok=True); os.makedirs("giong",exist_ok=True); os.makedirs("lora",exist_ok=True)
           for f in glob.glob("/kaggle/input/*/nhan-vat/*")+glob.glob("/kaggle/input/*/*.png"):
               try: shutil.copy(f, "nhan-vat/")
               except Exception: pass
           for f in glob.glob("/kaggle/input/*/giong/*")+glob.glob("/kaggle/input/*/*.wav"):
               try: shutil.copy(f, "giong/")
+              except Exception: pass
+          for f in glob.glob("/kaggle/input/*/lora/*")+glob.glob("/kaggle/input/*/*.safetensors"):
+              try: shutil.copy(f, "lora/")
               except Exception: pass
           subprocess.run(["pip","install","-q","diffusers>=0.30","transformers","accelerate",
               "TTS","imageio[ffmpeg]","opencv-python-headless","insightface","onnxruntime-gpu",

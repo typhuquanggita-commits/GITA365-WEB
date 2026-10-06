@@ -87,6 +87,15 @@ def buoc_anh(cfg, base):
                                     "méo mặt, biến dạng, thừa ngón tay, mờ nhoè, chất lượng thấp")
         seed = int(str(c.get("seed") or nvs.get(c.get("nhan_vat"), {}).get("seed") or 0) or 0)
         g = torch.Generator("cuda").manual_seed(seed)
+        # LoRA khuôn mặt (nếu đã train cho nhân vật này): lora/<id>.safetensors
+        da_lora = False
+        if c.get("co_lora"):
+            lpath = Path("lora") / f"{c.get('nhan_vat')}.safetensors"
+            if lpath.exists():
+                try: pipe_id.load_lora_weights(str(lpath.parent), weight_name=lpath.name); da_lora = True; log("nạp LoRA:", lpath.name)
+                except Exception as e: log("không nạp được LoRA", lpath.name, "(", str(e)[:80], ")")
+            else:
+                log("THIẾU LoRA", lpath, "→ sinh không có LoRA (mặt có thể lệch).")
         if instantid_ok:
             import cv2, numpy as np
             face_path = Path("nhan-vat") / f"{c.get('nhan_vat')}.png"
@@ -105,6 +114,9 @@ def buoc_anh(cfg, base):
             img = pipe_id(prompt=prompt, negative_prompt=neg, num_inference_steps=30,
                           height=1344, width=768, generator=g).images[0]
         img.save(out); log("ảnh xong:", out.name)
+        if da_lora:
+            try: pipe_id.unload_lora_weights()
+            except Exception: pass
 
 # ───────────────────────── 2 · ẢNH → VIDEO ─────────────────────────
 def buoc_video(cfg, base):
