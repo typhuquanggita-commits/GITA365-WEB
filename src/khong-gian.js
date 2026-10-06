@@ -62,8 +62,8 @@ var G = window.G || {}; window.G = G;
     R03:{cap:8, ds:['phong-ban','nang-luc-ns','dieu-hanh','crm','tai-chinh-ceo','con-nguoi',
                     'khoa-dao-tao','bang-viec','do-luong-kh','giam-sat','tang-truong']},
     /* R04 Quản lý chuyên môn — giữ chuẩn nghề toàn đội */
-    R04:{cap:5, ds:['tt-cskh','nang-luc-ns','do-luong-kh','ra-soat-kh',
-                    'phong-ban','bang-viec','assessment','trai-nghiem-kh']},
+    R04:{cap:5, ds:['nghe-qlcm','nang-luc-ns','tt-cskh','ra-soat-kh',
+                    'phong-ban','do-luong-kh','bang-viec','assessment','trai-nghiem-kh']},
     /* R05 Trưởng nhóm Coach */
     R05:{cap:5, ds:['nghe-coach','ban-coach','doi-ngu','bando-coach','bang-viec','xu-ly-ca','coach-deck']},
     /* R06 Senior Coach · R07 Coach */
@@ -72,15 +72,15 @@ var G = window.G || {}; window.G = G;
     /* R08 Giáo viên */
     R08:{cap:5, ds:['nghe-coach','khoa-dao-tao','ban-coach','xu-ly-ca','bang-viec','sat-hach','coach-deck']},
     /* R09 Mentor (lv9 — không mở pro_coach, dùng consult/ca) */
-    R09:{cap:5, ds:['xu-ly-ca','do-luong-kh','ra-soat-kh','bang-viec','assessment','tt-cskh']},
+    R09:{cap:5, ds:['nghe-mentor','xu-ly-ca','do-luong-kh','ra-soat-kh','bang-viec','assessment','tt-cskh']},
     /* R10 Chuyên gia đánh giá */
-    R10:{cap:5, ds:['assessment','do-luong-kh','ra-soat-kh','bang-viec','sat-hach','trai-nghiem-kh']},
+    R10:{cap:5, ds:['nghe-danhgia','assessment','do-luong-kh','ra-soat-kh','bang-viec','sat-hach','trai-nghiem-kh']},
     /* R11 Chuyên gia tư vấn — CRM là CÔNG CỤ CHĂM SÓC KHÁCH của Tư vấn,
        đặt trong Nghiệp vụ; chỉ hiện khi tài khoản được cấp CRM (G.S.crmMuc
        qua màn Phân quyền CRM) — cấp từng người, không mở đại trà. */
     R11:{cap:5, ds:['nghe-tu-van','tt-cskh','crm','ban-tu-van','pheu-chot','bang-viec','do-luong-kh']},
     /* R12 Phân tích dữ liệu (lv12 — bộ màn phân tích nghe_chung) */
-    R12:{cap:5, ds:['chieu-sau','ma-tran','giam-sat','tu-dong','phuong-phap','bo-nao','ra-soat']}
+    R12:{cap:5, ds:['nghe-phantich','chieu-sau','ma-tran','giam-sat','tu-dong','phuong-phap','bo-nao','ra-soat']}
   };
 
   /* Bộ mô tả cho cột trái. KHÔNG tự lọc quyền ở đây — chỉ trả danh sách

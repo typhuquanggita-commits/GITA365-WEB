@@ -751,6 +751,10 @@ G.NAV = [
        màn nằm gói app (luôn dựng được), nối thẳng các màn chuyên sâu. */
     {v:'nghe-tu-van', t:'Nghề Tư vấn (chuyên môn hoá)', h:'Khung nghề · 30 đầu việc/KPI · lộ trình khách · đào tạo nâng cấp', ic:'crown', star:1, perm:'pro_consult', capMo:'chung'},
     {v:'nghe-coach',  t:'Nghề Coach (chuyên môn hoá)',  h:'Khung nghề · 30 đầu việc/KPI · lộ trình gia đình · đào tạo nâng cấp', ic:'crown', star:1, perm:'pro_coach', capMo:'chung'},
+    {v:'nghe-qlcm',   t:'Nghề Quản lý chuyên môn',       h:'Khung nghề · 30 đầu việc/KPI · lộ trình giám sát · đào tạo nâng cấp', ic:'crown', star:1, perm:'pro_approve', capMo:'chung'},
+    {v:'nghe-mentor', t:'Nghề Mentor (chuyên môn hoá)',  h:'Khung nghề · 30 đầu việc/KPI · lộ trình gỡ ca · đào tạo nâng cấp', ic:'crown', star:1, perm:'pro_assess', capMo:'chung'},
+    {v:'nghe-danhgia',t:'Nghề Chuyên gia đánh giá',       h:'Khung nghề · 30 đầu việc/KPI · lộ trình đánh giá · đào tạo nâng cấp', ic:'crown', star:1, perm:'pro_assess', capMo:'chung'},
+    {v:'nghe-phantich',t:'Nghề Phân tích dữ liệu',        h:'Khung nghề · 30 đầu việc/KPI · lộ trình phân tích · đào tạo nâng cấp', ic:'crown', star:1, perm:'nghe_chung', capMo:'chung'},
     /* Bảng đăng ký hoạt động — khoá ở pro_coach vì nó phơi toàn bộ quy
        trình nội bộ: ai làm gì, hạn bao lâu, không ai làm thì rơi đi đâu. */
     /* Diễn thử — khoá pro_coach. Cột phải của mỗi lượt là câu người
