@@ -191,7 +191,7 @@ var G = window.G || {}; window.G = G;
 
     /* ══ CỤM C · SẢN XUẤT & AN TOÀN ══ */
     { key:'studio', so:'05', ic:'sparkle', c:'--t2', cum:'C', ten:'Quản trị xưởng phim / Studio',
-      man:'studio', nguon:'mau',
+      man:'studio-he', nguon:'mau',
       stats:function(){ return [
         {k:'Dự án video', v:'18', d:'trong tháng (mẫu)'},
         {k:'Đang dựng', v:'5', d:'khâu hậu kỳ (mẫu)', c:'#B4720F'},
@@ -203,8 +203,8 @@ var G = window.G || {}; window.G = G;
         ['Dựng','5','2','1,5 ngày','40%','Dựng phim','T5','VANG','Hậu kỳ'],
         ['Duyệt','2','1','0,3 ngày','70%','Giám đốc','T3','XANH','Chờ duyệt'],
         ['Phát hành','4','1','0,2 ngày','100%','Marketing','T6','XANH','Đã lên lịch'] ]}; },
-      nv:[['Duyệt kịch bản video','studio'],['Theo dõi tiến độ sản xuất','studio'],
-          ['Soát chuẩn thị giác 9:16','studio'],['Duyệt nội dung trước phát hành','studio'],
+      nv:[['Duyệt kịch bản video','studio'],['Theo dõi tiến độ sản xuất','studio-he'],
+          ['Soát chuẩn thị giác 9:16','studio-he'],['Duyệt nội dung trước phát hành','studio'],
           ['Quản kho tư liệu hình ảnh','thu-vien'],['Phân công đội sản xuất','phong-ban'],
           ['Đo hiệu quả video (view/chốt)','do-luong-kh'],['Phối studio với marketing','noi-dung-tiep-thi'],
           ['Duyệt ngân sách sản xuất','chi-phi'],['Báo cáo kết quả xưởng phim','do-luong-kh']] },

@@ -3783,3 +3783,28 @@ html[data-may="yeu"] *,html[data-may="yeu"] *::before,html[data-may="yeu"] *::af
 .gd-nvs{font-size:11px;font-weight:700;color:var(--m);padding:2px 9px;border-radius:999px;
   background:color-mix(in srgb,var(--m) 12%,transparent)}
 .gd-open{flex:none}
+
+/* ═══════════════ XƯỞNG PHIM / STUDIO · hệ điều hành chuyên môn ═══════════════ */
+.sx-radio{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;margin:0}
+.sx-tabbar{display:flex;gap:6px;overflow-x:auto;flex-wrap:wrap;padding:2px 2px 14px}
+.sx-tabbar label{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:12px;
+  border:1px solid var(--line);font-size:12.5px;font-weight:700;color:var(--ink-3);background:var(--surface);
+  cursor:pointer;white-space:nowrap}
+.sx-tabbar label:hover{color:var(--ink)}
+.sx-pan{display:none}
+#sx-qt:checked ~ #sx-p-qt,#sx-vt:checked ~ #sx-p-vt,#sx-cl:checked ~ #sx-p-cl,
+#sx-kh:checked ~ #sx-p-kh,#sx-cs:checked ~ #sx-p-cs,#sx-dl:checked ~ #sx-p-dl{display:block}
+#sx-qt:checked ~ .sx-tabbar label[for="sx-qt"],#sx-vt:checked ~ .sx-tabbar label[for="sx-vt"],
+#sx-cl:checked ~ .sx-tabbar label[for="sx-cl"],#sx-kh:checked ~ .sx-tabbar label[for="sx-kh"],
+#sx-cs:checked ~ .sx-tabbar label[for="sx-cs"],#sx-dl:checked ~ .sx-tabbar label[for="sx-dl"]{
+  background:var(--gita);color:#fff;border-color:var(--gita)}
+.sx-step{display:flex;gap:12px;padding:12px 2px;border-bottom:1px solid var(--line)}
+.sx-step:last-child{border-bottom:0}
+.sx-num{flex:none;width:28px;height:28px;border-radius:9px;display:grid;place-items:center;
+  font-weight:800;font-size:12.5px;background:var(--gita-mo-1);color:var(--gita-sau)}
+.sx-st-b{font-weight:700;color:var(--ink);font-size:13.5px}
+.sx-st-d{color:var(--ink-3);font-size:12.5px;line-height:1.55;margin-top:2px}
+.sx-meta{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.sx-chip{font-size:10.5px;font-weight:600;padding:2px 9px;border-radius:999px;
+  background:var(--surface-2);color:var(--ink-3);border:1px solid var(--line);white-space:nowrap}
+.sx-grp{font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--gita-sau)}
