@@ -169,12 +169,15 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     function tab(k,lbl,on){ return '<input type="radio" name="'+rid+'" id="'+rid+'-'+k+'"'+(on?' checked':'')+'>'+
       '<label for="'+rid+'-'+k+'" class="pb-tab">'+h(lbl)+'</label>'; }
 
+    /* Nhân sự THẬT: khớp vai của ban với tài khoản thật trong G.ACCOUNTS. */
     var nsRows = (m.ns||[]).map(function(r,i){
       var role=(G.ROLES?Object.keys(G.ROLES).map(function(k){return G.ROLES[k];}):[]).filter(function(x){return x.n===r[0];})[0];
       var col=role?role.c:'var(--gita)';
+      var acc=role?(G.ACCOUNTS||[]).filter(function(a){return a.role===role.id;})[0]:null;
+      var ten=acc?acc.ten:'(chưa gán người)', nha=acc?acc.nha:'';
       return '<tr><td class="mono dim">'+(i+1)+'</td>'+
-        '<td><span class="pb-vai" style="--vc:'+col+'">'+h(r[0])+'</span></td>'+
-        '<td class="mono">Bậc '+h(r[1])+'</td>'+
+        '<td><b>'+h(ten)+'</b>'+(nha?'<br><span class="tiny dim">'+h(nha)+'</span>':'')+'</td>'+
+        '<td><span class="pb-vai" style="--vc:'+col+'">'+h(r[0])+'</span><br><span class="tiny dim">Bậc '+h(r[1])+'</span></td>'+
         '<td>'+h(r[2])+'</td></tr>';
     }).join('');
 
@@ -204,7 +207,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
         tab('ns','Nhân sự',true)+tab('ag','Agent')+tab('man','Màn & công cụ')+
         tab('bc','Báo cáo')+tab('kho','Kho tài liệu')+tab('nq','Nội quy')+
         '<div class="pb-pan pb-ns">'+
-          '<table class="pb-tb"><thead><tr><th>STT</th><th>Vai</th><th>Cấp bậc</th><th>Nhiệm vụ</th></tr></thead>'+
+          '<table class="pb-tb"><thead><tr><th>STT</th><th>Họ tên</th><th>Vai · Cấp</th><th>Nhiệm vụ</th></tr></thead>'+
           '<tbody>'+(nsRows||'<tr><td colspan="4" class="dim">Chưa gán nhân sự</td></tr>')+'</tbody></table></div>'+
         '<div class="pb-pan"><div class="pb-ags">'+(agCards||'<p class="dim sm">Chưa phân công Agent</p>')+'</div></div>'+
         '<div class="pb-pan pb-manp"><div class="pb-mans">'+(manChips||'<span class="dim sm">—</span>')+'</div>'+
