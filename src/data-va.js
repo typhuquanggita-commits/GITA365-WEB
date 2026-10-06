@@ -2,12 +2,13 @@
    GITA 365 — DỮ LIỆU 10 MÀN CHI TIẾT VẬN HÀNH (Super Admin / Admin)
 
    G.VA_AREA: 10 mảng quản trị A–Z, mỗi mảng là một MÀN CHI TIẾT:
-     stats (4 ô số liệu) · bang (báo cáo nhanh, có đèn) · nv (10 nghiệp
-     vụ, mỗi nghiệp vụ mở thẳng màn thao tác) · man (màn gốc đầy đủ).
+     stats (4 ô số liệu) · bang (BÁO CÁO CHUYÊN SÂU — nhiều cột, có đèn) ·
+     nv (10 nghiệp vụ, mỗi nghiệp vụ mở thẳng màn thao tác) · man (màn gốc).
 
-   Phần ĐẾM ĐƯỢC lấy THẬT từ hệ (15 vai · 44 quyền · 16 ban · nhân sự ·
-   100 Agent). Số liệu kinh doanh / sản xuất tổng hợp là MẪU VẬN HÀNH
-   (ghi rõ nhãn) tới khi nối máy chủ. Mở cho qt_trang (Super Admin/Admin).
+   BẢNG ĐÃ NÂNG CẤP: mỗi bảng dày thêm 5 cột để đọc sâu hơn. Phần ĐẾM ĐƯỢC
+   lấy THẬT từ hệ (15 vai · 44 quyền · 16 ban · nhân sự · 100 Agent · điểm
+   vào từng ban); số liệu kinh doanh/sản xuất tổng hợp là MẪU VẬN HÀNH (ghi
+   rõ nhãn) tới khi nối máy chủ. Mở cho qt_trang (Super Admin/Admin).
    ═══════════════════════════════════════════════════════════════ */
 'use strict';
 var G = window.G || {}; window.G = G;
@@ -19,8 +20,12 @@ var G = window.G || {}; window.G = G;
   function soAgent(){ return G.DP_TRO_LY?G.DP_TRO_LY.length:100; }
   function quyenCua(r){ try{ return Object.keys(G.PERM).filter(function(k){ return r.lv<=G.PERM[k]; }).length; }catch(e){ return 0; } }
   function accCua(id){ return (G.ACCOUNTS||[]).filter(function(a){ return a.role===id; })[0]; }
-  function diemCua(acc){ try{ var d=(G.S&&G.S.nlDiem)?G.S.nlDiem[acc.u]:null;
-    if(!d || d.dv==null) return null; return Math.round(0.25*d.dv + 0.40*d.tt + 0.35*d.hs); }catch(e){ return null; } }
+  function nguongPerm(p,def){ try{ return (G.PERM&&G.PERM[p]!=null)?G.PERM[p]:def; }catch(e){ return def; } }
+  function chamDiem(acc){ try{ var d=(G.S&&G.S.nlDiem)?G.S.nlDiem[acc.u]:null; return (d&&d.dv!=null)?d:null; }catch(e){ return null; } }
+  function diemTong(d){ return Math.round(0.25*d.dv + 0.40*d.tt + 0.35*d.hs); }
+  function demRef(b,pre){ try{ return (b.troVao||[]).filter(function(x){ return String(x).indexOf(pre)===0; }).length; }catch(e){ return 0; } }
+
+  var crmTh = nguongPerm('crm_view',3), finTh = nguongPerm('fin_view',4), finPay = nguongPerm('fin_payout',3);
 
   G.VA_AREA = [
     /* ══ CỤM A · NGƯỜI & TỔ CHỨC ══ */
@@ -33,9 +38,13 @@ var G = window.G || {}; window.G = G;
         {k:'Tầng quản trị', v:'3', d:'trang · toàn hệ · nghề'} ]; },
       bang:function(){ var rows=(G.ROLES||[]).map(function(r){
           var acc=accCua(r.id);
-          return [r.id+' · '+(r.short||r.n), 'Bậc '+r.lv, acc?acc.ten:'(trống)', String(quyenCua(r)), acc?'XANH':'VANG'];
+          var tang = r.lv<=2?'Trang':(r.lv<=4?'Toàn hệ':'Nghề');
+          var crm = r.lv<=crmTh?'Có':'—';
+          var fin = r.lv<=finPay?'Duyệt chi':(r.lv<=finTh?'Chỉ xem':'—');
+          return [r.id+' · '+(r.short||r.n), 'Bậc '+r.lv, tang, acc?acc.ten:'(trống)', acc?acc.nha:'—',
+                  String(quyenCua(r)), crm, fin, acc?'Hoạt động':'Trống', acc?'XANH':'VANG'];
         });
-        return {cols:['Vai','Cấp','Nhân sự','Số quyền','Đèn'], den:4, rows:rows}; },
+        return {cols:['Vai','Cấp','Tầng','Nhân sự','Đơn vị','Số quyền','CRM','Tài chính','Trạng thái','Đèn'], den:9, rows:rows}; },
       nv:[['Soát toàn bộ vai & quyền (ma trận)','phan-quyen'],['Cấp quyền theo vai – cấp – tầng','phan-quyen'],
           ['Thu hồi quyền thừa / quá hạn','phan-quyen'],['Mở / khoá / xoá tài khoản','phan-quyen'],
           ['Soát quyền CRM từng bộ phận','phan-quyen'],['Kiểm tra quyền theo vai (giả lập)','kiem-theo-vai'],
@@ -50,8 +59,13 @@ var G = window.G || {}; window.G = G;
         {k:'Agent AI', v:String(soAgent()), d:'trợ lý nghiệp vụ (thật)'},
         {k:'Ban cần hỗ trợ', v:'4', d:'đèn vàng/đỏ (mẫu)', c:'#B4720F'} ]; },
       bang:function(){ var dd=['XANH','XANH','VANG','XANH','XANH','VANG','XANH','XANH','VANG','XANH','XANH','XANH','VANG','XANH','XANH','XANH'];
-        var rows=(G.H16_HE||[]).map(function(b,i){ return [b.ma, b.ten, String(3+(i%4)), dd[i%dd.length], (72+((i*7)%26))+'%']; });
-        return {cols:['Mã','Phòng ban','Nhân sự','Đèn','KPI'], den:3, rows:rows}; },
+        var rows=(G.H16_HE||[]).map(function(b,i){
+          var diem=(b.troVao||[]).length, man=demRef(b,'v:'), cong=demRef(b,'f:')+demRef(b,'t:'), tai=demRef(b,'d:')+demRef(b,'g:');
+          var den=dd[i%dd.length];
+          return [b.ma, b.ten, String(3+(i%4)), String(diem), String(man), String(cong), String(tai),
+                  (72+((i*7)%26))+'%', den, den==='XANH'?'Ổn định':(den==='VANG'?'Theo dõi':'Cần hỗ trợ')];
+        });
+        return {cols:['Mã','Phòng ban','Nhân sự','Điểm vào','Màn','Công cụ','Tài liệu','KPI','Đèn','Trạng thái'], den:8, rows:rows}; },
       nv:[['Nắm sơ đồ 16 ban & nhân sự','phong-ban'],['Duyệt cơ cấu & biên chế từng ban','phong-ban'],
           ['Phân công Agent cho ban','phong-ban'],['Giao & soát nhiệm vụ toàn hệ','man-cong-viec'],
           ['Soát dòng chảy công việc','bang-viec'],['Duyệt nội quy · văn hoá · tiêu chuẩn','luat-lam-viec'],
@@ -67,9 +81,12 @@ var G = window.G || {}; window.G = G;
         {k:'Chu kỳ', v:'Tháng', d:'thi nâng cấp'},
         {k:'Hạng', v:'5', d:'bậc mỗi nghề'} ]; },
       bang:function(){ var rows=(G.ROLES||[]).filter(function(r){return r.lv>=3&&r.lv<=12;})
-          .map(function(r){ var acc=accCua(r.id); var d=acc?diemCua(acc):null;
-            return [r.short||r.n, acc?acc.ten:'(trống)', acc?acc.nha:'—', d!=null?String(d):'Chưa chấm', d==null?'VANG':(d>=80?'XANH':(d>=60?'VANG':'DO'))]; });
-        return {cols:['Vai','Nhân sự','Đơn vị','Điểm','Đèn'], den:4, rows:rows}; },
+          .map(function(r){ var acc=accCua(r.id); var d=acc?chamDiem(acc):null; var t=d?diemTong(d):null;
+            var dx = t==null?'—':(t>=80?'Thăng hạng':(t>=60?'Giữ hạng':'Kèm thêm'));
+            var den = t==null?'VANG':(t>=80?'XANH':(t>=60?'VANG':'DO'));
+            return [r.short||r.n, acc?acc.ten:'(trống)', acc?acc.nha:'—', d?('Bậc '+(d.cap||1)):'—',
+                    d?String(d.dv):'—', d?String(d.tt):'—', d?String(d.hs):'—', t!=null?String(t):'Chưa chấm', den, dx]; });
+        return {cols:['Vai','Nhân sự','Đơn vị','Cấp','Chuyên môn','Thái độ','Kết quả','Điểm','Đèn','Đề xuất'], den:8, rows:rows}; },
       nv:[['Giao bài test đầu vào','sat-hach'],['Chấm & lưu điểm năng lực','nang-luc-ns'],
           ['Mở thi nâng cấp hàng tháng','sat-hach'],['Xét thăng hạng theo điểm','nang-luc-ns'],
           ['Đề xuất tăng lương / thưởng','nang-luc-ns'],['Theo dõi cảnh báo năng suất','nang-luc-ns'],
@@ -83,10 +100,12 @@ var G = window.G || {}; window.G = G;
         {k:'Đang học', v:'46', d:'nhân sự + khách (mẫu)', c:'var(--gita)'},
         {k:'Hoàn thành', v:'71%', d:'trung bình (mẫu)', c:'#0B7350'},
         {k:'Chứng nhận', v:'5 cấp', d:'mỗi nghề'} ]; },
-      bang:function(){ return {cols:['Chương trình','Đối tượng','Đang học','Hoàn thành'], den:-1, rows:[
-        ['Onboarding GITA','Nhân sự mới','12','85%'],['Nghiệp vụ Coach','Coach','9','72%'],
-        ['Nghiệp vụ Tư vấn','Tư vấn','7','78%'],['Làm việc cùng AI','Toàn đội','14','60%'],
-        ['Chương trình khách','Phụ huynh','4','66%'] ]}; },
+      bang:function(){ return {cols:['Chương trình','Đối tượng','Đang học','Hoàn thành','Thời lượng','Giảng viên','Chứng nhận','Đèn','Cập nhật'], den:7, rows:[
+        ['Onboarding GITA','Nhân sự mới','12','85%','2 tuần','QLCM','Cấp 1','XANH','Tuần này'],
+        ['Nghiệp vụ Coach','Coach','9','72%','6 tuần','TN Coach','Cấp 1–3','XANH','Tuần này'],
+        ['Nghiệp vụ Tư vấn','Tư vấn','7','78%','4 tuần','Tư vấn trưởng','Cấp 1–2','XANH','Hôm qua'],
+        ['Làm việc cùng AI','Toàn đội','14','60%','3 tuần','Phân tích','Chứng chỉ','VANG','Tuần này'],
+        ['Chương trình khách','Phụ huynh','4','66%','5 buổi','Coach','—','VANG','Tháng này'] ]}; },
       nv:[['Duyệt chương trình đào tạo','khoa-dao-tao'],['Theo dõi tiến độ đào tạo đội','khoa-dao-tao'],
           ['Soát chất lượng giảng dạy','sat-hach'],['Duyệt lộ trình nâng cấp từng vai','nang-luc-ns'],
           ['Theo dõi chứng nhận cấp độ','nang-luc-ns'],['Duyệt chương trình cho khách hàng','khoa-dao-tao'],
@@ -101,9 +120,12 @@ var G = window.G || {}; window.G = G;
         {k:'Giá trị phễu', v:'1,24 tỷ', d:'dự kiến (mẫu)', c:'var(--gita)'},
         {k:'Tỷ lệ chốt', v:'41%', d:'tháng này (mẫu)', c:'#0B7350'},
         {k:'Khách rủi ro', v:'8', d:'đèn đỏ (mẫu)', c:'#BE0E16'} ]; },
-      bang:function(){ return {cols:['Giai đoạn','Số khách','Giá trị','Tỷ lệ'], den:-1, rows:[
-        ['Mới','46','—','100%'],['Tư vấn','31','560 triệu','67%'],['Báo giá','19','410 triệu','41%'],
-        ['Đàm phán','11','260 triệu','24%'],['Chốt ký','7','180 triệu','15%'] ]}; },
+      bang:function(){ return {cols:['Giai đoạn','Số khách','Giá trị','Tỷ lệ','Giá trị TB','Thời gian ở','Phụ trách','Đèn','Xu hướng'], den:7, rows:[
+        ['Mới','46','—','100%','—','1,2 ngày','Tư vấn','XANH','▲'],
+        ['Tư vấn','31','560 triệu','67%','18 triệu','3,5 ngày','Tư vấn','XANH','▲'],
+        ['Báo giá','19','410 triệu','41%','21,6 triệu','4,1 ngày','Tư vấn','VANG','▬'],
+        ['Đàm phán','11','260 triệu','24%','23,6 triệu','5,8 ngày','Giám đốc','VANG','▼'],
+        ['Chốt ký','7','180 triệu','15%','25,7 triệu','2,0 ngày','Giám đốc','XANH','▲'] ]}; },
       nv:[['Nắm phễu bán hàng toàn hệ','crm'],['Soát quyền truy cập CRM','phan-quyen'],
           ['Theo dõi doanh thu & dự kiến chốt','crm'],['Nhận diện khách giá trị cao','crm'],
           ['Theo dõi khách rời / rủi ro','do-luong-kh'],['Soát chất lượng chăm sóc khách','trai-nghiem-kh'],
@@ -117,9 +139,12 @@ var G = window.G || {}; window.G = G;
         {k:'Chiến dịch', v:'6', d:'trong tháng (mẫu)', c:'var(--gita)'},
         {k:'Khách mới / tháng', v:'214', d:'từ marketing (mẫu)', c:'#0B7350'},
         {k:'Chi phí / khách', v:'168k', d:'CAC (mẫu)'} ]; },
-      bang:function(){ return {cols:['Kênh','Khách mới','Chi phí','Hiệu quả'], den:3, rows:[
-        ['Giới thiệu (CTV)','86','thấp','XANH'],['Nội dung / SEO','52','vừa','XANH'],
-        ['Mạng xã hội','41','vừa','VANG'],['Quảng cáo','28','cao','VANG'],['Sự kiện','7','cao','DO'] ]}; },
+      bang:function(){ return {cols:['Kênh','Tiếp cận','Khách mới','Chuyển đổi','Chi phí/khách','Doanh thu','ROI','Đèn','Xu hướng'], den:7, rows:[
+        ['Giới thiệu (CTV)','—','86','12,4%','92k','1,05 tỷ','×11','XANH','▲'],
+        ['Nội dung / SEO','18.400','52','3,1%','140k','620 triệu','×6','XANH','▲'],
+        ['Mạng xã hội','42.000','41','1,2%','196k','440 triệu','×4','VANG','▬'],
+        ['Quảng cáo','30.500','28','0,9%','268k','300 triệu','×2,8','VANG','▼'],
+        ['Sự kiện','1.200','7','5,8%','640k','95 triệu','×1,3','DO','▼'] ]}; },
       nv:[['Duyệt kế hoạch nội dung','noi-dung-tiep-thi'],['Soát chuỗi điểm chạm WOW','noi-dung-tiep-thi'],
           ['Duyệt kiến trúc thị giác','noi-dung-tiep-thi'],['Theo dõi hiệu quả từng kênh','do-luong-kh'],
           ['Duyệt ngân sách marketing','chi-phi'],['Soát chi phí / khách (CAC)','tai-chinh-qt'],
@@ -133,10 +158,12 @@ var G = window.G || {}; window.G = G;
         {k:'Gói dịch vụ', v:'12', d:'đang bán (mẫu)'},
         {k:'Gói bán chạy', v:'T3', d:'tháng này (mẫu)', c:'#0B7350'},
         {k:'Giá TB / gói', v:'14,5 tr', d:'mẫu' } ]; },
-      bang:function(){ return {cols:['Tầng','Sản phẩm','Giá (mẫu)','Trạng thái'], den:3, rows:[
-        ['T1','Khởi đầu – nền tảng','4,9 triệu','XANH'],['T2','Đồng hành cơ bản','9,8 triệu','XANH'],
-        ['T3','Chuyển hoá chuyên sâu','18 triệu','XANH'],['T4','Dẫn dắt nâng cao','32 triệu','VANG'],
-        ['T5','Khai phóng toàn diện','56 triệu','VANG'] ]}; },
+      bang:function(){ return {cols:['Tầng','Sản phẩm','Giá (mẫu)','Đã bán','Doanh thu','Biên LN','Hài lòng','Đèn','Xu hướng'], den:7, rows:[
+        ['T1','Khởi đầu – nền tảng','4,9 triệu','118','578 triệu','54%','4,6/5','XANH','▲'],
+        ['T2','Đồng hành cơ bản','9,8 triệu','86','843 triệu','51%','4,7/5','XANH','▲'],
+        ['T3','Chuyển hoá chuyên sâu','18 triệu','74','1,33 tỷ','49%','4,8/5','XANH','▲'],
+        ['T4','Dẫn dắt nâng cao','32 triệu','22','704 triệu','46%','4,7/5','VANG','▬'],
+        ['T5','Khai phóng toàn diện','56 triệu','9','504 triệu','44%','4,9/5','VANG','▼'] ]}; },
       nv:[['Soát cấu trúc 5 tầng sản phẩm','bang-gia'],['Duyệt bảng giá & học phí','bang-gia'],
           ['Thiết kế / sửa gói dịch vụ','bang-gia'],['Theo dõi gói bán chạy','do-luong-kh'],
           ['Soát biên lợi nhuận từng gói','tai-chinh-qt'],['Duyệt khuyến mãi / ưu đãi','bang-gia'],
@@ -150,10 +177,12 @@ var G = window.G || {}; window.G = G;
         {k:'Dòng tiền ròng', v:'+480 triệu', d:'mẫu', c:'#0B7350'},
         {k:'Công nợ', v:'310 triệu', d:'mẫu', c:'#B4720F'},
         {k:'Tuân thủ thuế', v:'96%', d:'mẫu', c:'#0B7350'} ]; },
-      bang:function(){ return {cols:['Khoản mục','Giá trị (mẫu)','Trạng thái','So kỳ trước'], den:2, rows:[
-        ['Doanh thu','2,15 tỷ','XANH','▲ 8%'],['Chi phí vận hành','0,75 tỷ','XANH','▲ 2%'],
-        ['Quỹ lương','0,58 tỷ','XANH','— 0%'],['Công nợ phải thu','0,31 tỷ','VANG','▼ 6%'],
-        ['Thuế phải nộp kỳ tới','0,12 tỷ','VANG','▲ 4%'] ]}; },
+      bang:function(){ return {cols:['Khoản mục','Giá trị (mẫu)','Kỳ trước','Kế hoạch','Đạt KH','Ghi chú','Phụ trách','Đèn','Xu hướng'], den:7, rows:[
+        ['Doanh thu','2,15 tỷ','1,99 tỷ','2,10 tỷ','102%','Vượt nhẹ','Giám đốc','XANH','▲'],
+        ['Chi phí vận hành','0,75 tỷ','0,74 tỷ','0,72 tỷ','104%','Theo dõi','Tài chính','VANG','▲'],
+        ['Quỹ lương','0,58 tỷ','0,58 tỷ','0,58 tỷ','100%','Đúng kế hoạch','Tài chính','XANH','▬'],
+        ['Công nợ phải thu','0,31 tỷ','0,33 tỷ','0,25 tỷ','124%','Cần thu hồi','Kế toán','VANG','▼'],
+        ['Thuế phải nộp kỳ tới','0,12 tỷ','0,11 tỷ','0,12 tỷ','100%','Đúng hạn','Kế toán','XANH','▲'] ]}; },
       nv:[['Soát thu – chi toàn hệ','tai-chinh-qt'],['Duyệt chi vượt thẩm quyền','chi-phi'],
           ['Soát bảng lương & quỹ lương','ke-toan-thue'],['Kiểm tuân thủ thuế','ke-toan-thue'],
           ['Theo dõi công nợ & thu hồi','tai-chinh-qt'],['Đối soát doanh thu – CRM','crm'],
@@ -168,10 +197,12 @@ var G = window.G || {}; window.G = G;
         {k:'Đang dựng', v:'5', d:'khâu hậu kỳ (mẫu)', c:'#B4720F'},
         {k:'Đã phát hành', v:'11', d:'9:16 (mẫu)', c:'#0B7350'},
         {k:'Thời gian / video', v:'3,2 ngày', d:'trung bình (mẫu)'} ]; },
-      bang:function(){ return {cols:['Khâu','Số dự án','Trạng thái','Ghi chú'], den:2, rows:[
-        ['Kịch bản','4','XANH','Đúng tiến độ'],['Quay / thu','3','VANG','Chờ lịch'],
-        ['Dựng','5','VANG','Hậu kỳ'],['Duyệt','2','XANH','Chờ Giám đốc'],
-        ['Phát hành','4','XANH','Đã lên lịch'] ]}; },
+      bang:function(){ return {cols:['Khâu','Số dự án','Nhân sự','Thời gian','Tiến độ','Phụ trách','Hạn','Đèn','Ghi chú'], den:7, rows:[
+        ['Kịch bản','4','2','0,5 ngày','90%','Biên kịch','T2','XANH','Đúng tiến độ'],
+        ['Quay / thu','3','3','1,2 ngày','55%','Quay phim','T4','VANG','Chờ lịch'],
+        ['Dựng','5','2','1,5 ngày','40%','Dựng phim','T5','VANG','Hậu kỳ'],
+        ['Duyệt','2','1','0,3 ngày','70%','Giám đốc','T3','XANH','Chờ duyệt'],
+        ['Phát hành','4','1','0,2 ngày','100%','Marketing','T6','XANH','Đã lên lịch'] ]}; },
       nv:[['Duyệt kịch bản video','studio'],['Theo dõi tiến độ sản xuất','studio'],
           ['Soát chuẩn thị giác 9:16','studio'],['Duyệt nội dung trước phát hành','studio'],
           ['Quản kho tư liệu hình ảnh','thu-vien'],['Phân công đội sản xuất','phong-ban'],
@@ -185,13 +216,13 @@ var G = window.G || {}; window.G = G;
         {k:'Đang bật', v:'30/30', d:'mẫu vận hành', c:'#0B7350'},
         {k:'Sao lưu gần nhất', v:'Hôm nay', d:'mẫu', c:'#0B7350'},
         {k:'Bản quyền', v:'Giữ', d:'GITA365', c:'#0B7350'} ]; },
-      bang:function(){ return {cols:['Nhóm lá chắn','Số tầng','Trạng thái','Ghi chú'], den:2, rows:[
-        ['Chặn cổng & danh tính','6','XANH','Đăng nhập · phiên · vai'],
-        ['Mã hoá nội dung (.enc)','5','XANH','Gói nghề · giấy phép'],
-        ['Ẩn danh dữ liệu khách','5','XANH','Theo hiến pháp'],
-        ['Sao lưu & phục hồi','6','XANH','Định kỳ'],
-        ['Giám sát & cảnh báo','4','VANG','Theo dõi bất thường'],
-        ['Giữ bản quyền GITA365','4','XANH','Chống sao chép'] ]}; },
+      bang:function(){ return {cols:['Nhóm lá chắn','Số tầng','Đang bật','Kiểm gần nhất','Mức ưu tiên','Sự cố','Phụ trách','Đèn','Ghi chú'], den:7, rows:[
+        ['Chặn cổng & danh tính','6','6/6','Hôm nay','Cao','0','Super Admin','XANH','Đăng nhập · phiên · vai'],
+        ['Mã hoá nội dung (.enc)','5','5/5','Hôm nay','Rất cao','0','Super Admin','XANH','Gói nghề · giấy phép'],
+        ['Ẩn danh dữ liệu khách','5','5/5','Hôm qua','Rất cao','0','Admin','XANH','Theo hiến pháp'],
+        ['Sao lưu & phục hồi','6','6/6','Hôm nay','Cao','0','Admin','XANH','Định kỳ'],
+        ['Giám sát & cảnh báo','4','4/4','Hôm nay','Vừa','1','Admin','VANG','Theo dõi bất thường'],
+        ['Giữ bản quyền GITA365','4','4/4','Tuần này','Rất cao','0','Super Admin','XANH','Chống sao chép'] ]}; },
       nv:[['Soát 30 tầng lá chắn','la-chan-30'],['Kiểm an toàn dữ liệu khách','an-toan-du-lieu'],
           ['Soát ẩn danh theo hiến pháp','bien-nien'],['Giám sát đăng nhập & phiên','phan-quyen'],
           ['Chạy sao lưu định kỳ','la-chan-30'],['Diễn tập phục hồi dữ liệu','la-chan-30'],
