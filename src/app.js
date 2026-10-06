@@ -797,8 +797,42 @@ function leftNav(){
       (L.phu ? '<span class="pv-bac">'+h(L.phu)+'</span>' : '')+'</div>'+
     '<div class="pv-so">'+L.so+'</div></div>';
 
-  return '<div class="scroll">'+ dai + daiMoi +
-    '<div class="nav-eyebrow">'+h(G.L('fiveGroups'))+'</div>' +
+  /* ── KHÔNG GIAN LÀM VIỆC (Giai đoạn 1 · tách vai) ──────────────
+     Một nút màn, lọc qua visible() — cùng cổng quyền với các nhóm dưới,
+     nên khối này KHÔNG BAO GIỜ mở thêm quyền: màn vai không đủ quyền thì
+     không hiện. */
+  function nutV(v){
+    var it = G.navItem ? G.navItem(v) : null;
+    if(!it || !visible(it)) return '';
+    var on = it.v===G.S.view;
+    return '<button class="nav-i'+(on?' on':'')+'" data-v="'+h(it.v)+'">'+
+      ic(it.ic)+'<span class="lb">'+h(G.iname(it))+'</span>'+
+      (it.star?'<span style="color:var(--gold-ink)">'+ic('star','w-3 h-3')+'</span>':'')+'</button>';
+  }
+  function khoiKG(){
+    if(!G.khongGian) return '';
+    var kg = G.khongGian();
+    function loc(ds, cap){ var o=[]; for(var i=0;i<ds.length && o.length<cap;i++){ var b=nutV(ds[i]); if(b) o.push(b); } return o; }
+    var kh = loc(kg.khach, kg.khachCap), vc = loc(kg.viec, kg.viecCap);
+    if(!kh.length && !vc.length) return '';
+    var o = '<div class="kg">'+
+      '<div class="nav-eyebrow kg-lbl">'+h(G.LANG==='en'?'Workspace':'Không gian làm việc')+'</div>';
+    if(kh.length)
+      o += '<div class="kg-sec kg-khach">'+
+        '<div class="kg-h">'+ic('heart')+'<b>'+h(G.LANG==='en'?'Customers':'Khách hàng')+'</b>'+
+          '<span class="kg-n">'+kh.length+'</span></div>'+
+        '<p class="kg-note">'+h(kg.khachNote)+'</p>'+
+        kh.join('')+'</div>';
+    if(vc.length)
+      o += '<div class="kg-sec kg-viec">'+
+        '<div class="kg-h">'+ic('target')+'<b>'+h(G.LANG==='en'?'My work':'Nghiệp vụ của tôi')+'</b>'+
+          '<span class="kg-n">'+vc.length+'</span></div>'+
+        vc.join('')+'</div>';
+    return o + '</div>';
+  }
+
+  return '<div class="scroll">'+ dai + daiMoi + khoiKG() +
+    '<div class="nav-eyebrow nav-eyebrow-all">'+h(G.LANG==='en'?G.L('fiveGroups'):'Toàn hệ thống')+'</div>' +
     NAV.map(function(g){
       var mo = g.items.filter(visible);
       if(!mo.length) return '';                 /* nhóm không mở được mục nào thì không hiện */

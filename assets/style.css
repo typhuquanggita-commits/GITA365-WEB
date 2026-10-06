@@ -3553,3 +3553,30 @@ html[data-may="yeu"] *,html[data-may="yeu"] *::before,html[data-may="yeu"] *::af
 .ntv-prog-bar{height:8px;background:var(--phu-3);border-radius:20px;overflow:hidden;margin-bottom:3px}
 .ntv-prog-bar i{display:block;height:100%;border-radius:20px}
 .ntv-prog span{font-size:11px;font-weight:700;color:var(--ink-2)}
+
+/* ═══ KHÔNG GIAN LÀM VIỆC — tách vai (Giai đoạn 1) ═══
+   Màu quy ước: Khách hàng = T4 xanh lá · Nghiệp vụ = GITA xanh ·
+   Toàn hệ thống = trung tính. */
+.kg{margin-bottom:14px}
+.kg-lbl{padding-bottom:9px}
+.kg-sec{margin-bottom:10px;border-radius:var(--r);padding:8px 8px 6px;
+  border:1px solid var(--line);position:relative;overflow:hidden}
+.kg-sec::before{content:'';position:absolute;left:0;top:9px;bottom:9px;width:3px;border-radius:0 3px 3px 0}
+.kg-khach{background:color-mix(in srgb,var(--t4) 8%,var(--surface));border-color:color-mix(in srgb,var(--t4) 26%,var(--line))}
+.kg-khach::before{background:var(--t4)}
+.kg-viec{background:var(--gita-mo-1);border-color:var(--gita-vien,var(--line))}
+.kg-viec::before{background:var(--gita)}
+.kg-h{display:flex;align-items:center;gap:8px;padding:4px 6px 7px}
+.kg-h svg{width:16px;height:16px;flex:none}
+.kg-khach .kg-h svg{color:var(--t4)}
+.kg-viec .kg-h svg{color:var(--gita)}
+.kg-h b{font-size:12.5px;font-weight:800;letter-spacing:.02em;flex:1;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.kg-khach .kg-h b{color:var(--t4)}
+.kg-viec .kg-h b{color:var(--gold-ink)}
+.kg-n{font-size:10px;font-weight:800;min-width:19px;height:18px;padding:0 5px;border-radius:999px;
+  display:grid;place-items:center;color:#fff;flex:none;letter-spacing:.02em}
+.kg-khach .kg-n{background:var(--t4)}
+.kg-viec .kg-n{background:var(--gita)}
+.kg-note{font-size:10px;line-height:1.55;color:var(--ink-4);padding:0 6px 7px;margin:0}
+.nav-eyebrow-all{border-top:1px solid var(--line);padding-top:13px;margin-top:2px}
