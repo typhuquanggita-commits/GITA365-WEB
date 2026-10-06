@@ -64000,77 +64000,25 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
 /* ═════════ src/van-hanh-gd.js ═════════ */
 (function(){
 /* ═══════════════════════════════════════════════════════════════
-   GITA 365 — BẢNG ĐIỀU KHIỂN GIÁM ĐỐC · 8 MÀN × 10 NGHIỆP VỤ
+   GITA 365 — BẢNG ĐIỀU KHIỂN GIÁM ĐỐC · 10 MÀN × 10 NGHIỆP VỤ
 
-   Hub điều hành cho Giám đốc (perm dh_toan_he). Tám mảng theo phương án
-   đã duyệt, MỖI MẢNG liệt kê 10 nghiệp vụ Giám đốc làm trong mảng đó
-   (tổng 80 nghiệp vụ), kèm nút mở thẳng màn sâu — vẫn qua G.allowed().
-     01 Quản lý hệ thống phòng ban        → phong-ban
-     02 Quản lý nguồn lực GITA            → dieu-hanh
-     03 CRM theo dõi kết quả kinh doanh   → crm
-     04 Báo cáo tài chính                 → tai-chinh-ceo
-     05 Quản trị nhân sự                  → con-nguoi
-     06 Đào tạo & chương trình            → khoa-dao-tao
-     07 Báo cáo kết quả phòng ban         → do-luong-kh
-     08 Hiệu suất làm việc của Giám đốc   → bang-viec
-   Không đụng máy chủ · giấy phép · mã hoá.
+   Hub điều hành (perm dh_toan_he). Đọc chung G.GD_AREA (10 mảng), mỗi
+   thẻ liệt kê 10 nghiệp vụ và mở vào MÀN CHI TIẾT gd-<key> (số liệu ·
+   báo cáo · nghiệp vụ bấm-thao-tác-được). Không đụng máy chủ · giấy phép.
    ═══════════════════════════════════════════════════════════════ */
 'use strict';
 var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
 (function(){
   var U = G.U, h = U.h, ic = U.ic;
 
-  var AREA = [
-    ['01','grid','--t1','Quản lý hệ thống phòng ban','phong-ban',[
-      'Nắm sơ đồ 16 ban & nhân sự','Phê duyệt cơ cấu & biên chế ban','Giao mục tiêu cho từng ban',
-      'Duyệt phân công Agent cho ban','Soát báo cáo dòng chảy công việc ban','Gỡ vướng liên phòng ban',
-      'Duyệt nội quy · văn hoá · tiêu chuẩn','Cân tải giữa các ban','Đánh giá hiệu quả từng ban',
-      'Quyết định tái cấu trúc khi cần']],
-    ['02','orbit','--t3','Quản lý nguồn lực GITA','dieu-hanh',[
-      'Nắm tổng nguồn lực (người·tiền·công cụ·AI)','Phân bổ nguồn lực theo ưu tiên','Soát sức chứa & tốc độ hệ',
-      'Duyệt đầu tư công cụ / hạ tầng','Theo dõi chi phí tài nguyên (D1/R2)','Điều phối nguồn lực khi cao điểm',
-      'Tối ưu nguồn lực nhàn rỗi','Duyệt thuê ngoài / đối tác','Giám sát token & chi phí AI',
-      'Báo cáo hiệu quả sử dụng nguồn lực']],
-    ['03','heart','--t5','CRM theo dõi kết quả kinh doanh','crm',[
-      'Nắm phễu bán hàng toàn hệ','Theo dõi doanh thu & dự kiến chốt','Soát tỷ lệ chuyển đổi từng giai đoạn',
-      'Nhận diện khách giá trị cao','Theo dõi khách rời / rủi ro','Đánh giá hiệu quả đội tư vấn',
-      'Soát chất lượng chăm sóc khách','Quyết định chiến dịch thúc đẩy','Theo dõi khách tái ký / nâng gói',
-      'Báo cáo kết quả kinh doanh định kỳ']],
-    ['04','chart','--t4','Báo cáo tài chính','tai-chinh-ceo',[
-      'Soát bảy con số CEO','Theo dõi dòng tiền ròng','Soát doanh thu – chi phí',
-      'Duyệt chi vượt thẩm quyền','Theo dõi công nợ & thu hồi','Soát bảng lương & quỹ lương',
-      'Kiểm tuân thủ thuế','Phân tích biên lợi nhuận','Quyết định đầu tư / cắt giảm',
-      'Báo cáo tài chính cho hội đồng']],
-    ['05','users','--t2','Quản trị nhân sự','con-nguoi',[
-      'Nắm sơ đồ nhân sự toàn hệ','Duyệt tuyển dụng & onboarding','Soát năng lực & thăng hạng',
-      'Quyết định tăng lương / thưởng','Xử lý nhân sự dưới chuẩn','Giữ chân người chủ chốt',
-      'Soát văn hoá & gắn kết','Duyệt điều chuyển / bổ nhiệm','Theo dõi cảnh báo năng suất',
-      'Vinh danh & ghi nhận']],
-    ['06','book','--t4','Đào tạo & Chương trình','khoa-dao-tao',[
-      'Duyệt chương trình đào tạo','Theo dõi tiến độ đào tạo đội','Soát chất lượng giảng dạy',
-      'Duyệt lộ trình nâng cấp từng vai','Theo dõi chứng nhận cấp độ','Duyệt chương trình cho khách hàng',
-      'Đo hiệu quả đào tạo (trước / sau)','Duyệt ngân sách đào tạo','Mời chuyên gia / đối tác đào tạo',
-      'Báo cáo kết quả đào tạo']],
-    ['07','pulse','--t3','Báo cáo kết quả phòng ban','do-luong-kh',[
-      'Soát KPI từng phòng ban','So sánh kết quả giữa các ban','Nhận diện ban đỏ / cần hỗ trợ',
-      'Theo dõi tiến độ mục tiêu quý','Soát dòng chảy công việc tắc','Đánh giá đề xuất cải tiến từ ban',
-      'Theo dõi chỉ số hài lòng','Soát bằng chứng kết quả','Quyết định khen thưởng ban',
-      'Tổng hợp báo cáo điều hành']],
-    ['08','crown','--t1','Hiệu suất làm việc của Giám đốc','bang-viec',[
-      'Soát KPI cá nhân Giám đốc','Theo dõi quyết định & hạn soi lại','Đo thời gian ra quyết định',
-      'Soát việc tồn & ưu tiên','Tự đánh giá theo chuẩn','Ghi & soát sáng kiến chiến lược',
-      'Soi quyết định lớn qua Hành lang','Theo dõi mục tiêu tăng trưởng','Cân bằng thời gian điều hành',
-      'Báo cáo hiệu suất lên hội đồng']]
-  ];
-
   function the(a){
-    var mo = G.allowed ? G.allowed(a[4]) : true;
-    var nut = mo ? '<button class="btn sm vh-mo" data-v="'+h(a[4])+'">'+ic('arrow','w-3 h-3')+'Mở màn</button>'
-                 : '<span class="vh-khoa">'+ic('lock','w-3 h-3')+'Cần quyền</span>';
-    var nv = '<ol class="gdv-nv">'+ a[5].map(function(x){ return '<li>'+h(x)+'</li>'; }).join('') +'</ol>';
-    return '<div class="gdv-the'+(mo?'':' off')+'" style="--c:var('+a[2]+')">'+
-      '<div class="gdv-h"><span class="vh-so">'+h(a[0])+'</span><span class="vh-ic">'+ic(a[1])+'</span>'+
-        '<b class="gdv-t">'+h(a[3])+'</b>'+nut+'</div>'+
+    var moChiTiet = true; /* màn chi tiết gd-* tự kiểm quyền bên trong */
+    var moGoc = G.allowed ? G.allowed(a.man) : true;
+    var nv = '<ol class="gdv-nv">'+ a.nv.map(function(x){ return '<li>'+h(x[0])+'</li>'; }).join('') +'</ol>';
+    return '<div class="gdv-the'+(moGoc?'':' off')+'" style="--c:var('+a.c+')">'+
+      '<div class="gdv-h"><span class="vh-so">'+h(a.so)+'</span><span class="vh-ic">'+ic(a.ic)+'</span>'+
+        '<b class="gdv-t">'+h(a.ten)+'</b>'+
+        '<button class="btn sm vh-mo" data-v="gd-'+h(a.key)+'">'+ic('arrow','w-3 h-3')+'Mở chi tiết</button></div>'+
       '<div class="gdv-nvwrap"><span class="gdv-lbl">10 nghiệp vụ</span>'+nv+'</div>'+
     '</div>';
   }
@@ -64078,23 +64026,315 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   G.VIEWS['van-hanh-gd'] = function(){
     if(!(typeof G.can==='function' && G.can('dh_toan_he')))
       return U.lockCard('Bảng điều khiển Giám đốc mở cho Giám đốc trở lên. Đăng nhập đúng vai để xem.');
-    var mo = AREA.filter(function(a){ return G.allowed ? G.allowed(a[4]) : true; }).length;
-    var tongNV = AREA.reduce(function(s,a){ return s + a[5].length; }, 0);
+    var AREA = G.GD_AREA || [];
+    var mo = AREA.filter(function(a){ return G.allowed ? G.allowed(a.man) : true; }).length;
+    var tongNV = AREA.reduce(function(s,a){ return s + (a.nv?a.nv.length:0); }, 0);
 
     var o = U.ph({ eyebrow:'GIÁM ĐỐC · ĐIỀU HÀNH', ic:'crown', grad:1,
-      t:'Bảng điều khiển Giám đốc — 8 màn × 10 nghiệp vụ',
-      lead:'Tám mảng điều hành, mỗi mảng mười nghiệp vụ Giám đốc thực hiện, kèm nút mở thẳng màn sâu. Cầm tầm nhìn, điều phối nguồn lực và chịu trách nhiệm tăng trưởng — từ một chỗ.' });
+      t:'Bảng điều khiển Giám đốc — '+AREA.length+' màn × 10 nghiệp vụ',
+      lead:'Mười mảng điều hành, mỗi mảng một màn chi tiết (số liệu · báo cáo · nghiệp vụ bấm-thao-tác-được). Bấm "Mở chi tiết" để vào màn làm việc của từng mảng.' });
 
     o += '<div class="grid g4 mb">'+
-      U.stat({k:'Mảng điều hành', v:String(AREA.length), d:'từ phòng ban tới hiệu suất'})+
-      U.stat({k:'Tổng nghiệp vụ', v:String(tongNV), d:'8 màn × 10 nghiệp vụ'})+
-      U.stat({k:'Đang mở được', v:mo+'/'+AREA.length, d:'theo quyền của anh/chị', c: mo===AREA.length?'#0B7350':'#B4720F'})+
+      U.stat({k:'Mảng điều hành', v:String(AREA.length), d:'màn chi tiết'})+
+      U.stat({k:'Tổng nghiệp vụ', v:String(tongNV), d:AREA.length+' màn × 10'})+
+      U.stat({k:'Màn gốc mở được', v:mo+'/'+AREA.length, d:'theo quyền của anh/chị', c: mo===AREA.length?'#0B7350':'#B4720F'})+
       U.stat({k:'Phòng ban', v:String(G.H16_HE?G.H16_HE.length:16), d:'bộ máy GITA'})+'</div>';
 
     o += '<div class="gdv-luoi">'+ AREA.map(the).join('') +'</div>';
-    o += '<p class="tiny muted" style="margin-top:14px">'+ic('shield','w-3 h-3')+' Mỗi màn vẫn qua cổng quyền của hệ — mảng ngoài quyền hiển thị khoá. Đây là bàn điều khiển điều hành, không phải cửa tắt quyền.</p>';
+    o += '<p class="tiny muted" style="margin-top:14px">'+ic('shield','w-3 h-3')+' Mỗi màn chi tiết & mỗi "Mở" vẫn qua cổng quyền của hệ. Đây là bàn điều khiển điều hành, không phải cửa tắt quyền.</p>';
     return o;
   };
+})();
+
+})();
+
+/* ═════════ src/data-gd.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — DỮ LIỆU 10 MÀN CHI TIẾT CỦA GIÁM ĐỐC (cho gd.js)
+
+   G.GD_AREA: 10 mảng điều hành, mỗi mảng là một màn chi tiết:
+     stats (4 ô số liệu) · bang (báo cáo nhanh) · nv (10 nghiệp vụ, mỗi
+     nghiệp vụ mở thẳng màn thao tác) · man (màn gốc đầy đủ).
+
+   Số liệu kinh doanh tổng hợp là MẪU VẬN HÀNH (có nhãn) tới khi nối máy
+   chủ; phần đếm được (số ban, số vai, số nhân sự) lấy thật từ hệ.
+   Mở cho Giám đốc trở lên (perm dh_toan_he).
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+(function(){
+  function soNS(){ return (G.ACCOUNTS||[]).filter(function(a){ var r=G.roleById?G.roleById(a.role):null; return r&&r.lv>=1&&r.lv<=12; }).length; }
+  function soBan(){ return G.H16_HE?G.H16_HE.length:16; }
+
+  G.GD_AREA = [
+    { key:'phongban', so:'01', ic:'grid', c:'--t1', ten:'Quản lý hệ thống phòng ban', man:'phong-ban', nguon:'mix',
+      stats:function(){ return [
+        {k:'Phòng ban', v:String(soBan()), d:'bộ máy GITA'},
+        {k:'Nhân sự', v:String(soNS()), d:'R01–R12 (thật)'},
+        {k:'Ban ổn định', v:'12', d:'đèn xanh (mẫu)', c:'#0B7350'},
+        {k:'Cần hỗ trợ', v:'4', d:'đèn vàng/đỏ (mẫu)', c:'#B4720F'} ]; },
+      bang:function(){
+        var dd=['XANH','XANH','VANG','XANH','XANH','VANG','XANH','XANH','VANG','XANH','XANH','XANH','VANG','XANH','XANH','XANH'];
+        var rows=(G.H16_HE||[]).map(function(b,i){ return [b.ma, b.ten, (3+(i%4)), dd[i%dd.length], (72+((i*7)%26))+'%']; });
+        return {cols:['Mã','Phòng ban','Nhân sự','Đèn','KPI'], den:3, rows:rows}; },
+      nv:[['Nắm sơ đồ 16 ban & nhân sự','phong-ban'],['Phê duyệt cơ cấu & biên chế ban','phong-ban'],
+          ['Giao mục tiêu cho từng ban','phong-ban'],['Duyệt phân công Agent cho ban','phong-ban'],
+          ['Soát báo cáo dòng chảy công việc','do-luong-kh'],['Gỡ vướng liên phòng ban','con-nguoi'],
+          ['Duyệt nội quy · văn hoá · tiêu chuẩn','phong-ban'],['Cân tải giữa các ban','phong-ban'],
+          ['Đánh giá hiệu quả từng ban','do-luong-kh'],['Quyết định tái cấu trúc khi cần','dieu-hanh']] },
+
+    { key:'nguonluc', so:'02', ic:'orbit', c:'--t3', ten:'Quản lý nguồn lực GITA', man:'dieu-hanh', nguon:'mau',
+      stats:function(){ return [
+        {k:'Nhân lực', v:String(soNS()), d:'đang vận hành (thật)'},
+        {k:'Sức chứa hệ', v:'78%', d:'trên trần (mẫu)', c:'#0B7350'},
+        {k:'Chi phí AI', v:'62%', d:'ngân sách tháng (mẫu)', c:'#B4720F'},
+        {k:'Đối tác', v:'5', d:'nhà cung cấp (mẫu)'} ]; },
+      bang:function(){ return {cols:['Nguồn lực','Đang dùng','Tổng','Trạng thái'], den:3, rows:[
+        ['Nhân lực', '92', '118 slot', 'XANH'],
+        ['Ghi D1/ngày', '64k', '100k', 'VANG'],
+        ['Lưu trữ R2', '0.7 triệu', '1 triệu/tháng', 'XANH'],
+        ['Token AI', '620k', '1 triệu', 'VANG'],
+        ['Ngân sách công cụ', '58 triệu', '80 triệu', 'XANH'] ]}; },
+      nv:[['Nắm tổng nguồn lực','dieu-hanh'],['Phân bổ nguồn lực theo ưu tiên','dieu-hanh'],
+          ['Soát sức chứa & tốc độ hệ','suc-chua-toc-do'],['Duyệt đầu tư công cụ / hạ tầng','chi-phi'],
+          ['Theo dõi chi phí tài nguyên (D1/R2)','theo-doi-tai-nguyen'],['Điều phối nguồn lực khi cao điểm','dieu-hanh'],
+          ['Tối ưu nguồn lực nhàn rỗi','suc-chua-toc-do'],['Duyệt thuê ngoài / đối tác','ket-noi'],
+          ['Giám sát token & chi phí AI','theo-doi-tai-nguyen'],['Báo cáo hiệu quả sử dụng nguồn lực','dieu-hanh']] },
+
+    { key:'crm', so:'03', ic:'heart', c:'--t5', ten:'CRM theo dõi kết quả kinh doanh', man:'crm', nguon:'mau',
+      stats:function(){ var n=null; try{ var d=(typeof G.ttKhach==='function')?G.ttKhach():null; n=d&&d.length?d.length:null; }catch(e){}
+        return [ {k:'Khách đang mở', v:n!=null?String(n):'—', d:n!=null?'từ CRM thật':'nối CRM'},
+        {k:'Giá trị phễu', v:'1,24 tỷ', d:'dự kiến (mẫu)', c:'var(--gita)'},
+        {k:'Tỷ lệ chốt', v:'41%', d:'tháng này (mẫu)', c:'#0B7350'},
+        {k:'Khách rủi ro', v:'8', d:'đèn đỏ (mẫu)', c:'#BE0E16'} ]; },
+      bang:function(){ return {cols:['Giai đoạn','Số khách','Giá trị','Tỷ lệ'], den:-1, rows:[
+        ['Mới', '46', '—', '100%'],['Tư vấn', '31', '560 triệu', '67%'],
+        ['Báo giá', '19', '410 triệu', '41%'],['Đàm phán', '11', '260 triệu', '24%'],
+        ['Chốt ký', '7', '180 triệu', '15%'] ]}; },
+      nv:[['Nắm phễu bán hàng toàn hệ','crm'],['Theo dõi doanh thu & dự kiến chốt','crm'],
+          ['Soát tỷ lệ chuyển đổi từng giai đoạn','do-luong-kh'],['Nhận diện khách giá trị cao','crm'],
+          ['Theo dõi khách rời / rủi ro','do-luong-kh'],['Đánh giá hiệu quả đội tư vấn','nang-luc-ns'],
+          ['Soát chất lượng chăm sóc khách','trai-nghiem-kh'],['Quyết định chiến dịch thúc đẩy','noi-dung-tiep-thi'],
+          ['Theo dõi khách tái ký / nâng gói','crm'],['Báo cáo kết quả kinh doanh định kỳ','tai-chinh-ceo']] },
+
+    { key:'taichinh', so:'04', ic:'chart', c:'--t4', ten:'Báo cáo tài chính', man:'tai-chinh-ceo', nguon:'mau',
+      stats:function(){ return [
+        {k:'Doanh thu tháng', v:'2,15 tỷ', d:'mẫu', c:'#0B7350'},
+        {k:'Dòng tiền ròng', v:'+480 triệu', d:'mẫu', c:'#0B7350'},
+        {k:'Chi phí', v:'1,67 tỷ', d:'mẫu'},
+        {k:'Biên lợi nhuận', v:'22%', d:'mẫu', c:'#0B7350'} ]; },
+      bang:function(){ return {cols:['Chỉ số (7 con số CEO)','Giá trị','So kỳ trước'], den:-1, rows:[
+        ['Doanh thu', '2,15 tỷ', '▲ 8%'],['Giá vốn', '0,92 tỷ', '▲ 4%'],
+        ['Chi phí vận hành', '0,75 tỷ', '▲ 2%'],['Lợi nhuận gộp', '1,23 tỷ', '▲ 11%'],
+        ['Dòng tiền ròng', '+0,48 tỷ', '▲ 15%'],['Công nợ', '0,31 tỷ', '▼ 6%'],['Quỹ lương', '0,58 tỷ', '— 0%'] ]}; },
+      nv:[['Soát bảy con số CEO','tai-chinh-ceo'],['Theo dõi dòng tiền ròng','tai-chinh-ceo'],
+          ['Soát doanh thu – chi phí','tang-truong'],['Duyệt chi vượt thẩm quyền','ke-toan-thue'],
+          ['Theo dõi công nợ & thu hồi','tai-chinh-ceo'],['Soát bảng lương & quỹ lương','ke-toan-thue'],
+          ['Kiểm tuân thủ thuế','ke-toan-thue'],['Phân tích biên lợi nhuận','tang-truong'],
+          ['Quyết định đầu tư / cắt giảm','chi-phi'],['Báo cáo tài chính cho hội đồng','tai-chinh-ceo']] },
+
+    { key:'nhansu', so:'05', ic:'users', c:'--t2', ten:'Quản trị nhân sự', man:'con-nguoi', nguon:'mix',
+      stats:function(){ return [
+        {k:'Nhân sự', v:String(soNS()), d:'R01–R12 (thật)'},
+        {k:'Đủ thăng hạng', v:'—', d:'xem màn Năng lực'},
+        {k:'Cảnh báo', v:'—', d:'năng suất', c:'#B4720F'},
+        {k:'Vai', v:String(G.ROLES?Object.keys(G.ROLES).length:15), d:'hệ vai (thật)'} ]; },
+      bang:function(){ var R=G.ROLES||{}; var rows=Object.keys(R).map(function(k){return R[k];})
+        .filter(function(r){return r.lv>=3&&r.lv<=12;})
+        .map(function(r){ var acc=(G.ACCOUNTS||[]).filter(function(a){return a.role===r.id;})[0];
+          return [r.n, 'Bậc '+r.lv, acc?acc.ten:'(trống)', acc?acc.nha:'—']; });
+        return {cols:['Vai','Cấp','Nhân sự','Đơn vị'], den:-1, rows:rows}; },
+      nv:[['Nắm sơ đồ nhân sự toàn hệ','phong-ban'],['Duyệt tuyển dụng & onboarding','con-nguoi'],
+          ['Soát năng lực & thăng hạng','nang-luc-ns'],['Quyết định tăng lương / thưởng','nang-luc-ns'],
+          ['Xử lý nhân sự dưới chuẩn','nang-luc-ns'],['Giữ chân người chủ chốt','con-nguoi'],
+          ['Soát văn hoá & gắn kết','con-nguoi'],['Duyệt điều chuyển / bổ nhiệm','phan-quyen'],
+          ['Theo dõi cảnh báo năng suất','nang-luc-ns'],['Vinh danh & ghi nhận','nang-luc-ns']] },
+
+    { key:'daotao', so:'06', ic:'book', c:'--t4', ten:'Đào tạo & Chương trình', man:'khoa-dao-tao', nguon:'mau',
+      stats:function(){ return [
+        {k:'Chương trình', v:'8', d:'đang chạy (mẫu)'},
+        {k:'Đang học', v:'46', d:'nhân sự + khách (mẫu)', c:'var(--gita)'},
+        {k:'Hoàn thành', v:'71%', d:'trung bình (mẫu)', c:'#0B7350'},
+        {k:'Chứng nhận', v:'5 cấp', d:'mỗi nghề'} ]; },
+      bang:function(){ return {cols:['Chương trình','Đối tượng','Đang học','Hoàn thành'], den:-1, rows:[
+        ['Onboarding GITA', 'Nhân sự mới', '12', '85%'],['Nghiệp vụ Coach', 'Coach', '9', '72%'],
+        ['Nghiệp vụ Tư vấn', 'Tư vấn', '7', '78%'],['Làm việc cùng AI', 'Toàn đội', '14', '60%'],
+        ['Chương trình khách', 'Phụ huynh', '4', '66%'] ]}; },
+      nv:[['Duyệt chương trình đào tạo','khoa-dao-tao'],['Theo dõi tiến độ đào tạo đội','khoa-dao-tao'],
+          ['Soát chất lượng giảng dạy','sat-hach'],['Duyệt lộ trình nâng cấp từng vai','nang-luc-ns'],
+          ['Theo dõi chứng nhận cấp độ','nang-luc-ns'],['Duyệt chương trình cho khách hàng','khoa-dao-tao'],
+          ['Đo hiệu quả đào tạo (trước/sau)','sat-hach'],['Duyệt ngân sách đào tạo','chi-phi'],
+          ['Mời chuyên gia / đối tác đào tạo','ket-noi'],['Báo cáo kết quả đào tạo','khoa-dao-tao']] },
+
+    { key:'baocaoban', so:'07', ic:'pulse', c:'--t3', ten:'Báo cáo kết quả phòng ban', man:'do-luong-kh', nguon:'mau',
+      stats:function(){ return [
+        {k:'Ban xanh', v:'12', d:'đạt chuẩn (mẫu)', c:'#0B7350'},
+        {k:'Ban vàng', v:'3', d:'theo dõi (mẫu)', c:'#B4720F'},
+        {k:'Ban đỏ', v:'1', d:'cần hỗ trợ (mẫu)', c:'#BE0E16'},
+        {k:'Mục tiêu quý', v:'76%', d:'tiến độ (mẫu)', c:'#0B7350'} ]; },
+      bang:function(){ var top=(G.H16_HE||[]).slice(0,6);
+        var dd=['XANH','XANH','VANG','XANH','DO','XANH'];
+        return {cols:['Phòng ban','KPI','Đèn','Xu hướng'], den:2, rows:top.map(function(b,i){
+          return [b.ten, (68+((i*9)%30))+'%', dd[i%dd.length], i%2?'▲':'▼']; })}; },
+      nv:[['Soát KPI từng phòng ban','do-luong-kh'],['So sánh kết quả giữa các ban','truy-van-da-chieu'],
+          ['Nhận diện ban đỏ / cần hỗ trợ','do-luong-kh'],['Theo dõi tiến độ mục tiêu quý','kpi-toi'],
+          ['Soát dòng chảy công việc tắc','bang-viec'],['Đánh giá đề xuất cải tiến từ ban','phong-ban'],
+          ['Theo dõi chỉ số hài lòng','trai-nghiem-kh'],['Soát bằng chứng kết quả','ra-soat-kh'],
+          ['Quyết định khen thưởng ban','nang-luc-ns'],['Tổng hợp báo cáo điều hành','dieu-hanh']] },
+
+    { key:'hieusuat', so:'08', ic:'crown', c:'--t1', ten:'Hiệu suất làm việc của Giám đốc', man:'bang-viec', nguon:'mau',
+      stats:function(){ return [
+        {k:'KPI cá nhân', v:'88', d:'trên 100 (mẫu)', c:'#0B7350'},
+        {k:'Quyết định/tuần', v:'14', d:'có ghi lý do (mẫu)'},
+        {k:'Việc tồn', v:'3', d:'đang xử lý (mẫu)', c:'#B4720F'},
+        {k:'Mục tiêu năm', v:'72%', d:'tiến độ (mẫu)', c:'#0B7350'} ]; },
+      bang:function(){ return {cols:['Trọng tâm tuần','Trạng thái','Hạn soi lại'], den:1, rows:[
+        ['Chốt chiến lược quý sau', 'XANH', 'T2 tuần tới'],['Duyệt ngân sách marketing', 'VANG', 'Hôm nay'],
+        ['Giữ chân 2 nhân sự chủ chốt', 'XANH', 'Đã xong'],['Soát rủi ro dòng tiền', 'VANG', 'Thứ 6'],
+        ['Họp hội đồng tháng', 'XANH', 'Cuối tháng'] ]}; },
+      nv:[['Soát KPI cá nhân Giám đốc','kpi-toi'],['Theo dõi quyết định & hạn soi lại','dieu-hanh'],
+          ['Đo thời gian ra quyết định','bang-viec'],['Soát việc tồn & ưu tiên','bang-viec'],
+          ['Tự đánh giá theo chuẩn','nang-luc-ns'],['Ghi & soát sáng kiến chiến lược','bang-viec'],
+          ['Soi quyết định lớn qua Hành lang','hanh-lang'],['Theo dõi mục tiêu tăng trưởng','tang-truong'],
+          ['Cân bằng thời gian điều hành','do-thoi-gian'],['Báo cáo hiệu suất lên hội đồng','tai-chinh-ceo']] },
+
+    { key:'chienluoc', so:'09', ic:'spark', c:'--t2', ten:'Chiến lược & Tăng trưởng', man:'tang-truong', nguon:'mau',
+      stats:function(){ return [
+        {k:'Mục tiêu quý', v:'6', d:'đang theo (mẫu)'},
+        {k:'Đạt chuẩn', v:'4/6', d:'đúng tiến độ (mẫu)', c:'#0B7350'},
+        {k:'Tăng trưởng', v:'+18%', d:'so cùng kỳ (mẫu)', c:'#0B7350'},
+        {k:'Sáng kiến', v:'12', d:'đang thử (mẫu)'} ]; },
+      bang:function(){ return {cols:['Mục tiêu chiến lược','Tiến độ','Trạng thái','Phụ trách'], den:2, rows:[
+        ['Tăng tỷ lệ chốt lên 95%', '82%', 'VANG', 'Tư vấn'],['Mở rộng 3 vệ tinh miền', '60%', 'VANG', 'Đại sứ'],
+        ['Chuẩn hoá quy trình toàn hệ', '90%', 'XANH', 'QLCM'],['Giảm 15% chi phí vận hành', '95%', 'XANH', 'Tài chính'],
+        ['Nâng đèn gia đình TB ≥80', '74%', 'VANG', 'Coach'] ]}; },
+      nv:[['Đặt mục tiêu chiến lược quý/năm','ban-do-chien-luoc'],['Chấm & chọn chiến lược (ICE)','ban-do-chien-luoc'],
+          ['Theo dõi tiến độ mục tiêu','kpi-toi'],['Phân tích thị trường & đối thủ','truy-van-da-chieu'],
+          ['Quyết định mở rộng / thu hẹp','dieu-hanh'],['Đo tăng trưởng so cùng kỳ','tang-truong'],
+          ['Chạy & đo thí nghiệm cải tiến','cai-tien'],['Học từ hệ thống lớn','hoc-tu-lon'],
+          ['Cân đối tăng trưởng & chuẩn nghề','chuan-1000'],['Trình chiến lược lên hội đồng','tai-chinh-ceo']] },
+
+    { key:'phaply', so:'10', ic:'shield', c:'--t5', ten:'Pháp lý & Rủi ro', man:'phap-ly-rui-ro', nguon:'mau',
+      stats:function(){ return [
+        {k:'Rủi ro cao', v:'1', d:'cần xử lý (mẫu)', c:'#BE0E16'},
+        {k:'Rủi ro vừa', v:'4', d:'theo dõi (mẫu)', c:'#B4720F'},
+        {k:'Tuân thủ', v:'96%', d:'điểm tuân thủ (mẫu)', c:'#0B7350'},
+        {k:'Bản quyền', v:'Giữ', d:'GITA365', c:'#0B7350'} ]; },
+      bang:function(){ return {cols:['Rủi ro','Mức','Trạng thái','Hướng xử lý'], den:1, rows:[
+        ['Hợp đồng thiếu chữ ký', 'Cao', 'DO', 'Bổ sung trong tuần'],['Dữ liệu khách chưa ẩn danh đủ', 'Vừa', 'VANG', 'Soát lá chắn'],
+        ['Yêu cầu xoá dữ liệu quá hạn', 'Vừa', 'VANG', 'Xử lý đúng luật'],['Tranh chấp hoa hồng CTV', 'Vừa', 'VANG', 'Đối chiếu sổ'],
+        ['Tuân thủ thuế kỳ tới', 'Thấp', 'XANH', 'Theo lịch'] ]}; },
+      nv:[['Soát hợp đồng & hồ sơ pháp lý','phap-ly-rui-ro'],['Rà soát pháp lý toàn hệ','ra-soat-phap-ly'],
+          ['Theo dõi rủi ro & phân mức','phap-ly-rui-ro'],['Duyệt hướng xử lý rủi ro cao','phap-ly-rui-ro'],
+          ['Kiểm tuân thủ hiến pháp','bien-nien'],['Soát yêu cầu xoá dữ liệu','an-toan-du-lieu'],
+          ['Giữ bản quyền GITA365','la-chan-30'],['Kiểm tuân thủ thuế','ke-toan-thue'],
+          ['Xử lý tranh chấp','phap-ly-rui-ro'],['Báo cáo rủi ro lên hội đồng','dieu-hanh']] }
+  ];
+})();
+
+})();
+
+/* ═════════ src/gd.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — KHUNG 10 MÀN CHI TIẾT CỦA GIÁM ĐỐC
+
+   Mỗi mảng trong G.GD_AREA render thành một màn làm việc đầy đủ:
+     · 4 ô số liệu
+     · Báo cáo nhanh (bảng, có đèn màu)
+     · 10 nghiệp vụ điều hành — mỗi nghiệp vụ BẤM ĐƯỢC: đổi trạng thái
+       (chưa → đang → xong, lưu qua phiên) và nút "Mở" tới màn thao tác.
+     · Mở màn gốc đầy đủ · quay về bảng điều khiển.
+
+   View key: gd-<area.key>. Mở cho Giám đốc trở lên (dh_toan_he); mỗi màn
+   tự kiểm quyền. Không đụng máy chủ · giấy phép · mã hoá.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
+(function(){
+  var U = G.U, h = U.h, ic = U.ic;
+  var BANDC = { DO:'#BE0E16', VANG:'#B4720F', XANH:'#0B7350' };
+  var TT = { '':{t:'Chưa',c:'--ink-4'}, dang:{t:'Đang làm',c:'--warn'}, xong:{t:'Đã xong',c:'--ok'} };
+
+  function khu(key){ return (G.GD_AREA||[]).filter(function(a){ return a.key===key; })[0]; }
+
+  /* Bấm đổi trạng thái một nghiệp vụ: chưa → đang → xong → chưa. */
+  G.gdTick = function(id){
+    if(!G.S.gdNV) G.S.gdNV = {};
+    var cur = G.S.gdNV[id] || '';
+    G.S.gdNV[id] = cur==='' ? 'dang' : cur==='dang' ? 'xong' : '';
+    if(G.save) G.save();
+    if(G.render) G.render();
+  };
+
+  function veBang(b){
+    if(!b || !b.rows || !b.rows.length) return '';
+    var den = (b.den==null) ? -1 : b.den;
+    var head = '<tr>'+ b.cols.map(function(c){ return '<th>'+h(c)+'</th>'; }).join('') +'</tr>';
+    var body = b.rows.map(function(r){
+      return '<tr>'+ r.map(function(cell,ci){
+        if(ci===den){ var m=BANDC[cell]||'#73849F'; return '<td class="ta-c"><span class="gd-den" style="--m:'+m+'" title="'+h(cell)+'"></span></td>'; }
+        return '<td>'+h(String(cell))+'</td>';
+      }).join('') +'</tr>';
+    }).join('');
+    return '<div class="gd-wrap"><table class="gd-tb"><thead>'+head+'</thead><tbody>'+body+'</tbody></table></div>';
+  }
+
+  function veNV(a){
+    var xong=0;
+    var rows = a.nv.map(function(it,i){
+      var id = a.key+':'+i;
+      var st = (G.S.gdNV||{})[id] || '';
+      if(st==='xong') xong++;
+      var t = TT[st];
+      var mo = G.allowed ? G.allowed(it[1]) : true;
+      var nut = mo ? '<button class="btn ghost sm gd-open" data-v="'+h(it[1])+'">Mở '+ic('arrow','w-3 h-3')+'</button>'
+                   : '<span class="vh-khoa">'+ic('lock','w-3 h-3')+'khoá</span>';
+      return '<div class="gd-nvr'+(st==='xong'?' done':'')+'">'+
+        '<button class="gd-tick gd-tick-'+(st||'chua')+'" data-gdtick="'+h(id)+'" style="--m:var('+t.c+')" title="Bấm đổi trạng thái">'+
+          (st==='xong'?ic('check','w-3 h-3'):st==='dang'?ic('clock','w-3 h-3'):'')+'</button>'+
+        '<span class="gd-nvi">'+(i+1)+'</span>'+
+        '<span class="gd-nvt">'+h(it[0])+'</span>'+
+        '<span class="gd-nvs" style="--m:var('+t.c+')">'+h(t.t)+'</span>'+
+        nut +'</div>';
+    }).join('');
+    return {html:'<div class="gd-nvlist">'+rows+'</div>', xong:xong};
+  }
+
+  G.gdManView = function(key){
+    var a = khu(key);
+    if(!a) return U.lockCard?U.lockCard('Không tìm thấy mảng.'):'—';
+    if(!(typeof G.can==='function' && G.can('dh_toan_he')))
+      return U.lockCard('Màn điều hành chi tiết mở cho Giám đốc trở lên. Đăng nhập đúng vai để xem.');
+
+    var nv = veNV(a);
+    var o = U.ph({ eyebrow:'GIÁM ĐỐC · MÀN '+a.so, ic:a.ic, grad:1, t:a.ten,
+      lead:'Màn điều hành chi tiết: số liệu nhanh, báo cáo và mười nghiệp vụ bấm-thao-tác-được. Mỗi nghiệp vụ đổi trạng thái để theo dõi và mở thẳng màn làm việc.' });
+
+    o += '<div class="row mb" style="gap:8px;flex-wrap:wrap">'+
+      '<button class="btn ghost sm" data-v="van-hanh-gd">'+ic('arrow','w-3 h-3')+'Bảng điều khiển</button>'+
+      (G.allowed && G.allowed(a.man) ? '<button class="btn sm" data-v="'+h(a.man)+'">'+ic('grid','w-3 h-3')+'Mở màn gốc đầy đủ</button>' : '')+
+      '</div>';
+
+    var st = a.stats ? a.stats() : [];
+    if(st.length) o += '<div class="grid g4 mb">'+ st.map(function(s){ return U.stat(s); }).join('') +'</div>';
+
+    var b = a.bang ? a.bang() : null;
+    var coMau = a.nguon && a.nguon!=='that';
+    o += U.sec('Báo cáo nhanh', coMau ? 'Số tổng hợp là mẫu vận hành tới khi nối máy chủ · phần đếm được lấy thật' : 'Dữ liệu thật từ hệ');
+    o += veBang(b);
+
+    o += U.sec('Mười nghiệp vụ điều hành', 'Bấm ô trạng thái để theo dõi (chưa · đang · xong) · bấm "Mở" để thao tác · đã xong '+nv.xong+'/10');
+    o += nv.html;
+
+    o += '<p class="tiny muted" style="margin-top:12px">'+ic('shield','w-3 h-3')+' Trạng thái nghiệp vụ lưu trên máy của anh/chị, giữ qua phiên. Mỗi "Mở" vẫn qua cổng quyền của hệ.</p>';
+    return o;
+  };
+
+  (G.GD_AREA||[]).forEach(function(a){
+    G.VIEWS['gd-'+a.key] = (function(k){ return function(){ return G.gdManView(k); }; })(a.key);
+  });
 })();
 
 })();
@@ -64137,7 +64377,7 @@ function save(){
        văn phòng thì Coach đăng xuất, phụ huynh đăng nhập vào cùng trình
        duyệt — không ghi tên chủ sổ thì bằng chứng đóng việc của Coach,
        viết về nhà nào có chuyện gì, nằm lại trong máy cho người sau. */
-    viec:G.S.viec, chotNgay:G.S.chotNgay, chotKhNgay:G.S.chotKhNgay, caiTien:G.S.caiTien, mua:G.S.mua, vet:G.S.vet, viecCua:G.S.viecCua, cvSangKien:G.S.cvSangKien, ltXuLy:G.S.ltXuLy, ltLichSu:G.S.ltLichSu, nlDiem:G.S.nlDiem,
+    viec:G.S.viec, chotNgay:G.S.chotNgay, chotKhNgay:G.S.chotKhNgay, caiTien:G.S.caiTien, mua:G.S.mua, vet:G.S.vet, viecCua:G.S.viecCua, cvSangKien:G.S.cvSangKien, ltXuLy:G.S.ltXuLy, ltLichSu:G.S.ltLichSu, nlDiem:G.S.nlDiem, gdNV:G.S.gdNV,
     /* Bàn cờ hành trình. Thiếu dòng này thì mọi quân nhà mình đặt bay
        hết khi tải lại trang — và một bàn cờ xoá được mỗi lần F5 thì
        nhìn nó không còn nghĩa gì. */
@@ -64186,6 +64426,7 @@ function load(){
     G.S.ltXuLy = d.ltXuLy || {};
     G.S.ltLichSu = d.ltLichSu || [];
     G.S.nlDiem = d.nlDiem || {};
+    G.S.gdNV = d.gdNV || {};
     G.S.mua = d.mua || null;
     G.S.vet = d.vet || [];
     G.S.viecCua = d.viecCua || null;
@@ -65654,6 +65895,7 @@ on('[data-vai]', function(el){ G.vaiModal(el.getAttribute('data-vai')); });
 on('[data-pbban]', function(el){ if(G.pbMoBan) G.pbMoBan(el.getAttribute('data-pbban')); });
 on('[data-pbag]', function(el){ if(G.pbAgent) G.pbAgent(el.getAttribute('data-pbag'), +el.getAttribute('data-pbagi')); });
 on('[data-nlhs]', function(el){ if(G.nlHoSo) G.nlHoSo(el.getAttribute('data-nlhs')); });
+on('[data-gdtick]', function(el){ if(G.gdTick) G.gdTick(el.getAttribute('data-gdtick')); });
 on('[data-nlnhap]', function(el){ if(G.nlNhap) G.nlNhap(el.getAttribute('data-nlnhap')); });
 on('[data-nlluu]', function(el){ if(G.nlLuu) G.nlLuu(el.getAttribute('data-nlluu')); });
 on('[data-pd]', function(el){ G.phacDoModal(el.getAttribute('data-pd')); });

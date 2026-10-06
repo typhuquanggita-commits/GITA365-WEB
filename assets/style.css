@@ -3758,3 +3758,28 @@ html[data-may="yeu"] *,html[data-may="yeu"] *::before,html[data-may="yeu"] *::af
   background:color-mix(in srgb,var(--c) 15%,transparent);color:var(--c);font-size:9.5px;font-weight:800;
   display:grid;place-items:center}
 @media(max-width:560px){.gdv-nv{column-count:1}}
+
+/* ═══ MÀN CHI TIẾT GIÁM ĐỐC (gd-*) ═══ */
+.gd-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);margin-bottom:4px}
+.gd-tb{width:100%;border-collapse:collapse;font-size:13px;min-width:440px}
+.gd-tb th{text-align:left;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-4);
+  padding:9px 11px;border-bottom:1.5px solid var(--line);font-weight:700;white-space:nowrap;background:var(--surface-2)}
+.gd-tb td{padding:9px 11px;border-bottom:1px solid var(--line)}
+.gd-tb td.ta-c{text-align:center}
+.gd-den{display:inline-block;width:11px;height:11px;border-radius:50%;background:var(--m);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--m) 20%,transparent);vertical-align:middle}
+.gd-nvlist{display:flex;flex-direction:column;gap:7px}
+.gd-nvr{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--line);border-radius:12px;
+  background:var(--surface);transition:.15s;flex-wrap:wrap}
+.gd-nvr.done{background:color-mix(in srgb,var(--ok) 6%,var(--surface))}
+.gd-tick{width:26px;height:26px;border-radius:8px;flex:none;display:grid;place-items:center;
+  border:1.5px solid var(--m);color:var(--m);background:color-mix(in srgb,var(--m) 10%,transparent);transition:.15s}
+.gd-tick-chua{border-color:var(--line);color:var(--ink-4);background:transparent}
+.gd-tick:hover{transform:scale(1.08)}
+.gd-tick svg{width:14px;height:14px}
+.gd-nvi{font-size:11px;font-weight:800;color:var(--ink-4);min-width:18px;text-align:center}
+.gd-nvt{flex:1;min-width:150px;font-size:13.5px;font-weight:600}
+.gd-nvr.done .gd-nvt{text-decoration:line-through;color:var(--ink-3)}
+.gd-nvs{font-size:11px;font-weight:700;color:var(--m);padding:2px 9px;border-radius:999px;
+  background:color-mix(in srgb,var(--m) 12%,transparent)}
+.gd-open{flex:none}

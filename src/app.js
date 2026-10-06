@@ -34,7 +34,7 @@ function save(){
        văn phòng thì Coach đăng xuất, phụ huynh đăng nhập vào cùng trình
        duyệt — không ghi tên chủ sổ thì bằng chứng đóng việc của Coach,
        viết về nhà nào có chuyện gì, nằm lại trong máy cho người sau. */
-    viec:G.S.viec, chotNgay:G.S.chotNgay, chotKhNgay:G.S.chotKhNgay, caiTien:G.S.caiTien, mua:G.S.mua, vet:G.S.vet, viecCua:G.S.viecCua, cvSangKien:G.S.cvSangKien, ltXuLy:G.S.ltXuLy, ltLichSu:G.S.ltLichSu, nlDiem:G.S.nlDiem,
+    viec:G.S.viec, chotNgay:G.S.chotNgay, chotKhNgay:G.S.chotKhNgay, caiTien:G.S.caiTien, mua:G.S.mua, vet:G.S.vet, viecCua:G.S.viecCua, cvSangKien:G.S.cvSangKien, ltXuLy:G.S.ltXuLy, ltLichSu:G.S.ltLichSu, nlDiem:G.S.nlDiem, gdNV:G.S.gdNV,
     /* Bàn cờ hành trình. Thiếu dòng này thì mọi quân nhà mình đặt bay
        hết khi tải lại trang — và một bàn cờ xoá được mỗi lần F5 thì
        nhìn nó không còn nghĩa gì. */
@@ -83,6 +83,7 @@ function load(){
     G.S.ltXuLy = d.ltXuLy || {};
     G.S.ltLichSu = d.ltLichSu || [];
     G.S.nlDiem = d.nlDiem || {};
+    G.S.gdNV = d.gdNV || {};
     G.S.mua = d.mua || null;
     G.S.vet = d.vet || [];
     G.S.viecCua = d.viecCua || null;
@@ -1551,6 +1552,7 @@ on('[data-vai]', function(el){ G.vaiModal(el.getAttribute('data-vai')); });
 on('[data-pbban]', function(el){ if(G.pbMoBan) G.pbMoBan(el.getAttribute('data-pbban')); });
 on('[data-pbag]', function(el){ if(G.pbAgent) G.pbAgent(el.getAttribute('data-pbag'), +el.getAttribute('data-pbagi')); });
 on('[data-nlhs]', function(el){ if(G.nlHoSo) G.nlHoSo(el.getAttribute('data-nlhs')); });
+on('[data-gdtick]', function(el){ if(G.gdTick) G.gdTick(el.getAttribute('data-gdtick')); });
 on('[data-nlnhap]', function(el){ if(G.nlNhap) G.nlNhap(el.getAttribute('data-nlnhap')); });
 on('[data-nlluu]', function(el){ if(G.nlLuu) G.nlLuu(el.getAttribute('data-nlluu')); });
 on('[data-pd]', function(el){ G.phacDoModal(el.getAttribute('data-pd')); });
