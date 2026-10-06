@@ -167,7 +167,8 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
 
     o += '<div class="row mb" style="gap:8px;flex-wrap:wrap">'+
       '<button class="btn ghost sm" data-v="van-hanh-10">'+ic('arrow','w-3 h-3')+'Bảng điều khiển vận hành</button>'+
-      (G.allowed && G.allowed('studio') ? '<button class="btn sm" data-v="studio">'+ic('spark','w-3 h-3')+'Mở xưởng dựng video</button>' : '')+
+      '<button class="btn sm" data-v="lam-phim-10">'+ic('sparkle','w-3 h-3')+'Chương trình 10 bước làm phim</button>'+
+      (G.allowed && G.allowed('studio') ? '<button class="btn ghost sm" data-v="studio">'+ic('spark','w-3 h-3')+'Mở xưởng dựng video</button>' : '')+
       '</div>';
 
     o += '<div class="grid g4 mb">'+

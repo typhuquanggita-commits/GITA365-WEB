@@ -3808,3 +3808,25 @@ html[data-may="yeu"] *,html[data-may="yeu"] *::before,html[data-may="yeu"] *::af
 .sx-chip{font-size:10.5px;font-weight:600;padding:2px 9px;border-radius:999px;
   background:var(--surface-2);color:var(--ink-3);border:1px solid var(--line);white-space:nowrap}
 .sx-grp{font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--gita-sau)}
+
+/* ═══════════════ CHƯƠNG TRÌNH LÀM PHIM · 10 bước ra phim ═══════════════ */
+.lp-prog{display:flex;align-items:center;gap:11px;margin:4px 0 18px}
+.lp-prog-bar{flex:1;height:9px;border-radius:999px;background:var(--surface-2);overflow:hidden;border:1px solid var(--line)}
+.lp-prog-fill{height:100%;background:var(--ok);border-radius:999px;transition:width .2s}
+.lp-prog-txt{font-size:12px;font-weight:700;color:var(--ink-3);white-space:nowrap}
+.lp-step{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:15px 18px;margin-bottom:12px}
+.lp-step.done{border-color:color-mix(in srgb,var(--ok) 45%,var(--line));background:color-mix(in srgb,var(--ok) 4%,var(--surface))}
+.lp-head{display:flex;align-items:flex-start;gap:12px}
+.lp-num{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-weight:800;font-size:15px;background:var(--gita);color:#fff}
+.lp-step.done .lp-num{background:var(--ok)}
+.lp-tt{font-weight:800;font-size:15px;color:var(--ink);line-height:1.3}
+.lp-goal{color:var(--ink-3);font-size:12.5px;line-height:1.55;margin-top:3px}
+.lp-sub{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--gita-sau);margin:13px 0 5px}
+.lp-check{display:flex;align-items:center;gap:10px;padding:4px 0}
+.lp-check .lp-ct{font-size:13px;color:var(--ink-2);line-height:1.45}
+.lp-check.x .lp-ct{text-decoration:line-through;color:var(--ink-4)}
+.lp-ai{display:flex;gap:9px;padding:10px 12px;border-radius:10px;background:var(--gita-mo-1);font-size:12.5px;color:var(--ink-2);line-height:1.55;margin-top:4px}
+.lp-ai b{color:var(--gita-sau)}
+.lp-mau{padding:10px 12px;border-radius:10px;background:var(--surface-2);border:1px dashed var(--line);font-size:12px;color:var(--ink-2);line-height:1.65;margin-top:7px}
+.lp-mau b{color:var(--ink)}
+.lp-out{margin-top:11px;font-size:12.5px;color:var(--ok);font-weight:600;display:flex;align-items:center;gap:6px}
