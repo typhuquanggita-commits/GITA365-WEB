@@ -4050,3 +4050,14 @@ html[data-may="yeu"] *,html[data-may="yeu"] *::before,html[data-may="yeu"] *::af
 
 /* V50·168 — lượt gọn của trợ lý: nút hành động một hàng */
 .ht-nut{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+
+/* V50 — Bộ não vận hành */
+.bn-phanhe{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.bn-ph{padding:12px 14px;margin:0}
+.bn-ph.bn-tat{opacity:.75}
+.bn-ph-dau{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.bn-pill{flex:none;font-size:11px;font-weight:700;padding:2px 9px;border-radius:99px;color:var(--bp);border:1px solid var(--bp);white-space:nowrap}
+.bn-buoc{display:grid;gap:8px;margin-top:10px}
+.bn-b{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border:1px solid var(--line);border-left:4px solid var(--bt);border-radius:10px}
+.bn-b > div{min-width:0}
+.bn-nut{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}

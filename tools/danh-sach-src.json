@@ -210,6 +210,7 @@
     "src/data-khung.js",
     "src/khung-du-lieu.js",
     "src/toan-canh.js",
+    "src/bo-nao-van-hanh.js",
     "src/studio-he.js",
     "src/studio-lam-phim.js",
     "src/studio-ban-dung.js",

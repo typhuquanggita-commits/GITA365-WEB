@@ -89,6 +89,7 @@ import { docChienLuocV20, dsMucTieuCL, taoMucTieuCL, capNhatMucTieuCL } from './
 import { ghiApDung, docApDung, tongApDung } from './ap-dung.js';
 import { ghiSoatMan, layBaoCaoSoat } from './soat-man.js';
 import { soatLuocDo, vaLuocDo } from './va-luoc-do.js';
+import { CRON_NHIP, nhipVanHanh, kichHoatKhachMoi, docBoNao, chayThuBoNao } from './bo-nao-van-hanh.js';
 import { docLuatGiaoDien } from './luat-giao-dien.js';
 import { capLenhGiamSat, thuLenhGiamSat, docLenhGiamSat, soatSoDen,
   docTranGiamSat } from './giam-sat.js';
@@ -350,7 +351,7 @@ const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau'
   /* Soát toàn bộ màn (soat-man.js) — R01 gửi báo cáo ĐÃ MÃ HOÁ trong trình duyệt. */
   'ghiSoatMan',
   /* Tự vá lược đồ D1 (va-luoc-do.js) — R01: thêm cột còn thiếu so với csdl.sql. */
-  'soatLuocDo'];
+  'soatLuocDo', 'docBoNao', 'chayThuBoNao'];
 
 async function lam(fn, y, env, db) {
   if (fn === 'dangNhap')  return await dangNhap(y, env, db);
@@ -723,6 +724,8 @@ async function lam(fn, y, env, db) {
   if (fn === 'tongApDung')        return await tongApDung(y, env, db, hoSo);
   if (fn === 'ghiSoatMan')        return await ghiSoatMan(y, env, db, hoSo);
   if (fn === 'soatLuocDo')        return await soatLuocDo(y, env, db, hoSo);
+  if (fn === 'docBoNao')          return await docBoNao(y, env, db, hoSo);
+  if (fn === 'chayThuBoNao')      return await chayThuBoNao(y, env, db, hoSo);
   if (fn === 'boViecHomNay')      return await boViecHomNay(y, env, db, hoSo);
   if (fn === 'batCheDoBao')       return await batCheDoBao(y, env, db, hoSo);
   if (fn === 'ghiGhimCon')        return await ghiGhimCon(y, env, db, hoSo);
@@ -1187,6 +1190,14 @@ export default {
      mà mã vẫn trông như đã làm xong việc. Nay khai đủ hai khung ở đó,
      và phép đo ở thu-worker.js gọi thẳng scheduled() với cả hai mốc. */
   async scheduled(su, env, ctx) {
+    /* V50 · NHỊP VẬN HÀNH MỖI GIỜ (bo-nao-van-hanh.js). Phân theo CHUỖI LỊCH,
+       đứng trước phép phân theo giờ: lượt 00:15 mà rơi xuống nhánh gioUTC === 0
+       là gửi bản tổng doanh thu lần hai. */
+    if (su && su.cron === CRON_NHIP) {
+      ctx.waitUntil(nhipVanHanh(env, { that: true }).catch(e =>
+        console.error('BO_NAO_NHIP_HONG', String(e && e.message || e))));
+      return;
+    }
     const gioUTC = new Date((su && su.scheduledTime) || Date.now()).getUTCHours();
 
     if (gioUTC === 0) {
@@ -1277,6 +1288,11 @@ export default {
          tài khoản (đổi mật khẩu + một loạt việc phá trong 15 phút) — chạy nền,
          không làm chậm câu trả lời. */
       if (kq && kq.ok && CUA_NHAY.has(fn) && ctx && ctx.waitUntil) ctx.waitUntil(tuSoatBaoDong(env, env.CSDL));
+      /* V50 · CÓ KHÁCH LÀ CHẠY: khách vừa kích hoạt tài khoản → bộ não giao Tư
+         vấn và hẹn chạm hôm nay, đúng lời "liên hệ trong 24 giờ" của thư kích hoạt. */
+      if (kq && kq.ok && fn === 'kichHoat' && kq.maKhachHang && ctx && ctx.waitUntil)
+        ctx.waitUntil(kichHoatKhachMoi(env, env.CSDL, kq.maKhachHang).catch(e =>
+          console.error('BO_NAO_KHACH_MOI_HONG', String(e && e.message || e))));
       const r = traJson(kq, 200, env, req);
       r.headers.set('x-gita-ma', ma);
       return r;

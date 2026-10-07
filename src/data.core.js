@@ -101,6 +101,8 @@ G.PERM = {
      Ba mức này cộng với tài chính (R01–R03) tạo ra đúng bậc thang:
      100% · 95% · 91% · 90% — xem G.TAM_NHIN bên dưới. */
   qt_trang:2, dh_toan_he:4, nghe_chung:12,
+  /* V50 · bộ não vận hành 24/7 — cùng ngưỡng cửa docBoNao ở máy chủ (R01–R03). */
+  bo_nao:3,
   /* V50·168 — chủ hệ: "việc cấp quyền hệ thống 100% do Super Admin". Máy chủ
      gác (mọi cửa cấp quyền chỉ R01). Ở app, Admin hệ thống vẫn THẤY màn cấp
      quyền (hiển thị 100%) ở chế độ xem; cap_quyen dùng cho nút thao tác. */
@@ -164,6 +166,7 @@ G.PERM_TEN = {
   kh_qua_tang:'Kho quà theo tầng',
   ctv_lien_ket:'Mã liên kết cộng tác viên', ctv_hoa_hong:'Hoa hồng và tài khoản nhận tiền',
   qt_trang:'Quản trị trang — tài khoản và phân quyền',
+  bo_nao:'Bộ não vận hành — nhịp 24/7, chạy thử',
   cap_quyen:'Cấp quyền hệ thống (chỉ Super Admin)',
   tl_gui:'Gửi tài liệu lên thư viện',
   tl_xem_het:'Xem toàn bộ tài liệu đã gửi',
@@ -1053,6 +1056,7 @@ G.NAV = [
     {v:'toan-canh-tc', t:'Toàn cảnh tài chính', h:'Chỉ số · quy trình thu & chi · quan hệ bảng · biểu đồ thu chi, dòng tiền, công nợ, credit · ma trận chức năng × vai · rủi ro · danh mục bảng', ic:'chart', perm:'fin_view', capMo:'chung'},
     {v:'khung-du-lieu', t:'Khung dữ liệu & ma trận quyền', h:'Cấu trúc bảng CRM · Tài chính (cột, ý nghĩa, ai đọc · ai ghi) · ma trận vai × màn · luồng dữ liệu khách ↔ nhân sự', ic:'grid', perm:'qt_trang', capMo:'chung'},
     {v:'soat-toan-man', t:'Soát toàn bộ màn', h:'Super Admin · ứng dụng tự mở từng mục cột trái bằng phiên thật, đo công cụ / chỉ để đọc / số minh hoạ / khoá / lỗi · gửi trợ lý bản mã hoá', ic:'search', perm:'qt_trang', capMo:'chung', hienKhi:'soatDuocToanMan'},
+    {v:'bo-nao-van-hanh', t:'Bộ não vận hành', h:'Nhịp 24/7: giao Tư vấn cho nhà mới · đưa nhà đèn đỏ lên đầu · hẹn và công nợ quá hạn · báo động · có khách là chạy · nút chạy thử', ic:'pulse', perm:'bo_nao', capMo:'chung'},
     {v:'trung-tam-do', t:'Trung tâm đo lường & tối ưu', h:'Một chỗ đo toàn hệ: 7 khối gom 16 ban · 41 chỉ số · từng vai, từng người, từng hoạt động · kết quả kiểm tra · phân tích & 2–5 giải pháp · phân bổ người · theo dõi triển khai tới khi đo lại', ic:'chart', star:1, capMo:'chung', hienKhi:'xemTrungTamDo'},
     {v:'do-luong-he', t:'Đo lường toàn diện khách hàng', h:'Hồ sơ đo lường hằng tháng từng nhà · sáu điểm gắn kết · tiến bộ · hài lòng · giá trị · rủi ro · tiềm năng · xếp hạng nội bộ & năm tầng chăm sóc · báo cáo tháng toàn hệ · chốt tháng', ic:'chart', star:1, capMo:'chung', hienKhi:'xemDoLuongHe'},
     {v:'credit-gita', t:'Hệ thống Credit (5 tầng × 10 cấp)', h:'10 đồng = 1 credit · gói → 5 quỹ → 50 cấp theo độ khó · giá credit từng hoạt động · credit thưởng · mã coach · chờ R01 duyệt', ic:'vault', star:1, perm:'fin_view', capMo:'chung'},

@@ -86,6 +86,9 @@ jobs:
       - name: Thử lớp hội thoại trợ lý (nghe như tư vấn viên · phân vai · đúng giới hạn)
         run: node tools/thu-tro-ly-hoi-thoai.mjs
 
+      - name: Chạy thử bộ não vận hành V50 (nhịp mỗi giờ · có khách là chạy · lịch · quyền)
+        run: node tools/thu-bo-nao-van-hanh.mjs
+
       - name: Thử Truy vấn đa chiều (bốn dòng chảy · bảng điểm 16 ban)
         run: node tools/thu-dong-chay.mjs
 

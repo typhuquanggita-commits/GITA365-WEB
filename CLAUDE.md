@@ -20,6 +20,10 @@ Chủ hệ: anh Trương Nhật Quang (không phải dân kỹ thuật, viết t
 - Khách: mỗi lượt một câu đón · một ý chính · MỘT câu hỏi; không đổ danh sách tư liệu, không lộ chữ nội bộ (kho, mã, trần %). Phụ huynh đi chuỗi chẩn đoán; học viên và đại sứ thì không. Câu xã giao không tra kho, không ghi nhớ. Đường khẩn luôn đi trước.
 - Thêm một bộ phận mới vào câu trả lời thì đi qua lớp này, đừng nối thẳng vào `theDap`. `tools/thu-tro-ly-hoi-thoai.mjs` canh.
 
+## Bộ não vận hành (`may-chu/bo-nao-van-hanh.js`)
+- Nhịp mỗi giờ (cron `15 * * * *`, rẽ nhánh theo `su.cron` TRƯỚC phép phân theo giờ) + chạy ngay khi khách kích hoạt tài khoản. Làm việc VẬN HÀNH: giao Tư vấn, đưa nhà đèn đỏ lên đầu, đếm, báo động, chụp số đo — mọi lượt ghi đảo ngược được, không đè người đã giao tay.
+- Không tự nhập nội dung phục vụ khách (ba chữ ký), không tự sửa mã, không tự cấp quyền. Bước mới thêm vào `nhipVanHanh` phải có chế độ chạy thử chỉ đọc. `tools/thu-bo-nao-van-hanh.mjs` canh.
+
 ## Quy trình (skill trong `.claude/skills/`)
 - Trước mọi commit/push: `gita-kiem-truoc-khi-day`.
 - Thêm/sửa cửa máy chủ: `gita-them-cua-may-chu`. Sửa lỗi: `gita-sua-loi`.

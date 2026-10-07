@@ -54,7 +54,7 @@ var G = window.G || {}; window.G = G;
     { id:'kho-nghe', khu:'nhansu',  ten:'Kho nghề & tài liệu',      ic:'vault',   viec:'14 kho nghề theo cụm, thư viện tài liệu — chương mở theo vai, tầng, gói.',
       phan:['thu-vien-v50','kn-pp','kn-kho','kn-nghe','kn-coach','kn-tuvan','kn-vip','kn-trai','kn-mk','kn-gd','kn-nha','kn-pl','kn-tc','kn-kt','kn-ct','thu-vien'], kho:[] },
     { id:'dieu-hanh', khu:'nhansu', ten:'Điều hành & đo lường',     ic:'chart',   viec:'Trung tâm đo lường 41 chỉ số, V20, 16 ban, các vai, phòng ban, năng lực, con người.',
-      phan:['trung-tam-do','truy-van-da-chieu','dk-cac-vai','phong-ban','nang-luc-ns','con-nguoi'], kho:['KT','CT'] },
+      phan:['trung-tam-do','bo-nao-van-hanh','truy-van-da-chieu','dk-cac-vai','phong-ban','nang-luc-ns','con-nguoi'], kho:['KT','CT'] },
     { id:'tai-chinh', khu:'nhansu', ten:'Tài chính',                ic:'list',    viec:'Ban tài chính theo giới hạn được cấp: kế toán, đối soát, thuế, credit, bảng giá.',
       phan:['toan-canh-tc','phong-tai-chinh','tai-chinh-ceo','ke-toan-thue','credit-gita','bang-gia','khung-du-lieu'], kho:['TC'] },
     { id:'quan-tri', khu:'nhansu',  ten:'Tài khoản & quyền',        ic:'shield',  viec:'Cấp quyền 100% do Super Admin: mở tài khoản, phân quyền, quyền CRM, khoá, nhật ký.',

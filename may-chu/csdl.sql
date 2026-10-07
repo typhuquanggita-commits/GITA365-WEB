@@ -2480,3 +2480,16 @@ CREATE TABLE IF NOT EXISTS apDung (u TEXT NOT NULL, vai TEXT NOT NULL, cum TEXT 
 --    khoá riêng không ở máy chủ). Giữ 3 bản mới nhất, xoá sau 14 ngày.
 -- ═════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS soatMan (id TEXT PRIMARY KEY, luc TEXT NOT NULL, u TEXT NOT NULL, so INTEGER NOT NULL, dv TEXT NOT NULL, goi TEXT NOT NULL);
+
+-- ═══ BỘ NÃO VẬN HÀNH V50 (bo-nao-van-hanh.js) ═══
+-- Mỗi nhịp (mỗi giờ · mỗi khách mới · mỗi lần chạy tay) một dòng: bước nào
+-- đã làm, cảnh báo gì. Giữ 30 ngày — bảng điều khiển đọc lại được hệ đã làm
+-- gì giữa hai lần chủ hệ mở máy.
+CREATE TABLE IF NOT EXISTS nhipBoNao (
+  id      TEXT PRIMARY KEY,
+  luc     TEXT NOT NULL,
+  kieu    TEXT NOT NULL,     -- nhip · khachMoi · tay · thu
+  that    INTEGER NOT NULL,  -- 1 = đã ghi · 0 = chạy thử chỉ đọc
+  ketQua  TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_nhipbn_luc ON nhipBoNao (luc DESC);

@@ -69,6 +69,15 @@ GITA_THU_TRA_LOI = "typhuquanggita@gmail.com"
 # thử: không ai muốn bộ thử của mình gửi thư thật vào hòm thư thật.
 GITA_THU_DOANH_THU = "typhuquanggita@gmail.com"
 
+# Bộ não đa trí (bo-nao-da-tri.js) — chủ hệ bật 07/10/2026 ("bật chế độ làm
+# việc full 24/7"). Chế độ TIẾT KIỆM: chỉ bộ nhớ đệm + Workers AI (miễn phí,
+# 10.000 neuron/ngày) — không tốn tiền nhà cung cấp trả phí nào. Muốn chạy
+# đủ năm nhà (DeepSeek · Gemini · OpenAI · Claude · Grok) thì nạp khoá bằng
+# wrangler secret put rồi đổi dòng dưới thành "0". Mọi lượt vẫn qua cổng
+# Điều 13 (soatRaNhaCungCap) trước khi rời hệ.
+GITA_DA_TRI_BAT = "1"
+GITA_CHE_DO_TIET_KIEM = "1"
+
 # HỘP THƯ GITHUB (thu.js · guiQuaGithub_): kho RIÊNG TƯ có workflow mở
 # issue khi nhận repository_dispatch "thu" → GitHub gửi email về hòm chủ
 # hệ. Chỉ dùng cho thư tới hòm chủ hệ (mã bảo mật, báo doanh thu, quản
@@ -129,7 +138,7 @@ binding = "AI"
 # worker.js. Thiếu dòng 00:00 ở đây thì bản tổng KHÔNG BAO GIỜ gửi, mà
 # mã vẫn trông như đã làm xong việc — đúng lớp lỗi im lặng nhất.
 [triggers]
-crons = ["0 20 * * *", "0 0 * * *"]
+crons = ["0 20 * * *", "0 0 * * *", "15 * * * *"]
 
 # Nguồn dữ liệu. Tạo bằng:  npx wrangler d1 create gita365
 # rồi dán database_id vào đây (id KHÔNG phải bí mật — nó chỉ định danh).
