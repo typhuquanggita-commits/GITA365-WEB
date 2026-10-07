@@ -196,6 +196,8 @@
     "src/do-luong-he.js",
     "src/ho-so-thang.js",
     "src/data-toi-uu.js",
+    "src/data-v20.js",
+    "src/trung-tam-v20.js",
     "src/trung-tam-do.js",
     "src/studio-he.js",
     "src/studio-lam-phim.js",

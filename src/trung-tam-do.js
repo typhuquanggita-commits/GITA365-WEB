@@ -13,9 +13,9 @@ var G = window.G || {}; window.G = G;
 (function(){
   var U = G.U, h = U.h, ic = U.ic, VIEW = 'trung-tam-do';
   G.VIEWS = G.VIEWS || {};
-  var st = { ai:'', tab:'tong', ngay:30, khoi:'TV', d:null, ls:null, kh:null, tai:{}, loi:{}, mo:'', giao:null, moKH:'', locVD:'' };
-  var MAU_TT = { dat:'#0B7350', canhBao:'#B4720F', xau:'#BE0E16', chuaDo:'#73849F', theoDoi:'#185AB4' };
-  var TEN_TT = { dat:'Đạt', canhBao:'Cảnh báo', xau:'Xấu', chuaDo:'Chưa đo', theoDoi:'Theo dõi' };
+  var st = { ai:'', lop:'vh', tab:'tong', ngay:30, khoi:'TV', d:null, ls:null, kh:null, tai:{}, loi:{}, mo:'', giao:null, moKH:'', locVD:'' };
+  var MAU_TT = { donBay:'#5140B4', dat:'#0B7350', canhBao:'#B4720F', xau:'#BE0E16', chuaDo:'#73849F', theoDoi:'#185AB4' };
+  var TEN_TT = { donBay:'Đòn bẩy chiến lược', dat:'Đạt', canhBao:'Cảnh báo', xau:'Xấu', chuaDo:'Chưa đo', theoDoi:'Theo dõi' };
   var TEN_TTKH = { moi:'Mới giao', dangLam:'Đang làm', xong:'Đã xong', huy:'Đã huỷ' };
 
   function T(){ return G.TU; }
@@ -101,7 +101,7 @@ var G = window.G || {}; window.G = G;
   }
   function danhGia(x, d){
     var k = kpiDef(x.ma), K = khoiDef(x.khoi), dk = (d.khoi || []).filter(function(z){ return z.ma === x.khoi; })[0] || {};
-    var s = k.ten + ' đang ' + giaTri(k, x.gt) + ' — ' + (x.tt === 'xau' ? 'XẤU' : 'cảnh báo') + ' (ngưỡng ' + nguongChu(k, x.nguong) + ')';
+    var s = k.ten + ' đang ' + giaTri(k, x.gt) + ' — ' + (x.tt === 'xau' ? 'XẤU' : x.tt === 'donBay' ? 'chưa xấu nhưng là đòn bẩy chiến lược lớn nhất theo mô phỏng V20' : 'cảnh báo') + ' (ngưỡng ' + nguongChu(k, x.nguong) + ')';
     if(x.truoc != null) s += '; kỳ trước ' + giaTri(k, x.truoc) + (x.gt > x.truoc ? ', đang tăng' : x.gt < x.truoc ? ', đang giảm' : ', đứng yên');
     return s + '. Khối ' + K.ten + ' đạt ' + (dk.diem == null ? '—' : dk.diem) + '/100 (' + (dk.xau || 0) + ' chỉ số xấu, ' + (dk.canhBao || 0) + ' cảnh báo).';
   }
@@ -201,6 +201,8 @@ var G = window.G || {}; window.G = G;
   /* ═══════════ THẺ: PHÂN TÍCH & GIẢI PHÁP ═══════════ */
   function vGP(d){
     var vd = dsVanDe(d);
+    /* Mở từ Chiến lược V20: vấn đề được chọn có thể chưa xấu nhưng là đòn bẩy cần đẩy */
+    if(st.mo && T().VAN_DE[st.mo] && !vd.some(function(x){ return x.ma === st.mo; })){ var them = (d.kpi || []).filter(function(x){ return x.ma === st.mo; })[0]; if(them) vd.unshift(Object.assign({}, them, { ttGoc: them.tt, tt: them.tt === 'xau' || them.tt === 'canhBao' ? them.tt : 'donBay' })); }
     var o = '<p class="sm muted" style="margin-top:0">Mỗi chỉ số xấu hoặc cảnh báo là một vấn đề. Máy đưa đánh giá, nguyên nhân thường gặp và 2–5 giải pháp xếp theo điểm ưu tiên (2 × tác động − công sức). Chọn một giải pháp → giao triển khai: máy đề xuất người đúng vai đang ít việc nhất.</p>';
     if(!vd.length) return o + '<div class="card pad-sm"><b>Không có vấn đề đang mở.</b> <span class="sm muted">Mọi chỉ số chấm được đều đạt.</span></div>';
     o += '<div class="co-hang mb"><button class="btn sm '+(st.locVD?'ghost':'')+'" data-ttd="loc-vd" data-v2="">Tất cả ('+vd.length+')</button>'+T().KHOI.map(function(K){ var n = vd.filter(function(x){ return x.khoi === K.ma; }).length; return n ? '<button class="btn sm '+(st.locVD===K.ma?'':'ghost')+'" data-ttd="loc-vd" data-v2="'+K.ma+'">'+h(K.ten)+' ('+n+')</button>' : ''; }).join('')+'</div>';
@@ -272,7 +274,7 @@ var G = window.G || {}; window.G = G;
   }
 
   function tabs(){
-    var ds = laQL() ? [['tong','Tổng quan','chart'],['khoi','Từng phòng ban','grid'],['vai','Từng vai & người','user'],['hd','Từng hoạt động','pulse'],['kt','Kết quả kiểm tra','shield'],['gp','Phân tích & giải pháp','star'],['tk','Triển khai','check'],['bd','Bản đồ & quy trình','compass']]
+    var ds = laQL() ? [['tong','Tổng quan','chart'],['khoi','Từng phòng ban','grid'],['vai','Từng vai & người','users'],['hd','Từng hoạt động','pulse'],['kt','Kết quả kiểm tra','shield'],['gp','Phân tích & giải pháp','star'],['tk','Triển khai','check'],['bd','Bản đồ & quy trình','compass']]
                     : [['tk','Việc tối ưu của tôi','check']];
     return '<div class="co-tabs" role="tablist">'+ds.map(function(x){ return '<button class="co-tab'+(st.tab===x[0]?' on':'')+'" role="tab" data-ttd="tab" data-v2="'+x[0]+'">'+ic(x[2],'w-3 h-3')+h(x[1])+'</button>'; }).join('')+'</div>';
   }
@@ -281,12 +283,15 @@ var G = window.G || {}; window.G = G;
     if(!T()) return U.lockCard('Thiếu tham số Trung tâm đo lường.');
     if(!G.xemTrungTamDo()) return U.lockCard('Trung tâm đo lường & tối ưu dành cho đội ngũ.');
     var ai = String((G.S && G.S.acc && G.S.acc.u) || '') + '|' + lv();
-    if(st.ai !== ai){ st = { ai:ai, tab: laQL() ? 'tong' : 'tk', ngay:30, khoi:'TV', d:null, ls:null, kh:null, tai:{}, loi:{}, mo:'', giao:null, moKH:'', locVD:'' }; mau = null; }
+    if(st.ai !== ai){ st = { ai:ai, lop:'vh', tab: laQL() ? 'tong' : 'tk', ngay:30, khoi:'TV', d:null, ls:null, kh:null, tai:{}, loi:{}, mo:'', giao:null, moKH:'', locVD:'' }; mau = null; }
     if(!laQL()) st.tab = 'tk';
     var o = U.ph({ eyebrow:'SUPER ADMIN · ĐO LƯỜNG & TỐI ƯU', ic:'chart', grad:1, t: laQL() ? 'Trung tâm đo lường & tối ưu' : 'Việc tối ưu của tôi',
       lead: laQL() ? 'Một chỗ đo toàn hệ: 7 khối gom 16 ban, 41 chỉ số, từng vai, từng người, từng hoạt động và kết quả kiểm tra — kèm phân tích, 2–5 giải pháp cho mỗi vấn đề, phân bổ người đúng vai và theo dõi triển khai tới khi đo lại.'
                    : 'Các giải pháp tối ưu Super Admin giao cho anh/chị: tick từng bước, đóng khi xong — máy tự đo lại chỉ số.' });
     if(!coMayChu()) o += '<div class="co-mau">'+ic('alert','w-4 h-4')+'<span><b>Ví dụ minh hoạ.</b> Số liệu giả định, chấm bằng đúng công thức đang chạy ở máy chủ. Đăng nhập tài khoản thật trên máy chủ của Học viện để xem số thật và giao việc.</span></div>';
+    if(laQL()) o += '<div class="co-hang mb" role="group" aria-label="Tầng xem"><button class="btn '+(st.lop==='vh'?'pri':'ghost')+'" data-ttd="lop" data-v2="vh">'+ic('pulse','w-3 h-3')+'Vận hành · hôm nay</button>'+
+      '<button class="btn '+(st.lop==='v20'?'pri':'ghost')+'" data-ttd="lop" data-v2="v20">'+ic('target','w-3 h-3')+'Chiến lược V20 · đi về đâu</button></div>';
+    if(laQL() && st.lop === 'v20' && G.TTD_V20) return o + G.TTD_V20.ve();
     o += tabs();
     if(st.tab === 'tk') return o + vTK();
     if(st.tab === 'bd') return o + vBD();
@@ -308,6 +313,8 @@ var G = window.G || {}; window.G = G;
     var el = e.target.closest && e.target.closest('[data-ttd]'); if(!el) return;
     var a = el.getAttribute('data-ttd'), v = el.getAttribute('data-v2'); e.preventDefault();
     if(a === 'tab') st.tab = v;
+    else if(a === 'lop') st.lop = v === 'v20' ? 'v20' : 'vh';
+    else if(a === 'mo-vd-ngoai'){ st.lop = 'vh'; st.tab = 'gp'; st.mo = v; st.giao = null; st.locVD = ''; setTimeout(function(){ var n = document.getElementById('vd-' + v); if(n && n.scrollIntoView) n.scrollIntoView({ block:'start' }); }, 60); }
     else if(a === 'ky'){ st.ngay = Number(v); st.d = null; }
     else if(a === 'lam-moi'){ st.d = null; st.ls = null; st.kh = null; }
     else if(a === 'khoi') st.khoi = v;

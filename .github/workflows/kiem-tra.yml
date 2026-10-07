@@ -56,6 +56,9 @@ jobs:
       - name: Thử Trung tâm đo lường & tối ưu (41 chỉ số · vai · người · kiểm tra · giải pháp · phân bổ · đo lại · khớp app)
         run: node tools/thu-toi-uu.mjs
 
+      - name: Thử Nền tảng chiến lược V20 (Holt · z bền · tách biến động · nhóm khách · LTV/CAC · mục tiêu · khớp app)
+        run: node tools/thu-v20.mjs
+
       - name: Thử Truy vấn đa chiều (bốn dòng chảy · bảng điểm 16 ban)
         run: node tools/thu-dong-chay.mjs
 

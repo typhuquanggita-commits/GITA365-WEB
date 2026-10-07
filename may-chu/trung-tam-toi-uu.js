@@ -372,3 +372,11 @@ export async function dsKeHoachToiUu(y, env, db, hoSo) {
   return { ok: true, quanLy: ql, ds: list, taiViec: Object.values(tai).sort((a, b) => b.mo - a.mo),
     dem: { moi: list.filter(k => k.trangThai === 'moi').length, dangLam: list.filter(k => k.trangThai === 'dangLam').length, xong: list.filter(k => k.trangThai === 'xong').length, tre: list.filter(k => k.tre).length } };
 }
+
+/* Giá trị hiện tại của 41 chỉ số (kỳ 30 ngày + ảnh chụp) — Nền tảng chiến lược V20 đọc để chấm mục tiêu. */
+export async function giaTriTU(db) {
+  await taoBang(db);
+  const hn = homNay(), den = lui(hn, -1), tu = lui(den, 30);
+  const a = await doKy(db, tu, den, 30), b = await doHienTai(db);
+  return Object.assign({}, a.g, b.g);
+}

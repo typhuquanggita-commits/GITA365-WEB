@@ -2454,3 +2454,13 @@ CREATE TABLE IF NOT EXISTS keHoachToiUu (id TEXT PRIMARY KEY, maGiaiPhap TEXT NO
   buoc TEXT NOT NULL, ghiChu TEXT, ketQua REAL, taoBoi TEXT NOT NULL, taoLuc TEXT NOT NULL, suaLuc TEXT, xongLuc TEXT);
 CREATE INDEX IF NOT EXISTS ix_khtu_nguoi ON keHoachToiUu (nguoiPhuTrach, trangThai);
 CREATE TABLE IF NOT EXISTS chupTrungTam (ngay TEXT PRIMARY KEY, phienBan TEXT, duLieu TEXT NOT NULL, luc TEXT NOT NULL);
+
+-- ═════════════════════════════════════════════════════════════
+--  NỀN TẢNG CHIẾN LƯỢC V20 (may-chu/chien-luoc-v20.js · V20-2026.10-a)
+--  mucTieuChienLuoc: mục tiêu chiến lược gắn MỘT chỉ số đo được (V20 hoặc
+--    41 chỉ số Trung tâm); máy tính tiến độ, kỳ vọng, dự báo tại hạn.
+--    Đổi mục tiêu / hạn phải có lý do — ghi nối vào ghiChu, không ghi đè.
+-- ═════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS mucTieuChienLuoc (id TEXT PRIMARY KEY, ten TEXT NOT NULL, chiSo TEXT NOT NULL, giaTriDau REAL NOT NULL,
+  mucTieu REAL NOT NULL, tuLuc TEXT NOT NULL, hanLuc TEXT NOT NULL, chuSo TEXT, trangThai TEXT NOT NULL DEFAULT 'dang', ghiChu TEXT,
+  taoBoi TEXT NOT NULL, taoLuc TEXT NOT NULL, suaLuc TEXT);
