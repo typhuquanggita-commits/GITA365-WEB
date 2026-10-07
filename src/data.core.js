@@ -626,6 +626,7 @@ G.NAV = [
     {v:'tien-bo',     t:'Nhà mình đã đổi gì',          h:'Tuần này so với tuần trước, và phần chênh lệch nói bằng lời', ic:'chart', star:1, capMo:'chung'},
     {v:'kpi-toi',     t:'KPI của tôi',                h:'KPI ngày · KPI tháng · liên đới · hạng lương thưởng', ic:'chart', star:1, capMo:'chung'},
     {v:'gioi-thieu',  t:'GITA 365 là gì',              h:'Sứ mệnh · tầm nhìn · mục tiêu · giá trị · năm tầng · văn hoá · cách đồng hành', ic:'seed', star:1, capMo:'chung'},
+    {v:'vi-credit',    t:'Ví credit của nhà mình',      h:'Số dư credit tặng · thưởng · trả phí · cách tích · dùng cho nhà mình · lịch sử', ic:'vault', star:1, capMo:'chung', hienKhi:'laKhachCredit'},
     {v:'hom-nay',      t:'Hôm nay',                      h:'Một việc duy nhất cho tối nay, tick xong thì cất máy đi — hai việc ngang nhau lúc chín giờ tối, trong bếp, tay bận, là không việc nào được làm · Chế độ Bão bật một chạm, KHÔNG hỏi vì sao · bỏ một việc thì không ai hỏi vặn · việc nặng có nút Để hôm khác ngay cạnh nút tiếp tục, CÙNG KÍCH CỠ', ic:'home', star:1, capMo:'chung'},
     {v:'bat-dau',     t:'Bắt đầu ở đây',               h:'Năm bước đầu tiên, đúng thứ tự',     ic:'seed', star:1, capMo:'chung'},
     {v:'tham-gia',    t:'Đường vào — sáu bước',         h:'Giới thiệu → đăng ký → test → hồ sơ → định hướng → 7 ngày', ic:'compass', star:1, capMo:'chung'},

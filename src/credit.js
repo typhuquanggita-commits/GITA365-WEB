@@ -89,12 +89,12 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   /* ═══════════ MÀN ═══════════ */
   var U = G.U, h = U.h, ic = U.ic, VIEW = 'credit-gita';
   var KHOA_DUYET = 'gita365_credit_duyet';
-  var st = { tab:'bang', tang:3, nhom:'CS', tuyen:'GT', cap:5, dong:'' };
+  var st = { tab:'vi', tang:3, nhom:'CS', tuyen:'GT', cap:5, dong:'' };
   function duyet(){ try{ return JSON.parse(localStorage.getItem(KHOA_DUYET)||'null'); }catch(e){ return null; } }
   var MAU = ['#185AB4','#5140B4','#0B6675','#0B7350','#BE0E16'];
 
   function tabs(){
-    var ds = [['bang','Bảng 5 tầng × 10 cấp','grid'],['goi','Quy đổi gói','vault'],['tieu','Giá hoạt động','list'],['thuong','Credit thưởng','star'],['ma','Mã coach','target'],['luat','Luật & duyệt','shield']];
+    var ds = [['vi','Ví thật (máy chủ)','orbit'],['bang','Bảng 5 tầng × 10 cấp','grid'],['goi','Quy đổi gói','vault'],['tieu','Giá hoạt động','list'],['thuong','Credit thưởng','star'],['ma','Mã coach','target'],['luat','Luật & duyệt','shield']];
     return '<div class="co-tabs" role="tablist">'+ds.map(function(x){ return '<button class="co-tab'+(st.tab===x[0]?' on':'')+'" role="tab" data-cr="tab" data-v2="'+x[0]+'">'+ic(x[2],'w-3 h-3')+h(x[1])+'</button>'; }).join('')+'</div>';
   }
   function chonTang(tatCa){
@@ -166,13 +166,11 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   function vLuat(){
     var d = duyet(), la01 = (G.S && G.S.roleObj && G.S.roleObj.id) === 'R01';
     var o = '<div class="card pad-sm mb"><ol class="sm" style="padding-left:18px;line-height:1.75;margin:0">'+P().luat.map(function(l){ return '<li>'+h(l)+'</li>'; }).join('')+'</ol></div>';
+    var dP = P().duyet;
     o += '<div class="card pad-sm"><b class="sm">Duyệt bảng credit · phiên bản '+h(P().phienBan)+'</b>'+
-      (d && d.phienBan===P().phienBan ? '<p class="sm mt" style="color:#0B7350">'+ic('check','w-4 h-4')+' Đã duyệt bởi '+h(d.ai)+' lúc '+h(new Date(d.luc).toLocaleString('vi-VN'))+(d.ghi?' · Ghi chú: '+h(d.ghi):'')+'</p>' :
+      (P().trangThai === 'da-duyet' && dP ? '<p class="sm mt" style="color:#0B7350">'+ic('check','w-4 h-4')+' Đã duyệt · '+h(dP.boi)+' · '+h(dP.ngay)+'</p><p class="tiny muted">'+h(dP.ghi||'')+'</p>' :
         '<p class="sm mt muted">Chưa duyệt. Bảng chưa áp vào ví khách nào.</p>')+
-      (la01 ? '<label class="co-f mt"><span>Ghi chú khi duyệt (điều chỉnh mong muốn)</span><textarea class="inp" id="cr-ghi" rows="2" maxlength="500"></textarea></label>'+
-        '<div class="co-hang mt"><button class="btn pri sm" data-cr="duyet">'+ic('check','w-3 h-3')+'Duyệt phiên bản này</button></div>' :
-        '<p class="tiny muted mt">Chỉ Super Admin (R01) duyệt được — đặt và đổi giá thuộc Vùng Đỏ của Hiến pháp.</p>')+
-      '<p class="tiny muted mt">Duyệt ở đây ghi trên máy này. Khi áp thật, phiên bản được duyệt phải ghi vào sổ máy chủ cùng ví credit của khách.</p></div>';
+      '<p class="tiny muted mt">Đổi bất kỳ tham số nào là ra phiên bản mới và phải duyệt lại. Giá gói chính thức đổi ở màn Bảng giá (R01, có lý do) — máy chủ tính credit theo giá ấy.</p></div>';
     return o;
   }
 
@@ -204,11 +202,11 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   G.VIEWS[VIEW] = function(){
     if(!(typeof G.can==='function' && G.can('fin_view'))) return U.lockCard('Hệ thống Credit mở cho ban điều hành và tài chính (R01–R04).');
     CR.hoiGia();
-    var d = duyet(), daDuyet = d && d.phienBan===P().phienBan;
+    var dP = P().duyet, daDuyet = P().trangThai === 'da-duyet';
     var o = U.ph({ eyebrow:'TÀI CHÍNH · HỆ THỐNG CREDIT', ic:'vault', grad:1, t:'Hệ thống Credit GITA365 — 5 tầng × 10 cấp',
       lead:'Tiền gói của khách đổi thành credit (10 đồng = 1 credit). Credit chia vào 5 quỹ, phân cho 10 cấp mỗi tầng theo thang độ khó; mọi hoạt động của khách đều có giá credit (tiêu) hoặc credit thưởng (tích). Mã coach gắn nhóm khách hàng, tầng, cấp và bậc khó.' });
     o += '<div class="co-mau" style="'+(daDuyet?'border-color:#0B7350;background:color-mix(in srgb,#0B7350 7%,var(--surface))':'')+'">'+ic(daDuyet?'check':'alert','w-4 h-4')+
-      '<span>'+(daDuyet ? '<b>Đã duyệt</b> phiên bản '+h(P().phienBan)+'.' : '<b>Bản chờ duyệt</b> — phiên bản '+h(P().phienBan)+'. Chưa áp vào ví khách nào.')+
+      '<span>'+(daDuyet ? '<b>Đã duyệt</b> phiên bản '+h(P().phienBan)+(dP ? ' · '+h(dP.boi)+' · '+h(dP.ngay) : '')+'. Ví credit thật chạy ở máy chủ.' : '<b>Bản chờ duyệt</b> — phiên bản '+h(P().phienBan)+'. Chưa áp vào ví khách nào.')+
       ' Giá gói: '+(CR.giaTuMayChu() ? 'đọc từ máy chủ.' : 'theo GIA_KHOI_DAU (chưa đọc được máy chủ).')+'</span></div>';
     o += '<div class="grid g4 mb">'+
       U.stat({ k:'Tỷ lệ quy đổi', v:'10đ = 1', d:'credit, mọi cấp mọi tầng' })+
@@ -216,7 +214,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       U.stat({ k:'Credit tặng', v:so(CR.tang(1).cr)+' · '+P().tang.filter(function(T){ return T.dangKy; }).map(function(T){ return so(T.dangKy); }).join('/'), d:'T1 · đăng ký T2/T3/T4/T5 — Học viện chịu' })+
       U.stat({ k:'Buổi chuẩn T3', v:so(CR.buoiChuan(CR.tang(3))), d:'credit · '+so(CR.buoiChuan(CR.tang(3))*P().ty)+'đ' })+'</div>';
     o += tabs();
-    o += st.tab==='bang' ? vBang() : st.tab==='goi' ? vGoi() : st.tab==='tieu' ? vTieu() : st.tab==='thuong' ? vThuong() : st.tab==='ma' ? vMa() : vLuat();
+    o += st.tab==='vi' ? (G.CRV ? G.CRV.veQuanTri() : '') : st.tab==='bang' ? vBang() : st.tab==='goi' ? vGoi() : st.tab==='tieu' ? vTieu() : st.tab==='thuong' ? vThuong() : st.tab==='ma' ? vMa() : vLuat();
     return o;
   };
 })();

@@ -16,22 +16,25 @@
      thuong      hoạt động TÍCH credit thưởng, chia từ quỹ thưởng của gói
      luat        luật dùng chung cho mọi cấp, mọi tầng
 
-   TRẠNG THÁI: 'cho-duyet' — chưa áp vào ví khách nào. Sau khi R01 duyệt,
-   ví credit thật phải đặt ở máy chủ (sổ cái), không đặt ở trình duyệt.
+   TRẠNG THÁI: ĐÃ DUYỆT (R01, 07/10/2026). Ví credit thật ở máy chủ
+   (may-chu/credit.js) — hai bên phải khớp; tools/thu-credit.mjs so từng số.
+   Giá T2 3.000.000đ: tham số đã đổi; giá chính thức vẫn đổi ở màn Bảng giá
+   (doiGia, R01, có lý do) — máy chủ đọc giá ấy.
    Không đụng máy chủ · giấy phép · mã hoá.
    ═══════════════════════════════════════════════════════════════ */
 'use strict';
 var G = window.G || {}; window.G = G;
 
 G.CR_THAMSO = {
-  phienBan:'CR-2026.10-b', trangThai:'cho-duyet',
+  phienBan:'CR-2026.10-c', trangThai:'da-duyet',
+  duyet:{ boi:'R01 · Trương Nhật Quang', ngay:'2026-10-07', ghi:'Đồng ý toàn bộ phương án đề xuất: giá T2 3.000.000đ, T1 tặng 2.000, đăng ký tặng 3.000/5.000/8.000/12.000, thứ tự trừ tặng → thưởng → trả phí, T1 tính 30 ngày.' },
   ty:10,
   /* gia: đồng · ngay: thời lượng chuẩn · buoi: buổi coach chính của chương trình tầng (G.CO_CT)
      · pha: số cổng nghiệm thu · tangCr: credit TẶNG của tầng 1 (gói 0đ) · dangKy: credit TẶNG khi
      thành viên đăng ký tài khoản ở tầng ấy. Hai mức tặng do chủ hệ chốt 10/2026; Học viện chịu. */
   tang:[
     { t:1, ten:'NHẬN DIỆN', gia:0,        ngay:30,  buoi:3,  pha:3, tangCr:2000, dangKy:0 },
-    { t:2, ten:'GIẢI MÃ',   gia:500000,   ngay:21,  buoi:6,  pha:3, dangKy:3000 },
+    { t:2, ten:'GIẢI MÃ',   gia:3000000,   ngay:21,  buoi:6,  pha:3, dangKy:3000 },
     { t:3, ten:'KIẾN TẠO',  gia:10000000, ngay:90,  buoi:12, pha:4, dangKy:5000 },
     { t:4, ten:'CHUYỂN HÓA',gia:30000000, ngay:365, buoi:24, pha:4, dangKy:8000 },
     { t:5, ten:'BỨT PHÁ',   gia:50000000, ngay:365, buoi:24, pha:4, dangKy:12000 }
@@ -83,7 +86,7 @@ G.CR_THAMSO = {
     'Credit THƯỞNG chia từ quỹ thưởng 10% của gói: chỉ dùng trong hệ (tài liệu, sự kiện, buổi bổ sung, trừ tối đa 10% giá tầng sau); không đổi ra tiền; hạn 12 tháng.',
     'Credit TẶNG tầng 1: 2.000 credit (chủ hệ chốt) — Học viện chịu, không đổi ra tiền, hết hạn khi kết thúc tầng 1.',
     'Credit TẶNG khi đăng ký tài khoản (chủ hệ chốt): tầng 2 · 3.000 · tầng 3 · 5.000 · tầng 4 · 8.000 · tầng 5 · 12.000 credit — cộng thêm vào ví, ngoài credit của gói; Học viện chịu; không đổi ra tiền, không hoàn; mỗi tài khoản nhận một lần cho mỗi tầng.',
-    'Thứ tự trừ (đề xuất): credit tặng trừ trước, rồi credit thưởng, sau cùng mới tới credit trả phí — để credit tặng không hết hạn mà khách chưa dùng.',
+    'Thứ tự trừ (đã duyệt): credit tặng trừ trước, rồi credit thưởng, sau cùng mới tới credit trả phí.',
     'Lên cấp: tích ≥ 60% credit thưởng của cấp và đạt mốc cấp do Coach xác nhận bằng bằng chứng.',
     'Giá credit của một hoạt động = bội số × 1 buổi coach chuẩn của tầng × hệ số độ khó của cấp × hệ số nhóm khách hàng.',
     'Hoàn tiền: chỉ phần credit trả phí chưa dùng, theo điều khoản hoàn của gói (HP_TANG). Credit thưởng và credit tặng (tầng 1, đăng ký) không hoàn.',

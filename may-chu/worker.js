@@ -79,6 +79,8 @@ import { docBangDieuKhien, banTinSang, chonBaNhaNgauNhien, soiQuyetDinh,
   ghiQuyetDinh, chuanBiVang } from './he-dieu-hanh.js';
 import { ghiLuotPrompt, docVongChay } from './bo-prompt.js';
 import { docBangGia, doiGia, soDoiGia } from './bang-gia.js';
+import { viCredit, soCreditNha, thuongCredit, tieuCredit, napCreditPhieu, dsPhieuThuChuaNap,
+  datViCredit, dieuChinhCredit, tongQuanCredit } from './credit.js';
 import { docLuatGiaoDien } from './luat-giao-dien.js';
 import { capLenhGiamSat, thuLenhGiamSat, docLenhGiamSat, soatSoDen,
   docTranGiamSat } from './giam-sat.js';
@@ -324,7 +326,10 @@ const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau'
   'luuGiaiPhap', 'duyetGiaiPhap', 'dsGiaiPhap', 'boSungGiaiPhap', 'canhMauDaTri', 'thuMauDaTri', 'docVongKhoaHoc',
   'taoTuyenDaTri', 'chayChangDaTri', 'docTuyenDaTri', 'docKpiCayTien', 'docDongChay',
   'phimTrangThai', 'phimGuiViec', 'phimXemViec', 'phimTinhHuong', 'phimMienPhi', 'quayKhopMoi', 'quayChuyenDong', 'quayVideoDong', 'taoNhanVatAI', 'quayXem', 'quayXoa', 'quayGiongNoi', 'quayPhimMoi', 'dongGoiPhanTu', 'xemPhanTu',
-  'guiBaoCaoNgay', 'tongHopBaoCao', 'dsBaoCaoNgay'];
+  'guiBaoCaoNgay', 'tongHopBaoCao', 'dsBaoCaoNgay',
+  /* Ví credit (credit.js) — sổ cái chỉ thêm dòng, bảng chủ hệ đã duyệt. */
+  'viCredit', 'soCreditNha', 'thuongCredit', 'tieuCredit', 'napCreditPhieu', 'dsPhieuThuChuaNap',
+  'datViCredit', 'dieuChinhCredit', 'tongQuanCredit'];
 
 async function lam(fn, y, env, db) {
   if (fn === 'dangNhap')  return await dangNhap(y, env, db);
@@ -662,6 +667,15 @@ async function lam(fn, y, env, db) {
   if (fn === 'docHomNay')         return await docHomNay(y, env, db, hoSo);
   if (fn === 'ghiHoChieuVideo')   return await ghiHoChieuVideo(y, env, db, hoSo);
   if (fn === 'tickNhip')          return await tickNhip(y, env, db, hoSo);
+  if (fn === 'viCredit')          return await viCredit(y, env, db, hoSo);
+  if (fn === 'soCreditNha')       return await soCreditNha(y, env, db, hoSo);
+  if (fn === 'thuongCredit')      return await thuongCredit(y, env, db, hoSo);
+  if (fn === 'tieuCredit')        return await tieuCredit(y, env, db, hoSo);
+  if (fn === 'napCreditPhieu')    return await napCreditPhieu(y, env, db, hoSo);
+  if (fn === 'dsPhieuThuChuaNap') return await dsPhieuThuChuaNap(y, env, db, hoSo);
+  if (fn === 'datViCredit')       return await datViCredit(y, env, db, hoSo);
+  if (fn === 'dieuChinhCredit')   return await dieuChinhCredit(y, env, db, hoSo);
+  if (fn === 'tongQuanCredit')    return await tongQuanCredit(y, env, db, hoSo);
   if (fn === 'boViecHomNay')      return await boViecHomNay(y, env, db, hoSo);
   if (fn === 'batCheDoBao')       return await batCheDoBao(y, env, db, hoSo);
   if (fn === 'ghiGhimCon')        return await ghiGhimCon(y, env, db, hoSo);

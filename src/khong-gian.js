@@ -83,8 +83,8 @@ var G = window.G || {}; window.G = G;
     R12:{cap:6, ds:['dk-cua-toi','nghe-phantich','chieu-sau','ma-tran','giam-sat','tu-dong','phuong-phap','bo-nao','ra-soat']},
     /* R13 Phụ huynh · R14 Học viên — bảng điều khiển 10 màn của nhà mình
        (dk-vai.js) đứng đầu, rồi hai màn mở mỗi ngày. */
-    R13:{cap:3, ds:['dk-cua-toi','hom-nay','nhiem-vu']},
-    R14:{cap:3, ds:['dk-cua-toi','hom-nay','nhiem-vu']},
+    R13:{cap:4, ds:['dk-cua-toi','vi-credit','hom-nay','nhiem-vu']},
+    R14:{cap:4, ds:['dk-cua-toi','vi-credit','hom-nay','nhiem-vu']},
     /* R15 CTV / Đại sứ giới thiệu */
     R15:{cap:6, ds:['dk-cua-toi','nghe-daisu','dai-su','hoa-hong','su-kien','ket-noi','ve-tinh']}
   };

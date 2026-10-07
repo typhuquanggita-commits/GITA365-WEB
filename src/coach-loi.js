@@ -124,6 +124,8 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       ghi:String(e.ghi||'').slice(0,500), ai:CO.toi().u, nguon:e.nguon||'so' };
     if(e.han) x.han = e.han; if(e.ma) x.ma = e.ma; if(e.mau) x.mau = 1;
     CO.st().hd.push(x);
+    /* Móc credit (credit-vi.js): hoạt động đã kiểm → thưởng credit ở sổ máy chủ */
+    if(typeof CO.sauGhi === 'function') try{ CO.sauGhi(x); }catch(er){}
     if(luu !== false) CO.luu();
     return x;
   };
@@ -135,6 +137,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     var d = CO.dk(dkId); if(!d) return;
     var b = d.lich.filter(function(x){ return x.so===so; })[0]; if(!b) return;
     b.tt = tt; b.luc = Date.now(); if(ghi) b.ghi = ghi;
+    if(typeof CO.sauBuoi === 'function') try{ CO.sauBuoi(d, b); }catch(er){}   /* buổi đã dẫn → trừ credit dịch vụ */
     CO.ghi({ nha:d.nha, dk:d.id, loai:'ghi_chu', ghi:'Buổi '+so+': '+({xong:'có mặt, đã dẫn',vang:'vắng',doi:'dời lịch',cho:'đặt lại'}[tt]||tt)+(ghi?' · '+ghi:'') }, false);
     CO.luu();
   };

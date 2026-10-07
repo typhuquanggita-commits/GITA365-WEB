@@ -2384,3 +2384,39 @@ CREATE TABLE IF NOT EXISTS vongKhoaHocDaTri (luc INTEGER PRIMARY KEY, soPhatHien
 CREATE TABLE IF NOT EXISTS soLocDaTri (ngay TEXT, cua TEXT, luot INTEGER DEFAULT 0, PRIMARY KEY (ngay, cua));
 CREATE TABLE IF NOT EXISTS loiNccDaTri (ngay TEXT, ncc TEXT, soLan INTEGER DEFAULT 0, PRIMARY KEY (ngay, ncc));
 CREATE TABLE IF NOT EXISTS tuyenDaTri (ma TEXT PRIMARY KEY, ten TEXT, cacChang TEXT, dangO INTEGER DEFAULT 0, ketQua TEXT, trangThai TEXT DEFAULT 'dangChay', luc INTEGER, lucSua INTEGER);
+
+-- ═════════════════════════════════════════════════════════════
+--  VÍ CREDIT (may-chu/credit.js) — 1 credit = 10 đồng, bảng chủ hệ
+--  duyệt CR-2026.10-c. Sổ CHỈ THÊM DÒNG: không UPDATE, không DELETE;
+--  sửa sai bằng dòng điều chỉnh có lý do. khoaDuy UNIQUE chặn ghi trùng
+--  (bấm hai lần, gọi lại sau lỗi mạng, hai người cùng nạp một phiếu).
+--  loai: tang · thuong · traPhi — trừ theo đúng thứ tự ấy.
+--  credit.js tự tạo hai bảng này lúc chạy; khai ở đây để lược đồ đủ.
+-- ═════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS soCredit (
+  id        TEXT PRIMARY KEY,
+  maNha     TEXT NOT NULL,          -- mã khách hàng
+  loai      TEXT NOT NULL,          -- tang · thuong · traPhi
+  so        INTEGER NOT NULL,       -- dương = cộng · âm = trừ
+  viec      TEXT NOT NULL,          -- tang-T1 · dang-ky · nap · thuong:<hd> · tieu:<hd> · hoan-tieu · dieu-chinh
+  khoaDuy   TEXT NOT NULL,
+  tang      INTEGER,
+  cap       INTEGER,
+  thamChieu TEXT,
+  ghiChu    TEXT,
+  boiAi     TEXT,
+  luc       TEXT NOT NULL
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_socredit_khoa ON soCredit (khoaDuy);
+CREATE INDEX IF NOT EXISTS ix_socredit_nha  ON soCredit (maNha, luc);
+CREATE INDEX IF NOT EXISTS ix_socredit_viec ON soCredit (maNha, viec, tang);
+
+-- Đầu ví: cấp (1–10) và nhóm khách hàng để tính giá credit từng dịch vụ.
+CREATE TABLE IF NOT EXISTS viCredit (
+  maNha  TEXT PRIMARY KEY,
+  cap    INTEGER NOT NULL DEFAULT 1,
+  nhom   TEXT NOT NULL DEFAULT 'CS',
+  moLuc  TEXT NOT NULL,
+  suaLuc TEXT,
+  boiAi  TEXT
+);

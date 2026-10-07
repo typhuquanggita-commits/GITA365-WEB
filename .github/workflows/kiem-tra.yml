@@ -47,6 +47,9 @@ jobs:
       - name: Thử Cây tiền (KPI 90/90/20 tính từ D1)
         run: node tools/thu-cay-tien.mjs
 
+      - name: Thử ví credit (sổ cái · quyền · thứ tự trừ · khớp app)
+        run: node tools/thu-credit.mjs
+
       - name: Thử Truy vấn đa chiều (bốn dòng chảy · bảng điểm 16 ban)
         run: node tools/thu-dong-chay.mjs
 
