@@ -32,6 +32,8 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     if(giaMayChu && giaMayChu[T.t] != null) { T.gia = Number(giaMayChu[T.t]); T.nguonGia = 'máy chủ'; } else T.nguonGia = 'tham số (GIA_KHOI_DAU)';
     T.laTang = !T.gia;
     T.cr = T.gia ? Math.round(T.gia / P().ty) : (T.tangCr || 0);
+    T.dk = Number(T.dangKy) || 0;              /* credit tặng khi đăng ký tài khoản ở tầng này */
+    T.vi = T.cr + T.dk;                         /* ví đầu kỳ của khách */
     return T;
   };
   CR.quy = function(ma){ return P().quy.filter(function(q){ return q.ma===ma; })[0] || { ty:0 }; };
@@ -102,7 +104,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   function bangTang(t){
     var T = CR.tang(t), rows = CR.bang(t);
     var o = '<div class="card pad-sm mb" style="border-left:4px solid '+MAU[t-1]+'"><div class="co-hang"><b style="color:'+MAU[t-1]+'">T'+t+' · '+h(T.ten)+'</b>'+
-      '<span class="sm co-grow">'+(T.laTang ? 'Gói 0đ → <b>'+so(T.cr)+'</b> credit TẶNG (Học viện chịu)' : 'Gói '+so(T.gia)+'đ → <b>'+so(T.cr)+'</b> credit')+' · '+T.ngay+' ngày · '+T.buoi+' buổi coach · 1 buổi chuẩn = '+so(CR.buoiChuan(T))+' credit ('+so(CR.buoiChuan(T)*P().ty)+'đ)</span></div></div>';
+      '<span class="sm co-grow">'+(T.laTang ? 'Gói 0đ → <b>'+so(T.cr)+'</b> credit TẶNG (Học viện chịu)' : 'Gói '+so(T.gia)+'đ → <b>'+so(T.cr)+'</b> credit'+(T.dk ? ' + <b>'+so(T.dk)+'</b> credit tặng đăng ký' : ''))+' · '+T.ngay+' ngày · '+T.buoi+' buổi coach · 1 buổi chuẩn = '+so(CR.buoiChuan(T))+' credit ('+so(CR.buoiChuan(T)*P().ty)+'đ)</span></div></div>';
     o += '<div class="co-tb mb"><table><thead><tr><th>Mã</th><th>Cấp</th><th>Bậc khó</th><th>Hệ số</th><th>Ngân sách credit</th><th>Quy đổi</th><th>Buổi coach</th><th>Credit/buổi</th><th>Thưởng tối đa</th><th>Ngưỡng lên cấp</th></tr></thead><tbody>'+
       rows.map(function(r){ return '<tr><td class="co-so"><b>'+r.ma+'</b></td><td><b>'+h(r.ten)+'</b>'+(r.khi?'<div class="tiny muted">'+h(r.khi)+'</div>':'')+'</td>'+
         '<td class="so">D'+r.L+'</td><td class="so">×'+r.k.toFixed(2)+'</td><td class="so"><b>'+so(r.ngan)+'</b></td><td class="so">'+so(r.vnd)+'đ</td>'+
@@ -124,10 +126,11 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       '<label class="co-f"><span>Số tiền gói (đồng)</span><input class="inp" id="cr-dong" inputmode="numeric" value="'+h(st.dong)+'" placeholder="VD: 10000000"></label></div>'+
       '<div class="co-hang mt"><button class="btn sm" data-cr="tinh">Quy đổi</button><span class="tiny muted">10 đồng = 1 credit</span></div></div>';
     var dong = Number(String(st.dong).replace(/\D/g,''));
-    var ds = dong ? [{ ten:'Gói đã nhập', dong:dong }] : P().tang.map(function(t){ var T = CR.tang(t.t); return { ten:'T'+T.t+' · '+T.ten, dong:T.gia, tang:T.laTang ? T.cr : 0 }; });
-    o += '<div class="co-tb"><table><thead><tr><th>Gói</th><th>Số tiền</th><th>Credit</th>'+P().quy.map(function(q){ return '<th>'+h(q.ten)+' ('+Math.round(q.ty*100)+'%)</th>'; }).join('')+'</tr></thead><tbody>'+
+    var ds = dong ? [{ ten:'Gói đã nhập', dong:dong }] : P().tang.map(function(t){ var T = CR.tang(t.t); return { ten:'T'+T.t+' · '+T.ten, dong:T.gia, tang:T.laTang ? T.cr : 0, dk:T.dk }; });
+    o += '<div class="co-tb"><table><thead><tr><th>Gói</th><th>Số tiền</th><th>Credit gói</th><th>Tặng đăng ký</th><th>Ví đầu kỳ</th>'+P().quy.map(function(q){ return '<th>'+h(q.ten)+' ('+Math.round(q.ty*100)+'%)</th>'; }).join('')+'</tr></thead><tbody>'+
       ds.map(function(x){ var q = x.tang ? { cr:x.tang, quy:P().quy.map(function(k){ return { cr:Math.round(x.tang*k.ty) }; }) } : CR.quyDoi(x.dong);
-        return '<tr><td><b>'+h(x.ten)+'</b>'+(x.tang?' <span class="co-tag">credit tặng</span>':'')+'</td><td class="so">'+so(x.dong)+'đ</td><td class="so"><b>'+so(q.cr)+'</b></td>'+q.quy.map(function(k){ return '<td class="so">'+so(k.cr)+'</td>'; }).join('')+'</tr>'; }).join('')+
+        return '<tr><td><b>'+h(x.ten)+'</b>'+(x.tang?' <span class="co-tag">credit tặng</span>':'')+'</td><td class="so">'+so(x.dong)+'đ</td><td class="so"><b>'+so(q.cr)+'</b></td>'+
+          '<td class="so">'+(x.dk ? '+'+so(x.dk) : '—')+'</td><td class="so"><b>'+so(q.cr + (x.dk||0))+'</b></td>'+q.quy.map(function(k){ return '<td class="so">'+so(k.cr)+'</td>'; }).join('')+'</tr>'; }).join('')+
       '</tbody></table></div>';
     o += '<div class="co-luoi mt">'+P().quy.map(function(q){ return '<div class="co-dong"><b class="co-so">'+Math.round(q.ty*100)+'%</b><span class="co-grow sm"><b>'+h(q.ten)+'</b><br><span class="tiny muted">'+h(q.mo)+'</span></span></div>'; }).join('')+'</div>';
     return o;
@@ -202,7 +205,6 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     if(!(typeof G.can==='function' && G.can('fin_view'))) return U.lockCard('Hệ thống Credit mở cho ban điều hành và tài chính (R01–R04).');
     CR.hoiGia();
     var d = duyet(), daDuyet = d && d.phienBan===P().phienBan;
-    var tong = P().tang.reduce(function(a,T){ return a + CR.tang(T.t).cr; }, 0);
     var o = U.ph({ eyebrow:'TÀI CHÍNH · HỆ THỐNG CREDIT', ic:'vault', grad:1, t:'Hệ thống Credit GITA365 — 5 tầng × 10 cấp',
       lead:'Tiền gói của khách đổi thành credit (10 đồng = 1 credit). Credit chia vào 5 quỹ, phân cho 10 cấp mỗi tầng theo thang độ khó; mọi hoạt động của khách đều có giá credit (tiêu) hoặc credit thưởng (tích). Mã coach gắn nhóm khách hàng, tầng, cấp và bậc khó.' });
     o += '<div class="co-mau" style="'+(daDuyet?'border-color:#0B7350;background:color-mix(in srgb,#0B7350 7%,var(--surface))':'')+'">'+ic(daDuyet?'check':'alert','w-4 h-4')+
@@ -211,7 +213,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     o += '<div class="grid g4 mb">'+
       U.stat({ k:'Tỷ lệ quy đổi', v:'10đ = 1', d:'credit, mọi cấp mọi tầng' })+
       U.stat({ k:'Cấp trong hệ', v:'50', d:'5 tầng × 10 cấp · bậc khó D1–D50' })+
-      U.stat({ k:'Credit 5 gói cộng lại', v:so(tong), d:'gồm '+so(CR.tang(1).cr)+' credit tặng T1' })+
+      U.stat({ k:'Credit tặng', v:so(CR.tang(1).cr)+' · '+P().tang.filter(function(T){ return T.dangKy; }).map(function(T){ return so(T.dangKy); }).join('/'), d:'T1 · đăng ký T2/T3/T4/T5 — Học viện chịu' })+
       U.stat({ k:'Buổi chuẩn T3', v:so(CR.buoiChuan(CR.tang(3))), d:'credit · '+so(CR.buoiChuan(CR.tang(3))*P().ty)+'đ' })+'</div>';
     o += tabs();
     o += st.tab==='bang' ? vBang() : st.tab==='goi' ? vGoi() : st.tab==='tieu' ? vTieu() : st.tab==='thuong' ? vThuong() : st.tab==='ma' ? vMa() : vLuat();
