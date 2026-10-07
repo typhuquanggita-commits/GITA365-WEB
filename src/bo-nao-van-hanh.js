@@ -55,16 +55,18 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       if(b.ma === 'CONG_NO') so.push((b.so || 0) + ' kỳ quá hạn · ' + U.bdGon(b.tongConNo || 0) + ' đ · chưa ai nhắc ' + (b.chuaAiNhac || 0));
       if(b.ma === 'KHO_CHO_DUYET') so.push((b.so || 0) + ' bản nháp chờ ba chữ ký');
       if(b.ma === 'BAO_DONG') so.push(b.soNgo ? b.soNgo + ' tài khoản đáng ngờ' : 'không có dấu hiệu' + (b.mailCuu ? '' : ' · chưa nạp email cứu hệ'));
+      if(b.ma === 'AGENT') so.push(!b.so ? 'không có tuyến tự chạy nào đang dở' : kq.that ? (b.daChay || 0) + '/' + b.so + ' tuyến chạy tiếp một chặng' : b.so + ' tuyến sẽ chạy tiếp' );
       if(b.ma === 'CHUP_DO') so.push(b.daChup ? 'đã chụp' : b.seChup ? 'sẽ chụp' : 'hôm nay đã có');
       return '<div class="bn-b" style="--bt:' + t[1] + '"><span class="bn-pill" style="--bp:' + t[1] + '">' + t[0] + '</span><div><b>' + h(b.ten) + '</b>' +
         '<p class="tiny muted" style="margin:2px 0 0">' + h(so.join(' ') || '') + (b.ghiChu ? ' — ' + h(b.ghiChu) : '') + (b.loi ? ' — ' + h(b.loi) : '') + '</p></div></div>';
     }).join('') + '</div>';
   }
   function lichSu(ds){
-    if(!ds.length) return '<p class="tiny muted">Chưa có nhịp nào được ghi. Nhịp đầu tiên chạy ở phút 15 của giờ kế tiếp sau khi triển khai.</p>';
+    if(!ds.length) return '<p class="tiny muted">Chưa có nhịp nào được ghi. Ca làm việc đầu tiên bắt đầu ở phút 0 của giờ kế tiếp sau khi triển khai.</p>';
     return '<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Lúc</th><th>Loại</th><th>Kết quả</th></tr></thead><tbody>' + ds.slice(0, 24).map(function(x){
+      var kq0 = x.kieu === 'nhip' && x.lan != null ? 'lượt ' + (x.lan + 1) + '/6 · ' : '';
       var kq = x.kieu === 'khachMoi' ? (x.maKH + ' → ' + ((x.phanCong && x.phanCong.tuVan) || (x.phanCong && x.phanCong.ket) || '')) :
-        x.tom ? (x.tom.canhBao + ' cảnh báo · ' + x.tom.loi + ' lỗi · ' + (x.ms || 0) + ' ms') : '';
+        x.tom ? (kq0 + x.tom.canhBao + ' cảnh báo · ' + x.tom.loi + ' lỗi · ' + (x.ms || 0) + ' ms') : '';
       return '<tr><td class="mono tiny">' + h(gio(x.luc)) + '</td><td>' + h(KIEU[x.kieu] || x.kieu) + (x.that ? '' : ' <span class="tiny muted">(không ghi)</span>') + '</td><td class="tiny">' + h(kq) + '</td></tr>';
     }).join('') + '</tbody></table></div>';
   }
@@ -77,7 +79,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   G.VIEWS['bo-nao-van-hanh'] = function(){
     nap();
     var o = '<header class="ph"><div class="eyebrow">V50 · vận hành 24/7</div><h1>Bộ não vận hành</h1>' +
-      '<p class="lead">Mỗi giờ bộ não tự giao Tư vấn cho nhà mới, đưa nhà lâu không ai chạm lên đầu danh sách gọi, đếm hẹn và công nợ quá hạn, soát báo động, chụp số đo. Có khách kích hoạt tài khoản là chạy ngay. Nội dung cho khách và mã nguồn vẫn đi qua chữ ký của người.</p></header>';
+      '<p class="lead">Làm 30 phút · nghỉ 30 phút, lặp liên tục 24/7 (sáu lượt ở phút 0–25 mỗi giờ). Mỗi lượt bộ não tự giao Tư vấn cho nhà mới, đưa nhà lâu không ai chạm lên đầu danh sách gọi, đếm hẹn và công nợ quá hạn, soát báo động, chạy tiếp đội Agent, chụp số đo. Có khách kích hoạt tài khoản là chạy ngay. Nội dung cho khách và mã nguồn vẫn đi qua chữ ký của người.</p></header>';
     if(!coMayChu())
       return o + '<div class="card pad"><b>Bảng này đọc thẳng máy chủ.</b><p class="tiny muted" style="margin:6px 0 0">Đăng nhập bản có máy chủ (gita365.pages.dev) để thấy phân hệ đang chạy và nhịp gần nhất. Bản thử không có số để hiện — bảng giám sát không vẽ số giả.</p></div>';
     if(laR01())

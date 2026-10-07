@@ -138,7 +138,7 @@ binding = "AI"
 # worker.js. Thiếu dòng 00:00 ở đây thì bản tổng KHÔNG BAO GIỜ gửi, mà
 # mã vẫn trông như đã làm xong việc — đúng lớp lỗi im lặng nhất.
 [triggers]
-crons = ["0 20 * * *", "0 0 * * *", "15 * * * *"]
+crons = ["0 20 * * *", "0 0 * * *", "0,5,10,15,20,25 * * * *"]
 
 # Nguồn dữ liệu. Tạo bằng:  npx wrangler d1 create gita365
 # rồi dán database_id vào đây (id KHÔNG phải bí mật — nó chỉ định danh).

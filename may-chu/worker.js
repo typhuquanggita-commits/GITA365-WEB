@@ -109,7 +109,7 @@ import { phimGuiViec, phimXemViec, phimTinhHuong } from './phim-ai.js';
 import { phimMienPhi, phimTrangThaiDu } from './phim-0d.js';
 import { hoiDaTri, hoiDongDaTri, chamDaTri, soDaTri, luuGiaiPhap, duyetGiaiPhap, dsGiaiPhap, boSungGiaiPhap,
   canhMauDaTri, canhMauTuDong, thuMauDaTri, vongKhoaHocTuDong, docVongKhoaHoc,
-  taoTuyenDaTri, chayChangDaTri, docTuyenDaTri } from './bo-nao-da-tri.js';
+  taoTuyenDaTri, datTuChayTuyen, chayChangDaTri, docTuyenDaTri } from './bo-nao-da-tri.js';
 import { docKpiCayTien } from './cay-tien.js';
 import { docDongChay } from './dong-chay.js';
 import { trangThaiCongKhai } from './trang-thai.js';
@@ -351,7 +351,7 @@ const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau'
   /* Soát toàn bộ màn (soat-man.js) — R01 gửi báo cáo ĐÃ MÃ HOÁ trong trình duyệt. */
   'ghiSoatMan',
   /* Tự vá lược đồ D1 (va-luoc-do.js) — R01: thêm cột còn thiếu so với csdl.sql. */
-  'soatLuocDo', 'docBoNao', 'chayThuBoNao'];
+  'soatLuocDo', 'docBoNao', 'chayThuBoNao', 'datTuChayTuyen'];
 
 async function lam(fn, y, env, db) {
   if (fn === 'dangNhap')  return await dangNhap(y, env, db);
@@ -765,6 +765,7 @@ async function lam(fn, y, env, db) {
   if (fn === 'docVongKhoaHoc')    return await docVongKhoaHoc(y, env, db, hoSo);
   if (fn === 'taoTuyenDaTri')     return await taoTuyenDaTri(y, env, db, hoSo);
   if (fn === 'chayChangDaTri')    return await chayChangDaTri(y, env, db, hoSo);
+  if (fn === 'datTuChayTuyen')    return await datTuChayTuyen(y, env, db, hoSo);
   if (fn === 'docTuyenDaTri')     return await docTuyenDaTri(y, env, db, hoSo);
   if (fn === 'docKpiCayTien')     return await docKpiCayTien(y, env, db, hoSo);
   if (fn === 'docDongChay')       return await docDongChay(y, env, db, hoSo);
@@ -1194,7 +1195,10 @@ export default {
        đứng trước phép phân theo giờ: lượt 00:15 mà rơi xuống nhánh gioUTC === 0
        là gửi bản tổng doanh thu lần hai. */
     if (su && su.cron === CRON_NHIP) {
-      ctx.waitUntil(nhipVanHanh(env, { that: true }).catch(e =>
+      /* Công tắc khẩn: GITA_BO_NAO_NGHI = "1" thì bộ não nghỉ hẳn, không cần sửa lịch. */
+      if (String(env.GITA_BO_NAO_NGHI || '') === '1') return;
+      const lan = Math.floor(new Date((su && su.scheduledTime) || Date.now()).getUTCMinutes() / 5);
+      ctx.waitUntil(nhipVanHanh(env, { that: true, lan }).catch(e =>
         console.error('BO_NAO_NHIP_HONG', String(e && e.message || e))));
       return;
     }

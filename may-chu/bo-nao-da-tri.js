@@ -36,6 +36,7 @@
    ═══════════════════════════════════════════════════════════════ */
 'use strict';
 
+import { vaBang } from './va-luoc-do.js';
 import { Kho } from './nen.js';
 import { laNguoiNha, laR01, tenNguoiDung as ten } from './vai-tro.js';
 import { soatRaNhaCungCap } from './an-toan-ai.js';
@@ -150,8 +151,10 @@ async function dungBang(db) {
     db.prepare('CREATE TABLE IF NOT EXISTS soLocDaTri (ngay TEXT, cua TEXT, luot INTEGER DEFAULT 0, PRIMARY KEY (ngay, cua))'),
     db.prepare('CREATE TABLE IF NOT EXISTS loiNccDaTri (ngay TEXT, ncc TEXT, soLan INTEGER DEFAULT 0, PRIMARY KEY (ngay, ncc))'),
     db.prepare('CREATE TABLE IF NOT EXISTS tuyenDaTri (ma TEXT PRIMARY KEY, ten TEXT, cacChang TEXT, dangO INTEGER DEFAULT 0, ' +
-      'ketQua TEXT, trangThai TEXT DEFAULT \'dangChay\', luc INTEGER, lucSua INTEGER)')
+      'ketQua TEXT, trangThai TEXT DEFAULT \'dangChay\', luc INTEGER, lucSua INTEGER, tuChay INTEGER DEFAULT 0)')
   ]);
+  /* V50: tuyến "tự chạy" — D1 dựng trước chưa có cột thì thêm (chỉ thêm). */
+  await vaBang(db, 'tuyenDaTri');
   daDung = true;
 }
 
@@ -832,10 +835,14 @@ export async function taoTuyenDaTri(y, env, db, hoSo) {
   await dungBang(db);
   const ma = 'TY-' + (await bam(tenT + '|' + Date.now())).slice(0, 8).toUpperCase();
   const now = Date.now();
-  await db.prepare('INSERT INTO tuyenDaTri (ma, ten, cacChang, dangO, ketQua, trangThai, luc, lucSua) VALUES (?,?,?,0,?,\'dangChay\',?,?)')
-    .bind(ma, tenT, JSON.stringify(sach), '[]', now, now).run();
-  await Kho.ghiNhatKy(db, { uid: hoSo.uid, username: ten(hoSo), viec: 'DA_TRI_TUYEN_TAO', doiTuong: ma, chiTiet: sach.length + ' chặng' });
-  return { ok: true, ma, soChang: sach.length };
+  /* V50 · TỰ CHẠY (chủ hệ 07/10/2026: "hệ thống Agent làm việc tự động"):
+     Super Admin bật cho TỪNG tuyến; bộ não vận hành chạy tiếp chặng kế ở mỗi
+     lượt làm việc, trong ngân sách ngày. Kết quả vẫn chỉ Super Admin đọc. */
+  const tuChay = (y || {}).tuChay === true ? 1 : 0;
+  await db.prepare('INSERT INTO tuyenDaTri (ma, ten, cacChang, dangO, ketQua, trangThai, luc, lucSua, tuChay) VALUES (?,?,?,0,?,\'dangChay\',?,?,?)')
+    .bind(ma, tenT, JSON.stringify(sach), '[]', now, now, tuChay).run();
+  await Kho.ghiNhatKy(db, { uid: hoSo.uid, username: ten(hoSo), viec: 'DA_TRI_TUYEN_TAO', doiTuong: ma, chiTiet: sach.length + ' chặng' + (tuChay ? ' · tự chạy' : '') });
+  return { ok: true, ma, soChang: sach.length, tuChay: !!tuChay };
 }
 
 export async function chayChangDaTri(y, env, db, hoSo) {
@@ -882,7 +889,18 @@ export async function docTuyenDaTri(y, env, db, hoSo) {
     return { ok: true, tuyen: { ma: r.ma, ten: r.ten, cacChang: JSON.parse(r.cacChang), dangO: r.dangO,
       ketQua: JSON.parse(r.ketQua || '[]'), trangThai: r.trangThai, luc: r.luc, lucSua: r.lucSua } };
   }
-  const ds = (await db.prepare('SELECT ma, ten, cacChang, dangO, trangThai, lucSua FROM tuyenDaTri ORDER BY lucSua DESC LIMIT 30').all()).results || [];
+  const ds = (await db.prepare('SELECT ma, ten, cacChang, dangO, trangThai, lucSua, tuChay FROM tuyenDaTri ORDER BY lucSua DESC LIMIT 30').all()).results || [];
   return { ok: true, ds: ds.map(r => ({ ma: r.ma, ten: r.ten, soChang: JSON.parse(r.cacChang).length,
-    dangO: r.dangO, trangThai: r.trangThai, lucSua: r.lucSua })) };
+    dangO: r.dangO, trangThai: r.trangThai, lucSua: r.lucSua, tuChay: !!r.tuChay })) };
+}
+
+/* Bật / tắt "tự chạy" cho một tuyến đã có — Super Admin. */
+export async function datTuChayTuyen(y, env, db, hoSo) {
+  if (!laR01(hoSo)) return { ok: false, code: 'NOPERM', error: 'Chỉ Super Admin.' };
+  await dungBang(db);
+  const ma = String((y || {}).ma || ''), bat = (y || {}).bat === true ? 1 : 0;
+  const r = await db.prepare('UPDATE tuyenDaTri SET tuChay = ?, lucSua = ? WHERE ma = ?').bind(bat, Date.now(), ma).run();
+  if (!(r && r.meta && r.meta.changes)) return { ok: false, code: 'KHONG_CO', error: 'Không có tuyến này.' };
+  await Kho.ghiNhatKy(db, { uid: hoSo.uid, username: ten(hoSo), viec: 'DA_TRI_TUYEN_TU_CHAY', doiTuong: ma, chiTiet: bat ? 'bật' : 'tắt' });
+  return { ok: true, ma, tuChay: !!bat };
 }

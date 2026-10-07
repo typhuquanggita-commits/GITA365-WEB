@@ -58635,8 +58635,9 @@ G.dtTaoTuyen = function () {
   var chang = [], sai = '';
   dong.forEach(function (s) { var p = s.split('|'); if (p.length < 2 || !p[0].trim() || !p[1].trim()) sai = s; else chang.push({ loai: p[0].trim(), de: p.slice(1).join('|').trim() }); });
   if (sai) { U.toast('Dòng sai khuôn "loai | đề": ' + sai, 'err'); return; }
-  G.goiMayChu('taoTuyenDaTri', { ten: ten, chang: chang }).then(function (x) {
-    U.toast(x && x.ok ? 'Đã tạo tuyến ' + x.ma + ' · ' + x.soChang + ' chặng.' : ((x && x.error) || 'Không tạo được.'), x && x.ok ? 'ok' : 'err');
+  var tuChay = !!(document.getElementById('dt-ty-tu') || {}).checked;
+  G.goiMayChu('taoTuyenDaTri', { ten: ten, chang: chang, tuChay: tuChay }).then(function (x) {
+    U.toast(x && x.ok ? 'Đã tạo tuyến ' + x.ma + ' · ' + x.soChang + ' chặng' + (x.tuChay ? ' · bộ não sẽ tự chạy từng chặng.' : '.') : ((x && x.error) || 'Không tạo được.'), x && x.ok ? 'ok' : 'err');
     G.dtTuyen = null; G.dtTuyenChi = null; G.dtTuyenTai();
   });
 };
@@ -58648,6 +58649,13 @@ G.dtChayChang = function (ma) {
     if (x && x.ok) { U.toast(x.chotChan, 'ok'); G.dtTuyen = null; G.dtXemTuyen(ma); }
     else U.toast((x && x.error) || 'Không chạy được.', 'err');
     veLai();
+  });
+};
+/* V50: bật / tắt "tự chạy" — bộ não vận hành chạy tiếp chặng kế mỗi lượt làm việc. */
+G.dtTuChay = function (ma, bat) {
+  G.goiMayChu('datTuChayTuyen', { ma: ma, bat: !!bat }).then(function (x) {
+    U.toast(x && x.ok ? (bat ? 'Đã bật tự chạy — bộ não chạy tiếp ở lượt làm việc kế.' : 'Đã tắt tự chạy.') : ((x && x.error) || 'Không đổi được.'), x && x.ok ? 'ok' : 'err');
+    G.dtTuyen = null; G.dtTuyenTai();
   });
 };
 G.dtXemTuyen = function (ma) {
@@ -58662,12 +58670,15 @@ function veTuyen() {
     '<div class="tiny muted mt">Khuôn mỗi dòng: <code>loai | đề chặng</code> · loai ∈ phanLoai · tomTat · soan · phanTich · chienLuoc · 2–7 chặng.</div>' +
     '<input id="dt-ty-ten" class="mt" style="width:100%" placeholder="Tên tuyến (vd: Ra mắt gói học mới)">' +
     '<textarea id="dt-ty-chang" rows="4" class="mt" style="width:100%" placeholder="phanTich | Phân tích ba đối thủ chính&#10;soan | Soạn thông điệp giới thiệu"></textarea>' +
+    '<label class="row mt tiny" style="gap:6px;align-items:center"><input type="checkbox" id="dt-ty-tu"> Tự chạy — bộ não vận hành chạy tiếp chặng kế ở mỗi lượt làm việc (làm 30 phút · nghỉ 30 phút), trong ngân sách ngày. Đọc kết quả ở đây khi xong.</label>' +
     '<div class="row mt">' + nut('G.dtTaoTuyen()', 'Tạo tuyến', 'pri') + '</div></div>';
   (t.ds || []).forEach(function (r) {
     o += '<div class="card mt"><div class="row" style="gap:6px;flex-wrap:wrap"><span class="chip mono">' + h(r.ma) + '</span><b>' + h(r.ten) + '</b>' +
       '<span class="chip">' + r.dangO + '/' + r.soChang + ' chặng</span>' +
-      (r.trangThai === 'xong' ? '<span class="chip" style="color:var(--ok)">đã xong</span>' : '<span class="chip">đang chạy</span>') + '</div>' +
+      (r.trangThai === 'xong' ? '<span class="chip" style="color:var(--ok)">đã xong</span>' : '<span class="chip">đang chạy</span>') +
+      (r.tuChay ? '<span class="chip" style="color:var(--gita)">tự chạy</span>' : '') + '</div>' +
       '<div class="row mt" style="gap:8px">' + nut('G.dtXemTuyen(\'' + h(r.ma) + '\')', 'Xem') +
+      (r.trangThai !== 'xong' ? nut('G.dtTuChay(\'' + h(r.ma) + '\',' + (r.tuChay ? 'false' : 'true') + ')', r.tuChay ? 'Tắt tự chạy' : 'Bật tự chạy') : '') +
       (r.trangThai !== 'xong' ? nut('G.dtChayChang(\'' + h(r.ma) + '\')', G.dtChangDangChay ? 'Đang chạy…' : 'Chạy chặng kế', 'pri') : '') + '</div></div>';
   });
   if (t.ds && !t.ds.length) o += '<div class="card mt tiny muted">Chưa có tuyến nào.</div>';
@@ -78909,16 +78920,18 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       if(b.ma === 'CONG_NO') so.push((b.so || 0) + ' kỳ quá hạn · ' + U.bdGon(b.tongConNo || 0) + ' đ · chưa ai nhắc ' + (b.chuaAiNhac || 0));
       if(b.ma === 'KHO_CHO_DUYET') so.push((b.so || 0) + ' bản nháp chờ ba chữ ký');
       if(b.ma === 'BAO_DONG') so.push(b.soNgo ? b.soNgo + ' tài khoản đáng ngờ' : 'không có dấu hiệu' + (b.mailCuu ? '' : ' · chưa nạp email cứu hệ'));
+      if(b.ma === 'AGENT') so.push(!b.so ? 'không có tuyến tự chạy nào đang dở' : kq.that ? (b.daChay || 0) + '/' + b.so + ' tuyến chạy tiếp một chặng' : b.so + ' tuyến sẽ chạy tiếp' );
       if(b.ma === 'CHUP_DO') so.push(b.daChup ? 'đã chụp' : b.seChup ? 'sẽ chụp' : 'hôm nay đã có');
       return '<div class="bn-b" style="--bt:' + t[1] + '"><span class="bn-pill" style="--bp:' + t[1] + '">' + t[0] + '</span><div><b>' + h(b.ten) + '</b>' +
         '<p class="tiny muted" style="margin:2px 0 0">' + h(so.join(' ') || '') + (b.ghiChu ? ' — ' + h(b.ghiChu) : '') + (b.loi ? ' — ' + h(b.loi) : '') + '</p></div></div>';
     }).join('') + '</div>';
   }
   function lichSu(ds){
-    if(!ds.length) return '<p class="tiny muted">Chưa có nhịp nào được ghi. Nhịp đầu tiên chạy ở phút 15 của giờ kế tiếp sau khi triển khai.</p>';
+    if(!ds.length) return '<p class="tiny muted">Chưa có nhịp nào được ghi. Ca làm việc đầu tiên bắt đầu ở phút 0 của giờ kế tiếp sau khi triển khai.</p>';
     return '<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Lúc</th><th>Loại</th><th>Kết quả</th></tr></thead><tbody>' + ds.slice(0, 24).map(function(x){
+      var kq0 = x.kieu === 'nhip' && x.lan != null ? 'lượt ' + (x.lan + 1) + '/6 · ' : '';
       var kq = x.kieu === 'khachMoi' ? (x.maKH + ' → ' + ((x.phanCong && x.phanCong.tuVan) || (x.phanCong && x.phanCong.ket) || '')) :
-        x.tom ? (x.tom.canhBao + ' cảnh báo · ' + x.tom.loi + ' lỗi · ' + (x.ms || 0) + ' ms') : '';
+        x.tom ? (kq0 + x.tom.canhBao + ' cảnh báo · ' + x.tom.loi + ' lỗi · ' + (x.ms || 0) + ' ms') : '';
       return '<tr><td class="mono tiny">' + h(gio(x.luc)) + '</td><td>' + h(KIEU[x.kieu] || x.kieu) + (x.that ? '' : ' <span class="tiny muted">(không ghi)</span>') + '</td><td class="tiny">' + h(kq) + '</td></tr>';
     }).join('') + '</tbody></table></div>';
   }
@@ -78931,7 +78944,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   G.VIEWS['bo-nao-van-hanh'] = function(){
     nap();
     var o = '<header class="ph"><div class="eyebrow">V50 · vận hành 24/7</div><h1>Bộ não vận hành</h1>' +
-      '<p class="lead">Mỗi giờ bộ não tự giao Tư vấn cho nhà mới, đưa nhà lâu không ai chạm lên đầu danh sách gọi, đếm hẹn và công nợ quá hạn, soát báo động, chụp số đo. Có khách kích hoạt tài khoản là chạy ngay. Nội dung cho khách và mã nguồn vẫn đi qua chữ ký của người.</p></header>';
+      '<p class="lead">Làm 30 phút · nghỉ 30 phút, lặp liên tục 24/7 (sáu lượt ở phút 0–25 mỗi giờ). Mỗi lượt bộ não tự giao Tư vấn cho nhà mới, đưa nhà lâu không ai chạm lên đầu danh sách gọi, đếm hẹn và công nợ quá hạn, soát báo động, chạy tiếp đội Agent, chụp số đo. Có khách kích hoạt tài khoản là chạy ngay. Nội dung cho khách và mã nguồn vẫn đi qua chữ ký của người.</p></header>';
     if(!coMayChu())
       return o + '<div class="card pad"><b>Bảng này đọc thẳng máy chủ.</b><p class="tiny muted" style="margin:6px 0 0">Đăng nhập bản có máy chủ (gita365.pages.dev) để thấy phân hệ đang chạy và nhịp gần nhất. Bản thử không có số để hiện — bảng giám sát không vẽ số giả.</p></div>';
     if(laR01())

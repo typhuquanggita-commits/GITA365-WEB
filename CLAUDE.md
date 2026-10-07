@@ -21,7 +21,7 @@ Chủ hệ: anh Trương Nhật Quang (không phải dân kỹ thuật, viết t
 - Thêm một bộ phận mới vào câu trả lời thì đi qua lớp này, đừng nối thẳng vào `theDap`. `tools/thu-tro-ly-hoi-thoai.mjs` canh.
 
 ## Bộ não vận hành (`may-chu/bo-nao-van-hanh.js`)
-- Nhịp mỗi giờ (cron `15 * * * *`, rẽ nhánh theo `su.cron` TRƯỚC phép phân theo giờ) + chạy ngay khi khách kích hoạt tài khoản. Làm việc VẬN HÀNH: giao Tư vấn, đưa nhà đèn đỏ lên đầu, đếm, báo động, chụp số đo — mọi lượt ghi đảo ngược được, không đè người đã giao tay.
+- Làm 30 phút · nghỉ 30 phút (cron `0,5,10,15,20,25 * * * *`, rẽ nhánh theo `su.cron` TRƯỚC phép phân theo giờ; lượt đầu ca làm việc nặng; `GITA_BO_NAO_NGHI=1` là công tắc nghỉ). Đội Agent: tuyến bật "tự chạy" đi tiếp một chặng mỗi lượt + chạy ngay khi khách kích hoạt tài khoản. Làm việc VẬN HÀNH: giao Tư vấn, đưa nhà đèn đỏ lên đầu, đếm, báo động, chụp số đo — mọi lượt ghi đảo ngược được, không đè người đã giao tay.
 - Không tự nhập nội dung phục vụ khách (ba chữ ký), không tự sửa mã, không tự cấp quyền. Bước mới thêm vào `nhipVanHanh` phải có chế độ chạy thử chỉ đọc. `tools/thu-bo-nao-van-hanh.mjs` canh.
 
 ## Quy trình (skill trong `.claude/skills/`)

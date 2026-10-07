@@ -34,8 +34,16 @@ import { BAC } from './vai-tro.js';
 import { soatBatThuong, tuSoatBaoDong } from './cuu-he.js';
 import { docTrungTamDo } from './trung-tam-toi-uu.js';
 import { dsQuaHan } from './tai-chinh.js';
+import { chayChangDaTri } from './bo-nao-da-tri.js';
+import { vaBang } from './va-luoc-do.js';
 
-export const CRON_NHIP = '15 * * * *';
+/* LÀM 30 PHÚT · NGHỈ 30 PHÚT (chủ hệ 07/10/2026), lặp liên tục 24/7: sáu
+   lượt ở phút 0 · 5 · 10 · 15 · 20 · 25 của mỗi giờ, rồi nghỉ tới hết giờ.
+   Lượt đầu ca (phút 0) làm cả việc nặng; năm lượt sau làm việc nhẹ và chạy
+   tiếp đội Agent. Một lượt Worker là một lần gọi ngắn — "làm 30 phút" là sáu
+   lượt dồn trong nửa giờ, không phải một tiến trình treo 30 phút. */
+export const CRON_NHIP = '0,5,10,15,20,25 * * * *';
+export const LUOT_MOI_CA = 6;
 const HE = Object.freeze({ role: 'R01', u: 'bo-nao-v50', uid: 'bo-nao-v50' });
 const NGAY_DO = 14, NGAY_VANG = 7;
 
@@ -99,7 +107,9 @@ async function ghiNhip(db, kieu, that, ketQua) {
 export async function nhipVanHanh(env, opt) {
   opt = opt || {};
   const that = opt.that === true, db = env.CSDL, hn = ngayVN(), t0 = Date.now();
-  const kq = { luc: new Date().toISOString(), that, kieu: opt.kieu || 'nhip', buoc: [] };
+  /* Lượt thứ mấy trong ca: đọc từ mốc đã hẹn. Chạy tay luôn coi là đầu ca. */
+  const lan = opt.lan != null ? opt.lan : 0, dauCa = lan === 0;
+  const kq = { luc: new Date().toISOString(), that, kieu: opt.kieu || 'nhip', lan, buoc: [] };
   async function buoc(ma, ten, f) {
     const b = { ma, ten };
     try { Object.assign(b, await f()); b.tt = b.tt || 'ok'; }
@@ -138,21 +148,21 @@ export async function nhipVanHanh(env, opt) {
       nhaDo: doDs.slice(0, 15), tt: doDs.length ? 'canhBao' : 'ok' };
   });
 
-  await buoc('HEN_CRM', 'Hẹn chạm CRM quá hạn theo người phụ trách', async () => {
+  if (dauCa) await buoc('HEN_CRM', 'Hẹn chạm CRM quá hạn theo người phụ trách', async () => {
     const r = await db.prepare("SELECT COALESCE(NULLIF(phuTrach, ''), '(chưa giao)') AS ai, COUNT(*) AS n FROM crmKhach WHERE henTiep IS NOT NULL AND henTiep <> '' AND henTiep < ? GROUP BY ai ORDER BY n DESC LIMIT 30").bind(hn).all();
     const ds = (r.results || []).map(x => ({ ai: x.ai, n: Number(x.n) }));
     const tong = ds.reduce((a, x) => a + x.n, 0);
     return { tong, theoNguoi: ds, tt: tong ? 'canhBao' : 'ok' };
   });
 
-  await buoc('CONG_NO', 'Công nợ quá hạn', async () => {
+  if (dauCa) await buoc('CONG_NO', 'Công nợ quá hạn', async () => {
     const q = await dsQuaHan({}, env, db, HE);
     if (!q || !q.ok) return { tt: 'loi', loi: (q && q.error) || 'không đọc được' };
     const chuaNhac = (q.ds || []).filter(x => !x.soLanNhac).length;
     return { so: q.so, tongConNo: q.tongConNo, chuaAiNhac: chuaNhac, tt: q.so ? 'canhBao' : 'ok' };
   });
 
-  await buoc('KHO_CHO_DUYET', 'Bản nháp kho chờ ba chữ ký', async () => {
+  if (dauCa) await buoc('KHO_CHO_DUYET', 'Bản nháp kho chờ ba chữ ký', async () => {
     let n = 0;
     try { const r = await db.prepare("SELECT COUNT(*) AS n FROM banNhapKho WHERE trangThai = 'nhap'").first(); n = Number(r && r.n) || 0; }
     catch (e) { if (!/no such table/i.test(String(e && e.message))) throw e; }
@@ -166,7 +176,32 @@ export async function nhipVanHanh(env, opt) {
       tt: ngo.length ? 'canhBao' : 'ok' };
   });
 
-  await buoc('CHUP_DO', 'Chụp Trung tâm đo lường (mỗi ngày một lần)', async () => {
+  await buoc('AGENT', 'Đội Agent: chạy tiếp chặng kế của các tuyến tự chạy', async () => {
+    await vaBang(db, 'tuyenDaTri');
+    let ds = [];
+    try { ds = (await db.prepare("SELECT ma, ten, dangO, cacChang FROM tuyenDaTri WHERE trangThai = 'dangChay' AND tuChay = 1 ORDER BY lucSua ASC LIMIT 3").all()).results || []; }
+    catch (e) { if (!/no such (table|column)/i.test(String(e && e.message))) throw e; }
+    const tom = ds.map(x => ({ ma: x.ma, ten: x.ten, chang: Number(x.dangO) + 1, soChang: (JSON.parse(x.cacChang || '[]') || []).length }));
+    if (!ds.length) return { so: 0 };
+    if (String(env.GITA_DA_TRI_BAT || '') !== '1') return { so: ds.length, tuyen: tom, tt: 'canhBao', ghiChu: 'Bộ não đa trí đang tắt — tuyến tự chạy đang chờ.' };
+    if (!that) return { so: ds.length, seChay: tom };
+    const ket = [];
+    for (const x of ds) {
+      const r = await chayChangDaTri({ ma: x.ma }, env, db, HE);
+      const k = { ma: x.ma, ok: !!(r && r.ok), chang: r && r.ok ? r.chang + 1 : undefined, xong: !!(r && r.xong), ncc: r && r.ncc, loi: r && !r.ok ? (r.code || r.error) : undefined };
+      /* Chặng phân tích sâu / chiến lược cần nhà cung cấp bậc ≥ 2. Chế độ tiết
+         kiệm chỉ có Workers AI (bậc 1) → tuyến ấy CHỜ, nói rõ vì sao; các tuyến
+         khác vẫn chạy. Hết ngân sách ngày thì dừng cả lượt. */
+      if (r && r.code === 'KHONG_NCC') k.vi = 'Chặng này cần nhà cung cấp AI bậc cao (DeepSeek/Gemini/OpenAI/Claude/Grok). Nạp khoá và đặt GITA_CHE_DO_TIET_KIEM = "0" để chạy tiếp.';
+      ket.push(k);
+      if (r && r.code === 'VUOT_HAN') break;
+    }
+    const loi = ket.filter(k => !k.ok);
+    return { so: ds.length, daChay: ket.filter(k => k.ok).length, ket, tt: loi.length ? 'canhBao' : 'ok',
+      ghiChu: loi.some(k => k.loi === 'KHONG_NCC') ? 'Có tuyến chờ nhà cung cấp AI bậc cao.' : '' };
+  });
+
+  if (dauCa) await buoc('CHUP_DO', 'Chụp Trung tâm đo lường (mỗi ngày một lần)', async () => {
     const homNayUTC = new Date().toISOString().slice(0, 10);
     let m = null;
     try { const r = await db.prepare('SELECT MAX(ngay) AS m FROM chupTrungTam').first(); m = r && r.m; } catch (e) {}
@@ -192,7 +227,7 @@ function phanHe(env) {
   const tietKiem = String((env && env.GITA_CHE_DO_TIET_KIEM) || '') === '1';
   const ncc = ['DEEPSEEK', 'GEMINI', 'OPENAI', 'ANTHROPIC', 'XAI'].filter(n => co('GITA_KHOA_' + n));
   return [
-    { ma: 'NHIP', ten: 'Nhịp vận hành mỗi giờ', bat: true, cheDo: 'Tự động 24/7 · phút 15 mỗi giờ', moTa: 'Phân công Tư vấn · đèn chăm sóc · hẹn CRM · công nợ · kho chờ duyệt · báo động · chụp đo lường.' },
+    { ma: 'NHIP', ten: 'Nhịp làm 30 phút · nghỉ 30 phút', bat: String((env && env.GITA_BO_NAO_NGHI) || '') !== '1', cheDo: String((env && env.GITA_BO_NAO_NGHI) || '') === '1' ? 'Đang tạm nghỉ (GITA_BO_NAO_NGHI = 1)' : 'Lặp liên tục 24/7 · 6 lượt mỗi giờ (phút 0–25), nghỉ phút 30–59', moTa: 'Đầu ca: phân công · đèn chăm sóc · hẹn CRM · công nợ · kho chờ duyệt · báo động · Agent · chụp đo lường. Năm lượt sau: phân công · đèn · báo động · Agent.' },
     { ma: 'KHACH_MOI', ten: 'Có khách là chạy', bat: true, cheDo: 'Tự động, ngay lúc khách kích hoạt tài khoản', moTa: 'Giao Tư vấn ít việc nhất, hẹn chạm hôm nay trong CRM.' },
     { ma: 'DEM', ten: 'Ca đêm 03:00', bat: true, cheDo: 'Tự động mỗi ngày', moTa: 'Vá lược đồ · dọn dẹp · soát sao lưu · tự soát và chữa · vòng khoa học của bộ não đa trí.' },
     { ma: 'SANG', ten: 'Bản tổng doanh thu 07:00', bat: co('GITA_THU_DOANH_THU'), cheDo: 'Tự động mỗi ngày', moTa: 'Gửi thư tổng ngày hôm qua.' },
@@ -201,7 +236,7 @@ function phanHe(env) {
     { ma: 'TU_HOAN_THIEN', ten: 'Tự hoàn thiện kho', bat: true, cheDo: 'Soạn nháp tự động · nhập kho cần 3 chữ ký', moTa: 'Không tự đưa nội dung chưa duyệt tới khách.' },
     { ma: 'TU_NANG_CAP', ten: 'Vòng tự nâng cấp', bat: true, cheDo: 'Đề xuất · cần ký · bảy vùng cấm ngoài đường', moTa: 'Không tự sửa mã, không tự cấp quyền.' },
     { ma: 'THANH_TRA', ten: 'Hệ thanh tra', bat: true, cheDo: 'Ghi sổ · Super Admin xử lý', moTa: '' },
-    { ma: 'AGENT', ten: 'Đội Agent (quy trình nhiều bước)', bat: daTri, cheDo: 'Chạy theo lệnh · cần quyền AI02 · cần bộ não đa trí', moTa: '' }
+    { ma: 'AGENT', ten: 'Đội Agent tự chạy', bat: daTri, cheDo: daTri ? 'Mỗi lượt làm việc chạy tiếp chặng kế (tối đa 3 tuyến) · trong ngân sách ngày' : 'Chờ bộ não đa trí bật', moTa: 'Super Admin tạo tuyến ở Bộ não đa trí và bật "Tự chạy". Kết quả chỉ Super Admin đọc — không tự gửi ra khách.' }
   ];
 }
 
@@ -210,7 +245,7 @@ export async function docBoNao(y, env, db, hoSo) {
   if ((BAC[(hoSo || {}).role] || 99) > 3) return { ok: false, code: 'NOPERM', error: 'Bộ não vận hành mở cho R01–R03.' };
   await dungBang(db);
   const r = await db.prepare('SELECT luc, kieu, that, ketQua FROM nhipBoNao ORDER BY luc DESC LIMIT 48').all();
-  const lan = (r.results || []).map(x => { let k = {}; try { k = JSON.parse(x.ketQua); } catch (e) {} return { luc: x.luc, kieu: x.kieu, that: !!x.that, tom: k.tom || null, ms: k.ms, buoc: k.buoc ? k.buoc.map(b => ({ ma: b.ma, tt: b.tt })) : undefined, maKH: k.maKH, phanCong: k.phanCong }; });
+  const lan = (r.results || []).map(x => { let k = {}; try { k = JSON.parse(x.ketQua); } catch (e) {} return { luc: x.luc, kieu: x.kieu, that: !!x.that, lan: k.lan, tom: k.tom || null, ms: k.ms, buoc: k.buoc ? k.buoc.map(b => ({ ma: b.ma, tt: b.tt })) : undefined, maKH: k.maKH, phanCong: k.phanCong }; });
   const nhipCuoi = lan.find(x => x.kieu === 'nhip');
   return { ok: true, phanHe: phanHe(env), lanChay: lan, nhipCuoi: nhipCuoi ? nhipCuoi.luc : null };
 }
