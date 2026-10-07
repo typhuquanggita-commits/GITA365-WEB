@@ -1660,6 +1660,9 @@ main{container-type:inline-size}
   padding:14px;margin:12px 0}
 .bd-cuon{overflow-x:auto}
 .bd-cuon svg{display:block}
+/* Luật biểu tượng chung svg{width:1.15em} đè thuộc tính width= của biểu đồ —
+   biểu đồ trong hộp phải lấy kích thước của chính nó. */
+.bd-box svg{width:auto;height:auto;flex:initial;max-width:none}
 .bd-chu{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-top:8px}
 .bd-chu span{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink-3)}
 .bd-chu i,.bd-cd-h i{width:11px;height:11px;border-radius:3px;flex:none;display:inline-block}
@@ -4027,3 +4030,20 @@ html[data-may="yeu"] *,html[data-may="yeu"] *::before,html[data-may="yeu"] *::af
 .kdl-mt thead th{background:var(--gita-mo-1);font-size:11px;color:var(--ink-3)}
 .kdl-mt tbody th{text-align:left;font-weight:600}
 .kdl-o{font-size:14px}
+/* ═══ Toàn cảnh CRM · Tài chính (src/toan-canh.js) ═══ */
+.tc-khoi-dau{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.tc-nhan{font-size:11px;font-weight:700;letter-spacing:.04em;padding:2px 9px;border-radius:99px;border:1px solid currentColor}
+.tc-that{color:var(--ok)} .tc-mau{color:var(--ink-4);border-style:dashed}
+.tc-luoi{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:12px}
+.tc-luoi .tc-khoi{margin-bottom:0}
+.tc-luoi + .tc-khoi,.tc-luoi{margin-bottom:12px}
+.tc-cuon{overflow-x:auto}
+.tc-sao{display:block;min-width:620px;width:100%;height:auto;color:var(--ink)}
+.tc-mt td.tc-o{font-size:12px}
+.tc-co{color:var(--ok);font-weight:700}
+.tc-dm{grid-template-columns:minmax(130px,1fr) minmax(200px,2.2fr) minmax(50px,.4fr) minmax(200px,2fr)}
+.tc-rr-ds{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px}
+.tc-rr{display:flex;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--line);border-left:4px solid var(--rr);border-radius:10px}
+.tc-rr > div{min-width:0}
+.tc-rr-so{display:flex;flex-direction:column;align-items:flex-end;text-align:right;flex:none;max-width:45%}
+@media(max-width:700px){.tc-luoi{grid-template-columns:1fr}}

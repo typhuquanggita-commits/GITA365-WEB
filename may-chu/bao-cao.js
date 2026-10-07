@@ -115,6 +115,10 @@ function maTuan(ngay) {
 export function dungKy(loai, moc) {
   const l = String(loai || 'tuan');
   let tuNgay, denNgay, ky;
+  /* Mốc phải là ngày YYYY-MM-DD (tháng: YYYY-MM) thật — mốc sai dạng trước
+     đây làm Date ném RangeError, cửa trả lỗi 500 thay vì "Ngày không hợp lệ". */
+  const ms = String(moc || '');
+  if (!(l === 'thang' ? /^\d{4}-\d{2}/.test(ms) : /^\d{4}-\d{2}-\d{2}$/.test(ms)) || !Number.isFinite(Date.parse(ms.slice(0, l === 'thang' ? 7 : 10) + (l === 'thang' ? '-01' : '')))) return null;
 
   if (l === 'ngay') {
     tuNgay = denNgay = String(moc);

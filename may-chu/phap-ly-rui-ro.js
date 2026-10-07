@@ -20,6 +20,7 @@
    13 đã có cửa ẩn danh từ 9.99.62. Phần này không dựng lại cái nào.
    ═══════════════════════════════════════════════════════════════ */
 
+import { nhaPhuTrach, LOI_NGOAI_NHA } from './pham-vi-nha.js';
 import { Kho } from './nen.js';
 import * as BoNao from './bo-nao.js';
 
@@ -154,6 +155,7 @@ export async function docDongY(y, env, db, hoSo) {
   if (!maNha) return { ok: false, error: 'Thiếu mã gia đình.' };
   if (!nhaCuaMinh(hoSo, maNha)) return { ok: false, code: 'NOPERM_NHA',
     error: 'Chỉ đọc được đồng ý của gia đình chính mình.' };
+  if (duocVaoPL(hoSo) && !(await nhaPhuTrach(db, hoSo, maNha))) return LOI_NGOAI_NHA;   /* V50·168 */
 
   const t = await docDongYNha(db, maNha);
   return { ok: true, maNha, dangCo: t.dangCo, daRut: t.daRut, chuaHoi: t.chuaHoi,
@@ -369,6 +371,9 @@ export async function xuatDuLieuNha(y, env, db, hoSo) {
   if (!maNha) return { ok: false, code: 'THIEUO', error: 'Thiếu mã gia đình.' };
   if (!nhaCuaMinh(hoSo, maNha)) return { ok: false, code: 'NOPERM_NHA',
     error: 'Chỉ đọc/xuất được dữ liệu của gia đình chính mình, hoặc R01–R12 xử lý yêu cầu.' };
+  /* V50·168: xuất TRỌN dữ liệu một nhà (email, điện thoại, nỗi sợ của con, sổ chạm,
+     phiếu thu) — nhân sự từ R04 trở xuống chỉ xuất được nhà mình phụ trách. */
+  if (duocVaoPL(hoSo) && !(await nhaPhuTrach(db, hoSo, maNha, 3))) return LOI_NGOAI_NHA;
 
   const layAll = async (sql, ...b) => {
     try { const r = await db.prepare(sql).bind(...b).all(); return r.results || r || []; }

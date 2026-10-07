@@ -36,19 +36,19 @@ var G = window.G || {}; window.G = G;
     { id:'cong-vao', khu:'khach',  ten:'Cổng vào',                 ic:'compass', viec:'Người chưa có tài khoản: hiểu GITA 365, đi sáu bước vào, đọc đánh giá thật.',
       phan:['gioi-thieu','tham-gia','danh-gia'], kho:[] },
     { id:'nha-minh', khu:'khach',  ten:'Nhà mình hôm nay',         ic:'home',    viec:'Việc của nhà hôm nay: một việc, nhiệm vụ, nhịp 21/90 ngày, minh chứng.',
-      phan:['ngoi-nha','dk-cua-toi','hom-nay','nhiem-vu','con-duong','chu-ky','minh-chung','bat-dau'], kho:['NHA'] },
+      phan:['ngoi-nha','dk-cua-toi','hom-nay','nhiem-vu','con-duong','chu-ky','vong-nhac','minh-chung','bat-dau'], kho:['NHA'] },
     { id:'hanh-trinh', khu:'khach', ten:'Hành trình & tiến bộ',    ic:'map',     viec:'Nhà đang ở đâu trên năm tầng, đổi được gì, báo cáo tháng, ghi nhận.',
-      phan:['ban-do','chan-dung-nha','tam-nhin','tien-bo','kpi-100','ban-co','ho-so-thang','phan-thuong','bang-tin'], kho:['NHA','GD'] },
+      phan:['ban-do','chan-dung-nha','tam-nhin','tien-bo','kpi-100','ban-co','ho-so-thang','phan-thuong','sat-hach','khoa-dao-tao','nhat-ky-vi-tri','thi-viet','bang-tin'], kho:['NHA','GD'] },
     { id:'dich-vu', khu:'khach',   ten:'Dịch vụ & tài khoản',      ic:'star',    viec:'Ví credit, học phí, quà theo tầng, trợ lý, sự kiện, đánh giá.',
-      phan:['vi-credit','thanh-toan','kho-qua','tro-ly','su-kien','danh-gia'], kho:['GD'] },
+      phan:['vi-credit','thanh-toan','kho-qua','tro-ly','giong-doc','su-kien','danh-gia'], kho:['GD'] },
     { id:'ve-tinh', khu:'khach',   ten:'Vệ tinh lan toả',          ic:'share',   viec:'CTV / Đại sứ: nhà mình giới thiệu, liên kết, hoa hồng, kết nối.',
-      phan:['dk-cua-toi','ve-tinh','dai-su','hoa-hong','ket-noi','su-kien'], kho:['TRAI'] },
+      phan:['dk-cua-toi','ve-tinh','dai-su','hoa-hong','ket-noi','su-kien','nghe-daisu'], kho:['TRAI'] },
     { id:'ban-lam-viec', khu:'nhansu', ten:'Bàn làm việc của tôi',  ic:'target',  viec:'Bảng điều khiển theo vai, đầu việc, KPI cá nhân, vòng nhắc, nhật ký.',
       phan:['dk-cua-toi','bang-viec','danh-muc-viec','kpi-toi','vong-nhac','nhat-ky-vi-tri'], kho:['NGHE'] },
     { id:'coach', khu:'nhansu',     ten:'Hệ điều hành Coach',       ic:'flame',   viec:'Chương trình, thiết kế bài, điều phối, chất lượng, ca — mỗi buổi ghi vào tiến trình chăm sóc ở CRM.',
       phan:['coach-he','coach-dp','coach-ct','coach-tk','coach-cl','coach-gp','coach-kho','coach-pt','coach-v20','coach-nlp','van-hanh-cham-soc','xu-ly-ca','xuat-du-lieu'], kho:['PP','KHO','COACH'] },
     { id:'khach-crm', khu:'nhansu', ten:'Khách hàng & CRM',         ic:'heart',   viec:'CRM theo quyền được cấp, CSKH, đo lường khách, trải nghiệm, tài liệu gia đình.',
-      phan:['crm','tt-cskh','do-luong-he','trai-nghiem-kh','nguoi-dan-dat','tai-lieu-khach','gui-tu-lieu','tang5-pro','khung-du-lieu'], kho:['TUVAN','VIP','TRAI'] },
+      phan:['toan-canh-crm','crm','tt-cskh','do-luong-he','trai-nghiem-kh','nguoi-dan-dat','tai-lieu-khach','gui-tu-lieu','tang5-pro','khung-du-lieu'], kho:['TUVAN','VIP','TRAI'] },
     { id:'dao-tao', khu:'nhansu',   ten:'Đào tạo & năng lực',       ic:'book',    viec:'Khoá đào tạo, sát hạch, cuộc thi viết — mở theo cấp bậc đạt được.',
       phan:['khoa-dao-tao','sat-hach','thi-viet'], kho:['NGHE','PP'] },
     { id:'kho-nghe', khu:'nhansu',  ten:'Kho nghề & tài liệu',      ic:'vault',   viec:'14 kho nghề theo cụm, thư viện tài liệu — chương mở theo vai, tầng, gói.',
@@ -56,7 +56,7 @@ var G = window.G || {}; window.G = G;
     { id:'dieu-hanh', khu:'nhansu', ten:'Điều hành & đo lường',     ic:'chart',   viec:'Trung tâm đo lường 41 chỉ số, V20, 16 ban, các vai, phòng ban, năng lực, con người.',
       phan:['trung-tam-do','truy-van-da-chieu','dk-cac-vai','phong-ban','nang-luc-ns','con-nguoi'], kho:['KT','CT'] },
     { id:'tai-chinh', khu:'nhansu', ten:'Tài chính',                ic:'list',    viec:'Ban tài chính theo giới hạn được cấp: kế toán, đối soát, thuế, credit, bảng giá.',
-      phan:['phong-tai-chinh','tai-chinh-ceo','ke-toan-thue','credit-gita','bang-gia','khung-du-lieu'], kho:['TC'] },
+      phan:['toan-canh-tc','phong-tai-chinh','tai-chinh-ceo','ke-toan-thue','credit-gita','bang-gia','khung-du-lieu'], kho:['TC'] },
     { id:'quan-tri', khu:'nhansu',  ten:'Tài khoản & quyền',        ic:'shield',  viec:'Cấp quyền 100% do Super Admin: mở tài khoản, phân quyền, quyền CRM, khoá, nhật ký.',
       phan:['phan-quyen','phan-quyen-crm','cap-tai-khoan','khoa-tai-khoan','nguoi-dung','toi','khoa-mat','nhat-ky-ht','khung-du-lieu'], kho:['PL'] },
     { id:'van-hanh-he', khu:'nhansu', ten:'Vận hành hệ thống',      ic:'pulse',   viec:'Máy chủ, tài nguyên, liên thông dữ liệu, sức chứa, AI, thanh tra, soát màn, kiểm thử.',
@@ -132,6 +132,9 @@ var G = window.G || {}; window.G = G;
     if(c){
       var ds = dsVai || [];
       for(var i = 0; i < ds.length; i++){ var hb = M.hub(ds[i]); if(hb && hb.kho.indexOf(c.ma) >= 0) return hb.id; }
+      /* Chương của kho khu khách → màn khu khách đầu tiên dùng kho ấy (không đưa
+         sang màn Kho nghề nội bộ). */
+      for(var j2 = 0; j2 < M.HUB.length; j2++){ var hk2 = M.HUB[j2]; if(hk2.khu === 'khach' && hk2.kho.indexOf(c.ma) >= 0) return hk2.id; }
       return 'kho-nghe';
     }
     if(M.KHOP[v]) return M.KHOP[v];
@@ -150,6 +153,23 @@ var G = window.G || {}; window.G = G;
   };
   M.hubKhach = function(id){ return (M.VAI_KHACH[id || M.vai()] || []).slice(); };
   M.hubTatCa = function(id){ return M.hubVai(id).concat(M.hubKhach(id)); };
+  /* CỔNG KHU KHÁCH: tài khoản khách không mở được trang khu nhân sự — kể cả gõ
+     thẳng địa chỉ #màn hay bấm một liên kết lạc. Được mở: phần của màn khu
+     khách, chương học thuyết khách được đọc (cụm của kho khu khách, hoặc chương
+     không mang quyền nghiệp vụ), bảng điều khiển của nhà mình. app.js gọi ở
+     G.allowed; perm / gói vẫn gác như cũ. */
+  M.chanKhach = function(v){
+    if(!M.laKhach() || !G.S || !G.S.acc) return false;
+    var id = M.hubCua(v, M.hubVai()), hb = id && M.hub(id);
+    if(hb && hb.khu === 'khach') return false;
+    /* Chương học thuyết: chỉ chương thuộc KHO KHU KHÁCH (Hành trình nhà mình ·
+       Cam kết với gia đình · Trải nghiệm & lan toả). Chương phương pháp, nghề,
+       tư vấn… của đội ngũ không mở cho khách, kể cả chương không mang quyền. */
+    var c = G.V50 && G.V50.cumCua ? G.V50.cumCua(v) : null;
+    if(c && M.KHO_KHACH.indexOf(c.ma) >= 0) return false;
+    return true;
+  };
+  M.KHO_KHACH = (function(){ var o = []; M.HUB.forEach(function(hb){ if(hb.khu === 'khach') hb.kho.forEach(function(k){ if(o.indexOf(k) < 0) o.push(k); }); }); return o; })();
   M.laKhach = function(id){ var v = id || M.vai(); return v === 'khach-la' || v === 'R13' || v === 'R14' || v === 'R15'; };
 
   /* Vì sao trang v chưa mở với tài khoản này — null là đã mở. Khách thấy

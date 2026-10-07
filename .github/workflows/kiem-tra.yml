@@ -71,6 +71,18 @@ jobs:
       - name: Khung dữ liệu CRM · Tài chính khớp lược đồ csdl.sql
         run: node tools/dung-khung-du-lieu.js --kiem
 
+      - name: Bản đồ cột tự vá lược đồ khớp csdl.sql
+        run: node tools/dung-luoc-do-cot.js --kiem
+
+      - name: Thử khói mọi cửa máy chủ (0 lỗi SQL · 3 vai)
+        run: node tools/thu-khoi-may-chu.mjs
+
+      - name: Thử liên kết (app ↔ máy chủ · màn ↔ màn · phần của màn chính)
+        run: node tools/thu-lien-ket.mjs
+
+      - name: Thử phạm vi nhà · ngang cấp · tự vá lược đồ
+        run: node tools/thu-pham-vi.mjs
+
       - name: Thử Truy vấn đa chiều (bốn dòng chảy · bảng điểm 16 ban)
         run: node tools/thu-dong-chay.mjs
 

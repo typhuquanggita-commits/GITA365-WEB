@@ -304,7 +304,7 @@ G.VIEWS = G.VIEWS || {};
       var cSk = (sk ? '<div class="cvt-sk">' + h(sk) + '</div>' : '<span class="tiny" style="color:var(--ink-4)">chưa có</span>') +
         '<button class="btn ghost sm cvt-act" style="margin-top:5px" data-cvsk="' + h(m.ma) + '">' + ic('edit', 'w-3 h-3') + (sk ? ' Sửa' : ' Thêm') + '</button>';
       var cTro = '<div class="tiny cvt-tip">' + h(troLyGoi(tk, m)) + '</div>' +
-        '<button class="btn ghost sm cvt-act" style="margin-top:5px" data-v="tro-ly-ai">' + ic('chat', 'w-3 h-3') + ' Hỏi Trợ lý</button>';
+        '<button class="btn ghost sm cvt-act" style="margin-top:5px" data-v="tro-ly">' + ic('chat', 'w-3 h-3') + ' Hỏi Trợ lý</button>';
 
       return '<tr>' +
         '<td class="cvt-stt">' + (i + 1) + '</td>' +

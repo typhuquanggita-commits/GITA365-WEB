@@ -31,6 +31,7 @@
    duyệt luôn thì không có lớp nào đứng giữa lời nói và sổ sách.
    ═══════════════════════════════════════════════════════════════ */
 
+import { nhaPhuTrach, LOI_NGOAI_NHA } from './pham-vi-nha.js';
 import { Kho, tokenMoi } from './nen.js';
 import { docGiaHienHanh } from './bang-gia.js';
 import { ghiDieuChinh } from './bao-cao.js';
@@ -1222,6 +1223,7 @@ export async function ghiNhacThu(y, env, db, hoSo) {
 
   const n = y.nhac || {};
   const nha = String(n.maKhachHang || '').trim();
+  if (nha && lv > 3 && !oDauTien(await quyenCua(db, hoSo.u), 'thu') && !(await nhaPhuTrach(db, hoSo, nha))) return LOI_NGOAI_NHA;   /* V50·168 */
   const kenh = String(n.kenh || '').trim();
   const ketQua = String(n.ketQua || '').trim();
   const noiDung = String(n.noiDung || '').trim();
@@ -1275,6 +1277,9 @@ export async function lichSuNhacThu(y, env, db, hoSo) {
 
   const nha = String(y.maKhachHang || '').trim();
   if (!nha) return {ok: false, error: 'Thiếu mã khách hàng.'};
+  /* V50·168: ghi chú nhắc nợ, hứa trả của một nhà — ngoài R01–R03 và kế toán
+     thu thì chỉ người phụ trách nhà ấy đọc được (cùng cổng với công nợ). */
+  if (lv > 3 && !oDauTien(await quyenCua(db, hoSo.u), 'thu') && !(await nhaPhuTrach(db, hoSo, nha))) return LOI_NGOAI_NHA;
 
   const r = await db.prepare(
     'SELECT * FROM nhacThu WHERE maKhachHang = ? ORDER BY luc DESC LIMIT 100'

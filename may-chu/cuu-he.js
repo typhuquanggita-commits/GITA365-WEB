@@ -89,8 +89,20 @@ export const AN_TOAN_KHI_BANG = new Set([
    phá trong một cửa sổ ngắn. Đây là DẤU HIỆU, không phải phán quyết —
    nó không tự đóng băng (tự đóng băng cũng là một đòn phá nếu bị kích
    nhầm), nó chỉ BÁO ĐỘNG ra email cứu hệ. */
-const VIEC_PHA = ['DOI_MAT_KHAU', 'CAP_KHOA', 'XOA_DU_LIEU', 'HA_TANG',
-  'DUYET_CHI', 'DAT_GIA', 'CAP_QUYEN', 'THU_HOI_QUYEN'];
+/* V50·168: danh sách cũ canh những mã KHÔNG cửa nào ghi (HA_TANG, DUYET_CHI,
+   DAT_GIA, CAP_QUYEN…) nên bộ dò không bao giờ thấy gì ngoài CAP_KHOA. Nay
+   là mã thật trong nhật ký (soát 07/10/2026). */
+const VIEC_DOI_MK = ['DOI_MAT_KHAU', 'DAT_LAI_MK'];
+const VIEC_PHA = ['DOI_MAT_KHAU', 'DAT_LAI_MK', 'ADMIN_KHOI_PHUC_MK', 'CAP_KHOA',
+  'QUYENCRM_CAP', 'QUYENCRM_THUHOI', 'QUYENTC_CAP', 'QUYENTC_THUHOI', 'T5PRO_CAP', 'AIQ_CAP',
+  'QUYENXEM_CAP', 'GIAMSAT_CAP_LENH', 'BG_DOIGIA', 'CHI_KY1', 'OFFBOARD_TK', 'TAO_TK_NOI_BO',
+  'CAP_NHAT_TK', 'GAN_PHONG_BAN', 'NANG_TANG', 'PL_XOA_YC',
+  'XOA_DU_LIEU', 'HA_TANG', 'DUYET_CHI', 'DAT_GIA', 'CAP_QUYEN', 'THU_HOI_QUYEN'];
+/* Cửa nhạy cảm: xong một lượt thành công là worker tự soát dấu hiệu chiếm
+   tài khoản (tuSoatBaoDong) — không còn chỉ chạy khi có người bấm tay. */
+export const CUA_NHAY = new Set(['doiMatKhau', 'datLaiMatKhau', 'adminKhoiPhucMatKhau', 'capQuyenCRM', 'thuHoiQuyenCRM',
+  'capQuyenTaiChinh', 'thuHoiQuyenTaiChinh', 'capQuyenT5Pro', 'capQuyenAI', 'capQuyenXem', 'capLenhGiamSat', 'doiGia',
+  'duyetChi', 'offboardTaiKhoan', 'taoTaiKhoanNoiBo', 'capNhatTaiKhoan', 'ganPhongBan', 'nangTang']);
 
 export async function soatBatThuong(db, phutCuaSo) {
   const cua = Number(phutCuaSo || 15);
@@ -103,8 +115,8 @@ export async function soatBatThuong(db, phutCuaSo) {
   const theoNguoi = {};
   for (const x of ds) {
     theoNguoi[x.username] = theoNguoi[x.username] || { doiMk: 0, pha: 0, viec: [] };
-    if (x.viec === 'DOI_MAT_KHAU') theoNguoi[x.username].doiMk += x.c;
-    if (VIEC_PHA.indexOf(x.viec) >= 0 && x.viec !== 'DOI_MAT_KHAU') {
+    if (VIEC_DOI_MK.indexOf(x.viec) >= 0) theoNguoi[x.username].doiMk += x.c;
+    if (VIEC_PHA.indexOf(x.viec) >= 0 && VIEC_DOI_MK.indexOf(x.viec) < 0) {
       theoNguoi[x.username].pha += x.c;
       theoNguoi[x.username].viec.push(x.viec + '×' + x.c);
     }
@@ -182,21 +194,18 @@ export async function baoDongCuuHe(y, env, db) {
 
 /* ═══════════════ CỬA CHUNG: XÁC THỰC BA YẾU TỐ ═══════════════ */
 async function xacThucBaYeuTo(y, env, db) {
-  /* Yếu tố 1 · khoá cứu hệ offline */
   const khoaCuu = String(env.GITA_KHOA_CUU || '');
   if (!khoaCuu) return { loi: { ok: false, code: 'CHUANAP',
     error: 'Chưa nạp GITA_KHOA_CUU. Không có nó thì không có đường phá kính nào.' } };
-  if (!khopBiMat(y.khoaCuu, khoaCuu))
-    return { loi: { ok: false, code: 'SAIKHOA',
-      error: 'Câu bí mật cứu hệ chưa đúng.' } };
-
-  /* Yếu tố 2 · token một lần từ email, còn hạn, chưa dùng */
+  /* V50·168: soát TOKEN trước, rồi KHOÁ — và sai cái nào cũng một câu trả lời.
+     Bản cũ soát khoá trước và trả SAIKHOA / SAITOKEN khác nhau: kẻ dò biết
+     ngay câu bí mật cứu hệ đã đúng hay chưa mà không cần token. */
   const tk = String(y.token || '');
-  const row = await db.prepare(
+  const row = tk ? await db.prepare(
     "SELECT * FROM cuuHe WHERE token = ? AND loai = 'BAODONG' ORDER BY stt DESC LIMIT 1"
-  ).bind(tk).first();
-  if (!tk || !row) return { loi: { ok: false, code: 'SAITOKEN',
-    error: 'Token cứu hệ không đúng. Token chỉ đến qua email cứu hệ.' } };
+  ).bind(tk).first() : null;
+  if (!row || !khopBiMat(y.khoaCuu, khoaCuu)) return { loi: { ok: false, code: 'SAICUU',
+    error: 'Thông tin cứu hệ chưa đúng (token từ email cứu hệ và câu bí mật cứu hệ).' } };
   if (Number(row.hanToken) < Date.now()) return { loi: { ok: false, code: 'HETHAN',
     error: 'Token đã hết hạn (một giờ). Kích báo động lại để nhận token mới.' } };
   if (row.daDung) return { loi: { ok: false, code: 'DADUNG',
@@ -210,6 +219,16 @@ async function xacThucBaYeuTo(y, env, db) {
    ghi). KHÔNG cần mật khẩu cũ ở bước này: đóng băng là bước KHẨN, càng
    nhanh càng tốt, và nó KHÔNG mất mát gì — chỉ dừng lại. Truy hồi mới
    là bước cần đủ ba yếu tố. */
+async function ghiNhatKyCuu(db, viec, chiTiet) {
+  try { await Kho.ghiNhatKy(db, { uid: 'HE_THONG', username: 'CUU_HE', viec, doiTuong: 'HE', chiTiet: String(chiTiet || '').slice(0, 200) }); } catch (e) { /* sổ đen vẫn giữ dấu */ }
+}
+
+/* Gọi từ worker sau mỗi cửa nhạy cảm thành công: soát 15 phút gần nhất, đủ dấu
+   hiệu thì gửi báo động (baoDongCuuHe tự chặn dội thư: 10 phút một thư). */
+export async function tuSoatBaoDong(env, db) {
+  try { return await baoDongCuuHe({ phut: 15 }, env, db); } catch (e) { return { ok: false }; }
+}
+
 export async function dongBangHe(y, env, db) {
   const xt = await xacThucBaYeuTo(y, env, db);
   if (xt.loi) return xt.loi;
@@ -226,6 +245,7 @@ export async function dongBangHe(y, env, db) {
   await ghiSoDenNoiBo(db, 'CUU_HE', 'CUU_DONGBANG', 'toanHe',
     'đá ' + ((soPhien && soPhien.c) || 0) + ' phiên');
 
+  await ghiNhatKyCuu(db, 'CUU_HE_DONG_BANG', 'đóng băng · cắt ' + ((soPhien && soPhien.c) || 0) + ' phiên');
   return { ok: true, daDaPhien: (soPhien && soPhien.c) || 0,
     vi: 'ĐÃ ĐÓNG BĂNG. Mọi phiên bị đá (kể cả hacker), mọi cửa ghi bị chặn. ' +
       'Bước tiếp: truyHoiHe với mật khẩu cũ + mật khẩu mới để chiếm lại và mở băng.' };
@@ -292,6 +312,7 @@ export async function truyHoiHe(y, env, db) {
   await ghiSoDenNoiBo(db, 'CUU_HE', 'CUU_TRUYHOI', nd.username,
     'đặt lại mật khẩu, đá mọi phiên, mở băng · mkCũ ' + (dungChu ? 'khớp' : 'không khớp'));
 
+  await ghiNhatKyCuu(db, 'CUU_HE_TRUY_HOI', 'truy hồi hệ');
   return { ok: true, dungChuXacNhan: dungChu,
     khoiPhucDuLieu: 'Cửa này chiếm lại QUYỀN (mật khẩu + phiên + mở băng). ' +
       'Khôi phục DỮ LIỆU đã bị phá là bước riêng, chạy tay từ bản sao lưu: ' +
@@ -312,6 +333,7 @@ export async function moBangHe(y, env, db) {
       .bind(new Date().toISOString(), y.token, 'CUU_HE', 'mở băng thủ công (báo động nhầm)'),
     db.prepare('UPDATE cuuHe SET daDung=1 WHERE token=?').bind(y.token)
   ]);
+  await ghiNhatKyCuu(db, 'CUU_HE_MO_BANG', 'mở băng');
   return { ok: true, vi: 'Đã mở băng.' };
 }
 

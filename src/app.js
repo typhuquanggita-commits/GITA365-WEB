@@ -1094,6 +1094,8 @@ G.navItem = function(v){
    điều kiện ấy thì một màn đã ẩn khỏi cột vẫn mở được bằng cách gõ
    thẳng địa chỉ — ẩn mà vẫn vào được thì không phải ẩn. */
 G.allowed = function(v){
+  /* V50·168: khách không mở trang khu nhân sự (src/v50-man.js · chanKhach). */
+  if(G.V50M && G.V50M.chanKhach && G.v50Bat168 && G.v50Bat168() && G.V50M.chanKhach(v)) return false;
   var it = G.navItem(v);
   if(!it) return true;
   if(it.perm && !G.can(it.perm)) return false;
@@ -1199,6 +1201,14 @@ function render(){
     return;
   }
   if(!G.VIEWS[G.S.view]) G.S.view = 'ban-do';
+  if(!G.allowed(G.S.view) && G.LA_KHACH && G.LA_KHACH()){
+    /* Khách: không nhắc tên quyền nội bộ, đưa về màn của nhà mình. */
+    main.innerHTML = '<div class="view">' + U.ph({eyebrow:'NHÀ MÌNH', ic:'home', t:'Phần này không thuộc tài khoản của nhà mình',
+      lead:'Mọi phần dành cho nhà mình nằm ở các màn bên trái. Phần nào sẽ mở khi nhà lên tầng hoặc khi gói dịch vụ được kích hoạt thì hiện kèm khoá ở đầu màn.'}) +
+      '<button class="btn pri" data-v="'+h((G.v50ManDau && G.v50ManDau()) || 'ngoi-nha')+'">'+ic('home','w-3 h-3')+'Về màn nhà mình</button></div>';
+    var lKh = document.getElementById('left'); if(lKh) lKh.innerHTML = leftNav();
+    save(); return;
+  }
   if(!G.allowed(G.S.view)){
     var it = G.navItem(G.S.view);
     main.innerHTML = '<div class="view">' + U.ph({eyebrow:'NGOÀI PHẠM VI CỦA VAI', ic:'lock',

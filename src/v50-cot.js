@@ -102,7 +102,7 @@ var G = window.G || {}; window.G = G;
     var o = '<nav class="v50-phan' + (hb.khu === 'khach' ? ' v50-phan-kh' : '') + '" aria-label="Các phần của màn ' + h(hb.ten) + '"><div class="v50-phan-dau">' +
       ic(hb.ic, 'w-4 h-4') + (nhan ? '<span class="tiny muted">' + h(nhan) + '</span>' : '') + '<b>' + h(hb.ten) + '</b>';
     if(!laPhan){ var it = G.navItem ? G.navItem(v) : null; o += '<span class="tiny muted">› ' + h(it ? G.iname(it) : v) + '</span>'; }
-    if(tat.indexOf(hb.id) < 0) o += '<span class="tiny muted">· ngoài các màn của vai này</span>';
+    if(tat.indexOf(hb.id) < 0 && !khach) o += '<span class="tiny muted">· ngoài các màn của vai này</span>';
     o += '</div><div class="v50-phan-ds">';
     hb.phan.forEach(function(p){
       var it = G.navItem ? G.navItem(p) : null; if(!it) return;

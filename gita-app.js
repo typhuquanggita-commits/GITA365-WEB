@@ -904,7 +904,7 @@ G.NAV = [
     {v:'kn-gd', t:'Kho nghề · Cam kết với gia đình', h:'V50 · chương học thuyết của cụm, mở theo vai · tầng · gói · bảng việc áp dụng đo được', ic:'vault', capMo:'chung'},
     {v:'kn-nha', t:'Kho nghề · Hành trình nhà mình', h:'V50 · chương học thuyết của cụm, mở theo vai · tầng · gói · bảng việc áp dụng đo được', ic:'vault', capMo:'chung'},
     {v:'kn-pl', t:'Kho nghề · Pháp lý, quyền & dữ liệu', h:'V50 · chương học thuyết của cụm, mở theo vai · tầng · gói · bảng việc áp dụng đo được', ic:'vault', perm:'nghe_chung', capMo:'chung'},
-    {v:'kn-tc', t:'Kho nghề · Quy trình tài chính', h:'V50 · chương học thuyết của cụm, mở theo vai · tầng · gói · bảng việc áp dụng đo được', ic:'vault', perm:'nghe_chung', capMo:'chung'},
+    {v:'kn-tc', t:'Kho nghề · Quy trình tài chính', h:'V50 · chương học thuyết của cụm, mở theo vai · tầng · gói · bảng việc áp dụng đo được', ic:'vault', perm:'fin_view', capMo:'chung'},
     {v:'kn-kt', t:'Kho nghề · Kiến trúc & tự vận hành hệ', h:'V50 · chương học thuyết của cụm, mở theo vai · tầng · gói · bảng việc áp dụng đo được', ic:'vault', perm:'nghe_chung', capMo:'chung'},
     {v:'kn-ct', t:'Kho nghề · Cải tiến & kiểm soát', h:'V50 · chương học thuyết của cụm, mở theo vai · tầng · gói · bảng việc áp dụng đo được', ic:'vault', perm:'nghe_chung', capMo:'chung'},
     {v:'thu-vien',    t:'Thư viện tài liệu',           h:'Gửi tài liệu lên · kho lớn lên từ đây', ic:'book', capMo:'chung', star:1},
@@ -1076,6 +1076,8 @@ G.NAV = [
     {v:'phap-ly-rui-ro', t:'Pháp lý & rủi ro', h:'Hai luật có hiệu lực 01/01/2026 — bảy việc của Luật 91 chia theo AI LÀM · ba ô đồng ý tách bạch, ô về con do CHA MẸ ký · nút xoá chạy thật, hai phía đo-được và lời-khai · bốn câu hỏi mang tới luật sư, KHÔNG có câu trả lời', ic:'shield', star:1, perm:'nghe_chung', capMo:'chung'},
     {v:'he-dieu-hanh', t:'Hệ điều hành CEO', h:'GITA-CEO-OS v3.0 — bốn nhịp vận hành, mỗi nhịp có THỜI LƯỢNG · bảng 12 chỉ số chia theo nguồn, chín cửa đo được và ba ô người khai · năm bước quyết định với hai mốc thời gian · năm chặng lộ trình, không nhảy cóc · bốn câu lệnh, câu thứ tư là phép thử', ic:'compass', star:1, perm:'fin_view', capMo:'chung'},
     {v:'bo-prompt', t:'Bộ prompt · 4 vai', h:'Bốn bản dán thẳng A · B · C · D — DỰNG LÚC CHẠY từ kho, không chép sẵn một chữ nào · vai C phải ở nhà cung cấp KHÁC vai A, soạn không tự duyệt được · sáu bước của một nội dung công khai, hai bước cuối là NGƯỜI · nối vào bảy cửa đã chạy sẵn', ic:'quote', star:1, perm:'nghe_chung', capMo:'chung'},
+    {v:'toan-canh-crm', t:'Toàn cảnh CRM', h:'Chỉ số · sơ đồ quy trình khách · quan hệ bảng · biểu đồ phễu, đèn, chạm, NPS · ma trận chức năng × vai · rủi ro · danh mục bảng', ic:'chart', perm:'crm_view', capMo:'chung'},
+    {v:'toan-canh-tc', t:'Toàn cảnh tài chính', h:'Chỉ số · quy trình thu & chi · quan hệ bảng · biểu đồ thu chi, dòng tiền, công nợ, credit · ma trận chức năng × vai · rủi ro · danh mục bảng', ic:'chart', perm:'fin_view', capMo:'chung'},
     {v:'khung-du-lieu', t:'Khung dữ liệu & ma trận quyền', h:'Cấu trúc bảng CRM · Tài chính (cột, ý nghĩa, ai đọc · ai ghi) · ma trận vai × màn · luồng dữ liệu khách ↔ nhân sự', ic:'grid', perm:'qt_trang', capMo:'chung'},
     {v:'soat-toan-man', t:'Soát toàn bộ màn', h:'Super Admin · ứng dụng tự mở từng mục cột trái bằng phiên thật, đo công cụ / chỉ để đọc / số minh hoạ / khoá / lỗi · gửi trợ lý bản mã hoá', ic:'search', perm:'qt_trang', capMo:'chung', hienKhi:'soatDuocToanMan'},
     {v:'trung-tam-do', t:'Trung tâm đo lường & tối ưu', h:'Một chỗ đo toàn hệ: 7 khối gom 16 ban · 41 chỉ số · từng vai, từng người, từng hoạt động · kết quả kiểm tra · phân tích & 2–5 giải pháp · phân bổ người · theo dõi triển khai tới khi đo lại', ic:'chart', star:1, capMo:'chung', hienKhi:'xemTrungTamDo'},
@@ -22603,7 +22605,7 @@ function theDap(d){
           ? 'Học phí tầng này chưa khai trong kho — Tư vấn báo lại con số thật.'
           : 'Lộ trình tầng '+m.tang+': '+h(new Intl.NumberFormat('vi-VN').format(m.gia))+
             ' '+h(m.donVi||'đồng'))+'</p>'+
-        '<button class="btn sm" data-v="dang-ky">Đăng ký lộ trình tầng '+m.tang+'</button>'+
+        '<button class="btn sm" data-v="tham-gia">Đăng ký lộ trình tầng '+m.tang+'</button>'+
         '</div></div>';
     }
   }
@@ -23782,7 +23784,7 @@ var G = window.G || {}; window.G = G;
          phụ đề, giọng, thu nhỏ/phóng to). Trang tĩnh anh em cạnh index.html
          nên mở bằng <a href>, không qua bộ định tuyến trong app. */
       '<a class="btn sm hd-studio" href="video-huong-dan.html" target="_blank" rel="noopener">' +
-      ic('spark', 'w-3 h-3') + 'Studio video (bài bản)</a>';
+      ic('spark', 'w-3 h-3') + (G.LA_KHACH && G.LA_KHACH() ? 'Video hướng dẫn đầy đủ' : 'Studio video (bài bản)') + '</a>';
   };
 })();
 
@@ -35353,7 +35355,7 @@ G.VIEWS = G.VIEWS || {};
       var cSk = (sk ? '<div class="cvt-sk">' + h(sk) + '</div>' : '<span class="tiny" style="color:var(--ink-4)">chưa có</span>') +
         '<button class="btn ghost sm cvt-act" style="margin-top:5px" data-cvsk="' + h(m.ma) + '">' + ic('edit', 'w-3 h-3') + (sk ? ' Sửa' : ' Thêm') + '</button>';
       var cTro = '<div class="tiny cvt-tip">' + h(troLyGoi(tk, m)) + '</div>' +
-        '<button class="btn ghost sm cvt-act" style="margin-top:5px" data-v="tro-ly-ai">' + ic('chat', 'w-3 h-3') + ' Hỏi Trợ lý</button>';
+        '<button class="btn ghost sm cvt-act" style="margin-top:5px" data-v="tro-ly">' + ic('chat', 'w-3 h-3') + ' Hỏi Trợ lý</button>';
 
       return '<tr>' +
         '<td class="cvt-stt">' + (i + 1) + '</td>' +
@@ -74045,7 +74047,7 @@ var G = window.G || {}; window.G = G;
   V.CUM = [
     { ma:'PP', ten:'Phương pháp & lộ trình GITA', khoi:'CO', kpi:'co7',
       mo:'Năm tầng, mười hai chặng, mô thức và ngôn từ dẫn dắt — xương sống mọi buổi làm việc.',
-      man:['gioi-thieu','gita-map','lo-trinh','hanh-trinh-5-tang','hanh-trinh-12','phuong-phap','tu-duy','chieu-sau','van-dung','mo-thuc','kien-truc-100','banh-da','sau-vung','coach-5-tang','ngon-tu'],
+      man:['gioi-thieu','phuong-phap','tu-duy','chieu-sau','van-dung','mo-thuc','kien-truc-100','sau-vung','coach-5-tang','ngon-tu'],
       viec:['Mỗi nhà đang phụ trách đã xác định đúng tầng (T1–T5) và ghi vào hồ sơ',
             'Buổi làm việc gần nhất bám đúng mô thức của tầng ấy, không nhảy tầng',
             'Mở tầng mới bằng bằng chứng, không mở bằng lời hứa',
@@ -74062,7 +74064,7 @@ var G = window.G || {}; window.G = G;
             'Lỗ hổng phát hiện trong kho được gửi lên Thư viện tài liệu'] },
     { ma:'NGHE', ten:'Chuẩn nghề các vai', khoi:'NS', kpi:'ns3',
       mo:'Mô tả nghề từng vai, gói nghề, 40 giờ đào tạo, sổ tay năm đầu, nôi nhân tài.',
-      man:['nghe-tu-van','nghe-coach','nghe-qlcm','nghe-mentor','nghe-danhgia','nghe-phantich','nghe-tncoach','nghe-giamdoc','nghe-giaovien','nghe-daisu','nghe-quantri','goi-nghe','dao-tao-dh','nam-dau','noi-nhan-tai'],
+      man:['nghe-tu-van','nghe-coach','nghe-qlcm','nghe-mentor','nghe-danhgia','nghe-phantich','nghe-tncoach','nghe-giamdoc','nghe-giaovien','nghe-quantri','goi-nghe','dao-tao-dh','nam-dau','noi-nhan-tai'],
       viec:['Mỗi nhân sự có mô tả nghề đúng vai và đã ký nhận',
             'Nhân sự mới qua đủ ba cửa trước khi nhận nhà riêng',
             'Đủ 40 giờ đào tạo năm đầu, có ghi nhận',
@@ -74103,7 +74105,7 @@ var G = window.G || {}; window.G = G;
             'Fan tích cực được mời vào chương trình giới thiệu'] },
     { ma:'MK', ten:'Thương hiệu & nội dung', khoi:'MK', kpi:'mk2',
       mo:'Nhận diện, ngôn từ, luật giao diện, bộ prompt, giọng đọc, nội dung tiếp thị.',
-      man:['noi-dung-tiep-thi','thuong-hieu','nhan-dien','nhan-dien-loi','so-tay-nhan-dien','luat-giao-dien','bo-prompt','giong-doc'],
+      man:['noi-dung-tiep-thi','thuong-hieu','nhan-dien','nhan-dien-loi','so-tay-nhan-dien','luat-giao-dien','bo-prompt'],
       viec:['Mọi bài đăng dùng đúng bộ nhận diện (logo, màu, giọng GITA)',
             'Không dùng từ cấm trong bộ nhận diện ngôn từ',
             'Lịch nội dung tuần có ít nhất ba bài vào cổng',
@@ -74119,7 +74121,7 @@ var G = window.G || {}; window.G = G;
             'Nghiệm thu mỗi chặng có bằng chứng và xác nhận của gia đình'] },
     { ma:'NHA', ten:'Hành trình nhà mình', khoi:'KH', kpi:'kh1',
       mo:'Định vị hôm nay, bản đồ cá nhân, thói quen, bộ test, tiến bộ của con — những bài cả nhà cùng đọc trên hành trình.',
-      man:['dinh-vi','ban-do-ca-nhan','chuyen-hoa','hanh-trinh-con','dong-hanh','nhan-vat','cay-vip','bo-test','mua-doi','buc-tranh','chin-vai','thoi-quen','cu-hich','bang-so','do-thoi-gian'],
+      man:['dinh-vi','ban-do-ca-nhan','chuyen-hoa','hanh-trinh-con','dong-hanh','nhan-vat','cay-vip','bo-test','mua-doi','buc-tranh','chin-vai','thoi-quen','cu-hich','bang-so','do-thoi-gian','lo-trinh','hanh-trinh-12','hanh-trinh-5-tang','gita-map','banh-da'],
       viec:['Gia đình mở app ít nhất ba ngày mỗi tuần',
             'Bản đồ cá nhân và định vị được cập nhật hằng tháng',
             'Có thói quen / nghi lễ gia đình đang theo dõi',
@@ -74242,19 +74244,19 @@ var G = window.G || {}; window.G = G;
     { id:'cong-vao', khu:'khach',  ten:'Cổng vào',                 ic:'compass', viec:'Người chưa có tài khoản: hiểu GITA 365, đi sáu bước vào, đọc đánh giá thật.',
       phan:['gioi-thieu','tham-gia','danh-gia'], kho:[] },
     { id:'nha-minh', khu:'khach',  ten:'Nhà mình hôm nay',         ic:'home',    viec:'Việc của nhà hôm nay: một việc, nhiệm vụ, nhịp 21/90 ngày, minh chứng.',
-      phan:['ngoi-nha','dk-cua-toi','hom-nay','nhiem-vu','con-duong','chu-ky','minh-chung','bat-dau'], kho:['NHA'] },
+      phan:['ngoi-nha','dk-cua-toi','hom-nay','nhiem-vu','con-duong','chu-ky','vong-nhac','minh-chung','bat-dau'], kho:['NHA'] },
     { id:'hanh-trinh', khu:'khach', ten:'Hành trình & tiến bộ',    ic:'map',     viec:'Nhà đang ở đâu trên năm tầng, đổi được gì, báo cáo tháng, ghi nhận.',
-      phan:['ban-do','chan-dung-nha','tam-nhin','tien-bo','kpi-100','ban-co','ho-so-thang','phan-thuong','bang-tin'], kho:['NHA','GD'] },
+      phan:['ban-do','chan-dung-nha','tam-nhin','tien-bo','kpi-100','ban-co','ho-so-thang','phan-thuong','sat-hach','khoa-dao-tao','nhat-ky-vi-tri','thi-viet','bang-tin'], kho:['NHA','GD'] },
     { id:'dich-vu', khu:'khach',   ten:'Dịch vụ & tài khoản',      ic:'star',    viec:'Ví credit, học phí, quà theo tầng, trợ lý, sự kiện, đánh giá.',
-      phan:['vi-credit','thanh-toan','kho-qua','tro-ly','su-kien','danh-gia'], kho:['GD'] },
+      phan:['vi-credit','thanh-toan','kho-qua','tro-ly','giong-doc','su-kien','danh-gia'], kho:['GD'] },
     { id:'ve-tinh', khu:'khach',   ten:'Vệ tinh lan toả',          ic:'share',   viec:'CTV / Đại sứ: nhà mình giới thiệu, liên kết, hoa hồng, kết nối.',
-      phan:['dk-cua-toi','ve-tinh','dai-su','hoa-hong','ket-noi','su-kien'], kho:['TRAI'] },
+      phan:['dk-cua-toi','ve-tinh','dai-su','hoa-hong','ket-noi','su-kien','nghe-daisu'], kho:['TRAI'] },
     { id:'ban-lam-viec', khu:'nhansu', ten:'Bàn làm việc của tôi',  ic:'target',  viec:'Bảng điều khiển theo vai, đầu việc, KPI cá nhân, vòng nhắc, nhật ký.',
       phan:['dk-cua-toi','bang-viec','danh-muc-viec','kpi-toi','vong-nhac','nhat-ky-vi-tri'], kho:['NGHE'] },
     { id:'coach', khu:'nhansu',     ten:'Hệ điều hành Coach',       ic:'flame',   viec:'Chương trình, thiết kế bài, điều phối, chất lượng, ca — mỗi buổi ghi vào tiến trình chăm sóc ở CRM.',
       phan:['coach-he','coach-dp','coach-ct','coach-tk','coach-cl','coach-gp','coach-kho','coach-pt','coach-v20','coach-nlp','van-hanh-cham-soc','xu-ly-ca','xuat-du-lieu'], kho:['PP','KHO','COACH'] },
     { id:'khach-crm', khu:'nhansu', ten:'Khách hàng & CRM',         ic:'heart',   viec:'CRM theo quyền được cấp, CSKH, đo lường khách, trải nghiệm, tài liệu gia đình.',
-      phan:['crm','tt-cskh','do-luong-he','trai-nghiem-kh','nguoi-dan-dat','tai-lieu-khach','gui-tu-lieu','tang5-pro','khung-du-lieu'], kho:['TUVAN','VIP','TRAI'] },
+      phan:['toan-canh-crm','crm','tt-cskh','do-luong-he','trai-nghiem-kh','nguoi-dan-dat','tai-lieu-khach','gui-tu-lieu','tang5-pro','khung-du-lieu'], kho:['TUVAN','VIP','TRAI'] },
     { id:'dao-tao', khu:'nhansu',   ten:'Đào tạo & năng lực',       ic:'book',    viec:'Khoá đào tạo, sát hạch, cuộc thi viết — mở theo cấp bậc đạt được.',
       phan:['khoa-dao-tao','sat-hach','thi-viet'], kho:['NGHE','PP'] },
     { id:'kho-nghe', khu:'nhansu',  ten:'Kho nghề & tài liệu',      ic:'vault',   viec:'14 kho nghề theo cụm, thư viện tài liệu — chương mở theo vai, tầng, gói.',
@@ -74262,7 +74264,7 @@ var G = window.G || {}; window.G = G;
     { id:'dieu-hanh', khu:'nhansu', ten:'Điều hành & đo lường',     ic:'chart',   viec:'Trung tâm đo lường 41 chỉ số, V20, 16 ban, các vai, phòng ban, năng lực, con người.',
       phan:['trung-tam-do','truy-van-da-chieu','dk-cac-vai','phong-ban','nang-luc-ns','con-nguoi'], kho:['KT','CT'] },
     { id:'tai-chinh', khu:'nhansu', ten:'Tài chính',                ic:'list',    viec:'Ban tài chính theo giới hạn được cấp: kế toán, đối soát, thuế, credit, bảng giá.',
-      phan:['phong-tai-chinh','tai-chinh-ceo','ke-toan-thue','credit-gita','bang-gia','khung-du-lieu'], kho:['TC'] },
+      phan:['toan-canh-tc','phong-tai-chinh','tai-chinh-ceo','ke-toan-thue','credit-gita','bang-gia','khung-du-lieu'], kho:['TC'] },
     { id:'quan-tri', khu:'nhansu',  ten:'Tài khoản & quyền',        ic:'shield',  viec:'Cấp quyền 100% do Super Admin: mở tài khoản, phân quyền, quyền CRM, khoá, nhật ký.',
       phan:['phan-quyen','phan-quyen-crm','cap-tai-khoan','khoa-tai-khoan','nguoi-dung','toi','khoa-mat','nhat-ky-ht','khung-du-lieu'], kho:['PL'] },
     { id:'van-hanh-he', khu:'nhansu', ten:'Vận hành hệ thống',      ic:'pulse',   viec:'Máy chủ, tài nguyên, liên thông dữ liệu, sức chứa, AI, thanh tra, soát màn, kiểm thử.',
@@ -74338,6 +74340,9 @@ var G = window.G || {}; window.G = G;
     if(c){
       var ds = dsVai || [];
       for(var i = 0; i < ds.length; i++){ var hb = M.hub(ds[i]); if(hb && hb.kho.indexOf(c.ma) >= 0) return hb.id; }
+      /* Chương của kho khu khách → màn khu khách đầu tiên dùng kho ấy (không đưa
+         sang màn Kho nghề nội bộ). */
+      for(var j2 = 0; j2 < M.HUB.length; j2++){ var hk2 = M.HUB[j2]; if(hk2.khu === 'khach' && hk2.kho.indexOf(c.ma) >= 0) return hk2.id; }
       return 'kho-nghe';
     }
     if(M.KHOP[v]) return M.KHOP[v];
@@ -74356,6 +74361,23 @@ var G = window.G || {}; window.G = G;
   };
   M.hubKhach = function(id){ return (M.VAI_KHACH[id || M.vai()] || []).slice(); };
   M.hubTatCa = function(id){ return M.hubVai(id).concat(M.hubKhach(id)); };
+  /* CỔNG KHU KHÁCH: tài khoản khách không mở được trang khu nhân sự — kể cả gõ
+     thẳng địa chỉ #màn hay bấm một liên kết lạc. Được mở: phần của màn khu
+     khách, chương học thuyết khách được đọc (cụm của kho khu khách, hoặc chương
+     không mang quyền nghiệp vụ), bảng điều khiển của nhà mình. app.js gọi ở
+     G.allowed; perm / gói vẫn gác như cũ. */
+  M.chanKhach = function(v){
+    if(!M.laKhach() || !G.S || !G.S.acc) return false;
+    var id = M.hubCua(v, M.hubVai()), hb = id && M.hub(id);
+    if(hb && hb.khu === 'khach') return false;
+    /* Chương học thuyết: chỉ chương thuộc KHO KHU KHÁCH (Hành trình nhà mình ·
+       Cam kết với gia đình · Trải nghiệm & lan toả). Chương phương pháp, nghề,
+       tư vấn… của đội ngũ không mở cho khách, kể cả chương không mang quyền. */
+    var c = G.V50 && G.V50.cumCua ? G.V50.cumCua(v) : null;
+    if(c && M.KHO_KHACH.indexOf(c.ma) >= 0) return false;
+    return true;
+  };
+  M.KHO_KHACH = (function(){ var o = []; M.HUB.forEach(function(hb){ if(hb.khu === 'khach') hb.kho.forEach(function(k){ if(o.indexOf(k) < 0) o.push(k); }); }); return o; })();
   M.laKhach = function(id){ var v = id || M.vai(); return v === 'khach-la' || v === 'R13' || v === 'R14' || v === 'R15'; };
 
   /* Vì sao trang v chưa mở với tài khoản này — null là đã mở. Khách thấy
@@ -75911,7 +75933,7 @@ var G = window.G || {}; window.G = G;
     var o = '<nav class="v50-phan' + (hb.khu === 'khach' ? ' v50-phan-kh' : '') + '" aria-label="Các phần của màn ' + h(hb.ten) + '"><div class="v50-phan-dau">' +
       ic(hb.ic, 'w-4 h-4') + (nhan ? '<span class="tiny muted">' + h(nhan) + '</span>' : '') + '<b>' + h(hb.ten) + '</b>';
     if(!laPhan){ var it = G.navItem ? G.navItem(v) : null; o += '<span class="tiny muted">› ' + h(it ? G.iname(it) : v) + '</span>'; }
-    if(tat.indexOf(hb.id) < 0) o += '<span class="tiny muted">· ngoài các màn của vai này</span>';
+    if(tat.indexOf(hb.id) < 0 && !khach) o += '<span class="tiny muted">· ngoài các màn của vai này</span>';
     o += '</div><div class="v50-phan-ds">';
     hb.phan.forEach(function(p){
       var it = G.navItem ? G.navItem(p) : null; if(!it) return;
@@ -78017,6 +78039,236 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     else if(a === 'mo') st.mo = st.mo === v ? '' : v;
     if(G.render && G.S && G.S.view === VIEW) G.render();
   });
+})();
+
+})();
+
+/* ═════════ src/toan-canh.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — TOÀN CẢNH CRM · TOÀN CẢNH TÀI CHÍNH (V50·168)
+
+   Chủ hệ: "CRM và Tài chính hiển thị đầy đủ bảng, sơ đồ, biểu đồ để tôi
+   nhìn được khung toàn diện trước khi góp ý". Mỗi màn bảy khối:
+     1. Chỉ số chính — số thật từ Trung tâm đo lường (docTrungTamDo) khi đã
+        nối máy chủ và vai R01–R03; chưa nối thì ví dụ minh hoạ CÓ NHÃN.
+     2. Sơ đồ quy trình (bước · bảng ghi · cửa máy chủ).
+     3. Sơ đồ quan hệ bảng (bảng trung tâm và các bảng nối với nó).
+     4. Biểu đồ — xu hướng từ ảnh chụp hằng ngày của Trung tâm (lichSuTrungTamDo)
+        khi có; phân bổ chưa có cửa đọc riêng thì vẽ khung minh hoạ có nhãn.
+     5. Ma trận chức năng × vai — đúng cổng ở máy chủ (soát 07/10/2026).
+     6. Kiểm soát rủi ro — mỗi rủi ro gắn chỉ số canh nó.
+     7. Danh mục bảng — từ G.KHUNG_DL (sinh từ csdl.sql); bấm sang Khung dữ
+        liệu để xem từng cột.
+   Mỗi khối mang nhãn "Số thật" hoặc "Minh hoạ" — không trộn mà không nói.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
+(function(){
+  var U = G.U, h = U.h, ic = U.ic;
+  var st = { ai:'', d:null, ls:null, dang:false, loi:'' };
+
+  function lv(){ var r = G.S && G.S.roleObj; return r && r.lv ? r.lv : 99; }
+  function coMayChu(){ return !!(G.API_CAP_PHEP && G.PHIEN_TOKEN); }
+  function soThat(){ return coMayChu() && lv() <= 3; }
+  function veLai(){ if(G.render) G.render(); }
+  function nhanNguon(that){ return '<span class="tc-nhan ' + (that ? 'tc-that' : 'tc-mau') + '">' + (that ? 'Số thật' : 'Minh hoạ') + '</span>'; }
+  function khoi(ten, phu, that, than){
+    return '<section class="card mb tc-khoi"><div class="tc-khoi-dau"><b>' + h(ten) + '</b>' + (that === null ? '' : nhanNguon(that)) + '</div>' +
+      (phu ? '<p class="tiny muted" style="margin:2px 0 10px">' + h(phu) + '</p>' : '') + than + '</section>';
+  }
+
+  /* ── Số thật từ Trung tâm đo lường ── */
+  function canSo(){
+    var ai = String((G.S && G.S.acc && G.S.acc.u) || '');
+    if(st.ai !== ai){ st = { ai:ai, d:null, ls:null, dang:false, loi:'' }; }
+    if(!soThat() || st.d || st.dang) return;
+    st.dang = true;
+    Promise.all([G.goiMayChu('docTrungTamDo', { ngay:30 }), G.goiMayChu('lichSuTrungTamDo', {})]).then(function(r){
+      st.dang = false;
+      if(r[0] && r[0].ok) st.d = r[0]; else st.loi = (r[0] && r[0].error) || 'Chưa đọc được Trung tâm đo lường.';
+      if(r[1] && r[1].ok) st.ls = r[1].ds || [];
+      if(G.S && /^toan-canh-/.test(G.S.view)) veLai();
+    });
+  }
+  function kpiDef(ma){ var T = G.TU; for(var i = 0; T && i < T.KPI.length; i++) if(T.KPI[i].ma === ma) return T.KPI[i]; return null; }
+  function giaTri(ma){ if(!st.d || !st.d.kpi) return null; for(var i = 0; i < st.d.kpi.length; i++) if(st.d.kpi[i].ma === ma) return st.d.kpi[i]; return null; }
+  var MAU_TT = { dat:'var(--ok)', canhBao:'var(--warn)', xau:'var(--gita-do)', chuaDo:'var(--ink-4)', theoDoi:'var(--gita)' };
+  function oSo(ma, mau){
+    var k = kpiDef(ma); if(!k) return null;
+    var g = soThat() ? giaTri(ma) : null, v, tt;
+    if(g){ v = g.gt; tt = g.tt; } else { v = mau; tt = 'mau'; }
+    var hien = v == null ? 'chưa đo' : (k.dv === 'đ' ? U.bdGon(v) + ' đ' : String(v).replace('.', ',') + (k.dv && k.dv !== 'đ' ? ' ' + k.dv : ''));
+    return { k:k.ten, v:hien, d: g ? (tt === 'dat' ? 'đạt' : tt === 'canhBao' ? 'cảnh báo' : tt === 'xau' ? 'cần xử lý' : tt === 'chuaDo' ? 'chưa đủ dữ liệu' : 'theo dõi') : 'ví dụ', c: g ? (MAU_TT[tt] || 'var(--gita)') : 'var(--ink-4)' };
+  }
+  function chuoi(ma, mau){
+    if(soThat() && st.ls && st.ls.length >= 2){
+      var pts = st.ls.map(function(x){ var o = null; (x.kpi || []).forEach(function(z){ if(z[0] === ma) o = z[1]; }); return { nhan:String(x.ngay).slice(5), gia:o == null ? 0 : Number(o) }; });
+      return { that:true, pts:pts };
+    }
+    return { that:false, pts:mau };
+  }
+
+  /* ── Sơ đồ quan hệ bảng: bảng trung tâm + các bảng nối ── */
+  function veSao(tam, ve){
+    var W = 760, H = 330, cx = W / 2, cy = H / 2, R = 128, n = ve.length;
+    var o = '<div class="tc-cuon"><svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Quan hệ của bảng ' + h(tam) + '" class="tc-sao">';
+    ve.forEach(function(x, i){
+      var a = -Math.PI / 2 + i * 2 * Math.PI / n, x2 = cx + Math.cos(a) * R * 2.05, y2 = cy + Math.sin(a) * R;
+      var mx = (cx + x2) / 2, my = (cy + y2) / 2;
+      o += '<line x1="' + cx + '" y1="' + cy + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="currentColor" stroke-opacity=".35"/>' +
+        '<text x="' + mx.toFixed(1) + '" y="' + (my - 4).toFixed(1) + '" font-size="10.5" text-anchor="middle" fill="currentColor" fill-opacity=".7">' + h(x[1]) + '</text>';
+    });
+    ve.forEach(function(x, i){
+      var a = -Math.PI / 2 + i * 2 * Math.PI / n, x2 = cx + Math.cos(a) * R * 2.05, y2 = cy + Math.sin(a) * R, w = Math.max(84, x[0].length * 7.4 + 18);
+      o += '<rect x="' + (x2 - w / 2).toFixed(1) + '" y="' + (y2 - 14).toFixed(1) + '" width="' + w.toFixed(1) + '" height="28" rx="8" fill="var(--surface)" stroke="currentColor" stroke-opacity=".5"/>' +
+        '<text x="' + x2.toFixed(1) + '" y="' + (y2 + 4).toFixed(1) + '" font-size="12" text-anchor="middle" fill="currentColor" font-family="var(--mono,monospace)">' + h(x[0]) + '</text>';
+    });
+    var wt = Math.max(110, tam.length * 8 + 26);
+    o += '<rect x="' + (cx - wt / 2) + '" y="' + (cy - 17) + '" width="' + wt + '" height="34" rx="9" fill="var(--gita-mo-1)" stroke="var(--gita)" stroke-width="2"/>' +
+      '<text x="' + cx + '" y="' + (cy + 5) + '" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor" font-family="var(--mono,monospace)">' + h(tam) + '</text>';
+    return o + '</svg></div>';
+  }
+
+  function maTran(cot, hang){
+    return '<div class="tc-cuon"><table class="kdl-mt tc-mt"><thead><tr><th>Chức năng</th>' + cot.map(function(c){ return '<th>' + h(c) + '</th>'; }).join('') + '</tr></thead><tbody>' +
+      hang.map(function(r){ return '<tr><th>' + h(r[0]) + '</th>' + r.slice(1).map(function(x){ var k = x === '—' ? ' muted' : x === 'mọi nhà' || x === 'được' ? ' tc-co' : ''; return '<td class="tc-o' + k + '">' + h(x) + '</td>'; }).join('') + '</tr>'; }).join('') +
+      '</tbody></table></div><p class="tiny muted mt">Đúng cổng ở máy chủ (soát 07/10/2026). "khi được cấp" = Super Admin cấp dòng quyền riêng cho người đó (CRM: xem · sửa · quản lý; tài chính: kế toán thu · chi · trưởng · quản lý phòng).</p>';
+  }
+  var COT = ['Super Admin','Admin','Giám đốc','QLCM','TN Coach','Coach · Senior','Giáo viên','Mentor · ĐG','Tư vấn','Phân tích','Khách'];
+
+  function danhMuc(ds){
+    return '<div class="v50-bang" role="table">' + '<div class="v50-hang v50-hang-dau tc-dm" role="row"><span>Bảng</span><span>Việc</span><span>Cột</span><span>Ai ghi</span></div>' +
+      ds.map(function(b){ return '<div class="v50-hang tc-dm" role="row"><span class="mono">' + h(b.ten) + '</span><span class="tiny">' + h(b.mo) + '</span><span class="mono tiny">' + b.cot.filter(function(c){ return c[0] !== '(ràng buộc)'; }).length + '</span><span class="tiny">' + h(b.ghi) + '</span></div>'; }).join('') +
+      '</div><div class="row mt" style="gap:8px"><button class="btn sm ghost" data-v="khung-du-lieu">' + ic('grid','w-3 h-3') + 'Xem từng cột ở Khung dữ liệu</button></div>';
+  }
+
+  function ruiRo(ds){
+    return ds.map(function(r){
+      var k = kpiDef(r[1]), g = soThat() ? giaTri(r[1]) : null;
+      var tt = g ? g.tt : '', mau = MAU_TT[tt] || 'var(--line-2)';
+      return '<div class="tc-rr" style="--rr:' + mau + '"><div><b>' + h(r[0]) + '</b><p class="tiny muted" style="margin:2px 0 0">' + h(r[2]) + '</p></div>' +
+        '<div class="tc-rr-so"><span class="tiny muted">' + h(k ? k.ten : r[1]) + '</span><b>' + (g ? (g.gt == null ? 'chưa đo' : h(String(g.gt).replace('.', ','))) : '<span class="tiny muted">chờ số thật</span>') + '</b></div></div>';
+    }).join('');
+  }
+
+  function dau(t, lead){
+    canSo();
+    var o = U.ph({ eyebrow:'V50·168 · KHUNG TOÀN DIỆN', ic:'chart', grad:1, t:t, lead:lead });
+    o += U.bdNguon ? U.bdNguon(soThat() && !!st.d) : '';
+    if(soThat() && st.dang && !st.d) o += '<p class="sm muted mb">Đang đọc số thật từ Trung tâm đo lường…</p>';
+    if(st.loi) o += '<p class="sm mb" style="color:var(--bad)">' + h(st.loi) + '</p>';
+    return o;
+  }
+
+  /* ════════════ TOÀN CẢNH CRM ════════════ */
+  G.VIEWS['toan-canh-crm'] = function(){
+    if(!(G.can && (G.can('crm_view') || G.can('dh_toan_he')))) return U.lockCard('Toàn cảnh CRM mở cho người được cấp CRM và ban điều hành.');
+    var K = G.KHUNG_DL || { crm:[] }, that = soThat() && !!st.d;
+    var o = dau('Toàn cảnh CRM', 'Khách đi từ lúc đăng ký tới khi lên tầng và giới thiệu nhà khác: bảng nào ghi, ai chạm, đo bằng chỉ số nào, ai được làm gì.');
+    o += khoi('Chỉ số chính', 'Ba khối của Trung tâm đo lường: Tư vấn & bán hàng · Coach & chăm sóc · Khách hàng & trải nghiệm.', that,
+      U.bdSoHang([oSo('tv1', 14), oSo('tv2', 52), oSo('tv5', 31), oSo('tv3', 6), oSo('co2', 3), oSo('co3', 2), oSo('kh3', 46), oSo('kh1', 78)].filter(Boolean)));
+    o += khoi('Sơ đồ quy trình khách hàng', 'Mỗi cột một chặng; dòng dưới là bảng được ghi và cửa máy chủ làm việc đó.', null,
+      U.bdDong([
+        { ten:'1 · Đăng ký', o:['Khách tự đăng ký, xác nhận email', 'users · dangKyCho', 'dangKy → kichHoat'] },
+        { ten:'2 · Tư vấn', o:['Gán Tư vấn trong 24 giờ', 'Phiếu chẩn đoán Tầng 1', 'crmKhach · crmCoHoi', 'crmGhiKhach · crmGhiCoHoi'] },
+        { ten:'3 · Vào học', o:['Phiếu thu được duyệt', 'Mở tệp khách, dựng kỳ thu', 'hoSoKhach · kyThu', 'ghiPhieuThu → duyetPhieuThu'] },
+        { ten:'4 · Chăm sóc', o:['Coach chạm đều: nhắn · gọi · WOW · buổi', 'Đèn xanh / vàng / đỏ', 'soCham · soCredit', 'ghiCham · tieuCredit'] },
+        { ten:'5 · Đo & lên tầng', o:['Sổ đo, NPS, báo cáo tháng', 'Đủ KPI + thanh toán → lên tầng', 'danhGiaKH · hoSoThang · lichSuTang', 'nangTang'] },
+        { ten:'6 · Lan toả', o:['Fan giới thiệu nhà mới', 'Hoa hồng đại sứ', 'hoSoKhach.boTro · hoaHongTra', 'traHoaHong'] }
+      ]));
+    o += khoi('Sơ đồ quan hệ bảng', 'hoSoKhach là gốc: mọi bảng CRM nối về mã nhà (maKhachHang / maNha / maKH).', null,
+      veSao('hoSoKhach', [['crmKhach','maKH'], ['crmCoHoi','maKH'], ['soCham','maNha'], ['suKienKH','maNha'], ['danhGiaKH','maNha'], ['hoSoThang','maNha'], ['quyenCRM','username → phạm vi'], ['users','uidPhuHuynh']]));
+    var tuan = chuoi('co1', [{nhan:'T1',gia:38},{nhan:'T2',gia:44},{nhan:'T3',gia:41},{nhan:'T4',gia:52},{nhan:'T5',gia:49},{nhan:'T6',gia:57}]);
+    var nps = chuoi('kh3', [{nhan:'Th5',gia:32},{nhan:'Th6',gia:38},{nhan:'Th7',gia:41},{nhan:'Th8',gia:39},{nhan:'Th9',gia:44},{nhan:'Th10',gia:46}]);
+    o += '<div class="tc-luoi">' +
+      khoi('Phễu chuyển đổi', 'Lead → kích hoạt → vào học → lên tầng → giới thiệu.', false, U.bdPhieu([{ten:'Lead',so:120},{ten:'Kích hoạt',so:62},{ten:'Vào học',so:21},{ten:'Lên tầng',so:9},{ten:'Giới thiệu nhà mới',so:4}])) +
+      khoi('Nhà theo đèn chăm sóc', 'Đèn đọc thẳng từ sổ chạm: xanh ≤ 7 ngày · vàng 7–14 · đỏ > 14.', false, U.bdVong([{ten:'Xanh',gia:31,mau:'var(--ok)'},{ten:'Vàng',gia:8,mau:'var(--warn)'},{ten:'Đỏ',gia:3,mau:'var(--gita-do)'}])) +
+      khoi('Lượt chạm mỗi nhà', tuan.that ? 'Theo ảnh chụp hằng ngày của Trung tâm.' : 'Theo tuần.', tuan.that, U.bdDuong(tuan.pts, { dvi:'lượt' })) +
+      khoi('NPS', nps.that ? 'Theo ảnh chụp hằng ngày của Trung tâm.' : 'Theo tháng.', nps.that, U.bdDuong(nps.pts, { dvi:'điểm' })) +
+      '</div>';
+    o += khoi('Ma trận chức năng × vai', 'Ai được làm gì trong CRM.', null, maTran(COT, [
+      ['Xem khách của mình', 'được', 'được', 'khi được cấp', 'khi được cấp', 'khi được cấp', 'khi được cấp', 'khi được cấp', 'khi được cấp', 'khi được cấp', 'khi được cấp', '—'],
+      ['Xem toàn bộ khách (mức quản lý)', 'được', 'được', 'khi được cấp', 'khi được cấp', 'khi được cấp', 'khi được cấp', 'khi được cấp', 'khi được cấp', 'khi được cấp', 'khi được cấp', '—'],
+      ['Sửa giai đoạn, hẹn tiếp', 'được', 'được', 'khi được cấp', 'khi được cấp', 'khi được cấp', 'khi được cấp', 'khi được cấp', 'khi được cấp', 'khi được cấp', 'khi được cấp', '—'],
+      ['Giao Coach / Tư vấn phụ trách nhà', 'được', 'được', 'được', 'được', '—', '—', '—', '—', '—', '—', '—'],
+      ['Phân tích chuyên sâu', 'được', 'được', 'khi được cấp', 'khi được cấp', 'khi được cấp', 'khi được cấp', 'khi được cấp', 'khi được cấp', 'khi được cấp', 'khi được cấp', '—'],
+      ['Ghi lượt chạm (sổ chạm)', 'mọi nhà', 'mọi nhà', 'mọi nhà', 'mọi nhà', 'nhà mình', 'nhà mình', 'nhà mình', 'nhà mình', 'nhà mình', 'nhà mình', '—'],
+      ['Ghi buổi coach (tự vào CRM)', 'mọi nhà', 'mọi nhà', 'mọi nhà', 'mọi nhà', 'mọi nhà', 'nhà mình', 'nhà mình', '—', '—', '—', '—'],
+      ['Cấp / thu hồi quyền CRM', 'được', '—', '—', '—', '—', '—', '—', '—', '—', '—', '—']
+    ]));
+    o += khoi('Kiểm soát rủi ro', 'Mỗi rủi ro có một chỉ số canh ở Trung tâm đo lường.', that, '<div class="tc-rr-ds">' + ruiRo([
+      ['Lead không ai nhận', 'tv3', 'Nhà mới quá 24 giờ chưa có Tư vấn phụ trách.'],
+      ['Hẹn chăm sóc quá hạn', 'tv4', 'Cơ hội có ngày hẹn đã qua mà chưa ghi lần chạm.'],
+      ['Nhà bị bỏ quên', 'co2', 'Quá 7 ngày chưa được chạm.'],
+      ['Nhà đèn đỏ', 'co3', 'Quá 14 ngày im lặng — phải gọi, người thật gọi.'],
+      ['Khách không hài lòng', 'kh4', 'CSAT thấp — gọi lại trong 48 giờ.'],
+      ['Hoàn tiền', 'kh5', 'Tỷ lệ hoàn tiền tăng là tín hiệu chăm sóc hỏng sớm.']
+    ]) + '</div>');
+    o += khoi('Danh mục bảng CRM', K.crm.length + ' bảng · sinh từ lược đồ máy chủ.', null, danhMuc(K.crm));
+    return o;
+  };
+
+  /* ════════════ TOÀN CẢNH TÀI CHÍNH ════════════ */
+  G.VIEWS['toan-canh-tc'] = function(){
+    if(!(G.can && G.can('fin_view'))) return U.lockCard('Toàn cảnh tài chính mở cho ban điều hành và ban tài chính được cấp.');
+    var K = G.KHUNG_DL || { taiChinh:[] }, that = soThat() && !!st.d;
+    var o = dau('Toàn cảnh tài chính', 'Tiền vào, tiền ra, công nợ, credit, lương, thuế: bảng nào ghi, ai duyệt ở mốc nào, rủi ro nào được canh bằng chỉ số nào.');
+    o += khoi('Chỉ số chính', 'Khối Tài chính của Trung tâm đo lường (30 ngày).', that,
+      U.bdSoHang([oSo('tc1', 186000000), oSo('tc2', 64), oSo('tc3', 67000000), oSo('tc4', 2), oSo('tc5', 3), oSo('tc6', 1), oSo('tc7', 0)].filter(Boolean)));
+    o += khoi('Sơ đồ quy trình THU', 'Từ phiếu thu tới công nợ và ví credit của nhà.', null, U.bdDong([
+      { ten:'1 · Ghi phiếu', o:['Tư vấn trở lên ghi phiếu thu', 'phieuThu (chờ duyệt)', 'ghiPhieuThu'] },
+      { ten:'2 · Đối chiếu', o:['Khớp giao dịch ngân hàng', 'giaoDichNganHang', 'doiChieuNganHang · khopGiaoDich'] },
+      { ten:'3 · Duyệt', o:['R01–R03 hoặc kế toán thu', 'phieuThu (đã duyệt)', 'duyetPhieuThu'] },
+      { ten:'4 · Công nợ', o:['Trừ vào kỳ thu, miễn giảm', 'kyThu · mienGiam', 'congNo · duyetMienGiam'] },
+      { ten:'5 · Credit', o:['Nạp ví theo gói', 'soCredit · viCredit', 'napCreditPhieu'] },
+      { ten:'6 · Chốt & báo cáo', o:['Chốt tuần, báo cáo kế toán', 'soChot · chotKet · ketToan*', 'chotTuan · baoCaoKeToan'] }
+    ]));
+    o += khoi('Sơ đồ quy trình CHI', 'Duyệt theo mốc tiền C0–C6; không ai tự duyệt khoản của mình.', null, U.bdDong([
+      { ten:'1 · Đề xuất', o:['Trưởng nhóm Coach trở lên', 'chiPhi (đề xuất)', 'ghiChi'] },
+      { ten:'2 · Duyệt theo mốc', o:['Kế toán chi / trưởng theo mốc', 'R01–R03 ở mốc cao', 'duyetChi'] },
+      { ten:'3 · Hoá đơn', o:['Gắn hoá đơn, bút toán', 'ketToanHoaDon · ketToanButToan', ''] },
+      { ten:'4 · Lương', o:['Hệ số do Super Admin', 'Chốt và đối soát lương', 'heSoLuong · bangLuong', 'chotLuong · doiSoatLuong'] },
+      { ten:'5 · Thuế', o:['Tờ khai', 'ketToanToKhai', 'boSoKhaiThue'] }
+    ]));
+    o += '<div class="tc-luoi">' +
+      khoi('Quan hệ bảng · phía THU', '', null, veSao('phieuThu', [['kyThu','idKy'], ['hoSoKhach','maKhachHang'], ['giaoDichNganHang','đối chiếu'], ['soCredit','nạp từ phiếu'], ['mienGiam','trừ kỳ'], ['hoanTien','hoàn'], ['quyenTaiChinh','ai duyệt']])) +
+      khoi('Quan hệ bảng · phía CHI', '', null, veSao('chiPhi', [['quyenTaiChinh','mốc duyệt'], ['ketToanHoaDon','hoá đơn'], ['ketToanButToan','bút toán'], ['bangLuong','lương'], ['heSoLuong','hệ số'], ['hoaHongTra','hoa hồng']])) +
+      '</div>';
+    var tc1 = chuoi('tc1', [{nhan:'Th5',gia:142000000},{nhan:'Th6',gia:151000000},{nhan:'Th7',gia:168000000},{nhan:'Th8',gia:159000000},{nhan:'Th9',gia:177000000},{nhan:'Th10',gia:186000000}]);
+    var tc3 = chuoi('tc3', [{nhan:'Th5',gia:38000000},{nhan:'Th6',gia:41000000},{nhan:'Th7',gia:55000000},{nhan:'Th8',gia:47000000},{nhan:'Th9',gia:61000000},{nhan:'Th10',gia:67000000}]);
+    o += '<div class="tc-luoi">' +
+      khoi('Thu và chi theo tháng', 'Cột đôi: thu đã duyệt · chi đã duyệt.', false, U.bdCot([{nhan:'Th5',a:142,b:104},{nhan:'Th6',a:151,b:110},{nhan:'Th7',a:168,b:113},{nhan:'Th8',a:159,b:112},{nhan:'Th9',a:177,b:116},{nhan:'Th10',a:186,b:119}], { aTen:'Thu (triệu đ)', bTen:'Chi (triệu đ)' })) +
+      khoi('Tiền thu đã duyệt', tc1.that ? 'Theo ảnh chụp hằng ngày của Trung tâm.' : 'Theo tháng.', tc1.that, U.bdDuong(tc1.pts, { dvi:'đ' })) +
+      khoi('Dòng tiền ròng', tc3.that ? 'Theo ảnh chụp hằng ngày của Trung tâm.' : 'Theo tháng.', tc3.that, U.bdDuong(tc3.pts, { dvi:'đ' })) +
+      khoi('Cơ cấu chi', 'Theo nhóm chi đã duyệt.', false, U.bdVong([{ten:'Lương & thưởng',gia:58},{ten:'Hoa hồng đại sứ',gia:12},{ten:'Hạ tầng & AI',gia:9},{ten:'Marketing',gia:14},{ten:'Vận hành khác',gia:7}])) +
+      khoi('Công nợ theo tuổi nợ', 'Số kỳ thu chưa thu đủ, theo số ngày quá hạn.', false, U.bdCot([{nhan:'Chưa tới hạn',a:12},{nhan:'1–15 ngày',a:4},{nhan:'16–30 ngày',a:2},{nhan:'> 30 ngày',a:1}], { aTen:'Số kỳ' })) +
+      khoi('Credit nạp và tiêu', 'Cột đôi theo tháng (nghìn credit).', false, U.bdCot([{nhan:'Th7',a:900,b:610},{nhan:'Th8',a:1100,b:780},{nhan:'Th9',a:1300,b:960},{nhan:'Th10',a:1600,b:1120}], { aTen:'Nạp', bTen:'Tiêu' })) +
+      '</div>';
+    o += khoi('Ma trận chức năng × vai', 'Ai được làm gì với tiền.', null, maTran(COT, [
+      ['Ghi phiếu thu', 'được', 'được', 'được', 'được', 'được', 'được', 'được', 'được', 'được', '—', '—'],
+      ['Duyệt phiếu thu · nạp credit từ phiếu', 'được', 'được', 'được', 'khi được cấp', 'khi được cấp', 'khi được cấp', 'khi được cấp', 'khi được cấp', 'khi được cấp', 'khi được cấp', '—'],
+      ['Xem công nợ', 'mọi nhà', 'mọi nhà', 'mọi nhà', 'nhà mình', 'nhà mình', 'nhà mình', 'nhà mình', 'nhà mình', 'nhà mình', '—', 'nhà mình'],
+      ['Đề xuất miễn giảm · hoàn tiền', 'được', 'được', 'được', 'được', 'được', 'được', '—', '—', '—', '—', '—'],
+      ['Duyệt miễn giảm · hoàn tiền', 'được', 'được', 'được', '—', '—', '—', '—', '—', '—', '—', '—'],
+      ['Đề xuất chi', 'được', 'được', 'được', 'được', 'được', '—', '—', '—', '—', '—', '—'],
+      ['Duyệt chi (theo mốc C0–C6)', 'được', 'được', 'được', 'khi được cấp', 'khi được cấp', 'khi được cấp', 'khi được cấp', 'khi được cấp', 'khi được cấp', 'khi được cấp', '—'],
+      ['Chốt sổ tuần · báo cáo kế toán', 'được', 'được', 'được', '—', '—', '—', '—', '—', '—', '—', '—'],
+      ['Bảng lương', 'cả bảng', 'cả bảng', 'cả bảng', 'dòng mình', 'dòng mình', 'dòng mình', 'dòng mình', 'dòng mình', 'dòng mình', 'dòng mình', '—'],
+      ['Đổi giá · hệ số lương · điều chỉnh credit', 'được', '—', '—', '—', '—', '—', '—', '—', '—', '—', '—'],
+      ['Cấp / thu hồi vị trí ban tài chính', 'được', '—', '—', '—', '—', '—', '—', '—', '—', '—', '—']
+    ]));
+    o += khoi('Kiểm soát rủi ro tài chính', 'Mỗi rủi ro có một chỉ số canh ở Trung tâm đo lường.', that, '<div class="tc-rr-ds">' + ruiRo([
+      ['Tiền về mà chưa ghi nhận', 'tc4', 'Phiếu thu chờ duyệt quá 3 ngày.'],
+      ['Công nợ trễ', 'tc5', 'Kỳ thu quá hạn chưa thu đủ.'],
+      ['Chi không chứng từ', 'tc6', 'Khoản chi không có hoá đơn.'],
+      ['Đề xuất chi tồn đọng', 'tc7', 'Đề xuất chi chờ duyệt quá 7 ngày.'],
+      ['Chi vượt thu', 'tc2', 'Tỷ lệ chi trên thu vượt ngưỡng.'],
+      ['Dòng tiền âm', 'tc3', 'Thu trừ chi trong kỳ.']
+    ]) + '</div><p class="tiny muted mt">Khoá cứng ở máy chủ: không ai tự duyệt khoản của mình, không ai tự cấp vị trí tài chính cho mình, mọi phiếu và mọi lần duyệt vào nhật ký không sửa xoá được.</p>');
+    o += khoi('Danh mục bảng tài chính', K.taiChinh.length + ' bảng · sinh từ lược đồ máy chủ.', null, danhMuc(K.taiChinh));
+    return o;
+  };
 })();
 
 })();
@@ -81307,6 +81559,8 @@ G.navItem = function(v){
    điều kiện ấy thì một màn đã ẩn khỏi cột vẫn mở được bằng cách gõ
    thẳng địa chỉ — ẩn mà vẫn vào được thì không phải ẩn. */
 G.allowed = function(v){
+  /* V50·168: khách không mở trang khu nhân sự (src/v50-man.js · chanKhach). */
+  if(G.V50M && G.V50M.chanKhach && G.v50Bat168 && G.v50Bat168() && G.V50M.chanKhach(v)) return false;
   var it = G.navItem(v);
   if(!it) return true;
   if(it.perm && !G.can(it.perm)) return false;
@@ -81412,6 +81666,14 @@ function render(){
     return;
   }
   if(!G.VIEWS[G.S.view]) G.S.view = 'ban-do';
+  if(!G.allowed(G.S.view) && G.LA_KHACH && G.LA_KHACH()){
+    /* Khách: không nhắc tên quyền nội bộ, đưa về màn của nhà mình. */
+    main.innerHTML = '<div class="view">' + U.ph({eyebrow:'NHÀ MÌNH', ic:'home', t:'Phần này không thuộc tài khoản của nhà mình',
+      lead:'Mọi phần dành cho nhà mình nằm ở các màn bên trái. Phần nào sẽ mở khi nhà lên tầng hoặc khi gói dịch vụ được kích hoạt thì hiện kèm khoá ở đầu màn.'}) +
+      '<button class="btn pri" data-v="'+h((G.v50ManDau && G.v50ManDau()) || 'ngoi-nha')+'">'+ic('home','w-3 h-3')+'Về màn nhà mình</button></div>';
+    var lKh = document.getElementById('left'); if(lKh) lKh.innerHTML = leftNav();
+    save(); return;
+  }
   if(!G.allowed(G.S.view)){
     var it = G.navItem(G.S.view);
     main.innerHTML = '<div class="view">' + U.ph({eyebrow:'NGOÀI PHẠM VI CỦA VAI', ic:'lock',

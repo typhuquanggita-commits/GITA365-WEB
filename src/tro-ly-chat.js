@@ -479,7 +479,7 @@ function theDap(d){
           ? 'Học phí tầng này chưa khai trong kho — Tư vấn báo lại con số thật.'
           : 'Lộ trình tầng '+m.tang+': '+h(new Intl.NumberFormat('vi-VN').format(m.gia))+
             ' '+h(m.donVi||'đồng'))+'</p>'+
-        '<button class="btn sm" data-v="dang-ky">Đăng ký lộ trình tầng '+m.tang+'</button>'+
+        '<button class="btn sm" data-v="tham-gia">Đăng ký lộ trình tầng '+m.tang+'</button>'+
         '</div></div>';
     }
   }

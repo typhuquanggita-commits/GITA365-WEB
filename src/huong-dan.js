@@ -558,6 +558,6 @@ var G = window.G || {}; window.G = G;
          phụ đề, giọng, thu nhỏ/phóng to). Trang tĩnh anh em cạnh index.html
          nên mở bằng <a href>, không qua bộ định tuyến trong app. */
       '<a class="btn sm hd-studio" href="video-huong-dan.html" target="_blank" rel="noopener">' +
-      ic('spark', 'w-3 h-3') + 'Studio video (bài bản)</a>';
+      ic('spark', 'w-3 h-3') + (G.LA_KHACH && G.LA_KHACH() ? 'Video hướng dẫn đầy đủ' : 'Studio video (bài bản)') + '</a>';
   };
 })();

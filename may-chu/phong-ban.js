@@ -20,6 +20,7 @@
    hướng dẫn công việc, và liên kết phối hợp.
    ═══════════════════════════════════════════════════════════════ */
 
+import { vaBang } from './va-luoc-do.js';
 import { Kho, kiemMatKhau, bamMoi, muoiMoi } from './nen.js';
 import { bacVai, laNguoiNha } from './vai-tro.js';
 
@@ -121,6 +122,7 @@ export async function chiTietPhongBan(y, env, db, hoSo) {
 
 /** Gán nhân sự vào phòng ban (chỉ R01/R02). */
 export async function ganPhongBan(y, env, db, hoSo) {
+  await vaBang(db, 'users');
   if (hoSo.role !== 'R01') return { ok: false, code: 'NOPERM',   /* V50·168: cấp quyền 100% do Super Admin */
     error: 'Chỉ Super Admin gán phòng ban.' };
   const username = String(y.username || '').trim().toLowerCase();

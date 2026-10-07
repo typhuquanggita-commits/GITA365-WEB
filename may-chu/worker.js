@@ -88,10 +88,12 @@ import { docTrungTamDo, lichSuTrungTamDo, goiYPhanBo, taoKeHoachToiUu, capNhatKe
 import { docChienLuocV20, dsMucTieuCL, taoMucTieuCL, capNhatMucTieuCL } from './chien-luoc-v20.js';
 import { ghiApDung, docApDung, tongApDung } from './ap-dung.js';
 import { ghiSoatMan, layBaoCaoSoat } from './soat-man.js';
+import { soatLuocDo, vaLuocDo } from './va-luoc-do.js';
 import { docLuatGiaoDien } from './luat-giao-dien.js';
 import { capLenhGiamSat, thuLenhGiamSat, docLenhGiamSat, soatSoDen,
   docTranGiamSat } from './giam-sat.js';
 import { ghiHoChieuVideo } from './studio.js';
+import { tuSoatBaoDong, CUA_NHAY } from './cuu-he.js';
 import { baoDongCuuHe, dongBangHe, moBangHe, truyHoiHe, soatCuuHe, dangBang,
   AN_TOAN_KHI_BANG } from './cuu-he.js';
 import { docHomNay, tickNhip, boViecHomNay, batCheDoBao, ghiGhimCon, docGhimCon,
@@ -346,7 +348,9 @@ const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau'
   /* V50 · mức áp dụng học thuyết (ap-dung.js) — 14 cụm, tự soát, tổng hợp cho R01–R03. */
   'ghiApDung', 'docApDung', 'tongApDung',
   /* Soát toàn bộ màn (soat-man.js) — R01 gửi báo cáo ĐÃ MÃ HOÁ trong trình duyệt. */
-  'ghiSoatMan'];
+  'ghiSoatMan',
+  /* Tự vá lược đồ D1 (va-luoc-do.js) — R01: thêm cột còn thiếu so với csdl.sql. */
+  'soatLuocDo'];
 
 async function lam(fn, y, env, db) {
   if (fn === 'dangNhap')  return await dangNhap(y, env, db);
@@ -718,6 +722,7 @@ async function lam(fn, y, env, db) {
   if (fn === 'docApDung')         return await docApDung(y, env, db, hoSo);
   if (fn === 'tongApDung')        return await tongApDung(y, env, db, hoSo);
   if (fn === 'ghiSoatMan')        return await ghiSoatMan(y, env, db, hoSo);
+  if (fn === 'soatLuocDo')        return await soatLuocDo(y, env, db, hoSo);
   if (fn === 'boViecHomNay')      return await boViecHomNay(y, env, db, hoSo);
   if (fn === 'batCheDoBao')       return await batCheDoBao(y, env, db, hoSo);
   if (fn === 'ghiGhimCon')        return await ghiGhimCon(y, env, db, hoSo);
@@ -1197,6 +1202,9 @@ export default {
         console.error('BAO_DOANHTHU_NGAY_HONG', String(e && e.message || e))));
       return;
     }
+    /* V50·168: mỗi đêm tự vá lược đồ trước tiên — cột thêm sau trong csdl.sql
+       tới được D1 đã có bảng (chỉ thêm cột, không xoá / đổi). */
+    ctx.waitUntil(vaLuocDo(env.CSDL).catch(e => console.error('VA_LUOC_DO_HONG', String(e && e.message || e))));
     ctx.waitUntil(donDep(env).then(() => quetSaoLuuMoCoi(env)).then(() => tuSoatVaChua(env)).catch(e =>
       console.error('DON_DEP_HONG', String(e && e.message || e))));
     ctx.waitUntil(vongKhoaHocTuDong(env).catch(e =>
@@ -1205,7 +1213,7 @@ export default {
       console.error('DA_TRI_CANH_MAU_HONG', String(e && e.message || e))));
   },
 
-  async fetch(req, env) {
+  async fetch(req, env, ctx) {
     /* Tài nguyên tĩnh công khai (giọng đọc Piper) — phục vụ từ R2. */
     if ((req.method === 'GET' || req.method === 'HEAD') && new URL(req.url).pathname.startsWith('/tn/'))
       return phucVuTaiNguyen(req, env);
@@ -1265,6 +1273,10 @@ export default {
       const chan = await veChiPhi(fn, y, env, req) || await chanKhoang(fn, env, env.CSDL);
       const kq = chan || await lam(fn, y, env, env.CSDL);
       if (!chan) ghiTotKhoang(fn);
+      /* V50·168: sau mỗi thao tác nhạy cảm thành công, tự soát dấu hiệu chiếm
+         tài khoản (đổi mật khẩu + một loạt việc phá trong 15 phút) — chạy nền,
+         không làm chậm câu trả lời. */
+      if (kq && kq.ok && CUA_NHAY.has(fn) && ctx && ctx.waitUntil) ctx.waitUntil(tuSoatBaoDong(env, env.CSDL));
       const r = traJson(kq, 200, env, req);
       r.headers.set('x-gita-ma', ma);
       return r;

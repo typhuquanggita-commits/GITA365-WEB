@@ -11,6 +11,7 @@
      · Không tự nâng tầng — chỉ gợi ý và lên lịch chạm.
    ═══════════════════════════════════════════════════════════════ */
 
+import { nhaPhuTrach, LOI_NGOAI_NHA } from './pham-vi-nha.js';
 import { Kho } from './nen.js';
 
 import { BAC } from './vai-tro.js';
@@ -34,16 +35,29 @@ function tiepTheo(tier) {
 export async function tinhReadyVip(y, env, db, hoSo) {
   if ((BAC[hoSo.role] || 99) > 12 && hoSo.role !== 'R13' && hoSo.role !== 'R14')
     return { ok: false, code: 'NOPERM' };
-  const maKH = String(y.maKH || '').trim();
+  const maKH = String((y || {}).maKH || '').trim();
   if (!maKH) return { ok: false, error: 'Thiếu mã khách.' };
 
+  /* Cột thật của lược đồ (bản cũ truy vấn hoSoKhach.ma/ten/tier/kpi và
+     soCham.maKhachHang — không cột nào có, nên ba cửa VIP luôn hỏng):
+     tầng ở hoSoKhach.tang, KPI ở students.kpi, tên ở users.hoTen. */
   const khach = await db.prepare(
-    'SELECT id, ma, ten, tier, kpi, coach, tuVan FROM hoSoKhach WHERE ma = ?'
+    'SELECT k.maKhachHang AS ma, k.tang AS tier, k.coach, k.tuVan, s.kpi AS kpi, u.hoTen AS ten ' +
+    'FROM hoSoKhach k LEFT JOIN students s ON s.id = k.maHocVien LEFT JOIN users u ON u.id = k.uidPhuHuynh ' +
+    'WHERE k.maKhachHang = ?'
   ).bind(maKH).first();
   if (!khach) return { ok: false, error: 'Không tìm thấy khách.' };
+  /* Ai được xem: gia đình chỉ nhà mình; nhân sự dưới QLCM chỉ nhà mình phụ trách. */
+  const lv = BAC[hoSo.role] || 99;
+  if (lv >= 13) {
+    const nd = await Kho.nguoiTheoId(db, hoSo.uid);
+    if (!nd || String(nd.maKhachHang || '') !== maKH) return { ok: false, code: 'NOPERM', error: 'Chỉ xem được nhà mình.' };
+  } else if (!(await nhaPhuTrach(db, hoSo, maKH))) {
+    return LOI_NGOAI_NHA;
+  }
 
   const soCham = await db.prepare(
-    'SELECT COUNT(*) n FROM soCham WHERE maKhachHang = ?'
+    'SELECT COUNT(*) n FROM soCham WHERE maNha = ?'
   ).bind(maKH).first();
 
   const ready = tinhReadiness(khach, (soCham && soCham.n) || 0);
@@ -85,13 +99,15 @@ export async function dsVipCanCham(y, env, db, hoSo) {
     return { ok: false, code: 'NOPERM', error: 'Chỉ R01–R05 xem danh sách VIP cần chạm.' };
 
   const ds = await db.prepare(
-    'SELECT ma, ten, tier, kpi FROM hoSoKhach WHERE tier >= 2 AND tier < 5 ORDER BY kpi DESC LIMIT 200'
+    'SELECT k.maKhachHang AS ma, u.hoTen AS ten, k.tang AS tier, COALESCE(s.kpi, 0) AS kpi ' +
+    'FROM hoSoKhach k LEFT JOIN students s ON s.id = k.maHocVien LEFT JOIN users u ON u.id = k.uidPhuHuynh ' +
+    'WHERE k.tang >= 2 AND k.tang < 5 ORDER BY kpi DESC LIMIT 200'
   ).all();
 
   const ketQua = [];
   for (const k of (ds.results || [])) {
     const soCham = await db.prepare(
-      'SELECT COUNT(*) n FROM soCham WHERE maKhachHang = ?'
+      'SELECT COUNT(*) n FROM soCham WHERE maNha = ?'
     ).bind(k.ma).first();
     const ready = tinhReadiness(k, (soCham && soCham.n) || 0);
     ketQua.push({ maKH: k.ma, ten: k.ten, tier: k.tier, kpi: k.kpi, ready,

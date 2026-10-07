@@ -23,6 +23,7 @@
    chính Hiến pháp Bộ não. Sổ nằm ở D1.
    ═══════════════════════════════════════════════════════════════ */
 
+import { nhaPhuTrach, LOI_NGOAI_NHA } from './pham-vi-nha.js';
 import { Kho } from './nen.js';
 import { BAC } from './vai-tro.js';
 import * as BoNao from './bo-nao.js';
@@ -157,6 +158,7 @@ export async function docSongSinh(y, env, db, hoSo) {
 
   const maNha = String((y || {}).maNha || '').trim();
   if (!maNha) return { ok: false, error: 'Thiếu mã gia đình.' };
+  if (!(await nhaPhuTrach(db, hoSo, maNha))) return LOI_NGOAI_NHA;   /* V50·168: tên con, nỗi lo của nhà — chỉ người phụ trách */
 
   const hs = await db.prepare('SELECT * FROM hoSoSongSinh WHERE maNha = ?')
     .bind(maNha).first();
@@ -247,12 +249,7 @@ export async function ghiCham(y, env, db, hoSo) {
      Sổ chạm là tiến trình chăm sóc mà CRM đọc. Trước đây mọi R01–R12 ghi
      được vào BẤT KỲ nhà nào. Nay từ Trưởng nhóm Coach trở xuống chỉ ghi
      được cho nhà mình là Coach hoặc Tư vấn phụ trách; R01–R04 ghi mọi nhà. */
-  if ((BAC[hoSo.role] || 99) > 4) {
-    const cua = await db.prepare('SELECT 1 AS c FROM hoSoKhach WHERE maKhachHang = ? AND (coach = ? OR tuVan = ?) LIMIT 1')
-      .bind(maNha, hoSo.u, hoSo.u).first();
-    if (!cua) return { ok: false, code: 'NGOAINHA',
-      error: 'Chỉ Coach hoặc Tư vấn phụ trách nhà này mới ghi được tiến trình chăm sóc của nhà.' };
-  }
+  if (!(await nhaPhuTrach(db, hoSo, maNha))) return LOI_NGOAI_NHA;
 
   /* ── CỔNG 1 · HAI CỘT LÀM CHO CẢ SỔ CÓ NGHĨA ── */
   const thieu = [];
@@ -338,6 +335,7 @@ export async function doSoCham(y, env, db, hoSo) {
     error: 'Cổng Vận hành & chăm sóc mở cho R01–R12.' };
   const maNha = String((y || {}).maNha || '').trim();
   if (!maNha) return { ok: false, error: 'Thiếu mã gia đình.' };
+  if (!(await nhaPhuTrach(db, hoSo, maNha))) return LOI_NGOAI_NHA;   /* V50·168: sổ chạm chứa trao đổi riêng của nhà */
   const r = await db.prepare(
     'SELECT ngay, kieu, denLuc, noiDung, canCu, aiDuyet, boiAi FROM soCham' +
     ' WHERE maNha = ? ORDER BY ngay ASC').bind(maNha).all();
@@ -382,6 +380,7 @@ export async function lapSongSinh(y, env, db, hoSo) {
     error: 'Cổng Vận hành & chăm sóc mở cho R01–R12.' };
 
   const x = y || {};
+  if (!(await nhaPhuTrach(db, hoSo, String(x.maNha || '').trim()))) return LOI_NGOAI_NHA;   /* V50·168 */
   const maNha = String(x.maNha || '').trim();
   if (!maNha) return { ok: false, error: 'Thiếu mã gia đình.' };
   if (!String(x.ngayThamGia || '').trim()) return { ok: false, code: 'THIEUTHAMGIA',

@@ -15,12 +15,14 @@ import { guiThu, CHAN_THU } from './thu.js';
 const RE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const RE_TK    = /^[a-z0-9_.]{3,50}$/;
 import { BAC } from './vai-tro.js';
+import { vaBang } from './va-luoc-do.js';
 
 function duocQuanLy(hoSo, muc) { return (BAC[hoSo.role] || 99) <= muc; }
 
 /** Tạo tài khoản nội bộ — CHỈ Super Admin (V50·168: "việc cấp quyền hệ
     thống 100% do Super Admin"; mở tài khoản = cấp một vai). */
 export async function taoTaiKhoanNoiBo(y, env, db, hoSo) {
+  await vaBang(db, 'users');   /* V50·168: D1 dựng trước có thể thiếu phongBan · offboardedAt… */
   if (!duocQuanLy(hoSo, 1)) return { ok: false, code: 'NOPERM', error: 'Mở tài khoản và cấp vai do Super Admin.' };
   const d = y || {};
   const username = String(d.username || '').trim().toLowerCase();
@@ -72,6 +74,7 @@ export async function taoTaiKhoanNoiBo(y, env, db, hoSo) {
 
 /** Cập nhật thông tin tài khoản (R01/R02). ĐỔI VAI chỉ Super Admin. */
 export async function capNhatTaiKhoan(y, env, db, hoSo) {
+  await vaBang(db, 'users');   /* V50·168: D1 dựng trước có thể thiếu phongBan · offboardedAt… */
   if (!duocQuanLy(hoSo, 2)) return { ok: false, code: 'NOPERM' };
   const d = y || {};
   const username = String(d.username || '').trim().toLowerCase();
@@ -84,8 +87,8 @@ export async function capNhatTaiKhoan(y, env, db, hoSo) {
   const taiKhoan = await db.prepare('SELECT id, role FROM users WHERE lower(username)=? LIMIT 1')
     .bind(username).first();
   if (!taiKhoan) return { ok: false, error: 'Không tìm thấy tài khoản.' };
-  if (mucChoPhep > (BAC[taiKhoan.role] || 99) && taiKhoan.id !== hoSo.uid)
-    return { ok: false, error: 'Không được sửa tài khoản cấp cao hơn.' };
+  if (mucChoPhep >= (BAC[taiKhoan.role] || 99) && taiKhoan.id !== hoSo.uid)
+    return { ok: false, error: 'Không được sửa tài khoản cấp cao hơn hoặc ngang cấp.' };
 
   const set = ['updatedAt = ?'];
   const val = [new Date().toISOString()];
@@ -112,6 +115,7 @@ export async function capNhatTaiKhoan(y, env, db, hoSo) {
 
 /** Danh sách tài khoản nội bộ (R01–R04). */
 export async function dsTaiKhoan(y, env, db, hoSo) {
+  await vaBang(db, 'users');   /* V50·168: D1 dựng trước có thể thiếu phongBan · offboardedAt… */
   if (!duocQuanLy(hoSo, 4)) return { ok: false, code: 'NOPERM' };
   const q = y || {};
   const tim = String(q.tim || '').trim().toLowerCase();
@@ -122,6 +126,9 @@ export async function dsTaiKhoan(y, env, db, hoSo) {
 
   let sql = 'SELECT id, username, hoTen, email, dienThoai, role, phongBan, active, createdAt, mustChangePw, deletedAt FROM users WHERE 1=1';
   const p = [];
+  /* V50·168: Giám đốc / QLCM thấy danh bạ NHÂN SỰ; khách hàng (email, điện
+     thoại của gia đình) chỉ R01–R02 xem ở đây — đội ngũ xem khách qua CRM theo quyền. */
+  if ((BAC[hoSo.role] || 99) > 2) sql += " AND role IN ('R01','R02','R03','R04','R05','R06','R07','R08','R09','R10','R11','R12') AND deletedAt IS NULL";
   if (tim) { sql += ' AND (lower(username) LIKE ? OR lower(hoTen) LIKE ? OR lower(email) LIKE ?)'; p.push('%'+tim+'%','%'+tim+'%','%'+tim+'%'); }
   if (phongBan) { sql += ' AND phongBan = ?'; p.push(phongBan); }
   if (role) { sql += ' AND role = ?'; p.push(role); }
@@ -133,6 +140,7 @@ export async function dsTaiKhoan(y, env, db, hoSo) {
 
 /** Khóa/xóa (offboard) tài khoản — R01/R02, R03 trong phòng ban. */
 export async function offboardTaiKhoan(y, env, db, hoSo) {
+  await vaBang(db, 'users');   /* V50·168: D1 dựng trước có thể thiếu phongBan · offboardedAt… */
   if (!duocQuanLy(hoSo, 3)) return { ok: false, code: 'NOPERM' };
   const username = String((y || {}).username || '').trim().toLowerCase();
   const lyDo = String((y || {}).lyDo || '').trim();
@@ -170,8 +178,10 @@ export async function adminKhoiPhucMatKhau(y, env, db, hoSo) {
   const taiKhoan = await db.prepare('SELECT id, email, role FROM users WHERE lower(username)=? LIMIT 1')
     .bind(username).first();
   if (!taiKhoan) return { ok: false, error: 'Không tìm thấy tài khoản.' };
-  if ((BAC[hoSo.role] || 99) > (BAC[taiKhoan.role] || 99) && taiKhoan.id !== hoSo.uid)
-    return { ok: false, error: 'Không đổi mật khẩu tài khoản cấp cao hơn.' };
+  /* Ngang cấp cũng chặn (trừ chính mình): một Admin không đặt lại mật khẩu
+     của Admin khác — đó là đường chiếm tài khoản ngang hàng. */
+  if ((BAC[hoSo.role] || 99) >= (BAC[taiKhoan.role] || 99) && taiKhoan.id !== hoSo.uid)
+    return { ok: false, error: 'Không đổi mật khẩu tài khoản cấp cao hơn hoặc ngang cấp.' };
 
   const muoi = muoiMoi();
   const hash = await bamMoi(matKhauMoi, muoi, env.GITA_TIEU);

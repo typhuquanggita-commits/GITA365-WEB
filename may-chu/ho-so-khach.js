@@ -27,6 +27,7 @@
    tuần mà hôm nay không có chỗ nào ghi.
    ═══════════════════════════════════════════════════════════════ */
 
+import { nhaPhuTrach, LOI_NGOAI_NHA } from './pham-vi-nha.js';
 import { Kho, tokenMoi } from './nen.js';
 import { dungLichThu } from './tai-chinh.js';
 
@@ -105,6 +106,11 @@ export async function xemTepKhach(y, env, db, hoSo) {
         viec: 'TEPKHACH_TUCHOI', doiTuong: nha, chiTiet: hoSo.role});
       return {ok: false, code: 'NOPERM', error: 'Chỉ xem được tệp của chính nhà mình.'};
     }
+  } else if (!(await nhaPhuTrach(db, hoSo, nha))) {
+    /* V50·168: Coach / Tư vấn (R06–R12) chỉ đọc tệp nhà mình phụ trách — cùng
+       luật với dsTepKhach. Trước đây danh sách trắng mở MỌI tệp. */
+    await Kho.ghiNhatKy(db, {uid: hoSo.uid, username: hoSo.u, viec: 'TEPKHACH_TUCHOI', doiTuong: nha, chiTiet: hoSo.role + ' · ngoài nhà phụ trách'});
+    return LOI_NGOAI_NHA;
   }
 
   const ph = await Kho.nguoiTheoId(db, hs.uidPhuHuynh);
@@ -155,7 +161,7 @@ export async function suaTepKhach(y, env, db, hoSo) {
   if (lv > 4) {
     if (sua.coach !== undefined || sua.tuVan !== undefined)
       return {ok: false, code: 'NOPERM', error: 'Giao Coach / Tư vấn phụ trách do Quản lý chuyên môn trở lên.'};
-    if (hs.coach !== hoSo.u && hs.tuVan !== hoSo.u)
+    if (!(await nhaPhuTrach(db, hoSo, nha)))
       return {ok: false, code: 'NOPERM', error: 'Chỉ sửa được tệp của nhà mình đang phụ trách.'};
   }
   const cot = [], gt = [], doi = [];
