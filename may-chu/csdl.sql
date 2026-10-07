@@ -2464,3 +2464,12 @@ CREATE TABLE IF NOT EXISTS chupTrungTam (ngay TEXT PRIMARY KEY, phienBan TEXT, d
 CREATE TABLE IF NOT EXISTS mucTieuChienLuoc (id TEXT PRIMARY KEY, ten TEXT NOT NULL, chiSo TEXT NOT NULL, giaTriDau REAL NOT NULL,
   mucTieu REAL NOT NULL, tuLuc TEXT NOT NULL, hanLuc TEXT NOT NULL, chuSo TEXT, trangThai TEXT NOT NULL DEFAULT 'dang', ghiChu TEXT,
   taoBoi TEXT NOT NULL, taoLuc TEXT NOT NULL, suaLuc TEXT);
+
+-- ═════════════════════════════════════════════════════════════
+--  V50 · MỨC ÁP DỤNG HỌC THUYẾT (may-chu/ap-dung.js · V50-2026.10-a)
+--  apDung: một dòng / nhân sự / cụm học thuyết (14 cụm, src/data-v50.js).
+--    chiTiet = mảng trạng thái từng việc: da · dang · chua · kl.
+--    diem = (đã + ½ đang) / (số việc − không liên quan) × 100.
+-- ═════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS apDung (u TEXT NOT NULL, vai TEXT NOT NULL, cum TEXT NOT NULL, diem REAL, da INTEGER NOT NULL,
+  dang INTEGER NOT NULL, tong INTEGER NOT NULL, chiTiet TEXT NOT NULL, luc TEXT NOT NULL, PRIMARY KEY (u, cum));

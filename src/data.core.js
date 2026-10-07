@@ -858,6 +858,7 @@ G.NAV = [
        hỏi của họ — mình mở tới đâu, còn gì chưa mở — bằng ngôn ngữ gia
        đình, không kèm mục lục kho nghề. */
     {v:'kho-tong',    t:'Kho tổng — toàn cảnh',        h:'9 nhóm · hơn 50 kho · số đếm thật', ic:'vault', perm:'nghe_chung', capMo:'chung', star:1},
+    {v:'thu-vien-v50', t:'Thư viện vận hành',          h:'V50 · 154 màn học thuyết gom 14 cụm · mỗi cụm một bảng việc áp dụng đo được, nối thẳng chỉ số ở Trung tâm đo lường', ic:'book', capMo:'chung', star:1},
     {v:'thu-vien',    t:'Thư viện tài liệu',           h:'Gửi tài liệu lên · kho lớn lên từ đây', ic:'book', capMo:'chung', star:1},
     {v:'noi-nhan-tai',t:'Nôi nuôi dưỡng nhân tài',     h:'Hành trình cha mẹ thông thái · 6 quyển · 10 chương · 3 hành trình (90 ngày · 365 ngày · một đời)', ic:'seed', capMo:'chung', star:1},
     {v:'minh-chung',  t:'Minh chứng nhiệm vụ',         h:'Nộp ảnh, báo cáo xác nhận đã làm',   ic:'check', capMo:'chung', star:1},

@@ -59,6 +59,9 @@ jobs:
       - name: Thử Nền tảng chiến lược V20 (Holt · z bền · tách biến động · nhóm khách · LTV/CAC · mục tiêu · khớp app)
         run: node tools/thu-v20.mjs
 
+      - name: Thử Kiến trúc vận hành V50 (bản đồ màn · 14 cụm học thuyết · tự soát áp dụng · quyền · khớp app)
+        run: node tools/thu-ap-dung.mjs
+
       - name: Thử Truy vấn đa chiều (bốn dòng chảy · bảng điểm 16 ban)
         run: node tools/thu-dong-chay.mjs
 

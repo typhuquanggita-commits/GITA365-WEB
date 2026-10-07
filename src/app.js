@@ -865,7 +865,9 @@ function leftNav(){
   return '<div class="scroll">'+ dai + daiMoi + khoiKG() +
     '<div class="nav-eyebrow nav-eyebrow-all">'+h(G.LANG==='en'?G.L('fiveGroups'):'Toàn hệ thống')+'</div>' +
     NAV.map(function(g){
-      var mo = g.items.filter(visible);
+      /* V50: màn học thuyết / mẫu / trùng rút khỏi cột của nhân sự — đọc ở
+         Thư viện vận hành (src/data-v50.js). Gia đình giữ nguyên cột. */
+      var mo = g.items.filter(function(it){ return visible(it) && !(G.V50 && G.V50.an(it.v)); });
       if(!mo.length) return '';                 /* nhóm không mở được mục nào thì không hiện */
       var open = G.S.open.indexOf(g.id)>=0;
       function nut(it){
@@ -900,7 +902,7 @@ function leftNav(){
 function hnav(){
   var NAV = G.navDung ? G.navDung() : G.NAV;
   return NAV.map(function(g){
-    var mo = g.items.filter(visible);
+    var mo = g.items.filter(function(it){ return visible(it) && !(G.V50 && G.V50.an(it.v)); });
     if(!mo.length) return '';
     var on = G.S.open.indexOf(g.id) >= 0;
     return '<button class="hnav-i'+(on?' on':'')+'" data-sec="'+h(g.id)+'" '+
@@ -909,6 +911,7 @@ function hnav(){
   }).join('');
 }
 G.hnav = hnav;
+G.mucHien = visible;   /* Thư viện vận hành lọc màn theo đúng cổng của cột trái */
 
 G.leftNav = leftNav;
 
@@ -1155,6 +1158,17 @@ G.a11yNhan = function (root) {
 
 function render(){
   var main = document.getElementById('main');
+  /* V50 · màn mẫu / trùng → công cụ sống. Đặt Ở ĐÂY chứ không chỉ ở G.go:
+     mở bằng địa chỉ #màn, trạng thái đã lưu hay nút trong một màn khác
+     đều đi qua render. Đích không mở được với vai này → giữ màn cũ. */
+  if(G.V50 && G.V50.dich){
+    var d50 = G.V50.dich(G.S.view);
+    if(d50){
+      G.V50.vuaGop = { tu:G.S.view, den:d50.v, ly:d50.ly };
+      G.S.view = d50.v;
+      if(d50.mo && G.TTD_MO) G.TTD_MO(d50.mo);
+    }
+  }
   /* Màn của gói nghề mà mã chưa về: NÓI ĐANG MỞ, đừng nhảy về bản đồ.
 
      Trước bản 9.23 dòng này chỉ có một vế — thiếu màn thì đổi sang
@@ -1203,7 +1217,10 @@ function render(){
      phủ hết 212 màn. */
   var hdThanh = (G.hdNut && G.S.view !== 'tro-ly')
     ? '<div class="hd-thanh">' + G.hdNut(G.S.view, '', 'Xem video hướng dẫn màn này') + '</div>' : '';
-  main.innerHTML = '<div class="view">' + nhac + hdThanh + noiDung + '</div>';
+  /* V50: màn học thuyết có thêm thanh ÁP DỤNG (bảng việc đo được + chỉ số
+     chịu tác động) — src/v50-ap-dung.js. Màn vừa được gộp có dòng báo. */
+  var v50 = G.v50Thanh ? G.v50Thanh(G.S.view) : '';
+  main.innerHTML = '<div class="view">' + nhac + hdThanh + v50 + noiDung + '</div>';
   if(G.a11yNhan) G.a11yNhan(main);   /* bù tên đọc được cho mọi ô nhập (a11y) */
   /* Màn trợ lý là một CỬA SỔ chiếm trọn chiều cao, nên nó cần lề dưới
      của vùng nội dung nhỏ lại. Lớp này là chỗ duy nhất khai chuyện ấy —

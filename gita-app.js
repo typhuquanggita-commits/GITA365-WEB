@@ -885,6 +885,7 @@ G.NAV = [
        hỏi của họ — mình mở tới đâu, còn gì chưa mở — bằng ngôn ngữ gia
        đình, không kèm mục lục kho nghề. */
     {v:'kho-tong',    t:'Kho tổng — toàn cảnh',        h:'9 nhóm · hơn 50 kho · số đếm thật', ic:'vault', perm:'nghe_chung', capMo:'chung', star:1},
+    {v:'thu-vien-v50', t:'Thư viện vận hành',          h:'V50 · 154 màn học thuyết gom 14 cụm · mỗi cụm một bảng việc áp dụng đo được, nối thẳng chỉ số ở Trung tâm đo lường', ic:'book', capMo:'chung', star:1},
     {v:'thu-vien',    t:'Thư viện tài liệu',           h:'Gửi tài liệu lên · kho lớn lên từ đây', ic:'book', capMo:'chung', star:1},
     {v:'noi-nhan-tai',t:'Nôi nuôi dưỡng nhân tài',     h:'Hành trình cha mẹ thông thái · 6 quyển · 10 chương · 3 hành trình (90 ngày · 365 ngày · một đời)', ic:'seed', capMo:'chung', star:1},
     {v:'minh-chung',  t:'Minh chứng nhiệm vụ',         h:'Nộp ảnh, báo cáo xác nhận đã làm',   ic:'check', capMo:'chung', star:1},
@@ -62165,41 +62166,44 @@ var G = window.G || {}; window.G = G;
          đâu. Xem theo quyền; giữ bí mật khách; theo Hiến pháp. */
   G.KG_KHACH_KH = ['ban-do','hanh-trinh-con','chu-ky','lo-trinh','tien-bo',
                    'kpi-100','phan-thuong','chan-dung-nha'];
-  G.KG_KHACH_NS = ['crm','do-luong-he','do-luong-kh','ra-soat-kh','trai-nghiem-kh',
+  G.KG_KHACH_NS = ['crm','do-luong-he','ra-soat-kh','trai-nghiem-kh','do-luong-kh',
                    'hanh-trinh-con','lo-trinh','ban-do','chan-dung-nha'];
 
   /* ── KHỐI NGHIỆP VỤ — ứng viên theo vai, renderer cắt theo cap ──
      Ứng viên luôn nhiều hơn cap một chút, để sau khi lọc quyền vẫn đủ. */
-  var AZ10 = ['trung-tam-do','van-hanh-10','nghe-quantri','phan-quyen','phong-ban','tai-chinh-qt','nang-luc-ns','studio',
-              'crm','noi-dung-tiep-thi','bang-gia','la-chan-30','khoa-dao-tao',
-              'bang-viec','dieu-hanh','truy-van-da-chieu','tang-truong'];
+  /* V50 (07/10/2026): không gian làm việc chỉ còn CÔNG CỤ SỐNG — nhập liệu,
+     giao việc, đo được. Màn mẫu (dieu-hanh, coach-deck, doi-ngu, tai-chinh-qt,
+     tang-truong…) đã gộp vào công cụ thật (src/data-v50.js); màn học thuyết
+     đọc ở Thư viện vận hành, kèm bảng việc áp dụng. tools/thu-ap-dung.mjs
+     canh: không vai nhân sự nào còn trỏ vào màn mẫu đã gộp. */
+  var AZ10 = ['trung-tam-do','dk-cua-toi','phong-tai-chinh','crm','coach-dp','do-luong-he','phan-quyen','nang-luc-ns',
+              'bang-viec','thu-vien-v50','phong-ban','credit-gita','nguoi-dung','studio','noi-may-chu'];
   G.KG_VIEC = {
-    /* R01 Super Admin · R02 Admin — 10 màn quản trị A→Z */
+    /* R01 Super Admin · R02 Admin — 10 công cụ quản trị */
     R01:{cap:10, ds:AZ10},
     R02:{cap:10, ds:AZ10},
-    /* R03 Giám đốc — 8 màn điều hành (đều là màn lv3 mở được) */
-    R03:{cap:8, ds:['trung-tam-do','van-hanh-gd','nghe-giamdoc','phong-ban','nang-luc-ns','dieu-hanh','crm','tai-chinh-ceo','con-nguoi',
-                    'khoa-dao-tao','bang-viec','do-luong-he','do-luong-kh','giam-sat','tang-truong']},
+    /* R03 Giám đốc — 8 công cụ điều hành */
+    R03:{cap:8, ds:['trung-tam-do','dk-cua-toi','phong-tai-chinh','crm','coach-dp','do-luong-he','nang-luc-ns','bang-viec',
+                    'thu-vien-v50','phong-ban','tai-chinh-ceo','con-nguoi']},
     /* R04 Quản lý chuyên môn — giữ chuẩn nghề toàn đội */
-    R04:{cap:6, ds:['dk-cua-toi','do-luong-he','nghe-qlcm','nang-luc-ns','tt-cskh','ra-soat-kh',
-                    'phong-ban','do-luong-kh','bang-viec','assessment','trai-nghiem-kh']},
-    /* R05 Trưởng nhóm Coach */
-    R05:{cap:7, ds:['dk-cua-toi','coach-he','do-luong-he','nghe-tncoach','doi-ngu','ban-coach','bando-coach','bang-viec','xu-ly-ca','coach-deck']},
-    /* R06 Senior Coach · R07 Coach */
-    R06:{cap:7, ds:['dk-cua-toi','coach-he','do-luong-he','nghe-coach','ban-coach','coach-deck','bando-coach','xu-ly-ca','bang-viec','doi-ngu']},
-    R07:{cap:7, ds:['dk-cua-toi','coach-he','do-luong-he','nghe-coach','ban-coach','coach-deck','bando-coach','xu-ly-ca','bang-viec','doi-ngu']},
+    R04:{cap:6, ds:['dk-cua-toi','do-luong-he','coach-cl','nang-luc-ns','tt-cskh','bang-viec','thu-vien-v50','nghe-qlcm','ra-soat-kh','assessment']},
+    /* R05 Trưởng nhóm Coach — điều phối, chất lượng, đo lường */
+    R05:{cap:7, ds:['dk-cua-toi','coach-he','coach-dp','coach-cl','do-luong-he','bang-viec','thu-vien-v50','xu-ly-ca','nghe-tncoach']},
+    /* R06 Senior Coach · R07 Coach — chương trình, thiết kế bài, ca */
+    R06:{cap:7, ds:['dk-cua-toi','coach-he','coach-dp','coach-ct','coach-tk','do-luong-he','bang-viec','thu-vien-v50','xu-ly-ca','nghe-coach']},
+    R07:{cap:7, ds:['dk-cua-toi','coach-he','coach-dp','coach-ct','coach-tk','do-luong-he','bang-viec','thu-vien-v50','xu-ly-ca','nghe-coach']},
     /* R08 Giáo viên */
-    R08:{cap:7, ds:['dk-cua-toi','coach-he','do-luong-he','nghe-giaovien','khoa-dao-tao','sat-hach','ban-coach','xu-ly-ca','bang-viec']},
+    R08:{cap:7, ds:['dk-cua-toi','coach-he','khoa-dao-tao','sat-hach','coach-tk','do-luong-he','bang-viec','thu-vien-v50','xu-ly-ca']},
     /* R09 Mentor (lv9 — không mở pro_coach, dùng consult/ca) */
-    R09:{cap:6, ds:['dk-cua-toi','nghe-mentor','xu-ly-ca','do-luong-kh','ra-soat-kh','bang-viec','assessment','tt-cskh']},
+    R09:{cap:6, ds:['dk-cua-toi','coach-pt','xu-ly-ca','do-luong-he','tt-cskh','bang-viec','thu-vien-v50','ra-soat-kh','assessment']},
     /* R10 Chuyên gia đánh giá */
-    R10:{cap:6, ds:['dk-cua-toi','nghe-danhgia','assessment','do-luong-kh','ra-soat-kh','bang-viec','sat-hach','trai-nghiem-kh']},
+    R10:{cap:6, ds:['dk-cua-toi','assessment','coach-pt','do-luong-he','bang-viec','thu-vien-v50','sat-hach','ra-soat-kh']},
     /* R11 Chuyên gia tư vấn — CRM là CÔNG CỤ CHĂM SÓC KHÁCH của Tư vấn,
        đặt trong Nghiệp vụ; chỉ hiện khi tài khoản được cấp CRM (G.S.crmMuc
        qua màn Phân quyền CRM) — cấp từng người, không mở đại trà. */
-    R11:{cap:6, ds:['dk-cua-toi','nghe-tu-van','tt-cskh','crm','ban-tu-van','pheu-chot','bang-viec','do-luong-kh']},
-    /* R12 Phân tích dữ liệu (lv12 — bộ màn phân tích nghe_chung) */
-    R12:{cap:6, ds:['dk-cua-toi','do-luong-he','nghe-phantich','chieu-sau','ma-tran','giam-sat','tu-dong','phuong-phap','bo-nao','ra-soat']},
+    R11:{cap:6, ds:['dk-cua-toi','tt-cskh','crm','coach-pt','do-luong-he','bang-viec','thu-vien-v50','pheu-chot']},
+    /* R12 Phân tích dữ liệu — đo lường, việc tối ưu được giao */
+    R12:{cap:6, ds:['dk-cua-toi','do-luong-he','trung-tam-do','bang-viec','thu-vien-v50','nghe-phantich','chieu-sau','ma-tran']},
     /* R13 Phụ huynh · R14 Học viên — bảng điều khiển 10 màn của nhà mình
        (dk-vai.js) đứng đầu, rồi hai màn mở mỗi ngày. */
     R13:{cap:5, ds:['dk-cua-toi','ho-so-thang','vi-credit','hom-nay','nhiem-vu']},
@@ -73947,6 +73951,234 @@ var G = window.G || {}; window.G = G;
 
 })();
 
+/* ═════════ src/data-v50.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — KIẾN TRÚC VẬN HÀNH V50 · BẢN ĐỒ MÀN (V50-2026.10-a)
+
+   Soát 270 mục cột trái ngày 07/10/2026 (đo trên bản chạy, đọc cả mã):
+     · ~94 màn là CÔNG CỤ — nhập liệu, bấm việc, gọi máy chủ, lưu trạng thái.
+     · 160 màn là HỌC THUYẾT / LIỆT KÊ — đọc được, nhưng không bấm được việc
+       gì và không đo được ai đã làm theo. Nằm rải trong sáu nhóm, nhân sự
+       phải lội qua chúng mới tới được công cụ.
+     · 17 màn là SỐ MINH HOẠ hoặc TRÙNG một công cụ sống đã có
+       (bảng điều khiển mẫu, buồng lái mẫu, bảng tài chính mẫu…).
+
+   V50 xử lý ba loại bằng ba luật, KHÔNG xoá mã màn nào (99 khoá màn được
+   tools/do-16-he.js canh vẫn đăng ký nguyên), nên đảo ngược được ngay:
+     GOP  màn mẫu / trùng → CHUYỂN THẲNG sang công cụ sống. Có danh sách
+          dự phòng: vai không mở được đích thì đi đích kế; không đích nào
+          mở được thì giữ màn cũ (không bao giờ chuyển vào chỗ bị khoá).
+     CUM  màn học thuyết → rút khỏi cột trái của NHÂN SỰ (lv ≤ 12), gom vào
+          14 cụm ở màn Thư viện vận hành. Mỗi cụm có BẢNG VIỆC ÁP DỤNG
+          (5–6 việc đo được) và CHỈ SỐ chịu tác động ở Trung tâm đo lường —
+          học thuyết thành việc, việc thành số.
+     AN   màn trùng một lối vào khác (bảng điều khiển theo vai) → rút khỏi
+          cột trái, lối vào gốc vẫn mở.
+   Gia đình, học viên, CTV (lv ≥ 13) KHÔNG đổi cột trái — các màn hành
+   trình của nhà mình vẫn ở đúng chỗ cũ.
+
+   Tắt toàn bộ V50 (về y như trước): Thư viện vận hành → "Hiện lại đủ",
+   hoặc localStorage gita_v50_tat = '1'.
+
+   Bảng việc áp dụng có bản sao số lượng ở may-chu/ap-dung.js (CUM_SO);
+   tools/thu-ap-dung.mjs so hai bên.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+(function(){
+  var V = {};
+  V.PHIEN_BAN = 'V50-2026.10-a';
+
+  /* [đích ưu tiên…], lý do, tuỳ chọn mở đích */
+  V.GOP = {
+    'dieu-hanh':         [['trung-tam-do'], 'Số minh hoạ — Trung tâm đo lường đo thật 41 chỉ số, 7 khối.'],
+    'tong-quan':         [['trung-tam-do'], 'Tổng quan hôm nay đã gộp vào Trung tâm đo lường.'],
+    'tang-truong':       [['trung-tam-do'], 'Tăng trưởng thật ở tầng Chiến lược V20 (North Star, dự báo, kịch bản).', { lop:'v20' }],
+    'ban-do-chien-luoc': [['trung-tam-do'], 'Bản đồ chiến lược thay bằng mục tiêu V20 có số đo và tiến độ.', { lop:'v20' }],
+    'the-diem-can-bang': [['trung-tam-do'], 'Thẻ điểm cân bằng thay bằng 7 khối × 41 chỉ số đo thật.', { lop:'v20' }],
+    'tai-chinh-qt':      [['phong-tai-chinh'], 'Bảng tài chính mẫu — dùng Phòng Kế toán – Tài chính (số thật).'],
+    'chi-phi':           [['phong-tai-chinh'], 'Kiến trúc chi phí mẫu — chi thật, duyệt thật ở Phòng tài chính.'],
+    'coach-deck':        [['coach-dp', 'coach-he'], 'Buồng lái mẫu — Điều phối & giám sát chương trình là bản sống.'],
+    'doi-ngu':           [['coach-dp', 'coach-he'], 'Đội ngũ mẫu — tải việc từng coach ở Điều phối & giám sát.'],
+    'bando-coach':       [['coach-he'], 'Bản đồ coaching gộp vào Hệ điều hành Coach.'],
+    'tuvan-deck':        [['crm', 'tt-cskh'], 'Khoang mở cửa mẫu — trùng CRM.'],
+    'bando-tuvan':       [['tt-cskh', 'crm'], 'Bản đồ vận hành khách gộp vào Trung tâm Tư vấn & CSKH.'],
+    'hai-long':          [['do-luong-he'], 'NPS / CSAT thật ở Đo lường toàn diện khách hàng.'],
+    'kiem-thu':          [['kiem-theo-vai'], 'Phòng kiểm thử mẫu — Kiểm thử theo vai chạy thật.'],
+    'thanh-tra':         [['thanh-tra-soi'], 'Thanh tra mẫu — Mười tổ thanh tra soi chạy thật.'],
+    'vong-doi-tk':       [['khoa-tai-khoan', 'nguoi-dung'], 'Vòng đời tài khoản: khoá · mở lại · xoá làm thật ở đây.'],
+    'kiem-duyet':        [['duyet-tai-lieu'], 'Kiểm duyệt mẫu — Kiểm duyệt tài liệu duyệt thật.']
+  };
+
+  /* Trùng một lối vào khác: rút khỏi cột trái, không chuyển hướng
+     (Bảng điều khiển của tôi đang dựng chính các màn này theo vai). */
+  V.AN = {
+    'van-hanh-10': ['dk-cua-toi', 'Bảng điều khiển của tôi mở đúng bảng này cho Super Admin / Admin.'],
+    'van-hanh-gd': ['dk-cua-toi', 'Bảng điều khiển của tôi mở đúng bảng này cho Giám đốc.']
+  };
+
+  /* 14 cụm học thuyết. khoi/kpi = mã ở G.TU (data-toi-uu.js). */
+  V.CUM = [
+    { ma:'PP', ten:'Phương pháp & lộ trình GITA', khoi:'CO', kpi:'co7',
+      mo:'Năm tầng, mười hai chặng, mô thức và ngôn từ dẫn dắt — xương sống mọi buổi làm việc.',
+      man:['gioi-thieu','gita-map','lo-trinh','hanh-trinh-5-tang','hanh-trinh-12','phuong-phap','tu-duy','chieu-sau','van-dung','mo-thuc','kien-truc-100','banh-da','sau-vung','coach-5-tang','ngon-tu'],
+      viec:['Mỗi nhà đang phụ trách đã xác định đúng tầng (T1–T5) và ghi vào hồ sơ',
+            'Buổi làm việc gần nhất bám đúng mô thức của tầng ấy, không nhảy tầng',
+            'Mở tầng mới bằng bằng chứng, không mở bằng lời hứa',
+            'Dùng ngôn từ dẫn dắt chuẩn, không dùng nỗi sợ để thúc',
+            'Mỗi tháng rà nhà đứng yên quá 60 ngày ở một tầng',
+            'Người mới trong đội đã qua bài kiểm phần phương pháp'] },
+    { ma:'KHO', ten:'Kho chuyên môn', khoi:'CO', kpi:'co3',
+      mo:'Phác đồ, kịch bản, tình huống, ma trận vấn đề — tra trước khi làm, ghi mã để đo lại.',
+      man:['kho','phac-do','kich-ban','tinh-huong','ma-tran','ma-tran-bang','sach','tai-lieu-goc','kho-tai-lieu','kho-tong','van-tay','diem-cham'],
+      viec:['Mỗi nhà đèn đỏ đã gắn một phác đồ cụ thể (ghi mã trong ca)',
+            'Trước buổi khó đã tra tình huống tương tự trong kho',
+            'Kịch bản dùng trong buổi lấy từ kho và ghi mã để đo hiệu quả',
+            'Tài liệu gửi gia đình đã qua kiểm duyệt',
+            'Lỗ hổng phát hiện trong kho được gửi lên Thư viện tài liệu'] },
+    { ma:'NGHE', ten:'Chuẩn nghề các vai', khoi:'NS', kpi:'ns3',
+      mo:'Mô tả nghề từng vai, gói nghề, 40 giờ đào tạo, sổ tay năm đầu, nôi nhân tài.',
+      man:['nghe-tu-van','nghe-coach','nghe-qlcm','nghe-mentor','nghe-danhgia','nghe-phantich','nghe-tncoach','nghe-giamdoc','nghe-giaovien','nghe-daisu','nghe-quantri','goi-nghe','dao-tao-dh','nam-dau','noi-nhan-tai'],
+      viec:['Mỗi nhân sự có mô tả nghề đúng vai và đã ký nhận',
+            'Nhân sự mới qua đủ ba cửa trước khi nhận nhà riêng',
+            'Đủ 40 giờ đào tạo năm đầu, có ghi nhận',
+            'Đánh giá năng lực theo khung thăng hạng mỗi quý',
+            'Có người kế cận cho mỗi vị trí quan trọng'] },
+    { ma:'COACH', ten:'Coach & chăm sóc hằng ngày', khoi:'CO', kpi:'co2',
+      mo:'Bàn làm việc, điểm chạm, diễn thử, luật làm việc với gia đình, đồng hành từng cấp.',
+      man:['ban-coach','so-tay-van-hanh','diem-cham-1000','dien-thu','hoat-dong','ban-ve','chuan-ngon-ngu','luat-lam-viec','coach-kh','vung-manh','dong-hanh-cap','phim-cau-noi'],
+      viec:['Không nhà nào quá 7 ngày chưa được chạm',
+            'Mỗi buổi coach được ghi nhận ở Điều phối & giám sát trong 24 giờ',
+            'Diễn thử trước hai buổi khó nhất (buổi đầu, buổi chuyển tầng)',
+            'Mọi trao đổi với gia đình đi qua hệ thống, không qua kênh riêng',
+            'Việc chưa ai nhận được giao người ngay trong ngày',
+            'Trưởng nhóm duyệt chất lượng ít nhất một buổi mỗi coach mỗi tuần'] },
+    { ma:'TUVAN', ten:'Tư vấn & chuyển đổi', khoi:'TV', kpi:'tv5',
+      mo:'Bàn tư vấn, phễu chốt, chân dung khách, chín cổng chuyển đổi, học phí, giới thiệu.',
+      man:['ban-tu-van','tang34','pheu-chot','so-tay-tu-van','chan-dung-kh','chuyen-doi','hoc-phi','referral','ref-gita','assessment','chan-dung-tc'],
+      viec:['Mỗi lead có người phụ trách trong 24 giờ',
+            'Cuộc gọi đầu dùng phiếu chẩn đoán Tầng 1 và lưu kết quả',
+            'Nói học phí đúng bảng giá, không giảm ngoài quyền',
+            'Cơ hội đang mở luôn có ngày hẹn kế tiếp',
+            'Nhà đã vào học được mời giới thiệu sau khoảnh khắc WOW đầu'] },
+    { ma:'VIP', ten:'VIP & khách lớn', khoi:'TV', kpi:'tv6',
+      mo:'Phân hạng, hồ sơ, cây tiền VIP, tệp nhân sự trung thành, trợ lý chăm sóc.',
+      man:['hang-vip','hoso-vip','cay-tien','cay-tien-vip','khach-lon','nhan-su-tt','ai-cham'],
+      viec:['Danh sách VIP / VVIP cập nhật theo chuẩn phân hạng, có người phụ trách riêng',
+            'Hồ sơ VIP đủ trường bắt buộc và mốc chăm sóc',
+            'Lịch chạm VIP dày hơn chuẩn thường và đúng hạn',
+            'Có nhân sự trung thành được giao cho nhóm VIP',
+            'Rà rủi ro rời bỏ của nhóm VIP mỗi tháng'] },
+    { ma:'TRAI', ten:'Trải nghiệm & lan toả', khoi:'KH', kpi:'kh3',
+      mo:'Chuỗi WOW → Fan → lan toả, định nghĩa đo lường khách, rà soát mười hai mặt, vinh danh.',
+      man:['chuoi-wow','wow','do-luong-kh','ra-soat-kh','vinh-danh','chuyen-cam-hung','chuyen-the-gioi'],
+      viec:['Mỗi nhà có ít nhất một khoảnh khắc WOW được ghi trong tháng',
+            'Nhà chấm NPS / CSAT thấp được gọi lại trong 48 giờ',
+            'Rà soát mười hai mặt cho nhà sắp hết kỳ',
+            'Câu chuyện thành công được xin phép và đưa vào vinh danh',
+            'Fan tích cực được mời vào chương trình giới thiệu'] },
+    { ma:'MK', ten:'Thương hiệu & nội dung', khoi:'MK', kpi:'mk2',
+      mo:'Nhận diện, ngôn từ, luật giao diện, bộ prompt, giọng đọc, nội dung tiếp thị.',
+      man:['noi-dung-tiep-thi','thuong-hieu','nhan-dien','nhan-dien-loi','so-tay-nhan-dien','luat-giao-dien','bo-prompt','giong-doc'],
+      viec:['Mọi bài đăng dùng đúng bộ nhận diện (logo, màu, giọng GITA)',
+            'Không dùng từ cấm trong bộ nhận diện ngôn từ',
+            'Lịch nội dung tuần có ít nhất ba bài vào cổng',
+            'Mỗi bài ghi kênh, lượt xem, lượt bấm để đo ở Trung tâm',
+            'Prompt AI dùng bộ chuẩn bốn vai'] },
+    { ma:'GD', ten:'Cam kết với gia đình', khoi:'KH', kpi:'kh4',
+      mo:'Bảy quyền, sáu điều không bán, năm điều không ai được sửa, ranh giới, cổng nghiệm thu.',
+      man:['phap-ly','tien-rung','bien-nien','giu-lua','so-tay-gia-dinh','hansei-sach','doi-dong-hanh','ranh-gioi','cong-nghiem-thu','chuan-nhat'],
+      viec:['Gia đình đã được nói rõ bảy quyền và ký nhận',
+            'Không vi phạm sáu điều không bao giờ bán',
+            'Nhật ký không sửa xoá — mọi chỉnh sửa có dấu vết',
+            'Yêu cầu của gia đình (xoá dữ liệu, hoàn tiền) xử lý đúng hạn',
+            'Nghiệm thu mỗi chặng có bằng chứng và xác nhận của gia đình'] },
+    { ma:'NHA', ten:'Hành trình nhà mình', khoi:'KH', kpi:'kh1',
+      mo:'Các màn gia đình dùng — đội ngũ đọc để biết nhà đang thấy gì và nhắc đúng chỗ.',
+      man:['dinh-vi','ban-do-ca-nhan','chuyen-hoa','hanh-trinh-con','dong-hanh','nhan-vat','cay-vip','bo-test','mua-doi','buc-tranh','chin-vai','thoi-quen','cu-hich','bang-so','do-thoi-gian'],
+      viec:['Gia đình mở app ít nhất ba ngày mỗi tuần',
+            'Bản đồ cá nhân và định vị được cập nhật hằng tháng',
+            'Có thói quen / nghi lễ gia đình đang theo dõi',
+            'Bộ test nhận diện làm lại mỗi chu kỳ 90 ngày',
+            'Tiến bộ của con ghi bằng bằng chứng, không chỉ cảm nhận'] },
+    { ma:'PL', ten:'Pháp lý, quyền & dữ liệu', khoi:'CN', kpi:'cn5',
+      mo:'Rà soát pháp lý, bằng chứng điện tử, ký kết, văn bản, tầng quyền, mật mã kín, lá chắn.',
+      man:['ra-soat-phap-ly','bang-chung','ho-so-hop-dong','ky-ket','van-ban','tang-quyen','hang-tai-lieu','dau-mat','dong-chay','an-toan-du-lieu','la-chan-30','so-tay-admin'],
+      viec:['Hợp đồng ký đúng luồng và lưu bằng chứng điện tử',
+            'Phát hiện rà soát pháp lý có người xử lý và hạn',
+            'Tài khoản nghỉ việc bị khoá ngay trong ngày',
+            'Tài liệu mật mang dấu mật mã kín',
+            'Yêu cầu xoá dữ liệu xử lý trong hạn'] },
+    { ma:'TC', ten:'Quy trình tài chính', khoi:'TC', kpi:'tc4',
+      mo:'Quy trình thu – chi – duyệt và hệ điều hành CEO.',
+      man:['quy-trinh-tc','he-dieu-hanh'],
+      viec:['Phiếu thu được duyệt trong 3 ngày',
+            'Mọi khoản chi có hoá đơn',
+            'Đề xuất chi được duyệt trong 7 ngày',
+            'Đối soát cuối tháng khớp sổ',
+            'Bảy con số CEO cập nhật mỗi tuần'] },
+    { ma:'KT', ten:'Kiến trúc & tự vận hành hệ', khoi:'NS', kpi:'ns4',
+      mo:'16 hệ, kiến trúc hợp nhất, bản đồ 12 khối, bánh đà, tuyến, điều phối AI, tự vận hành.',
+      man:['he-16','kien-truc-hop-nhat','ban-do-tong-the','vong-lap-van-hanh','khung-van-hanh','bo-may-tap-doan','tuyen','quy-trinh-toan-he','tu-van-hanh','tu-nang-cap','tu-hoan-thien','giam-sat','quyen-nang-ai','dieu-phoi','supreme','bo-nao','ai-dieu-phoi','nam-man'],
+      viec:['Mỗi hệ trong 16 hệ có chủ sở hữu và chỉ số ở Trung tâm',
+            'Việc tối ưu quá hạn được xử lý trước việc mới',
+            'Quyền AI cấp đúng trần tự chủ, có nhật ký',
+            'Mỗi quý rà kiến trúc mục tiêu so với mã đang chạy',
+            'Thay đổi lớn qua kiểm thử theo vai trước khi phát hành'] },
+    { ma:'CT', ten:'Cải tiến & kiểm soát', khoi:'NS', kpi:'ns4',
+      mo:'Rà soát hệ thống, điểm gãy, hành lang thành công, tự động hoá, tinh gọn, chuẩn 1000 điểm.',
+      man:['ra-soat','ra-soat-loi','hanh-lang','tu-dong','cai-tien','tinh-gon','giai-doan-bao-ve','chuan-1000','hoc-tu-lon','tin-noi-bo'],
+      viec:['Mỗi điểm gãy trong rà soát có người sửa và hạn',
+            'Đề xuất cải tiến từ người làm được trả lời trong 7 ngày',
+            'Việc lặp hơn ba lần mỗi tuần được xem xét tự động hoá',
+            'Quyết định quan trọng lên bảng tin nội bộ trong ngày',
+            'Chuẩn 1000 điểm chấm lại mỗi quý'] }
+  ];
+
+  var CUA = {};
+  V.CUM.forEach(function(c){ c.man.forEach(function(v){ CUA[v] = c; }); });
+  V.cumCua = function(v){ return CUA[v] || null; };
+  V.cum = function(ma){ for(var i = 0; i < V.CUM.length; i++) if(V.CUM[i].ma === ma) return V.CUM[i]; return null; };
+
+  /* Chấm một bảng tự soát — bản sao ĐÚNG phép của may-chu/ap-dung.js.
+     tt: mảng 'da' | 'dang' | 'chua' | 'kl' (không liên quan). */
+  V.cham = function(tt){
+    var da = 0, dang = 0, kl = 0, n = (tt || []).length;
+    for(var i = 0; i < n; i++){ var x = tt[i]; if(x === 'da') da++; else if(x === 'dang') dang++; else if(x === 'kl') kl++; }
+    var tong = n - kl;
+    return { da:da, dang:dang, tong:tong, diem: tong > 0 ? Math.round(100 * (da + 0.5 * dang) / tong) : null };
+  };
+
+  /* ── Bật / tắt ── */
+  V.tat = function(){ try { return localStorage.getItem('gita_v50_tat') === '1'; } catch(e){ return false; } };
+  V.datTat = function(b){ try { if(b) localStorage.setItem('gita_v50_tat', '1'); else localStorage.removeItem('gita_v50_tat'); } catch(e){} };
+  function lv(){ var r = G.S && G.S.roleObj; return r && r.lv ? r.lv : 99; }
+  V.laNhanSu = function(){ return lv() <= 12; };
+
+  /* Đích chuyển hướng của một màn, hoặc null. Chỉ chuyển khi đích có thật
+     VÀ vai mở được — không bao giờ đưa người dùng vào chỗ bị khoá. */
+  V.boQua = {};
+  V.dich = function(v){
+    if(V.tat() || V.boQua[v]) return null;
+    var g = V.GOP[v]; if(!g) return null;
+    for(var i = 0; i < g[0].length; i++){
+      var t = g[0][i];
+      if(G.manCoThat && G.manCoThat(t) && (!G.allowed || G.allowed(t))) return { v:t, ly:g[1], mo:g[2] || null };
+    }
+    return null;
+  };
+  /* Rút khỏi cột trái? (chỉ nhân sự; gia đình giữ nguyên cột) */
+  V.an = function(v){
+    if(V.tat() || !V.laNhanSu()) return false;
+    return !!(V.GOP[v] || V.AN[v] || CUA[v]);
+  };
+
+  G.V50 = V;
+})();
+
+})();
+
 /* ═════════ src/data-v20.js ═════════ */
 (function(){
 /* ═══════════════════════════════════════════════════════════════
@@ -74676,11 +74908,18 @@ var G = window.G || {}; window.G = G;
     return '<div class="co-tabs" role="tablist">'+ds.map(function(x){ return '<button class="co-tab'+(st.tab===x[0]?' on':'')+'" role="tab" data-ttd="tab" data-v2="'+x[0]+'">'+ic(x[2],'w-3 h-3')+h(x[1])+'</button>'; }).join('')+'</div>';
   }
 
+  /* Mở Trung tâm ở đúng chỗ từ màn khác (V50: màn gộp → tầng V20; thanh
+     Áp dụng của màn học thuyết → giải pháp của đúng khối). Dùng một lần. */
+  var choMo = null;
+  G.TTD_MO = function(o){ choMo = o || null; };
+
   G.VIEWS['trung-tam-do'] = function(){
     if(!T()) return U.lockCard('Thiếu tham số Trung tâm đo lường.');
     if(!G.xemTrungTamDo()) return U.lockCard('Trung tâm đo lường & tối ưu dành cho đội ngũ.');
     var ai = String((G.S && G.S.acc && G.S.acc.u) || '') + '|' + lv();
     if(st.ai !== ai){ st = { ai:ai, lop:'vh', tab: laQL() ? 'tong' : 'tk', ngay:30, khoi:'TV', d:null, ls:null, kh:null, tai:{}, loi:{}, mo:'', giao:null, moKH:'', locVD:'' }; mau = null; }
+    if(choMo && laQL()){ if(choMo.lop) st.lop = choMo.lop; if(choMo.tab){ st.lop = 'vh'; st.tab = choMo.tab; } if(choMo.khoi != null) st.locVD = choMo.khoi; }
+    choMo = null;
     if(!laQL()) st.tab = 'tk';
     var o = U.ph({ eyebrow:'SUPER ADMIN · ĐO LƯỜNG & TỐI ƯU', ic:'chart', grad:1, t: laQL() ? 'Trung tâm đo lường & tối ưu' : 'Việc tối ưu của tôi',
       lead: laQL() ? 'Một chỗ đo toàn hệ: 7 khối gom 16 ban, 41 chỉ số, từng vai, từng người, từng hoạt động và kết quả kiểm tra — kèm phân tích, 2–5 giải pháp cho mỗi vấn đề, phân bổ người đúng vai và theo dõi triển khai tới khi đo lại.'
@@ -74758,6 +74997,261 @@ var G = window.G || {}; window.G = G;
     k.tienDo = Math.round(100 * xong.length / k.buoc.length);
     if(!coMayChu()){ if(k.trangThai === 'moi' && xong.length) k.trangThai = 'dangLam'; veLai(); return; }
     G.goiMayChu('capNhatKeHoachToiUu', { id:id, buocXong:xong }).then(function(r){ if(r && r.ok){ k.trangThai = r.trangThai; k.tienDo = r.tienDo; } else U.toast((r && r.error) || 'Chưa lưu được.', 'err'); veLai(); });
+  });
+})();
+
+})();
+
+/* ═════════ src/v50-ap-dung.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — V50 · ĐỘNG CƠ ÁP DỤNG + THƯ VIỆN VẬN HÀNH
+
+   Màn học thuyết cũ chỉ để ĐỌC: không bấm được việc gì, không ai biết
+   đội đã làm theo hay chưa. V50 nâng cả 154 màn bằng MỘT động cơ thay vì
+   vá từng màn:
+     · Thanh ÁP DỤNG ở đầu mỗi màn học thuyết (app.js chèn qua G.v50Thanh):
+       cụm của màn · điểm áp dụng của tôi · chỉ số chịu tác động ở Trung tâm
+       đo lường · nút Tự soát.
+     · Tự soát: bảng 5–6 việc của cụm, mỗi việc bốn trạng thái (đã làm ·
+       đang làm · chưa · không liên quan) → điểm 0–100, lưu máy chủ
+       (ghiApDung) để Super Admin thấy học thuyết nào còn nằm trên giấy.
+     · Thư viện vận hành (thu-vien-v50): 14 cụm, tìm nhanh, mức áp dụng toàn
+       đội (R01–R03, tongApDung), danh sách màn đã gộp và nút tắt V50.
+   Không có máy chủ (bản thử) → bảng tự soát lưu trên máy này; số toàn đội
+   hiện VÍ DỤ MINH HOẠ có nhãn rõ.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
+(function(){
+  var U = G.U, h = U.h, ic = U.ic;
+  var VIEW = 'thu-vien-v50';
+  var st = { ai:'', bang:null, daTaiMay:false, tong:null, taiTong:false, loiTong:'', soat:null, soatTT:null };
+
+  function V(){ return G.V50; }
+  function lv(){ var r = G.S && G.S.roleObj; return r && r.lv ? r.lv : 99; }
+  function ten(){ return String((G.S && G.S.acc && G.S.acc.u) || ''); }
+  function coMayChu(){ return !!(G.API_CAP_PHEP && G.PHIEN_TOKEN); }
+  function laQL(){ return lv() <= 3; }
+  function kpiDef(ma){ var T = G.TU; if(!T) return null; for(var i = 0; i < T.KPI.length; i++) if(T.KPI[i].ma === ma) return T.KPI[i]; return null; }
+  function khoiDef(ma){ var T = G.TU; if(!T) return null; for(var i = 0; i < T.KHOI.length; i++) if(T.KHOI[i].ma === ma) return T.KHOI[i]; return null; }
+  function veLai(){ if(G.render) G.render(); }
+  function so(n){ return Number(n).toLocaleString('vi-VN'); }
+
+  /* ── Bảng tự soát của tôi: máy này + máy chủ (bản mới hơn thắng) ── */
+  function khoaMay(){ return 'gita_v50_ad:' + ten(); }
+  function canBang(){
+    if(st.ai !== ten() + '|' + lv()){ st = { ai:ten() + '|' + lv(), bang:null, daTaiMay:false, tong:null, taiTong:false, loiTong:'', soat:null, soatTT:null }; }
+    if(!st.bang){
+      st.bang = {};
+      try { var s = localStorage.getItem(khoaMay()); if(s) st.bang = JSON.parse(s) || {}; } catch(e){ st.bang = {}; }
+    }
+    if(coMayChu() && !st.daTaiMay && V().laNhanSu()){
+      st.daTaiMay = true;
+      G.goiMayChu('docApDung', {}).then(function(r){
+        if(!r || !r.ok) return;
+        var doi = false;
+        (r.ds || []).forEach(function(x){
+          var co = st.bang[x.cum];
+          if(!co || String(co.luc || '') < String(x.luc || '')){ st.bang[x.cum] = { tt:x.tt, diem:x.diem, luc:x.luc }; doi = true; }
+        });
+        if(doi){ luuMay(); if(G.S && (G.S.view === VIEW || V().cumCua(G.S.view))) veLai(); }
+      });
+    }
+    return st.bang;
+  }
+  function luuMay(){ try { localStorage.setItem(khoaMay(), JSON.stringify(st.bang || {})); } catch(e){} }
+  function diemCua(ma){ var b = canBang()[ma]; return b && b.diem != null ? b.diem : null; }
+  function vien(d){
+    if(d == null) return '<span class="v50-diem v50-chua">chưa soát</span>';
+    var k = d >= 80 ? 'v50-tot' : d >= 50 ? 'v50-vua' : 'v50-yeu';
+    return '<span class="v50-diem ' + k + '">' + d + '<small>/100</small></span>';
+  }
+
+  /* ── Thanh áp dụng ở đầu màn học thuyết (app.js gọi mỗi lần vẽ) ── */
+  G.v50Thanh = function(v){
+    if(!V()) return '';
+    var o = '';
+    var g = V().vuaGop;
+    if(g && g.den === v){
+      var itTu = G.navItem ? G.navItem(g.tu) : null;
+      o += '<div class="v50-gop" role="status">' + ic('arrow','w-4 h-4') + '<span><b>«' + h(itTu ? G.iname(itTu) : g.tu) + '» đã gộp vào đây.</b> ' + h(g.ly) + '</span>' +
+        '<button class="btn sm ghost" data-v50="ban-cu" data-v2="' + h(g.tu) + '">Xem bản cũ</button></div>';
+      V().vuaGop = null;
+    }
+    if(V().tat() || !V().laNhanSu()) return o;
+    var c = V().cumCua(v);
+    if(!c) return o;
+    var k = kpiDef(c.kpi), kh = khoiDef(c.khoi), d = diemCua(c.ma);
+    o += '<div class="v50-thanh">' +
+      '<div class="v50-thanh-dau"><span class="v50-nhan">V50 · ÁP DỤNG</span><b>' + h(c.ten) + '</b><span class="tiny muted">' + c.man.length + ' màn trong cụm</span></div>' +
+      '<div class="v50-thanh-than">' +
+        '<div class="v50-o"><span class="tiny muted">Điểm áp dụng của tôi</span>' + vien(d) + '</div>' +
+        '<div class="v50-o v50-o-rong"><span class="tiny muted">Chỉ số chịu tác động</span><b>' + h(k ? k.ten : c.kpi) + '</b><span class="tiny muted">' + h(kh ? kh.ten : c.khoi) + ' · đo ở Trung tâm đo lường</span></div>' +
+        '<div class="v50-nut">' +
+          '<button class="btn sm pri" data-v50="soat" data-v2="' + h(c.ma) + '">' + ic('check','w-3 h-3') + 'Tự soát ' + c.viec.length + ' việc</button>' +
+          (laQL() && G.manCoThat && G.manCoThat('trung-tam-do') ? '<button class="btn sm ghost" data-v50="giai-phap" data-v2="' + h(c.khoi) + '">' + ic('chart','w-3 h-3') + 'Giải pháp khối này</button>' : '') +
+          '<button class="btn sm ghost" data-v="' + VIEW + '">' + ic('book','w-3 h-3') + 'Thư viện</button>' +
+        '</div>' +
+      '</div></div>';
+    return o;
+  };
+
+  /* ── Hộp tự soát ── */
+  var NHAN = [['da','Đã làm'], ['dang','Đang làm'], ['chua','Chưa'], ['kl','Không liên quan']];
+  function moSoat(ma){
+    var c = V().cum(ma); if(!c) return;
+    var b = canBang()[ma];
+    st.soat = ma;
+    st.soatTT = c.viec.map(function(x, i){ return (b && b.tt && b.tt[i]) || 'chua'; });
+    veSoat();
+  }
+  function veSoat(){
+    var c = V().cum(st.soat); if(!c) return;
+    var kq = V().cham(st.soatTT), k = kpiDef(c.kpi);
+    var o = '<div class="v50-hop"><div class="up tiny muted">TỰ SOÁT ÁP DỤNG · ' + h(c.ten) + '</div>' +
+      '<h3 style="margin:4px 0 6px">Đội mình đang làm theo tới đâu?</h3>' +
+      '<p class="sm muted" style="margin:0 0 12px">Chấm thật, không chấm cho đẹp: điểm này cộng vào mức áp dụng toàn đội mà Super Admin xem, và đi cùng chỉ số <b>' + h(k ? k.ten : c.kpi) + '</b>.</p>' +
+      c.viec.map(function(t, i){
+        return '<div class="v50-viec"><div class="sm">' + (i + 1) + '. ' + h(t) + '</div><div class="v50-chon" role="group" aria-label="Trạng thái việc ' + (i + 1) + '">' +
+          NHAN.map(function(n){ return '<button class="v50-tt' + (st.soatTT[i] === n[0] ? ' on v50-tt-' + n[0] : '') + '" data-v50="tt" data-v2="' + i + ':' + n[0] + '" aria-pressed="' + (st.soatTT[i] === n[0]) + '">' + h(n[1]) + '</button>'; }).join('') +
+        '</div></div>';
+      }).join('') +
+      '<div class="v50-kq"><span>Điểm sau khi chấm</span>' + vien(kq.diem) + '<span class="tiny muted">' + kq.da + ' đã · ' + kq.dang + ' đang · ' + kq.tong + ' việc liên quan</span></div>' +
+      '<div class="row" style="gap:8px;justify-content:flex-end;margin-top:12px"><button class="btn ghost" data-v50="dong">Để sau</button>' +
+      '<button class="btn pri" data-v50="luu">' + ic('check','w-3 h-3') + 'Lưu tự soát</button></div></div>';
+    U.modal(o);
+  }
+  function luuSoat(){
+    var ma = st.soat, tt = st.soatTT.slice(), kq = V().cham(tt), luc = new Date().toISOString();
+    canBang()[ma] = { tt:tt, diem:kq.diem, luc:luc }; luuMay();
+    U.closeModal(); st.soat = null;
+    if(!coMayChu()){ U.toast('Đã lưu trên máy này (bản thử — chưa nối máy chủ).', 'ok'); veLai(); return; }
+    G.goiMayChu('ghiApDung', { cum:ma, tt:tt }).then(function(r){
+      if(r && r.ok){ canBang()[ma].luc = r.luc || luc; luuMay(); st.tong = null; st.taiTong = false; U.toast('Đã lưu tự soát · ' + (r.diem == null ? 'chưa đo' : r.diem + '/100') + '.', 'ok'); }
+      else U.toast((r && r.error) || 'Chưa lưu được lên máy chủ — bảng vẫn giữ trên máy này.', 'err');
+      veLai();
+    });
+  }
+
+  /* ── Mức áp dụng toàn đội (R01–R03) ── */
+  function canTong(){
+    if(!laQL() || st.taiTong) return;
+    st.taiTong = true;
+    if(!coMayChu()){ st.tong = mauTong(); return; }
+    G.goiMayChu('tongApDung', {}).then(function(r){
+      if(r && r.ok){ st.tong = r; st.loiTong = ''; } else st.loiTong = (r && r.error) || 'Chưa đọc được mức áp dụng.';
+      if(G.S && G.S.view === VIEW) veLai();
+    });
+  }
+  function mauTong(){
+    var cum = V().CUM.map(function(c, i){ return { cum:c.ma, soNguoi:3 + (i * 5) % 9, diemTB:35 + (i * 17) % 55, thapNhat:10 + (i * 7) % 30 }; });
+    return { ok:true, mau:true, nhanSu:24, daSoat:17, phu:70.8, cum:cum, vai:[],
+      thap:[{ u:'coach.vi.du', vai:'R07', cum:'COACH', diem:20 }, { u:'tuvan.vi.du', vai:'R11', cum:'TUVAN', diem:30 }, { u:'ql.vi.du', vai:'R04', cum:'NGHE', diem:40 }] };
+  }
+  function veTong(){
+    if(!laQL()) return '';
+    canTong();
+    var t = st.tong;
+    var o = '<div class="card mb"><div class="row wrap" style="justify-content:space-between;gap:8px"><div><div class="up tiny muted">TOÀN ĐỘI · R01–R03</div><b>Mức áp dụng học thuyết</b></div>';
+    if(!t){ return o + '</div><p class="sm muted mt">' + h(st.loiTong || 'Đang đọc…') + '</p></div>'; }
+    o += '<div class="row wrap" style="gap:6px"><span class="chip">' + so(t.daSoat || 0) + (t.nhanSu ? ' / ' + so(t.nhanSu) : '') + ' nhân sự đã soát</span>' +
+      (t.phu != null ? '<span class="chip">độ phủ ' + String(t.phu).replace('.', ',') + '%</span>' : '') + '</div></div>';
+    if(t.mau) o += '<div class="co-mau mt">' + ic('alert','w-4 h-4') + '<span><b>Ví dụ minh hoạ.</b> Bản thử chưa nối máy chủ nên số toàn đội là giả định. Đăng nhập tài khoản thật để thấy số đội mình.</span></div>';
+    var m = {}; (t.cum || []).forEach(function(x){ m[x.cum] = x; });
+    var hang = V().CUM.map(function(c){ var x = m[c.ma]; return { c:c, x:x, d: x ? Number(x.diemTB) : null }; })
+      .sort(function(a, b){ return (a.d == null ? 999 : a.d) - (b.d == null ? 999 : b.d); });
+    o += '<div class="v50-bang mt" role="table" aria-label="Mức áp dụng từng cụm">' +
+      '<div class="v50-hang v50-hang-dau" role="row"><span>Cụm (thấp trước)</span><span>Người</span><span>Điểm TB</span><span>Thấp nhất</span></div>' +
+      hang.map(function(r){
+        return '<div class="v50-hang" role="row"><span>' + h(r.c.ten) + '</span><span>' + (r.x ? so(r.x.soNguoi) : '—') + '</span><span>' +
+          (r.d == null ? '<span class="tiny muted">chưa ai soát</span>' : vien(Math.round(r.d))) + '</span><span>' + (r.x && r.x.thapNhat != null ? so(r.x.thapNhat) : '—') + '</span></div>';
+      }).join('') + '</div>';
+    if((t.thap || []).length)
+      o += '<details class="mt"><summary class="sm"><b>' + t.thap.length + ' bảng dưới 50 điểm</b> — người cần kèm</summary><div class="v50-bang mt">' +
+        t.thap.map(function(x){ var c = V().cum(x.cum); return '<div class="v50-hang"><span class="mono tiny">' + h(x.u) + '</span><span>' + h(x.vai) + '</span><span>' + h(c ? c.ten : x.cum) + '</span><span>' + vien(x.diem) + '</span></div>'; }).join('') +
+        '</div></details>';
+    return o + '</div>';
+  }
+
+  /* ── Màn Thư viện vận hành ── */
+  G.VIEWS[VIEW] = function(){
+    if(!V()) return U.lockCard('Thiếu bản đồ V50.');
+    var nhanSu = V().laNhanSu(), tat = V().tat();
+    var hien = function(v){ var it = G.navItem ? G.navItem(v) : null; return it && (!G.mucHien || G.mucHien(it)) ? it : null; };
+    var tongCum = 0, tongGop = 0;
+    V().CUM.forEach(function(c){ c.man.forEach(function(v){ if(hien(v)) tongCum++; }); });
+    Object.keys(V().GOP).forEach(function(v){ if(V().dich(v) || tat) tongGop++; });
+    var tongCong = 0;
+    (G.NAV || []).forEach(function(g){ g.items.forEach(function(it){ if((!G.mucHien || G.mucHien(it)) && !V().an(it.v)) tongCong++; }); });
+
+    var o = U.ph({ eyebrow:'KIẾN TRÚC VẬN HÀNH V50', ic:'book', grad:1, t:'Thư viện vận hành',
+      lead: nhanSu
+        ? 'Cột trái chỉ giữ công cụ làm việc. Mọi màn học thuyết nằm ở đây, gom theo 14 cụm — mỗi cụm có bảng việc áp dụng để chấm đội mình đang làm theo tới đâu, và chỉ số ở Trung tâm đo lường để thấy học thuyết ấy có đổi được số hay không.'
+        : 'Các bài đọc về hành trình nhà mình, gom theo chủ đề. Bấm vào một bài để đọc.' });
+    if(tat) o += '<div class="co-mau mb">' + ic('alert','w-4 h-4') + '<span><b>V50 đang tắt.</b> Cột trái hiện đủ mọi mục như trước và màn mẫu không chuyển hướng.</span></div>';
+    if(nhanSu)
+      o += '<div class="grid g3 mb">' +
+        '<div class="card"><div class="up tiny muted">Cột trái</div><div class="v50-so">' + so(tongCong) + '</div><div class="tiny muted">công cụ mở được với vai này</div></div>' +
+        '<div class="card"><div class="up tiny muted">Học thuyết</div><div class="v50-so">' + so(tongCum) + '</div><div class="tiny muted">màn gom vào ' + V().CUM.length + ' cụm, có bảng việc áp dụng</div></div>' +
+        '<div class="card"><div class="up tiny muted">Đã gộp</div><div class="v50-so">' + so(tongGop) + '</div><div class="tiny muted">màn mẫu / trùng chuyển thẳng sang công cụ sống</div></div></div>';
+    if(nhanSu && !tat) o += veTong();
+
+    o += '<label class="v50-tim">' + ic('search','w-4 h-4') + '<input id="v50-tim" class="inp" type="search" placeholder="Tìm màn hoặc cụm — ví dụ: phác đồ, VIP, hợp đồng" aria-label="Tìm trong Thư viện vận hành"></label>';
+    o += '<div class="v50-cums">';
+    V().CUM.forEach(function(c){
+      var ds = c.man.map(hien).filter(Boolean);
+      if(!ds.length) return;
+      var k = kpiDef(c.kpi), d = nhanSu ? diemCua(c.ma) : null;
+      o += '<section class="card v50-cum" data-cum="' + h((c.ten + ' ' + c.mo).toLowerCase()) + '">' +
+        '<div class="v50-cum-dau"><div><b>' + h(c.ten) + '</b><p class="tiny muted" style="margin:3px 0 0">' + h(c.mo) + '</p></div>' + (nhanSu ? vien(d) : '') + '</div>' +
+        (nhanSu ? '<div class="tiny muted mt">Chỉ số: <b>' + h(k ? k.ten : c.kpi) + '</b></div>' : '') +
+        '<div class="v50-man">' + ds.map(function(it){
+          return '<button class="v50-mo" data-v="' + h(it.v) + '" data-ten="' + h(String(G.iname(it)).toLowerCase()) + '">' + ic(it.ic || 'book','w-3 h-3') + '<span>' + h(G.iname(it)) + '</span></button>';
+        }).join('') + '</div>' +
+        (nhanSu ? '<div class="row mt" style="gap:6px"><button class="btn sm pri" data-v50="soat" data-v2="' + h(c.ma) + '">' + ic('check','w-3 h-3') + 'Tự soát ' + c.viec.length + ' việc</button></div>' : '') +
+      '</section>';
+    });
+    o += '</div><p class="tiny muted v50-trong" hidden>Không có màn nào khớp.</p>';
+
+    if(nhanSu){
+      var gop = Object.keys(V().GOP).map(function(v){ var it = G.navItem ? G.navItem(v) : null, g = V().GOP[v], den = G.navItem ? G.navItem(g[0][0]) : null;
+        return '<div class="v50-hang"><span>' + h(it ? G.iname(it) : v) + '</span><span>→ ' + h(den ? G.iname(den) : g[0][0]) + '</span><span class="tiny muted">' + h(g[1]) + '</span>' +
+          '<span><button class="btn sm ghost" data-v50="ban-cu" data-v2="' + h(v) + '">Bản cũ</button></span></div>'; }).join('');
+      o += '<details class="card mt"><summary><b>' + Object.keys(V().GOP).length + ' màn mẫu / trùng đã gộp</b> <span class="tiny muted">— màn cũ vẫn còn, chỉ không còn là lối vào chính</span></summary><div class="v50-bang v50-bang-gop mt">' + gop + '</div></details>';
+    }
+    if(G.can && G.can('qt_trang'))
+      o += '<div class="card mt"><div class="row wrap" style="justify-content:space-between;gap:8px"><div><b>' + (tat ? 'Bật lại V50' : 'Tắt V50 trên máy này') + '</b>' +
+        '<p class="tiny muted" style="margin:3px 0 0">' + (tat ? 'Rút học thuyết khỏi cột trái và chuyển màn mẫu sang công cụ sống.' : 'Hiện lại đủ mọi mục ở cột trái như trước V50, màn mẫu không chuyển hướng. Không xoá dữ liệu nào.') + '</p></div>' +
+        '<button class="btn ' + (tat ? 'pri' : 'ghost') + '" data-v50="bat-tat">' + (tat ? 'Bật lại' : 'Hiện lại đủ') + '</button></div></div>';
+    return '<div class="v50">' + o + '</div>';
+  };
+
+  /* ── Sự kiện ── */
+  document.addEventListener('click', function(e){
+    var el = e.target.closest && e.target.closest('[data-v50]'); if(!el) return;
+    var a = el.getAttribute('data-v50'), v = el.getAttribute('data-v2') || '';
+    if(a === 'soat'){ moSoat(v); return; }
+    if(a === 'tt'){ var p = v.split(':'), i = Number(p[0]); if(st.soatTT && i >= 0 && i < st.soatTT.length){ st.soatTT[i] = p[1]; veSoat(); } return; }
+    if(a === 'luu'){ if(st.soat) luuSoat(); return; }
+    if(a === 'dong'){ U.closeModal(); st.soat = null; return; }
+    if(a === 'giai-phap'){ if(G.TTD_MO) G.TTD_MO({ tab:'gp', khoi:v }); G.go('trung-tam-do'); return; }
+    if(a === 'ban-cu'){ V().boQua[v] = 1; G.go(v); return; }
+    if(a === 'bat-tat'){ var tat = V().tat(); V().datTat(!tat); U.toast(tat ? 'Đã bật lại V50.' : 'Đã tắt V50 trên máy này — cột trái hiện đủ như trước.', 'ok'); veLai(); return; }
+  });
+  document.addEventListener('input', function(e){
+    if(!e.target || e.target.id !== 'v50-tim') return;
+    var q = String(e.target.value || '').toLowerCase().trim(), con = 0;
+    var cums = document.querySelectorAll('.v50-cum');
+    for(var i = 0; i < cums.length; i++){
+      var c = cums[i], caCum = !q || c.getAttribute('data-cum').indexOf(q) >= 0, nut = c.querySelectorAll('.v50-mo'), coNut = 0;
+      for(var j = 0; j < nut.length; j++){
+        nut[j].hidden = !caCum && nut[j].getAttribute('data-ten').indexOf(q) < 0;
+        if(!nut[j].hidden) coNut++;
+      }
+      c.hidden = !coNut; if(coNut) con++;
+    }
+    var tr = document.querySelector('.v50-trong'); if(tr) tr.hidden = con > 0;
   });
 })();
 
@@ -77820,7 +78314,9 @@ function leftNav(){
   return '<div class="scroll">'+ dai + daiMoi + khoiKG() +
     '<div class="nav-eyebrow nav-eyebrow-all">'+h(G.LANG==='en'?G.L('fiveGroups'):'Toàn hệ thống')+'</div>' +
     NAV.map(function(g){
-      var mo = g.items.filter(visible);
+      /* V50: màn học thuyết / mẫu / trùng rút khỏi cột của nhân sự — đọc ở
+         Thư viện vận hành (src/data-v50.js). Gia đình giữ nguyên cột. */
+      var mo = g.items.filter(function(it){ return visible(it) && !(G.V50 && G.V50.an(it.v)); });
       if(!mo.length) return '';                 /* nhóm không mở được mục nào thì không hiện */
       var open = G.S.open.indexOf(g.id)>=0;
       function nut(it){
@@ -77855,7 +78351,7 @@ function leftNav(){
 function hnav(){
   var NAV = G.navDung ? G.navDung() : G.NAV;
   return NAV.map(function(g){
-    var mo = g.items.filter(visible);
+    var mo = g.items.filter(function(it){ return visible(it) && !(G.V50 && G.V50.an(it.v)); });
     if(!mo.length) return '';
     var on = G.S.open.indexOf(g.id) >= 0;
     return '<button class="hnav-i'+(on?' on':'')+'" data-sec="'+h(g.id)+'" '+
@@ -77864,6 +78360,7 @@ function hnav(){
   }).join('');
 }
 G.hnav = hnav;
+G.mucHien = visible;   /* Thư viện vận hành lọc màn theo đúng cổng của cột trái */
 
 G.leftNav = leftNav;
 
@@ -78110,6 +78607,17 @@ G.a11yNhan = function (root) {
 
 function render(){
   var main = document.getElementById('main');
+  /* V50 · màn mẫu / trùng → công cụ sống. Đặt Ở ĐÂY chứ không chỉ ở G.go:
+     mở bằng địa chỉ #màn, trạng thái đã lưu hay nút trong một màn khác
+     đều đi qua render. Đích không mở được với vai này → giữ màn cũ. */
+  if(G.V50 && G.V50.dich){
+    var d50 = G.V50.dich(G.S.view);
+    if(d50){
+      G.V50.vuaGop = { tu:G.S.view, den:d50.v, ly:d50.ly };
+      G.S.view = d50.v;
+      if(d50.mo && G.TTD_MO) G.TTD_MO(d50.mo);
+    }
+  }
   /* Màn của gói nghề mà mã chưa về: NÓI ĐANG MỞ, đừng nhảy về bản đồ.
 
      Trước bản 9.23 dòng này chỉ có một vế — thiếu màn thì đổi sang
@@ -78158,7 +78666,10 @@ function render(){
      phủ hết 212 màn. */
   var hdThanh = (G.hdNut && G.S.view !== 'tro-ly')
     ? '<div class="hd-thanh">' + G.hdNut(G.S.view, '', 'Xem video hướng dẫn màn này') + '</div>' : '';
-  main.innerHTML = '<div class="view">' + nhac + hdThanh + noiDung + '</div>';
+  /* V50: màn học thuyết có thêm thanh ÁP DỤNG (bảng việc đo được + chỉ số
+     chịu tác động) — src/v50-ap-dung.js. Màn vừa được gộp có dòng báo. */
+  var v50 = G.v50Thanh ? G.v50Thanh(G.S.view) : '';
+  main.innerHTML = '<div class="view">' + nhac + hdThanh + v50 + noiDung + '</div>';
   if(G.a11yNhan) G.a11yNhan(main);   /* bù tên đọc được cho mọi ô nhập (a11y) */
   /* Màn trợ lý là một CỬA SỔ chiếm trọn chiều cao, nên nó cần lề dưới
      của vùng nội dung nhỏ lại. Lớp này là chỗ duy nhất khai chuyện ấy —

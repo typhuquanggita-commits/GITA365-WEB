@@ -279,11 +279,18 @@ var G = window.G || {}; window.G = G;
     return '<div class="co-tabs" role="tablist">'+ds.map(function(x){ return '<button class="co-tab'+(st.tab===x[0]?' on':'')+'" role="tab" data-ttd="tab" data-v2="'+x[0]+'">'+ic(x[2],'w-3 h-3')+h(x[1])+'</button>'; }).join('')+'</div>';
   }
 
+  /* Mở Trung tâm ở đúng chỗ từ màn khác (V50: màn gộp → tầng V20; thanh
+     Áp dụng của màn học thuyết → giải pháp của đúng khối). Dùng một lần. */
+  var choMo = null;
+  G.TTD_MO = function(o){ choMo = o || null; };
+
   G.VIEWS['trung-tam-do'] = function(){
     if(!T()) return U.lockCard('Thiếu tham số Trung tâm đo lường.');
     if(!G.xemTrungTamDo()) return U.lockCard('Trung tâm đo lường & tối ưu dành cho đội ngũ.');
     var ai = String((G.S && G.S.acc && G.S.acc.u) || '') + '|' + lv();
     if(st.ai !== ai){ st = { ai:ai, lop:'vh', tab: laQL() ? 'tong' : 'tk', ngay:30, khoi:'TV', d:null, ls:null, kh:null, tai:{}, loi:{}, mo:'', giao:null, moKH:'', locVD:'' }; mau = null; }
+    if(choMo && laQL()){ if(choMo.lop) st.lop = choMo.lop; if(choMo.tab){ st.lop = 'vh'; st.tab = choMo.tab; } if(choMo.khoi != null) st.locVD = choMo.khoi; }
+    choMo = null;
     if(!laQL()) st.tab = 'tk';
     var o = U.ph({ eyebrow:'SUPER ADMIN · ĐO LƯỜNG & TỐI ƯU', ic:'chart', grad:1, t: laQL() ? 'Trung tâm đo lường & tối ưu' : 'Việc tối ưu của tôi',
       lead: laQL() ? 'Một chỗ đo toàn hệ: 7 khối gom 16 ban, 41 chỉ số, từng vai, từng người, từng hoạt động và kết quả kiểm tra — kèm phân tích, 2–5 giải pháp cho mỗi vấn đề, phân bổ người đúng vai và theo dõi triển khai tới khi đo lại.'

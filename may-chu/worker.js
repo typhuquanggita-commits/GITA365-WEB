@@ -86,6 +86,7 @@ import { guiSoDoKH, guiDanhGiaKH, hoSoDoLuongKH, xepHangKH, baoCaoThangHe, chotB
 import { docTrungTamDo, lichSuTrungTamDo, goiYPhanBo, taoKeHoachToiUu, capNhatKeHoachToiUu,
   dsKeHoachToiUu } from './trung-tam-toi-uu.js';
 import { docChienLuocV20, dsMucTieuCL, taoMucTieuCL, capNhatMucTieuCL } from './chien-luoc-v20.js';
+import { ghiApDung, docApDung, tongApDung } from './ap-dung.js';
 import { docLuatGiaoDien } from './luat-giao-dien.js';
 import { capLenhGiamSat, thuLenhGiamSat, docLenhGiamSat, soatSoDen,
   docTranGiamSat } from './giam-sat.js';
@@ -340,7 +341,9 @@ const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau'
   /* Trung tâm đo lường & tối ưu (trung-tam-toi-uu.js) — 7 khối · vai · người · hoạt động · kiểm tra · kế hoạch. */
   'docTrungTamDo', 'lichSuTrungTamDo', 'goiYPhanBo', 'taoKeHoachToiUu', 'capNhatKeHoachToiUu', 'dsKeHoachToiUu',
   /* Nền tảng chiến lược V20 (chien-luoc-v20.js) — North Star · động lực · nhóm khách · dự báo · bất thường · mục tiêu. */
-  'docChienLuocV20', 'dsMucTieuCL', 'taoMucTieuCL', 'capNhatMucTieuCL'];
+  'docChienLuocV20', 'dsMucTieuCL', 'taoMucTieuCL', 'capNhatMucTieuCL',
+  /* V50 · mức áp dụng học thuyết (ap-dung.js) — 14 cụm, tự soát, tổng hợp cho R01–R03. */
+  'ghiApDung', 'docApDung', 'tongApDung'];
 
 async function lam(fn, y, env, db) {
   if (fn === 'dangNhap')  return await dangNhap(y, env, db);
@@ -704,6 +707,9 @@ async function lam(fn, y, env, db) {
   if (fn === 'dsMucTieuCL')       return await dsMucTieuCL(y, env, db, hoSo);
   if (fn === 'taoMucTieuCL')      return await taoMucTieuCL(y, env, db, hoSo);
   if (fn === 'capNhatMucTieuCL')  return await capNhatMucTieuCL(y, env, db, hoSo);
+  if (fn === 'ghiApDung')         return await ghiApDung(y, env, db, hoSo);
+  if (fn === 'docApDung')         return await docApDung(y, env, db, hoSo);
+  if (fn === 'tongApDung')        return await tongApDung(y, env, db, hoSo);
   if (fn === 'boViecHomNay')      return await boViecHomNay(y, env, db, hoSo);
   if (fn === 'batCheDoBao')       return await batCheDoBao(y, env, db, hoSo);
   if (fn === 'ghiGhimCon')        return await ghiGhimCon(y, env, db, hoSo);
