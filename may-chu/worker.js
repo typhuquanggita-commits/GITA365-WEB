@@ -83,6 +83,8 @@ import { viCredit, soCreditNha, thuongCredit, tieuCredit, napCreditPhieu, dsPhie
   datViCredit, dieuChinhCredit, tongQuanCredit } from './credit.js';
 import { guiSoDoKH, guiDanhGiaKH, hoSoDoLuongKH, xepHangKH, baoCaoThangHe, chotBaoCaoThang,
   dsHoSoThang } from './do-luong-kh.js';
+import { docTrungTamDo, lichSuTrungTamDo, goiYPhanBo, taoKeHoachToiUu, capNhatKeHoachToiUu,
+  dsKeHoachToiUu } from './trung-tam-toi-uu.js';
 import { docLuatGiaoDien } from './luat-giao-dien.js';
 import { capLenhGiamSat, thuLenhGiamSat, docLenhGiamSat, soatSoDen,
   docTranGiamSat } from './giam-sat.js';
@@ -333,7 +335,9 @@ const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau'
   'viCredit', 'soCreditNha', 'thuongCredit', 'tieuCredit', 'napCreditPhieu', 'dsPhieuThuChuaNap',
   'datViCredit', 'dieuChinhCredit', 'tongQuanCredit',
   /* Đo lường toàn diện khách hàng (do-luong-kh.js) — hồ sơ tháng · xếp hạng · báo cáo. */
-  'guiSoDoKH', 'guiDanhGiaKH', 'hoSoDoLuongKH', 'xepHangKH', 'baoCaoThangHe', 'chotBaoCaoThang', 'dsHoSoThang'];
+  'guiSoDoKH', 'guiDanhGiaKH', 'hoSoDoLuongKH', 'xepHangKH', 'baoCaoThangHe', 'chotBaoCaoThang', 'dsHoSoThang',
+  /* Trung tâm đo lường & tối ưu (trung-tam-toi-uu.js) — 7 khối · vai · người · hoạt động · kiểm tra · kế hoạch. */
+  'docTrungTamDo', 'lichSuTrungTamDo', 'goiYPhanBo', 'taoKeHoachToiUu', 'capNhatKeHoachToiUu', 'dsKeHoachToiUu'];
 
 async function lam(fn, y, env, db) {
   if (fn === 'dangNhap')  return await dangNhap(y, env, db);
@@ -687,6 +691,12 @@ async function lam(fn, y, env, db) {
   if (fn === 'baoCaoThangHe')     return await baoCaoThangHe(y, env, db, hoSo);
   if (fn === 'chotBaoCaoThang')   return await chotBaoCaoThang(y, env, db, hoSo);
   if (fn === 'dsHoSoThang')       return await dsHoSoThang(y, env, db, hoSo);
+  if (fn === 'docTrungTamDo')     return await docTrungTamDo(y, env, db, hoSo);
+  if (fn === 'lichSuTrungTamDo')  return await lichSuTrungTamDo(y, env, db, hoSo);
+  if (fn === 'goiYPhanBo')        return await goiYPhanBo(y, env, db, hoSo);
+  if (fn === 'taoKeHoachToiUu')   return await taoKeHoachToiUu(y, env, db, hoSo);
+  if (fn === 'capNhatKeHoachToiUu') return await capNhatKeHoachToiUu(y, env, db, hoSo);
+  if (fn === 'dsKeHoachToiUu')    return await dsKeHoachToiUu(y, env, db, hoSo);
   if (fn === 'boViecHomNay')      return await boViecHomNay(y, env, db, hoSo);
   if (fn === 'batCheDoBao')       return await batCheDoBao(y, env, db, hoSo);
   if (fn === 'ghiGhimCon')        return await ghiGhimCon(y, env, db, hoSo);

@@ -51,7 +51,7 @@ var G = window.G || {}; window.G = G;
 
   /* ── KHỐI NGHIỆP VỤ — ứng viên theo vai, renderer cắt theo cap ──
      Ứng viên luôn nhiều hơn cap một chút, để sau khi lọc quyền vẫn đủ. */
-  var AZ10 = ['van-hanh-10','nghe-quantri','phan-quyen','phong-ban','tai-chinh-qt','nang-luc-ns','studio',
+  var AZ10 = ['trung-tam-do','van-hanh-10','nghe-quantri','phan-quyen','phong-ban','tai-chinh-qt','nang-luc-ns','studio',
               'crm','noi-dung-tiep-thi','bang-gia','la-chan-30','khoa-dao-tao',
               'bang-viec','dieu-hanh','truy-van-da-chieu','tang-truong'];
   G.KG_VIEC = {
@@ -59,7 +59,7 @@ var G = window.G || {}; window.G = G;
     R01:{cap:10, ds:AZ10},
     R02:{cap:10, ds:AZ10},
     /* R03 Giám đốc — 8 màn điều hành (đều là màn lv3 mở được) */
-    R03:{cap:8, ds:['van-hanh-gd','nghe-giamdoc','phong-ban','nang-luc-ns','dieu-hanh','crm','tai-chinh-ceo','con-nguoi',
+    R03:{cap:8, ds:['trung-tam-do','van-hanh-gd','nghe-giamdoc','phong-ban','nang-luc-ns','dieu-hanh','crm','tai-chinh-ceo','con-nguoi',
                     'khoa-dao-tao','bang-viec','do-luong-he','do-luong-kh','giam-sat','tang-truong']},
     /* R04 Quản lý chuyên môn — giữ chuẩn nghề toàn đội */
     R04:{cap:6, ds:['dk-cua-toi','do-luong-he','nghe-qlcm','nang-luc-ns','tt-cskh','ra-soat-kh',

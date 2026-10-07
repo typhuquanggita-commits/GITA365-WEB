@@ -2441,3 +2441,16 @@ CREATE TABLE IF NOT EXISTS danhGiaKH (maNha TEXT NOT NULL, uid TEXT NOT NULL, th
   nps INTEGER, csat INTEGER, ghiChu TEXT, luc TEXT NOT NULL, PRIMARY KEY (maNha, uid, thang));
 CREATE TABLE IF NOT EXISTS hoSoThang (maNha TEXT NOT NULL, thang TEXT NOT NULL, duLieu TEXT NOT NULL,
   tiemNang INTEGER, tangCS TEXT, chot INTEGER NOT NULL DEFAULT 0, boiAi TEXT, luc TEXT NOT NULL, PRIMARY KEY (maNha, thang));
+
+-- ═════════════════════════════════════════════════════════════
+--  TRUNG TÂM ĐO LƯỜNG & TỐI ƯU (may-chu/trung-tam-toi-uu.js · TU-2026.10-a)
+--  keHoachToiUu: một giải pháp được Super Admin chọn → kế hoạch có người
+--    phụ trách (tự phân bổ theo tải), hạn, các bước; đóng thì đo lại chỉ số.
+--  chupTrungTam: ảnh chụp điểm 7 khối mỗi ngày một dòng — đường xu hướng.
+--  trung-tam-toi-uu.js tự tạo các bảng này lúc chạy; khai ở đây để lược đồ đủ.
+-- ═════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS keHoachToiUu (id TEXT PRIMARY KEY, maGiaiPhap TEXT NOT NULL, kpi TEXT NOT NULL, khoi TEXT NOT NULL,
+  ten TEXT NOT NULL, giaTriDau REAL, mucTieu REAL, vai TEXT, nguoiPhuTrach TEXT NOT NULL, hanLuc TEXT NOT NULL, trangThai TEXT NOT NULL DEFAULT 'moi',
+  buoc TEXT NOT NULL, ghiChu TEXT, ketQua REAL, taoBoi TEXT NOT NULL, taoLuc TEXT NOT NULL, suaLuc TEXT, xongLuc TEXT);
+CREATE INDEX IF NOT EXISTS ix_khtu_nguoi ON keHoachToiUu (nguoiPhuTrach, trangThai);
+CREATE TABLE IF NOT EXISTS chupTrungTam (ngay TEXT PRIMARY KEY, phienBan TEXT, duLieu TEXT NOT NULL, luc TEXT NOT NULL);

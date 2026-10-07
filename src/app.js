@@ -651,6 +651,8 @@ function vaoPhien(a){
   G.dpGiamSat = null;              /* sổ giám sát Agent cũng không ở lại */
   var portal = G.PORTALS[G.S.roleObj.portal];
   G.S.view = (portal && portal.home) || 'ban-do';
+  /* R01–R03 vào thẳng Trung tâm đo lường & tối ưu — số thật thay cho số mẫu của dieu-hanh. */
+  if (G.S.roleObj.lv <= 3 && G.VIEWS['trung-tam-do']) G.S.view = 'trung-tam-do';
   G.S.open = [groupOf(G.S.view) || 'g1'];
   save();
   manCho('Đang mở kho theo phạm vi được cấp phép…');

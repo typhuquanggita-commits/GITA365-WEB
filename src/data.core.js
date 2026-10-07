@@ -530,7 +530,7 @@ G.DUOI = {
   hs:    ['ngoi-nha', 'nhiem-vu', 'tien-bo', 'tro-ly'],
   coach: ['coach-deck', 'bang-viec', 'tien-bo', 'tro-ly'],
   tuvan: ['tuvan-deck', 'bang-viec', 'tien-bo', 'tro-ly'],
-  admin: ['dieu-hanh', 'bang-viec', 'kpi-toi', 'tro-ly'],
+  admin: ['trung-tam-do', 'dieu-hanh', 'bang-viec', 'tro-ly'],
   ctv:   ['bat-dau', 'bang-viec', 'tien-rung', 'tro-ly']
 };
 
@@ -1027,6 +1027,7 @@ G.NAV = [
     {v:'phap-ly-rui-ro', t:'Pháp lý & rủi ro', h:'Hai luật có hiệu lực 01/01/2026 — bảy việc của Luật 91 chia theo AI LÀM · ba ô đồng ý tách bạch, ô về con do CHA MẸ ký · nút xoá chạy thật, hai phía đo-được và lời-khai · bốn câu hỏi mang tới luật sư, KHÔNG có câu trả lời', ic:'shield', star:1, perm:'nghe_chung', capMo:'chung'},
     {v:'he-dieu-hanh', t:'Hệ điều hành CEO', h:'GITA-CEO-OS v3.0 — bốn nhịp vận hành, mỗi nhịp có THỜI LƯỢNG · bảng 12 chỉ số chia theo nguồn, chín cửa đo được và ba ô người khai · năm bước quyết định với hai mốc thời gian · năm chặng lộ trình, không nhảy cóc · bốn câu lệnh, câu thứ tư là phép thử', ic:'compass', star:1, perm:'fin_view', capMo:'chung'},
     {v:'bo-prompt', t:'Bộ prompt · 4 vai', h:'Bốn bản dán thẳng A · B · C · D — DỰNG LÚC CHẠY từ kho, không chép sẵn một chữ nào · vai C phải ở nhà cung cấp KHÁC vai A, soạn không tự duyệt được · sáu bước của một nội dung công khai, hai bước cuối là NGƯỜI · nối vào bảy cửa đã chạy sẵn', ic:'quote', star:1, perm:'nghe_chung', capMo:'chung'},
+    {v:'trung-tam-do', t:'Trung tâm đo lường & tối ưu', h:'Một chỗ đo toàn hệ: 7 khối gom 16 ban · 41 chỉ số · từng vai, từng người, từng hoạt động · kết quả kiểm tra · phân tích & 2–5 giải pháp · phân bổ người · theo dõi triển khai tới khi đo lại', ic:'chart', star:1, capMo:'chung', hienKhi:'xemTrungTamDo'},
     {v:'do-luong-he', t:'Đo lường toàn diện khách hàng', h:'Hồ sơ đo lường hằng tháng từng nhà · sáu điểm gắn kết · tiến bộ · hài lòng · giá trị · rủi ro · tiềm năng · xếp hạng nội bộ & năm tầng chăm sóc · báo cáo tháng toàn hệ · chốt tháng', ic:'chart', star:1, capMo:'chung', hienKhi:'xemDoLuongHe'},
     {v:'credit-gita', t:'Hệ thống Credit (5 tầng × 10 cấp)', h:'10 đồng = 1 credit · gói → 5 quỹ → 50 cấp theo độ khó · giá credit từng hoạt động · credit thưởng · mã coach · chờ R01 duyệt', ic:'vault', star:1, perm:'fin_view', capMo:'chung'},
     {v:'bang-gia', t:'Bảng giá', h:'Số sửa được ngay, khung ở kho — giá là con số TẠM trong lúc dựng nên phải sửa được, còn bậc ấy hứa giao gì thì đổi qua một lượt phát hành · mỗi lần đổi là MỘT DÒNG MỚI có người ký và lý do · giá đã chốt vào lịch thu KHÔNG đổi theo · đổi giá không tự dời thang duyệt chi', ic:'star', star:1, perm:'fin_view', capMo:'chung'},

@@ -33,7 +33,10 @@ sq.prepare("INSERT INTO phieuThu (id, maKhachHang, soTien, hinhThuc, nguoiGhi, g
 sq.prepare("INSERT INTO phieuThu (id, maKhachHang, soTien, hinhThuc, nguoiGhi, ghiLuc, trangThai) VALUES ('P3','K03',999,'chuyenKhoan','nv',?,'choDuyet')").run(tuanTruoc);
 sq.prepare("INSERT INTO hoanTien (id, maKhachHang, soTien, theoLuat, lyDo, nguoiDeXuat, deXuatLuc, trangThai) VALUES ('H1','K04',50,'luật','lý do','nv',?,'daDuyet')").run(hn);
 sq.prepare("INSERT INTO hoaHongTra (id, nhaKem, nhaDuocKem, tangVuot, bac, phanTram, goiCanCu, soTien, trangThai, sinhLuc, traLuc) VALUES ('HH1','K05','K06',1,'B5',10,1000,30,'daTra',?,?)").run(hn, hn);
-sq.prepare("INSERT INTO chiPhi (id, khoanMuc, soTien, ngayChi, hinhThuc, dienGiai, nguoiDeXuat, deXuatLuc) VALUES ('C1','thue-may-chu',40,?,'chuyenKhoan','x','nv',?)").run(hn, hn);
+sq.prepare("INSERT INTO chiPhi (id, khoanMuc, soTien, ngayChi, hinhThuc, dienGiai, nguoiDeXuat, deXuatLuc, trangThai) VALUES ('C1','thue-may-chu',40,?,'chuyenKhoan','x','nv',?,'daDuyet')").run(hn, hn);
+/* đề xuất chưa duyệt / bị từ chối KHÔNG là chi phí */
+sq.prepare("INSERT INTO chiPhi (id, khoanMuc, soTien, ngayChi, hinhThuc, dienGiai, nguoiDeXuat, deXuatLuc, trangThai) VALUES ('C2','x',500,?,'chuyenKhoan','x','nv',?,'choDuyet')").run(hn, hn);
+sq.prepare("INSERT INTO chiPhi (id, khoanMuc, soTien, ngayChi, hinhThuc, dienGiai, nguoiDeXuat, deXuatLuc, trangThai) VALUES ('C3','x',700,?,'chuyenKhoan','x','nv',?,'tuChoi')").run(hn, hn);
 sq.prepare("INSERT INTO baiHocHoanThanh (id, maHocVien, maBai, ngay) VALUES ('B1','HV1','BAI1',?),('B2','HV1','BAI2',?),('B3','HV2','BAI1',?)").run(hn, hn, hn);
 sq.prepare("INSERT INTO soCham (id, maNha, ngay, kieu, denLuc, noiDung, canCu, aiDuyet, boiAi, ghiLuc) VALUES ('S1','K01',?,'wow','XANH','n','c','a','b',?)").run(hn, hn);
 sq.prepare("INSERT INTO soCham (id, maNha, ngay, kieu, denLuc, noiDung, canCu, aiDuyet, boiAi, ghiLuc) VALUES ('S2','K02',?,'nhan','DO','n','c','a','b',?)").run(hn, hn);
@@ -52,7 +55,7 @@ sq.prepare("INSERT INTO audit (id, luc, uid, username, viec) VALUES ('A1',?,'U1'
 const d = await docDongChay({ ngay: 30 }, {}, db, r01);
 kiem('dòng tiền: thu 300 · hoàn 50 · hoa hồng 30 · ròng 220',
   d.ok && d.tien.thu === 300 && d.tien.hoan === 50 && d.tien.hoaHong === 30 && d.tien.rong === 220);
-kiem('dòng chi phí: tổng 40 · lương kỳ 2026-09 đọc được', d.chiPhi.tong === 40 && d.chiPhi.luong && d.chiPhi.luong.ky === '2026-09');
+kiem('dòng chi phí: tổng 40 (chỉ khoản đã duyệt) · lương kỳ 2026-09 đọc được', d.chiPhi.tong === 40 && d.chiPhi.luong && d.chiPhi.luong.ky === '2026-09');
 kiem('dòng giá trị: 3 bài học · 1 WOW · 1 lên tầng', d.giaTri.baiHoc === 3 && d.giaTri.wow === 1 && d.giaTri.lenTang === 1);
 kiem('dòng công việc: audit đếm được, việc nhiều nhất là DA_TRI', d.congViec.tongLuot >= 2 && d.congViec.top[0].viec === 'DA_TRI');
 

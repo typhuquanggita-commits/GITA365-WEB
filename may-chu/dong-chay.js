@@ -50,9 +50,9 @@ export async function docDongChay(y, env, db, hoSo) {
     "SELECT substr(ghiLuc,1,7) thang, COALESCE(SUM(soTien),0) n FROM phieuThu WHERE trangThai = 'daDuyet' GROUP BY thang ORDER BY thang DESC LIMIT 6");
 
   /* ── DÒNG CHI PHÍ ── */
-  const chi = await so(db, 'SELECT COALESCE(SUM(soTien),0) n FROM chiPhi WHERE substr(ngayChi,1,10) >= ?', tu);
+  const chi = await so(db, 'SELECT COALESCE(SUM(soTien),0) n FROM chiPhi WHERE trangThai = \'daDuyet\' AND substr(ngayChi,1,10) >= ?', tu);
   const chiTop = await dsach(db,
-    'SELECT khoanMuc, COALESCE(SUM(soTien),0) n FROM chiPhi WHERE substr(ngayChi,1,10) >= ? GROUP BY khoanMuc ORDER BY n DESC LIMIT 5', tu);
+    'SELECT khoanMuc, COALESCE(SUM(soTien),0) n FROM chiPhi WHERE trangThai = \'daDuyet\' AND substr(ngayChi,1,10) >= ? GROUP BY khoanMuc ORDER BY n DESC LIMIT 5', tu);
   const luong = (await db.prepare('SELECT ky, COALESCE(SUM(luongCung + phanKpi),0) n, COUNT(*) soNguoi FROM bangLuong GROUP BY ky ORDER BY ky DESC LIMIT 1').first()) || null;
   const aiToken = await dsach(db, 'SELECT ncc, SUM(vao + ra) n FROM soTokenDaTri WHERE ngay >= ? GROUP BY ncc ORDER BY n DESC', tu);
 

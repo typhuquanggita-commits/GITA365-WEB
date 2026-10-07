@@ -53,6 +53,9 @@ jobs:
       - name: Thử đo lường khách hàng (số đo · gom tháng · sáu điểm · phân tầng · quyền · khớp app)
         run: node tools/thu-do-luong.mjs
 
+      - name: Thử Trung tâm đo lường & tối ưu (41 chỉ số · vai · người · kiểm tra · giải pháp · phân bổ · đo lại · khớp app)
+        run: node tools/thu-toi-uu.mjs
+
       - name: Thử Truy vấn đa chiều (bốn dòng chảy · bảng điểm 16 ban)
         run: node tools/thu-dong-chay.mjs
 
