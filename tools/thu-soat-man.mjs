@@ -83,7 +83,9 @@ sq.prepare("UPDATE soatMan SET luc = '2020-01-01T00:00:00.000Z'").run();
 kiem('quá 14 ngày → tự xoá, cửa trả "trống"', (await M.layBaoCaoSoat({}, {}, db)).trong === true && Number(sq.prepare('SELECT COUNT(*) n FROM soatMan').get().n) === 0);
 
 const wf = fs.readFileSync(ROOT + '/.github/workflows/lay-bao-cao-soat.yml', 'utf8');
-kiem('workflow không dùng secret, kiểm khuôn bản mã trước khi tải lên', !/secrets\./.test(wf) && /d,dv,iv,k,v,z/.test(wf));
+kiem('workflow không dùng secret, kiểm khuôn bản mã trước khi đẩy', !/secrets\./.test(wf) && /d,dv,iv,k,v,z/.test(wf));
+const day = [...wf.matchAll(/git push[^\n]*/g)].map(m => m[0]);
+kiem('workflow chỉ đẩy vào nhánh dữ liệu bao-cao-soat, không chạm main', day.length === 1 && /bao-cao-soat$/.test(day[0].trim()) && !/\bmain\b/.test(day[0]));
 
 console.log('\n' + dat + ' đạt · ' + truot + ' sai');
 process.exit(truot ? 1 : 0);

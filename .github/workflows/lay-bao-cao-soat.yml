@@ -4,10 +4,12 @@
 # Super Admin chạy "Soát toàn bộ màn" trong app; báo cáo được mã hoá ngay
 # trong trình duyệt (AES-256-GCM bọc RSA-OAEP-3072, khoá công khai ở
 # src/khoa-soat.js) rồi cất ở máy chủ. Workflow này chỉ CHUYỂN bản mã ấy
-# thành một artifact để người giữ khoá riêng tải về và giải. Kho mã công
-# khai nên workflow KIỂM trước khi tải lên: gói phải đúng khuôn bản mã,
-# không một trường đọc được nào ngoài thời điểm và số màn.
-# Không dùng secret nào — cửa layBaoCaoSoat chỉ trả bản mã.
+# sang nhánh dữ liệu riêng `bao-cao-soat` (một commit, không lịch sử) để
+# người giữ khoá riêng lấy bằng git rồi XOÁ nhánh. Kho mã công khai nên
+# workflow KIỂM trước khi đẩy: gói phải đúng khuôn bản mã, không một
+# trường đọc được nào ngoài thời điểm và số màn.
+# Không dùng secret nào: cửa layBaoCaoSoat chỉ trả bản mã; quyền đẩy là
+# token tự cấp của chính lượt chạy, chỉ ghi được vào nhánh bao-cao-soat.
 # ═══════════════════════════════════════════════════════════════
 name: Lấy báo cáo soát toàn màn (bản mã)
 
@@ -15,7 +17,11 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
+
+concurrency:
+  group: lay-bao-cao-soat
+  cancel-in-progress: false
 
 jobs:
   lay:
@@ -24,28 +30,36 @@ jobs:
       - name: Lấy bản mã mới nhất từ máy chủ
         run: |
           set -eu
-          curl -fsS --max-time 30 -X POST "https://gita365.typhuquanggita.workers.dev/" \
-            -H 'Content-Type: text/plain;charset=utf-8' \
-            --data '{"fn":"layBaoCaoSoat"}' -o tra.json
+          ma=$(curl -sS --max-time 30 -o tra.json -w '%{http_code}' -X POST "https://gita365.typhuquanggita.workers.dev/" \
+            -H 'Content-Type: text/plain;charset=utf-8' --data '{"fn":"layBaoCaoSoat"}' || echo 000)
+          if [ "$ma" != "200" ]; then echo "::error::Máy chủ trả HTTP $ma"; exit 1; fi
           node <<'NODE'
           const fs = require('fs');
           const r = JSON.parse(fs.readFileSync('tra.json', 'utf8'));
-          if (!r.ok) { console.error('Máy chủ trả lỗi: ' + (r.error || '?')); process.exit(1); }
-          if (r.trong) { console.error('Chưa có báo cáo nào trong 14 ngày. Super Admin bấm "Gửi bản mã hoá" ở màn Soát toàn bộ màn trước.'); process.exit(1); }
+          const loi = m => { console.log('::error::' + m); process.exit(1); };
+          if (!r.ok) loi('Máy chủ trả lỗi: ' + (r.error || '?'));
+          if (r.trong) loi('Chưa có báo cáo nào trong 14 ngày — Super Admin bấm "Gửi bản mã hoá" ở màn Soát toàn bộ màn trước.');
           const g = JSON.parse(r.goi);
           const B64 = /^[A-Za-z0-9+/]+={0,2}$/;
           const dung = Object.keys(g).sort().join(',') === 'd,dv,iv,k,v,z' && g.v === 1 && /^[0-9a-f]{16}$/.test(g.dv) &&
             g.k.length === 512 && B64.test(g.k) && g.iv.length === 16 && B64.test(g.iv) && B64.test(g.d);
-          if (!dung) { console.error('Gói không đúng khuôn bản mã — không tải lên.'); process.exit(1); }
+          if (!dung) loi('Gói không đúng khuôn bản mã — không đẩy.');
           fs.mkdirSync('ra', { recursive: true });
           fs.writeFileSync('ra/soat-ban-ma.json', JSON.stringify({ luc: r.luc, so: r.so, goi: g }));
-          console.log('Bản mã lúc ' + r.luc + ' · ' + r.so + ' màn · khoá ' + g.dv + ' · ' + Math.round(r.goi.length / 1024) + ' KB');
+          console.log('::notice::Bản mã lúc ' + r.luc + ' · ' + r.so + ' màn · khoá ' + g.dv + ' · ' + Math.round(r.goi.length / 1024) + ' KB');
           NODE
           rm -f tra.json
 
-      - name: Tải bản mã lên (giữ 3 ngày)
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: soat-ban-ma
-          path: ra/soat-ban-ma.json
-          retention-days: 3
+      - name: Đẩy bản mã sang nhánh dữ liệu bao-cao-soat
+        env:
+          TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          cd ra
+          git init -q -b bao-cao-soat
+          git config user.name "gita-soat-toan-man"
+          git config user.email "gita-soat-toan-man@users.noreply.github.com"
+          git add soat-ban-ma.json
+          git commit -qm "Bản mã báo cáo soát toàn màn"
+          git push -q -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" bao-cao-soat
+          echo "::notice::Đã đẩy bản mã sang nhánh bao-cao-soat."
