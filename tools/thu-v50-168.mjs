@@ -105,6 +105,10 @@ await CT.capQuyenTaiChinh({ username: 'tv2', chucNang: 'keToanThu', lyDo: 'Kế 
 const q = await CT.quyenCua(db, 'tv2');
 kiem('vị trí ban tài chính do Super Admin cấp → mở công nợ theo phạm vi thu', q.keToanThu === true && (await TC.congNo({ maKhachHang: 'K1' }, {}, db, ho('tv2', 'R11', 'T2'))).ok !== false);
 
+const HK = await nap('ho-so-khach.js');
+kiem('Coach KHÔNG tự gán mình làm Coach của nhà khác (nới phạm vi CRM)', (await HK.suaTepKhach({ maKhachHang: 'K1', sua: { coach: 'coach2' } }, {}, db, C2)).code === 'NOPERM');
+kiem('Coach phụ trách cũng KHÔNG đổi người phụ trách', (await HK.suaTepKhach({ maKhachHang: 'K1', sua: { tuVan: 'coach1' } }, {}, db, C1)).code === 'NOPERM');
+kiem('Coach KHÔNG sửa tệp nhà không phụ trách', (await HK.suaTepKhach({ maKhachHang: 'K1', sua: { band: 'XANH' } }, {}, db, C2)).code === 'NOPERM');
 const w = fs.readFileSync(ROOT + '/may-chu/worker.js', 'utf8');
 kiem('đăng nhập trả vị trí tài chính (taiChinhMuc) cho máy khách', /taiChinhMuc: taiChinhMuc/.test(w));
 

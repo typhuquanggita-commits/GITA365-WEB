@@ -148,6 +148,16 @@ export async function suaTepKhach(y, env, db, hoSo) {
   if (!hs) return {ok: false, error: 'Không tìm thấy tệp khách hàng này.'};
 
   const sua = y.sua || {};
+  /* V50·168 · CRM CÓ GIỚI HẠN: cột coach / tuVan chính là thứ bộ lọc "khách
+     của tôi" ở CRM dùng. Để Coach tự ghi tên mình vào nhà khác là tự nới
+     phạm vi CRM. Giao người phụ trách chỉ từ Quản lý chuyên môn trở lên;
+     dưới mức ấy chỉ sửa được tệp của nhà mình đang phụ trách. */
+  if (lv > 4) {
+    if (sua.coach !== undefined || sua.tuVan !== undefined)
+      return {ok: false, code: 'NOPERM', error: 'Giao Coach / Tư vấn phụ trách do Quản lý chuyên môn trở lên.'};
+    if (hs.coach !== hoSo.u && hs.tuVan !== hoSo.u)
+      return {ok: false, code: 'NOPERM', error: 'Chỉ sửa được tệp của nhà mình đang phụ trách.'};
+  }
   const cot = [], gt = [], doi = [];
   for (const k of SUA_DUOC) {
     if (sua[k] === undefined) continue;
