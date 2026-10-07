@@ -68,6 +68,9 @@ jobs:
       - name: Thử V50·168 (≤168 trang · 15 màn chính · trần màn theo vai · cấp quyền chỉ Super Admin · Coach↔CRM · tài chính & CRM theo giới hạn)
         run: node tools/thu-v50-168.mjs
 
+      - name: Khung dữ liệu CRM · Tài chính khớp lược đồ csdl.sql
+        run: node tools/dung-khung-du-lieu.js --kiem
+
       - name: Thử Truy vấn đa chiều (bốn dòng chảy · bảng điểm 16 ban)
         run: node tools/thu-dong-chay.mjs
 

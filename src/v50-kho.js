@@ -17,16 +17,24 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
 
   function ve(c){
     var V = G.V50, M = G.V50M;
-    var nhanSu = V.laNhanSu();
+    var nhanSu = V.laNhanSu(), khach = M.laKhach();
     var mo = [], khoa = [];
     c.man.forEach(function(v){
       var it = G.navItem ? G.navItem(v) : null; if(!it) return;
-      var ly = M.khoa(v);
-      if(!ly) mo.push(it);
-      else if(ly !== 'Chưa có trên bản này') khoa.push([it, ly]);
+      var loai = M.khoaLoai(v);
+      if(!loai) mo.push(it);
+      /* Khách chỉ thấy chương khoá theo quyền lợi (tầng · gói · kích hoạt);
+         chương nghiệp vụ của đội ngũ ẩn hẳn. Nhân sự chỉ thấy chương khoá do gói. */
+      else if(loai !== 'khong' && (khach ? loai !== 'vai' : loai !== 'vai')) khoa.push([it, M.khoa(v)]);
     });
     var dung = M.HUB.filter(function(hb){ return hb.kho.indexOf(c.ma) >= 0; }).map(function(hb){ return hb.ten; });
-    var o = U.ph({ eyebrow:'KHO NGHỀ · V50', ic:'vault', grad:1, t:c.ten, lead:c.mo });
+    var o = U.ph({ eyebrow: khach ? 'BÀI ĐỌC CỦA NHÀ MÌNH' : 'KHO NGHỀ · V50', ic:'vault', grad:1, t:c.ten, lead:c.mo });
+    if(khach){
+      o += '<div class="card mb"><b>Bài đã mở</b>' + (mo.length ? '<div class="v50-man">' + mo.map(function(it){ return '<button class="v50-mo" data-v="' + h(it.v) + '">' + ic(it.ic || 'book','w-3 h-3') + '<span>' + h(G.iname(it)) + '</span></button>'; }).join('') + '</div>' : '<p class="sm muted mt">Chưa có bài nào mở với tài khoản này.</p>') + '</div>';
+      if(khoa.length) o += '<div class="card mb"><b>Mở ở chặng sau</b><p class="tiny muted" style="margin:3px 0 0">Mở khi nhà lên tầng hoặc khi gói dịch vụ được kích hoạt.</p><div class="v50-man">' +
+        khoa.map(function(x){ return '<span class="v50-mo v50-khoa" title="' + h(x[1]) + '">' + ic('lock','w-3 h-3') + '<span>' + h(G.iname(x[0])) + ' <small class="muted">· ' + h(x[1]) + '</small></span></span>'; }).join('') + '</div></div>';
+      return o;
+    }
     o += '<div class="grid g3 mb">' +
       '<div class="card"><div class="up tiny muted">Chương đã mở</div><div class="v50-so">' + mo.length + '<small class="tiny muted"> / ' + (mo.length + khoa.length) + '</small></div><div class="tiny muted">theo vai, tầng và gói của tài khoản này</div></div>' +
       '<div class="card"><div class="up tiny muted">Chỉ số chịu tác động</div><b>' + h(kpiTen(c.kpi)) + '</b><div class="tiny muted">đo ở Trung tâm đo lường</div></div>' +

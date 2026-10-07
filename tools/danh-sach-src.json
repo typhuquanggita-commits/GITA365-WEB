@@ -206,6 +206,8 @@
     "src/soat-toan-man.js",
     "src/v50-kho.js",
     "src/v50-cot.js",
+    "src/data-khung.js",
+    "src/khung-du-lieu.js",
     "src/studio-he.js",
     "src/studio-lam-phim.js",
     "src/studio-ban-dung.js",

@@ -278,5 +278,19 @@ export async function ghiDoiTang(db, {maKhachHang, tuTang, denTang, kpi, boi, ly
   await db.prepare('UPDATE hoSoKhach SET tang = ?, suaLuc = ? WHERE maKhachHang = ?')
     .bind(denTang, luc, maKhachHang).run();
 
+  /* V50·168 · DỮ LIỆU NỐI NGẦM: tầng học của từng học viên (nguoiHocTang) là
+     thứ lộ trình cá nhân hoá và khoá nội dung theo tầng đọc. Trước đây không
+     cửa nào ghi bảng này, nên hai chức năng ấy luôn đọc bảng trống. Đổi tầng
+     ở đây là chỗ ghi duy nhất — ghi luôn, không bao giờ hạ (cùng luật L02). */
+  try {
+    const n = await db.prepare('UPDATE nguoiHocTang SET tang = MAX(tang, ?), lenTangLuc = ?, boiAi = ? WHERE maKhachHang = ?')
+      .bind(Number(denTang), luc, boi || null, maKhachHang).run();
+    if (!Number(((n || {}).meta || {}).changes || 0) && maHocVien) {
+      const ph = uidPhuHuynh || ((await db.prepare('SELECT uidPhuHuynh FROM hoSoKhach WHERE maKhachHang = ?').bind(maKhachHang).first()) || {}).uidPhuHuynh;
+      if (ph) await db.prepare('INSERT INTO nguoiHocTang (id,maHocVien,maKhachHang,uidPhuHuynh,tang,vaoLuc,lenTangLuc,boiAi) VALUES (?,?,?,?,?,?,?,?)')
+        .bind('NHT-' + tokenMoi().slice(0, 14), maHocVien, maKhachHang, ph, Number(denTang), luc, luc, boi || null).run();
+    }
+  } catch (e) { /* bảng phụ — không làm hỏng lượt đổi tầng đã ghi lịch sử */ }
+
   return await dungLichThu(db, maKhachHang, denTang, luc);
 }

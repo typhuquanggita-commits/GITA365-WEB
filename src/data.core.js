@@ -101,8 +101,9 @@ G.PERM = {
      Ba mức này cộng với tài chính (R01–R03) tạo ra đúng bậc thang:
      100% · 95% · 91% · 90% — xem G.TAM_NHIN bên dưới. */
   qt_trang:2, dh_toan_he:4, nghe_chung:12,
-  /* V50·168 — chủ hệ: "việc cấp quyền hệ thống 100% do Super Admin". Mở
-     tài khoản, phân quyền, cấp quyền CRM chỉ R01; máy chủ gác cùng luật. */
+  /* V50·168 — chủ hệ: "việc cấp quyền hệ thống 100% do Super Admin". Máy chủ
+     gác (mọi cửa cấp quyền chỉ R01). Ở app, Admin hệ thống vẫn THẤY màn cấp
+     quyền (hiển thị 100%) ở chế độ xem; cap_quyen dùng cho nút thao tác. */
   cap_quyen:1,
 
   /* ══ THƯ VIỆN TÀI LIỆU ══
@@ -537,7 +538,7 @@ G.DUOI = {
   coach: ['coach-dp', 'coach-he', 'bang-viec', 'tro-ly'],
   tuvan: ['tt-cskh', 'crm', 'bang-viec', 'tro-ly'],
   admin: ['trung-tam-do', 'dk-cua-toi', 'bang-viec', 'tro-ly'],
-  ctv:   ['bat-dau', 'bang-viec', 'tien-rung', 'tro-ly']
+  ctv:   ['ve-tinh', 'dai-su', 'hoa-hong', 'tro-ly']   /* V50·168: khách không thấy màn nghiệp vụ (bảng công việc) */
 };
 
 /* ══════════ 2. NĂM TẦNG ══════════ */
@@ -1048,6 +1049,7 @@ G.NAV = [
     {v:'phap-ly-rui-ro', t:'Pháp lý & rủi ro', h:'Hai luật có hiệu lực 01/01/2026 — bảy việc của Luật 91 chia theo AI LÀM · ba ô đồng ý tách bạch, ô về con do CHA MẸ ký · nút xoá chạy thật, hai phía đo-được và lời-khai · bốn câu hỏi mang tới luật sư, KHÔNG có câu trả lời', ic:'shield', star:1, perm:'nghe_chung', capMo:'chung'},
     {v:'he-dieu-hanh', t:'Hệ điều hành CEO', h:'GITA-CEO-OS v3.0 — bốn nhịp vận hành, mỗi nhịp có THỜI LƯỢNG · bảng 12 chỉ số chia theo nguồn, chín cửa đo được và ba ô người khai · năm bước quyết định với hai mốc thời gian · năm chặng lộ trình, không nhảy cóc · bốn câu lệnh, câu thứ tư là phép thử', ic:'compass', star:1, perm:'fin_view', capMo:'chung'},
     {v:'bo-prompt', t:'Bộ prompt · 4 vai', h:'Bốn bản dán thẳng A · B · C · D — DỰNG LÚC CHẠY từ kho, không chép sẵn một chữ nào · vai C phải ở nhà cung cấp KHÁC vai A, soạn không tự duyệt được · sáu bước của một nội dung công khai, hai bước cuối là NGƯỜI · nối vào bảy cửa đã chạy sẵn', ic:'quote', star:1, perm:'nghe_chung', capMo:'chung'},
+    {v:'khung-du-lieu', t:'Khung dữ liệu & ma trận quyền', h:'Cấu trúc bảng CRM · Tài chính (cột, ý nghĩa, ai đọc · ai ghi) · ma trận vai × màn · luồng dữ liệu khách ↔ nhân sự', ic:'grid', perm:'qt_trang', capMo:'chung'},
     {v:'soat-toan-man', t:'Soát toàn bộ màn', h:'Super Admin · ứng dụng tự mở từng mục cột trái bằng phiên thật, đo công cụ / chỉ để đọc / số minh hoạ / khoá / lỗi · gửi trợ lý bản mã hoá', ic:'search', perm:'qt_trang', capMo:'chung', hienKhi:'soatDuocToanMan'},
     {v:'trung-tam-do', t:'Trung tâm đo lường & tối ưu', h:'Một chỗ đo toàn hệ: 7 khối gom 16 ban · 41 chỉ số · từng vai, từng người, từng hoạt động · kết quả kiểm tra · phân tích & 2–5 giải pháp · phân bổ người · theo dõi triển khai tới khi đo lại', ic:'chart', star:1, capMo:'chung', hienKhi:'xemTrungTamDo'},
     {v:'do-luong-he', t:'Đo lường toàn diện khách hàng', h:'Hồ sơ đo lường hằng tháng từng nhà · sáu điểm gắn kết · tiến bộ · hài lòng · giá trị · rủi ro · tiềm năng · xếp hạng nội bộ & năm tầng chăm sóc · báo cáo tháng toàn hệ · chốt tháng', ic:'chart', star:1, capMo:'chung', hienKhi:'xemDoLuongHe'},
@@ -1076,9 +1078,9 @@ G.NAV = [
     {v:'suc-chua-toc-do', t:'Sức chứa & Tốc độ', h:'Bộ não chạy nhanh và chứa nhiều trên Cloudflare bằng NĂM TRỤ (việc nặng ở máy khách · chỉ mục đường tra nóng · bộ nhớ đệm ở biên · Workers tự co giãn · R2 cho tệp lớn), không bằng một con số · "1TB" là dung lượng, đạt bằng R2 (hàng TB) + chia mảnh D1, không phải mức của bộ não · sức chứa ĐO ĐƯỢC lúc gọi (cửa doSucChua), không tự khai · nói ra cả trần Cloudflare lẫn đường vượt trần', ic:'vault', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'thanh-tra-soi', t:'Mười tổ thanh tra soi', h:'Mười thanh tra ĐỘC LẬP chuyên phá các điểm chưa tốt, mười CẤP × 100 bậc = 1000 bậc tiêu chuẩn liền mạch · mỗi tổ NEO vào một phép soi CÓ THẬT trong mã nguồn (soatRaNgoai · truyHoiHe · capDuyetTheoTien · nhaCuaMinh · xuatDuLieuNha · danhDauXoa · dieuPhoiTroLy · a11yNhan · lapTheVungManh · kiemPhien), không phải một dòng khẩu hiệu — mục 114 đối chiếu tên ấy tồn tại trong tệp, trỏ vào cái tên bịa thì đỏ · cấp cao = hậu quả nặng hơn khi hỏng, cấp 10 là rò dữ liệu một đứa trẻ ra ngoài', ic:'shield', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'kien-truc-thi-giac', t:'Kiến trúc sư thị giác', h:'Đọc màn · tài liệu · đề xuất · kho · hiến pháp · luật thương hiệu', ic:'spark', star:1, perm:'qt_trang', capMo:'chung'},
-    {v:'phan-quyen',   t:'Phân công & cấp quyền',      h:'15 vị trí × 31 quyền · bấm ô để đổi', ic:'shield', star:1, perm:'cap_quyen', capMo:'quantri'},
-    {v:'phan-quyen-crm',t:'Phân quyền CRM',            h:'Cấp quyền CRM cho bộ phận · xem/sửa/quản lý · ai được cấp mới thấy', ic:'lock', star:1, perm:'cap_quyen', capMo:'quantri'},
-    {v:'cap-tai-khoan',t:'Mở tài khoản mới',           h:'Cấp cho vị trí từ Tư vấn trở lên',    ic:'plus', star:1, perm:'cap_quyen', capMo:'quantri'},
+    {v:'phan-quyen',   t:'Phân công & cấp quyền',      h:'15 vị trí × 31 quyền · bấm ô để đổi', ic:'shield', star:1, perm:'qt_trang', capMo:'quantri'},
+    {v:'phan-quyen-crm',t:'Phân quyền CRM',            h:'Cấp quyền CRM cho bộ phận · xem/sửa/quản lý · ai được cấp mới thấy', ic:'lock', star:1, perm:'qt_trang', capMo:'quantri'},
+    {v:'cap-tai-khoan',t:'Mở tài khoản mới',           h:'Cấp cho vị trí từ Tư vấn trở lên',    ic:'plus', star:1, perm:'qt_trang', capMo:'quantri'},
     {v:'khoa-tai-khoan',t:'Khoá · mở lại · xoá',       h:'Vòng đời một tài khoản, có lý do',    ic:'lock', perm:'qt_trang', capMo:'quantri'},
     {v:'nguoi-dung',   t:'Danh bạ người dùng',         h:'Ai đang ở vị trí nào, hoạt động ra sao',ic:'users', perm:'qt_trang', capMo:'quantri'},
     {v:'sap-xep',     t:'Sắp xếp thư mục',              h:'Đổi thứ tự · ẩn bớt · thêm thư mục mới', ic:'orbit', star:1, perm:'qt_trang', capMo:'quantri'},

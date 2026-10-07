@@ -41,12 +41,18 @@ const ds = r => M.hubVai(r);
 kiem('Phụ huynh · Học sinh · CTV: đúng 3 màn; khách lạ ≤ 3', ['R13', 'R14', 'R15'].every(r => ds(r).length === 3) && ds('khach-la').length <= 3);
 kiem('Coach → Chuyên viên dữ liệu (R06–R12): tối đa 5 màn', ['R06', 'R07', 'R08', 'R09', 'R10', 'R11', 'R12'].every(r => ds(r).length <= 5 && ds(r).length >= 4));
 kiem('Trưởng nhóm Coach → Giám đốc (R03–R05): tối đa 10 màn', ['R03', 'R04', 'R05'].every(r => ds(r).length <= 10));
-kiem('Admin · Super Admin: tối đa 12 màn, có Tài khoản & quyền', ['R01', 'R02'].every(r => ds(r).length <= 12 && ds(r).includes('quan-tri')));
+kiem('Admin · Super Admin: hiển thị 100% — đủ 15 màn chính (10 nghiệp vụ + 5 khu khách hàng)', ['R01', 'R02'].every(r => M.hubTatCa(r).length === M.HUB.length && ds(r).includes('quan-tri')));
+kiem('tách khu: màn của khách chỉ gồm màn khu khách; màn nghiệp vụ nhân sự chỉ gồm màn khu nhân sự', ['R13', 'R14', 'R15', 'khach-la'].every(r => ds(r).every(id => M.hub(id).khu === 'khach')) &&
+  ['R01','R02','R03','R04','R05','R06','R07','R08','R09','R10','R11','R12'].every(r => ds(r).every(id => M.hub(id).khu === 'nhansu') && M.hubKhach(r).every(id => M.hub(id).khu === 'khach')));
+kiem('nhân sự R03–R12 có khu vực khách hàng riêng (xem theo quyền)', ['R03','R07','R11','R12'].every(r => M.hubKhach(r).length >= 2));
+kiem('bảng điều khiển của phụ huynh / học viên / đại sứ khớp vào khu khách, không vào Bàn làm việc nhân sự', M.hubCua('dk-phuhuynh-nhip') === 'nha-minh' && M.hubCua('dk-hocvien') === 'nha-minh' && M.hubCua('dk-daisu-hoa-hong') === 've-tinh' && M.hubCua('dk-coach-ca') === 'ban-lam-viec');
+kiem('cùng một trang hai khu: gia đình mở Bảng điều khiển ở Nhà mình, Coach mở ở Bàn làm việc', M.hubCua('dk-cua-toi', M.hubTatCa('R13')) === 'nha-minh' && M.hubCua('dk-cua-toi', M.hubTatCa('R07')) === 'ban-lam-viec');
 kiem('mọi màn chính khai ở vai đều có thật', Object.values(M.VAI).every(l => l.every(id => M.hub(id))));
 kiem('gia đình không có màn quản trị, tài chính, CRM', ['R13', 'R14', 'R15'].every(r => !ds(r).some(id => ['quan-tri', 'tai-chinh', 'khach-crm', 'dieu-hanh', 'van-hanh-he'].includes(id))));
 kiem('Coach có Hệ điều hành Coach VÀ Khách hàng & CRM (cập nhật tiến trình chăm sóc)', ['R05', 'R06', 'R07'].every(r => ds(r).includes('coach') && ds(r).includes('khach-crm')));
 const coChay = ['phan-quyen', 'phan-quyen-crm', 'cap-tai-khoan'].map(v => { let it; G.NAV.forEach(g => g.items.forEach(x => { if (x.v === v) it = x; })); return it && it.perm; });
-kiem('ba phần cấp quyền mang quyền cap_quyen (chỉ R01) ở app', coChay.every(p => p === 'cap_quyen') && G.PERM.cap_quyen === 1);
+kiem('màn cấp quyền: Admin hệ thống THẤY (hiển thị 100%), thao tác do máy chủ chỉ cho Super Admin', coChay.every(p => p === 'qt_trang') && /Chế độ xem: cấp quyền 100% do Super Admin/.test(fs.readFileSync(ROOT + '/src/v50-cot.js', 'utf8')));
+kiem('khung bảng CRM & Tài chính là phần của Khách hàng & CRM, Tài chính, Tài khoản & quyền', ['khach-crm', 'tai-chinh', 'quan-tri'].every(id => M.hub(id).phan.includes('khung-du-lieu')) && nav.has('khung-du-lieu'));
 
 /* ══ 2 · MÁY CHỦ ══ */
 const sq = new DatabaseSync(':memory:');
@@ -109,6 +115,10 @@ const HK = await nap('ho-so-khach.js');
 kiem('Coach KHÔNG tự gán mình làm Coach của nhà khác (nới phạm vi CRM)', (await HK.suaTepKhach({ maKhachHang: 'K1', sua: { coach: 'coach2' } }, {}, db, C2)).code === 'NOPERM');
 kiem('Coach phụ trách cũng KHÔNG đổi người phụ trách', (await HK.suaTepKhach({ maKhachHang: 'K1', sua: { tuVan: 'coach1' } }, {}, db, C1)).code === 'NOPERM');
 kiem('Coach KHÔNG sửa tệp nhà không phụ trách', (await HK.suaTepKhach({ maKhachHang: 'K1', sua: { band: 'XANH' } }, {}, db, C2)).code === 'NOPERM');
+/* dữ liệu nối ngầm: đổi tầng ghi luôn tầng học của học viên */
+sq.prepare("INSERT INTO nguoiHocTang (id, maHocVien, maKhachHang, uidPhuHuynh, tang) VALUES ('N1','HV1','K1','P1',3)").run();
+try { await HK.ghiDoiTang(db, { maKhachHang: 'K1', tuTang: 3, denTang: 4, boi: 'chu', lyDo: 'thử' }); } catch (e) { /* lịch thu phía sau không thuộc phép thử này */ }
+kiem('đổi tầng cập nhật luôn tầng học (nguoiHocTang) mà lộ trình cá nhân hoá đọc', sq.prepare("SELECT tang FROM nguoiHocTang WHERE maKhachHang='K1'").get().tang === 4 && sq.prepare("SELECT tang FROM hoSoKhach WHERE maKhachHang='K1'").get().tang === 4);
 const w = fs.readFileSync(ROOT + '/may-chu/worker.js', 'utf8');
 kiem('đăng nhập trả vị trí tài chính (taiChinhMuc) cho máy khách', /taiChinhMuc: taiChinhMuc/.test(w));
 

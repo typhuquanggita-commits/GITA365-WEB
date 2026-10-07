@@ -808,6 +808,9 @@ function leftNav(){
     tongKhoa++;
     if(!it.perm || G.can(it.perm)) choTang++;   /* hụt gói, không hụt quyền */
   }); });
+  /* V50·168: đếm theo màn của vai (khách không bị báo "86 mục chưa tới lượt"
+     của 270 mục cũ — chỉ phần thật sự thuộc quyền lợi của mình). */
+  if(G.v50Bat168 && G.v50Bat168() && G.v50DemPhamVi){ var d168 = G.v50DemPhamVi(); tongMo = d168.mo; tongKhoa = d168.khoa; choTang = d168.choTang; }
 
   /* Chỉ so khi kho đã nạp xong. Đang nạp mà so thì tập mục còn dao động,
      và dải sẽ báo "vừa mở" rồi "vừa mở" lần nữa trong cùng một lần vào. */
@@ -898,7 +901,7 @@ function leftNav(){
           mo.map(nut).join('')+
         '</div></div>';
     }).join('')) + '</div>'+
-    '<div class="foot"><button class="nav-i" data-v="toi">'+ic('home')+'<span class="lb">'+h(G.L('myAccount'))+'</span></button>'+
+    '<div class="foot">'+((!G.allowed || G.allowed('toi')) ? '<button class="nav-i" data-v="toi">'+ic('home')+'<span class="lb">'+h(G.L('myAccount'))+'</span></button>' : '')+
     (G.can('sua_noi_dung') ? '<button class="nav-i" data-v="sap-xep">'+ic('orbit')+
       '<span class="lb">Sắp xếp thư mục</span></button>' : '')+
     '<button class="nav-i" data-act="doi-mk-mo">'+ic('lock')+'<span class="lb">'+h(G.L('changePw'))+'</span></button>'+

@@ -128,8 +128,9 @@ G.PERM = {
      Ba mức này cộng với tài chính (R01–R03) tạo ra đúng bậc thang:
      100% · 95% · 91% · 90% — xem G.TAM_NHIN bên dưới. */
   qt_trang:2, dh_toan_he:4, nghe_chung:12,
-  /* V50·168 — chủ hệ: "việc cấp quyền hệ thống 100% do Super Admin". Mở
-     tài khoản, phân quyền, cấp quyền CRM chỉ R01; máy chủ gác cùng luật. */
+  /* V50·168 — chủ hệ: "việc cấp quyền hệ thống 100% do Super Admin". Máy chủ
+     gác (mọi cửa cấp quyền chỉ R01). Ở app, Admin hệ thống vẫn THẤY màn cấp
+     quyền (hiển thị 100%) ở chế độ xem; cap_quyen dùng cho nút thao tác. */
   cap_quyen:1,
 
   /* ══ THƯ VIỆN TÀI LIỆU ══
@@ -564,7 +565,7 @@ G.DUOI = {
   coach: ['coach-dp', 'coach-he', 'bang-viec', 'tro-ly'],
   tuvan: ['tt-cskh', 'crm', 'bang-viec', 'tro-ly'],
   admin: ['trung-tam-do', 'dk-cua-toi', 'bang-viec', 'tro-ly'],
-  ctv:   ['bat-dau', 'bang-viec', 'tien-rung', 'tro-ly']
+  ctv:   ['ve-tinh', 'dai-su', 'hoa-hong', 'tro-ly']   /* V50·168: khách không thấy màn nghiệp vụ (bảng công việc) */
 };
 
 /* ══════════ 2. NĂM TẦNG ══════════ */
@@ -1075,6 +1076,7 @@ G.NAV = [
     {v:'phap-ly-rui-ro', t:'Pháp lý & rủi ro', h:'Hai luật có hiệu lực 01/01/2026 — bảy việc của Luật 91 chia theo AI LÀM · ba ô đồng ý tách bạch, ô về con do CHA MẸ ký · nút xoá chạy thật, hai phía đo-được và lời-khai · bốn câu hỏi mang tới luật sư, KHÔNG có câu trả lời', ic:'shield', star:1, perm:'nghe_chung', capMo:'chung'},
     {v:'he-dieu-hanh', t:'Hệ điều hành CEO', h:'GITA-CEO-OS v3.0 — bốn nhịp vận hành, mỗi nhịp có THỜI LƯỢNG · bảng 12 chỉ số chia theo nguồn, chín cửa đo được và ba ô người khai · năm bước quyết định với hai mốc thời gian · năm chặng lộ trình, không nhảy cóc · bốn câu lệnh, câu thứ tư là phép thử', ic:'compass', star:1, perm:'fin_view', capMo:'chung'},
     {v:'bo-prompt', t:'Bộ prompt · 4 vai', h:'Bốn bản dán thẳng A · B · C · D — DỰNG LÚC CHẠY từ kho, không chép sẵn một chữ nào · vai C phải ở nhà cung cấp KHÁC vai A, soạn không tự duyệt được · sáu bước của một nội dung công khai, hai bước cuối là NGƯỜI · nối vào bảy cửa đã chạy sẵn', ic:'quote', star:1, perm:'nghe_chung', capMo:'chung'},
+    {v:'khung-du-lieu', t:'Khung dữ liệu & ma trận quyền', h:'Cấu trúc bảng CRM · Tài chính (cột, ý nghĩa, ai đọc · ai ghi) · ma trận vai × màn · luồng dữ liệu khách ↔ nhân sự', ic:'grid', perm:'qt_trang', capMo:'chung'},
     {v:'soat-toan-man', t:'Soát toàn bộ màn', h:'Super Admin · ứng dụng tự mở từng mục cột trái bằng phiên thật, đo công cụ / chỉ để đọc / số minh hoạ / khoá / lỗi · gửi trợ lý bản mã hoá', ic:'search', perm:'qt_trang', capMo:'chung', hienKhi:'soatDuocToanMan'},
     {v:'trung-tam-do', t:'Trung tâm đo lường & tối ưu', h:'Một chỗ đo toàn hệ: 7 khối gom 16 ban · 41 chỉ số · từng vai, từng người, từng hoạt động · kết quả kiểm tra · phân tích & 2–5 giải pháp · phân bổ người · theo dõi triển khai tới khi đo lại', ic:'chart', star:1, capMo:'chung', hienKhi:'xemTrungTamDo'},
     {v:'do-luong-he', t:'Đo lường toàn diện khách hàng', h:'Hồ sơ đo lường hằng tháng từng nhà · sáu điểm gắn kết · tiến bộ · hài lòng · giá trị · rủi ro · tiềm năng · xếp hạng nội bộ & năm tầng chăm sóc · báo cáo tháng toàn hệ · chốt tháng', ic:'chart', star:1, capMo:'chung', hienKhi:'xemDoLuongHe'},
@@ -1103,9 +1105,9 @@ G.NAV = [
     {v:'suc-chua-toc-do', t:'Sức chứa & Tốc độ', h:'Bộ não chạy nhanh và chứa nhiều trên Cloudflare bằng NĂM TRỤ (việc nặng ở máy khách · chỉ mục đường tra nóng · bộ nhớ đệm ở biên · Workers tự co giãn · R2 cho tệp lớn), không bằng một con số · "1TB" là dung lượng, đạt bằng R2 (hàng TB) + chia mảnh D1, không phải mức của bộ não · sức chứa ĐO ĐƯỢC lúc gọi (cửa doSucChua), không tự khai · nói ra cả trần Cloudflare lẫn đường vượt trần', ic:'vault', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'thanh-tra-soi', t:'Mười tổ thanh tra soi', h:'Mười thanh tra ĐỘC LẬP chuyên phá các điểm chưa tốt, mười CẤP × 100 bậc = 1000 bậc tiêu chuẩn liền mạch · mỗi tổ NEO vào một phép soi CÓ THẬT trong mã nguồn (soatRaNgoai · truyHoiHe · capDuyetTheoTien · nhaCuaMinh · xuatDuLieuNha · danhDauXoa · dieuPhoiTroLy · a11yNhan · lapTheVungManh · kiemPhien), không phải một dòng khẩu hiệu — mục 114 đối chiếu tên ấy tồn tại trong tệp, trỏ vào cái tên bịa thì đỏ · cấp cao = hậu quả nặng hơn khi hỏng, cấp 10 là rò dữ liệu một đứa trẻ ra ngoài', ic:'shield', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'kien-truc-thi-giac', t:'Kiến trúc sư thị giác', h:'Đọc màn · tài liệu · đề xuất · kho · hiến pháp · luật thương hiệu', ic:'spark', star:1, perm:'qt_trang', capMo:'chung'},
-    {v:'phan-quyen',   t:'Phân công & cấp quyền',      h:'15 vị trí × 31 quyền · bấm ô để đổi', ic:'shield', star:1, perm:'cap_quyen', capMo:'quantri'},
-    {v:'phan-quyen-crm',t:'Phân quyền CRM',            h:'Cấp quyền CRM cho bộ phận · xem/sửa/quản lý · ai được cấp mới thấy', ic:'lock', star:1, perm:'cap_quyen', capMo:'quantri'},
-    {v:'cap-tai-khoan',t:'Mở tài khoản mới',           h:'Cấp cho vị trí từ Tư vấn trở lên',    ic:'plus', star:1, perm:'cap_quyen', capMo:'quantri'},
+    {v:'phan-quyen',   t:'Phân công & cấp quyền',      h:'15 vị trí × 31 quyền · bấm ô để đổi', ic:'shield', star:1, perm:'qt_trang', capMo:'quantri'},
+    {v:'phan-quyen-crm',t:'Phân quyền CRM',            h:'Cấp quyền CRM cho bộ phận · xem/sửa/quản lý · ai được cấp mới thấy', ic:'lock', star:1, perm:'qt_trang', capMo:'quantri'},
+    {v:'cap-tai-khoan',t:'Mở tài khoản mới',           h:'Cấp cho vị trí từ Tư vấn trở lên',    ic:'plus', star:1, perm:'qt_trang', capMo:'quantri'},
     {v:'khoa-tai-khoan',t:'Khoá · mở lại · xoá',       h:'Vòng đời một tài khoản, có lý do',    ic:'lock', perm:'qt_trang', capMo:'quantri'},
     {v:'nguoi-dung',   t:'Danh bạ người dùng',         h:'Ai đang ở vị trí nào, hoạt động ra sao',ic:'users', perm:'qt_trang', capMo:'quantri'},
     {v:'sap-xep',     t:'Sắp xếp thư mục',              h:'Đổi thứ tự · ẩn bớt · thêm thư mục mới', ic:'orbit', star:1, perm:'qt_trang', capMo:'quantri'},
@@ -74237,41 +74239,43 @@ var G = window.G || {}; window.G = G;
 
   /* id · tên · icon · một câu việc · phần (khoá màn có sẵn) · cụm kho */
   M.HUB = [
-    { id:'cong-vao',  ten:'Cổng vào',                 ic:'compass', viec:'Người chưa có tài khoản: hiểu GITA 365, đi sáu bước vào, đọc đánh giá thật.',
+    { id:'cong-vao', khu:'khach',  ten:'Cổng vào',                 ic:'compass', viec:'Người chưa có tài khoản: hiểu GITA 365, đi sáu bước vào, đọc đánh giá thật.',
       phan:['gioi-thieu','tham-gia','danh-gia'], kho:[] },
-    { id:'nha-minh',  ten:'Nhà mình hôm nay',         ic:'home',    viec:'Việc của nhà hôm nay: một việc, nhiệm vụ, nhịp 21/90 ngày, minh chứng.',
-      phan:['ngoi-nha','hom-nay','nhiem-vu','con-duong','chu-ky','minh-chung','bat-dau'], kho:['NHA'] },
-    { id:'hanh-trinh', ten:'Hành trình & tiến bộ',    ic:'map',     viec:'Nhà đang ở đâu trên năm tầng, đổi được gì, báo cáo tháng, ghi nhận.',
+    { id:'nha-minh', khu:'khach',  ten:'Nhà mình hôm nay',         ic:'home',    viec:'Việc của nhà hôm nay: một việc, nhiệm vụ, nhịp 21/90 ngày, minh chứng.',
+      phan:['ngoi-nha','dk-cua-toi','hom-nay','nhiem-vu','con-duong','chu-ky','minh-chung','bat-dau'], kho:['NHA'] },
+    { id:'hanh-trinh', khu:'khach', ten:'Hành trình & tiến bộ',    ic:'map',     viec:'Nhà đang ở đâu trên năm tầng, đổi được gì, báo cáo tháng, ghi nhận.',
       phan:['ban-do','chan-dung-nha','tam-nhin','tien-bo','kpi-100','ban-co','ho-so-thang','phan-thuong','bang-tin'], kho:['NHA','GD'] },
-    { id:'dich-vu',   ten:'Dịch vụ & tài khoản',      ic:'star',    viec:'Ví credit, học phí, quà theo tầng, trợ lý, sự kiện, đánh giá.',
+    { id:'dich-vu', khu:'khach',   ten:'Dịch vụ & tài khoản',      ic:'star',    viec:'Ví credit, học phí, quà theo tầng, trợ lý, sự kiện, đánh giá.',
       phan:['vi-credit','thanh-toan','kho-qua','tro-ly','su-kien','danh-gia'], kho:['GD'] },
-    { id:'ve-tinh',   ten:'Vệ tinh lan toả',          ic:'share',   viec:'CTV / Đại sứ: nhà mình giới thiệu, liên kết, hoa hồng, kết nối.',
-      phan:['ve-tinh','dai-su','hoa-hong','ket-noi','su-kien'], kho:['TRAI'] },
-    { id:'ban-lam-viec', ten:'Bàn làm việc của tôi',  ic:'target',  viec:'Bảng điều khiển theo vai, đầu việc, KPI cá nhân, vòng nhắc, nhật ký.',
+    { id:'ve-tinh', khu:'khach',   ten:'Vệ tinh lan toả',          ic:'share',   viec:'CTV / Đại sứ: nhà mình giới thiệu, liên kết, hoa hồng, kết nối.',
+      phan:['dk-cua-toi','ve-tinh','dai-su','hoa-hong','ket-noi','su-kien'], kho:['TRAI'] },
+    { id:'ban-lam-viec', khu:'nhansu', ten:'Bàn làm việc của tôi',  ic:'target',  viec:'Bảng điều khiển theo vai, đầu việc, KPI cá nhân, vòng nhắc, nhật ký.',
       phan:['dk-cua-toi','bang-viec','danh-muc-viec','kpi-toi','vong-nhac','nhat-ky-vi-tri'], kho:['NGHE'] },
-    { id:'coach',     ten:'Hệ điều hành Coach',       ic:'flame',   viec:'Chương trình, thiết kế bài, điều phối, chất lượng, ca — mỗi buổi ghi vào tiến trình chăm sóc ở CRM.',
+    { id:'coach', khu:'nhansu',     ten:'Hệ điều hành Coach',       ic:'flame',   viec:'Chương trình, thiết kế bài, điều phối, chất lượng, ca — mỗi buổi ghi vào tiến trình chăm sóc ở CRM.',
       phan:['coach-he','coach-dp','coach-ct','coach-tk','coach-cl','coach-gp','coach-kho','coach-pt','coach-v20','coach-nlp','van-hanh-cham-soc','xu-ly-ca','xuat-du-lieu'], kho:['PP','KHO','COACH'] },
-    { id:'khach-crm', ten:'Khách hàng & CRM',         ic:'heart',   viec:'CRM theo quyền được cấp, CSKH, đo lường khách, trải nghiệm, tài liệu gia đình.',
-      phan:['crm','tt-cskh','do-luong-he','trai-nghiem-kh','nguoi-dan-dat','tai-lieu-khach','gui-tu-lieu','tang5-pro'], kho:['TUVAN','VIP','TRAI'] },
-    { id:'dao-tao',   ten:'Đào tạo & năng lực',       ic:'book',    viec:'Khoá đào tạo, sát hạch, cuộc thi viết — mở theo cấp bậc đạt được.',
+    { id:'khach-crm', khu:'nhansu', ten:'Khách hàng & CRM',         ic:'heart',   viec:'CRM theo quyền được cấp, CSKH, đo lường khách, trải nghiệm, tài liệu gia đình.',
+      phan:['crm','tt-cskh','do-luong-he','trai-nghiem-kh','nguoi-dan-dat','tai-lieu-khach','gui-tu-lieu','tang5-pro','khung-du-lieu'], kho:['TUVAN','VIP','TRAI'] },
+    { id:'dao-tao', khu:'nhansu',   ten:'Đào tạo & năng lực',       ic:'book',    viec:'Khoá đào tạo, sát hạch, cuộc thi viết — mở theo cấp bậc đạt được.',
       phan:['khoa-dao-tao','sat-hach','thi-viet'], kho:['NGHE','PP'] },
-    { id:'kho-nghe',  ten:'Kho nghề & tài liệu',      ic:'vault',   viec:'14 kho nghề theo cụm, thư viện tài liệu — chương mở theo vai, tầng, gói.',
+    { id:'kho-nghe', khu:'nhansu',  ten:'Kho nghề & tài liệu',      ic:'vault',   viec:'14 kho nghề theo cụm, thư viện tài liệu — chương mở theo vai, tầng, gói.',
       phan:['thu-vien-v50','kn-pp','kn-kho','kn-nghe','kn-coach','kn-tuvan','kn-vip','kn-trai','kn-mk','kn-gd','kn-nha','kn-pl','kn-tc','kn-kt','kn-ct','thu-vien'], kho:[] },
-    { id:'dieu-hanh', ten:'Điều hành & đo lường',     ic:'chart',   viec:'Trung tâm đo lường 41 chỉ số, V20, 16 ban, các vai, phòng ban, năng lực, con người.',
+    { id:'dieu-hanh', khu:'nhansu', ten:'Điều hành & đo lường',     ic:'chart',   viec:'Trung tâm đo lường 41 chỉ số, V20, 16 ban, các vai, phòng ban, năng lực, con người.',
       phan:['trung-tam-do','truy-van-da-chieu','dk-cac-vai','phong-ban','nang-luc-ns','con-nguoi'], kho:['KT','CT'] },
-    { id:'tai-chinh', ten:'Tài chính',                ic:'list',    viec:'Ban tài chính theo giới hạn được cấp: kế toán, đối soát, thuế, credit, bảng giá.',
-      phan:['phong-tai-chinh','tai-chinh-ceo','ke-toan-thue','credit-gita','bang-gia'], kho:['TC'] },
-    { id:'quan-tri',  ten:'Tài khoản & quyền',        ic:'shield',  viec:'Cấp quyền 100% do Super Admin: mở tài khoản, phân quyền, quyền CRM, khoá, nhật ký.',
-      phan:['phan-quyen','phan-quyen-crm','cap-tai-khoan','khoa-tai-khoan','nguoi-dung','toi','khoa-mat','nhat-ky-ht'], kho:['PL'] },
-    { id:'van-hanh-he', ten:'Vận hành hệ thống',      ic:'pulse',   viec:'Máy chủ, tài nguyên, liên thông dữ liệu, sức chứa, AI, thanh tra, soát màn, kiểm thử.',
+    { id:'tai-chinh', khu:'nhansu', ten:'Tài chính',                ic:'list',    viec:'Ban tài chính theo giới hạn được cấp: kế toán, đối soát, thuế, credit, bảng giá.',
+      phan:['phong-tai-chinh','tai-chinh-ceo','ke-toan-thue','credit-gita','bang-gia','khung-du-lieu'], kho:['TC'] },
+    { id:'quan-tri', khu:'nhansu',  ten:'Tài khoản & quyền',        ic:'shield',  viec:'Cấp quyền 100% do Super Admin: mở tài khoản, phân quyền, quyền CRM, khoá, nhật ký.',
+      phan:['phan-quyen','phan-quyen-crm','cap-tai-khoan','khoa-tai-khoan','nguoi-dung','toi','khoa-mat','nhat-ky-ht','khung-du-lieu'], kho:['PL'] },
+    { id:'van-hanh-he', khu:'nhansu', ten:'Vận hành hệ thống',      ic:'pulse',   viec:'Máy chủ, tài nguyên, liên thông dữ liệu, sức chứa, AI, thanh tra, soát màn, kiểm thử.',
       phan:['noi-may-chu','theo-doi-tai-nguyen','lien-thong','suc-chua-toc-do','bo-nao-da-tri','thanh-tra-soi','phap-ly-rui-ro','soat-toan-man','kiem-theo-vai','soat-day-du'], kho:['KT','PL'] },
-    { id:'noi-dung',  ten:'Nội dung & truyền thông',  ic:'spark',    viec:'Studio, xưởng phim, thị giác, biên soạn, sửa chữ hiển thị, duyệt tài liệu và đánh giá.',
+    { id:'noi-dung', khu:'nhansu',  ten:'Nội dung & truyền thông',  ic:'spark',    viec:'Studio, xưởng phim, thị giác, biên soạn, sửa chữ hiển thị, duyệt tài liệu và đánh giá.',
       phan:['studio','xuong-phim','kien-truc-thi-giac','bien-soan-noi-dung','sua-hien-thi','duyet-tai-lieu','duyet-danh-gia','sap-xep'], kho:['MK'] }
   ];
 
   /* Màn chính theo vai, đúng trần chủ hệ đặt. 'khach-la' = chưa đăng nhập. */
-  M.TRAN_VAI = { R01:12, R02:12, R03:10, R04:10, R05:10, R06:5, R07:5, R08:5, R09:5, R10:5, R11:5, R12:5, R13:3, R14:3, R15:3, 'khach-la':3 };
-  var QT = ['ban-lam-viec','dieu-hanh','tai-chinh','khach-crm','coach','dao-tao','kho-nghe','quan-tri','van-hanh-he','noi-dung','nha-minh','cong-vao'];
+  M.TRAN_VAI = { R01:15, R02:15, R03:10, R04:10, R05:10, R06:5, R07:5, R08:5, R09:5, R10:5, R11:5, R12:5, R13:3, R14:3, R15:3, 'khach-la':3 };
+  /* Admin hệ thống · Super Admin: hiển thị 100% — cả 10 màn nghiệp vụ VÀ cả 5
+     màn khu vực khách hàng. Cấp quyền vẫn chỉ Super Admin (máy chủ gác). */
+  var QT = ['ban-lam-viec','dieu-hanh','tai-chinh','khach-crm','coach','dao-tao','kho-nghe','quan-tri','van-hanh-he','noi-dung'];
   M.VAI = {
     R01: QT, R02: QT,
     R03: ['ban-lam-viec','dieu-hanh','tai-chinh','khach-crm','coach','dao-tao','kho-nghe','noi-dung'],
@@ -74290,11 +74294,19 @@ var G = window.G || {}; window.G = G;
     'khach-la': ['cong-vao']
   };
 
+  /* KHU VỰC KHÁCH HÀNG của nhân sự — tách riêng khỏi màn nghiệp vụ, xem trong
+     phạm vi quyền (phần nào vai không mở được thì không hiện). Gia đình,
+     học viên, CTV thì ngược lại: KHÔNG thấy một màn nghiệp vụ nào. */
+  var KH_NS = ['nha-minh','hanh-trinh','dich-vu'];
+  M.VAI_KHACH = { R01:['nha-minh','hanh-trinh','dich-vu','ve-tinh','cong-vao'], R02:['nha-minh','hanh-trinh','dich-vu','ve-tinh','cong-vao'],
+    R03:KH_NS, R04:KH_NS, R05:KH_NS, R06:KH_NS, R07:KH_NS, R08:KH_NS, R09:KH_NS, R10:KH_NS, R11:KH_NS, R12:KH_NS };
+
   /* Màn cũ không là phần của màn chính nào → khớp về màn chính nào.
      Bảng điều khiển theo vai: 12 bảng dk-<vai> + 120 màn chi tiết, 10 màn
      A–Z (va-*) và 10 màn Giám đốc (gd-*) là CÁC MỤC bên trong "Bảng điều
      khiển của tôi" — mở từ đó, không đứng ở cột trái. */
-  M.KHOP_TIEN_TO = [[/^dk-(?!cua-toi$|cac-vai$)/, 'ban-lam-viec'], [/^va-/, 'ban-lam-viec'], [/^gd-/, 'ban-lam-viec'],
+  M.KHOP_TIEN_TO = [[/^dk-(phuhuynh|hocvien)(-|$)/, 'nha-minh'], [/^dk-daisu(-|$)/, 've-tinh'],
+                    [/^dk-(?!cua-toi$|cac-vai$)/, 'ban-lam-viec'], [/^va-/, 'ban-lam-viec'], [/^gd-/, 'ban-lam-viec'],
                     [/^van-hanh-(10|gd)$/, 'ban-lam-viec']];
   M.KHOP = { 'studio-he':'noi-dung', 'lam-phim-10':'noi-dung', 'ban-dung':'noi-dung', 'san-xuat-ai':'noi-dung',
              'ban-co-tong':'ban-lam-viec', 'pham-vi':'quan-tri' };
@@ -74316,6 +74328,9 @@ var G = window.G || {}; window.G = G;
       var ma = kn[1].toUpperCase();
       for(var k = 0; k < dsVai.length; k++){ var hk = M.hub(dsVai[k]); if(hk && hk.kho.indexOf(ma) >= 0) return hk.id; }
     }
+    /* Một trang có thể là phần của hai màn (Bảng điều khiển của tôi: khu nhà
+       mình cho gia đình, Bàn làm việc cho nhân sự) — ưu tiên màn CỦA VAI. */
+    if(dsVai) for(var q = 0; q < dsVai.length; q++){ var hq = M.hub(dsVai[q]); if(hq && hq.phan.indexOf(v) >= 0) return hq.id; }
     if(PHAN_CUA[v]) return PHAN_CUA[v];
     var V5 = G.V50;
     if(V5 && V5.GOP && V5.GOP[v]) return M.hubCua(V5.GOP[v][0][0], dsVai);
@@ -74339,11 +74354,26 @@ var G = window.G || {}; window.G = G;
     if(!id && ds.indexOf('tai-chinh') < 0 && G.S && G.S.taiChinhMuc && G.S.taiChinhMuc.length && /^R(0[1-9]|1[0-2])$/.test(vai)) ds.splice(1, 0, 'tai-chinh');
     return ds.slice(0, tran);
   };
+  M.hubKhach = function(id){ return (M.VAI_KHACH[id || M.vai()] || []).slice(); };
+  M.hubTatCa = function(id){ return M.hubVai(id).concat(M.hubKhach(id)); };
+  M.laKhach = function(id){ var v = id || M.vai(); return v === 'khach-la' || v === 'R13' || v === 'R14' || v === 'R15'; };
 
   /* Vì sao trang v chưa mở với tài khoản này — null là đã mở. Khách thấy
      phần bị khoá kèm lý do (chờ tầng · cần gói · ngoài vai), không thấy
      một nút chết. Quyền thật vẫn do G.allowed / G.can / máy chủ gác. */
   var TEN_BAC = { 1:'Super Admin', 2:'Admin', 3:'Giám đốc', 4:'Quản lý chuyên môn', 5:'Trưởng nhóm Coach', 8:'Giáo viên trở lên', 10:'Chuyên gia đánh giá trở lên', 11:'Tư vấn trở lên', 12:'đội ngũ GITA 365', 13:'phụ huynh', 14:'học viên', 15:'tài khoản đã đăng ký' };
+  /* Loại khoá: 'vai' (ngoài vai/cấp) · 'kichHoat' · 'tang' · 'goi' · 'khong' (chưa có).
+     Khách chỉ được thấy khoá 'tang' / 'goi' / 'kichHoat' — đó là quyền lợi sẽ mở;
+     khoá 'vai' là việc của nhân sự, ẩn hẳn để khách không rối. */
+  M.khoaLoai = function(v){
+    var ly = M.khoa(v);
+    if(!ly) return null;
+    if(ly === 'Chưa có trên bản này') return 'khong';
+    if(/^Dành cho/.test(ly) || ly === 'Trong kho nghề của đội ngũ') return 'vai';
+    if(/^Mở khi tài khoản/.test(ly)) return 'kichHoat';
+    if(/Tầng/.test(ly)) return 'tang';
+    return 'goi';
+  };
   M.khoa = function(v){
     var it = G.navItem ? G.navItem(v) : null;
     if(!G.manCoThat || !G.manCoThat(v)) return 'Chưa có trên bản này';
@@ -75726,16 +75756,24 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
 
   function ve(c){
     var V = G.V50, M = G.V50M;
-    var nhanSu = V.laNhanSu();
+    var nhanSu = V.laNhanSu(), khach = M.laKhach();
     var mo = [], khoa = [];
     c.man.forEach(function(v){
       var it = G.navItem ? G.navItem(v) : null; if(!it) return;
-      var ly = M.khoa(v);
-      if(!ly) mo.push(it);
-      else if(ly !== 'Chưa có trên bản này') khoa.push([it, ly]);
+      var loai = M.khoaLoai(v);
+      if(!loai) mo.push(it);
+      /* Khách chỉ thấy chương khoá theo quyền lợi (tầng · gói · kích hoạt);
+         chương nghiệp vụ của đội ngũ ẩn hẳn. Nhân sự chỉ thấy chương khoá do gói. */
+      else if(loai !== 'khong' && (khach ? loai !== 'vai' : loai !== 'vai')) khoa.push([it, M.khoa(v)]);
     });
     var dung = M.HUB.filter(function(hb){ return hb.kho.indexOf(c.ma) >= 0; }).map(function(hb){ return hb.ten; });
-    var o = U.ph({ eyebrow:'KHO NGHỀ · V50', ic:'vault', grad:1, t:c.ten, lead:c.mo });
+    var o = U.ph({ eyebrow: khach ? 'BÀI ĐỌC CỦA NHÀ MÌNH' : 'KHO NGHỀ · V50', ic:'vault', grad:1, t:c.ten, lead:c.mo });
+    if(khach){
+      o += '<div class="card mb"><b>Bài đã mở</b>' + (mo.length ? '<div class="v50-man">' + mo.map(function(it){ return '<button class="v50-mo" data-v="' + h(it.v) + '">' + ic(it.ic || 'book','w-3 h-3') + '<span>' + h(G.iname(it)) + '</span></button>'; }).join('') + '</div>' : '<p class="sm muted mt">Chưa có bài nào mở với tài khoản này.</p>') + '</div>';
+      if(khoa.length) o += '<div class="card mb"><b>Mở ở chặng sau</b><p class="tiny muted" style="margin:3px 0 0">Mở khi nhà lên tầng hoặc khi gói dịch vụ được kích hoạt.</p><div class="v50-man">' +
+        khoa.map(function(x){ return '<span class="v50-mo v50-khoa" title="' + h(x[1]) + '">' + ic('lock','w-3 h-3') + '<span>' + h(G.iname(x[0])) + ' <small class="muted">· ' + h(x[1]) + '</small></span></span>'; }).join('') + '</div></div>';
+      return o;
+    }
     o += '<div class="grid g3 mb">' +
       '<div class="card"><div class="up tiny muted">Chương đã mở</div><div class="v50-so">' + mo.length + '<small class="tiny muted"> / ' + (mo.length + khoa.length) + '</small></div><div class="tiny muted">theo vai, tầng và gói của tài khoản này</div></div>' +
       '<div class="card"><div class="up tiny muted">Chỉ số chịu tác động</div><b>' + h(kpiTen(c.kpi)) + '</b><div class="tiny muted">đo ở Trung tâm đo lường</div></div>' +
@@ -75770,17 +75808,21 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
 /* ═════════ src/v50-cot.js ═════════ */
 (function(){
 /* ═══════════════════════════════════════════════════════════════
-   GITA 365 — V50·168 · CỘT TRÁI THEO MÀN CHÍNH + THANH PHẦN
+   GITA 365 — V50·168 · CỘT TRÁI HAI KHU VỰC + THANH PHẦN
 
-   Cột trái của MỌI vai chỉ còn các màn chính của vai (3 · 5 · 10 · 12 —
-   src/v50-man.js), thay cho khối không gian làm việc và sáu nhóm "Toàn hệ
-   thống". Bấm một màn chính là mở phần đầu tiên vai được dùng.
-   Đầu mỗi trang có THANH PHẦN: tên màn chính, các phần của nó (phần chưa
-   mở hiện khoá kèm lý do theo cấp · tầng · gói), và lối vào kho nghề của
-   màn. Trang nằm ngoài các phần (chương học thuyết, mục chi tiết của bảng
-   điều khiển) hiện đường dẫn về màn chính đang chứa nó.
-   Quyền không đổi ở đây: mỗi nút đi qua cùng cổng visible()/allowed() với
-   app.js; máy chủ vẫn gác mọi thao tác.
+   Chủ hệ (07/10/2026): tách riêng màn khách hàng và màn nhân sự.
+     · KHÁCH (phụ huynh · học sinh · CTV · khách lạ): chỉ thấy màn của mình,
+       mở theo quyền lợi của tài khoản. KHÔNG một dấu vết nghiệp vụ nhân sự:
+       phần khoá vì "ngoài vai" bị ẩn hẳn; chỉ hiện khoá tầng / gói / kích
+       hoạt — tức quyền lợi sẽ được mở.
+     · NHÂN SỰ: hai khu tách bạch ở cột trái —
+         KHU VỰC NHÂN SỰ   màn nghiệp vụ đúng vai / cấp (+ quyền Super Admin
+                           cấp thêm: CRM, ban tài chính, T5-PRO…)
+         KHU VỰC KHÁCH HÀNG màn của khách, xem trong phạm vi quyền
+       Nhân sự chỉ thấy phần mình dùng được — không phần khoá nào.
+     · ADMIN HỆ THỐNG · SUPER ADMIN: hiển thị 100% cả hai khu.
+   Quyền thật không đổi ở đây: nút nào cũng qua visible()/allowed() của
+   app.js, và máy chủ gác mọi thao tác.
    ═══════════════════════════════════════════════════════════════ */
 'use strict';
 var G = window.G || {}; window.G = G;
@@ -75789,74 +75831,2191 @@ var G = window.G || {}; window.G = G;
 
   function bat(){ return !!(G.V50M && G.V50 && !G.V50.tat()); }
   G.v50Bat168 = bat;
+  function M(){ return G.V50M; }
   function moDuoc(v){ var it = G.navItem ? G.navItem(v) : null; return !!it && (!G.mucHien || G.mucHien(it)) && (!G.allowed || G.allowed(v)); }
-  /* Phần đầu tiên vai mở được của một màn chính */
   function phanDau(hb){ for(var i = 0; i < hb.phan.length; i++) if(moDuoc(hb.phan[i])) return hb.phan[i]; return null; }
-  function hubsVai(){ return G.V50M.hubVai().map(G.V50M.hub).filter(function(hb){ return hb && phanDau(hb); }); }
+  function coPhan(hb){ return hb && phanDau(hb); }
+  function hubsVai(){ return M().hubVai().map(M().hub).filter(coPhan); }
+  function hubsKhach(){ return M().hubKhach().map(M().hub).filter(coPhan); }
   G.v50HubsVai = hubsVai;
-  /* Trang mở đầu sau đăng nhập: phần đầu tiên vai được dùng (theo quyền,
-     chưa cần kho — kho mở sau). */
+  function hubHienTai(){ return M().hubCua(G.S.view, M().hubTatCa()); }
+
+  /* Trang mở đầu sau đăng nhập: phần đầu tiên của màn nghiệp vụ đầu tiên. */
   G.v50ManDau = function(){
     if(!bat()) return null;
-    var ds = G.V50M.hubVai();
+    var ds = M().hubVai();
     for(var i = 0; i < ds.length; i++){
-      var hb = G.V50M.hub(ds[i]); if(!hb) continue;
+      var hb = M().hub(ds[i]); if(!hb) continue;
       for(var j = 0; j < hb.phan.length; j++){ var p = hb.phan[j]; if(G.VIEWS[p] && (!G.allowed || G.allowed(p))) return p; }
     }
     return null;
   };
-  function hubHienTai(){ return G.V50M.hubCua(G.S.view, G.V50M.hubVai()); }
+
+  /* Số trên dải phạm vi đếm theo màn của vai, không theo 270 mục cũ. */
+  G.v50DemPhamVi = function(){
+    var mo = 0, choTang = 0, khoa = 0, thay = {};
+    M().hubTatCa().forEach(function(id){
+      var hb = M().hub(id); if(!hb) return;
+      hb.phan.forEach(function(p){
+        if(thay[p]) return; thay[p] = 1;
+        var l = M().khoaLoai(p);
+        if(!l) mo++; else if(l === 'tang' || l === 'goi' || l === 'kichHoat') choTang++; else if(l === 'vai') khoa++;
+      });
+    });
+    return { mo:mo, khoa:khoa, choTang:choTang };
+  };
+
+  function nutHub(hb, cur){
+    return '<button class="nav-i' + (hb.id === cur ? ' on' : '') + '" data-v="' + h(phanDau(hb)) + '" title="' + h(hb.viec) + '">' + ic(hb.ic) +
+      '<span class="lb">' + h(hb.ten) + '</span></button>';
+  }
 
   /* ── Cột trái ── */
   G.v50CotTrai = function(){
-    var ds = hubsVai(), cur = hubHienTai();
-    var r = G.S.roleObj || {};
-    return '<div class="kg v50-cot">' +
-      '<div class="nav-eyebrow kg-lbl">' + h(G.LANG === 'en' ? 'My screens' : 'Màn làm việc') + ' · ' + ds.length + '</div>' +
-      ds.map(function(hb){
-        var on = hb.id === cur;
-        return '<button class="nav-i' + (on ? ' on' : '') + '" data-v="' + h(phanDau(hb)) + '" title="' + h(hb.viec) + '">' + ic(hb.ic) +
-          '<span class="lb">' + h(hb.ten) + '</span></button>';
-      }).join('') +
-      '<p class="kg-note" style="margin-top:8px">' + h(r.n || '') + ' · mở theo cấp bậc, tầng và gói của tài khoản.</p></div>';
+    var cur = hubHienTai(), r = G.S.roleObj || {};
+    if(M().laKhach()){
+      var dk = hubsVai();
+      return '<div class="kg v50-cot"><div class="nav-eyebrow kg-lbl">' + h(G.LANG === 'en' ? 'My family' : 'Nhà mình') + '</div>' +
+        dk.map(function(hb){ return nutHub(hb, cur); }).join('') +
+        '<p class="kg-note" style="margin-top:8px">Mở theo tầng và gói dịch vụ của tài khoản.</p></div>';
+    }
+    var ns = hubsVai(), kh = hubsKhach();
+    var o = '<div class="kg v50-cot">' +
+      '<div class="kg-sec kg-viec"><div class="kg-h">' + ic('target') + '<b>' + h(G.LANG === 'en' ? 'Staff area' : 'Khu vực nhân sự') + '</b><span class="kg-n">' + ns.length + '</span></div>' +
+      ns.map(function(hb){ return nutHub(hb, cur); }).join('') + '</div>';
+    if(kh.length)
+      o += '<div class="kg-sec kg-khach"><div class="kg-h">' + ic('heart') + '<b>' + h(G.LANG === 'en' ? 'Customer area' : 'Khu vực khách hàng') + '</b><span class="kg-n">' + kh.length + '</span></div>' +
+        '<p class="kg-note">Màn của khách, xem trong phạm vi quyền của ' + h(r.n || 'vai') + '.</p>' +
+        kh.map(function(hb){ return nutHub(hb, cur); }).join('') + '</div>';
+    return o + '</div>';
   };
-  /* Thanh ngang (desktop) cũng là màn chính */
+  /* Thanh ngang (desktop): khu nhân sự, rồi khu khách hàng */
   G.v50Hnav = function(){
     var cur = hubHienTai();
-    return hubsVai().map(function(hb){
-      return '<button class="hnav-i' + (hb.id === cur ? ' on' : '') + '" data-v="' + h(phanDau(hb)) + '" title="' + h(hb.viec) + '">' + ic(hb.ic) + '<span>' + h(hb.ten) + '</span></button>';
-    }).join('');
+    var nut = function(hb){ return '<button class="hnav-i' + (hb.id === cur ? ' on' : '') + '" data-v="' + h(phanDau(hb)) + '" title="' + h(hb.viec) + '">' + ic(hb.ic) + '<span>' + h(hb.ten) + '</span></button>'; };
+    var o = hubsVai().map(nut).join('');
+    if(!M().laKhach()){ var kh = hubsKhach(); if(kh.length) o += '<span class="v50-hnav-ngan" aria-hidden="true"></span>' + kh.map(nut).join(''); }
+    return o;
   };
 
   /* ── Thanh phần ở đầu trang ── */
+  var CAP_QUYEN = { 'phan-quyen':1, 'phan-quyen-crm':1, 'cap-tai-khoan':1 };
   G.v50PhanBar = function(v){
     if(!bat() || !G.S || !G.S.acc) return '';
-    var id = G.V50M.hubCua(v, G.V50M.hubVai()), hb = id && G.V50M.hub(id);
+    var tat = M().hubTatCa(), id = M().hubCua(v, tat), hb = id && M().hub(id);
     if(!hb) return '';
-    var trongVai = G.V50M.hubVai().indexOf(hb.id) >= 0;
+    var khach = M().laKhach();
+    if(khach && hb.khu !== 'khach') return '';           /* khách không bao giờ thấy khung màn nghiệp vụ */
     var laPhan = hb.phan.indexOf(v) >= 0;
-    var o = '<nav class="v50-phan" aria-label="Các phần của màn ' + h(hb.ten) + '"><div class="v50-phan-dau">' + ic(hb.ic, 'w-4 h-4') + '<b>' + h(hb.ten) + '</b>';
+    var nhan = khach ? '' : (hb.khu === 'khach' ? 'Khu vực khách hàng · ' : 'Khu vực nhân sự · ');
+    var o = '<nav class="v50-phan' + (hb.khu === 'khach' ? ' v50-phan-kh' : '') + '" aria-label="Các phần của màn ' + h(hb.ten) + '"><div class="v50-phan-dau">' +
+      ic(hb.ic, 'w-4 h-4') + (nhan ? '<span class="tiny muted">' + h(nhan) + '</span>' : '') + '<b>' + h(hb.ten) + '</b>';
     if(!laPhan){ var it = G.navItem ? G.navItem(v) : null; o += '<span class="tiny muted">› ' + h(it ? G.iname(it) : v) + '</span>'; }
-    if(!trongVai) o += '<span class="tiny muted">· ngoài các màn của vai này</span>';
+    if(tat.indexOf(hb.id) < 0) o += '<span class="tiny muted">· ngoài các màn của vai này</span>';
     o += '</div><div class="v50-phan-ds">';
     hb.phan.forEach(function(p){
       var it = G.navItem ? G.navItem(p) : null; if(!it) return;
-      var ly = G.V50M.khoa(p);
-      if(ly === 'Chưa có trên bản này') return;
-      if(ly) o += '<button class="v50-pc v50-pc-khoa" data-v50m="khoa" data-v2="' + h(ly) + '" title="' + h(ly) + '">' + ic('lock','w-3 h-3') + h(G.iname(it)) + '</button>';
-      else o += '<button class="v50-pc' + (p === v ? ' on' : '') + '" data-v="' + h(p) + '"' + (p === v ? ' aria-current="page"' : '') + '>' + h(G.iname(it)) + '</button>';
+      var loai = M().khoaLoai(p);
+      if(!loai){
+        o += '<button class="v50-pc' + (p === v ? ' on' : '') + '" data-v="' + h(p) + '"' + (p === v ? ' aria-current="page"' : '') + '>' + h(G.iname(it)) + '</button>';
+        return;
+      }
+      /* Chỉ KHÁCH thấy phần còn khoá, và chỉ khoá quyền lợi (tầng · gói · kích hoạt). */
+      if(khach && (loai === 'tang' || loai === 'goi' || loai === 'kichHoat')){
+        var ly = M().khoa(p);
+        o += '<button class="v50-pc v50-pc-khoa" data-v50m="khoa" data-v2="' + h(ly) + '" title="' + h(ly) + '">' + ic('lock','w-3 h-3') + h(G.iname(it)) + '</button>';
+      }
     });
     hb.kho.forEach(function(ma){
       var c = G.V50.cum(ma); if(!c) return;
       var k = 'kn-' + ma.toLowerCase();
-      if(moDuoc(k)) o += '<button class="v50-pc v50-pc-kho' + (k === v ? ' on' : '') + '" data-v="' + k + '">' + ic('vault','w-3 h-3') + 'Kho · ' + h(c.ten) + '</button>';
+      if(moDuoc(k)) o += '<button class="v50-pc v50-pc-kho' + (k === v ? ' on' : '') + '" data-v="' + k + '">' + ic('vault','w-3 h-3') + (khach ? 'Bài đọc · ' : 'Kho · ') + h(c.ten) + '</button>';
     });
-    return o + '</div></nav>';
+    o += '</div>';
+    if(CAP_QUYEN[v] && G.S.roleObj && G.S.roleObj.id !== 'R01')
+      o += '<p class="tiny" style="margin:6px 2px 0;color:var(--alert)">Chế độ xem: cấp quyền 100% do Super Admin — máy chủ từ chối thao tác cấp quyền từ tài khoản này.</p>';
+    return o + '</nav>';
   };
 
   document.addEventListener('click', function(e){
     var el = e.target.closest && e.target.closest('[data-v50m]'); if(!el) return;
     if(el.getAttribute('data-v50m') === 'khoa') U.toast(el.getAttribute('data-v2') || 'Phần này chưa mở với tài khoản này.', 'err');
+  });
+})();
+
+})();
+
+/* ═════════ src/data-khung.js ═════════ */
+(function(){
+/* TỆP DỰNG RA — đừng sửa tay. Nguồn: may-chu/csdl.sql + tools/dung-khung-du-lieu.js
+   Khung bảng CRM · Tài chính cho màn "Khung dữ liệu & ma trận quyền" (chỉ cấu trúc, không dữ liệu). */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.KHUNG_DL = {
+ "crm": [
+  {
+   "ten": "hoSoKhach",
+   "mo": "Tệp khách hàng — gốc của mọi khối",
+   "doc": "Coach / Tư vấn: nhà mình phụ trách · R01–R04: toàn hệ",
+   "ghi": "Giao người phụ trách: R01–R04 · Coach / Tư vấn sửa tệp nhà mình · đổi tầng: R01–R03 (cổng KPI + thanh toán)",
+   "cot": [
+    [
+     "maKhachHang",
+     "TEXT",
+     "PRIMARY KEY",
+     ""
+    ],
+    [
+     "uidPhuHuynh",
+     "TEXT",
+     "NOT NULL",
+     "trỏ users.id"
+    ],
+    [
+     "maHocVien",
+     "TEXT",
+     "",
+     "trỏ students.id"
+    ],
+    [
+     "tuyen",
+     "TEXT",
+     "NOT NULL DEFAULT 'GITA365'",
+     ""
+    ],
+    [
+     "tang",
+     "INTEGER",
+     "NOT NULL DEFAULT 0",
+     ""
+    ],
+    [
+     "band",
+     "TEXT",
+     "",
+     "XANH · VANG · DO · XAM, theo G.MT_BANG"
+    ],
+    [
+     "coach",
+     "TEXT",
+     "",
+     "tên đăng nhập người kèm"
+    ],
+    [
+     "tuVan",
+     "TEXT",
+     "",
+     "tên đăng nhập người tư vấn"
+    ],
+    [
+     "boTro",
+     "TEXT",
+     "",
+     "mã nhà giới thiệu — gốc của hoa hồng"
+    ],
+    [
+     "trangThai",
+     "TEXT",
+     "NOT NULL DEFAULT 'dangHoc'",
+     "dangHoc · tamDung · nghi · xong"
+    ],
+    [
+     "vaoLuc",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "suaLuc",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "ghiChu",
+     "TEXT",
+     "",
+     ""
+    ]
+   ]
+  },
+  {
+   "ten": "crmKhach",
+   "mo": "Trạng thái CRM của một nhà: giai đoạn, người phụ trách, hẹn tiếp",
+   "doc": "Theo quyền CRM Super Admin cấp; dưới mức quản lý chỉ khách mình",
+   "ghi": "Mức \"sửa\" trở lên; giao người phụ trách cần mức \"quản lý\"",
+   "cot": [
+    [
+     "maKH",
+     "TEXT",
+     "PRIMARY KEY",
+     "trỏ hoSoKhach.maKhachHang"
+    ],
+    [
+     "phuTrach",
+     "TEXT",
+     "",
+     "tên đăng nhập nhân sự phụ trách quan hệ"
+    ],
+    [
+     "giaiDoan",
+     "TEXT",
+     "",
+     "moi · tuvan · chotky · onboarding · donghanh · rui · roi"
+    ],
+    [
+     "henTiep",
+     "TEXT",
+     "",
+     "ngày hẹn chạm tiếp (YYYY-MM-DD)"
+    ],
+    [
+     "ghiChu",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "capNhatLuc",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "boiAi",
+     "TEXT",
+     "",
+     ""
+    ]
+   ]
+  },
+  {
+   "ten": "crmCoHoi",
+   "mo": "Cơ hội bán: giá trị, giai đoạn, người phụ trách",
+   "doc": "Theo quyền CRM; lọc theo người phụ trách",
+   "ghi": "Mức \"sửa\" trở lên",
+   "cot": [
+    [
+     "id",
+     "TEXT",
+     "PRIMARY KEY",
+     ""
+    ],
+    [
+     "maKH",
+     "TEXT",
+     "NOT NULL",
+     "nhà nào (hoSoKhach.maKhachHang)"
+    ],
+    [
+     "ten",
+     "TEXT",
+     "NOT NULL",
+     "tên cơ hội: \"Nâng Tầng 4\", \"Gia hạn 365\""
+    ],
+    [
+     "giaTri",
+     "INTEGER",
+     "NOT NULL",
+     "giá trị dự kiến (đồng), > 0"
+    ],
+    [
+     "giaiDoan",
+     "TEXT",
+     "NOT NULL",
+     "moi · tuvan · baogia · damphan · chotky"
+    ],
+    [
+     "trangThai",
+     "TEXT",
+     "NOT NULL DEFAULT 'mo'",
+     "mo · thang · thua"
+    ],
+    [
+     "lyDoThua",
+     "TEXT",
+     "",
+     "bắt buộc khi trangThai='thua'"
+    ],
+    [
+     "duKienChot",
+     "TEXT",
+     "",
+     "ngày dự kiến chốt (YYYY-MM-DD)"
+    ],
+    [
+     "nguoiPhuTrach",
+     "TEXT",
+     "",
+     "ai đang đẩy cơ hội (lọc quyền)"
+    ],
+    [
+     "taoLuc",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "capNhatLuc",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "boiAi",
+     "TEXT",
+     "",
+     ""
+    ]
+   ]
+  },
+  {
+   "ten": "quyenCRM",
+   "mo": "Sổ cấp quyền CRM theo từng người (xem · sửa · quản lý, có hạn)",
+   "doc": "R01–R02",
+   "ghi": "CHỈ Super Admin cấp / thu hồi",
+   "cot": [
+    [
+     "id",
+     "TEXT",
+     "PRIMARY KEY",
+     ""
+    ],
+    [
+     "username",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "muc",
+     "TEXT",
+     "NOT NULL",
+     "xem · sua · quanly"
+    ],
+    [
+     "lyDo",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "boiAi",
+     "TEXT",
+     "NOT NULL",
+     "chỉ R01 cấp được (V50·168)"
+    ],
+    [
+     "capLuc",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "hetHan",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "thuHoiLuc",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "thuHoiBoi",
+     "TEXT",
+     "",
+     ""
+    ]
+   ]
+  },
+  {
+   "ten": "soCham",
+   "mo": "Sổ chạm — tiến trình chăm sóc: nhắn · gọi · WOW · buổi coach",
+   "doc": "CRM (dòng thời gian, chạm cuối, KPI) · Coach (đèn xanh / vàng / đỏ)",
+   "ghi": "Coach / Tư vấn: nhà mình phụ trách · R01–R04: mọi nhà · tự ghi khi Coach ghi buổi",
+   "cot": [
+    [
+     "id",
+     "TEXT",
+     "PRIMARY KEY",
+     ""
+    ],
+    [
+     "maNha",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "ngay",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "kieu",
+     "TEXT",
+     "NOT NULL",
+     "nhan · goi · wow"
+    ],
+    [
+     "denLuc",
+     "TEXT",
+     "",
+     "đèn của nhà ấy LÚC CHẠM: XANH · VANG · DO"
+    ],
+    [
+     "noiDung",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "canCu",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "aiDuyet",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "boiAi",
+     "TEXT",
+     "NOT NULL",
+     "người thật sự chạm"
+    ],
+    [
+     "ghiLuc",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ]
+   ]
+  },
+  {
+   "ten": "suKienKH",
+   "mo": "Sự kiện của khách (sổ đo, hoạt động) — chống trùng bằng khoá duy nhất",
+   "doc": "Đo lường toàn diện khách hàng · Trung tâm đo lường",
+   "ghi": "Gia đình gửi từ màn của mình",
+   "cot": [
+    [
+     "id",
+     "TEXT",
+     "PRIMARY KEY",
+     ""
+    ],
+    [
+     "maNha",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "uid",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "loai",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "giaTri",
+     "REAL",
+     "",
+     ""
+    ],
+    [
+     "ngay",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "khoaDuy",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "ghiChu",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "luc",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ]
+   ]
+  },
+  {
+   "ten": "danhGiaKH",
+   "mo": "NPS · CSAT theo tháng của từng người trong nhà",
+   "doc": "Đo lường toàn diện khách hàng · Trung tâm đo lường (kh3, kh4)",
+   "ghi": "Gia đình chấm",
+   "cot": [
+    [
+     "maNha",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "uid",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "thang",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "nps",
+     "INTEGER",
+     "",
+     ""
+    ],
+    [
+     "csat",
+     "INTEGER",
+     "",
+     ""
+    ],
+    [
+     "ghiChu",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "luc",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "(ràng buộc)",
+     "",
+     "PRIMARY KEY (maNha, uid, thang)",
+     ""
+    ]
+   ]
+  },
+  {
+   "ten": "hoSoThang",
+   "mo": "Báo cáo tháng đã chốt của một nhà",
+   "doc": "Gia đình (nhà mình) · đội ngũ theo quyền đo lường",
+   "ghi": "Chốt theo tháng ở máy chủ",
+   "cot": [
+    [
+     "maNha",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "thang",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "duLieu",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "tiemNang",
+     "INTEGER",
+     "",
+     ""
+    ],
+    [
+     "tangCS",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "chot",
+     "INTEGER",
+     "NOT NULL DEFAULT 0",
+     ""
+    ],
+    [
+     "boiAi",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "luc",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "(ràng buộc)",
+     "",
+     "PRIMARY KEY (maNha, thang)",
+     ""
+    ]
+   ]
+  }
+ ],
+ "taiChinh": [
+  {
+   "ten": "kyThu",
+   "mo": "Kỳ thu học phí — dựng tự động khi đổi tầng",
+   "doc": "Công nợ: gia đình xem nhà mình · ban tài chính / R01–R03 mọi nhà · nhân sự khác nhà mình phụ trách",
+   "ghi": "Máy dựng khi đổi tầng",
+   "cot": [
+    [
+     "id",
+     "TEXT",
+     "PRIMARY KEY",
+     ""
+    ],
+    [
+     "maKhachHang",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "tang",
+     "INTEGER",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "ky",
+     "INTEGER",
+     "NOT NULL",
+     "1, 2, 3, 4"
+    ],
+    [
+     "soKy",
+     "INTEGER",
+     "NOT NULL",
+     "tổng số kỳ của tầng này"
+    ],
+    [
+     "ngayThu",
+     "INTEGER",
+     "NOT NULL",
+     "ngày thứ mấy của tầng thì tới kỳ"
+    ],
+    [
+     "phaiThu",
+     "REAL",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "hanLuc",
+     "TEXT",
+     "",
+     "mốc thật, tính từ ngày vào tầng"
+    ],
+    [
+     "congTruoc",
+     "TEXT",
+     "",
+     "kỳ này chỉ thu khi cổng nào đã nghiệm thu"
+    ],
+    [
+     "taoLuc",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ]
+   ]
+  },
+  {
+   "ten": "phieuThu",
+   "mo": "Phiếu thu tiền",
+   "doc": "R01–R03 · ban tài chính",
+   "ghi": "Ghi: Tư vấn trở lên · duyệt: R01–R03 hoặc kế toán thu · huỷ: R01–R03",
+   "cot": [
+    [
+     "id",
+     "TEXT",
+     "PRIMARY KEY",
+     ""
+    ],
+    [
+     "maKhachHang",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "idKy",
+     "TEXT",
+     "",
+     "trỏ kyThu.id; để trống là khoản thu ngoài lịch"
+    ],
+    [
+     "soTien",
+     "REAL",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "hinhThuc",
+     "TEXT",
+     "NOT NULL",
+     "chuyenKhoan · tienMat · the"
+    ],
+    [
+     "maThamChieu",
+     "TEXT",
+     "",
+     "số giao dịch ngân hàng"
+    ],
+    [
+     "minhChung",
+     "TEXT",
+     "",
+     "mã tệp trên Drive"
+    ],
+    [
+     "nguoiGhi",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "ghiLuc",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "nguoiDuyet",
+     "TEXT",
+     "",
+     "NGƯỜI KHÁC người ghi — xem chú giải ở tai-chinh.js"
+    ],
+    [
+     "duyetLuc",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "trangThai",
+     "TEXT",
+     "NOT NULL DEFAULT 'choDuyet'",
+     "choDuyet · daDuyet · tuChoi"
+    ],
+    [
+     "lyDo",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "ghiChu",
+     "TEXT",
+     "",
+     ""
+    ]
+   ]
+  },
+  {
+   "ten": "mienGiam",
+   "mo": "Miễn giảm học phí",
+   "doc": "R01–R03",
+   "ghi": "Đề xuất: Coach trở lên · duyệt: R01–R03",
+   "cot": [
+    [
+     "id",
+     "TEXT",
+     "PRIMARY KEY",
+     ""
+    ],
+    [
+     "maKhachHang",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "idKy",
+     "TEXT",
+     "NOT NULL",
+     "trỏ kyThu.id — miễn giảm gắn vào MỘT kỳ"
+    ],
+    [
+     "soTien",
+     "REAL",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "loai",
+     "TEXT",
+     "NOT NULL",
+     "hocBong · anhChiEm · hoanCanh · khuyenMai · khac"
+    ],
+    [
+     "theoLuat",
+     "TEXT",
+     "NOT NULL",
+     "nguyên văn luật hay quyết định cho giảm"
+    ],
+    [
+     "lyDo",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "nguoiDeXuat",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "deXuatLuc",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "nguoiDuyet",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "duyetLuc",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "trangThai",
+     "TEXT",
+     "NOT NULL DEFAULT 'choDuyet'",
+     ""
+    ]
+   ]
+  },
+  {
+   "ten": "hoanTien",
+   "mo": "Hoàn tiền",
+   "doc": "R01–R03",
+   "ghi": "Đề xuất: Coach trở lên · duyệt: R01–R03",
+   "cot": [
+    [
+     "id",
+     "TEXT",
+     "PRIMARY KEY",
+     ""
+    ],
+    [
+     "maKhachHang",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "idPhieuThu",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "soTien",
+     "REAL",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "theoLuat",
+     "TEXT",
+     "NOT NULL",
+     "nguyên văn luật hoàn của tầng ấy"
+    ],
+    [
+     "lyDo",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "nguoiDeXuat",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "nguoiDuyet",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "deXuatLuc",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "duyetLuc",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "trangThai",
+     "TEXT",
+     "NOT NULL DEFAULT 'choDuyet'",
+     ""
+    ]
+   ]
+  },
+  {
+   "ten": "hoaHongTra",
+   "mo": "Hoa hồng đã trả cho đại sứ",
+   "doc": "R01–R03",
+   "ghi": "Trả: R01–R03",
+   "cot": [
+    [
+     "id",
+     "TEXT",
+     "PRIMARY KEY",
+     ""
+    ],
+    [
+     "nhaKem",
+     "TEXT",
+     "NOT NULL",
+     "mã nhà được hưởng"
+    ],
+    [
+     "nhaDuocKem",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "tangVuot",
+     "INTEGER",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "bac",
+     "TEXT",
+     "NOT NULL",
+     "B5 · B10, theo G.HH_BAC"
+    ],
+    [
+     "phanTram",
+     "REAL",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "goiCanCu",
+     "REAL",
+     "NOT NULL",
+     "giá gói của nhà ĐƯỢC KÈM"
+    ],
+    [
+     "soTien",
+     "REAL",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "kpiNhaKem",
+     "REAL",
+     "",
+     ""
+    ],
+    [
+     "kpiNhaDuocKem",
+     "REAL",
+     "",
+     ""
+    ],
+    [
+     "maChungCu",
+     "TEXT",
+     "",
+     "trỏ chungCu.ma"
+    ],
+    [
+     "trangThai",
+     "TEXT",
+     "NOT NULL DEFAULT 'phaiTra'",
+     "phaiTra · daTra · huy"
+    ],
+    [
+     "sinhLuc",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "traLuc",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "huyLuc",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "nguoiDuyet",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "lyDo",
+     "TEXT",
+     "",
+     ""
+    ]
+   ]
+  },
+  {
+   "ten": "chiPhi",
+   "mo": "Đề xuất chi và duyệt chi theo mốc tiền",
+   "doc": "R01–R03 · ban tài chính",
+   "ghi": "Ghi: Trưởng nhóm Coach trở lên · duyệt theo mốc C0–C6 (kế toán chi / kế toán trưởng) · huỷ: R01–R03",
+   "cot": [
+    [
+     "id",
+     "TEXT",
+     "PRIMARY KEY",
+     ""
+    ],
+    [
+     "khoanMuc",
+     "TEXT",
+     "NOT NULL",
+     "danh sách trắng, khai ở chi-tieu.js"
+    ],
+    [
+     "soTien",
+     "REAL",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "ngayChi",
+     "TEXT",
+     "NOT NULL",
+     "mốc TIỀN RA, không phải mốc nhập liệu"
+    ],
+    [
+     "hinhThuc",
+     "TEXT",
+     "NOT NULL",
+     "chuyenKhoan · tienMat · the"
+    ],
+    [
+     "nhaCungCap",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "coHoaDon",
+     "INTEGER",
+     "NOT NULL DEFAULT 0",
+     ""
+    ],
+    [
+     "maHoaDon",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "minhChung",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "dienGiai",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "nguoiDeXuat",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "deXuatLuc",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "nguoiDuyet",
+     "TEXT",
+     "",
+     "NGƯỜI KHÁC người đề xuất"
+    ],
+    [
+     "duyetLuc",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "nguoiDuyet2",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "duyetLuc2",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "nguoiDuyet3",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "duyetLuc3",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "nac",
+     "TEXT",
+     "",
+     "N1…N5, nấc THẬT đã áp (gồm cả gộp 7 ngày)"
+    ],
+    [
+     "baoGia",
+     "TEXT",
+     "",
+     "danh sách báo giá, JSON"
+    ],
+    [
+     "soBaoGia",
+     "INTEGER",
+     "NOT NULL DEFAULT 0",
+     ""
+    ],
+    [
+     "soHopDong",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "trangThai",
+     "TEXT",
+     "NOT NULL DEFAULT 'choDuyet'",
+     "choDuyet · daDuyet · tuChoi · huy"
+    ],
+    [
+     "tuGhi",
+     "INTEGER",
+     "NOT NULL DEFAULT 0",
+     ""
+    ],
+    [
+     "idBangLuong",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "huyLuc",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "lyDo",
+     "TEXT",
+     "",
+     ""
+    ]
+   ]
+  },
+  {
+   "ten": "quyenTaiChinh",
+   "mo": "Vị trí ban tài chính theo từng người (kế toán thu / chi / trưởng · quản lý phòng)",
+   "doc": "R01–R03",
+   "ghi": "CHỈ Super Admin cấp / thu hồi",
+   "cot": [
+    [
+     "id",
+     "TEXT",
+     "PRIMARY KEY",
+     ""
+    ],
+    [
+     "username",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "chucNang",
+     "TEXT",
+     "NOT NULL",
+     "keToan · keToanTruong"
+    ],
+    [
+     "mocToiDa",
+     "TEXT",
+     "",
+     "C1…C6, chỉ có nghĩa với keToanTruong"
+    ],
+    [
+     "lyDo",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "boiAi",
+     "TEXT",
+     "NOT NULL",
+     "chỉ R01 cấp được (V50·168)"
+    ],
+    [
+     "capLuc",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "hetHan",
+     "TEXT",
+     "",
+     "vắng nghĩa là không hết hạn"
+    ],
+    [
+     "thuHoiLuc",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "thuHoiBoi",
+     "TEXT",
+     "",
+     ""
+    ]
+   ]
+  },
+  {
+   "ten": "giaoDichNganHang",
+   "mo": "Giao dịch ngân hàng để đối chiếu thu",
+   "doc": "R01–R03 · kế toán thu",
+   "ghi": "Nhập tay / đối chiếu: R01–R03 hoặc kế toán thu · cửa ngân hàng dùng khoá riêng",
+   "cot": [
+    [
+     "id",
+     "TEXT",
+     "PRIMARY KEY",
+     ""
+    ],
+    [
+     "soTaiKhoan",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "maGiaoDich",
+     "TEXT",
+     "NOT NULL",
+     "mã ngân hàng cấp, duy nhất theo tài khoản"
+    ],
+    [
+     "huong",
+     "TEXT",
+     "NOT NULL",
+     "vao · ra"
+    ],
+    [
+     "soTien",
+     "REAL",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "noiDung",
+     "TEXT",
+     "",
+     "nội dung chuyển khoản, chữ của người gửi"
+    ],
+    [
+     "luc",
+     "TEXT",
+     "NOT NULL",
+     "mốc ngân hàng ghi"
+    ],
+    [
+     "nhanLuc",
+     "TEXT",
+     "NOT NULL",
+     "mốc hệ nhận được"
+    ],
+    [
+     "nguon",
+     "TEXT",
+     "NOT NULL",
+     "webhook · nhapTay"
+    ],
+    [
+     "nguoiNhap",
+     "TEXT",
+     "",
+     "chỉ có khi nhapTay"
+    ],
+    [
+     "idPhieuThu",
+     "TEXT",
+     "",
+     "khớp với phiếu nào"
+    ],
+    [
+     "idChiPhi",
+     "TEXT",
+     "",
+     "hoặc khoản chi nào"
+    ],
+    [
+     "khopLuc",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "khopBoi",
+     "TEXT",
+     "",
+     ""
+    ]
+   ]
+  },
+  {
+   "ten": "ketToanButToan",
+   "mo": "Bút toán kế toán",
+   "doc": "R01–R03",
+   "ghi": "R01–R03",
+   "cot": [
+    [
+     "id",
+     "INTEGER",
+     "PRIMARY KEY AUTOINCREMENT",
+     ""
+    ],
+    [
+     "ngay",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "dienGiai",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "tkNo",
+     "TEXT",
+     "NOT NULL",
+     "ghi Nợ tài khoản nào"
+    ],
+    [
+     "tkCo",
+     "TEXT",
+     "NOT NULL",
+     "ghi Có tài khoản nào (khác tkNo)"
+    ],
+    [
+     "soTien",
+     "INTEGER",
+     "NOT NULL",
+     "đồng, > 0"
+    ],
+    [
+     "chungTu",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "nguoiGhi",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "ghiLuc",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ]
+   ]
+  },
+  {
+   "ten": "ketToanHoaDon",
+   "mo": "Hoá đơn",
+   "doc": "R01–R03",
+   "ghi": "R01–R03",
+   "cot": [
+    [
+     "id",
+     "INTEGER",
+     "PRIMARY KEY AUTOINCREMENT",
+     ""
+    ],
+    [
+     "soHD",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "loai",
+     "TEXT",
+     "NOT NULL",
+     "ra · vao"
+    ],
+    [
+     "doiTuong",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "tienHang",
+     "INTEGER",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "thueSuat",
+     "REAL",
+     "NOT NULL DEFAULT 0",
+     ""
+    ],
+    [
+     "tienThue",
+     "INTEGER",
+     "NOT NULL DEFAULT 0",
+     ""
+    ],
+    [
+     "ngay",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "daGhiSo",
+     "INTEGER",
+     "NOT NULL DEFAULT 0",
+     ""
+    ],
+    [
+     "nguoiGhi",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "ghiLuc",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ]
+   ]
+  },
+  {
+   "ten": "ketToanToKhai",
+   "mo": "Tờ khai thuế",
+   "doc": "R01–R03",
+   "ghi": "R01–R03",
+   "cot": [
+    [
+     "loai",
+     "TEXT",
+     "NOT NULL",
+     "GTGT · TNCN · TNDN · MONBAI"
+    ],
+    [
+     "ky",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "soTien",
+     "INTEGER",
+     "NOT NULL DEFAULT 0",
+     ""
+    ],
+    [
+     "trangThai",
+     "TEXT",
+     "NOT NULL",
+     "chuaKhai · daKhai · daNop"
+    ],
+    [
+     "hanNop",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "nguoiKhai",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "ghiLuc",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "(ràng buộc)",
+     "",
+     "PRIMARY KEY (loai, ky)",
+     ""
+    ]
+   ]
+  },
+  {
+   "ten": "heSoLuong",
+   "mo": "Hệ số lương",
+   "doc": "R01–R03",
+   "ghi": "CHỈ Super Admin",
+   "cot": [
+    [
+     "id",
+     "TEXT",
+     "PRIMARY KEY",
+     ""
+    ],
+    [
+     "viTri",
+     "TEXT",
+     "NOT NULL",
+     "keToanThu · keToanChi · keToanTruong"
+    ],
+    [
+     "tuKy",
+     "TEXT",
+     "NOT NULL",
+     "có hiệu lực từ kỳ này trở đi (YYYY-MM)"
+    ],
+    [
+     "luongCung",
+     "INTEGER",
+     "NOT NULL",
+     "tầng 1"
+    ],
+    [
+     "tranKpi",
+     "INTEGER",
+     "NOT NULL",
+     "tầng 2 khi đạt 100 điểm"
+    ],
+    [
+     "lyDo",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "boiAi",
+     "TEXT",
+     "NOT NULL",
+     "chỉ R01"
+    ],
+    [
+     "datLuc",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ]
+   ]
+  },
+  {
+   "ten": "bangLuong",
+   "mo": "Bảng lương",
+   "doc": "Mỗi người xem dòng của mình · R01–R03 / ban tài chính xem đủ",
+   "ghi": "Chốt: R01–R03 / ban tài chính",
+   "cot": [
+    [
+     "id",
+     "TEXT",
+     "PRIMARY KEY",
+     ""
+    ],
+    [
+     "ky",
+     "TEXT",
+     "NOT NULL",
+     "YYYY-MM"
+    ],
+    [
+     "username",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "viTri",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "diem",
+     "REAL",
+     "",
+     "null nghĩa là KHÔNG CÓ GÌ ĐỂ ĐO trong kỳ"
+    ],
+    [
+     "bacDiem",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "soDo",
+     "TEXT",
+     "NOT NULL",
+     "JSON số đo thô của từng thước, đông cứng"
+    ],
+    [
+     "trongBoQua",
+     "REAL",
+     "",
+     "phần trọng số rơi vào thước không đo được"
+    ],
+    [
+     "luongCung",
+     "INTEGER",
+     "NOT NULL DEFAULT 0",
+     ""
+    ],
+    [
+     "phanKpi",
+     "INTEGER",
+     "NOT NULL DEFAULT 0",
+     ""
+    ],
+    [
+     "ghiNhan",
+     "INTEGER",
+     "NOT NULL DEFAULT 0",
+     "tầng 3, do Giám đốc quyết"
+    ],
+    [
+     "ghiNhanVi",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "duoi60",
+     "TEXT",
+     "",
+     "BẮT BUỘC khi điểm < 60: quyết định của người chốt"
+    ],
+    [
+     "idHeSo",
+     "TEXT",
+     "",
+     "dòng hệ số đã dùng, để dựng lại được"
+    ],
+    [
+     "trangThai",
+     "TEXT",
+     "NOT NULL DEFAULT 'nhap'",
+     "nhap · daChot"
+    ],
+    [
+     "nguoiChot",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "chotLuc",
+     "TEXT",
+     "",
+     ""
+    ]
+   ]
+  },
+  {
+   "ten": "nhacThu",
+   "mo": "Lịch sử nhắc thu",
+   "doc": "Tư vấn trở lên",
+   "ghi": "Tư vấn trở lên",
+   "cot": [
+    [
+     "id",
+     "TEXT",
+     "PRIMARY KEY",
+     ""
+    ],
+    [
+     "maKhachHang",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "idKy",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "kenh",
+     "TEXT",
+     "NOT NULL",
+     "goiDien · nhanTin · email · gapMat"
+    ],
+    [
+     "noiDung",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "ketQua",
+     "TEXT",
+     "NOT NULL",
+     "huaTra · khongLienLac · xinKhatNo · tuChoi · daTra"
+    ],
+    [
+     "henLuc",
+     "TEXT",
+     "",
+     "nhà hẹn trả ngày nào, nếu có hẹn"
+    ],
+    [
+     "boi",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "luc",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ]
+   ]
+  },
+  {
+   "ten": "soCredit",
+   "mo": "Sổ credit (nạp · tiêu · thưởng · hoàn) — chống trùng bằng khoá duy nhất",
+   "doc": "Ví của nhà · Credit (tài chính) · Trung tâm đo lường",
+   "ghi": "Tiêu: Coach nhà mình / nhà tự phục vụ · nạp từ phiếu thu: R01–R03 hoặc kế toán thu · điều chỉnh: CHỈ Super Admin",
+   "cot": [
+    [
+     "id",
+     "TEXT",
+     "PRIMARY KEY",
+     ""
+    ],
+    [
+     "maNha",
+     "TEXT",
+     "NOT NULL",
+     "mã khách hàng"
+    ],
+    [
+     "loai",
+     "TEXT",
+     "NOT NULL",
+     "tang · thuong · traPhi"
+    ],
+    [
+     "so",
+     "INTEGER",
+     "NOT NULL",
+     "dương = cộng · âm = trừ"
+    ],
+    [
+     "viec",
+     "TEXT",
+     "NOT NULL",
+     "tang-T1 · dang-ky · nap · thuong:<hd> · tieu:<hd> · hoan-tieu · dieu-chinh"
+    ],
+    [
+     "khoaDuy",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "tang",
+     "INTEGER",
+     "",
+     ""
+    ],
+    [
+     "cap",
+     "INTEGER",
+     "",
+     ""
+    ],
+    [
+     "thamChieu",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "ghiChu",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "boiAi",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "luc",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ]
+   ]
+  },
+  {
+   "ten": "viCredit",
+   "mo": "Ví credit của một nhà: cấp, nhóm",
+   "doc": "Nhà mình · đội ngũ theo quyền",
+   "ghi": "Máy chủ cập nhật theo sổ credit",
+   "cot": [
+    [
+     "maNha",
+     "TEXT",
+     "PRIMARY KEY",
+     ""
+    ],
+    [
+     "cap",
+     "INTEGER",
+     "NOT NULL DEFAULT 1",
+     ""
+    ],
+    [
+     "nhom",
+     "TEXT",
+     "NOT NULL DEFAULT 'CS'",
+     ""
+    ],
+    [
+     "moLuc",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "suaLuc",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "boiAi",
+     "TEXT",
+     "",
+     ""
+    ]
+   ]
+  },
+  {
+   "ten": "bangGia",
+   "mo": "Bảng giá đang áp dụng",
+   "doc": "R01–R03",
+   "ghi": "Đổi giá: CHỈ Super Admin",
+   "cot": [
+    [
+     "id",
+     "TEXT",
+     "PRIMARY KEY",
+     ""
+    ],
+    [
+     "tang",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "gia",
+     "INTEGER",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "lyDo",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "boiAi",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "vaiBoiAi",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "ghiLuc",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "dong",
+     "INTEGER",
+     "NOT NULL DEFAULT 0",
+     "đóng bậc, KHÔNG xoá"
+    ],
+    [
+     "ten",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "gom",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "khong",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "nhip",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "hoan",
+     "TEXT",
+     "",
+     ""
+    ]
+   ]
+  },
+  {
+   "ten": "taiKhoanNhan",
+   "mo": "Tài khoản ngân hàng / QR nhận tiền",
+   "doc": "R01–R04 · phụ huynh, học viên (để chuyển khoản)",
+   "ghi": "R01–R02",
+   "cot": [
+    [
+     "id",
+     "TEXT",
+     "PRIMARY KEY CHECK (id = 'gita365')",
+     ""
+    ],
+    [
+     "nganHang",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "chuTk",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "soTk",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "qrDataUrl",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "noiDungCk",
+     "TEXT",
+     "NOT NULL DEFAULT ''",
+     ""
+    ],
+    [
+     "capLuc",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ],
+    [
+     "capBoi",
+     "TEXT",
+     "NOT NULL",
+     ""
+    ]
+   ]
+  }
+ ]
+};
+
+})();
+
+/* ═════════ src/khung-du-lieu.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — KHUNG DỮ LIỆU & MA TRẬN QUYỀN (V50·168 · R01–R02)
+
+   Chủ hệ: "Các phần tài chính và CRM cho hiển thị khung bảng để tôi có thể
+   kiểm tra cấu trúc". Bốn thẻ:
+     CRM · Tài chính   khung từng bảng D1 (cột · kiểu · ràng buộc · chú thích)
+                       và ai đọc / ai ghi — sinh từ may-chu/csdl.sql bằng
+                       tools/dung-khung-du-lieu.js (CI canh khớp lược đồ).
+                       Chỉ cấu trúc, không một dòng dữ liệu.
+     Ma trận           15 vai × 15 màn chính: nghiệp vụ · khu khách hàng ·
+                       màn của khách — đọc thẳng từ src/v50-man.js.
+     Luồng dữ liệu     khách làm gì → ghi vào bảng nào → màn nhân sự nào đọc.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
+(function(){
+  var U = G.U, h = U.h, ic = U.ic;
+  var VIEW = 'khung-du-lieu';
+  var st = { tab:'crm', mo:'' };
+
+  var LUONG = [
+    ['Gia đình tick việc hôm nay, nhiệm vụ, nhịp sống', 'Nhà mình hôm nay', 'nhipXong', 'Đo lường toàn diện khách hàng · Trung tâm đo lường (co4) · Chiến lược V20'],
+    ['Gia đình gửi sổ đo, chấm NPS / CSAT', 'Hành trình & tiến bộ · Dịch vụ', 'suKienKH · danhGiaKH · hoSoThang', 'Đo lường toàn diện khách hàng · Trung tâm đo lường (kh3, kh4)'],
+    ['Gia đình dùng dịch vụ tự phục vụ bằng credit', 'Dịch vụ & tài khoản (Ví)', 'soCredit · viCredit', 'Credit (Tài chính) · Trung tâm đo lường'],
+    ['Coach ghi một buổi coach', 'Hệ điều hành Coach', 'soCredit → soCham (tự động)', 'CRM: dòng thời gian, chạm cuối, KPI · Coach: đèn xanh / vàng / đỏ'],
+    ['Coach / Tư vấn ghi lượt chạm (nhắn · gọi · WOW)', 'Hệ điều hành Coach', 'soCham', 'CRM · Điều phối & giám sát · Trung tâm đo lường (co1, co2)'],
+    ['Tư vấn ghi phiếu thu; kế toán duyệt', 'Khách hàng & CRM · Tài chính', 'phieuThu → kyThu · nạp soCredit', 'Gia đình: thanh toán, công nợ, ví · Tài chính · Trung tâm (tc1, tc4)'],
+    ['Đổi tầng cho một nhà (cổng KPI + thanh toán)', 'Điều hành · Tài chính', 'hoSoKhach.tang · nguoiHocTang · kyThu', 'Gia đình: phần mở theo tầng · lộ trình cá nhân hoá · lịch thu'],
+    ['Super Admin cấp quyền', 'Tài khoản & quyền', 'quyenCRM · quyenTaiChinh · quyenT5Pro · quyenNoiDung', 'Đăng nhập trả mức quyền → cột trái nhân sự mở thêm màn tương ứng']
+  ];
+
+  function bangKhung(ds){
+    return ds.map(function(b){
+      var mo = st.mo === b.ten;
+      return '<div class="card mb kdl-bang"><button class="kdl-dau" data-kdl="mo" data-v2="' + h(b.ten) + '" aria-expanded="' + mo + '">' +
+        '<span class="mono"><b>' + h(b.ten) + '</b></span><span class="sm muted">' + h(b.mo) + '</span><span class="tiny muted">' + b.cot.filter(function(c){ return c[0] !== '(ràng buộc)'; }).length + ' cột ' + (mo ? '▴' : '▾') + '</span></button>' +
+        '<div class="kdl-quyen tiny"><span><b>Ai đọc:</b> ' + h(b.doc) + '</span><span><b>Ai ghi:</b> ' + h(b.ghi) + '</span></div>' +
+        (mo ? '<div class="v50-bang mt" role="table" aria-label="Cột của bảng ' + h(b.ten) + '">' +
+          '<div class="v50-hang v50-hang-dau kdl-hang" role="row"><span>Cột</span><span>Kiểu</span><span>Ràng buộc</span><span>Ý nghĩa</span></div>' +
+          b.cot.map(function(c){ return '<div class="v50-hang kdl-hang" role="row"><span class="mono">' + h(c[0]) + '</span><span class="mono tiny">' + h(c[1]) + '</span><span class="mono tiny">' + h(c[2]) + '</span><span class="tiny">' + h(c[3]) + '</span></div>'; }).join('') +
+        '</div>' : '') + '</div>';
+    }).join('');
+  }
+
+  function maTran(){
+    var M = G.V50M; if(!M) return '';
+    var VAI = ['R01','R02','R03','R04','R05','R06','R07','R08','R09','R10','R11','R12','R13','R14','R15','khach-la'];
+    var ten = function(id){ if(id === 'khach-la') return 'Khách lạ'; var r = G.roleById ? G.roleById(id) : null; return r ? r.short || r.n : id; };
+    var o = '<p class="sm muted mb">● màn nghiệp vụ của vai · ◐ khu vực khách hàng (nhân sự xem theo quyền) · ◎ màn của chính khách · — không có. Quyền Super Admin cấp thêm (CRM, ban tài chính, T5-PRO, ký nội dung) mở phần tương ứng bên trong các màn này.</p>';
+    o += '<div class="kdl-cuon"><table class="kdl-mt"><thead><tr><th>Màn chính</th>' + VAI.map(function(v){ return '<th>' + h(ten(v)) + '</th>'; }).join('') + '</tr></thead><tbody>';
+    M.HUB.forEach(function(hb){
+      o += '<tr><th>' + h(hb.ten) + ' <small class="muted">' + hb.phan.length + '</small></th>' + VAI.map(function(v){
+        var ns = M.hubVai(v).indexOf(hb.id) >= 0, kh = (M.VAI_KHACH[v] || []).indexOf(hb.id) >= 0;
+        var k = ns ? (M.laKhach(v) ? '◎' : '●') : kh ? '◐' : '—';
+        return '<td class="kdl-o' + (k === '—' ? ' muted' : '') + '">' + k + '</td>';
+      }).join('') + '</tr>';
+    });
+    o += '<tr><th>Tổng màn hiển thị</th>' + VAI.map(function(v){ return '<td class="kdl-o"><b>' + M.hubTatCa(v).length + '</b></td>'; }).join('') + '</tr>';
+    return o + '</tbody></table></div>';
+  }
+
+  function luong(){
+    return '<div class="v50-bang" role="table" aria-label="Luồng dữ liệu khách và nhân sự">' +
+      '<div class="v50-hang v50-hang-dau kdl-luong" role="row"><span>Việc xảy ra</span><span>Ở màn</span><span>Ghi vào bảng</span><span>Màn nhân sự đọc</span></div>' +
+      LUONG.map(function(x){ return '<div class="v50-hang kdl-luong" role="row"><span>' + h(x[0]) + '</span><span class="tiny">' + h(x[1]) + '</span><span class="mono tiny">' + h(x[2]) + '</span><span class="tiny">' + h(x[3]) + '</span></div>'; }).join('') +
+      '</div><p class="tiny muted mt">Mọi luồng chạy ngầm qua một cơ sở dữ liệu duy nhất (D1) ở máy chủ: khách và nhân sự nhìn cùng một số, mỗi bên qua cổng quyền của mình.</p>';
+  }
+
+  G.VIEWS[VIEW] = function(){
+    if(!(G.can && G.can('qt_trang'))) return U.lockCard('Khung dữ liệu dành cho Admin hệ thống và Super Admin.');
+    var K = G.KHUNG_DL || { crm:[], taiChinh:[] };
+    var o = U.ph({ eyebrow:'V50·168 · CẤU TRÚC HỆ', ic:'grid', grad:1, t:'Khung dữ liệu & ma trận quyền',
+      lead:'Khung bảng CRM và Tài chính để soát cấu trúc (chỉ cột, không dữ liệu), ma trận vai × màn chính, và luồng dữ liệu nối khách với nhân sự.' });
+    var TAB = [['crm','CRM · ' + K.crm.length + ' bảng','heart'], ['tc','Tài chính · ' + K.taiChinh.length + ' bảng','list'], ['mt','Ma trận vai × màn','grid'], ['luong','Luồng dữ liệu','orbit']];
+    o += '<div class="co-tabs" role="tablist">' + TAB.map(function(t){ return '<button class="co-tab' + (st.tab === t[0] ? ' on' : '') + '" role="tab" data-kdl="tab" data-v2="' + t[0] + '">' + ic(t[2],'w-3 h-3') + h(t[1]) + '</button>'; }).join('') + '</div>';
+    if(st.tab === 'crm') o += bangKhung(K.crm);
+    else if(st.tab === 'tc') o += bangKhung(K.taiChinh);
+    else if(st.tab === 'mt') o += maTran();
+    else o += luong();
+    return o;
+  };
+
+  document.addEventListener('click', function(e){
+    var el = e.target.closest && e.target.closest('[data-kdl]'); if(!el) return;
+    var a = el.getAttribute('data-kdl'), v = el.getAttribute('data-v2') || '';
+    if(a === 'tab'){ st.tab = v; st.mo = ''; }
+    else if(a === 'mo') st.mo = st.mo === v ? '' : v;
+    if(G.render && G.S && G.S.view === VIEW) G.render();
   });
 })();
 
@@ -78862,6 +81021,9 @@ function leftNav(){
     tongKhoa++;
     if(!it.perm || G.can(it.perm)) choTang++;   /* hụt gói, không hụt quyền */
   }); });
+  /* V50·168: đếm theo màn của vai (khách không bị báo "86 mục chưa tới lượt"
+     của 270 mục cũ — chỉ phần thật sự thuộc quyền lợi của mình). */
+  if(G.v50Bat168 && G.v50Bat168() && G.v50DemPhamVi){ var d168 = G.v50DemPhamVi(); tongMo = d168.mo; tongKhoa = d168.khoa; choTang = d168.choTang; }
 
   /* Chỉ so khi kho đã nạp xong. Đang nạp mà so thì tập mục còn dao động,
      và dải sẽ báo "vừa mở" rồi "vừa mở" lần nữa trong cùng một lần vào. */
@@ -78952,7 +81114,7 @@ function leftNav(){
           mo.map(nut).join('')+
         '</div></div>';
     }).join('')) + '</div>'+
-    '<div class="foot"><button class="nav-i" data-v="toi">'+ic('home')+'<span class="lb">'+h(G.L('myAccount'))+'</span></button>'+
+    '<div class="foot">'+((!G.allowed || G.allowed('toi')) ? '<button class="nav-i" data-v="toi">'+ic('home')+'<span class="lb">'+h(G.L('myAccount'))+'</span></button>' : '')+
     (G.can('sua_noi_dung') ? '<button class="nav-i" data-v="sap-xep">'+ic('orbit')+
       '<span class="lb">Sắp xếp thư mục</span></button>' : '')+
     '<button class="nav-i" data-act="doi-mk-mo">'+ic('lock')+'<span class="lb">'+h(G.L('changePw'))+'</span></button>'+

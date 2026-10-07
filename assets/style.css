@@ -4013,3 +4013,17 @@ html[data-may="yeu"] *,html[data-may="yeu"] *::before,html[data-may="yeu"] *::af
 .v50-pc-khoa{color:var(--ink-4);border-style:dashed}
 .v50-pc-kho{border-color:var(--line-2);background:var(--gita-mo-1)}
 .v50-khoa{cursor:default;border-style:dashed;color:var(--ink-4)}
+.v50-hnav-ngan{flex:none;width:1px;align-self:stretch;margin:6px 6px;background:var(--line-2)}
+.v50-phan-kh{border-color:color-mix(in srgb,var(--t4,#0B7350) 35%,var(--line))}
+/* ═══ Khung dữ liệu & ma trận quyền (src/khung-du-lieu.js) ═══ */
+.kdl-dau{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px;width:100%;background:none;border:0;padding:0;text-align:left;color:var(--ink);cursor:pointer}
+.kdl-dau .sm{flex:1 1 220px;min-width:0}
+.kdl-quyen{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:6px;color:var(--ink-2)}
+.kdl-hang{grid-template-columns:minmax(120px,1fr) minmax(70px,.5fr) minmax(140px,1.2fr) minmax(160px,1.6fr)}
+.kdl-luong{grid-template-columns:minmax(170px,1.4fr) minmax(120px,1fr) minmax(140px,1fr) minmax(180px,1.6fr)}
+.kdl-cuon{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+.kdl-mt{border-collapse:collapse;font-size:12.5px;min-width:900px;width:100%}
+.kdl-mt th,.kdl-mt td{border-top:1px solid var(--line);padding:6px 8px;text-align:center;white-space:nowrap}
+.kdl-mt thead th{background:var(--gita-mo-1);font-size:11px;color:var(--ink-3)}
+.kdl-mt tbody th{text-align:left;font-weight:600}
+.kdl-o{font-size:14px}
