@@ -620,6 +620,7 @@ G.NAV = [
        của mình, và danh mục tự lọc theo vai ngay trên màn hình. Khách
        hàng vào "KPI của tôi" thì thấy nhịp ngày và KPI tầng, đội ngũ thì
        thấy KPI công việc: cùng một mục, hai nội dung, theo đúng vai. */
+    {v:'dk-cua-toi',  t:'Bảng điều khiển của tôi',    h:'10 màn chi tiết × 10 nghiệp vụ đúng vai của tôi · đèn tiến độ · mở thẳng màn làm việc', ic:'grid', star:1, capMo:'chung'},
     {v:'bang-viec',   t:'Bảng công việc của tôi',     h:'Trễ hạn · đang làm · mới nhận · đã xong · chốt ngày', ic:'pulse', star:1, capMo:'chung', hienKhi:'cvVaiCoDauViec'},
     {v:'danh-muc-viec',t:'Danh mục đầu việc',         h:'Tích chọn để nhận việc · nói rõ đóng bằng bằng chứng gì', ic:'list', capMo:'chung', hienKhi:'cvVaiCoDauViec'},
     {v:'tien-bo',     t:'Nhà mình đã đổi gì',          h:'Tuần này so với tuần trước, và phần chênh lệch nói bằng lời', ic:'chart', star:1, capMo:'chung'},
@@ -969,6 +970,7 @@ G.NAV = [
     {v:'noi-may-chu', t:'Nối máy chủ',                 h:'Dán địa chỉ · gọi thử · sáu bước dựng', ic:'orbit', perm:'qt_trang', capMo:'chung', star:1},
     {v:'van-hanh-10', t:'Bảng điều khiển vận hành',      h:'10 màn quản trị A–Z · người & tổ chức · kinh doanh · sản xuất & an toàn', ic:'grid', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'van-hanh-gd', t:'Bảng điều khiển Giám đốc',       h:'8 màn điều hành × 10 nghiệp vụ · phòng ban · nguồn lực · CRM · tài chính · nhân sự', ic:'crown', star:1, perm:'dh_toan_he', capMo:'chung'},
+    {v:'dk-cac-vai',  t:'Bảng điều khiển các vai',      h:'15 vai × 10 màn · xem bảng từng vai ở chế độ giám sát', ic:'users', star:1, perm:'dh_toan_he', capMo:'chung'},
     {v:'phong-ban',   t:'Hệ thống Phòng ban',          h:'16 ban · nhân sự theo vai · Agent (bấm xem lý lịch) · báo cáo · kho · nội quy', ic:'grid', star:1, perm:'dh_toan_he', capMo:'chung'},
     {v:'nang-luc-ns', t:'Năng lực & Thăng hạng',        h:'Test đầu vào · thi tháng · thăng hạng · lương · cảnh báo năng suất · vinh danh', ic:'chart', star:1, perm:'dh_toan_he', capMo:'chung'},
     /* Khoá khuôn mặt — an ninh tài khoản CỦA MỖI NGƯỜI, nên KHÔNG khoá ở

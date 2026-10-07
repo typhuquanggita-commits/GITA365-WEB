@@ -647,6 +647,7 @@ G.NAV = [
        của mình, và danh mục tự lọc theo vai ngay trên màn hình. Khách
        hàng vào "KPI của tôi" thì thấy nhịp ngày và KPI tầng, đội ngũ thì
        thấy KPI công việc: cùng một mục, hai nội dung, theo đúng vai. */
+    {v:'dk-cua-toi',  t:'Bảng điều khiển của tôi',    h:'10 màn chi tiết × 10 nghiệp vụ đúng vai của tôi · đèn tiến độ · mở thẳng màn làm việc', ic:'grid', star:1, capMo:'chung'},
     {v:'bang-viec',   t:'Bảng công việc của tôi',     h:'Trễ hạn · đang làm · mới nhận · đã xong · chốt ngày', ic:'pulse', star:1, capMo:'chung', hienKhi:'cvVaiCoDauViec'},
     {v:'danh-muc-viec',t:'Danh mục đầu việc',         h:'Tích chọn để nhận việc · nói rõ đóng bằng bằng chứng gì', ic:'list', capMo:'chung', hienKhi:'cvVaiCoDauViec'},
     {v:'tien-bo',     t:'Nhà mình đã đổi gì',          h:'Tuần này so với tuần trước, và phần chênh lệch nói bằng lời', ic:'chart', star:1, capMo:'chung'},
@@ -996,6 +997,7 @@ G.NAV = [
     {v:'noi-may-chu', t:'Nối máy chủ',                 h:'Dán địa chỉ · gọi thử · sáu bước dựng', ic:'orbit', perm:'qt_trang', capMo:'chung', star:1},
     {v:'van-hanh-10', t:'Bảng điều khiển vận hành',      h:'10 màn quản trị A–Z · người & tổ chức · kinh doanh · sản xuất & an toàn', ic:'grid', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'van-hanh-gd', t:'Bảng điều khiển Giám đốc',       h:'8 màn điều hành × 10 nghiệp vụ · phòng ban · nguồn lực · CRM · tài chính · nhân sự', ic:'crown', star:1, perm:'dh_toan_he', capMo:'chung'},
+    {v:'dk-cac-vai',  t:'Bảng điều khiển các vai',      h:'15 vai × 10 màn · xem bảng từng vai ở chế độ giám sát', ic:'users', star:1, perm:'dh_toan_he', capMo:'chung'},
     {v:'phong-ban',   t:'Hệ thống Phòng ban',          h:'16 ban · nhân sự theo vai · Agent (bấm xem lý lịch) · báo cáo · kho · nội quy', ic:'grid', star:1, perm:'dh_toan_he', capMo:'chung'},
     {v:'nang-luc-ns', t:'Năng lực & Thăng hạng',        h:'Test đầu vào · thi tháng · thăng hạng · lương · cảnh báo năng suất · vinh danh', ic:'chart', star:1, perm:'dh_toan_he', capMo:'chung'},
     /* Khoá khuôn mặt — an ninh tài khoản CỦA MỖI NGƯỜI, nên KHÔNG khoá ở
@@ -52028,6 +52030,10 @@ G.VIEWS = G.VIEWS || {};
     return o;
   }
 
+  /* Chuẩn nghề dùng chung cho Bảng điều khiển theo vai (dk-vai.js) — chỉ đọc. */
+  G.NGHE_DATA = G.NGHE_DATA || {};
+  G.NGHE_DATA['nghe-tu-van'] = { vaiTen: 'Tư vấn', khung: KHUNG, cap: CAP, nhom: NHOM, viec: VIEC };
+
   G.VIEWS['nghe-tu-van'] = function () {
     if (!(typeof G.can === 'function' && G.can('pro_consult')))
       return U.lockCard('Trang chuyên môn hoá nghề Tư vấn mở cho Chuyên gia tư vấn trở lên. Đăng nhập đúng vai để xem.');
@@ -62097,7 +62103,7 @@ var G = window.G || {}; window.G = G;
 
        ◆ KHÁCH HÀNG       — các màn về hoạt động/hành trình của khách
        ◆ NGHIỆP VỤ CỦA TÔI — khối việc cô đọng: 10 (quản trị) · 8 (giám
-                             đốc) · 5 (các vai còn lại)
+                             đốc) · 6 (các vai còn lại, mở đầu bằng Bảng điều khiển của tôi)
        ▸ TOÀN HỆ THỐNG    — sáu nhóm cũ, giữ nguyên, gấp lại bên dưới
 
    BẢO MẬT LÀ LÕI. Mỗi khoá màn ở đây KHÔNG tự mở quyền. Lúc dựng, cột trái
@@ -62148,27 +62154,31 @@ var G = window.G || {}; window.G = G;
     R03:{cap:8, ds:['van-hanh-gd','nghe-giamdoc','phong-ban','nang-luc-ns','dieu-hanh','crm','tai-chinh-ceo','con-nguoi',
                     'khoa-dao-tao','bang-viec','do-luong-kh','giam-sat','tang-truong']},
     /* R04 Quản lý chuyên môn — giữ chuẩn nghề toàn đội */
-    R04:{cap:5, ds:['nghe-qlcm','nang-luc-ns','tt-cskh','ra-soat-kh',
+    R04:{cap:6, ds:['dk-cua-toi','nghe-qlcm','nang-luc-ns','tt-cskh','ra-soat-kh',
                     'phong-ban','do-luong-kh','bang-viec','assessment','trai-nghiem-kh']},
     /* R05 Trưởng nhóm Coach */
-    R05:{cap:5, ds:['nghe-tncoach','doi-ngu','ban-coach','bando-coach','bang-viec','xu-ly-ca','coach-deck']},
+    R05:{cap:6, ds:['dk-cua-toi','nghe-tncoach','doi-ngu','ban-coach','bando-coach','bang-viec','xu-ly-ca','coach-deck']},
     /* R06 Senior Coach · R07 Coach */
-    R06:{cap:5, ds:['nghe-coach','ban-coach','coach-deck','bando-coach','xu-ly-ca','bang-viec','doi-ngu']},
-    R07:{cap:5, ds:['nghe-coach','ban-coach','coach-deck','bando-coach','xu-ly-ca','bang-viec','doi-ngu']},
+    R06:{cap:6, ds:['dk-cua-toi','nghe-coach','ban-coach','coach-deck','bando-coach','xu-ly-ca','bang-viec','doi-ngu']},
+    R07:{cap:6, ds:['dk-cua-toi','nghe-coach','ban-coach','coach-deck','bando-coach','xu-ly-ca','bang-viec','doi-ngu']},
     /* R08 Giáo viên */
-    R08:{cap:5, ds:['nghe-giaovien','khoa-dao-tao','sat-hach','ban-coach','xu-ly-ca','bang-viec']},
+    R08:{cap:6, ds:['dk-cua-toi','nghe-giaovien','khoa-dao-tao','sat-hach','ban-coach','xu-ly-ca','bang-viec']},
     /* R09 Mentor (lv9 — không mở pro_coach, dùng consult/ca) */
-    R09:{cap:5, ds:['nghe-mentor','xu-ly-ca','do-luong-kh','ra-soat-kh','bang-viec','assessment','tt-cskh']},
+    R09:{cap:6, ds:['dk-cua-toi','nghe-mentor','xu-ly-ca','do-luong-kh','ra-soat-kh','bang-viec','assessment','tt-cskh']},
     /* R10 Chuyên gia đánh giá */
-    R10:{cap:5, ds:['nghe-danhgia','assessment','do-luong-kh','ra-soat-kh','bang-viec','sat-hach','trai-nghiem-kh']},
+    R10:{cap:6, ds:['dk-cua-toi','nghe-danhgia','assessment','do-luong-kh','ra-soat-kh','bang-viec','sat-hach','trai-nghiem-kh']},
     /* R11 Chuyên gia tư vấn — CRM là CÔNG CỤ CHĂM SÓC KHÁCH của Tư vấn,
        đặt trong Nghiệp vụ; chỉ hiện khi tài khoản được cấp CRM (G.S.crmMuc
        qua màn Phân quyền CRM) — cấp từng người, không mở đại trà. */
-    R11:{cap:5, ds:['nghe-tu-van','tt-cskh','crm','ban-tu-van','pheu-chot','bang-viec','do-luong-kh']},
+    R11:{cap:6, ds:['dk-cua-toi','nghe-tu-van','tt-cskh','crm','ban-tu-van','pheu-chot','bang-viec','do-luong-kh']},
     /* R12 Phân tích dữ liệu (lv12 — bộ màn phân tích nghe_chung) */
-    R12:{cap:5, ds:['nghe-phantich','chieu-sau','ma-tran','giam-sat','tu-dong','phuong-phap','bo-nao','ra-soat']},
+    R12:{cap:6, ds:['dk-cua-toi','nghe-phantich','chieu-sau','ma-tran','giam-sat','tu-dong','phuong-phap','bo-nao','ra-soat']},
+    /* R13 Phụ huynh · R14 Học viên — bảng điều khiển 10 màn của nhà mình
+       (dk-vai.js) đứng đầu, rồi hai màn mở mỗi ngày. */
+    R13:{cap:3, ds:['dk-cua-toi','hom-nay','nhiem-vu']},
+    R14:{cap:3, ds:['dk-cua-toi','hom-nay','nhiem-vu']},
     /* R15 CTV / Đại sứ giới thiệu */
-    R15:{cap:5, ds:['nghe-daisu','dai-su','hoa-hong','su-kien','ket-noi','ve-tinh']}
+    R15:{cap:6, ds:['dk-cua-toi','nghe-daisu','dai-su','hoa-hong','su-kien','ket-noi','ve-tinh']}
   };
 
   /* Bộ mô tả cho cột trái. KHÔNG tự lọc quyền ở đây — chỉ trả danh sách
@@ -62894,6 +62904,10 @@ G.VIEWS = G.VIEWS || {};
     o += '<p class="tiny muted" style="margin-top:8px">' + ic('shield', 'w-3 h-3') + ' Danh sách minh hoạ. Khi nối hồ sơ đào tạo thật, bảng chạy trên dữ liệu thật của đội Coach.</p>';
     return o;
   }
+
+  /* Chuẩn nghề dùng chung cho Bảng điều khiển theo vai (dk-vai.js) — chỉ đọc. */
+  G.NGHE_DATA = G.NGHE_DATA || {};
+  G.NGHE_DATA['nghe-coach'] = { vaiTen: 'Coach', khung: KHUNG, cap: CAP, nhom: NHOM, viec: VIEC };
 
   G.VIEWS['nghe-coach'] = function () {
     if (!(typeof G.can === 'function' && G.can('pro_coach')))
@@ -64633,6 +64647,1891 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
 
   (G.VA_AREA||[]).forEach(function(a){
     G.VIEWS['va-'+a.key] = (function(k){ return function(){ return G.vaManView(k); }; })(a.key);
+  });
+})();
+
+})();
+
+/* ═════════ src/data-dk-vai-1.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — DỮ LIỆU BẢNG ĐIỀU KHIỂN THEO VAI (phần 1):
+   Quản lý chuyên môn (R04) · Trưởng nhóm Coach (R05) ·
+   Senior Coach (R06) · Coach (R07)
+
+   Mỗi vai 10 màn × 10 nghiệp vụ. Số nguyên = đầu việc trong chuẩn nghề
+   của vai (lấy nguyên trọng số, chuẩn đạt, màn làm, dấu hiệu xong);
+   mảng [tên, màn, trọngSố, chuẩnĐạt, dấuHiệuXong] = nghiệp vụ riêng của
+   màn. Senior Coach và Coach dùng chung chuẩn nghề nghe-coach nhưng tách
+   rõ việc: Senior gỡ ca khó, kèm Coach mới, giữ chuẩn nhóm; Coach giữ
+   nhịp hằng ngày của chính các nhà mình đồng hành. Coach không chạm tiền,
+   mọi nghiệm thu bằng bằng chứng, hồ sơ gia đình đi qua hệ thống.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.DK_VAI = G.DK_VAI || {};
+
+/* ══ R04 · QUẢN LÝ CHUYÊN MÔN ══ */
+G.DK_VAI.qlcm = {
+  vai:['R04'], ten:'Quản lý chuyên môn', ic:'shield', c:'--t1', spec:'nghe-qlcm',
+  lead:'Người giữ chuẩn nghề cho toàn bộ đội dẫn dắt: soát đầu vào, giám sát buổi, nghiệm thu bằng bằng chứng và gỡ những ca đội không gỡ được. Cái hay được viết thành chuẩn, cái sai được sửa trước khi tới gia đình.',
+  cum:{ A:{t:'GIỮ CHUẨN HẰNG NGÀY', s:'Nắm đội · soát đầu vào · giám sát buổi'},
+        B:{t:'NGHIỆM THU & GỠ CA', s:'Ngôn ngữ · bằng chứng · ca vượt cấp · điều phối đội'},
+        C:{t:'CHUẨN HOÁ & CHUẨN NGHỀ', s:'Nhân rộng · đo lường · thăng cấp · hiến pháp'} },
+  loiTat:[ ['cong-nghiem-thu','Cổng nghiệm thu','shield'], ['xu-ly-ca','Xử lý ca theo quy trình','tools'],
+           ['do-luong-kh','Hệ đo lường khách hàng','chart'], ['kpi-toi','KPI của tôi','pulse'] ],
+  areas:[
+    { key:'nam-doi-dau-ngay', so:'01', ic:'pulse', c:'--t1', cum:'A', ten:'Nắm toàn cảnh đầu ngày',
+      man:'do-luong-kh',
+      mo:'Đọc đèn từng đội, từng Coach, từng nhà trước khi làm bất cứ việc gì khác trong ngày.',
+      nv:[ 0, 2, 25,
+        ['Đọc đèn đỏ mới bật qua đêm', 'do-luong-kh', 4, 'Mọi đèn đỏ mới có người nhận trước 9 giờ', 'Danh sách đỏ gắn tên người xử lý'],
+        ['Soát ca đang treo quá 48 giờ', 'xu-ly-ca', 3, 'Không ca nào treo quá 48 giờ không lý do', 'Ca treo có hạn mới và người giữ'],
+        ['Xem lịch buổi khó trong ngày của đội', 'doi-ngu', 3, 'Biết trước buổi khó để dự hoặc hỗ trợ', 'Buổi khó được đánh dấu cần dự'],
+        ['Đọc bảng tin nội bộ & việc mới giao', 'tin-noi-bo', 2, 'Nắm thông báo chuyên môn trong ngày', 'Tin quan trọng được chuyển cho đội'],
+        ['Soát nhà đang ở vùng ngày 8–12', 'van-hanh-cham-soc', 4, 'Nhà ở vùng tử thần có nhịp chạm riêng', 'Mỗi nhà có lịch chạm trong 24 giờ'],
+        ['Chọn ba việc ưu tiên chuyên môn hôm nay', 'bang-viec', 3, 'Ba việc có thứ tự, có hạn giờ', 'Ba việc ghi lên bảng công việc'],
+        ['Soát góp ý mới của gia đình', 'hai-long', 3, 'Góp ý tiêu cực được đọc trong ngày', 'Góp ý gắn đội và hướng xử lý'] ] },
+
+    { key:'soat-dau-vao', so:'02', ic:'search', c:'--t2', cum:'A', ten:'Soát chuẩn đầu vào',
+      man:'ra-soat-kh',
+      mo:'Không hồ sơ nào vào lộ trình khi còn thiếu mặt, sai tầng, lời hứa không đo được hay chưa có đồng thuận.',
+      nv:[ 1,
+        ['Đối chiếu hồ sơ với đủ 12 mặt', 'ra-soat-kh', 4, 'Đủ 12 mặt, không mặt trống', 'Hồ sơ gắn nhãn đạt / chưa đạt'],
+        ['Soát kết quả Assessment Tầng 1', 'assessment', 4, 'Đủ 6 miền, đủ 10 bước bắt buộc', 'DCI và định hướng chăm sóc được ghi'],
+        ['Kiểm định vị tầng ban đầu của nhà', 'bo-test', 3, 'Tầng xếp có bằng chứng từ bộ test', 'Tầng chốt kèm lý do'],
+        ['Soát bàn giao Tư vấn → Coach', 'tt-cskh', 4, 'Bàn giao đủ thông tin, không rơi lời hứa', 'Biên bản bàn giao có hai bên xác nhận'],
+        ['Kiểm đồng thuận & bảy quyền của nhà', 'phap-ly', 4, 'Nhà biết rõ bảy quyền trước khi bắt đầu', 'Đồng thuận lưu trong hồ sơ'],
+        ['Soát lời hứa trong hồ sơ chốt', 'pheu-chot', 3, 'Không lời hứa nào không đo được', 'Lời hứa sai chuẩn được gỡ và báo lại'],
+        ['Đọc tài liệu gia đình gửi lên', 'tai-lieu-khach', 2, 'Đọc trước buổi đầu tiên', 'Ghi chú điểm cần khai thác'],
+        ['Soát đúng chân dung khách hàng', 'chan-dung-kh', 2, 'Nhà xếp đúng một trong sáu chân dung', 'Chân dung ghi trong hồ sơ'],
+        ['Trả hồ sơ thiếu kèm danh sách bổ sung', 'ra-soat-kh', 3, 'Trả trong 24 giờ, nói rõ thiếu gì', 'Người lập hồ sơ nhận danh sách bổ sung'] ] },
+
+    { key:'giam-sat-buoi', so:'03', ic:'eye', c:'--t3', cum:'A', ten:'Giám sát buổi & dòng chảy',
+      man:'ban-coach',
+      mo:'Dự, soi buổi của Coach và Tư vấn theo mẫu chuẩn; giữ việc của đội không tắc, không trễ dồn.',
+      nv:[ 3, 5, 26,
+        ['Dự trực tiếp buổi theo mẫu soi', 'ban-coach', 4, 'Mỗi tuần dự ít nhất 3 buổi khác người', 'Phiếu soi buổi có điểm và ghi chú'],
+        ['Soi buổi Tư vấn tại Khoang mở cửa', 'tuvan-deck', 3, 'Soi đúng lằn ranh lúc chốt', 'Điểm vượt lằn ranh được ghi lại'],
+        ['Soát sáu nhịp trong buổi Coach', 'bando-coach', 3, 'Buổi đi đủ sáu nhịp, không nhảy cóc', 'Nhịp thiếu được ghi để kèm'],
+        ['Kiểm vòng nhắc Đúng – Đủ – Sâu của đội', 'vong-nhac', 2, 'Việc không dừng ở nấc "đã xem"', 'Việc kẹt nấc được nhắc lại'],
+        ['Soát hoạt động không ai nhận', 'hoat-dong', 3, 'Không việc nào rơi mà không ai biết', 'Việc rơi có người nhận'],
+        ['Theo dõi đồng hồ thời gian của đội', 'do-thoi-gian', 2, 'Không việc vượt ngưỡng âm thầm', 'Việc vượt ngưỡng có lý do'],
+        ['Ghi biên bản giám sát cuối tuần', 'nhat-ky-vi-tri', 2, 'Mỗi tuần một biên bản, có số liệu', 'Biên bản lưu sổ nhật ký'] ] },
+
+    { key:'chuan-ngon-ngu', so:'04', ic:'chat', c:'--t4', cum:'B', ten:'Chuẩn ngôn ngữ & lời dẫn',
+      man:'chuan-ngon-ngu',
+      mo:'Giữ mọi câu nói tới gia đình đúng chuẩn sáu vai: không câu cấm, không lời hứa suông, không lệch giọng GITA.',
+      nv:[ 4, 6, 9,
+        ['Soát câu cấm trong bản ghi buổi', 'nhan-dien-loi', 4, 'Không câu cấm nào tới tai gia đình', 'Câu sai có bản sửa đi kèm'],
+        ['Chấm bài diễn thử hai buổi khó', 'dien-thu', 3, 'Đủ 20 lượt, mỗi lượt truy được về kho', 'Điểm diễn thử ghi vào hồ sơ Coach'],
+        ['Cập nhật mẫu câu ngôn từ dẫn dắt', 'ngon-tu', 2, 'Mẫu câu dùng được ngay, đúng sáu nhịp', 'Mẫu mới đưa vào kho ngôn từ'],
+        ['Soi tin nhắn đội gửi gia đình', 'luat-lam-viec', 3, 'Tin đi qua hệ thống, đúng giọng GITA', 'Tin lệch giọng được sửa và nhắc'],
+        ['Kiểm giọng kịch bản sale của Tư vấn', 'kich-ban-sale', 3, 'Không hứa kết quả không đo được', 'Kịch bản đạt giọng GITA'],
+        ['Rà thuật ngữ theo sổ tay nhận diện', 'so-tay-nhan-dien', 2, 'Thuật ngữ dùng thống nhất cả đội', 'Từ sai chuẩn được thay'],
+        ['Soát ngôn từ trong tư liệu gửi nhà', 'gui-tu-lieu', 2, 'Tư liệu đúng tầng, không gây hoang mang', 'Tư liệu được duyệt mới gửi'] ] },
+
+    { key:'nghiem-thu', so:'05', ic:'check', c:'--t5', cum:'B', ten:'Nghiệm thu chuyên môn',
+      man:'cong-nghiem-thu',
+      mo:'Cho nhà qua chặng bằng bằng chứng, không bằng lời — công tâm, tiêu chí rõ trước khi chấm.',
+      nv:[ 7, 8, 10, 27,
+        ['Xét nhà qua cổng nghiệm thu chặng', 'cong-nghiem-thu', 5, 'Đủ bằng chứng mới cho qua chặng', 'Cổng ghi đạt / chưa đạt kèm lý do'],
+        ['Kiểm bằng chứng điện tử đúng chuẩn', 'bang-chung', 4, 'Không mắc ba lỗi làm bằng chứng mất giá trị', 'Bằng chứng gắn nhãn hợp lệ'],
+        ['Đối chiếu minh chứng nhiệm vụ của nhà', 'minh-chung', 3, 'Minh chứng khớp nhiệm vụ đã giao', 'Nhiệm vụ đóng hoặc trả lại có lý do'],
+        ['Soát Mười điểm về đích của nhà', 'kpi-100', 3, 'Mỗi điểm về đích có bằng chứng', 'Bảng mười điểm cập nhật'],
+        ['Trả lại hồ sơ chưa đạt có hướng sửa', 'ra-soat-kh', 3, 'Nói rõ thiếu gì, sửa thế nào, hạn nào', 'Người làm nhận phản hồi có hạn sửa'],
+        ['Phúc tra ngẫu nhiên ca đã nghiệm thu', 'cong-nghiem-thu', 3, 'Mỗi tuần phúc tra ít nhất 2 ca', 'Kết quả phúc tra khớp hoặc ca được mở lại'] ] },
+
+    { key:'go-ca-vuot-cap', so:'06', ic:'tools', c:'--t1', cum:'B', ten:'Gỡ ca vượt cấp',
+      man:'xu-ly-ca',
+      mo:'Nhận ca đội không gỡ được, quyết định có lý do ghi sổ và vào cuộc cứu đội đèn đỏ trong ngày.',
+      nv:[ 11, 12, 14,
+        ['Nhận ca chuyển lên từ Trưởng nhóm', 'xu-ly-ca', 4, 'Nhận trong ngày, hẹn thời điểm gỡ', 'Ca có người giữ và hạn gỡ'],
+        ['Tra phác đồ cho vấn đề lõi của ca', 'phac-do', 3, 'Hướng gỡ dựa trên phác đồ đúng tầng', 'Phác đồ gắn vào hồ sơ ca'],
+        ['Đối chiếu tình huống thực chiến tương tự', 'tinh-huong', 2, 'Có ít nhất một tình huống đối chiếu', 'Mã Key tình huống ghi trong ca'],
+        ['Phân định ca tầng 3 – tầng 4 thuộc ai', 'tang34', 3, 'Đúng ranh giới Trợ lý với Coach', 'Ca giao đúng người theo tầng'],
+        ['Chuyển ca vượt chuyên môn sang Mentor', 'xu-ly-ca', 3, 'Chuyển đúng lúc, kèm đủ bối cảnh', 'Mentor xác nhận nhận ca'],
+        ['Soát tín hiệu đỏ trên bộ bản vẽ', 'ban-ve', 3, 'Không bỏ qua tín hiệu đỏ nào của nhà', 'Tín hiệu đỏ có hành động kèm'],
+        ['Theo dõi ca sau khi gỡ 14 ngày', 'van-hanh-cham-soc', 3, 'Ca gỡ xong không tái đỏ trong 14 ngày', 'Đèn nhà giữ vàng hoặc xanh'] ] },
+
+    { key:'dieu-phoi-doi', so:'07', ic:'users', c:'--t2', cum:'B', ten:'Điều phối & chăm đội',
+      man:'doi-ngu',
+      mo:'Cân tải giữa các Trưởng nhóm và Coach, gỡ vướng bằng họp ngắn, ghi nhận đúng người đúng việc.',
+      nv:[ 13, 28, 18,
+        ['Soát tải số nhà trên từng Coach', 'doi-ngu', 4, 'Không Coach nào vượt trần nhà phụ trách', 'Bảng tải cập nhật, người vượt được giảm'],
+        ['Duyệt đề xuất phân công của Trưởng nhóm', 'doi-ngu', 3, 'Phân công đúng sức, đúng tầng nhà', 'Phân công được duyệt hoặc trả lại có lý do'],
+        ['Trả lời chỗ vướng đội gửi lên', 'cai-tien', 2, 'Có câu trả lời trong 14 ngày', 'Mỗi vướng có câu trả lời'],
+        ['Soát người mới đủ ba cửa', 'con-nguoi', 4, 'Chưa đủ ba cửa thì không chạm khách', 'Người mới gắn trạng thái ba cửa'],
+        ['Họp chuyên môn tuần với Trưởng nhóm', 'doi-ngu', 3, 'Mỗi tuần một buổi, có biên bản', 'Biên bản ghi việc và người nhận'],
+        ['Đăng ghi nhận việc tốt lên bảng tin', 'tin-noi-bo', 2, 'Ghi nhận việc, không xếp hạng người', 'Tin ghi nhận đăng đúng ngăn'],
+        ['Trò chuyện riêng với người có dấu hiệu đuối', 'doi-ngu', 3, 'Phát hiện sớm trước khi người gãy', 'Có kế hoạch hỗ trợ ghi lại'] ] },
+
+    { key:'chuan-hoa', so:'08', ic:'book', c:'--t3', cum:'C', ten:'Chuẩn hoá & nhân rộng',
+      man:'kho-tai-lieu',
+      mo:'Biến cách làm tốt thành chuẩn viết ra, đưa cho đội khác áp dụng và giữ cẩm nang theo kịp thực tế.',
+      nv:[ 15, 16, 17, 29,
+        ['Đưa cách gỡ hay vào kho kịch bản', 'kich-ban', 3, 'Kịch bản có bối cảnh, câu dẫn, dấu hiệu xong', 'Kịch bản mới có mã trong kho'],
+        ['Rà quy trình tinh gọn, cắt lãng phí', 'tinh-gon', 2, 'Mỗi tháng bỏ được ít nhất một bước thừa', 'Quy trình mới ghi rõ bước đã cắt'],
+        ['Cập nhật mô thức huấn luyện đã áp dụng', 'mo-thuc', 2, 'Mô thức gắn với ca thật đã dùng', 'Ghi chú vận dụng lưu theo mô thức'],
+        ['Soạn bài cho Bốn mươi giờ đào tạo', 'dao-tao-dh', 3, 'Bài có ca thi vai và tiêu chí đạt', 'Bài đưa vào lịch đào tạo'],
+        ['Đối chiếu chuẩn mới với Chuẩn vận hành', 'chuan-nhat', 2, 'Chuẩn mới không trái Kaizen – Shokunin', 'Ghi chú đối chiếu kèm chuẩn'],
+        ['Duyệt điểm chạm hiệu quả vào kho 1000', 'diem-cham-1000', 2, 'Điểm chạm có bằng chứng hiệu quả', 'Điểm chạm được lưu và gắn tầng'] ] },
+
+    { key:'do-luong-bao-cao', so:'09', ic:'chart', c:'--t4', cum:'C', ten:'Đo lường & báo cáo',
+      man:'nang-luc-ns',
+      mo:'Đo năng lực đội và kết quả gia đình bằng số khớp thực tế, chốt ngày và báo lên điều hành có đề xuất.',
+      nv:[ 19, 20, 21, 22, 23,
+        ['Soát chỉ số hài lòng theo từng đội', 'hai-long', 3, 'Đội dưới 90% có kế hoạch nâng', 'Kế hoạch gắn đội và hạn'],
+        ['Đối chiếu số đo với nhật ký thật', 'bang-chung', 3, 'Số báo cáo khớp nhật ký hệ', 'Chỗ lệch được ghi và sửa'],
+        ['Theo dõi số nhà lên tầng trong tháng', 'do-luong-kh', 4, 'Mỗi lần lên tầng có bằng chứng', 'Bảng lên tầng tháng được chốt'],
+        ['Chấm thi tháng của đội chuyên môn', 'nang-luc-ns', 3, 'Đề đúng chuẩn nghề, chấm công tâm', 'Điểm thi tháng ghi vào hồ sơ'],
+        ['Đọc thẻ điểm cân bằng của khối', 'the-diem-can-bang', 2, 'Bốn góc nhìn đều có số, không lệch một phía', 'Góc lệch có việc cần làm kèm'] ] },
+
+    { key:'khung-nghe', so:'10', ic:'crown', c:'--t5', cum:'C', ten:'Thăng cấp & khung nghề',
+      man:'nghe-qlcm',
+      mo:'Đi đường năm cấp QLCM bằng bằng chứng, giữ hiến pháp nghề và bảo mật hồ sơ gia đình.',
+      nv:[ 24,
+        ['Giữ chuẩn QLCM Tập sự: nghiệm thu có kèm', 'nghe-qlcm', 2, 'Qua đào tạo nghiệm thu + thi chuẩn nghề', 'Chứng nhận Tập sự trong hồ sơ'],
+        ['Lên Quản lý chuyên môn: 30 hồ sơ chuẩn', 'nghe-qlcm', 3, '≥30 hồ sơ nghiệm thu · 0 lọt lỗi nặng', 'Hồ sơ đề xuất lên cấp có bằng chứng'],
+        ['Lên QLCM Cao cấp: đèn đội ≥80 ba tháng', 'nghe-qlcm', 3, 'Đèn đội TB ≥80 · gỡ được ca vượt cấp', 'Số đèn ba tháng đính kèm đề xuất'],
+        ['Lên Trưởng khối: đào tạo được QLCM mới', 'nghe-qlcm', 2, 'Nhiều đội đạt chuẩn · có QLCM mới đạt', 'Danh sách người đã kèm lên chuẩn'],
+        ['Hướng tới Giám đốc chuyên môn', 'nghe-qlcm', 1, 'Chuẩn nghề toàn hệ, kết quả bền', 'Lộ trình năm có mốc đo'],
+        ['Đối chiếu quyết định với Năm điều bất biến', 'bien-nien', 4, 'Không quyết định nào sửa năm điều', 'Quyết định khó ghi chỗ đối chiếu'],
+        ['Giữ bảy quyền của gia đình khi nghiệm thu', 'phap-ly', 4, 'Nhà được biết và đồng ý mọi bước', 'Không khiếu nại về quyền trong kỳ'],
+        ['Bảo mật hồ sơ gia đình khi xuất dữ liệu', 'xuat-du-lieu', 4, 'Chỉ xuất đúng phạm vi, ẩn thông tin riêng', 'Lượt xuất có lý do trong nhật ký'],
+        ['Thi sát hạch năng lực định kỳ', 'sat-hach', 2, 'Qua 8 trục đánh giá đúng cấp', 'Kết quả sát hạch lưu hồ sơ'] ] }
+  ]
+};
+
+/* ══ R05 · TRƯỞNG NHÓM COACH ══ */
+G.DK_VAI.tncoach = {
+  vai:['R05'], ten:'Trưởng nhóm Coach', ic:'users', c:'--t2', spec:'nghe-tncoach',
+  lead:'Người tạo ra Coach giỏi, không chỉ làm Coach: nắm đội đầu ngày, giao nhà đúng sức, dự giờ và kèm sau buổi, nghiệm thu bằng bằng chứng và giữ lửa cho cả đội.',
+  cum:{ A:{t:'NẮM ĐỘI MỖI NGÀY', s:'Đầu ngày · phân công · dự giờ'},
+        B:{t:'DỰNG NGƯỜI & GIỮ NHÀ', s:'Kèm cặp · nghiệm thu · giữ lửa · cứu nhà đỏ'},
+        C:{t:'PHÁT TRIỂN ĐỘI & CHUẨN NGHỀ', s:'Lộ trình Coach · KPI đội · thăng cấp'} },
+  loiTat:[ ['doi-ngu','Đội ngũ dẫn dắt','users'], ['ban-coach','Bàn làm việc của Coach','pulse'],
+           ['kpi-toi','KPI của tôi','chart'] ],
+  areas:[
+    { key:'nam-doi', so:'01', ic:'pulse', c:'--t1', cum:'A', ten:'Nắm đội đầu ngày',
+      man:'do-luong-kh',
+      mo:'Đầu ngày biết đội có ai, buổi nào, Coach nào đuối và nhà nào đỏ — trước khi điện thoại bắt đầu reo.',
+      nv:[ 0, 1, 2, 34,
+        ['Xem Buồng lái của từng Coach', 'coach-deck', 3, 'Biết nhà nào mỗi Coach phải chạm trước', 'Danh sách chạm trước chốt cùng Coach'],
+        ['Soát nhà đỏ chưa có người gọi', 'van-hanh-cham-soc', 4, 'Không nhà đỏ nào quá nửa ngày chưa ai gọi', 'Nhà đỏ gắn Coach gọi và giờ gọi'],
+        ['Họp đứng 10 phút đầu ngày với đội', 'doi-ngu', 3, 'Mỗi Coach nói một việc khó nhất hôm nay', 'Việc khó có người hỗ trợ'],
+        ['Soát buổi hôm qua chưa ghi dữ liệu', 'bang-viec', 2, 'Buổi nào cũng có bản ghi trước 10 giờ', 'Buổi thiếu ghi được Coach bổ sung'],
+        ['Đọc lời nhắc có hạn giờ của đội', 'ban-coach', 2, 'Không lời nhắc nào của đội quá hạn', 'Lời nhắc tới hạn được xử lý'],
+        ['Chọn buổi cần dự giờ trong ngày', 'bang-viec', 3, 'Ưu tiên Coach mới và buổi khó', 'Lịch dự giờ ghi lên bảng việc'] ] },
+
+    { key:'phan-cong', so:'02', ic:'grid', c:'--t2', cum:'A', ten:'Phân công đúng người đúng nhà',
+      man:'doi-ngu',
+      mo:'Giao nhà cho Coach đúng sức, đúng tầng; cân tải khi đội quá tải và bàn giao sạch giữa các nhóm.',
+      nv:[ 7, 8, 10, 30, 32,
+        ['Đọc hồ sơ nhà mới trước khi giao', 'ra-soat-kh', 3, 'Biết tầng, chân dung, nút thắt trước khi chọn Coach', 'Ghi chú lý do chọn Coach'],
+        ['Ghép nhà tầng cao với Coach đủ cấp', 'coach-5-tang', 4, 'Nhà T4–T5 chỉ giao Coach đủ năng lực tầng', 'Phân công ghi cấp Coach và tầng nhà'],
+        ['Nhận bàn giao nhà mới từ Tư vấn', 'tt-cskh', 3, 'Không rơi lời hứa nào khi chuyển sang Coach', 'Coach xác nhận đã đọc bàn giao'],
+        ['Sắp lịch buổi tránh chồng chéo', 'chu-ky', 2, 'Không Coach nào trùng buổi, đúng nhịp 21/90', 'Lịch tuần của đội không trùng'],
+        ['Giao lại nhà khi Coach nghỉ', 'doi-ngu', 3, 'Nhà không gián đoạn quá một nhịp chạm', 'Coach thay đã chạm nhà trong 48 giờ'] ] },
+
+    { key:'du-gio', so:'03', ic:'eye', c:'--t3', cum:'A', ten:'Dự giờ & soi buổi',
+      man:'ban-coach',
+      mo:'Dự giờ, soi buổi của Coach theo mẫu chuẩn và chấm chất lượng bằng điều thấy được, không bằng cảm giác.',
+      nv:[ 3, 12, 13,
+        ['Soi buổi theo sáu nhịp Bản đồ coaching', 'bando-coach', 4, 'Chấm đủ sáu nhịp, ghi nhịp hụt', 'Phiếu soi có điểm từng nhịp'],
+        ['Soát câu cấm trong bản ghi của đội', 'nhan-dien-loi', 3, 'Không câu cấm nào tới gia đình', 'Câu sai có bản sửa gửi Coach'],
+        ['Kiểm Coach mở buổi đúng giờ hẹn', 'ban-coach', 2, 'Trễ quá 10 phút phải có lý do', 'Buổi trễ ghi lý do'],
+        ['Soát điểm chạm WOW trong buổi của đội', 'diem-cham-1000', 2, 'Mỗi buổi tối thiểu một điểm chạm', 'Buổi thiếu điểm chạm được ghi để kèm'],
+        ['Soát nhiệm vụ Coach giao có vừa sức', 'con-duong', 3, 'Nhiệm vụ có hạn, đo được, vừa sức nhà', 'Nhiệm vụ quá sức được Coach chỉnh'],
+        ['Soi lằn ranh luật làm việc với gia đình', 'luat-lam-viec', 3, 'Mọi liên lạc đi qua hệ thống', 'Chỗ lệch luật được nhắc và ghi'],
+        ['Lưu phiếu soi buổi vào sổ nhật ký', 'nhat-ky-vi-tri', 2, 'Mỗi buổi dự có một phiếu', 'Phiếu lưu theo tên Coach'] ] },
+
+    { key:'kem-cap', so:'04', ic:'heart', c:'--t4', cum:'B', ten:'Kèm cặp & gỡ vướng',
+      man:'bando-coach',
+      mo:'Kèm Coach ngay sau buổi, gỡ vướng trong ngày, làm mẫu buổi khó và biết lúc nào chuyển ca lên trên.',
+      nv:[ 4, 5, 6, 35, 9,
+        ['Cho Coach diễn thử trước buổi khó', 'dien-thu', 3, 'Diễn ít nhất một lượt trước buổi khó', 'Coach sửa được câu dễ nói mà luật cấm'],
+        ['Gợi kịch bản đúng tầng cho Coach', 'kich-ban', 2, 'Kịch bản bám đúng nhà và tầng', 'Mã kịch bản gắn vào ca'],
+        ['Kèm Coach đọc tín hiệu đỏ trên bản vẽ', 'ban-ve', 3, 'Coach tự gọi đúng tên tín hiệu đỏ', 'Coach nêu đúng tín hiệu ở ca thật'],
+        ['Đặt một điều sửa sau mỗi buổi kèm', 'chuan-ngon-ngu', 2, 'Mỗi lần chỉ một điều, cụ thể, đo được', 'Buổi sau kiểm lại điều đã sửa'],
+        ['Kèm Coach dùng phác đồ cho vấn đề lõi', 'phac-do', 2, 'Coach chọn đúng phác đồ theo tầng', 'Phác đồ ghi trong lộ trình nhà'] ] },
+
+    { key:'nghiem-thu-doi', so:'05', ic:'check', c:'--t5', cum:'B', ten:'Nghiệm thu kết quả đội',
+      man:'ra-soat-kh',
+      mo:'Không bằng chứng là chưa đạt — nghiệm thu kết quả của từng Coach bằng minh chứng có hai bên xác nhận.',
+      nv:[ 11, 14, 36,
+        ['Soát nhiệm vụ Coach đóng trong ngày', 'bang-viec', 3, 'Việc đóng có bằng chứng ≥20 ký tự', 'Việc thiếu bằng chứng được mở lại'],
+        ['Đối chiếu minh chứng nhà nộp lên', 'minh-chung', 3, 'Minh chứng khớp nhiệm vụ đã giao', 'Minh chứng gắn nhãn đạt / chưa đạt'],
+        ['Soát Mười điểm về đích nhà của đội', 'kpi-100', 3, 'Mỗi điểm có bằng chứng', 'Bảng mười điểm cập nhật'],
+        ['Kiểm lý do khi Coach đổi đèn nhà', 'do-luong-kh', 3, 'Đổi đèn phải có dữ kiện', 'Lần đổi đèn ghi lý do'],
+        ['Chuẩn bị hồ sơ nhà lên tầng cho QLCM', 'ra-soat-kh', 4, 'Đủ bằng chứng trước khi trình nghiệm thu', 'Hồ sơ trình kèm danh mục bằng chứng'],
+        ['Kiểm Coach ghi đúng giai đoạn coaching', 'bando-coach', 2, 'Giai đoạn ghi khớp thực tế buổi', 'Giai đoạn lệch được chỉnh'],
+        ['Trả phản hồi khi nghiệm thu chưa đạt', 'chuan-ngon-ngu', 3, 'Nói rõ thiếu gì và cách bổ sung', 'Coach nhận phản hồi có hạn sửa'] ] },
+
+    { key:'giu-lua-doi', so:'06', ic:'flame', c:'--t1', cum:'B', ten:'Chăm đội & giữ lửa',
+      man:'nguoi-dan-dat',
+      mo:'Chăm Coach như Coach chăm nhà: nhận ra người đuối sớm, ghi nhận kịp thời, giữ văn hoá và giữ người giỏi.',
+      nv:[ 15, 17, 18, 37, 31,
+        ['Trò chuyện 1–1 hằng tháng với từng Coach', 'nguoi-dan-dat', 3, 'Mỗi Coach một buổi mỗi tháng, có ghi chú', 'Ghi chú 1–1 có một việc cam kết'],
+        ['Đăng ghi nhận việc tốt của đội', 'tin-noi-bo', 2, 'Ghi nhận việc, không xếp hạng người', 'Tin ghi nhận đăng đúng ngăn đội'],
+        ['Nhắc Coach nghỉ đủ sau tuần cao điểm', 'do-thoi-gian', 2, 'Sau tuần cao điểm có ít nhất một ngày nhẹ', 'Lịch nghỉ ghi trên bảng đội'],
+        ['Đề cử câu chuyện của đội lên Vinh danh', 'vinh-danh', 2, 'Câu chuyện có bằng chứng kết quả', 'Đề cử gửi đúng kỳ'],
+        ['Mời đội cùng dự sự kiện & lửa trại', 'su-kien', 1, 'Mỗi quý đội có một dịp gặp nhau', 'Danh sách đội tham dự'] ] },
+
+    { key:'cuu-nha-do', so:'07', ic:'alert', c:'--t2', cum:'B', ten:'Cứu nhà đèn đỏ cùng Coach',
+      man:'van-hanh-cham-soc',
+      mo:'Cùng Coach vào cuộc với gia đình đèn đỏ trong ngày, giữ nhà không rơi ở vùng tử thần và theo tới khi đèn hồi.',
+      nv:[ 16,
+        ['Lập danh sách nhà đỏ của cả đội', 'do-luong-kh', 4, 'Không sót nhà đỏ nào của đội', 'Danh sách đỏ gắn Coach và hạn gọi'],
+        ['Soát nhà của đội ở vùng ngày 8–12', 'van-hanh-cham-soc', 4, 'Mỗi nhà ở vùng tử thần có lịch chạm', 'Lịch chạm vùng 8–12 đủ cho từng nhà'],
+        ['Cùng Coach đọc lý do nhà chuyển đỏ', 'ban-ve', 3, 'Gọi đúng tên tín hiệu, không đoán', 'Lý do đỏ ghi trong hồ sơ nhà'],
+        ['Gọi cùng Coach với nhà đỏ kéo dài', 'van-hanh-cham-soc', 4, 'Nhà đỏ quá 7 ngày có Trưởng nhóm vào cuộc', 'Có bản ghi cuộc gọi chung'],
+        ['Soát góp ý không hài lòng của nhà đội', 'hai-long', 3, 'Góp ý xấu được đọc trong ngày', 'Góp ý có hướng xử lý và người nhận'],
+        ['Mở ca xử lý theo bảy bước khi cần', 'xu-ly-ca', 3, 'Đi đủ bảy bước, có bằng chứng', 'Ca mở có người giữ'],
+        ['Phát hiện nhà đang nguội dần', 'do-luong-kh', 3, 'Phát hiện trước khi nhà chuyển đỏ', 'Nhà nguội có điểm chạm giữ lửa'],
+        ['Theo nhà tới khi đèn hồi vàng', 'van-hanh-cham-soc', 3, 'Không đóng ca khi đèn còn đỏ', 'Đèn nhà hồi vàng hai tuần liền'],
+        ['Rút bài học ca đỏ cho cả đội', 'doi-ngu', 2, 'Mỗi ca đỏ gỡ xong có một bài học', 'Bài học chia sẻ trong sinh hoạt đội'] ] },
+
+    { key:'phat-trien-coach', so:'08', ic:'seed', c:'--t3', cum:'C', ten:'Phát triển Coach',
+      man:'coach-5-tang',
+      mo:'Tạo ra Coach giỏi: mỗi người một lộ trình lên cấp, tập sự thành chính thức, người dưới chuẩn có hướng rõ.',
+      nv:[ 24, 25, 29, 39, 26,
+        ['Soát tiến độ khoá đào tạo của Coach', 'khoa-dao-tao', 2, 'Không Coach nào kẹt bài quá hai tuần', 'Bài kẹt có lịch gỡ'],
+        ['Kèm Coach mới qua ba cửa', 'con-nguoi', 4, 'Chưa đủ ba cửa thì không chạm khách', 'Coach mới có trạng thái ba cửa'],
+        ['Cho Coach luyện tình huống thực chiến', 'tinh-huong', 2, 'Mỗi tháng một thử thách 7 ngày', 'Kết quả thử thách ghi hồ sơ'],
+        ['Dẫn Coach mới qua Sổ tay năm đầu', 'nam-dau', 2, 'Đủ 6 mốc kiểm trong 12 tháng', 'Mốc kiểm có xác nhận người kèm'],
+        ['Ghép cặp dự giờ chéo trong đội', 'ban-coach', 2, 'Mỗi Coach dự ít nhất một buổi mỗi tuần', 'Lịch dự chéo của đội'] ] },
+
+    { key:'do-luong-doi', so:'09', ic:'chart', c:'--t4', cum:'C', ten:'Đo lường & báo cáo đội',
+      man:'kpi-toi',
+      mo:'Tổng hợp KPI đội bằng số khớp thực tế, đánh giá năng lực công tâm và báo lên có đề xuất.',
+      nv:[ 19, 20, 21, 22, 38, 27, 33,
+        ['Theo dõi số nhà của đội lên tầng', 'tien-bo', 3, 'Lên tầng có bằng chứng nghiệm thu', 'Bảng lên tầng tháng của đội'],
+        ['Đọc chỉ số hài lòng tháng của đội', 'hai-long', 3, 'Đội dưới 90% có kế hoạch nâng', 'Kế hoạch nâng gắn hạn'],
+        ['Đối chiếu KPI đội với nhật ký thật', 'bang-chung', 3, 'Số báo khớp nhật ký hệ', 'Chỗ lệch được ghi và sửa'] ] },
+
+    { key:'khung-nghe', so:'10', ic:'crown', c:'--t5', cum:'C', ten:'Thăng cấp & khung nghề',
+      man:'nghe-tncoach',
+      mo:'Đi đường năm cấp Trưởng nhóm bằng bằng chứng, đề xuất thăng hạng đúng người và giữ hiến pháp nghề.',
+      nv:[ 28, 23,
+        ['Giữ chuẩn Trưởng nhóm Tập sự có người kèm', 'nghe-tncoach', 2, 'Coach Cao cấp + qua đào tạo lãnh đạo', 'Chứng nhận Tập sự trong hồ sơ'],
+        ['Lên Trưởng nhóm: ≥3 Coach lên cấp', 'nghe-tncoach', 3, '≥3 Coach đội lên cấp có bằng chứng', 'Hồ sơ đề xuất kèm bằng chứng từng Coach'],
+        ['Lên Trưởng nhóm Cao cấp: đèn đội ≥80', 'nghe-tncoach', 3, 'Đèn đội TB ≥80 · KPI đội ≥85% ba tháng', 'Số liệu ba tháng đính kèm'],
+        ['Lên Trưởng khối Coach: đào tạo Trưởng nhóm', 'nghe-tncoach', 2, 'Nhiều đội mạnh · kèm được Trưởng nhóm mới', 'Danh sách người đã kèm đạt chuẩn'],
+        ['Hướng tới Giám đốc huấn luyện', 'nghe-tncoach', 1, 'Hệ huấn luyện Coach bền toàn hệ', 'Lộ trình năm có mốc đo'],
+        ['Đối chiếu cách dẫn đội với Sáu ranh giới', 'ranh-gioi', 3, 'Dựng người, không lời phê nào hạ thấp con người', 'Không khiếu nại về cách đối xử'],
+        ['Giữ bảy quyền của gia đình trong đội', 'phap-ly', 4, 'Coach của đội nói đúng bảy quyền với nhà', 'Không khiếu nại về quyền'],
+        ['Bảo mật hồ sơ nhà khi trao đổi trong đội', 'luat-lam-viec', 4, 'Không chia hồ sơ nhà ngoài hệ thống', 'Không vi phạm bảo mật trong kỳ'] ] }
+  ]
+};
+
+/* ══ R06 · SENIOR COACH — người gỡ ca khó, kèm Coach mới, giữ chuẩn nhóm ══ */
+G.DK_VAI.scoach = {
+  vai:['R06'], ten:'Senior Coach', ic:'star', c:'--t3', spec:'nghe-coach',
+  lead:'Người gỡ những ca người khác chưa gỡ được: chẩn đoán lại nhà khó, dựng lộ trình cho nhà T4–T5, nhận ca vượt cấp, kèm Coach mới và giữ chuẩn ngôn ngữ, bằng chứng cho cả nhóm.',
+  cum:{ A:{t:'CA KHÓ ĐẦU NGÀY', s:'Soát ca · chẩn đoán sâu · lộ trình tầng cao'},
+        B:{t:'GỠ CA & KÈM NGƯỜI', s:'Ca vượt cấp · nghiệm thu chặt · giữ đèn · kèm Coach mới'},
+        C:{t:'GIỮ CHUẨN NGHỀ', s:'Ngôn ngữ · diễn thử · KPI · thăng cấp'} },
+  loiTat:[ ['xu-ly-ca','Xử lý ca theo quy trình','tools'], ['ban-coach','Bàn làm việc của Coach','pulse'],
+           ['dien-thu','Diễn thử hai buổi khó','chat'], ['kpi-toi','KPI của tôi','chart'] ],
+  areas:[
+    { key:'soat-ca-kho', so:'01', ic:'search', c:'--t1', cum:'A', ten:'Soát ca khó đầu ngày',
+      man:'coach-deck',
+      mo:'Đầu ngày nhìn trước nhà T4–T5, ca vượt cấp đang chờ và Coach đang xin hỗ trợ — rồi mới tới lịch của mình.',
+      nv:[ 0, 1, 2,
+        ['Đọc danh sách ca vượt cấp đang chờ', 'xu-ly-ca', 4, 'Biết ca nào chờ, chờ bao lâu', 'Mỗi ca chờ có giờ hẹn gỡ'],
+        ['Soát nhà T4–T5 mình phụ trách', 'coach-deck', 4, 'Đủ 4 nhà T4–T5, biết nhà nào chạm trước', 'Thứ tự chạm trong ngày được chốt'],
+        ['Nhận yêu cầu hỗ trợ từ Coach trong nhóm', 'doi-ngu', 3, 'Trả lời Coach trong 2 giờ làm việc', 'Yêu cầu có hẹn hỗ trợ cụ thể'],
+        ['Soát tín hiệu đỏ mới trên bản vẽ nhà khó', 'ban-ve', 4, 'Không bỏ qua tín hiệu đỏ nào', 'Tín hiệu đỏ có hành động kèm'],
+        ['Đọc tài liệu nhà khó gửi lên', 'tai-lieu-khach', 2, 'Đọc trước buổi, ghi điểm khai thác', 'Ghi chú đính vào hồ sơ nhà'],
+        ['Giữ khung trống cho ca phát sinh', 'bang-viec', 2, 'Giữ ít nhất một khung trống mỗi ngày', 'Khung trống ghi trên bảng việc'],
+        ['Soát nhà khó ở vùng ngày 8–12', 'van-hanh-cham-soc', 3, 'Nhà khó ở vùng tử thần có lịch chạm riêng', 'Lịch chạm vùng 8–12 đủ'] ] },
+
+    { key:'chan-doan-sau', so:'02', ic:'brain', c:'--t2', cum:'A', ten:'Chẩn đoán sâu ca khó',
+      man:'bando-coach',
+      mo:'Đọc ra nút thắt thật của những nhà mà lần chẩn đoán đầu chưa trúng — bằng dữ kiện, không bằng phỏng đoán.',
+      nv:[ 3, 4, 5, 6, 7,
+        ['Chẩn đoán lại ca Coach khác chưa gỡ được', 'bando-coach', 5, 'Tìm được nút thắt mới có dữ kiện', 'Bản chẩn đoán mới thay bản cũ có lý do'],
+        ['Đối chiếu ma trận 220 vấn đề × 5 tầng', 'ma-tran', 3, 'Vấn đề lõi khớp một ô ma trận', 'Mã ô ma trận ghi vào hồ sơ'],
+        ['Gọi tên vòng luẩn quẩn của nhà', 'sau-vung', 3, 'Vòng có tên, có điểm cắt', 'Điểm cắt vòng ghi trong lộ trình'],
+        ['Soát lại 12 mặt khi chẩn đoán lệch', 'ra-soat-kh', 3, 'Không mặt nào bị bỏ sót', 'Mặt mới phát hiện được ghi'],
+        ['Đọc vùng mạnh của con làm dữ kiện', 'vung-manh', 2, 'Dùng làm dữ kiện, không gán nhãn con', 'Điểm mạnh của con gắn vào lộ trình'] ] },
+
+    { key:'lo-trinh-tang-cao', so:'03', ic:'map', c:'--t3', cum:'A', ten:'Lộ trình nhà T4–T5',
+      man:'con-duong',
+      mo:'Dựng và giữ lộ trình cho nhà tầng cao, nơi một nhiệm vụ sai sức có thể làm nhà lùi cả chu kỳ.',
+      nv:[ 8, 9, 10, 12, 13, 35,
+        ['Thiết kế chu kỳ 90 ngày cho nhà tầng cao', 'chu-ky', 4, 'Chu kỳ có mốc 21 ngày đo được', 'Lịch chu kỳ chốt cùng gia đình'],
+        ['Soát cổng chuyển tầng trên bản vẽ 50 ô', 'ban-ve', 3, 'Đủ điều kiện cổng trước khi đẩy tầng', 'Cổng đạt ghi bằng chứng'],
+        ['Gắn lộ trình với tầm nhìn 5–20 năm', 'tam-nhin', 2, 'Mỗi chặng nối được về tầm nhìn của nhà', 'Lộ trình ghi rõ liên kết tầm nhìn'],
+        ['Chọn bài coach sâu theo cấp đồng hành', 'dong-hanh-cap', 3, 'Bài đúng cấp, đúng chân dung', 'Bài gắn vào chặng kế tiếp'] ] },
+
+    { key:'go-ca-vuot-cap', so:'04', ic:'tools', c:'--t4', cum:'B', ten:'Gỡ ca vượt cấp',
+      man:'xu-ly-ca',
+      mo:'Nhận những ca Coach đã thử mà chưa gỡ được, gỡ theo bảy bước có bằng chứng và trả lại Coach khi ca đã ổn.',
+      nv:[ 31, 33, 20,
+        ['Nhận ca từ Coach kèm đủ bối cảnh', 'xu-ly-ca', 4, 'Nhận đủ lịch sử buổi và việc đã thử', 'Ca có người giữ mới và hạn gỡ'],
+        ['Gỡ ca theo bảy bước có bằng chứng', 'xu-ly-ca', 5, 'Đủ bảy bước, không bỏ bước', 'Mỗi bước có bằng chứng ghi trong ca'],
+        ['Tra phác đồ cho vấn đề lõi của ca khó', 'phac-do', 3, 'Hướng gỡ theo phác đồ đúng tầng', 'Phác đồ gắn vào hồ sơ ca'],
+        ['Đối chiếu 250 tình huống thực chiến', 'tinh-huong', 2, 'Có ít nhất một tình huống đối chiếu', 'Mã Key tình huống ghi trong ca'],
+        ['Phân định ca tầng 3 – tầng 4 với Trợ lý', 'tang34', 3, 'Đúng ranh giới Trợ lý với Coach', 'Ca giao đúng người theo tầng'],
+        ['Trả ca về Coach phụ trách khi ổn định', 'xu-ly-ca', 3, 'Đèn nhà vàng hai tuần trước khi trả', 'Coach xác nhận nhận lại ca'],
+        ['Ghi bài học ca khó vào kho kịch bản', 'kich-ban', 2, 'Kịch bản có bối cảnh và câu dẫn', 'Kịch bản mới có mã trong kho'] ] },
+
+    { key:'nghiem-thu-chat', so:'05', ic:'check', c:'--t5', cum:'B', ten:'Nghiệm thu chặt',
+      man:'bang-chung',
+      mo:'Giữ chuẩn nghiệm thu cao nhất nhóm: không bằng chứng là chưa đạt, kể cả khi nhà rất thân.',
+      nv:[ 14, 15, 16, 17, 18, 19,
+        ['Phúc tra bằng chứng ca Coach mới đóng', 'bang-chung', 3, 'Mỗi tuần phúc tra ít nhất 3 ca', 'Ca thiếu bằng chứng được mở lại'],
+        ['Kiểm ba lỗi làm bằng chứng mất giá trị', 'bang-chung', 3, 'Không bằng chứng nào mắc lỗi', 'Bằng chứng gắn nhãn hợp lệ'],
+        ['Chuẩn bị hồ sơ nhà lên tầng để trình', 'ra-soat-kh', 4, 'Đủ bằng chứng trước khi trình QLCM', 'Hồ sơ trình kèm danh mục bằng chứng'],
+        ['Soát Mười điểm về đích của nhà tầng cao', 'kpi-100', 3, 'Mỗi điểm có bằng chứng', 'Bảng mười điểm cập nhật'] ] },
+
+    { key:'giu-den-nha-kho', so:'06', ic:'flame', c:'--t1', cum:'B', ten:'Giữ đèn nhà khó',
+      man:'van-hanh-cham-soc',
+      mo:'Nhà khó dễ nguội nhất: giữ nhịp chạm, phát hiện nguội sớm và không bỏ rơi nhà sau khi lên tầng.',
+      nv:[ 21, 22, 23, 24, 34, 37,
+        ['Gọi nhà khó đỏ kéo dài cùng Coach', 'van-hanh-cham-soc', 4, 'Nhà đỏ quá 7 ngày có Senior vào cuộc', 'Có bản ghi cuộc gọi chung'],
+        ['Đọc góp ý không hài lòng của nhà khó', 'hai-long', 3, 'Đọc trong ngày, có hướng xử lý', 'Góp ý gắn người nhận'],
+        ['Nối lại khát khao khi nhà mất động lực', 'chuyen-hoa', 3, 'Nhà nói lại được điều mình muốn', 'Khát khao ghi lại trong hồ sơ'],
+        ['Giữ bảy quyền khi nhà muốn dừng', 'phap-ly', 4, 'Tôn trọng quyền dừng, không níu bằng áp lực', 'Lựa chọn của nhà ghi rõ'] ] },
+
+    { key:'kem-coach-moi', so:'07', ic:'users', c:'--t2', cum:'B', ten:'Kèm Coach mới',
+      man:'ban-coach',
+      mo:'Senior là người Coach mới hỏi đầu tiên: cho dự giờ, làm mẫu, kèm sau buổi và báo Trưởng nhóm điều thấy được.',
+      nv:[ 30, 32, 38,
+        ['Cho Coach mới dự buổi khó của mình', 'ban-coach', 3, 'Mỗi tuần mở ít nhất một buổi cho dự', 'Coach dự ghi được ba điều học'],
+        ['Dự buổi Coach mới và phản hồi sau buổi', 'bando-coach', 4, 'Phản hồi theo sáu nhịp, cụ thể', 'Coach nhận một điều sửa có hạn'],
+        ['Kèm Coach mới qua ba cửa', 'con-nguoi', 4, 'Chưa đủ ba cửa thì không chạm khách', 'Coach mới có trạng thái ba cửa'],
+        ['Dẫn Coach mới theo Sổ tay năm đầu', 'nam-dau', 2, 'Đủ mốc kiểm đúng tháng', 'Mốc kiểm có xác nhận người kèm'],
+        ['Chấm ca thi vai trong Bốn mươi giờ đào tạo', 'dao-tao-dh', 3, 'Chấm theo tiêu chí tuyệt đối', 'Điểm thi vai ghi hồ sơ Coach'],
+        ['Trả lời câu hỏi chuyên môn của nhóm', 'tin-noi-bo', 2, 'Câu hỏi được trả lời trong ngày', 'Câu trả lời lưu ở ngăn chuyên môn'],
+        ['Kèm Coach dùng 25 mô thức huấn luyện', 'mo-thuc', 2, 'Coach dùng đúng mô thức cho ca thật', 'Ghi chú vận dụng của Coach'] ] },
+
+    { key:'chuan-ngon-ngu', so:'08', ic:'chat', c:'--t3', cum:'C', ten:'Chuẩn ngôn ngữ & diễn thử',
+      man:'dien-thu',
+      mo:'Giữ chuẩn nghề cho cả nhóm: ngôn ngữ sáu vai, hai buổi khó được diễn thử, bản vẽ và điểm chạm được chuẩn hoá.',
+      nv:[ 11, 28, 36,
+        ['Diễn thử hai buổi khó trước ca thật', 'dien-thu', 4, 'Đủ 20 lượt, truy được về kho', 'Lượt diễn thử lưu kèm điểm'],
+        ['Dẫn Coach diễn thử câu dễ nói mà luật cấm', 'dien-thu', 3, 'Coach nhận ra câu cấm ngay lượt đầu', 'Coach qua bài diễn thử'],
+        ['Soát chuẩn ngôn ngữ sáu vai trong ca khó', 'chuan-ngon-ngu', 4, 'Không câu cấm, không lời hứa suông', 'Bản ghi buổi đạt chuẩn ngôn ngữ'],
+        ['Bắt lỗi ngôn từ trong bản ghi của nhóm', 'nhan-dien-loi', 3, 'Lỗi bắt trước khi tới khách', 'Câu sai có bản sửa gửi Coach'],
+        ['Điền và cập nhật ô bản vẽ cho nhà khó', 'ban-ve', 3, 'Mỗi ô có tag đúng cấp độ', 'Bản vẽ nhà cập nhật sau buổi'],
+        ['Chuẩn hoá mẫu câu ngôn từ dẫn dắt', 'ngon-tu', 2, 'Mẫu câu đúng sáu nhịp, dùng được ngay', 'Mẫu mới vào kho ngôn từ'],
+        ['Góp ý chỉnh chuẩn khi thấy chỗ vướng', 'cai-tien', 2, 'Nói chỗ vướng kèm ví dụ thật', 'Góp ý được ghi nhận và trả lời'] ] },
+
+    { key:'ghi-nhan-kpi', so:'09', ic:'chart', c:'--t4', cum:'C', ten:'Ghi nhận & KPI',
+      man:'kpi-toi',
+      mo:'Chốt ngày bằng số thật, giữ KPI ≥85% ba tháng và ghi lại điều học được từ mỗi ca khó.',
+      nv:[ 25, 26, 27, 29,
+        ['Soát KPI tháng so với ngưỡng 85%', 'kpi-toi', 4, 'Biết mình đang trên hay dưới ngưỡng', 'Có kế hoạch bù nếu dưới ngưỡng'],
+        ['Đếm nhà T4–T5 lên tầng có bằng chứng', 'tien-bo', 3, 'Mỗi lần lên tầng có nghiệm thu', 'Bảng lên tầng tháng được chốt'],
+        ['Ghi nhật ký ca khó cuối ngày', 'nhat-ky-vi-tri', 2, 'Mỗi ca khó một dòng: thấy gì, làm gì', 'Nhật ký ngày đủ dòng'],
+        ['Đo thời gian ca khó so với ngưỡng', 'do-thoi-gian', 2, 'Ca vượt ngưỡng có lý do', 'Lý do ghi trong đồng hồ việc'],
+        ['Đề cử câu chuyện ca gỡ được lên Vinh danh', 'vinh-danh', 1, 'Có bằng chứng, được gia đình đồng ý', 'Đề cử gửi đúng kỳ'],
+        ['Soát đèn trung bình các nhà phụ trách', 'do-luong-kh', 3, 'Đèn TB phản ánh đúng sức khoẻ nhà', 'Số đèn TB ghi vào báo cáo tháng'] ] },
+
+    { key:'khung-nghe', so:'10', ic:'crown', c:'--t5', cum:'C', ten:'Thăng cấp & khung nghề',
+      man:'nghe-coach',
+      mo:'Giữ chuẩn Senior: KPI ≥85% ba tháng, không vi phạm hiến pháp, và chuẩn bị bằng chứng để lên Trưởng nhóm.',
+      nv:[ 39,
+        ['Giữ chuẩn Senior: KPI ≥85% ba tháng', 'nghe-coach', 4, 'KPI ≥85% ba tháng · 0 vi phạm hiến pháp', 'Bảng KPI ba tháng đạt ngưỡng'],
+        ['Giữ quyền gỡ ca khó và 4 nhà T4–T5', 'nghe-coach', 3, 'Phụ trách đủ 4 nhà T4–T5 đúng chuẩn', 'Danh sách nhà tầng cao cập nhật'],
+        ['Chuẩn bị lên Trưởng nhóm: kèm được Coach mới', 'nghe-coach', 3, 'Đèn nhà TB ≥75 · có Coach mới đạt chuẩn', 'Hồ sơ đề xuất kèm bằng chứng'],
+        ['Hướng tới Chuyên gia dẫn dắt', 'nghe-coach', 1, 'Chuẩn hoá phương pháp · đào tạo Coach giỏi', 'Lộ trình năm có mốc đo'],
+        ['Đỡ Coach Tập sự đi tới chuẩn Coach', 'coach-5-tang', 3, '≥3 gia đình lên tầng có bằng chứng', 'Coach được kèm đạt chuẩn Coach'],
+        ['Thi sát hạch năng lực định kỳ', 'sat-hach', 2, 'Qua 8 trục đánh giá đúng cấp', 'Kết quả sát hạch lưu hồ sơ'],
+        ['Đối chiếu quyết định ca khó với Năm điều', 'bien-nien', 4, 'Không quyết định nào sửa năm điều', 'Quyết định khó ghi chỗ đối chiếu'],
+        ['Giữ Sáu ranh giới khi nhà khó gây áp lực', 'ranh-gioi', 4, 'Không vượt ranh giới dù nhà nài nỉ', 'Không vi phạm ranh giới trong kỳ'],
+        ['Bảo mật chi tiết ca khó khi chia sẻ', 'luat-lam-viec', 4, 'Chia sẻ bài học, ẩn danh tính nhà', 'Không lộ thông tin nhà trong kỳ'] ] }
+  ]
+};
+
+/* ══ R07 · COACH — nhịp đồng hành hằng ngày với chính các nhà mình ══ */
+G.DK_VAI.coach = {
+  vai:['R07'], ten:'Coach', ic:'flame', c:'--t4', spec:'nghe-coach',
+  lead:'Người thắp lửa chuyển hoá cho từng gia đình mình đồng hành: chuẩn bị đầu ngày, mở buổi đúng nhịp, giao nhiệm vụ vừa sức, nghiệm thu bằng bằng chứng và giữ đèn từng nhà mỗi ngày.',
+  cum:{ A:{t:'NHỊP BUỔI HẰNG NGÀY', s:'Chuẩn bị · mở buổi · giao việc · nghiệm thu'},
+        B:{t:'ĐỒNG HÀNH TỪNG NHÀ', s:'Giữ đèn · phối hợp · cá nhân hoá'},
+        C:{t:'LỚN LÊN TRONG NGHỀ', s:'Học nghề · KPI · thăng cấp'} },
+  loiTat:[ ['coach-deck','Buồng lái Coach','flame'], ['ban-coach','Bàn làm việc của Coach','pulse'],
+           ['bang-viec','Bảng công việc của tôi','list'], ['kpi-toi','KPI của tôi','chart'] ],
+  areas:[
+    { key:'chuan-bi-dau-ngay', so:'01', ic:'sun', c:'--t1', cum:'A', ten:'Chuẩn bị đầu ngày',
+      man:'coach-deck',
+      mo:'Mở Buồng lái, biết nhà nào chạm trước, chuẩn bị giáo cụ — để buổi nào cũng vào đúng nhịp.',
+      nv:[ 0, 1, 2,
+        ['Xem lịch buổi hôm nay của mình', 'ban-coach', 3, 'Biết đủ giờ, nhà, mục tiêu từng buổi', 'Lịch ngày hiện trên Bàn Coach'],
+        ['Đọc lại ghi chép buổi trước của từng nhà', 'bang-viec', 3, 'Nhớ cam kết nhà đã hứa tuần trước', 'Mỗi buổi có một câu nối từ buổi trước'],
+        ['Soát nhiệm vụ nhà tới hạn hôm nay', 'con-duong', 2, 'Biết nhà nào có việc tới hạn', 'Danh sách tới hạn ghi trên bảng việc'],
+        ['Xem lời nhắc có hạn giờ của trợ lý', 'ban-coach', 2, 'Không lời nhắc nào quá hạn', 'Lời nhắc được xử lý hoặc dời có lý do'],
+        ['Chọn điểm chạm WOW cho buổi đầu', 'diem-cham-1000', 2, 'Điểm chạm hợp tầng và hợp nhà', 'Điểm chạm ghi vào kế hoạch buổi'],
+        ['Đọc tư liệu nhà vừa gửi lên', 'tai-lieu-khach', 2, 'Đọc trước buổi, ghi điểm cần hỏi', 'Ghi chú đính kèm hồ sơ nhà'],
+        ['Đọc bảng tin đội đầu ngày', 'tin-noi-bo', 1, 'Nắm thông báo chuyên môn mới', 'Không bỏ lỡ thay đổi chuẩn'] ] },
+
+    { key:'mo-buoi', so:'02', ic:'compass', c:'--t2', cum:'A', ten:'Mở buổi & chẩn đoán',
+      man:'ban-coach',
+      mo:'Mở buổi đúng hẹn, để nhà nói trước, đọc đúng nút thắt và tầng hiện tại của nhà.',
+      nv:[ 3, 4, 5, 6, 7,
+        ['Mở buổi bằng việc nhà đã làm được', 'bando-coach', 2, 'Hỏi điều nhà làm được trước điều chưa làm', 'Câu mở ghi trong bản ghi buổi'],
+        ['Định vị hôm nay cùng gia đình', 'dinh-vi', 3, 'Nhà tự chấm hôm nay đang ở đâu', 'Điểm định vị lưu vào hồ sơ'],
+        ['Đọc chân dung nhà trước khi kết luận', 'chan-dung-nha', 2, 'Kết luận dựa trên chân dung, không cảm tính', 'Chân dung cập nhật sau buổi'],
+        ['Dùng bộ test nhận diện 5 tầng khi cần', 'bo-test', 2, 'Test đúng lúc, không thay cho lắng nghe', 'Kết quả test gắn vào hồ sơ'],
+        ['Hỏi Senior khi chẩn đoán chưa chắc', 'xu-ly-ca', 3, 'Hỏi sớm, không đoán bừa', 'Senior nhận xem lại chẩn đoán'] ] },
+
+    { key:'giao-nhiem-vu', so:'03', ic:'target', c:'--t3', cum:'A', ten:'Dẫn dắt & giao nhiệm vụ',
+      man:'con-duong',
+      mo:'Dựng lộ trình bám đúng nhà, giao nhiệm vụ vừa sức có hạn và chốt cam kết cụ thể trước khi kết buổi.',
+      nv:[ 8, 9, 10, 11, 12, 13,
+        ['Gửi tư liệu đúng tầng sau buổi', 'gui-tu-lieu', 2, 'Tư liệu đúng tầng, đúng nhu cầu nhà', 'Lượt gửi ghi trong hồ sơ'],
+        ['Đặt nhiệm vụ vào Nhật ký 365 của nhà', 'nhiem-vu', 2, 'Nhiệm vụ hiện trên nhật ký của nhà', 'Nhà thấy nhiệm vụ trên màn của mình'],
+        ['Dặn nhà cách nộp minh chứng', 'minh-chung', 2, 'Nhà biết nộp gì, nộp ở đâu', 'Nhà nộp được minh chứng đầu tiên'],
+        ['Gợi một thói quen nhỏ cho cả nhà', 'thoi-quen', 2, 'Làm được hằng ngày, không quá sức', 'Thói quen ghi vào kế hoạch tuần'] ] },
+
+    { key:'nghiem-thu', so:'04', ic:'check', c:'--t4', cum:'A', ten:'Nghiệm thu & bằng chứng',
+      man:'bang-chung',
+      mo:'Không bằng chứng là chưa đạt: nghiệm thu nhiệm vụ, ghi dữ liệu buổi và cập nhật đèn đúng sức khoẻ nhà.',
+      nv:[ 14, 15, 16, 17, 18, 19,
+        ['Xem minh chứng nhà nộp trong ngày', 'minh-chung', 3, 'Xem trong 24 giờ sau khi nhà nộp', 'Minh chứng gắn đạt / chưa đạt'],
+        ['Phản hồi nhẹ khi minh chứng chưa đạt', 'chuan-ngon-ngu', 2, 'Nói rõ cần thêm gì, không trách', 'Nhà nộp bổ sung trong hạn'],
+        ['Ghi lý do khi đổi đèn nhà', 'do-luong-kh', 2, 'Đổi đèn có dữ kiện', 'Lần đổi đèn có lý do'],
+        ['Cập nhật Mười điểm về đích của nhà', 'kpi-100', 2, 'Điểm có bằng chứng từng mục', 'Bảng mười điểm cập nhật'] ] },
+
+    { key:'giu-den', so:'05', ic:'heart', c:'--t5', cum:'B', ten:'Chăm sóc & giữ đèn',
+      man:'van-hanh-cham-soc',
+      mo:'Gọi nhà đỏ trong ngày, chạm đúng nhịp 21/90, nhắc nhẹ và giữ lửa để nhà xanh không nguội.',
+      nv:[ 20, 21, 22, 23, 37,
+        ['Chạm nhà trong vùng ngày 8–12', 'van-hanh-cham-soc', 4, 'Không nhà nào im lặng ở vùng tử thần', 'Mỗi nhà vùng 8–12 có lượt chạm ghi lại'],
+        ['Gửi lời ghi nhận khi nhà làm được việc', 'phan-thuong', 2, 'Ghi nhận việc cụ thể, kịp thời', 'Nhà nhận ghi nhận trong ngày'],
+        ['Mời nhà kể lại điều đã đổi thay', 'tien-bo', 2, 'Nhà tự kể bằng lời của mình', 'Câu chuyện lưu ở Nhà mình đã đổi gì'],
+        ['Nhắc nhà mốc chu kỳ 21 ngày sắp chốt', 'chu-ky', 2, 'Nhắc trước 3 ngày', 'Nhà biết mốc và việc cần xong'],
+        ['Đọc góp ý của nhà mình phụ trách', 'hai-long', 3, 'Đọc trong ngày, phản hồi trong 48 giờ', 'Góp ý có câu trả lời'] ] },
+
+    { key:'phoi-hop', so:'06', ic:'share', c:'--t1', cum:'B', ten:'Phối hợp & chuyển ca',
+      man:'tt-cskh',
+      mo:'Nhận bàn giao sạch từ Tư vấn, chuyển ca vượt sức đúng lúc, không bàn tiền và chỉ xin giới thiệu khi nhà hài lòng rõ.',
+      nv:[ 30, 31, 24,
+        ['Đọc biên bản bàn giao trước buổi đầu', 'tt-cskh', 3, 'Biết lời hứa, kỳ vọng, nút thắt của nhà', 'Câu hỏi còn thiếu gửi lại Tư vấn'],
+        ['Chuyển ca vượt sức lên Senior Coach', 'xu-ly-ca', 3, 'Chuyển khi đã thử hai lần chưa gỡ được', 'Senior xác nhận nhận ca'],
+        ['Báo Trưởng nhóm khi nhà đỏ quá 7 ngày', 'doi-ngu', 3, 'Báo trong ngày, kèm việc đã làm', 'Trưởng nhóm xác nhận vào cuộc'],
+        ['Chuyển câu hỏi tiền về đúng bộ phận', 'tt-cskh', 3, 'Coach không bàn tiền, chỉ chuyển đúng nơi', 'Câu hỏi tiền có người phụ trách nhận'],
+        ['Gửi phiếu chỉ dẫn khi nhà muốn giới thiệu', 'referral', 2, 'Chỉ khi nhà tự nguyện, không ép', 'Phiếu chỉ dẫn được gửi'],
+        ['Đọc hành trình của con trước buổi', 'hanh-trinh-con', 2, 'Nắm việc con đang học và đang vướng', 'Một điểm về con được hỏi trong buổi'],
+        ['Nhận lại ca từ Senior sau khi gỡ', 'xu-ly-ca', 2, 'Đọc đủ việc Senior đã làm', 'Buổi kế tiếp nối đúng hướng đã gỡ'] ] },
+
+    { key:'ca-nhan-hoa', so:'07', ic:'sparkle', c:'--t2', cum:'B', ten:'Cá nhân hoá cho nhà mình',
+      man:'phuong-phap',
+      mo:'Mỗi nhà một cách riêng: kịch bản bám đúng nhà, điểm chạm hiệu quả được lưu và kế hoạch lên tầng rõ ràng.',
+      nv:[ 33, 34, 35, 36,
+        ['Chọn kịch bản chuyên môn đúng tầng', 'kich-ban', 2, 'Kịch bản hợp tầng và chân dung nhà', 'Mã kịch bản gắn vào buổi'],
+        ['Tra phác đồ cho vấn đề nhà đang gặp', 'phac-do', 2, 'Hướng đi theo phác đồ đúng tầng', 'Phác đồ ghi trong lộ trình'],
+        ['Cập nhật bản đồ cá nhân 11 ô cùng nhà', 'ban-do-ca-nhan', 2, 'Mỗi ô có số đo nhà tự chấm', 'Bản đồ cập nhật sau chu kỳ'],
+        ['Dùng vùng mạnh của con trong lộ trình', 'vung-manh', 2, 'Dùng làm dữ kiện, không gán nhãn con', 'Một nhiệm vụ dựa trên điểm mạnh của con'],
+        ['Nối lộ trình với tầm nhìn của nhà', 'tam-nhin', 2, 'Mỗi chặng nối được về tầm nhìn', 'Lộ trình ghi liên kết tầm nhìn'],
+        ['Đọc cây giá trị trước khi chọn nhiệm vụ', 'cay-vip', 1, 'Nhiệm vụ không trái giá trị của nhà', 'Giá trị nhà ghi trong lộ trình'] ] },
+
+    { key:'hoc-nghe', so:'08', ic:'book', c:'--t3', cum:'C', ten:'Học nghề mỗi ngày',
+      man:'dien-thu',
+      mo:'Mỗi ngày học thêm một kịch bản, dự giờ Coach khác, diễn thử buổi khó và tự soi buổi chưa tròn.',
+      nv:[ 28, 32, 29,
+        ['Diễn thử buổi khó trước khi gặp nhà', 'dien-thu', 3, 'Diễn ít nhất một lượt có người nghe', 'Câu cấm được nhận ra và sửa'],
+        ['Học mẫu câu ngôn từ dẫn dắt', 'ngon-tu', 2, 'Mỗi tuần dùng được một mẫu mới', 'Mẫu câu xuất hiện trong bản ghi buổi'],
+        ['Làm bài tiếp theo của khoá đào tạo', 'khoa-dao-tao', 2, 'Không kẹt bài quá hai tuần', 'Bài nộp và bài kế tiếp tự mở'],
+        ['Luyện tình huống thực chiến 7 ngày', 'tinh-huong', 2, 'Mỗi tháng một thử thách', 'Kết quả thử thách ghi hồ sơ'],
+        ['Đọc lại chuẩn ngôn ngữ sáu vai', 'chuan-ngon-ngu', 2, 'Nhớ câu cấm của vai Coach', 'Không câu cấm trong bản ghi tuần'],
+        ['Sửa đúng điều được kèm sau buổi dự', 'bando-coach', 3, 'Buổi sau sửa được điều đã nhận', 'Trưởng nhóm xác nhận đã sửa'],
+        ['Ghi sổ nhật ký nghề cuối ngày', 'nhat-ky-vi-tri', 1, 'Một dòng: hôm nay học được gì', 'Nhật ký ngày có dòng mới'] ] },
+
+    { key:'ghi-nhan-kpi', so:'09', ic:'chart', c:'--t4', cum:'C', ten:'Ghi nhận & KPI',
+      man:'kpi-toi',
+      mo:'Chốt ngày bằng số thật, cập nhật hồ sơ lộ trình và báo tuần cho Trưởng nhóm có đề xuất.',
+      nv:[ 25, 26, 27, 38,
+        ['Đếm nhà lên tầng có bằng chứng', 'tien-bo', 3, 'Mỗi lần lên tầng có nghiệm thu', 'Bảng lên tầng tháng cập nhật'],
+        ['Soát chuỗi đóng việc đúng hạn', 'kpi-toi', 3, 'Chuỗi không đứt quá một ngày', 'Chuỗi đúng hạn hiện trên KPI'],
+        ['Đối chiếu giờ làm với ngưỡng', 'do-thoi-gian', 2, 'Việc vượt ngưỡng có lý do', 'Lý do ghi trong đồng hồ việc'],
+        ['Gửi chỗ vướng lên Cải tiến', 'cai-tien', 2, 'Nói chỗ vướng kèm ví dụ thật', 'Có người trả lời trong 14 ngày'],
+        ['Soát đèn trung bình nhà mình phụ trách', 'do-luong-kh', 3, 'Đèn TB phản ánh đúng sức khoẻ nhà', 'Số đèn TB ghi báo cáo tháng'],
+        ['Soát buổi chưa có bản ghi trong tuần', 'bang-viec', 2, 'Không buổi nào thiếu bản ghi', 'Buổi thiếu được bổ sung trước thứ Sáu'] ] },
+
+    { key:'khung-nghe', so:'10', ic:'crown', c:'--t5', cum:'C', ten:'Thăng cấp & khung nghề',
+      man:'nghe-coach',
+      mo:'Đi từ Tập sự lên Coach rồi Senior bằng bằng chứng, giữ hiến pháp nghề và ranh giới với gia đình.',
+      nv:[ 39,
+        ['Qua 40 giờ đào tạo nền Coach Tập sự', 'dao-tao-dh', 3, 'Qua 40h đào tạo nền + thi đầu vào', 'Chứng nhận Tập sự trong hồ sơ'],
+        ['Lên Coach: ≥3 gia đình lên tầng', 'nghe-coach', 4, '≥3 gia đình lên tầng có bằng chứng', 'Hồ sơ đề xuất kèm bằng chứng từng nhà'],
+        ['Lên Senior Coach: KPI ≥85% ba tháng', 'nghe-coach', 3, 'KPI ≥85% ba tháng · 0 vi phạm hiến pháp', 'Bảng KPI ba tháng đính kèm'],
+        ['Hướng tới Trưởng nhóm và Chuyên gia', 'nghe-coach', 1, 'Đèn nhà TB ≥75 · kèm được Coach mới', 'Lộ trình năm có mốc đo'],
+        ['Thi sát hạch năng lực định kỳ', 'sat-hach', 2, 'Qua 8 trục đánh giá đúng cấp', 'Kết quả sát hạch lưu hồ sơ'],
+        ['Giữ Sáu ranh giới với gia đình', 'ranh-gioi', 4, 'Không vượt ranh giới dù nhà nài nỉ', 'Không vi phạm ranh giới trong kỳ'],
+        ['Liên lạc qua hệ thống, giữ kín hồ sơ nhà', 'luat-lam-viec', 4, 'Không liên lạc riêng, không chia hồ sơ ra ngoài', 'Mọi liên lạc có dấu vết trên hệ'],
+        ['Nói đúng bảy quyền với nhà mình', 'phap-ly', 3, 'Nhà biết quyền trước mỗi chặng', 'Không khiếu nại về quyền'],
+        ['Giữ Năm điều không ai được sửa', 'bien-nien', 4, 'Không hứa, không làm trái năm điều', 'Không vi phạm hiến pháp trong kỳ'] ] }
+  ]
+};
+
+})();
+
+/* ═════════ src/data-dk-vai-2.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — DỮ LIỆU BẢNG ĐIỀU KHIỂN THEO VAI (phần 2):
+   Giáo viên (R08) · Mentor (R09) · Chuyên gia đánh giá (R10) ·
+   Chuyên gia tư vấn (R11)
+
+   Mỗi vai: 10 màn chi tiết × 10 nghiệp vụ, chia ba cụm (A nhịp hằng
+   ngày · B chuyên môn sâu · C đo lường, thăng cấp, khung nghề). Số
+   nguyên = đầu việc trong chuẩn nghề của vai (đủ 30 đầu việc, mỗi đầu
+   việc đúng một lần); mảng = nghiệp vụ riêng của màn ấy. Mọi màn trỏ
+   tới đều nằm trong phạm vi vai được thấy. Bằng chứng trước cảm giác,
+   không hứa điều không đo được, dữ liệu gia đình giữ kín.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.DK_VAI = G.DK_VAI || {};
+
+/* ══ R08 · GIÁO VIÊN ══ */
+G.DK_VAI.giaovien = {
+  vai:['R08'], ten:'Giáo viên', ic:'book', spec:'nghe-giaovien',
+  lead:'Dạy đúng thứ học viên đang cần để đi tiếp: nắm lớp, soạn bài, dẫn lớp, nghiệm thu bằng bằng chứng và không bỏ lại ai. Mỗi màn mở thẳng chỗ làm việc thật.',
+  cum:{ A:{t:'NHỊP LỚP HẰNG NGÀY', s:'Nắm lớp · soạn bài · dẫn lớp · nghiệm thu'},
+        B:{t:'SƯ PHẠM CHUYÊN SÂU', s:'Giáo cụ · chấm điểm · kèm riêng · nuôi tài'},
+        C:{t:'TIẾN BỘ & CHUẨN NGHỀ', s:'Đo tiến bộ lớp · thăng cấp · khung nghề'} },
+  loiTat:[ ['bang-viec','Bảng công việc của tôi','pulse'], ['khoa-dao-tao','Khoá đào tạo của tôi','book'], ['kpi-toi','KPI của tôi','chart'] ],
+  areas:[
+    { key:'nam-lop', so:'01', ic:'users', c:'--t1', cum:'A', ten:'Nắm lớp đầu ngày',
+      man:'khoa-dao-tao',
+      mo:'Biết ai đang đuối, ai vượt, ai nợ bài, ai vắng trước khi bước vào lớp.',
+      nv:[ 0, 29, 23, 1,
+           ['Mở sổ lớp, đọc ghi chú buổi trước', 'nhat-ky-vi-tri', 3, 'Đọc trước giờ lên lớp ít nhất 15 phút', 'Ghi chú buổi trước đánh dấu đã đọc'],
+           ['Đối chiếu chặng học của từng học viên', 'hanh-trinh-12', 3, 'Biết mỗi học viên đang ở chặng nào trong 12 chặng', 'Mỗi học viên gắn đúng chặng'],
+           ['Chọn một việc trọng tâm cho buổi hôm nay', 'bang-viec', 3, 'Một việc, không dàn trải', 'Việc trọng tâm ghi trên bảng việc'],
+           ['Xử lý việc trễ hạn trên bảng công việc', 'bang-viec', 3, 'Không việc nào trễ quá một ngày', 'Trễ hạn về 0 hoặc có lý do ghi rõ'],
+           ['Soát phạm vi lớp mình được mở', 'pham-vi', 2, 'Chỉ làm trong lớp và học viên được giao', 'Danh sách lớp khớp phạm vi'],
+           ['Nhận việc mới từ danh mục đầu việc', 'danh-muc-viec', 2, 'Nhận việc nói rõ đóng bằng bằng chứng gì', 'Việc nhận có ghi bằng chứng đóng'] ] },
+
+    { key:'soan-bai', so:'02', ic:'edit', c:'--t2', cum:'A', ten:'Soạn bài đúng chỗ lớp cần',
+      man:'thu-vien',
+      mo:'Mỗi bài bám đúng chỗ lớp đang vướng, có mục tiêu đo được và ví dụ gần học viên.',
+      nv:[ 3, 4, 5,
+           ['Chọn mô thức huấn luyện cho bài', 'mo-thuc', 4, 'Một mô thức chính, gọi đúng tên', 'Giáo án ghi rõ mô thức dùng'],
+           ['Bám bài vào ma trận vấn đề của lớp', 'ma-tran', 3, 'Bài trỏ về đúng nhóm vấn đề', 'Giáo án gắn mã vấn đề'],
+           ['Lấy tình huống thực chiến làm bài luyện', 'tinh-huong', 3, 'Tình huống có mã Key, sát với lớp', 'Giáo án có ít nhất một tình huống'],
+           ['Soạn theo đúng tầng của học viên', 'lo-trinh', 3, 'Không dạy vượt tầng lớp đang đứng', 'Giáo án ghi tầng T1–T5'],
+           ['Chia bài theo nhịp Học · Làm · Nộp', 'khoa-dao-tao', 3, 'Đủ ba phần, phần Làm không ít hơn phần Học', 'Bài có đủ ba phần trên khoá'],
+           ['Soát lời giảng qua bộ nhận diện ngôn từ', 'nhan-dien-loi', 2, 'Không câu máy viết, không câu cấm', 'Bài qua soát ngôn từ'],
+           ['Đưa giáo án tốt lên thư viện', 'thu-vien', 2, 'Gắn tầng, chủ đề, người soạn', 'Đồng nghiệp tìm được giáo án'] ] },
+
+    { key:'dan-lop', so:'03', ic:'spark', c:'--t3', cum:'A', ten:'Dẫn lớp',
+      man:'ngon-tu',
+      mo:'Lớp cuốn, đúng chuẩn ngôn ngữ, học viên làm nhiều hơn nghe và về nhà có bài vừa sức.',
+      nv:[ 6, 7, 8, 9,
+           ['Mở lớp bằng câu hỏi gắn đời thật', 'ngon-tu', 3, 'Câu mở trong ba phút đầu', 'Học viên trả lời được câu mở'],
+           ['Dẫn buổi theo sáu nhịp ngôn ngữ', 'phuong-phap', 4, 'Đi đủ sáu nhịp, không nhảy cóc', 'Sổ buổi đánh dấu đủ sáu nhịp'],
+           ['Giữ lớp trong sáu ranh giới', 'ranh-gioi', 3, 'Không câu nào chạm ranh giới', 'Không ghi nhận vi phạm trong buổi'],
+           ['Cho học viên thực hành ngay tại lớp', 'nhiem-vu', 3, 'Thời gian làm không ít hơn thời gian nghe', 'Mỗi học viên có một sản phẩm tại lớp'],
+           ['Chốt buổi: ba điều học viên mang về', 'nhat-ky-vi-tri', 2, 'Học viên tự nói ra ba điều', 'Ba điều ghi trong sổ buổi'],
+           ['Diễn thử trước buổi dạy khó', 'dien-thu', 3, 'Diễn ít nhất một lượt trước buổi khó', 'Có lượt diễn thử ghi lại'] ] },
+
+    { key:'nghiem-thu', so:'04', ic:'check', c:'--t4', cum:'A', ten:'Nghiệm thu bài tập',
+      man:'minh-chung',
+      mo:'Không bằng chứng là chưa đạt: duyệt minh chứng, trả bài kèm việc sửa, mở bài kế tiếp đúng lúc.',
+      nv:[ 10, 26, 13,
+           ['Đối chiếu bài nộp với chuẩn đạt đã giao', 'minh-chung', 4, 'Chấm theo chuẩn đạt, không theo cảm tình', 'Mỗi bài gắn đạt/chưa đạt kèm lý do'],
+           ['Trả bài chưa đạt kèm một việc sửa cụ thể', 'bang-viec', 3, 'Mỗi bài trả kèm một việc làm được ngay', 'Học viên nhận việc sửa có hạn'],
+           ['Kiểm minh chứng theo chuẩn bằng chứng điện tử', 'bang-chung', 3, 'Đủ tính chất, không mắc lỗi mất giá trị', 'Minh chứng hợp lệ theo chuẩn'],
+           ['Nhắc học viên chưa nộp trước hạn chót', 'van-hanh-cham-soc', 2, 'Nhắc trước hạn ít nhất 24 giờ', 'Có lượt nhắc ghi nhận'],
+           ['Mở bài kế tiếp khi bài trước đạt', 'khoa-dao-tao', 2, 'Chỉ mở khi đạt có bằng chứng', 'Bài kế tiếp mở đúng lúc'],
+           ['Ghi nhận bài làm tốt', 'phan-thuong', 2, 'Ghi nhận việc làm, không xếp hạng', 'Học viên nhận huy hiệu/ghi nhận'],
+           ['Theo cổng nghiệm thu chặng 21 ngày', 'chu-ky', 3, 'Qua cổng mới sang chặng sau', 'Cổng chặng có kết luận'] ] },
+
+    { key:'giao-cu', so:'05', ic:'vault', c:'--t5', cum:'B', ten:'Giáo cụ & nguồn chuẩn',
+      man:'kho-tai-lieu',
+      mo:'Dạy đúng nguồn chuẩn của Học viện, giáo cụ sẵn sàng trước buổi, con số nào cũng có nguồn.',
+      nv:[ 2, 25,
+           ['Chọn tài liệu đúng tầng × cấp của lớp', 'kho-tai-lieu', 3, 'Tài liệu khớp tầng và cấp', 'Danh mục tài liệu buổi đã chốt'],
+           ['Đối chiếu số liệu bài giảng với tài liệu gốc', 'tai-lieu-goc', 3, 'Con số có nguồn, không tự đặt', 'Mỗi số liệu trích được nguồn'],
+           ['Lấy kịch bản chuyên môn đúng tầng', 'kich-ban', 2, 'Kịch bản khớp tầng lớp đang học', 'Kịch bản gắn vào giáo án'],
+           ['Chuẩn bị bộ test nhận diện cho lớp mới', 'bo-test', 3, 'Đúng bộ theo tầng, đủ câu', 'Đề test sẵn trước buổi đầu'],
+           ['Tra trợ lý GITA khi cần trích nguồn', 'tro-ly', 2, 'Câu trả lời có nguồn mới dùng', 'Trích dẫn ghi kèm trong bài'],
+           ['Chọn quà tài liệu cho học viên đạt mốc', 'kho-qua', 2, 'Quà gắn với mốc đã đạt', 'Quà gửi kèm lời ghi nhận'],
+           ['Chọn sách gốc cho phần đọc thêm', 'sach', 2, 'Vừa sức, có trang cụ thể', 'Danh mục đọc thêm gửi lớp'],
+           ['Gửi tư liệu học cho gia đình học viên', 'gui-tu-lieu', 2, 'Gửi qua hệ, đúng lời xin', 'Tư liệu gửi có ghi nhận'] ] },
+
+    { key:'cham-diem', so:'06', ic:'target', c:'--t1', cum:'B', ten:'Chấm điểm & sát hạch',
+      man:'sat-hach',
+      mo:'Điểm thực, nhận xét dựng người, đề đo đúng thứ cần đo và mỗi buổi đều có dữ liệu.',
+      nv:[ 11, 24, 12,
+           ['Chấm theo tám trục đánh giá sát hạch', 'sat-hach', 4, 'Đủ tám trục, mỗi trục có căn cứ', 'Phiếu chấm đủ tám trục'],
+           ['Tổ chức buổi sát hạch đúng quy chế', 'sat-hach', 3, 'Cùng đề, cùng giờ, không nhắc bài', 'Biên bản sát hạch đủ học viên'],
+           ['Chấm chéo bài khó với giáo viên khác', 'sat-hach', 3, 'Lệch quá một bậc phải chấm lại', 'Bài khó có hai điểm chấm'],
+           ['Đọc kết quả test nhận diện đầu khoá', 'bo-test', 3, 'Phân đúng nhóm học viên', 'Mỗi học viên có nhóm xuất phát'],
+           ['So điểm hiện tại với điểm đầu khoá', 'khoa-dao-tao', 3, 'Cùng thang đo, nói rõ chênh lệch', 'Mỗi học viên có mức tiến bộ'],
+           ['Xếp mốc về đích theo mười điểm', 'kpi-100', 2, 'Mốc đạt có tiêu chí đo được', 'Mốc ghi vào hồ sơ học viên'],
+           ['Xuất bảng điểm lớp đúng phân quyền', 'xuat-du-lieu', 2, 'Chỉ xuất cho người có quyền', 'Bảng điểm xuất có nhật ký'] ] },
+
+    { key:'kem-rieng', so:'07', ic:'heart', c:'--t2', cum:'B', ten:'Kèm riêng học viên đuối',
+      man:'xu-ly-ca',
+      mo:'Vào cuộc sớm với học viên đuối và mất động lực, gọi đúng chỗ vướng, không bỏ ai lại phía sau.',
+      nv:[ 14, 15, 16,
+           ['Gọi tên chỗ học viên đang vướng', 'xu-ly-ca', 4, 'Một chỗ vướng cụ thể, có dấu hiệu', 'Chỗ vướng ghi trong hồ sơ kèm'],
+           ['Lập kế hoạch kèm bảy ngày', 'nhiem-vu', 3, 'Việc nhỏ mỗi ngày, đo được', 'Học viên nhận kế hoạch bảy ngày'],
+           ['Đọc vòng luẩn quẩn học viên đang mắc', 'sau-vung', 3, 'Gọi đúng vùng, chỉ được đường về', 'Vùng và đường về đã ghi'],
+           ['Chuyển ca vượt sức lên Mentor/Coach', 'xu-ly-ca', 3, 'Chuyển sớm, đủ bối cảnh', 'Người nhận ca xác nhận'],
+           ['Giữ mọi trao đổi với nhà trong hệ thống', 'luat-lam-viec', 3, 'Không liên hệ ngoài hệ thống', 'Mọi liên hệ có dấu vết trên hệ'],
+           ['Kiểm lại sau bảy ngày kèm riêng', 'khoa-dao-tao', 3, 'Có số đo trước và sau', 'Kết luận tiếp kèm hay dừng'],
+           ['Giữ kín chuyện riêng học viên chia sẻ', 'phap-ly', 3, 'Không kể lại ngoài người cần biết', 'Không thông tin riêng nào bị lộ'] ] },
+
+    { key:'nuoi-tai', so:'08', ic:'seed', c:'--t3', cum:'B', ten:'Giữ lửa học viên giỏi & tiềm năng',
+      man:'noi-nhan-tai',
+      mo:'Phát hiện sớm, giao thử thách vừa tầm và kể lại tiến bộ thật để lửa học không tắt.',
+      nv:[ 17, 27,
+           ['Giao thử thách vượt cấp cho học viên giỏi', 'tinh-huong', 3, 'Thử thách bảy ngày, có KPI', 'Học viên nhận và bắt đầu thử thách'],
+           ['Đọc vùng mạnh của học viên', 'vung-manh', 3, 'Dựa trên ba thứ quan sát được', 'Thẻ vùng mạnh có bằng chứng'],
+           ['Mời học viên dự thi viết theo mốc', 'thi-viet', 2, 'Mời đúng mốc 7 – 21 – 90 – 365', 'Học viên đăng ký dự thi'],
+           ['Kể chuyện tiến bộ thật của học viên', 'vinh-danh', 2, 'Có bằng chứng, được học viên đồng ý', 'Chuyện được đăng ở vinh danh'],
+           ['Ghép học viên giỏi kèm bạn đuối', 'nhiem-vu', 2, 'Hai bên đồng ý, có việc cụ thể', 'Cặp kèm có việc tuần đầu'],
+           ['Đề xuất lên tầng kế tiếp khi đủ điều kiện', 'lo-trinh', 3, 'Đủ bằng chứng của tầng hiện tại', 'Đề xuất lên tầng được ghi nhận'],
+           ['Ghi điểm thưởng cho chuỗi ngày học đều', 'do-thoi-gian', 2, 'Đúng ba ngưỡng, quy đổi đúng', 'Điểm thưởng ghi vào hồ sơ'],
+           ['Gắn khoảnh khắc WOW khi học viên vượt chặng', 'wow', 2, 'Một khoảnh khắc đáng nhớ thật', 'Học viên nhắc lại được khoảnh khắc'] ] },
+
+    { key:'tien-bo-lop', so:'09', ic:'chart', c:'--t4', cum:'C', ten:'Đo tiến bộ & báo cáo lớp',
+      man:'kpi-toi',
+      mo:'Tiến độ phản ánh đúng, ngày được chốt, lớp được báo lên chủ nhiệm kèm đề xuất cải tiến.',
+      nv:[ 18, 19, 20, 21,
+           ['Đọc tỷ lệ học viên tiến bộ của lớp', 'kpi-toi', 4, 'Đo trên bằng chứng, không ước lượng', 'Tỷ lệ tiến bộ ghi vào KPI tháng'],
+           ['Đếm học viên bị bỏ lại trong tháng', 'khoa-dao-tao', 4, 'Mục tiêu: không học viên nào bị bỏ', 'Danh sách bỏ lại về 0 hoặc đang được cứu'],
+           ['Đọc góp ý học viên về buổi dạy', 'hai-long', 3, 'Đọc phần chưa tốt trước phần khen', 'Có một việc sửa rút từ góp ý'],
+           ['Gửi chỗ vướng qua kênh cải tiến', 'cai-tien', 2, 'Nói rõ chỗ vướng, có đề xuất', 'Đề xuất có người trả lời trong 14 ngày'],
+           ['Viết nhật ký dạy tuần', 'nhat-ky-vi-tri', 2, 'Mỗi tuần một trang, có số liệu', 'Trang tuần đã lưu'],
+           ['Cắt lãng phí thời gian trong buổi dạy', 'tinh-gon', 2, 'Cắt ít nhất một lãng phí mỗi tháng', 'Buổi dạy gọn hơn, ghi rõ chỗ cắt'] ] },
+
+    { key:'nang-nghe', so:'10', ic:'crown', c:'--t5', cum:'C', ten:'Thăng cấp & khung nghề Giáo viên',
+      man:'nghe-giaovien',
+      mo:'Năm cấp nghề Giáo viên, việc tự soi buổi dạy khó và những điều không ai được sửa.',
+      nv:[ 22, 28,
+           ['Cấp 1 · Tập sự: qua sư phạm và thi đầu vào', 'nghe-giaovien', 3, 'Qua đào tạo sư phạm + thi', 'Có chứng nhận đầu vào'],
+           ['Cấp 2 · Giáo viên: một lớp qua bài đạt chuẩn', 'nghe-giaovien', 3, 'Ít nhất một lớp qua bài đạt chuẩn', 'Hồ sơ lớp đạt được duyệt'],
+           ['Cấp 3 · Giáo viên Giỏi: tiến bộ cao, không bỏ ai', 'nghe-giaovien', 4, 'Tỷ lệ tiến bộ cao · 0 học viên bị bỏ', 'Đủ ba tháng số liệu đạt'],
+           ['Cấp 4 · Chủ nhiệm: nhiều lớp mạnh, kèm người mới', 'nghe-giaovien', 4, 'Nhiều lớp mạnh · kèm Giáo viên mới', 'Có Giáo viên mới qua kèm'],
+           ['Cấp 5 · Chuyên gia đào tạo: giáo trình chuẩn', 'nghe-giaovien', 4, 'Hệ đào tạo bền · giáo trình chuẩn', 'Giáo trình được duyệt vào kho'],
+           ['Thuộc năm điều không ai được sửa', 'bien-nien', 3, 'Nói lại được và áp vào lớp', 'Qua câu hỏi kiểm của chủ nhiệm'],
+           ['Giữ dữ liệu học viên đúng luật', 'phap-ly-rui-ro', 4, 'Ô đồng ý về con do cha mẹ ký', 'Không dữ liệu học viên nào ra ngoài hệ'],
+           ['Nắm mười điều lệ và chỗ mỗi điều chặn', 'so-tay-van-hanh', 2, 'Biết điều nào chặn việc của mình', 'Tự kiểm mười điều không vướng'] ] }
+  ]
+};
+
+/* ══ R09 · MENTOR ══ */
+G.DK_VAI.mentor = {
+  vai:['R09'], ten:'Mentor', ic:'tools', spec:'nghe-mentor',
+  lead:'Người chạy tám việc băng nền dưới cả năm khoang: nhận ca, gọi đúng nút gốc, gỡ cùng đội rồi trao lại vai dẫn. Mentor đứng sau đội, không chạm gia đình thay Coach.',
+  cum:{ A:{t:'NHỊP GỠ CA HẰNG NGÀY', s:'Nhận ca · chẩn đoán · gỡ nút cùng đội'},
+        B:{t:'BĂNG NỀN & TRUYỀN NGHỀ', s:'Việc nền · bù khoang · playbook · truyền lại'},
+        C:{t:'ĐO LƯỜNG & CHUẨN NGHỀ', s:'Đóng ca · KPI · thăng cấp · khung nghề'} },
+  loiTat:[ ['bang-viec','Bảng công việc của tôi','pulse'], ['xu-ly-ca','Xử lý ca theo quy trình','tools'], ['ban-do','Bản đồ năm khoang','map'], ['kpi-toi','KPI của tôi','chart'] ],
+  areas:[
+    { key:'nhan-ca', so:'01', ic:'bell', c:'--t1', cum:'A', ten:'Nhận ca & xếp ưu tiên',
+      man:'xu-ly-ca',
+      mo:'Không sót ca khẩn: ca mới, ca treo từ hôm qua và khoang đang hở được xếp lên đầu.',
+      nv:[ 0, 1, 24,
+           ['Đọc ca mới vào từ Coach và Tư vấn', 'xu-ly-ca', 3, 'Đọc hết trong buổi sáng', 'Mỗi ca mới có người nhận'],
+           ['Gắn đèn đỏ – vàng – xanh cho ca mới', 'do-luong-kh', 3, 'Đèn theo dữ liệu, không theo cảm giác', 'Mọi ca mở đều có đèn'],
+           ['Soát phạm vi ca mình được mở', 'pham-vi', 2, 'Không mở ca ngoài phạm vi', 'Danh sách ca khớp phạm vi'],
+           ['Xem bàn cờ tổng: khoang nào đang hở', 'ban-co-tong', 3, 'Biết khoang nào thiếu người hôm nay', 'Khoang hở ghi lên bảng việc'],
+           ['Ghi ca trễ hạn lên bảng công việc', 'bang-viec', 3, 'Không ca nào trễ mà không lý do', 'Ca trễ có hạn mới và lý do'],
+           ['Nhận việc nền mới từ danh mục đầu việc', 'danh-muc-viec', 2, 'Nhận kèm bằng chứng đóng', 'Việc nhận ghi rõ bằng chứng'],
+           ['Ghi sổ nhật ký ca đầu ngày', 'nhat-ky-vi-tri', 2, 'Mỗi sáng một dòng ưu tiên', 'Sổ ngày có ba ca ưu tiên'] ] },
+
+    { key:'chan-doan', so:'02', ic:'search', c:'--t2', cum:'A', ten:'Chẩn đoán nút thắt gốc',
+      man:'chieu-sau',
+      mo:'Nghe đội nói hết, đối chiếu ma trận, gọi đúng gốc chứ không dừng ở ngọn.',
+      nv:[ 2, 3, 4, 5, 6,
+           ['Soi tầng gia đình đang đứng trên lộ trình', 'lo-trinh', 3, 'Gọi đúng tầng T1–T5', 'Hồ sơ ca ghi tầng'],
+           ['Đọc ca theo nhóm xanh – vàng – cam – đỏ', 'ma-tran-bang', 3, 'Xếp đúng nhóm theo dữ liệu', 'Ca gắn nhóm khách'],
+           ['Gọi tên vòng luẩn quẩn của ca', 'sau-vung', 4, 'Gọi đúng vùng, chỉ ra chỗ rơi', 'Vùng và chỗ rơi ghi trong hồ sơ'],
+           ['Đối chiếu tình huống thực chiến tương tự', 'tinh-huong', 3, 'Tìm được mã Key gần nhất', 'Hồ sơ trỏ về tình huống mẫu'],
+           ['Tách dữ kiện khỏi suy đoán trong hồ sơ', 'xu-ly-ca', 4, 'Mỗi giả thuyết có một dữ kiện đỡ', 'Hồ sơ chia hai cột dữ kiện/giả thuyết'] ] },
+
+    { key:'go-nut', so:'03', ic:'lightning', c:'--t3', cum:'A', ten:'Gỡ nút cùng đội',
+      man:'phuong-phap',
+      mo:'Dựng hướng gỡ cùng Coach/Tư vấn, thử nhỏ trước, theo sát bước đầu rồi trao lại vai dẫn.',
+      nv:[ 7, 8, 9, 25, 26,
+           ['Chọn mô thức gỡ phù hợp dạng ca', 'mo-thuc', 4, 'Gọi đúng tên mô thức', 'Hướng gỡ ghi mô thức dùng'],
+           ['Lấy kịch bản chuyên môn cho bước gỡ', 'kich-ban', 3, 'Kịch bản đúng tầng của ca', 'Coach nhận kịch bản trước buổi'],
+           ['Đặt mốc kiểm theo chu kỳ 21 ngày', 'chu-ky', 3, 'Có cổng kiểm, có số đo', 'Mốc 21 ngày ghi trên ca'],
+           ['Đứng sau, không chạm gia đình thay Coach', 'luat-lam-viec', 4, 'Mentor không thay vai dẫn', 'Mọi lượt chạm nhà do Coach thực hiện'],
+           ['Hội ý 15 phút khi bước gỡ lệch hướng', 'xu-ly-ca', 3, 'Hội ý trong 24 giờ kể từ khi lệch', 'Hướng mới được đội đồng thuận'] ] },
+
+    { key:'bang-nen', so:'04', ic:'orbit', c:'--t4', cum:'B', ten:'Chạy việc băng nền',
+      man:'ban-do',
+      mo:'Tám việc nền chạy đều dưới cả năm khoang: định vị, định hướng, nhịp chạm, nghi lễ, ghi nhận.',
+      nv:[ 11, 27,
+           ['Đọc bản đồ năm khoang: việc nền nào đang tắc', 'ban-do', 4, 'Biết khoang nào tắc việc nền', 'Việc tắc có tên và hạn gỡ'],
+           ['Giữ bảng số trung thực cho nhà băng nền', 'dinh-vi', 4, 'Số đo thật, không cảm giác', 'Bảng định vị cập nhật trong tuần'],
+           ['Rà định hướng với tầm nhìn mỗi 21 ngày', 'tam-nhin', 3, 'Việc không nối được tầm nhìn thì bỏ', 'Danh sách việc giữ/bỏ đã ghi'],
+           ['Giữ nhịp chạm 365 ngày, canh ngày 8–12', 'van-hanh-cham-soc', 4, 'Không nhà nào rơi vùng tử thần', 'Nhịp chạm đúng hạn, đèn đỏ được gọi'],
+           ['Giữ thói quen & nghi lễ của nhà chạy đều', 'thoi-quen', 3, 'Nghi lễ chạy đúng nhịp', 'Nghi lễ tuần có dấu tick'],
+           ['Ghi nhận tiến bộ có bằng chứng', 'vinh-danh', 2, 'Không bằng chứng thì không ghi nhận', 'Chuyện tốt được kể kèm bằng chứng'],
+           ['Xử lý ca trợ lý chăm sóc tự động chuyển về', 'ai-cham', 3, 'Luật chạy nền không bỏ sót nhà', 'Ca máy chuyển về có người nhận'],
+           ['Nhận việc máy không được làm thay', 'tu-dong', 3, 'Việc máy không được nhận có người giữ', 'Không việc nào rơi giữa máy và người'] ] },
+
+    { key:'bu-khoang', so:'05', ic:'shield', c:'--t5', cum:'B', ten:'Bù khoang & soát hồ sơ khó',
+      man:'ra-soat-kh',
+      mo:'Không để khoang nào hở: bù người kịp, soi đủ mười hai mặt, đèn ca luôn phản ánh đúng.',
+      nv:[ 10, 12, 13, 14,
+           ['Nhận ca bàn giao khi Coach vắng', 'doi-ngu', 3, 'Bàn giao đủ, không mất thông tin', 'Nhà được chạm đúng lịch dù Coach vắng'],
+           ['Đọc tài liệu gia đình gửi lên ở ca khó', 'tai-lieu-khach', 2, 'Đọc trước khi vào ca', 'Điểm mới bổ sung vào hồ sơ ca'],
+           ['Giữ chuỗi WOW không đứt khi đổi người', 'chuoi-wow', 3, 'Đổi người không đứt mạch WOW', 'Cấp kế tiếp vẫn có điểm WOW'],
+           ['Trả ca lại người giữ chính sau khi bù', 'xu-ly-ca', 3, 'Trả kèm ghi chú đủ bối cảnh', 'Người giữ chính xác nhận nhận lại'],
+           ['Soát chuẩn hồ sơ VIP khi bù ca lớn', 'hoso-vip', 2, 'Đủ bảy phần trước khi chạm', 'Hồ sơ VIP không thiếu trường'],
+           ['Báo khoang hở kéo dài lên QLCM', 'bang-viec', 2, 'Hở quá hai ngày phải báo', 'Báo cáo có người nhận xử lý'] ] },
+
+    { key:'playbook', so:'06', ic:'book', c:'--t1', cum:'B', ten:'Chuẩn hoá cách gỡ thành playbook',
+      man:'kho-tai-lieu',
+      mo:'Ca lặp có cách gỡ sẵn: gom ca cùng dạng, viết, thử, đưa vào kho và rút bản lỗi thời.',
+      nv:[ 15, 18,
+           ['Gom các ca cùng dạng trước khi viết', 'ma-tran', 3, 'Ít nhất ba ca cùng dạng mới chuẩn hoá', 'Nhóm ca có mã dạng chung'],
+           ['Viết playbook theo bảy bước xử lý ca', 'xu-ly-ca', 4, 'Đủ bảy bước, có bằng chứng mẫu', 'Playbook đi qua đủ bảy bước'],
+           ['Thử playbook trên một ca thật', 'phuong-phap', 3, 'Thử trước khi đưa vào kho', 'Có kết quả thử ghi lại'],
+           ['Đưa playbook lên thư viện tài liệu', 'thu-vien', 2, 'Gắn tầng, dạng ca, người viết', 'Playbook tìm được trong thư viện'],
+           ['Soát lời playbook qua bộ nhận diện ngôn từ', 'nhan-dien-loi', 2, 'Không câu cấm, không câu máy viết', 'Playbook qua soát ngôn từ'],
+           ['Gắn tình huống mẫu vào playbook', 'tinh-huong', 2, 'Mỗi playbook ít nhất một tình huống', 'Playbook trỏ về mã tình huống'],
+           ['Đối chiếu playbook với tài liệu gốc', 'tai-lieu-goc', 2, 'Không trái nguồn chuẩn Học viện', 'Playbook ghi nguồn đối chiếu'],
+           ['Rút playbook cũ đã lỗi thời', 'kho-tai-lieu', 2, 'Cách gỡ sai không còn trong kho', 'Bản cũ gắn nhãn ngừng dùng'] ] },
+
+    { key:'truyen-lai', so:'07', ic:'share', c:'--t2', cum:'B', ten:'Truyền lại cho Coach',
+      man:'coach-5-tang',
+      mo:'Coach tự gỡ được lần sau: kèm ca, dạy đọc chiều sâu, đưa ca khó (đã ẩn danh) vào đào tạo.',
+      nv:[ 16, 17, 28,
+           ['Kèm Coach đi một ca cùng mình', 'coach-5-tang', 4, 'Coach làm, Mentor quan sát', 'Coach tự dẫn được ca tương tự'],
+           ['Chấm năng lực Coach theo tầng sau ca', 'coach-5-tang', 3, 'Theo bốn năng lực của tầng', 'Phiếu năng lực có nhận xét'],
+           ['Dạy Coach đọc chiều sâu năm lớp', 'chieu-sau', 3, 'Coach gọi được lớp mình đang làm', 'Coach nêu được lớp kế tiếp'],
+           ['Đưa ca khó vào buổi đào tạo đội', 'dao-tao-dh', 3, 'Ca được ẩn danh trước khi dạy', 'Ca dùng trong buổi thi vai'],
+           ['Viết bài học lên bảng tin nội bộ', 'tin-noi-bo', 2, 'Ghi nhận việc, không xếp hạng ai', 'Bài học được đội đọc'],
+           ['Giao bài luyện vận dụng cho Coach', 'van-dung', 2, 'Đúng cấp độ vận dụng của Coach', 'Coach nộp bài luyện'],
+           ['Hỏi lại Coach sau hai tuần tự gỡ', 'xu-ly-ca', 2, 'Coach tự gỡ không cần gọi lại', 'Ca lặp do Coach tự đóng'] ] },
+
+    { key:'dong-ca', so:'08', ic:'check', c:'--t3', cum:'C', ten:'Đóng ca & chấm sau ca',
+      man:'do-luong-kh',
+      mo:'Không bằng chứng là chưa xong: đo trước – sau, có xác nhận, báo lên QLCM kèm đề xuất.',
+      nv:[ 19, 20, 21,
+           ['Đo trước – sau can thiệp bằng cùng chỉ số', 'do-luong-kh', 4, 'Cùng thang đo, cùng mốc', 'Ca có số trước và số sau'],
+           ['Lấy xác nhận của Coach khi đóng ca', 'xu-ly-ca', 3, 'Người giữ chính đồng ý đóng', 'Ca đóng có xác nhận hai bên'],
+           ['Nộp minh chứng gỡ ca', 'minh-chung', 3, 'Ảnh/báo cáo xác nhận đã làm', 'Minh chứng gắn vào ca'],
+           ['Đọc góp ý của nhà sau khi gỡ', 'hai-long', 3, 'Nghe phần chưa tốt trước', 'Góp ý ghi vào hồ sơ ca'],
+           ['Mở lại ca khi dấu hiệu cũ quay về', 'xu-ly-ca', 3, 'Mở lại trong 48 giờ', 'Ca mở lại có lý do'],
+           ['Kiểm ca qua cổng nghiệm thu chặng', 'chu-ky', 3, 'Qua cổng mới tính là xong', 'Cổng chặng có kết luận đạt'],
+           ['Đếm thời gian gỡ từ nhận tới đóng', 'kpi-toi', 2, 'Thời gian gỡ ngắn dần', 'Số ngày gỡ ghi vào KPI tháng'] ] },
+
+    { key:'do-luong', so:'09', ic:'chart', c:'--t4', cum:'C', ten:'KPI & cải tiến của Mentor',
+      man:'kpi-toi',
+      mo:'Chốt ngày, đọc KPI liên đới với đội mình gỡ, tự soi ca chưa gọn và cắt bước thừa.',
+      nv:[ 22, 23, 29,
+           ['Đọc KPI liên đới với đội mình gỡ', 'kpi-toi', 3, 'Biết đội nào nâng nhờ mình', 'KPI liên đới có số tháng'],
+           ['Đọc thời gian · thưởng · phạt của tháng', 'do-thoi-gian', 2, 'Đúng ba ngưỡng', 'Bảng tháng không lệch'],
+           ['Gửi chỗ vướng qua cải tiến từ người làm', 'cai-tien', 2, 'Có người trả lời trong 14 ngày', 'Đề xuất có mã theo dõi'],
+           ['Cắt lãng phí trong quy trình gỡ ca', 'tinh-gon', 3, 'Cắt ít nhất một bước thừa mỗi tháng', 'Quy trình gỡ ngắn hơn, ghi rõ'],
+           ['Đọc hệ này đang nợ gì ở phần gỡ ca', 'hansei-sach', 2, 'Gọi tên một món nợ thật', 'Món nợ có người nhận'],
+           ['Viết nhật ký tuần của Mentor', 'nhat-ky-vi-tri', 2, 'Mỗi tuần một trang có số', 'Trang tuần đã lưu'],
+           ['Tự chấm vòng nhắc Đúng – Đủ – Sâu', 'vong-nhac', 2, 'Xem không phải là làm', 'Mỗi việc lớn qua đủ ba nấc'] ] },
+
+    { key:'nang-nghe', so:'10', ic:'crown', c:'--t5', cum:'C', ten:'Thăng cấp & khung nghề Mentor',
+      man:'nghe-mentor',
+      mo:'Năm cấp nghề Mentor, khung nghề, ranh giới và bảo mật dữ liệu gia đình khi chia sẻ ca.',
+      nv:[ ['Cấp 1 · Mentor Tập sự: đào tạo nền, thi chẩn đoán', 'nghe-mentor', 3, 'Qua đào tạo nền + thi chẩn đoán', 'Có chứng nhận đầu vào'],
+           ['Cấp 2 · Mentor: 15 ca gỡ có bằng chứng', 'nghe-mentor', 3, 'Ít nhất 15 ca gỡ có bằng chứng', 'Đủ 15 ca đóng có bằng chứng'],
+           ['Cấp 3 · Senior Mentor: gỡ ca vượt cấp', 'nghe-mentor', 4, 'Gỡ ca vượt cấp · thời gian gỡ ngắn dần', 'Số ngày gỡ giảm ba tháng liền'],
+           ['Cấp 4 · Mentor dẫn dắt: nâng đội, đào tạo Mentor', 'nghe-mentor', 4, 'Nhiều đội nâng rõ · đào tạo Mentor', 'Có Mentor mới qua kèm'],
+           ['Cấp 5 · Chuyên gia gỡ nút: chuẩn hoá toàn hệ', 'nghe-mentor', 4, 'Chuẩn hoá cách gỡ toàn hệ', 'Playbook được dùng chung toàn hệ'],
+           ['Nắm khung nghề Mentor chín thẻ', 'nghe-mentor', 3, 'Nói lại được vai, ranh giới, KPI', 'Tự kiểm khung nghề đạt'],
+           ['Dự sát hạch năng lực đúng kỳ', 'sat-hach', 3, 'Thi đúng kỳ, đủ tám trục', 'Kết quả sát hạch được ghi'],
+           ['Thuộc năm điều không ai được sửa', 'bien-nien', 3, 'Nói lại được và áp vào ca', 'Qua câu hỏi kiểm của QLCM'],
+           ['Giữ sáu ranh giới khi đứng sau đội', 'ranh-gioi', 4, 'Không vi phạm ranh giới nào', 'Không ghi nhận vi phạm trong tháng'],
+           ['Ẩn danh ca trước khi chia sẻ ngoài đội', 'bo-nao', 4, 'Ẩn danh trước khi ra ngoài', 'Không dữ liệu nhà nào lộ khi chia sẻ'] ] }
+  ]
+};
+
+/* ══ R10 · CHUYÊN GIA ĐÁNH GIÁ ══ */
+G.DK_VAI.danhgia = {
+  vai:['R10'], ten:'Chuyên gia đánh giá', ic:'target', spec:'nghe-danhgia',
+  lead:'Trả lại sự thật bằng dữ liệu, không bằng cảm giác: thu đủ dữ liệu, chấm theo tiêu chí, mỗi kết luận một bằng chứng, rồi theo tới khi nhà thật sự cải thiện.',
+  cum:{ A:{t:'NHỊP CHẤM HẰNG NGÀY', s:'Hàng chờ · thu dữ liệu · chẩn đoán · chấm'},
+        B:{t:'TRẢ SỰ THẬT & THEO DÕI', s:'Bằng chứng · trả kết quả · theo dõi · rủi ro'},
+        C:{t:'CHUẨN ĐO & CHUẨN NGHỀ', s:'Hiệu chỉnh bộ đo · thăng cấp · khung nghề'} },
+  loiTat:[ ['bang-viec','Bảng công việc của tôi','pulse'], ['assessment','Assessment Tầng 1','search'], ['do-luong-kh','Hệ đo lường khách hàng','chart'], ['kpi-toi','KPI của tôi','star'] ],
+  areas:[
+    { key:'hang-cho', so:'01', ic:'list', c:'--t1', cum:'A', ten:'Hàng chờ đánh giá',
+      man:'do-luong-kh',
+      mo:'Không sót yêu cầu tới hạn: ca khẩn lên đầu, ca treo được theo tiếp, ca xung đột được chuyển.',
+      nv:[ 0, 2, 24,
+           ['Soát phạm vi ca mình được giao chấm', 'pham-vi', 2, 'Không chấm ca ngoài phạm vi', 'Hàng chờ khớp phạm vi'],
+           ['Chuyển ca có xung đột lợi ích', 'luat-lam-viec', 4, 'Ca người quen hoặc ca mình dẫn thì chuyển', 'Ca xung đột đã có người khác nhận'],
+           ['Ghi hạn trả kết quả cho từng ca', 'bang-viec', 3, 'Mỗi ca một hạn cụ thể', 'Bảng việc có hạn từng ca'],
+           ['Hẹn buổi đánh giá qua người phụ trách nhà', 'xu-ly-ca', 3, 'Không hẹn thẳng ngoài hệ', 'Lịch có người phụ trách xác nhận'],
+           ['Nhận yêu cầu chấm lại từ danh mục đầu việc', 'danh-muc-viec', 2, 'Nhận kèm bằng chứng đóng', 'Việc nhận ghi rõ bằng chứng'],
+           ['Mở sổ nhật ký đánh giá đầu ngày', 'nhat-ky-vi-tri', 2, 'Ba ca ưu tiên ghi trước 9 giờ', 'Sổ ngày có danh sách ưu tiên'],
+           ['Đọc bàn cờ tổng: khoang nào chờ đánh giá', 'ban-co-tong', 2, 'Biết khoang nào đang dồn ca', 'Khoang dồn ca được ghi chú'] ] },
+
+    { key:'thu-thap', so:'02', ic:'filter', c:'--t2', cum:'A', ten:'Thu thập dữ liệu ca',
+      man:'ra-soat-kh',
+      mo:'Đủ dữ liệu, không suy đoán: nguồn được xác minh, lời kể tách khỏi điều quan sát được.',
+      nv:[ 3, 4, 25,
+           ['Đọc tài liệu gia đình gửi lên', 'tai-lieu-khach', 3, 'Đọc hết trước khi chấm', 'Tài liệu gắn vào hồ sơ ca'],
+           ['Lấy bảng số trung thực của nhà', 'dinh-vi', 4, 'Số đo, không lời kể', 'Bảng định vị gắn vào ca'],
+           ['Đọc kết quả bộ test nhận diện năm tầng', 'bo-test', 3, 'Đúng bộ, đủ câu', 'Kết quả test có trong hồ sơ'],
+           ['Tách lời kể khỏi dữ kiện quan sát được', 'ra-soat-kh', 4, 'Mỗi dòng ghi rõ nguồn: kể hay thấy', 'Hồ sơ chia cột kể/thấy'],
+           ['Xin đủ ô đồng ý trước khi thu dữ liệu', 'phap-ly-rui-ro', 4, 'Ô về con do cha mẹ ký', 'Có đồng ý hợp lệ trong hồ sơ'],
+           ['Đọc minh chứng nhiệm vụ nhà đã nộp', 'minh-chung', 3, 'Minh chứng có ngày, có người', 'Minh chứng dùng được đã đánh dấu'],
+           ['Đọc vùng mạnh của con khi có trong ca', 'vung-manh', 2, 'Dựa trên ba thứ quan sát được', 'Vùng mạnh ghi kèm bằng chứng'] ] },
+
+    { key:'chan-doan', so:'03', ic:'zoom', c:'--t3', cum:'A', ten:'Chẩn đoán Assessment Tầng 1',
+      man:'assessment',
+      mo:'Chẩn đoán đúng quy trình: đủ mười bước, sáu miền, nhìn đủ năm lớp chứ không dừng ở bề mặt.',
+      nv:[ 5, 6,
+           ['Đi đủ mười bước bắt buộc của Assessment', 'assessment', 5, 'Không bỏ bước nào', 'Mười bước có dấu hoàn thành'],
+           ['Chấm sáu miền chẩn đoán', 'assessment', 4, 'Mỗi miền có căn cứ', 'Đủ sáu miền có điểm'],
+           ['Tính chỉ số DCI cho ca', 'assessment', 3, 'Tính theo công thức chuẩn', 'DCI ghi vào kết quả'],
+           ['Đề xuất định hướng chăm sóc từ chẩn đoán', 'assessment', 3, 'Định hướng bám kết quả, không hứa', 'Định hướng ghi kèm kết quả'],
+           ['Đối chiếu ma trận 220 vấn đề × 5 tầng', 'ma-tran', 3, 'Xác định nhóm và tầng', 'Ca gắn mã vấn đề'],
+           ['Xếp nhà vào nhóm xanh – vàng – cam – đỏ', 'ma-tran-bang', 3, 'Theo dữ liệu, không cảm tính', 'Ca có nhóm màu'],
+           ['Xác định tầng hiện tại trên lộ trình', 'lo-trinh', 3, 'Đúng tầng T1–T5 theo bằng chứng', 'Tầng ghi vào kết quả'],
+           ['Gọi tên vòng luẩn quẩn nếu có', 'sau-vung', 2, 'Gọi đúng vùng, không gán nhãn người', 'Vùng ghi kèm dấu hiệu'] ] },
+
+    { key:'cham', so:'04', ic:'star', c:'--t4', cum:'A', ten:'Chấm & đối chiếu',
+      man:'do-luong-kh',
+      mo:'Chấm theo tiêu chí có sẵn, độc lập, nhất quán với lần trước; lệch phải có lý do viết ra.',
+      nv:[ 1, 7, 8, 10, 26,
+           ['Chấm độc lập trước khi xem điểm người khác', 'do-luong-kh', 4, 'Chốt điểm mình trước, không bị neo', 'Điểm có dấu giờ trước khi xem'],
+           ['Ghi lý do cho mỗi điểm lệch chuẩn', 'do-luong-kh', 3, 'Lệch phải có lý do viết ra', 'Mọi điểm lệch có ghi chú'],
+           ['Đối chiếu mười điểm về đích', 'kpi-100', 3, 'Theo 100 tiêu chí đo được', 'Mốc đạt có tiêu chí kèm'],
+           ['Chấm học viên theo tám trục sát hạch', 'sat-hach', 3, 'Đủ tám trục, có căn cứ', 'Phiếu chấm đủ tám trục'],
+           ['Không làm tròn điểm cho dễ nghe', 'ranh-gioi', 4, 'Điểm thật, không nâng đỡ', 'Điểm khớp bằng chứng'] ] },
+
+    { key:'bang-chung', so:'05', ic:'lock', c:'--t5', cum:'B', ten:'Bằng chứng cho kết luận',
+      man:'ra-soat-kh',
+      mo:'Mỗi kết luận đọc ngược được về dữ liệu; bằng chứng hợp lệ, giữ kín và tôn trọng quyền của nhà.',
+      nv:[ 9, 27, 14,
+           ['Loại minh chứng không rõ ngày, rõ người', 'minh-chung', 3, 'Thiếu ngày hoặc người thì không dùng', 'Minh chứng bị loại có ghi lý do'],
+           ['Ghi chuỗi truy vết từ dữ liệu tới kết luận', 'ra-soat-kh', 4, 'Đọc ngược được từ kết luận về dữ liệu', 'Hồ sơ có chuỗi truy vết'],
+           ['Ghi kết luận chưa chắc là giả thuyết', 'ra-soat-kh', 3, 'Không biến giả thuyết thành kết luận', 'Giả thuyết gắn nhãn riêng'],
+           ['Đóng gói hồ sơ để người khác chấm lại được', 'bang-viec', 3, 'Người thứ hai kiểm được, không cần hỏi', 'Hồ sơ đủ để chấm lại'],
+           ['Cho nhà đọc và sửa dữ liệu của mình', 'phap-ly', 3, 'Tôn trọng quyền đọc · sửa', 'Yêu cầu đọc/sửa xử lý trong hạn'],
+           ['Xoá dữ liệu khi nhà yêu cầu', 'phap-ly-rui-ro', 4, 'Nút xoá chạy thật, có dấu vết', 'Yêu cầu xoá hoàn tất, có biên bản'],
+           ['Đặt hạn lưu giữ bằng chứng', 'tien-rung', 2, 'Không giữ dữ liệu quá mức cần', 'Mỗi bằng chứng có hạn lưu'] ] },
+
+    { key:'tra-ket-qua', so:'06', ic:'quote', c:'--t1', cum:'B', ten:'Trả kết quả sự thật',
+      man:'ngon-tu',
+      mo:'Rõ và trung thực dù khó nghe, có hướng đi kèm, người nhận hiểu và chấp nhận.',
+      nv:[ 11, 12, 13,
+           ['Mở phần chưa tốt trước phần khen', 'ngon-tu', 4, 'Nói thật trước, rồi mới động viên', 'Người nhận nghe đủ phần chưa tốt'],
+           ['Viết kết quả bằng ngôn từ GITA', 'nhan-dien-loi', 3, 'Không câu máy viết, không câu cấm', 'Bản kết quả qua soát ngôn từ'],
+           ['Không hứa điều không đo được khi trả kết quả', 'ranh-gioi', 4, 'Chỉ nói điều có số đo', 'Không có lời hứa không đo được'],
+           ['Trả kết quả qua người phụ trách nhà', 'xu-ly-ca', 3, 'Coach có mặt hoặc nắm trước', 'Coach xác nhận đã nắm kết quả'],
+           ['Đặt mốc kiểm lại theo chu kỳ 21/90 ngày', 'chu-ky', 3, 'Có ngày kiểm lại cụ thể', 'Mốc kiểm lại ghi trên ca'],
+           ['Trả lời băn khoăn sau buổi trả kết quả', 'xu-ly-ca', 2, 'Mọi câu hỏi được trả lời trong 48 giờ', 'Không băn khoăn nào treo'],
+           ['Gửi bản kết quả dễ đọc cho gia đình', 'gui-tu-lieu', 3, 'Gửi qua hệ, gọn, dễ đọc', 'Gia đình xác nhận đã nhận'] ] },
+
+    { key:'theo-doi', so:'07', ic:'eye', c:'--t2', cum:'B', ten:'Theo dõi sau đánh giá',
+      man:'do-luong-kh',
+      mo:'Kiểm nhà/đội có cải thiện thật, chấm lại khi có thay đổi lớn, đèn luôn phản ánh đúng.',
+      nv:[ 15, 16, 18,
+           ['Đọc nhà mình đã đổi gì sau đánh giá', 'tien-bo', 3, 'So tuần với tuần, nói bằng lời', 'Có ghi nhận chênh lệch'],
+           ['Đọc bảng số gia đình ở mốc 21 ngày', 'bang-so', 3, 'Cùng chỉ số với lần đầu', 'Số mốc 21 ngày ghi vào ca'],
+           ['Hỏi đội phụ trách bước cải thiện đã làm', 'xu-ly-ca', 2, 'Hỏi bằng việc cụ thể', 'Có câu trả lời ghi vào ca'],
+           ['Đọc góp ý của nhà về buổi đánh giá', 'hai-long', 3, 'Nghe phần chưa tốt trước', 'Một việc sửa rút từ góp ý'],
+           ['Đọc thẻ điểm cân bằng của nhà theo quý', 'the-diem-can-bang', 2, 'Đủ bốn góc nhìn', 'Thẻ điểm quý cập nhật'],
+           ['Xác nhận mốc về đích khi nhà đạt', 'kpi-100', 3, 'Đạt đủ tiêu chí mới xác nhận', 'Mốc về đích ghi có bằng chứng'],
+           ['Báo khi nhà không cải thiện sau hai mốc', 'xu-ly-ca', 3, 'Hai mốc đứng yên phải báo', 'Ca chuyển Mentor/QLCM có ghi chú'] ] },
+
+    { key:'rui-ro', so:'08', ic:'alert', c:'--t3', cum:'B', ten:'Cảnh báo rủi ro & mô thức lặp',
+      man:'ma-tran',
+      mo:'Rủi ro được báo sớm, đúng phạm vi; rủi ro lặp được gọi tên trên dữ liệu đã ẩn danh.',
+      nv:[ 17, 28,
+           ['Đọc mười hai mặt tìm tín hiệu rủi ro', 'ra-soat-kh', 4, 'Không bỏ sót mặt nào', 'Tín hiệu rủi ro ghi theo mặt'],
+           ['Gọi ngay khi đèn đỏ về an toàn của con', 'van-hanh-cham-soc', 5, 'Đèn đỏ phải GỌI trong ngày', 'Có người nhận ca trong ngày'],
+           ['Canh nhà sắp rơi vùng ngày 8–12', 'van-hanh-cham-soc', 3, 'Nhà rơi nhịp được báo trước', 'Danh sách nhà nguy rơi gửi đội'],
+           ['Đọc giai đoạn và lớp bảo vệ của ca', 'giai-doan-bao-ve', 3, 'Biết lớp nào còn thiếu', 'Lớp bảo vệ thiếu được ghi'],
+           ['Giữ sáu điều cấm khi xử lý rủi ro', 'giam-sat', 4, 'Không lệnh nào mở điều cấm', 'Không vi phạm điều cấm'],
+           ['Đề xuất dạng rủi ro mới cho ma trận', 'ma-tran', 2, 'Dạng mới có ít nhất ba ca minh chứng', 'Đề xuất gửi QLCM'],
+           ['Đọc 14 dạng khó ở tầng 3 và tầng 4', 'tang34', 2, 'Biết ca thuộc dạng nào', 'Ca gắn dạng khó'],
+           ['Ẩn danh ca trước khi đưa vào mô thức', 'bo-nao', 4, 'Không tên, không dấu nhận ra nhà', 'Báo cáo không còn dữ liệu nhận diện'] ] },
+
+    { key:'hieu-chinh', so:'09', ic:'tools', c:'--t4', cum:'C', ten:'Chuẩn hoá & hiệu chỉnh bộ đo',
+      man:'ra-soat-kh',
+      mo:'Cả nhóm chấm nhất quán: tiêu chí tốt được giữ, độ lệch giảm, bộ đo nâng chuẩn mỗi tuần.',
+      nv:[ 19, 20, 21, 23, 29,
+           ['Chấm chung một ca mẫu cùng nhóm', 'do-luong-kh', 4, 'Cả nhóm chấm cùng ca mỗi tháng', 'Độ lệch ca mẫu được ghi'],
+           ['Gửi chỗ vướng của bộ đo qua cải tiến', 'cai-tien', 2, 'Có người trả lời trong 14 ngày', 'Đề xuất có mã theo dõi'],
+           ['Cắt lãng phí trong quy trình đánh giá', 'tinh-gon', 2, 'Cắt ít nhất một bước thừa mỗi quý', 'Quy trình ngắn hơn, ghi rõ chỗ cắt'],
+           ['Đối chiếu tiêu chí với tài liệu gốc', 'tai-lieu-goc', 3, 'Tiêu chí có nguồn chuẩn Học viện', 'Mỗi tiêu chí ghi nguồn'],
+           ['Đọc hệ này đang nợ gì ở bộ đo', 'hansei-sach', 2, 'Gọi tên một món nợ thật', 'Món nợ có người nhận'] ] },
+
+    { key:'nang-nghe', so:'10', ic:'crown', c:'--t5', cum:'C', ten:'Thăng cấp & khung nghề Assessor',
+      man:'nghe-danhgia',
+      mo:'Chốt ngày vào KPI, năm cấp nghề Chuyên gia đánh giá và những điều không ai được sửa.',
+      nv:[ 22,
+           ['Cấp 1 · Tập sự: chuẩn đo và thi chẩn đoán', 'nghe-danhgia', 3, 'Qua đào tạo chuẩn đo + thi chẩn đoán', 'Có chứng nhận đầu vào'],
+           ['Cấp 2 · Chuyên gia đánh giá: 30 ca nhất quán', 'nghe-danhgia', 3, '≥30 ca nhất quán · 0 kết luận thiếu bằng chứng', 'Đủ 30 ca qua kiểm'],
+           ['Cấp 3 · Senior Assessor: chấm ca khó chính xác', 'nghe-danhgia', 4, 'Độ chính xác cao · chấm ca khó', 'Ca khó qua kiểm chéo'],
+           ['Cấp 4 · Trưởng nhóm: nhất quán toàn nhóm', 'nghe-danhgia', 4, 'Nhất quán toàn nhóm · đào tạo Assessor', 'Độ lệch nhóm trong ngưỡng'],
+           ['Cấp 5 · Chuyên gia chuẩn đo: chuẩn toàn hệ', 'nghe-danhgia', 4, 'Chuẩn đo lường toàn hệ', 'Bộ chuẩn đo được duyệt toàn hệ'],
+           ['Đọc KPI tháng và hạng lương thưởng', 'kpi-toi', 2, 'Biết mình đang ở hạng nào', 'Đã xem KPI tháng'],
+           ['Nắm khung nghề Chuyên gia đánh giá', 'nghe-danhgia', 3, 'Nói lại được vai, ranh giới, KPI', 'Tự kiểm khung nghề đạt'],
+           ['Thuộc năm điều không ai được sửa', 'bien-nien', 3, 'Nói lại được và áp vào ca', 'Qua câu hỏi kiểm của QLCM'],
+           ['Dự sát hạch năng lực đúng kỳ', 'sat-hach', 3, 'Thi đúng kỳ, đủ tám trục', 'Kết quả sát hạch được ghi'] ] }
+  ]
+};
+
+/* ══ R11 · CHUYÊN GIA TƯ VẤN ══ */
+G.DK_VAI.tuvan = {
+  vai:['R11'], ten:'Chuyên gia tư vấn', ic:'compass', spec:'nghe-tu-van',
+  lead:'Mở cánh cửa cho gia đình đang tìm đường: tiếp cận trong 24 giờ, sàng lọc thật, tư vấn đúng vấn đề, chốt không ép và bàn giao đủ cho Coach, rồi chăm bền.',
+  cum:{ A:{t:'MỞ CỬA HẰNG NGÀY', s:'Đầu ngày · tiếp cận · sàng lọc · tư vấn'},
+        B:{t:'CHỐT ĐÚNG & CHĂM BỀN', s:'Báo giá · chốt · bàn giao · tái chạm'},
+        C:{t:'ĐO LƯỜNG & CHUẨN NGHỀ', s:'Ghi nhận · phễu · thăng cấp · khung nghề'} },
+  loiTat:[ ['tt-cskh','Trung tâm Tư vấn & CSKH','users'], ['ban-tu-van','Bàn làm việc của Tư vấn','chat'], ['pheu-chot','Phễu chốt','target'], ['kpi-toi','KPI của tôi','chart'] ],
+  areas:[
+    { key:'dau-ngay', so:'01', ic:'sun', c:'--t1', cum:'A', ten:'Chuẩn bị đầu ngày',
+      man:'tt-cskh',
+      mo:'Mở đúng danh sách, nhà rủi ro lên đầu, mỗi buổi có mục tiêu và câu mở trước khi gọi.',
+      nv:[ 0, 1, 2,
+           ['Xem việc hôm nay theo bốn loại khách', 'tt-cskh', 3, 'Biết mỗi khách thuộc loại nào', 'Danh sách việc chia đủ bốn loại'],
+           ['Đọc lịch hẹn tư vấn trong ngày', 'bang-viec', 3, 'Không buổi nào bị quên', 'Mỗi buổi có giờ và mục tiêu'],
+           ['Xử lý việc trễ hạn từ hôm qua', 'bang-viec', 3, 'Trễ hạn về 0 trước trưa', 'Việc trễ đóng hoặc có hạn mới'],
+           ['Soát phạm vi khách mình được mở', 'pham-vi', 2, 'Không chạm khách ngoài phạm vi', 'Danh sách khách khớp phạm vi'],
+           ['Ôn một câu mở theo giọng GITA', 'kich-ban-sale', 2, 'Hỏi để hiểu, không đọc kịch bản', 'Câu mở dùng được trong buổi đầu'],
+           ['Nhận việc trợ lý chăm sóc tự động chuyển về', 'ai-cham', 2, 'Không bỏ việc máy chuyển về', 'Việc máy chuyển có người nhận'],
+           ['Ghi ba ưu tiên vào sổ nhật ký', 'nhat-ky-vi-tri', 2, 'Ba ưu tiên trước 9 giờ', 'Sổ ngày có ba ưu tiên'] ] },
+
+    { key:'tiep-can', so:'02', ic:'arrow', c:'--t2', cum:'A', ten:'Tiếp cận khách mới',
+      man:'tuvan-deck',
+      mo:'Người đang tìm đường được chạm trong 24 giờ, đọc đúng chân dung và có buổi hẹn rõ ràng.',
+      nv:[ 3, 6,
+           ['Đọc người đang tìm đường và bước kế tiếp', 'tuvan-deck', 4, 'Mỗi người có một bước kế tiếp', 'Không ai treo quá 24 giờ'],
+           ['Nhận khách giới thiệu từ đại sứ', 'ref-gita', 3, 'Gọi trong 24 giờ, nhắc tên người giới thiệu', 'Log liên hệ có nguồn giới thiệu'],
+           ['Đọc phiếu chỉ dẫn referral trước khi gọi', 'referral', 3, 'Nắm PAIN · GOAL · GAP trước', 'Phiếu có ghi chú trước cuộc gọi'],
+           ['Đọc đúng chân dung khách trước buổi đầu', 'chan-dung-kh', 3, 'Xếp vào một trong sáu chân dung', 'Hồ sơ gắn chân dung'],
+           ['Mời khách dự sự kiện mở cửa', 'su-kien', 2, 'Mời đúng người, đúng sự kiện', 'Khách đăng ký tham dự'],
+           ['Gửi bài giới thiệu GITA 365 sau cuộc gọi đầu', 'gioi-thieu', 2, 'Gửi một lần, không gửi ồ ạt', 'Khách mở và phản hồi'],
+           ['Dẫn khách qua đường vào sáu bước', 'tham-gia', 3, 'Khách biết bước tiếp theo', 'Khách ở đúng bước trên đường vào'],
+           ['Mời khách tự định vị nhà trên bản đồ', 'ban-do', 2, 'Khách tự thấy nhà đang ở khoang nào', 'Khách nói được khoang của nhà'] ] },
+
+    { key:'sang-loc', so:'03', ic:'filter', c:'--t3', cum:'A', ten:'Sàng lọc & hồ sơ khách',
+      man:'ban-tu-van',
+      mo:'Bảy câu sàng lọc có bốn câu chặn, tầng đề xuất có căn cứ, hồ sơ đủ trường và có đồng ý.',
+      nv:[ 4, 5, 7,
+           ['Hỏi đủ bốn câu chặn trước khi đi tiếp', 'ban-tu-van', 4, 'Vướng câu chặn thì dừng, nói thật', 'Bốn câu chặn có câu trả lời'],
+           ['Nói thật khi khách chưa hợp với GITA', 'so-tay-tu-van', 4, 'Không kéo khách không hợp vào phễu', 'Khách không hợp được ghi lý do'],
+           ['Rà mười hai mặt nhu cầu của gia đình', 'ra-soat-kh', 3, 'Không bỏ sót mặt nào', 'Đủ 12 mặt trong hồ sơ'],
+           ['Chạy Assessment Tầng 1 khi cần chẩn đoán', 'assessment', 4, 'Đi đủ mười bước bắt buộc', 'Có kết quả chẩn đoán'],
+           ['Xếp khách vào nhóm xanh – vàng – cam – đỏ', 'ma-tran-bang', 3, 'Theo dữ liệu sàng lọc', 'Hồ sơ gắn nhóm màu'],
+           ['Xin đồng ý lưu dữ liệu ngay từ đầu', 'phap-ly-rui-ro', 4, 'Ba ô đồng ý tách bạch', 'Hồ sơ có đồng ý hợp lệ'],
+           ['Đọc test nhận diện năm tầng của nhà', 'bo-test', 2, 'Đúng bộ theo tầng', 'Kết quả test có trong hồ sơ'] ] },
+
+    { key:'tu-van', so:'04', ic:'chat', c:'--t4', cum:'A', ten:'Tư vấn lộ trình',
+      man:'tang34',
+      mo:'Lộ trình bám đúng nhu cầu nhà, nói giá trị chứ không nói tính năng, không hứa điều không đo được.',
+      nv:[ 8, 9, 12,
+           ['Đặt nỗi đau của nhà cạnh khát khao', 'chuyen-hoa', 4, 'Nhà tự nói ra khát khao', 'Ghi được một câu khát khao của nhà'],
+           ['Đối chiếu ma trận vấn đề để chọn lộ trình', 'ma-tran', 3, 'Lộ trình trỏ về mã vấn đề', 'Lộ trình có mã vấn đề'],
+           ['Vẽ lộ trình T1 → T5 cho nhà', 'lo-trinh', 4, 'Mỗi chặng một câu hỏi rõ', 'Nhà thấy chặng đầu tiên của mình'],
+           ['Dùng kịch bản chuyên môn đúng tầng', 'kich-ban', 3, 'Kịch bản khớp tầng của nhà', 'Buổi bám đúng kịch bản tầng'],
+           ['Kể chuyện người thật có hoàn cảnh gần', 'chuyen-the-gioi', 2, 'Chuyện thật, không phóng đại', 'Khách nhận ra mình trong chuyện'],
+           ['Nói rõ ranh giới Trợ lý với Coach', 'tang34', 3, 'Khách biết ai làm gì', 'Khách nói lại được vai của Coach'],
+           ['Không hứa kết quả không đo được', 'so-tay-tu-van', 5, 'Chỉ hứa điều có số đo', 'Không lời hứa nào không đo được'] ] },
+
+    { key:'bao-gia', so:'05', ic:'quote', c:'--t5', cum:'B', ten:'Báo giá & gỡ băn khoăn',
+      man:'hoc-phi',
+      mo:'Nói chuyện tiền rõ ràng theo bảy luật, gửi lộ trình qua hệ, gỡ băn khoăn mà không ép.',
+      nv:[ 10, 11, 13,
+           ['Nói chuyện tiền theo bảy luật', 'hoc-phi', 4, 'Rõ giá, rõ nhịp thu, rõ hoàn tiền', 'Không câu hỏi nào bị bỏ ngỏ'],
+           ['Chọn đúng kịch bản trong 18 kịch bản tiền', 'hoc-phi', 3, 'Kịch bản khớp tình huống khách', 'Buổi nói tiền không lệch kịch bản'],
+           ['Giải thích hoàn tiền trước khi chốt', 'hoc-phi', 4, 'Khách nghe rõ trước khi ký', 'Khách xác nhận đã hiểu hoàn tiền'],
+           ['Đọc phân hạng VIP để báo đúng gói', 'hang-vip', 2, 'Gói đúng hạng, không đẩy gói cao', 'Báo giá khớp hạng khách'],
+           ['Cho khách thời gian nghĩ, không ép ngày', 'luat-lam-viec', 4, 'Không tạo khan hiếm giả', 'Khách tự hẹn ngày trả lời'],
+           ['Gửi lộ trình qua hệ, không qua kênh riêng', 'gui-tu-lieu', 3, 'Mọi tài liệu đi qua hệ', 'Có dấu vết gửi trên hệ'],
+           ['Xác định khách đang ở cổng chuyển đổi nào', 'chuyen-doi', 2, 'Biết khách ở cổng nào trong chín cổng', 'Cổng ghi trên hồ sơ'] ] },
+
+    { key:'chot', so:'06', ic:'check', c:'--t1', cum:'B', ten:'Chốt đúng lằn ranh',
+      man:'pheu-chot',
+      mo:'Không ép, đúng lằn ranh hiến pháp: hợp đồng hợp lệ, khách đồng thuận, thanh toán khớp biên nhận.',
+      nv:[ 14, 15, 17, 18,
+           ['Tách chốt thô với chốt đủ điều kiện', 'pheu-chot', 4, 'Chỉ tính chốt đủ điều kiện', 'Phễu ghi đúng loại chốt'],
+           ['Soát năm điều không được làm lúc chốt', 'so-tay-tu-van', 5, 'Không vi phạm lằn ranh lúc chốt', 'Buổi chốt qua soát lằn ranh'],
+           ['Đọc lại điều khoản chính cùng khách', 'van-ban', 3, 'Khách hiểu điều khoản trước khi ký', 'Khách xác nhận đã đọc'],
+           ['Nói rõ bảy quyền của nhà khi ký', 'phap-ly', 4, 'Quyền đi · xoá · phủ quyết nói rõ', 'Gia đình nói lại được ít nhất ba quyền'],
+           ['Trao sổ tay của gia đình sau khi ký', 'so-tay-gia-dinh', 2, 'Gia đình nhận đủ 24 trang', 'Gia đình xác nhận đã nhận sổ'],
+           ['Đọc ba số kèm của phễu sau mỗi lần chốt', 'pheu-chot', 2, 'Chốt nhiều mà rơi sớm là chưa đạt', 'Ba số ghi vào báo cáo tuần'] ] },
+
+    { key:'ban-giao', so:'07', ic:'share', c:'--t2', cum:'B', ten:'Bàn giao Coach & vận hành',
+      man:'bando-tuvan',
+      mo:'Coach nhận đủ, không phải hỏi lại; gia đình biết ai đi cùng và có một ngày đầu đáng nhớ.',
+      nv:[ 16,
+           ['Đi đủ bảy chặng bản đồ vận hành khách', 'bando-tuvan', 3, 'Biết khách ở chặng nào', 'Chặng ghi đúng trên hồ sơ'],
+           ['Đóng gói hồ sơ bàn giao sáu ô', 'ban-tu-van', 4, 'Đủ sáu ô, không ô trống', 'Gói bàn giao đóng đủ'],
+           ['Chuyển chân dung nhà sang Coach', 'chan-dung-nha', 3, 'Chân dung đủ, có nguồn', 'Coach đọc được không cần hỏi lại'],
+           ['Giới thiệu người đồng hành cho gia đình', 'doi-dong-hanh', 3, 'Nhà biết ai đi cùng, liên hệ thế nào', 'Nhà gặp Coach buổi đầu'],
+           ['Đặt điểm chạm WOW ngày đầu', 'wow', 3, 'Một khoảnh khắc đáng nhớ ngày đầu', 'Nhà phản hồi về ngày đầu'],
+           ['Giữ khoảnh khắc quyết định đầu tiên', 'diem-cham', 3, 'Không bỏ trống khoảnh khắc đầu', 'Khoảnh khắc đầu có người giữ'],
+           ['Hỏi lại Coach sau 48 giờ bàn giao', 'doi-ngu', 3, 'Hỏi lại trong 48 giờ', 'Coach xác nhận không thiếu thông tin'],
+           ['Lập hồ sơ VIP khi khách thuộc hạng VIP', 'hoso-vip', 2, 'Đủ bảy phần, ba mươi trường', 'Hồ sơ VIP đủ trường'],
+           ['Dùng mẫu biên bản bàn giao chuẩn', 'van-ban', 2, 'Đúng mẫu trong bộ văn bản chuẩn', 'Biên bản có xác nhận hai bên'] ] },
+
+    { key:'cham-soc', so:'08', ic:'heart', c:'--t3', cum:'B', ten:'Chăm sóc & tái chạm',
+      man:'van-hanh-cham-soc',
+      mo:'Chạm đúng nhịp, cứu nhà đèn đỏ trong ngày, mời tái ký và xin giới thiệu khi khách hài lòng rõ.',
+      nv:[ 19, 20, 21, 22, 23,
+           ['Canh vùng tử thần ngày 8–12', 'van-hanh-cham-soc', 4, 'Chạm đúng nhịp trong vùng nguy', 'Không nhà nào rơi trong ngày 8–12'],
+           ['Chăm khách lớn theo bốn tầng', 'khach-lon', 3, 'Đúng nhịp chạm của tầng', 'Hồ sơ khách lớn cập nhật'],
+           ['Chăm cây tiền VIP đúng nhịp', 'cay-tien', 3, 'Đúng nhịp, đủ bốn việc', 'Điểm cây tiền cập nhật'],
+           ['Đọc chỉ số hài lòng và góp ý', 'hai-long', 3, 'Nghe phần chưa tốt trước', 'Một việc sửa rút từ góp ý'],
+           ['Dẫn khách hài lòng qua chuỗi WOW → Fan', 'chuoi-wow', 2, 'Không ép giới thiệu', 'Khách lên cấp trung thành'] ] },
+
+    { key:'ghi-nhan', so:'09', ic:'chart', c:'--t4', cum:'C', ten:'Ghi nhận & đo phễu',
+      man:'kpi-toi',
+      mo:'Buổi nào cũng có dữ liệu, việc đóng có bằng chứng, ngày được chốt và phễu đọc bằng số thật.',
+      nv:[ 24, 25, 26, 27, 28,
+           ['Đọc mười lăm con số tháng của Tư vấn', 'so-tay-tu-van', 3, 'Số đếm thật, không khai', 'Bảng số tháng đủ 15 số'],
+           ['Đọc tỷ lệ phản hồi trong 24 giờ', 'kpi-toi', 3, 'Khách mới được chạm trong 24 giờ', 'Tỷ lệ tháng ghi vào KPI'],
+           ['Gửi chỗ vướng qua cải tiến từ người làm', 'cai-tien', 2, 'Có người trả lời trong 14 ngày', 'Đề xuất có mã theo dõi'],
+           ['Cắt lãng phí trong phễu tư vấn', 'tinh-gon', 2, 'Cắt ít nhất một bước thừa mỗi tháng', 'Phễu gọn hơn, ghi rõ chỗ cắt'],
+           ['Tự chấm vòng nhắc Đúng – Đủ – Sâu', 'vong-nhac', 2, 'Xem không phải là làm', 'Việc lớn qua đủ ba nấc'] ] },
+
+    { key:'nang-nghe', so:'10', ic:'crown', c:'--t5', cum:'C', ten:'Thăng cấp & khung nghề Tư vấn',
+      man:'nghe-tu-van',
+      mo:'Năm cấp nghề Tư vấn, ba cửa trước khi chạm khách một mình, ranh giới và lời hứa về dữ liệu.',
+      nv:[ 29,
+           ['Cấp 1 · Tập sự: 40 giờ nền và thi đầu vào', 'nghe-tu-van', 3, 'Qua 40h đào tạo nền + thi đầu vào', 'Có chứng nhận đầu vào'],
+           ['Cấp 2 · Sơ cấp: 20 buổi đạt, chốt 10 nhà', 'nghe-tu-van', 3, '≥20 buổi đạt chuẩn · chốt ≥10 nhà', 'Hồ sơ buổi đạt được duyệt'],
+           ['Cấp 3 · Chính thức: KPI 85% ba tháng', 'nghe-tu-van', 4, 'KPI ≥85% ba tháng · 0 vi phạm hiến pháp', 'Đủ ba tháng số liệu đạt'],
+           ['Cấp 4 · Cao cấp: chốt 80%, sức khoẻ khách 75', 'nghe-tu-van', 4, 'Tỷ lệ chốt ≥80% · sức khoẻ KH TB ≥75', 'Số liệu quý đạt ngưỡng'],
+           ['Cấp 5 · Chuyên gia Tư vấn: dẫn đội, chuẩn hoá', 'nghe-tu-van', 4, 'Dẫn dắt đội · chuẩn hoá kịch bản đạt chuẩn', 'Kịch bản chuẩn được đưa vào kho'],
+           ['Qua ba cửa trước khi chạm khách một mình', 'con-nguoi', 5, 'Hiến pháp 13/13 · giọng qua hàng rào', 'Đủ ba cửa có người kèm xác nhận'],
+           ['Luyện giọng GITA qua kịch bản sale', 'kich-ban-sale', 3, 'Hỏi để hiểu, mỗi lần một câu có trọng tâm', 'Qua chấm giọng của trưởng nhóm'],
+           ['Thuộc sáu điều không bao giờ bán', 'tien-rung', 4, 'Giữ lời hứa về dữ liệu và túi tiền', 'Không vi phạm lời hứa dữ liệu'],
+           ['Giữ sáu ranh giới khi tư vấn', 'ranh-gioi', 4, 'Không vi phạm ranh giới nào', 'Không ghi nhận vi phạm trong tháng'] ] }
+  ]
+};
+
+})();
+
+/* ═════════ src/data-dk-vai-3.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — DỮ LIỆU BẢNG ĐIỀU KHIỂN THEO VAI (phần 3):
+   Phân tích dữ liệu (R12) · Phụ huynh (R13) · Học viên (R14) ·
+   Đại sứ / Cộng tác viên (R15)
+
+   Mỗi vai: 10 màn chi tiết × 10 nghiệp vụ. Vai có chuẩn nghề (R12, R15)
+   dùng trọn 30 đầu việc của G.NGHE_SPEC, phần còn lại là nghiệp vụ riêng
+   của màn. Hai vai khách hàng (R13, R14) không có chuẩn nghề — 100 việc
+   nhỏ, lời nói giản dị, chỉ trong phạm vi nhà mình / việc học của mình.
+   Ranh giới: R12 chỉ làm trên số gộp đã ẩn danh, không mở hồ sơ từng nhà;
+   R15 giới thiệu và kể chuyện thật, không tư vấn, không hứa kết quả,
+   hoa hồng chỉ để xem và soát. Không đụng máy chủ · giấy phép · mã hoá.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.DK_VAI = G.DK_VAI || {};
+
+/* ══════════════ R12 · PHÂN TÍCH DỮ LIỆU ══════════════ */
+G.DK_VAI.phantich = {
+  vai:['R12'], ten:'Phân tích dữ liệu', ic:'chart', spec:'nghe-phantich',
+  lead:'Đọc số gộp toàn hệ, làm sạch, tìm mô thức, cảnh báo sớm và đề xuất có bằng chứng. Chỉ làm trên dữ liệu tổng hợp đã ẩn danh — không bao giờ mở hồ sơ từng nhà.',
+  cum:{ A:{t:'NHỊP DỮ LIỆU HẰNG NGÀY', s:'Hàng chờ · thu thập · làm sạch · chuẩn hoá'},
+        B:{t:'PHÂN TÍCH & CẢNH BÁO', s:'Mô thức · phân khúc · ngưỡng đỏ · đề xuất'},
+        C:{t:'TOÀN VẸN & PHÁT TRIỂN NGHỀ', s:'Chất lượng số · bảo mật · hiến pháp · thăng cấp'} },
+  loiTat:[ ['bang-viec','Bảng công việc của tôi','pulse'], ['giam-sat','Trần giám sát','shield'],
+           ['kpi-toi','KPI của tôi','chart'], ['nghe-phantich','Nghề Phân tích dữ liệu','crown'] ],
+  areas:[
+    { key:'nhip-dau-ngay', so:'01', ic:'pulse', c:'--t1', cum:'A', ten:'Nhịp đầu ngày & hàng chờ',
+      man:'bang-viec',
+      mo:'Mở ngày bằng toàn cảnh số gộp, nhận yêu cầu phân tích và xếp hàng chờ theo hạn.',
+      nv:[ 0, 1, 2, 24,
+           ['Xếp hàng chờ phân tích theo hạn và trọng số', 'bang-viec', 3, 'Việc tới hạn nằm trên cùng', 'Hàng chờ có thứ tự'],
+           ['Nhận đầu việc mới từ danh mục', 'danh-muc-viec', 2, 'Chỉ nhận việc trong phạm vi vai', 'Đầu việc đã tích nhận'],
+           ['Đọc bàn cờ tổng toàn hệ', 'ban-co-tong', 3, 'Biết khoang nào đang đỏ', 'Ghi 3 khoang cần chú ý'],
+           ['Soát phạm vi dữ liệu được phép dùng', 'pham-vi', 3, 'Chỉ dùng dữ liệu gộp đã mở cho vai', 'Phạm vi xác nhận trước khi chạy'],
+           ['Đọc bảng tin nội bộ tìm yêu cầu số liệu', 'tin-noi-bo', 1, 'Không sót yêu cầu từ các ban', 'Đã đọc tin trong ngày'],
+           ['Hẹn ngày trả kết quả cho người yêu cầu', 'bang-viec', 2, 'Mỗi yêu cầu có hạn trả rõ', 'Người yêu cầu biết ngày nhận']
+      ] },
+    { key:'thu-thap-nguon', so:'02', ic:'vault', c:'--t2', cum:'A', ten:'Thu thập & xác minh nguồn',
+      man:'kho-tong',
+      mo:'Gom số gộp từ hơn 50 kho, xác minh nguồn đáng tin trước khi đưa vào phân tích.',
+      nv:[ 3, 25,
+           ['Lập bản kê nguồn cho từng phân tích', 'kho-tong', 3, 'Mỗi con số ghi rõ đếm từ kho nào', 'Bản kê nguồn đính kèm'],
+           ['Kéo số gộp từ kho tổng theo kỳ', 'kho-tong', 4, 'Đúng kỳ, đúng phạm vi, không lấy bản ghi lẻ', 'Tệp số gộp đã lưu'],
+           ['Lấy chỉ số hài lòng gộp theo tháng', 'hai-long', 3, 'Đủ phiếu của kỳ, đã ẩn danh', 'Chỉ số tháng đã nhập'],
+           ['Lấy tỉ lệ tự động hoá đo trên hệ', 'tu-dong', 2, 'Lấy tỉ lệ đo được, không lấy số khai', 'Tỉ lệ đã cập nhật'],
+           ['Gom số chuyển đổi qua chín cổng', 'chuyen-doi', 3, 'Đủ chín cổng, cùng một kỳ', 'Bảng chín cổng đã có số'],
+           ['Gom tiến độ mười bánh đà toàn hệ', 'banh-da', 3, 'Số gộp theo vòng, không theo nhà', 'Bảng mười vòng cập nhật'],
+           ['Gắn nhãn nguồn chưa đủ tin cậy', 'kho-tong', 2, 'Nguồn nghi vấn không vào báo cáo', 'Nguồn đã gắn nhãn'],
+           ['Ghi nhật ký mỗi lần kéo dữ liệu', 'nhat-ky-vi-tri', 2, 'Mỗi lần kéo một dòng ghi', 'Nhật ký kéo dữ liệu đủ']
+      ] },
+    { key:'lam-sach', so:'03', ic:'filter', c:'--t3', cum:'A', ten:'Làm sạch & chuẩn hoá',
+      man:'kho-tong',
+      mo:'Đưa dữ liệu về sạch và cùng chuẩn: bù hoặc đánh dấu chỗ thiếu, gộp trùng, ẩn danh trước khi phân tích.',
+      nv:[ 4, 5, 6,
+           ['Gắn nhãn ô thiếu thay vì đoán số', 'kho-tong', 4, 'Ô thiếu ghi rõ, không tự điền', 'Ô thiếu đã gắn nhãn'],
+           ['Gộp bản ghi trùng giữa các kho', 'kho-tong', 3, 'Trùng lặp bằng 0 sau khi gộp', 'Báo cáo trùng đã đóng'],
+           ['Quy đổi các thang điểm về một chuẩn', 'the-diem-can-bang', 3, 'Mọi thước cùng thang trước khi so', 'Bảng quy đổi đã ghi'],
+           ['Xếp dữ liệu đúng mốc kỳ 21 / 90 ngày', 'kho-tong', 2, 'Cùng mốc kỳ mới so được', 'Dữ liệu nằm đúng kỳ'],
+           ['Loại giá trị ngoại lai có ghi lý do', 'kho-tong', 3, 'Mỗi điểm bị loại có lý do viết', 'Danh sách ngoại lai đã lưu'],
+           ['Ẩn danh trước khi đưa vào bảng phân tích', 'bo-nao', 5, 'Không còn tên, số điện thoại, mã nhà', 'Tệp đã ẩn danh'],
+           ['Lưu phiên bản dữ liệu đã sạch', 'kho-tong', 2, 'Bản gốc và bản sạch tách bạch', 'Phiên bản sạch có ngày']
+      ] },
+    { key:'mo-thuc', so:'04', ic:'brain', c:'--t1', cum:'B', ten:'Tìm mô thức & kiểm giả thuyết',
+      man:'chieu-sau',
+      mo:'Gọi tên mô thức có ý nghĩa trong số gộp, ghi giả thuyết và kiểm chứng bằng số — không bằng cảm giác.',
+      nv:[ 7, 26, 10,
+           ['Đối chiếu với 42 mô thức GITA', 'phuong-phap', 4, 'Khớp mô thức đã có hoặc ghi rõ là mới', 'Mô thức đã gắn mã'],
+           ['Tách tương quan với nhân quả', 'chieu-sau', 4, 'Không kết luận nhân quả khi chỉ có tương quan', 'Mức kết luận ghi cạnh số'],
+           ['Kiểm cỡ mẫu trước khi kết luận', 'chieu-sau', 3, 'Mẫu đủ lớn mới báo mô thức', 'Cỡ mẫu ghi cạnh kết luận'],
+           ['So mô thức giữa các kỳ', 'the-diem-can-bang', 3, 'Cùng chuẩn, cùng thước', 'Bảng so kỳ đã dựng'],
+           ['Gắn mô thức vào chuỗi nhân quả chiến lược', 'ban-do-chien-luoc', 3, 'Mô thức nối đúng mục tiêu', 'Mô thức có mục tiêu đi kèm'],
+           ['Lưu giả thuyết đã bác bỏ', 'chieu-sau', 2, 'Giả thuyết sai cũng được ghi', 'Sổ giả thuyết bác bỏ cập nhật'],
+           ['Mời người làm nghề đọc chéo mô thức', 'tin-noi-bo', 2, 'Ít nhất một người ngoài đọc', 'Có phản hồi đọc chéo']
+      ] },
+    { key:'ma-tran-phan-khuc', so:'05', ic:'grid', c:'--t2', cum:'B', ten:'Ma trận vấn đề & phân khúc',
+      man:'ma-tran',
+      mo:'Đặt mô thức vào ma trận 220 vấn đề × 5 tầng và phân khúc theo bốn nhóm khách — chỉ ở mức nhóm.',
+      nv:[ 8, 9, 28,
+           ['Đếm tần suất vấn đề theo tầng', 'ma-tran', 4, 'Đếm gộp, không truy về từng nhà', 'Bảng tần suất theo tầng'],
+           ['Tô bốn nhóm XANH · VÀNG · CAM · ĐỎ', 'ma-tran-bang', 3, 'Mỗi nhóm có ngưỡng ghi rõ', 'Bảng bốn màu cập nhật'],
+           ['Đối chiếu sáu chân dung khách hàng', 'chan-dung-kh', 3, 'Phân khúc khớp chân dung đã có', 'Phân khúc gắn chân dung'],
+           ['Giữ ngưỡng tối thiểu mỗi ô để không lộ danh', 'ma-tran-bang', 4, 'Ô dưới ngưỡng thì gộp lại', 'Không ô nào quá nhỏ'],
+           ['Theo dịch chuyển giữa các nhóm theo quý', 'ma-tran-bang', 3, 'Đủ hai kỳ mới nói dịch chuyển', 'Biểu đồ dịch chuyển đã dựng'],
+           ['Xếp mười vấn đề nổi nhất theo nhóm', 'ma-tran', 2, 'Mỗi vấn đề có số kèm', 'Danh sách top 10 xong'],
+           ['Gửi bảng phân khúc gộp cho chuyên môn', 'tin-noi-bo', 2, 'Gửi bản gộp, không gửi bản ghi', 'Bảng đã gửi']
+      ] },
+    { key:'canh-bao-som', so:'06', ic:'alert', c:'--t4', cum:'B', ten:'Cảnh báo sớm & ngưỡng đỏ',
+      man:'giam-sat',
+      mo:'Phát hiện rủi ro trước khi nổ, xếp mức, theo ngưỡng đỏ và báo đúng vai, đúng lúc.',
+      nv:[ 11, 12, 13, 27,
+           ['Đặt ngưỡng đỏ cho từng chỉ số chính', 'giam-sat', 4, 'Mỗi chỉ số có ngưỡng viết thành số', 'Bảng ngưỡng đã lưu'],
+           ['Theo tỉ lệ rơi chuỗi toàn hệ theo tuần', 'banh-da', 4, 'Báo khi tỉ lệ rơi tăng 2 tuần liền', 'Cảnh báo rơi chuỗi đã xét'],
+           ['Theo chỉ số hài lòng dưới mục tiêu 90%', 'hai-long', 4, 'Dưới ngưỡng thì báo trong ngày', 'Chỉ số dưới ngưỡng đã báo'],
+           ['Đối chiếu cảnh báo với điều hệ đang nợ', 'hansei-sach', 2, 'Cảnh báo gắn với câu hệ chưa trả lời', 'Nợ của hệ được đối chiếu'],
+           ['Đóng cảnh báo khi đã có người xử lý', 'giam-sat', 3, 'Không để cảnh báo treo quá 7 ngày', 'Cảnh báo có trạng thái đóng'],
+           ['Rà cảnh báo nhầm để chỉnh ngưỡng', 'giam-sat', 2, 'Tỉ lệ báo nhầm giảm dần', 'Ngưỡng được hiệu chỉnh']
+      ] },
+    { key:'de-xuat-bao-cao', so:'07', ic:'quote', c:'--t3', cum:'B', ten:'Đề xuất & báo cáo điều hành',
+      man:'the-diem-can-bang',
+      mo:'Biến số liệu thành đề xuất cải tiến có bằng chứng, trình điều hành và theo đến khi được áp dụng.',
+      nv:[ 15, 16, 17, 18,
+           ['Viết mỗi đề xuất kèm số trước – sau', 'the-diem-can-bang', 4, 'Có mốc so và cách đo lại', 'Đề xuất có mốc so'],
+           ['Ghi rõ điều số liệu chưa nói được', 'the-diem-can-bang', 3, 'Giới hạn phân tích viết thành lời', 'Mục giới hạn có trong báo cáo'],
+           ['Gửi đề xuất vào kênh cải tiến', 'cai-tien', 3, 'Có người trả lời trong 14 ngày', 'Đề xuất có mã theo dõi'],
+           ['Đề xuất cắt việc thừa theo bảy lãng phí', 'tinh-gon', 2, 'Lãng phí gọi tên kèm số', 'Đề xuất tinh gọn đã gửi'],
+           ['Cập nhật thẻ điểm cân bằng theo 7 nhịp', 'the-diem-can-bang', 3, 'Mỗi mục tiêu có số mới nhất', 'Thẻ điểm có ngày cập nhật'],
+           ['Tóm tắt một trang cho buổi họp sáng', 'nam-man', 3, 'Ba điểm chính, một hành động', 'Bản tóm tắt đã gửi']
+      ] },
+    { key:'toan-ven', so:'08', ic:'check', c:'--t5', cum:'C', ten:'Toàn vẹn & chất lượng dữ liệu',
+      man:'kho-tong',
+      mo:'Soát toàn vẹn toàn hệ, kiểm chéo với sổ nguồn và báo rõ chỗ lệch kèm hướng sửa.',
+      nv:[ 19, 20, 21,
+           ['Chấm điểm toàn vẹn theo từng kho', 'kho-tong', 3, 'Mỗi kho có điểm và ngày soát', 'Bảng điểm toàn vẹn cập nhật'],
+           ['Kiểm số hiển thị khớp số đếm thật', 'kho-tong', 3, 'Số trên trang bằng số đếm từ kho', 'Không còn số lệch'],
+           ['Rà số mẫu vận hành còn ghi nhãn rõ', 'kho-tong', 2, 'Số mẫu không bao giờ giả làm số thật', 'Mọi số mẫu đều có nhãn'],
+           ['Theo lỗi dữ liệu tới khi được sửa', 'giam-sat', 3, 'Mỗi lỗi có người nhận và hạn', 'Lỗi chuyển trạng thái đã sửa'],
+           ['Soát hệ đo theo sáu điều cấm giám sát', 'giam-sat', 4, 'Không đo vượt trần đã dựng', 'Hệ đo qua soát trần'],
+           ['Giữ nguyên số đã chốt theo hiến pháp', 'bien-nien', 2, 'Không sửa lịch sử số đã chốt', 'Số chốt giữ nguyên'],
+           ['Lưu nhật ký soát toàn vẹn hằng tuần', 'nhat-ky-vi-tri', 2, 'Mỗi tuần một bản ghi', 'Nhật ký tuần đầy đủ']
+      ] },
+    { key:'bao-mat-an-danh', so:'09', ic:'lock', c:'--t4', cum:'C', ten:'Bảo mật, ẩn danh & hiến pháp dữ liệu',
+      man:'bo-nao',
+      mo:'Giữ danh tính an toàn: chỉ làm trên số gộp đã ẩn danh, đúng hiến pháp, ranh giới và luật dữ liệu.',
+      nv:[ 14,
+           ['Đọc hiến pháp 13 điều của Bộ não', 'bo-nao', 3, 'Nói lại được điều về ẩn danh', 'Đã đọc và ghi 3 điểm'],
+           ['Từ chối yêu cầu xem hồ sơ từng nhà', 'pham-vi', 5, 'Chỉ trả số gộp, chuyển đúng vai', 'Yêu cầu được chuyển đúng nơi'],
+           ['Soát bảy việc của luật dữ liệu cá nhân', 'phap-ly-rui-ro', 4, 'Biết việc nào thuộc vai mình', 'Danh sách việc của vai đã soát'],
+           ['Giữ sáu điều không bao giờ bán', 'tien-rung', 4, 'Không xuất dữ liệu ra ngoài hệ', 'Không có lần xuất ngoài'],
+           ['Ôn sáu ranh giới mỗi tháng', 'ranh-gioi', 2, 'Nói lại được sáu ranh giới', 'Đã ôn trong tháng'],
+           ['Loại dữ liệu nhà đã dùng quyền xoá', 'phap-ly', 4, 'Dữ liệu đã xoá không vào phân tích', 'Bộ dữ liệu đã loại bản xoá'],
+           ['Khoá máy làm số liệu bằng khuôn mặt', 'khoa-mat', 2, 'Máy luôn có khoá khi rời chỗ', 'Khoá khuôn mặt đã bật'],
+           ['Soát giới hạn AI điều phối với dữ liệu', 'ai-dieu-phoi', 3, 'AI không nhận việc đọc hồ sơ lẻ', 'Giới hạn AI đã kiểm'],
+           ['Báo ngay khi thấy nguy cơ lộ danh tính', 'giam-sat', 5, 'Báo trong ngày, dừng dùng tệp', 'Sự cố có biên bản']
+      ] },
+    { key:'kpi-thang-cap', so:'10', ic:'crown', c:'--t2', cum:'C', ten:'KPI, học nghề & thăng cấp',
+      man:'nghe-phantich',
+      mo:'Chốt ngày vào KPI, học kỹ thuật mới và đi năm cấp nghề Phân tích bằng bằng chứng.',
+      nv:[ 22, 23, 29,
+           ['Cấp 1 · Phân tích Tập sự: qua nền dữ liệu', 'khoa-dao-tao', 3, 'Học xong đào tạo nền và thi đạt', 'Có chứng nhận Tập sự'],
+           ['Cấp 2 · Phân tích dữ liệu: ≥10 mô thức đúng', 'nghe-phantich', 4, 'Dữ liệu sạch liên tục ≥3 tháng', 'Hồ sơ 10 mô thức được duyệt'],
+           ['Cấp 3 · Phân tích Cao cấp: cảnh báo sớm đúng', 'nghe-phantich', 4, 'Dự báo đúng có đối chiếu', 'Hồ sơ cảnh báo đúng được duyệt'],
+           ['Cấp 4 · Trưởng nhóm dữ liệu: kèm người mới', 'nghe-phantich', 3, 'Nhóm chạy đều, có người được kèm', 'Có người Phân tích mới đạt cấp'],
+           ['Cấp 5 · Chuyên gia dữ liệu: hệ đo đáng tin', 'nghe-phantich', 3, 'Các ban tin dùng hệ đo toàn hệ', 'Được công nhận Chuyên gia'],
+           ['Thi sát hạch năng lực phân tích', 'sat-hach', 3, 'Đạt điểm chuẩn của cấp', 'Kết quả sát hạch lưu hồ sơ'],
+           ['Xem KPI tuần và tự soi chỗ hụt', 'kpi-toi', 2, 'Biết đầu việc nào đang hụt', 'Ghi một điểm cải tiến']
+      ] }
+  ]
+};
+
+/* ══════════════ R13 · PHỤ HUYNH ══════════════ */
+G.DK_VAI.phuhuynh = {
+  vai:['R13'], ten:'Phụ huynh', ic:'home',
+  lead:'Góc của cả nhà: mỗi tối một việc nhỏ, xem con đã đi tới đâu, giữ lại điều tốt và biết nhà mình có những quyền gì. Không cần giỏi công nghệ — chỉ cần đều tay.',
+  cum:{ A:{t:'MỖI NGÀY CỦA NHÀ MÌNH', s:'Hôm nay · nhiệm vụ · thói quen nhỏ'},
+        B:{t:'CÙNG CON ĐI ĐƯỜNG DÀI', s:'Bản đồ · tầm nhìn · hành trình của con · học cùng con'},
+        C:{t:'NHÌN LẠI, KẾT NỐI & QUYỀN CỦA NHÀ', s:'Tiến bộ · cộng đồng · thanh toán · bảy quyền'} },
+  loiTat:[ ['hom-nay','Việc tối nay','sun'], ['tien-bo','Nhà mình đã đổi gì','chart'],
+           ['minh-chung','Gửi minh chứng','check'], ['dong-hanh','Hỏi người đồng hành','heart'] ],
+  areas:[
+    { key:'ngoi-nha-hom-nay', so:'01', ic:'sun', c:'--t1', cum:'A', ten:'Ngôi nhà & hôm nay',
+      man:'hom-nay',
+      mo:'Mỗi tối một việc duy nhất cho cả nhà — làm xong, tick, rồi cất máy đi.',
+      nv:[ ['Mở việc tối nay của nhà mình', 'hom-nay', 3, 'Mở trước giờ ăn tối', 'Đã thấy việc tối nay'],
+           ['Làm xong và tick việc tối nay', 'hom-nay', 3, 'Một việc, làm trọn', 'Đã tick việc tối nay'],
+           ['Ghé thăm Ngôi nhà thịnh vượng', 'ngoi-nha', 1, 'Cả nhà cùng xem một lần', 'Biết nhà mình đang ở phòng nào'],
+           ['Đi năm bước đầu tiên theo thứ tự', 'bat-dau', 2, 'Làm đúng thứ tự, không nhảy bước', 'Năm bước đã tick'],
+           ['Đọc GITA 365 là gì cùng người thân', 'gioi-thieu', 1, 'Ai trong nhà cũng nghe qua', 'Cả nhà nói được một câu về GITA'],
+           ['Xem bảng công việc của nhà', 'bang-viec', 2, 'Biết việc nào sắp đến hạn', 'Không việc nào trễ mà không hay'],
+           ['Nhận một việc nhỏ trong danh mục', 'danh-muc-viec', 2, 'Chọn việc vừa sức nhà mình', 'Đã tích nhận một việc'],
+           ['Xem nhà mình đã mở tới đâu', 'pham-vi', 1, 'Biết phần nào chưa mở', 'Đã xem phạm vi của nhà'],
+           ['Bấm một ô trên bàn cờ tổng', 'ban-co-tong', 1, 'Mở đúng ô nhà đang cần', 'Đã mở một ô'],
+           ['Báo mùa khó để được hạ chuẩn', 'mua-doi', 2, 'Nói thật, không cố gồng', 'Mùa của nhà đã cập nhật']
+      ] },
+    { key:'ban-do-chan-dung', so:'02', ic:'map', c:'--t2', cum:'B', ten:'Bản đồ gia đình & chân dung',
+      man:'ban-do',
+      mo:'Vẽ chân dung nhà mình thật thà, để biết đang đứng ở đâu trước khi đi tiếp.',
+      nv:[ ['Cả nhà cùng xem Bản đồ Gia đình', 'ban-do', 2, 'Cả nhà cùng xem một lần', 'Mỗi người chỉ được một ô mình thích'],
+           ['Viết chân dung nhà mình', 'chan-dung-nha', 3, 'Viết thật, không tô đẹp', 'Chân dung nhà đã lưu'],
+           ['Định vị hôm nay bằng bảng số', 'dinh-vi', 3, 'Ghi số thật, không theo cảm giác', 'Bảng định vị có số tuần này'],
+           ['Điền bản đồ cá nhân 11 ô', 'ban-do-ca-nhan', 2, 'Mỗi người lớn điền phần mình', 'Đủ 11 ô của một người'],
+           ['Xem chín vai đang giữ trong nhà', 'chin-vai', 2, 'Gọi tên ai đang giữ việc gì', 'Không ai bị bỏ ra ngoài'],
+           ['Đọc bốn miền G – I – T – A', 'gita-map', 1, 'Hiểu nguyên nhân nằm ở miền nào', 'Chọn được một miền cần chăm'],
+           ['Gọi tên vòng luẩn quẩn của nhà', 'sau-vung', 2, 'Nói bằng lời, không trách ai', 'Đã chọn một chỗ hay rơi'],
+           ['Xem bảng số gia đình', 'bang-so', 2, 'Cùng đọc bảy chỉ số', 'Biết chỉ số nào cần chăm'],
+           ['Chọn nhân vật đại diện cho mình', 'nhan-vat', 1, 'Ảnh không rời máy', 'Nhân vật đã chọn'],
+           ['Viết vào sổ tay của gia đình', 'so-tay-gia-dinh', 1, 'Đọc một trang mỗi tuần', 'Trang cuối có dòng nhà mình viết']
+      ] },
+    { key:'tam-nhin', so:'03', ic:'compass', c:'--t3', cum:'B', ten:'Tầm nhìn của nhà mình',
+      man:'tam-nhin',
+      mo:'Cả nhà cùng hình dung 5 – 20 năm tới, đi từ nỗi lo hôm nay đến điều mong muốn.',
+      nv:[ ['Cùng viết tầm nhìn 5 năm', 'tam-nhin', 3, 'Mỗi người góp một câu', 'Tầm nhìn 5 năm đã lưu'],
+           ['Phác tầm nhìn 20 năm cho con', 'tam-nhin', 2, 'Viết điều mong, không ép con', 'Có ba dòng về con'],
+           ['Treo tầm nhìn ở chỗ cả nhà thấy', 'tam-nhin', 1, 'Đặt nơi đi qua hằng ngày', 'Tầm nhìn đã treo lên'],
+           ['Chuyển nỗi lo thành điều mong muốn', 'chuyen-hoa', 2, 'Mỗi nỗi lo có một khát khao', 'Đã viết một cặp lo – mong'],
+           ['Xem cây giá trị của nhà', 'cay-vip', 1, 'Biết nhà đang ở Hạt, Rễ hay Thân', 'Đã gọi tên tầng hiện tại'],
+           ['Đọc con đường năm tầng', 'hanh-trinh-5-tang', 1, 'Hiểu năm thử thách phía trước', 'Chọn được thử thách gần nhất'],
+           ['Trả lời ba câu của bức tranh hành trình', 'buc-tranh', 2, 'Ba câu ngắn mỗi tối', 'Có ba câu trả lời'],
+           ['Xem mười điểm về đích', 'kpi-100', 2, 'Biết điểm mốc gần nhất', 'Đã đánh dấu mốc nhà nhắm tới'],
+           ['Đọc chuyện truyền cảm hứng cùng con', 'chuyen-cam-hung', 1, 'Một chuyện mỗi tuần', 'Đã đọc xong một chuyện'],
+           ['Nghe chuyện người thật trước giờ ngủ', 'chuyen-the-gioi', 1, 'Nghe cùng nhau, không vội', 'Con kể lại được một ý']
+      ] },
+    { key:'hanh-trinh-con', so:'04', ic:'seed', c:'--t4', cum:'B', ten:'Hành trình của con',
+      man:'hanh-trinh-con',
+      mo:'Theo con từng bước — điều con mạnh, điều con đang tập, và lúc nào cần ở bên.',
+      nv:[ ['Xem hành trình của con tuần này', 'hanh-trinh-con', 3, 'Xem cùng con, không chấm điểm', 'Biết con đang ở chặng nào'],
+           ['Hỏi con một điều con thích tuần này', 'hanh-trinh-con', 2, 'Nghe hết, không ngắt lời', 'Đã ghi lại câu con nói'],
+           ['Đọc hành trình 12 chặng của học viên', 'hanh-trinh-12', 1, 'Biết chặng tiếp theo của con', 'Đã xem chặng kế'],
+           ['Cùng con đi một ô bàn cờ hành trình', 'ban-co', 2, 'Một ngày một ô', 'Con đã đi ô hôm nay'],
+           ['Ghi khoảnh khắc WOW của con', 'wow', 2, 'Ghi ngay trong ngày', 'Một khoảnh khắc đã lưu'],
+           ['Đi bên con trên con đường nhiệm vụ', 'con-duong', 2, 'Để con tự bước, mình đi bên', 'Con mở được mốc mới'],
+           ['Viết vài dòng nhật ký về con', 'nhat-ky-vi-tri', 1, 'Vài dòng mỗi tuần', 'Nhật ký có bài tuần này'],
+           ['Khen con đúng việc con đã làm', 'phan-thuong', 2, 'Khen việc cụ thể, không khen chung', 'Con nhận được một ghi nhận'],
+           ['Mời con thử cuộc thi viết 7 ngày', 'thi-viet', 1, 'Con tự chọn viết hay không', 'Con đã viết bài đầu'],
+           ['Mở tài liệu quà tặng khi con vướng', 'kho-qua', 2, 'Mở đúng tài liệu chỗ đang mắc', 'Đã đọc một tài liệu hợp']
+      ] },
+    { key:'lo-trinh-nhiem-vu', so:'05', ic:'target', c:'--t5', cum:'A', ten:'Lộ trình & nhiệm vụ',
+      man:'nhiem-vu',
+      mo:'Biết nhà đang ở tầng nào, nhiệm vụ tuần này là gì, và ghi nhật ký 365 ngày.',
+      nv:[ ['Xem lộ trình T1 → T5 của nhà', 'lo-trinh', 2, 'Biết tầng nhà đang đi', 'Đã gọi tên tầng hiện tại'],
+           ['Nhận nhiệm vụ tuần này', 'nhiem-vu', 3, 'Nhận vừa sức, có ngày xong', 'Nhiệm vụ tuần đã nhận'],
+           ['Chia việc trong nhiệm vụ cho từng người', 'nhiem-vu', 2, 'Mỗi người một phần rõ', 'Ai cũng biết phần mình'],
+           ['Ghi nhật ký 365 sau mỗi nhiệm vụ', 'nhiem-vu', 2, 'Ghi ngay trong ngày làm', 'Có dòng nhật ký hôm nay'],
+           ['Tự chấm theo vòng Đúng – Đủ – Sâu', 'vong-nhac', 1, 'Nhớ: xem không phải là làm', 'Tự chấm được một nấc'],
+           ['Đi một bước trên mười bánh đà', 'banh-da', 2, 'Một vòng, một việc', 'Đã mở một việc trong vòng'],
+           ['Xem đồng hồ thời gian & điểm thưởng', 'do-thoi-gian', 1, 'Biết việc nào đang trễ', 'Đã xem điểm tuần'],
+           ['Ghi việc làm dở để làm tiếp', 'bang-viec', 1, 'Không bỏ dở quá một tuần', 'Việc dở có ngày làm lại'],
+           ['Hỏi trợ lý GITA khi chưa hiểu việc', 'tro-ly', 1, 'Hỏi ngắn, đọc nguồn trích', 'Đã có câu trả lời'],
+           ['Cả nhà chạy một cú hích nhỏ', 'cu-hich', 2, 'Có mục tiêu đo được', 'Cú hích có ngày kết thúc']
+      ] },
+    { key:'minh-chung-tien-bo', so:'06', ic:'check', c:'--t1', cum:'C', ten:'Minh chứng & tiến bộ',
+      man:'minh-chung',
+      mo:'Lưu lại bằng chứng việc nhà đã làm và nhìn tuần này khác tuần trước ra sao.',
+      nv:[ ['Gửi minh chứng sau khi làm nhiệm vụ', 'minh-chung', 3, 'Một ảnh hoặc vài dòng là đủ', 'Minh chứng đã gửi'],
+           ['Hỏi lại khi minh chứng chưa được xác nhận', 'dong-hanh', 2, 'Hỏi nhẹ sau 3 ngày', 'Minh chứng có trạng thái rõ'],
+           ['Xem nhà mình đã đổi gì tuần này', 'tien-bo', 3, 'So với tuần trước, nói bằng lời', 'Ghi một điều đã đổi'],
+           ['Cả nhà cùng đọc phần tiến bộ', 'tien-bo', 2, 'Cả nhà cùng xem một lần', 'Mỗi người nói một điều vui'],
+           ['Xem KPI của nhà mình', 'kpi-toi', 1, 'Đọc số, không tự trách', 'Biết chỉ số đang thấp'],
+           ['Nhận ghi nhận và huy hiệu', 'phan-thuong', 1, 'Huy hiệu đến từ việc thật', 'Đã xem huy hiệu mới'],
+           ['Đổi điểm lấy quà cho cả nhà', 'phan-thuong', 1, 'Đổi khi đủ điểm thật', 'Quà đã chọn'],
+           ['Kể chuyện tốt trong nhà để được vinh danh', 'vinh-danh', 1, 'Chuyện thật, có người làm chứng', 'Câu chuyện đã gửi'],
+           ['Viết ba câu đánh giá GITA 365', 'danh-gia', 2, 'Nói phần chưa tốt nhiều hơn phần khen', 'Ba câu đánh giá đã gửi'],
+           ['Xem hệ này đang nợ nhà mình gì', 'hansei-sach', 1, 'Biết câu hệ chưa trả lời', 'Đã đọc danh sách nợ']
+      ] },
+    { key:'hoc-sat-hach', so:'07', ic:'book', c:'--t2', cum:'B', ten:'Học & sát hạch của cha mẹ',
+      man:'khoa-dao-tao',
+      mo:'Cha mẹ học từng chút một: khoá học của nhà, bài test nhận diện và sát hạch vừa sức.',
+      nv:[ ['Học một bài trong khoá của tôi', 'khoa-dao-tao', 3, 'Một bài mỗi tuần, học trọn', 'Bài học đã đánh dấu xong'],
+           ['Làm bộ test nhận diện 5 tầng', 'bo-test', 3, 'Trả lời thật, không đoán', 'Kết quả test đã lưu'],
+           ['Nhờ người đồng hành giải thích kết quả test', 'dong-hanh', 2, 'Hỏi điều chưa rõ', 'Có lời giải thích kết quả'],
+           ['Làm bài sát hạch khi đã sẵn sàng', 'sat-hach', 2, 'Ôn xong mới vào thi', 'Đã xem kết quả sát hạch'],
+           ['Đọc một chương Nôi nuôi dưỡng nhân tài', 'noi-nhan-tai', 2, 'Một chương, đọc chậm', 'Ghi một ý mang về nhà'],
+           ['Tìm tài liệu đúng chỗ trong thư viện', 'thu-vien', 1, 'Tìm theo chuyện nhà đang gặp', 'Đã lưu một tài liệu'],
+           ['Nghe bài bằng giọng đọc khi bận tay', 'giong-doc', 1, 'Nghe trọn một bài', 'Bài nghe đã xong'],
+           ['Xem người đi cùng phải làm được gì', 'coach-5-tang', 1, 'Biết điều nên mong ở người đồng hành', 'Đã đọc năng lực tầng nhà mình'],
+           ['Đọc năm điều tư vấn không được làm', 'so-tay-tu-van', 1, 'Biết lằn ranh để tự bảo vệ', 'Đã đọc năm điều'],
+           ['Nhận ra logo và màu GITA thật', 'nhan-dien', 1, 'Phân biệt được trang giả', 'Biết dấu nhận GITA thật']
+      ] },
+    { key:'thoi-quen-chu-ky', so:'08', ic:'ritual', c:'--t3', cum:'A', ten:'Thói quen & chu kỳ',
+      man:'thoi-quen',
+      mo:'Giữ bốn nghi lễ của nhà và đi từng chu kỳ 21 / 90 ngày, chậm mà đều.',
+      nv:[ ['Chọn bốn nghi lễ cho cả năm', 'thoi-quen', 2, 'Cả nhà cùng chọn', 'Bốn nghi lễ đã lưu'],
+           ['Giữ một nghi lễ nhỏ mỗi tuần', 'thoi-quen', 3, 'Đúng ngày đã hẹn', 'Nghi lễ tuần đã tick'],
+           ['Ăn tối không điện thoại một bữa mỗi tuần', 'thoi-quen', 2, 'Cả nhà cùng cất máy', 'Đã tick bữa tối không máy'],
+           ['Bắt đầu chu kỳ 21 ngày', 'chu-ky', 3, 'Một thói quen, 21 ngày', 'Ngày 1 đã tick'],
+           ['Nhìn lại khi hết chu kỳ', 'chu-ky', 2, 'Ghi được gì, vướng gì', 'Bản nhìn lại đã lưu'],
+           ['Bước sang chu kỳ 90 ngày', 'chu-ky', 2, 'Qua cổng 21 ngày rồi mới sang', 'Chu kỳ 90 ngày đã mở'],
+           ['Giữ chuỗi ngày liền tay', 'do-thoi-gian', 2, 'Lỡ một ngày thì làm lại, không bỏ', 'Chuỗi ngày còn giữ'],
+           ['Mùa bận thì giữ việc nhỏ nhất', 'mua-doi', 1, 'Hạ chuẩn chứ không bỏ hẳn', 'Chuỗi được giữ trong mùa khó'],
+           ['Trả lời lời nhắc của người đi cùng', 'doi-dong-hanh', 1, 'Đọc lời nhắc trong ngày', 'Đã trả lời lời nhắc'],
+           ['Ghi một câu biết ơn cuối tuần', 'nhat-ky-vi-tri', 1, 'Mỗi người một câu', 'Có câu biết ơn tuần này']
+      ] },
+    { key:'ket-noi-su-kien', so:'09', ic:'users', c:'--t4', cum:'C', ten:'Kết nối & sự kiện',
+      man:'su-kien',
+      mo:'Gặp những nhà khác đang cùng đi, dự lửa trại và giữ liên lạc với người đồng hành.',
+      nv:[ ['Đăng ký một sự kiện của cộng đồng', 'su-kien', 2, 'Chọn buổi cả nhà đi được', 'Đã đăng ký một buổi'],
+           ['Cả nhà cùng dự lửa trại', 'su-kien', 2, 'Đi đủ người có thể', 'Có ảnh kỷ niệm buổi lửa trại'],
+           ['Gửi góp ý sau mỗi sự kiện', 'danh-gia', 1, 'Nói thật điều chưa ổn', 'Góp ý đã gửi'],
+           ['Nhắn người đồng hành khi cần', 'dong-hanh', 2, 'Nói rõ điều đang vướng', 'Đã nhận phản hồi'],
+           ['Đọc năm lời hứa của người đi cùng', 'doi-dong-hanh', 1, 'Biết điều nhà mình được hứa', 'Đã đọc năm lời hứa'],
+           ['Ghi tên người tuyệt vời quanh mình', 've-tinh', 1, 'Ba người mỗi quý', 'Vệ tinh có tên mới'],
+           ['Nối Facebook hoặc Telegram để nhận tin', 'ket-noi', 1, 'Chỉ nối kênh nhà mình dùng', 'Kênh đã kết nối'],
+           ['Đọc tin cộng đồng cùng nhau', 'bang-tin', 1, 'Nhà mình không đi một mình', 'Đã đọc một chuyện cộng đồng'],
+           ['Chọn một chuyện nhà khác để học theo', 'bang-tin', 1, 'Chuyện có số đếm rõ nguồn', 'Ghi một điều muốn thử'],
+           ['Chỉ đường vào cho người quen hỏi', 'tham-gia', 1, 'Chỉ kể trải nghiệm thật', 'Người quen biết sáu bước vào']
+      ] },
+    { key:'thanh-toan-quyen', so:'10', ic:'shield', c:'--t5', cum:'C', ten:'Thanh toán & quyền của nhà',
+      man:'phap-ly',
+      mo:'Đóng học phí minh bạch, biết bảy quyền của nhà và giữ dữ liệu của nhà an toàn.',
+      nv:[ ['Thanh toán học phí đúng hạn', 'thanh-toan', 3, 'Chỉ chuyển qua QR hệ thống xác thực', 'Biên nhận đã lưu'],
+           ['Đối chiếu thông tin nhận tiền trước khi chuyển', 'thanh-toan', 3, 'Đúng tên và số do hệ thống xác thực', 'Đã đối chiếu trước khi chuyển'],
+           ['Hỏi về học phí khi chưa rõ', 'dong-hanh', 1, 'Hỏi trước khi chuyển', 'Đã có câu trả lời rõ'],
+           ['Đọc bảy quyền của nhà mình', 'phap-ly', 2, 'Biết quyền im lặng, xoá, đi', 'Đã đọc bảy quyền'],
+           ['Dùng quyền khiếu nại khi thấy chưa đúng', 'phap-ly', 2, 'Nói rõ chuyện gì, khi nào', 'Khiếu nại có mã theo dõi'],
+           ['Đọc sáu điều không bao giờ bán', 'tien-rung', 2, 'Biết dữ liệu nhà không bị bán', 'Đã đọc lời hứa dữ liệu'],
+           ['Đọc năm điều không ai được sửa', 'bien-nien', 1, 'Hiểu điều hệ giữ cố định', 'Đã đọc hiến pháp một trang'],
+           ['Đọc sáu ranh giới', 'ranh-gioi', 1, 'Biết điều không ai được làm với nhà', 'Đã đọc sáu ranh giới'],
+           ['Bật khoá khuôn mặt cho tài khoản', 'khoa-mat', 2, 'Khuôn mặt không rời máy', 'Khoá khuôn mặt đã bật'],
+           ['Biết khi nào hệ này xong việc với nhà', 'giu-lua', 1, 'Hiểu năm điều kiện xong', 'Đã đọc điều kiện xong']
+      ] }
+  ]
+};
+
+/* ══════════════ R14 · HỌC VIÊN ══════════════ */
+G.DK_VAI.hocvien = {
+  vai:['R14'], ten:'Học viên', ic:'star',
+  lead:'Bảng của học viên: đi lộ trình học của mình, làm nhiệm vụ và bài test, học trọn khoá đào tạo, nộp minh chứng và nhận ghi nhận — từng bước nhỏ, có bằng chứng.',
+  cum:{ A:{t:'NHỊP HỌC MỖI NGÀY', s:'Hôm nay · nhiệm vụ · thói quen & chu kỳ'},
+        B:{t:'HỌC SÂU & THỬ SỨC', s:'Hiểu mình · lộ trình · bài test · khoá học · sát hạch'},
+        C:{t:'TIẾN BỘ, GHI NHẬN & KẾT NỐI', s:'Minh chứng · phần thưởng · vinh danh · bạn đồng hành'} },
+  loiTat:[ ['hom-nay','Việc hôm nay','sun'], ['nhiem-vu','Nhiệm vụ & nhật ký','target'],
+           ['khoa-dao-tao','Khoá học của tôi','book'], ['phan-thuong','Ghi nhận của tôi','crown'] ],
+  areas:[
+    { key:'hom-nay', so:'01', ic:'sun', c:'--t1', cum:'A', ten:'Hôm nay của tôi',
+      man:'hom-nay',
+      mo:'Mỗi ngày một việc học quan trọng nhất — làm xong, tick, rồi nghỉ.',
+      nv:[ ['Mở việc học hôm nay', 'hom-nay', 3, 'Mở trước giờ học', 'Đã thấy việc hôm nay'],
+           ['Làm xong và tick việc hôm nay', 'hom-nay', 3, 'Làm trọn một việc', 'Đã tick việc hôm nay'],
+           ['Đặt giờ học cố định trong ngày', 'do-thoi-gian', 2, 'Cùng một khung giờ mỗi ngày', 'Giờ học đã đặt'],
+           ['Đi năm bước bắt đầu', 'bat-dau', 2, 'Đúng thứ tự, không nhảy bước', 'Năm bước đã xong'],
+           ['Xem bảng công việc của tôi', 'bang-viec', 2, 'Biết việc nào sắp đến hạn', 'Không việc trễ mà không biết'],
+           ['Chọn một đầu việc vừa sức', 'danh-muc-viec', 2, 'Biết đóng việc bằng bằng chứng gì', 'Đã tích nhận đầu việc'],
+           ['Ghé Ngôi nhà thịnh vượng', 'ngoi-nha', 1, 'Biết mình đang ở phòng nào', 'Đã xem ngôi nhà'],
+           ['Xem mình đã mở tới đâu', 'pham-vi', 1, 'Biết phần nào còn khoá', 'Đã xem phạm vi'],
+           ['Mở một ô trên bàn cờ tổng', 'ban-co-tong', 1, 'Mở đúng ô đang học', 'Đã mở một ô'],
+           ['Đọc GITA 365 là gì', 'gioi-thieu', 1, 'Kể lại được bằng lời mình', 'Nói được một câu về GITA']
+      ] },
+    { key:'hieu-minh', so:'02', ic:'compass', c:'--t2', cum:'B', ten:'Bản đồ cá nhân & điểm mạnh',
+      man:'ban-do-ca-nhan',
+      mo:'Hiểu mình: lý do học, tài năng, chỗ hay rơi — rồi vòng lại sửa lộ trình.',
+      nv:[ ['Điền đủ bản đồ cá nhân 11 ô', 'ban-do-ca-nhan', 3, 'Viết thật, không chép mẫu', 'Đủ 11 ô'],
+           ['Viết lý do vì sao mình học', 'ban-do-ca-nhan', 2, 'Một câu bằng lời mình', 'Câu "tại sao" đã lưu'],
+           ['Gọi tên tài năng mình đang có', 'ban-do-ca-nhan', 2, 'Có ví dụ việc đã làm', 'Ghi ba tài năng kèm ví dụ'],
+           ['Sửa lộ trình sau khi hiểu mình hơn', 'ban-do-ca-nhan', 2, 'Sửa có lý do ghi rõ', 'Bản đồ có ngày cập nhật'],
+           ['Chuyển một nỗi sợ thành mong muốn', 'chuyen-hoa', 2, 'Một cặp sợ – mong', 'Đã viết một cặp'],
+           ['Xem Bản Đồ Gia Đình Thịnh Vượng', 'ban-do', 1, 'Biết mình góp phần nào cho nhà', 'Chọn được ô mình góp'],
+           ['Đọc bốn miền G – I – T – A về bản thân', 'gita-map', 1, 'Biết chỗ vướng nằm ở miền nào', 'Chọn một miền để tập'],
+           ['Gọi tên vòng luẩn quẩn của mình', 'sau-vung', 2, 'Nói thật, không tự trách', 'Đã chọn chỗ hay rơi và đường về'],
+           ['Chọn nhân vật đại diện', 'nhan-vat', 1, 'Ảnh không rời máy', 'Nhân vật đã có trên con đường'],
+           ['Xem cây giá trị của mình', 'cay-vip', 1, 'Biết mình đang ở tầng nào', 'Đã gọi tên tầng']
+      ] },
+    { key:'lo-trinh-hoc', so:'03', ic:'map', c:'--t3', cum:'B', ten:'Lộ trình học T1 → T5',
+      man:'lo-trinh',
+      mo:'Thấy toàn bộ đường học năm tầng, biết chặng đang đi và mốc kế tiếp.',
+      nv:[ ['Xem lộ trình T1 → T5 của tôi', 'lo-trinh', 3, 'Biết tầng đang học', 'Đã gọi tên tầng hiện tại'],
+           ['Đọc hành trình 12 chặng của học viên', 'hanh-trinh-12', 2, 'Biết chặng kế tiếp', 'Đã đánh dấu chặng hiện tại'],
+           ['Xem mốc gần nhất trong mười điểm về đích', 'kpi-100', 2, 'Mốc có tiêu chí đo được', 'Biết tiêu chí của mốc gần nhất'],
+           ['Đọc con đường năm tầng', 'hanh-trinh-5-tang', 1, 'Hiểu năm thử thách', 'Chọn thử thách đang gặp'],
+           ['Đi một ô bàn cờ hành trình mỗi ngày', 'ban-co', 2, 'Một ngày một ô', 'Ô hôm nay đã đi'],
+           ['Bước tiếp trên con đường nhiệm vụ', 'con-duong', 2, 'Mốc mở bằng việc thật', 'Mốc mới đã mở'],
+           ['Trả lời ba câu bức tranh hành trình', 'buc-tranh', 1, 'Ba câu mỗi tối', 'Có ba câu trả lời'],
+           ['Xem hành trình của mình cùng cha mẹ', 'hanh-trinh-con', 1, 'Biết cha mẹ đang theo chặng nào', 'Đã xem cùng cha mẹ'],
+           ['Cập nhật mùa học hiện tại', 'mua-doi', 1, 'Mùa khó thì hạ chuẩn, không bỏ', 'Mùa học đã cập nhật'],
+           ['Hỏi trợ lý khi chưa hiểu lộ trình', 'tro-ly', 1, 'Hỏi ngắn, xem nguồn trích', 'Có câu trả lời kèm nguồn']
+      ] },
+    { key:'nhiem-vu', so:'04', ic:'target', c:'--t4', cum:'A', ten:'Nhiệm vụ & nhật ký 365',
+      man:'nhiem-vu',
+      mo:'Nhận nhiệm vụ, làm đến nơi và ghi nhật ký 365 ngày để thấy mình lớn lên.',
+      nv:[ ['Nhận nhiệm vụ tuần này', 'nhiem-vu', 3, 'Có ngày xong rõ', 'Nhiệm vụ tuần đã nhận'],
+           ['Làm nhiệm vụ đủ ba nấc Đúng – Đủ – Sâu', 'vong-nhac', 3, 'Xem không phải là làm', 'Tự chấm được nấc đạt'],
+           ['Chia nhiệm vụ lớn thành bước nhỏ', 'nhiem-vu', 2, 'Mỗi bước làm được trong một buổi', 'Danh sách bước đã ghi'],
+           ['Ghi nhật ký 365 sau khi làm', 'nhiem-vu', 2, 'Ghi ngay trong ngày', 'Có dòng nhật ký hôm nay'],
+           ['Đi một việc trên mười bánh đà', 'banh-da', 2, 'Một vòng một việc', 'Việc trong vòng đã mở'],
+           ['Xem đồng hồ thời gian của nhiệm vụ', 'do-thoi-gian', 2, 'Biết việc nào sắp trễ', 'Đã xem ngưỡng thời gian'],
+           ['Ghi việc dở và hẹn ngày làm tiếp', 'bang-viec', 1, 'Không bỏ dở quá một tuần', 'Việc dở có ngày hẹn'],
+           ['Đọc chuyện truyền cảm hứng của nhiệm vụ', 'chuyen-cam-hung', 1, 'Một chuyện mỗi nhiệm vụ', 'Đã đọc chuyện của nhiệm vụ'],
+           ['Viết sổ nhật ký tuần', 'nhat-ky-vi-tri', 2, 'Vài dòng cuối tuần', 'Bài tuần đã lưu'],
+           ['Mở tài liệu quà tặng khi bị mắc', 'kho-qua', 1, 'Mở đúng chỗ đang mắc', 'Đã đọc một tài liệu hợp']
+      ] },
+    { key:'bai-test', so:'05', ic:'search', c:'--t5', cum:'B', ten:'Bài test & cuộc thi viết',
+      man:'bo-test',
+      mo:'Làm bài test để biết mình đang ở đâu — trả lời thật thì kết quả mới có ích; viết để thấy mình đi xa.',
+      nv:[ ['Làm bộ test nhận diện đầu vào', 'bo-test', 3, 'Trả lời thật, không đoán', 'Kết quả test đã lưu'],
+           ['Đọc kết quả bốn nhóm của mình', 'bo-test', 2, 'Hiểu mình thuộc nhóm nào', 'Đã ghi nhóm của mình'],
+           ['Chọn một điểm yếu để tập sau test', 'bo-test', 2, 'Một điểm, có việc tập cụ thể', 'Điểm tập đã ghi'],
+           ['Làm lại test sau chu kỳ 90 ngày', 'bo-test', 2, 'Cùng bộ test để so', 'Có hai kết quả để so'],
+           ['So kết quả với lần trước bằng lời', 'tien-bo', 2, 'Nói điều đã khác, không chỉ số', 'Ghi một điều đã khác'],
+           ['Hỏi người đồng hành về kết quả test', 'dong-hanh', 2, 'Hỏi điều chưa rõ', 'Có lời giải thích'],
+           ['Thi viết 7 ngày', 'thi-viet', 1, 'Viết đủ 7 ngày', 'Bài 7 ngày đã nộp'],
+           ['Thi viết 21 ngày', 'thi-viet', 2, 'Viết đủ 21 ngày', 'Bài 21 ngày đã nộp'],
+           ['Hướng tới bài viết mốc 90 – 365', 'thi-viet', 2, 'Bài đạt mốc nhận học bổng 10%', 'Đã nộp bài mốc 90'],
+           ['Soát bài theo ba nấc trước khi nộp', 'vong-nhac', 1, 'Đúng, đủ, sâu', 'Bài đã tự soát']
+      ] },
+    { key:'khoa-sat-hach', so:'06', ic:'book', c:'--t1', cum:'B', ten:'Khoá đào tạo & sát hạch',
+      man:'khoa-dao-tao',
+      mo:'Học trọn từng khoá, ôn bằng thư viện và vào sát hạch khi đã sẵn sàng.',
+      nv:[ ['Học một bài trong khoá của tôi', 'khoa-dao-tao', 3, 'Học trọn, không lướt', 'Bài đã đánh dấu xong'],
+           ['Hoàn thành trọn một khoá học', 'khoa-dao-tao', 3, 'Đủ mọi bài và bài tập', 'Khoá có dấu hoàn thành'],
+           ['Ôn bài trước sát hạch', 'thu-vien', 2, 'Ôn đúng phần sẽ thi', 'Ghi chú ôn đã có'],
+           ['Vào sát hạch năng lực', 'sat-hach', 3, 'Đủ điều kiện mới vào thi', 'Kết quả sát hạch đã lưu'],
+           ['Xem lại câu sai sau sát hạch', 'sat-hach', 2, 'Hiểu vì sao sai', 'Ghi lại ba câu sai'],
+           ['Nghe bài giảng bằng giọng đọc', 'giong-doc', 1, 'Nghe trọn một bài', 'Bài nghe đã xong'],
+           ['Đọc một chương Nôi nuôi dưỡng nhân tài', 'noi-nhan-tai', 1, 'Một chương, đọc chậm', 'Ghi một ý mang về'],
+           ['Tìm tài liệu trong thư viện', 'thu-vien', 1, 'Tìm theo việc đang học', 'Đã lưu một tài liệu'],
+           ['Hỏi trợ lý GITA về bài học', 'tro-ly', 1, 'Câu trả lời có nguồn', 'Đã hiểu điều còn vướng'],
+           ['Đọc người đi cùng phải làm được gì', 'coach-5-tang', 1, 'Biết điều nên mong ở người dạy', 'Đã đọc năng lực tầng mình']
+      ] },
+    { key:'thoi-quen-chu-ky', so:'07', ic:'ritual', c:'--t2', cum:'A', ten:'Thói quen & chu kỳ học',
+      man:'chu-ky',
+      mo:'Giữ nhịp học bằng chu kỳ 21 / 90 ngày — chậm mà đều, có cổng nghiệm thu.',
+      nv:[ ['Bắt đầu chu kỳ 21 ngày', 'chu-ky', 3, 'Một thói quen học, 21 ngày', 'Ngày 1 đã tick'],
+           ['Tick đều mỗi ngày trong chu kỳ', 'chu-ky', 2, 'Lỡ một ngày thì làm lại ngay', 'Chuỗi ngày còn giữ'],
+           ['Qua cổng nghiệm thu cuối chu kỳ', 'chu-ky', 3, 'Có bằng chứng cho từng chặng', 'Cổng nghiệm thu đã qua'],
+           ['Lập kế hoạch chu kỳ 90 ngày', 'chu-ky', 2, 'Mục tiêu đo được', 'Kế hoạch 90 ngày đã lưu'],
+           ['Nhìn lại theo PDCA sau mỗi chặng', 'chu-ky', 2, 'Làm – xem – sửa rõ ràng', 'Bản nhìn lại đã viết'],
+           ['Giữ giờ học và giờ nghỉ cân bằng', 'do-thoi-gian', 1, 'Không thức khuya để bù', 'Không ngày nào quá giờ'],
+           ['Hạ chuẩn khi mùa thi bận', 'mua-doi', 1, 'Giữ việc nhỏ nhất', 'Chuỗi vẫn được giữ'],
+           ['Ghi một điều biết ơn mỗi tối', 'nhat-ky-vi-tri', 1, 'Một câu mỗi tối', 'Có câu biết ơn hôm nay'],
+           ['Đọc chuyện người thật về sự kiên trì', 'chuyen-the-gioi', 1, 'Một chuyện mỗi tuần', 'Ghi một ý học được'],
+           ['Tự chấm thói quen cuối tuần', 'kpi-toi', 2, 'Chấm thật, không tô đẹp', 'Điểm tuần đã ghi']
+      ] },
+    { key:'minh-chung', so:'08', ic:'check', c:'--t3', cum:'C', ten:'Minh chứng & tiến bộ',
+      man:'minh-chung',
+      mo:'Nộp bằng chứng việc đã làm và nhìn thấy mình khác đi từ tuần này sang tuần sau.',
+      nv:[ ['Nộp minh chứng nhiệm vụ', 'minh-chung', 3, 'Ảnh hoặc báo cáo đúng việc', 'Minh chứng đã nộp'],
+           ['Bổ sung minh chứng khi được hỏi lại', 'minh-chung', 2, 'Bổ sung trong 3 ngày', 'Minh chứng được xác nhận'],
+           ['Chụp lại sản phẩm mình làm ra', 'minh-chung', 2, 'Sản phẩm thật, do mình làm', 'Ảnh sản phẩm đã lưu'],
+           ['Xem mình đã đổi gì tuần này', 'tien-bo', 3, 'So với tuần trước bằng lời', 'Ghi một điều đã đổi'],
+           ['Kể với cha mẹ một điều đã tiến bộ', 'tien-bo', 1, 'Kể bằng lời mình', 'Cha mẹ đã nghe'],
+           ['Xem KPI của tôi', 'kpi-toi', 2, 'Đọc số, không tự trách', 'Biết chỉ số đang thấp'],
+           ['Ghi khoảnh khắc WOW của mình', 'wow', 1, 'Ghi trong ngày', 'Một khoảnh khắc đã lưu'],
+           ['Lưu bài viết mình tự hào', 'nhat-ky-vi-tri', 1, 'Chọn bài mình tự hào nhất', 'Bài đã lưu'],
+           ['Viết ba câu đánh giá GITA 365', 'danh-gia', 2, 'Phần chưa tốt nhiều hơn phần khen', 'Ba câu đã gửi'],
+           ['Xem hệ này đang nợ gì mình', 'hansei-sach', 1, 'Biết câu hệ chưa trả lời', 'Đã đọc danh sách']
+      ] },
+    { key:'phan-thuong', so:'09', ic:'crown', c:'--t4', cum:'C', ten:'Phần thưởng & vinh danh',
+      man:'phan-thuong',
+      mo:'Nhận ghi nhận đúng việc đã làm, lên cấp, đổi điểm lấy quà và kể chuyện tốt.',
+      nv:[ ['Xem cấp độ hiện tại của tôi', 'phan-thuong', 2, 'Biết còn bao nhiêu để lên cấp', 'Đã xem cấp'],
+           ['Lên cấp tiếp theo bằng bằng chứng', 'phan-thuong', 3, 'Đủ tiêu chí cấp, có minh chứng', 'Cấp mới đã mở'],
+           ['Đặt mục tiêu cấp cho quý tới', 'phan-thuong', 2, 'Mục tiêu có tiêu chí đo', 'Mục tiêu cấp đã lưu'],
+           ['Nhận huy hiệu từ việc thật', 'phan-thuong', 2, 'Huy hiệu gắn việc đã làm', 'Huy hiệu mới đã nhận'],
+           ['Đổi điểm lấy quà', 'phan-thuong', 1, 'Đổi khi đủ điểm thật', 'Quà đã chọn'],
+           ['Xem điểm thưởng và điểm trừ của tuần', 'do-thoi-gian', 2, 'Hiểu vì sao được, vì sao trừ', 'Đã xem bảng điểm tuần'],
+           ['Chọn quà tài liệu cho chặng đang học', 'kho-qua', 1, 'Đúng chặng mình đang học', 'Tài liệu quà đã mở'],
+           ['Gửi chuyện để được vinh danh', 'vinh-danh', 1, 'Chuyện thật, có người xác nhận', 'Câu chuyện đã gửi'],
+           ['Xem kỳ tích năm của bạn bè', 'vinh-danh', 1, 'Học từ người đi trước', 'Ghi một điều muốn thử'],
+           ['Cảm ơn người giúp mình lên cấp', 've-tinh', 1, 'Một lời cảm ơn cụ thể', 'Lời cảm ơn đã gửi']
+      ] },
+    { key:'ket-noi-an-toan', so:'10', ic:'users', c:'--t5', cum:'C', ten:'Kết nối, an toàn & quyền của tôi',
+      man:'ket-noi',
+      mo:'Học cùng bạn bè và người đồng hành, dự sự kiện, giữ tài khoản an toàn và biết quyền của mình.',
+      nv:[ ['Dự một sự kiện hoặc lửa trại', 'su-kien', 2, 'Chọn buổi hợp lịch học', 'Đã có mặt ở sự kiện'],
+           ['Nhắn người đồng hành khi bị vướng', 'dong-hanh', 2, 'Nói rõ đang vướng chỗ nào', 'Đã nhận phản hồi'],
+           ['Ghi tên bạn học tuyệt vời quanh mình', 've-tinh', 1, 'Ba người mỗi quý', 'Vệ tinh có tên mới'],
+           ['Nối kênh nhận tin học tập', 'ket-noi', 1, 'Chỉ nối kênh mình dùng', 'Kênh đã nối'],
+           ['Đọc tin cộng đồng học viên', 'bang-tin', 1, 'Mình không học một mình', 'Đã đọc một chuyện'],
+           ['Đọc năm lời hứa của người đi cùng', 'doi-dong-hanh', 1, 'Biết điều mình được hứa', 'Đã đọc năm lời hứa'],
+           ['Bật khoá khuôn mặt', 'khoa-mat', 2, 'Khuôn mặt không rời máy', 'Khoá đã bật'],
+           ['Đọc bảy quyền của mình', 'phap-ly', 1, 'Biết quyền xoá, im lặng, khiếu nại', 'Đã đọc bảy quyền'],
+           ['Đọc sáu điều không bao giờ bán', 'tien-rung', 1, 'Biết dữ liệu mình được giữ', 'Đã đọc lời hứa dữ liệu'],
+           ['Xem biên nhận học phí đã đóng', 'thanh-toan', 1, 'Chỉ chuyển qua QR hệ thống xác thực', 'Biên nhận đã lưu']
+      ] }
+  ]
+};
+
+/* ══════════════ R15 · ĐẠI SỨ / CỘNG TÁC VIÊN ══════════════ */
+G.DK_VAI.daisu = {
+  vai:['R15'], ten:'Đại sứ / Cộng tác viên', ic:'share', spec:'nghe-daisu',
+  lead:'Kể câu chuyện GITA bằng trải nghiệm thật, giới thiệu đúng người cho Tư vấn và giữ quan hệ sau đó. Đại sứ không tư vấn, không hứa kết quả; hoa hồng chỉ để xem và soát, không thương lượng.',
+  cum:{ A:{t:'NHỊP GIỚI THIỆU HẰNG NGÀY', s:'Học nghề · danh sách người quen · kể chuyện thật'},
+        B:{t:'KẾT NỐI & CHĂM SAU', s:'Chuyển Tư vấn · theo nhà vào · lan toả'},
+        C:{t:'GHI NHẬN, UY TÍN & THĂNG CẤP', s:'Hoa hồng minh bạch · KPI · ranh giới · năm cấp'} },
+  loiTat:[ ['dai-su','Đại sứ GITA 365','share'], ['hoa-hong','Hoa hồng của tôi','chart'],
+           ['kpi-toi','KPI của tôi','pulse'], ['nghe-daisu','Nghề Đại sứ','crown'] ],
+  areas:[
+    { key:'hoc-nghe', so:'01', ic:'book', c:'--t1', cum:'A', ten:'Học nghề & câu chuyện GITA',
+      man:'dai-su',
+      mo:'Hiểu GITA đủ sâu để kể bằng lời mình, nắm đúng gói và ưu đãi trước khi nói với ai.',
+      nv:[ 0, 29, 22,
+           ['Đọc GITA 365 là gì tới khi kể lại được', 'gioi-thieu', 3, 'Kể trong 2 phút, không đọc giấy', 'Đã kể thử cho một người nhà'],
+           ['Học 20 nhiệm vụ và 13 quy tắc đại sứ', 'dai-su', 4, 'Nói lại được 13 quy tắc', 'Đã tick đọc đủ quy tắc'],
+           ['Đọc năm điều tư vấn không được làm', 'so-tay-tu-van', 3, 'Biết lằn ranh mình không bước qua', 'Ghi 2 điều mình dễ phạm'],
+           ['Ôn sáu ranh giới trước khi đi giới thiệu', 'ranh-gioi', 3, 'Không hứa, không ép, không chẩn đoán', 'Đã ôn trong tuần'],
+           ['Dùng đúng logo, màu, chữ GITA', 'nhan-dien', 2, 'Không tự chế hình ảnh GITA', 'Tư liệu đúng bộ nhận diện'],
+           ['Học trọn khoá đào tạo đại sứ', 'khoa-dao-tao', 3, 'Học đủ bài, làm bài tập', 'Khoá có dấu hoàn thành'],
+           ['Nghe cách người thật kể chuyện', 'chuyen-the-gioi', 1, 'Học cách kể, không chép lời', 'Ghi một cách mở chuyện']
+      ] },
+    { key:'danh-sach-ma', so:'02', ic:'list', c:'--t2', cum:'A', ten:'Danh sách người quen & mã liên kết',
+      man:'ve-tinh',
+      mo:'Giữ mã liên kết luôn đúng và một danh sách người quen có thứ tự ưu tiên, tôn trọng từng người.',
+      nv:[ 1, 2,
+           ['Kiểm mã liên kết còn hiệu lực', 'dai-su', 3, 'Mã đúng tên mình, chưa hết hạn', 'Mã đã thử trước khi gửi'],
+           ['Ghi người quen vào vệ tinh của tôi', 've-tinh', 2, 'Chỉ ghi người mình thật sự quen', 'Vệ tinh có tên mới'],
+           ['Xếp người quen theo mức gần gũi', 've-tinh', 2, 'Thân trước, xa sau', 'Danh sách có ba mức'],
+           ['Ghi điều người quen đang bận tâm', 've-tinh', 2, 'Ghi điều họ tự kể, không suy đoán', 'Mỗi người một dòng ghi'],
+           ['Gỡ tên người không muốn được nhắc', 've-tinh', 3, 'Họ từ chối thì dừng hẳn', 'Người đó đã rời danh sách'],
+           ['Đọc hành trình 12 chặng để kể đúng', 'hanh-trinh-12', 1, 'Biết nhà mới sẽ đi qua gì', 'Kể được ba chặng đầu'],
+           ['Nắm đường vào sáu bước của nhà mới', 'tham-gia', 2, 'Biết nhà mới đi bước nào sau mình', 'Nói được sáu bước'],
+           ['Giữ danh sách người quen riêng tư', 'khoa-mat', 3, 'Máy có khoá, không chia danh sách', 'Khoá khuôn mặt đã bật']
+      ] },
+    { key:'tiep-can-ke-chuyen', so:'03', ic:'chat', c:'--t3', cum:'A', ten:'Tiếp cận & kể chuyện thật',
+      man:'chuyen-cam-hung',
+      mo:'Mở cuộc trò chuyện đúng lúc, kể trải nghiệm thật, lắng nghe trước khi gửi gì.',
+      nv:[ 3, 4, 5, 6, 23,
+           ['Viết sẵn câu chuyện 2 phút của mình', 'nhat-ky-vi-tri', 3, 'Có trước – sau, không con số hứa hẹn', 'Bản kể 2 phút đã lưu'],
+           ['Dừng khi người nghe chưa sẵn sàng', 'dai-su', 3, 'Không nhắc lại quá một lần', 'Ghi "chưa sẵn sàng", hẹn lại sau'],
+           ['Chọn chuyện hợp với người nghe', 'chuyen-cam-hung', 2, 'Đúng mạch họ quan tâm', 'Đã chọn một chuyện'],
+           ['Gửi bản nghe cho người bận', 'giong-doc', 1, 'Bản nghe đúng bản quyền giọng', 'Đã gửi bản nghe'],
+           ['Mời xem đánh giá thật của các nhà', 'danh-gia', 2, 'Đưa cả phần chưa tốt', 'Người nghe đã xem đánh giá']
+      ] },
+    { key:'ket-noi-tu-van', so:'04', ic:'arrow', c:'--t4', cum:'B', ten:'Kết nối với Tư vấn',
+      man:'dai-su',
+      mo:'Chuyển người quan tâm sang Tư vấn đúng lúc, với kỳ vọng đúng — đại sứ dẫn đường, không tư vấn thay.',
+      nv:[ 7, 8, 9, 24,
+           ['Xin phép trước khi chuyển số liên lạc', 'dai-su', 4, 'Có lời đồng ý rõ ràng', 'Lời đồng ý đã ghi lại'],
+           ['Chuyển câu hỏi chuyên môn sang Tư vấn', 'dai-su', 4, 'Không tự trả lời về con hay lộ trình', 'Câu hỏi đã chuyển kèm ngữ cảnh'],
+           ['Ghi tóm tắt nhu cầu khi chuyển', 'dai-su', 3, 'Chỉ điều người đó đồng ý chia', 'Tóm tắt có trong phiếu giới thiệu'],
+           ['Giới thiệu năm tầng như con đường, không hứa tầng', 'hanh-trinh-5-tang', 3, 'Nói con đường, không nói kết quả', 'Người nghe hiểu đây là hành trình'],
+           ['Để Tư vấn nói chuyện học phí', 'so-tay-tu-van', 3, 'Câu hỏi tiền chuyển đúng người', 'Không báo giá nào do đại sứ đưa'],
+           ['Kể lời hứa dữ liệu của GITA', 'tien-rung', 2, 'Nói rõ dữ liệu nhà không bị bán', 'Người nghe biết lời hứa dữ liệu']
+      ] },
+    { key:'theo-doi-nha-vao', so:'05', ic:'eye', c:'--t5', cum:'B', ten:'Theo dõi nhà vào',
+      man:'dai-su',
+      mo:'Biết nhà mình giới thiệu đang ở bước nào, gỡ vướng đúng nơi và xác nhận nhà vào bằng bằng chứng.',
+      nv:[ 10, 11, 12, 25,
+           ['Cập nhật bước của nhà trong đường vào', 'tham-gia', 2, 'Đúng một trong sáu bước', 'Bước đã cập nhật'],
+           ['Hỏi thăm sau buổi tư vấn đầu', 'dai-su', 2, 'Hỏi cảm nhận, không hỏi chuyện riêng', 'Đã có phản hồi'],
+           ['Chuyển phàn nàn về đúng bộ phận', 'dai-su', 3, 'Không tự hứa xử lý', 'Phàn nàn có người nhận'],
+           ['Để nhà tự quyết, không thúc', 'phap-ly', 3, 'Tôn trọng quyền im lặng và đi', 'Không nhắc quá lịch đã hẹn'],
+           ['Ghi nhà dừng lại và lý do', 'dai-su', 2, 'Lý do do nhà nói, không đoán', 'Danh sách có lý do dừng'],
+           ['Ghi mốc nhà vào trong nhật ký', 'nhat-ky-vi-tri', 2, 'Có ngày và bằng chứng', 'Mốc đã ghi']
+      ] },
+    { key:'cham-sau-lan-toa', so:'06', ic:'heart', c:'--t1', cum:'B', ten:'Chăm sau & lan toả',
+      man:'su-kien',
+      mo:'Giữ quan hệ sau khi nhà vào, chúc mừng đúng khoảnh khắc và chỉ xin giới thiệu tiếp khi họ hài lòng rõ.',
+      nv:[ 13, 14, 15, 16, 26,
+           ['Xem chuỗi WOW để biết lúc nên hỏi thăm', 'wow', 1, 'Ghé đúng lúc, không làm phiền', 'Đã hẹn một lần hỏi thăm'],
+           ['Mời nhà đã vào kể chuyện của họ', 'bang-tin', 2, 'Họ đồng ý mới đăng', 'Chuyện có lời đồng ý'],
+           ['Kể chuyện vinh danh của nhà đã vào', 'vinh-danh', 2, 'Được nhà cho phép kể', 'Chuyện đã được ghi nhận'],
+           ['Đi cùng nhà mới đến buổi lửa trại đầu', 'su-kien', 2, 'Để nhà thấy có người quen', 'Nhà mới đã dự buổi đầu'],
+           ['Không xin giới thiệu khi nhà đang khó', 'mua-doi', 3, 'Mùa khó thì chỉ hỏi thăm', 'Không lời nhờ nào trong mùa khó']
+      ] },
+    { key:'hoa-hong-so', so:'07', ic:'chart', c:'--t2', cum:'C', ten:'Hoa hồng & sổ ghi minh bạch',
+      man:'hoa-hong',
+      mo:'Xem và soát hoa hồng theo cơ chế công bố — trần 10%, không thương lượng, không nhận ngoài sổ.',
+      nv:[ 17, 19,
+           ['Đọc cơ chế tài chính bốn cấp', 'hoa-hong', 3, 'Hiểu trần 10% và cách tính', 'Nói lại được cách tính'],
+           ['Xem hoa hồng tháng này', 'hoa-hong', 3, 'Chỉ xem, không đề nghị đổi', 'Đã xem số tháng'],
+           ['Đối chiếu nhà vào với dòng hoa hồng', 'hoa-hong', 3, 'Mỗi nhà vào có một dòng', 'Không dòng nào thiếu'],
+           ['Báo lệch hoa hồng qua kênh chính thức', 'hoa-hong', 3, 'Báo có bằng chứng, không mặc cả', 'Báo lệch có mã theo dõi'],
+           ['Từ chối nhận tiền ngoài sổ', 'hoa-hong', 5, 'Mọi khoản đi qua hệ thống', 'Không khoản nào ngoài sổ'],
+           ['Không giảm giá bằng hoa hồng của mình', 'hoa-hong', 4, 'Không chia hoa hồng cho người được giới thiệu', 'Không lời hứa giảm giá riêng'],
+           ['Lưu chứng từ nhận hoa hồng', 'hoa-hong', 2, 'Mỗi kỳ một chứng từ', 'Chứng từ đã lưu'],
+           ['Xem thời gian · thưởng · phạt của đại sứ', 'do-thoi-gian', 1, 'Biết ngưỡng chuẩn hoàn thành', 'Đã xem ngưỡng']
+      ] },
+    { key:'kpi-nhat-ky', so:'08', ic:'pulse', c:'--t3', cum:'C', ten:'KPI, nhật ký & tự soi',
+      man:'kpi-toi',
+      mo:'Chốt ngày, ghi nhật ký giới thiệu và tự soi cách làm để lan toả tốt hơn mỗi tuần.',
+      nv:[ 18, 20, 21, 27, 28,
+           ['Xem KPI tuần: người được chuyển và nhà vào', 'kpi-toi', 3, 'Đọc cả số nhà dừng lại', 'Ghi một điều rút ra'],
+           ['Đặt mục tiêu theo chất, không theo số', 'kpi-toi', 2, 'Ưu tiên nhà vào thật và ở lại', 'Mục tiêu tuần đã ghi'],
+           ['Xem bảng công việc của tôi', 'bang-viec', 2, 'Không việc hẹn nào quá hạn', 'Việc hẹn có trạng thái'],
+           ['Nhận đầu việc đại sứ trong danh mục', 'danh-muc-viec', 2, 'Biết đóng bằng bằng chứng gì', 'Đã tích nhận đầu việc'],
+           ['Đọc góp ý về cách mình giới thiệu', 'danh-gia', 3, 'Nghe phần chưa tốt trước', 'Ghi một điều cần sửa']
+      ] },
+    { key:'uy-tin-ranh-gioi', so:'09', ic:'shield', c:'--t4', cum:'C', ten:'Uy tín, ranh giới & quyền của nhà',
+      man:'ranh-gioi',
+      mo:'Giữ uy tín đại sứ: minh bạch vai mình, không tư vấn, không hứa kết quả, giữ kín chuyện người quen.',
+      nv:[ ['Nói rõ mình là đại sứ có hoa hồng', 'dai-su', 4, 'Minh bạch ngay từ câu đầu', 'Người nghe biết vai của mình'],
+           ['Không hứa kết quả cho con hay cho nhà', 'ranh-gioi', 5, 'Không câu "chắc chắn", không con số', 'Không lời hứa nào bị phản ánh'],
+           ['Không chẩn đoán hay khuyên chuyện nhà người khác', 'ranh-gioi', 5, 'Lắng nghe rồi chuyển Tư vấn', 'Không buổi tư vấn nào do mình làm'],
+           ['Giữ kín điều người quen đã kể', 'ranh-gioi', 4, 'Không kể lại cho người khác', 'Không phàn nàn về lộ chuyện'],
+           ['Đăng bài không dùng ảnh nhà khác', 'nhan-dien', 3, 'Chỉ dùng ảnh có đồng ý', 'Bài đăng không có ảnh lạ'],
+           ['Đọc bảy quyền của nhà mình', 'phap-ly', 2, 'Biết quyền xoá, đi, khiếu nại', 'Đã đọc bảy quyền'],
+           ['Kể đúng năm lời hứa của người đi cùng', 'doi-dong-hanh', 2, 'Kể đúng lời hứa, không thêm', 'Lời kể khớp năm lời hứa'],
+           ['Kể cả điều hệ còn đang nợ', 'hansei-sach', 2, 'Không giấu điều hệ chưa làm được', 'Người nghe biết điều hệ còn nợ'],
+           ['Đọc năm điều không ai được sửa', 'bien-nien', 1, 'Hiểu điều GITA giữ cố định', 'Đã đọc hiến pháp một trang'],
+           ['Kể đúng khi nào hệ xong việc với một nhà', 'giu-lua', 1, 'Không kể GITA như gói trọn đời', 'Kể đúng điều kiện xong']
+      ] },
+    { key:'thang-cap', so:'10', ic:'crown', c:'--t5', cum:'C', ten:'Thăng cấp Đại sứ',
+      man:'nghe-daisu',
+      mo:'Đi năm cấp Đại sứ bằng nhà vào thật có bằng chứng và uy tín được giữ.',
+      nv:[ ['Cấp 1 · Đại sứ Tập sự: nhận mã và hiểu GITA', 'nghe-daisu', 3, 'Qua bài đọc nền, có mã liên kết', 'Cấp Tập sự đã mở'],
+           ['Cấp 2 · Đại sứ: ≥3 nhà vào thật', 'nghe-daisu', 4, 'Mỗi nhà có bằng chứng vào', 'Hồ sơ 3 nhà được xác nhận'],
+           ['Cấp 3 · Đại sứ Vàng: ≥10 nhà vào, giữ uy tín', 'nghe-daisu', 4, 'Không phản ánh về lời hứa sai', 'Hồ sơ Vàng được duyệt'],
+           ['Cấp 4 · Đại sứ Kim Cương: nhà giới thiệu nhà', 'nghe-daisu', 3, 'Mạng lưới có lớp giới thiệu thứ hai', 'Mạng lưới được xác nhận'],
+           ['Cấp 5 · Đại sứ Danh dự: hình mẫu cộng đồng', 'nghe-daisu', 3, 'Lan toả bền nhiều năm', 'Được vinh danh Danh dự'],
+           ['Xem điều kiện cấp kế tiếp trong trang Đại sứ', 'dai-su', 2, 'Biết điều kiện cấp kế tiếp', 'Đã ghi điều còn thiếu'],
+           ['Gom bằng chứng nhà vào cho hồ sơ cấp', 'minh-chung', 3, 'Bằng chứng do hệ xác nhận', 'Hồ sơ đủ bằng chứng'],
+           ['Thi sát hạch năng lực đại sứ', 'sat-hach', 3, 'Đạt điểm chuẩn của cấp', 'Kết quả lưu hồ sơ'],
+           ['Viết bài thi về điều mình đã thấy', 'thi-viet', 1, 'Viết điều thật mình chứng kiến', 'Bài đã nộp'],
+           ['Xem vinh danh đại sứ của năm', 'vinh-danh', 1, 'Học từ người đi trước', 'Ghi một điều muốn thử']
+      ] }
+  ]
+};
+
+})();
+
+/* ═════════ src/dk-vai.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — BẢNG ĐIỀU KHIỂN THEO VAI · 10 MÀN × 10 NGHIỆP VỤ (R04–R15)
+
+   Cùng mẫu với Bảng điều khiển vận hành (R01–R02) và Bảng điều khiển
+   Giám đốc (R03), nhưng một bộ máy chung cho mười hai vai còn lại. Dữ liệu
+   từng vai nằm ở G.DK_VAI (data-dk-vai-*.js):
+
+     G.DK_VAI[key] = { vai:['R07'], ten, ic, c, spec:'nghe-coach', lead,
+       cum:{A:{t,s},B:…,C:…},
+       areas:[ {key, so, ic, c, cum, ten, man, mo, nv:[…10 mục]} ×10 ] }
+
+   Mỗi mục nghiệp vụ là MỘT trong hai dạng:
+     · số i  → đầu việc thứ i trong chuẩn nghề của vai (G.NGHE_SPEC /
+               G.NGHE_DATA) — lấy nguyên trọng số, chuẩn đạt, cách làm,
+               màn làm và dấu hiệu xong, không chép lại.
+     · [tên, màn, trọngSố, chuẩnĐạt, dấuHiệuXong] — nghiệp vụ riêng của màn.
+
+   View: dk-<key> (bảng điều khiển của vai) · dk-<key>-<area> (màn chi
+   tiết) · dk-cua-toi (bảng của vai đang đăng nhập) · dk-cac-vai (giám sát
+   15 vai, dh_toan_he). Ai xem được: đúng vai ấy · qt_trang xem mọi vai ·
+   dh_toan_he xem để giám sát. Trạng thái dùng chung ô gdNV + G.gdTick (khoá
+   riêng dk-<key>-<area>:<i>). Mỗi nút "Mở" vẫn qua G.allowed. Không đụng
+   máy chủ · giấy phép · mã hoá.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
+(function(){
+  var U = G.U, h = U.h, ic = U.ic;
+  var BANDC = { DO:'#BE0E16', VANG:'#B4720F', XANH:'#0B7350' };
+  var TT = { '':{t:'Chưa',c:'--ink-4'}, dang:{t:'Đang làm',c:'--warn'}, xong:{t:'Đã xong',c:'--ok'} };
+  var CUM_MAC = { A:{t:'VIỆC HẰNG NGÀY', s:'Nhịp làm việc chuẩn của vai'},
+                  B:{t:'CHUYÊN MÔN SÂU', s:'Nghiệp vụ đặc thù và phối hợp'},
+                  C:{t:'PHÁT TRIỂN & CHUẨN NGHỀ', s:'Đo lường · thăng cấp · khung nghề'} };
+
+  function dsVai(){ return G.DK_VAI || {}; }
+  function spec(P){ return P.spec ? ((G.NGHE_SPEC||{})[P.spec] || (G.NGHE_DATA||{})[P.spec] || null) : null; }
+
+  /* Một mục nghiệp vụ → dạng đầy đủ. Đầu việc chuẩn nghề lấy thẳng từ spec. */
+  function mucNV(P, x){
+    if(typeof x === 'number'){
+      var S = spec(P), v = S && S.viec ? S.viec[x] : null;
+      if(!v) return { ten:'(đầu việc '+x+' chưa có trong chuẩn nghề)', v:'', w:1, chuan:'', cach:'', xong:'', goc:false };
+      return { ten:v[1], v:v[5], w:v[2], chuan:v[3], cach:v[4], xong:v[6], goc:true, nhom:(S.nhom&&S.nhom[v[0]])?S.nhom[v[0]].ten:'' };
+    }
+    return { ten:x[0], v:x[1], w:x[2]||2, chuan:x[3]||'', cach:'', xong:x[4]||'', goc:false };
+  }
+  function idNV(P, a, i){ return 'dk-'+P.key+'-'+a.key+':'+i; }
+  function tt(id){ return (G.S.gdNV||{})[id] || ''; }
+  /* Màn đích không có, hoặc vai không được vào (đầu việc chuẩn nghề trỏ màn
+     của vai trên) → về màn chính của mảng. Không bao giờ nút chết. */
+  function dich(m, a){ return (G.manCoThat && G.manCoThat(m.v) && (!G.allowed || G.allowed(m.v))) ? m.v : a.man; }
+  function tenMan(v){ var it = G.navItem ? G.navItem(v) : null; return it ? (G.iname ? G.iname(it) : it.t) : v; }
+  function den(st, w){ return st==='xong' ? 'XANH' : (st==='' && w>=4) ? 'DO' : 'VANG'; }
+
+  function soLieu(P, a){
+    var ds = a.nv.map(function(x){ return mucNV(P,x); });
+    var xong=0, dang=0, cao=0, wXong=0, wTong=0;
+    ds.forEach(function(m,i){
+      var s = tt(idNV(P,a,i)); wTong += m.w;
+      if(s==='xong'){ xong++; wXong += m.w; } else { if(s==='dang') dang++; if(m.w>=4) cao++; }
+    });
+    return { ds:ds, xong:xong, dang:dang, cao:cao, wXong:wXong, wTong:wTong, n:ds.length };
+  }
+
+  /* Ai được xem bảng của vai P: đúng vai · quản trị trang · điều hành toàn hệ. */
+  function duocXem(P){
+    var r = G.S && G.S.roleObj;
+    if(r && P.vai.indexOf(r.id) >= 0) return true;
+    return typeof G.can==='function' && (G.can('qt_trang') || G.can('dh_toan_he'));
+  }
+  function laGiamSat(P){ var r = G.S && G.S.roleObj; return !(r && P.vai.indexOf(r.id) >= 0); }
+  function khoa(P){ return U.lockCard('Bảng điều khiển này dành cho vai '+P.ten+'. Ban điều hành xem được để giám sát. Đăng nhập đúng vai để xem.'); }
+  function nhanSu(P){ return (G.ACCOUNTS||[]).filter(function(a){ return P.vai.indexOf(a.role) >= 0; }).length; }
+
+  function veBang(P, a, L){
+    var coSpec = !!P.spec;
+    var cols = ['#', coSpec?'Nghiệp vụ':'Việc','Màn làm','Trọng số','Chuẩn đạt','Dấu hiệu xong'].concat(coSpec?['Nguồn']:[], ['Trạng thái','Đèn']);
+    var body = L.ds.map(function(m,i){
+      var s = tt(idNV(P,a,i)), d = den(s, m.w);
+      return '<tr><td>'+(i+1)+'</td><td><b>'+h(m.ten)+'</b></td><td class="tiny">'+h(tenMan(dich(m,a)))+'</td>'+
+        '<td class="ta-c">'+m.w+'</td><td class="tiny">'+h(m.chuan||'—')+'</td><td class="tiny">'+h(m.xong||'—')+'</td>'+
+        (coSpec ? '<td class="tiny">'+(m.goc ? 'Chuẩn nghề'+(m.nhom?' · '+h(m.nhom):'') : 'Nghiệp vụ màn')+'</td>' : '')+
+        '<td class="tiny">'+h(TT[s].t)+'</td>'+
+        '<td class="ta-c"><span class="gd-den" style="--m:'+BANDC[d]+'" title="'+h(d)+'"></span></td></tr>';
+    }).join('');
+    return '<div class="gd-wrap"><table class="gd-tb"><thead><tr>'+cols.map(function(c){ return '<th>'+h(c)+'</th>'; }).join('')+
+      '</tr></thead><tbody>'+body+'</tbody></table></div>';
+  }
+
+  function veNV(P, a, L){
+    return '<div class="gd-nvlist">'+ L.ds.map(function(m,i){
+      var id = idNV(P,a,i), s = tt(id), t = TT[s], tgt = dich(m,a);
+      var mo = G.allowed ? G.allowed(tgt) : true;
+      var nut = mo ? '<button class="btn ghost sm gd-open" data-v="'+h(tgt)+'">Mở '+ic('arrow','w-3 h-3')+'</button>'
+                   : '<span class="vh-khoa">'+ic('lock','w-3 h-3')+'khoá</span>';
+      return '<div class="gd-nvr'+(s==='xong'?' done':'')+'">'+
+        '<button class="gd-tick gd-tick-'+(s||'chua')+'" data-gdtick="'+h(id)+'" style="--m:var('+t.c+')" title="Bấm đổi trạng thái">'+
+          (s==='xong'?ic('check','w-3 h-3'):s==='dang'?ic('clock','w-3 h-3'):'')+'</button>'+
+        '<span class="gd-nvi">'+(i+1)+'</span>'+
+        '<span class="gd-nvt">'+h(m.ten)+(m.w>=4?' <span class="dk-w" title="Trọng số cao">'+m.w+'</span>':'')+'</span>'+
+        '<span class="gd-nvs" style="--m:var('+t.c+')">'+h(t.t)+'</span>'+ nut +'</div>';
+    }).join('') +'</div>';
+  }
+
+  G.dkManView = function(pk, ak){
+    var P = dsVai()[pk];
+    var a = P ? P.areas.filter(function(x){ return x.key===ak; })[0] : null;
+    if(!a) return U.lockCard('Không tìm thấy màn.');
+    if(!duocXem(P)) return khoa(P);
+    var L = soLieu(P, a);
+    var o = U.ph({ eyebrow:P.ten.toUpperCase()+' · MÀN '+a.so+(laGiamSat(P)?' · CHẾ ĐỘ GIÁM SÁT':''), ic:a.ic, grad:1, t:a.ten,
+      lead: a.mo || 'Mười việc của màn này: số liệu nhanh, báo cáo có đèn và nút mở thẳng màn làm việc.' });
+    o += '<div class="row mb" style="gap:8px;flex-wrap:wrap">'+
+      '<button class="btn ghost sm" data-v="dk-'+h(P.key)+'">'+ic('arrow','w-3 h-3')+'Bảng điều khiển '+h(P.ten)+'</button>'+
+      (G.allowed && G.allowed(a.man) ? '<button class="btn sm" data-v="'+h(a.man)+'">'+ic('grid','w-3 h-3')+'Mở màn gốc đầy đủ</button>' : '')+
+      (P.spec && G.manCoThat && G.manCoThat(P.spec) && G.allowed(P.spec) ? '<button class="btn ghost sm" data-v="'+h(P.spec)+'">'+ic('book','w-3 h-3')+'Chuẩn nghề</button>' : '')+
+      '</div>';
+    var pt = L.wTong ? Math.round(100*L.wXong/L.wTong) : 0;
+    o += '<div class="grid g4 mb">'+
+      U.stat({k:'Đã xong', v:L.xong+'/'+L.n, d:L.dang+' việc đang làm', c: L.xong===L.n?'#0B7350':null})+
+      U.stat({k:'Điểm việc đạt', v:L.wXong+'/'+L.wTong, d:pt+'% tổng trọng số'})+
+      U.stat({k:'Ưu tiên cao còn mở', v:String(L.cao), d:'trọng số ≥ 4 chưa xong', c: L.cao?'#BE0E16':'#0B7350'})+
+      (P.spec ? U.stat({k:'Theo chuẩn nghề', v:L.ds.filter(function(m){ return m.goc; }).length+'/'+L.n, d:'đầu việc lấy từ chuẩn nghề'})
+              : U.stat({k:'Đang làm', v:String(L.dang), d:'việc đã bắt đầu'}))+'</div>';
+    o += U.sec('Báo cáo chi tiết', 'Đèn: xanh = đã xong · vàng = đang làm hoặc việc nhẹ chưa làm · đỏ = việc trọng số cao chưa bắt đầu');
+    o += veBang(P, a, L);
+    o += U.sec(P.spec ? 'Mười nghiệp vụ' : 'Mười việc', 'Bấm ô trạng thái để theo dõi (chưa · đang · xong) · bấm "Mở" để thao tác · đã xong '+L.xong+'/'+L.n);
+    o += veNV(P, a, L);
+    o += '<p class="tiny muted" style="margin-top:12px">'+ic('shield','w-3 h-3')+' Trạng thái lưu trên máy của anh/chị, giữ qua phiên. Mỗi "Mở" vẫn qua cổng quyền của hệ.</p>';
+    return o;
+  };
+
+  function tienDo(P){
+    var x=0, n=0, w=0, wt=0;
+    P.areas.forEach(function(a){ var L = soLieu(P,a); x+=L.xong; n+=L.n; w+=L.wXong; wt+=L.wTong; });
+    return { xong:x, n:n, wXong:w, wTong:wt };
+  }
+
+  function the(P, a){
+    var L = soLieu(P, a), moGoc = G.allowed ? G.allowed(a.man) : true;
+    var nv = '<ol class="gdv-nv">'+ L.ds.map(function(m,i){
+      return '<li'+(tt(idNV(P,a,i))==='xong'?' class="dk-xong"':'')+'>'+h(m.ten)+'</li>'; }).join('') +'</ol>';
+    return '<div class="gdv-the'+(moGoc?'':' off')+'" style="--c:var('+a.c+')">'+
+      '<div class="gdv-h"><span class="vh-so">'+h(a.so)+'</span><span class="vh-ic">'+ic(a.ic)+'</span>'+
+        '<b class="gdv-t">'+h(a.ten)+'</b>'+
+        '<span class="dk-pt">'+L.xong+'/'+L.n+'</span>'+
+        '<button class="btn sm vh-mo" data-v="dk-'+h(P.key)+'-'+h(a.key)+'">'+ic('arrow','w-3 h-3')+'Mở chi tiết</button></div>'+
+      '<div class="gdv-nvwrap"><span class="gdv-lbl">10 '+(P.spec?'nghiệp vụ':'việc')+'</span>'+nv+'</div></div>';
+  }
+
+  G.dkHubView = function(pk){
+    var P = dsVai()[pk];
+    if(!P) return U.lockCard('Không tìm thấy bảng điều khiển.');
+    if(!duocXem(P)) return khoa(P);
+    var T = tienDo(P), cum = P.cum || CUM_MAC;
+    var o = U.ph({ eyebrow:P.ten.toUpperCase()+' · BẢNG ĐIỀU KHIỂN'+(laGiamSat(P)?' · CHẾ ĐỘ GIÁM SÁT':''), ic:P.ic, grad:1,
+      t:'Bảng điều khiển '+P.ten+' — '+P.areas.length+' màn × 10 '+(P.spec?'nghiệp vụ':'việc'), lead:P.lead });
+    var pt = T.wTong ? Math.round(100*T.wXong/T.wTong) : 0;
+    o += '<div class="grid g4 mb">'+
+      U.stat({k:'Màn chi tiết', v:String(P.areas.length), d:'mỗi màn 10 '+(P.spec?'nghiệp vụ':'việc')})+
+      U.stat({k:(P.spec?'Nghiệp vụ':'Việc')+' đã xong', v:T.xong+'/'+T.n, d:'đánh dấu trên máy này', c: T.xong===T.n?'#0B7350':null})+
+      U.stat({k:'Điểm việc đạt', v:pt+'%', d:T.wXong+'/'+T.wTong+' trọng số'})+
+      U.stat({k:'Cùng vai', v:String(nhanSu(P)), d:'tài khoản đang hoạt động'})+'</div>';
+    var nut = [];
+    if(laGiamSat(P)) nut.push('<button class="btn ghost sm" data-v="dk-cac-vai">'+ic('arrow','w-3 h-3')+'Bảng điều khiển các vai</button>');
+    if(P.spec && G.manCoThat && G.manCoThat(P.spec) && G.allowed(P.spec)) nut.push('<button class="btn ghost sm" data-v="'+h(P.spec)+'">'+ic('book','w-3 h-3')+'Chuẩn nghề '+h(P.ten)+'</button>');
+    (P.loiTat||[]).forEach(function(x){ if(G.allowed(x[0]) && G.manCoThat(x[0])) nut.push('<button class="btn ghost sm" data-v="'+h(x[0])+'">'+ic(x[2]||'grid','w-3 h-3')+h(x[1])+'</button>'); });
+    if(nut.length) o += '<div class="row mb" style="gap:8px;flex-wrap:wrap">'+nut.join('')+'</div>';
+    ['A','B','C'].forEach(function(c){
+      var nhom = P.areas.filter(function(a){ return a.cum===c; });
+      if(!nhom.length) return;
+      o += U.sec(cum[c].t, cum[c].s);
+      o += '<div class="gdv-luoi">'+ nhom.map(function(a){ return the(P,a); }).join('') +'</div>';
+    });
+    o += '<p class="tiny muted" style="margin-top:14px">'+ic('shield','w-3 h-3')+' Mỗi màn chi tiết và mỗi "Mở" vẫn qua cổng quyền của hệ. Đây là bàn làm việc theo vai, không phải cửa tắt quyền.</p>';
+    return o;
+  };
+
+  /* Vai đang đăng nhập → bảng của vai ấy. R01–R03 đã có bảng riêng. */
+  function bangCua(id){
+    if(id==='R01' || id==='R02') return 'van-hanh-10';
+    if(id==='R03') return 'van-hanh-gd';
+    var ks = Object.keys(dsVai()).filter(function(k){ return dsVai()[k].vai.indexOf(id) >= 0; });
+    return ks.length ? 'dk-'+ks[0] : '';
+  }
+  G.dkBangCua = bangCua;
+
+  G.VIEWS['dk-cua-toi'] = function(){
+    var r = G.S && G.S.roleObj;
+    var v = r ? bangCua(r.id) : '';
+    if(!v || !G.VIEWS[v]) return U.lockCard('Vai của anh/chị chưa có bảng điều khiển riêng.');
+    return G.VIEWS[v]();
+  };
+
+  G.VIEWS['dk-cac-vai'] = function(){
+    if(!(typeof G.can==='function' && G.can('dh_toan_he')))
+      return U.lockCard('Bảng điều khiển các vai mở cho ban điều hành (Super Admin · Admin · Giám đốc · Quản lý chuyên môn).');
+    var o = U.ph({ eyebrow:'ĐIỀU HÀNH · 15 VAI', ic:'users', grad:1, t:'Bảng điều khiển các vai — 15 vai × 10 màn',
+      lead:'Mỗi vai một bảng điều khiển riêng: mười màn chi tiết, mỗi màn mười nghiệp vụ lấy từ chuẩn nghề của vai. Bấm để xem ở chế độ giám sát — số tiến độ là đánh dấu trên máy này.' });
+    var tongMan = 0, tongNV = 0;
+    var the2 = (G.ROLES||[]).map(function(r){
+      var v = bangCua(r.id); if(!v) return '';
+      var P = v.indexOf('dk-')===0 ? dsVai()[v.slice(3)] : null;
+      var nMan = P ? P.areas.length : (v==='van-hanh-10' ? (G.VA_AREA||[]).length : (G.GD_AREA||[]).length);
+      tongMan += nMan; tongNV += nMan*10;
+      var T = P ? tienDo(P) : null, mo = G.allowed(v);
+      return '<div class="gdv-the'+(mo?'':' off')+'" style="--c:'+h(r.c)+'"><div class="gdv-h">'+
+        '<span class="vh-so">'+h(r.id)+'</span><b class="gdv-t">'+h(r.n)+'<span class="tiny muted" style="display:block;font-weight:500">'+h(r.ln||'')+'</span></b>'+
+        (T ? '<span class="dk-pt">'+T.xong+'/'+T.n+'</span>' : '')+
+        (mo ? '<button class="btn sm vh-mo" data-v="'+h(v)+'">'+ic('arrow','w-3 h-3')+'Mở</button>' : '<span class="vh-khoa">'+ic('lock','w-3 h-3')+'khoá</span>')+
+        '</div><div class="gdv-nvwrap tiny muted">'+nMan+' màn chi tiết · '+(nMan*10)+' nghiệp vụ</div></div>';
+    }).join('');
+    o += '<div class="grid g4 mb">'+
+      U.stat({k:'Vai có bảng', v:String((G.ROLES||[]).filter(function(r){ return bangCua(r.id); }).length)+'/'+(G.ROLES||[]).length, d:'R01–R15'})+
+      U.stat({k:'Màn chi tiết', v:String(tongMan), d:'trên toàn hệ'})+
+      U.stat({k:'Nghiệp vụ', v:String(tongNV), d:'mỗi màn 10'})+
+      U.stat({k:'Tài khoản', v:String((G.ACCOUNTS||[]).length), d:'đang hoạt động'})+'</div>';
+    o += '<div class="gdv-luoi">'+the2+'</div>';
+    return o;
+  };
+
+  Object.keys(dsVai()).forEach(function(k){
+    var P = dsVai()[k]; P.key = k;
+    G.VIEWS['dk-'+k] = function(){ return G.dkHubView(k); };
+    P.areas.forEach(function(a){ G.VIEWS['dk-'+k+'-'+a.key] = function(){ return G.dkManView(k, a.key); }; });
   });
 })();
 

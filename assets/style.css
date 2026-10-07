@@ -3877,3 +3877,10 @@ html[data-may="yeu"] *,html[data-may="yeu"] *::before,html[data-may="yeu"] *::af
 .bd-frame.on{border-color:var(--gita)}
 .bd-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 .bd-chip{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--surface-2);color:var(--ink-3);border:1px solid var(--line)}
+
+/* ═══ BẢNG ĐIỀU KHIỂN THEO VAI (dk-*) — dùng chung khung gd-/gdv- ═══ */
+.dk-pt{font-size:11.5px;font-weight:800;color:var(--c);font-variant-numeric:tabular-nums;
+  padding:2px 9px;border-radius:999px;background:color-mix(in srgb,var(--c) 12%,transparent)}
+.dk-w{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 4px;margin-left:4px;border-radius:6px;
+  font-size:10.5px;font-weight:800;color:var(--gita-do,#BE0E16);background:color-mix(in srgb,var(--gita-do,#BE0E16) 10%,transparent);vertical-align:1px}
+.gdv-nv li.dk-xong{color:var(--ink-4);text-decoration:line-through}

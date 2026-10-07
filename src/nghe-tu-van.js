@@ -237,6 +237,10 @@ G.VIEWS = G.VIEWS || {};
     return o;
   }
 
+  /* Chuẩn nghề dùng chung cho Bảng điều khiển theo vai (dk-vai.js) — chỉ đọc. */
+  G.NGHE_DATA = G.NGHE_DATA || {};
+  G.NGHE_DATA['nghe-tu-van'] = { vaiTen: 'Tư vấn', khung: KHUNG, cap: CAP, nhom: NHOM, viec: VIEC };
+
   G.VIEWS['nghe-tu-van'] = function () {
     if (!(typeof G.can === 'function' && G.can('pro_consult')))
       return U.lockCard('Trang chuyên môn hoá nghề Tư vấn mở cho Chuyên gia tư vấn trở lên. Đăng nhập đúng vai để xem.');

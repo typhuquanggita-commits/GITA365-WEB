@@ -11,7 +11,7 @@
 
        ◆ KHÁCH HÀNG       — các màn về hoạt động/hành trình của khách
        ◆ NGHIỆP VỤ CỦA TÔI — khối việc cô đọng: 10 (quản trị) · 8 (giám
-                             đốc) · 5 (các vai còn lại)
+                             đốc) · 6 (các vai còn lại, mở đầu bằng Bảng điều khiển của tôi)
        ▸ TOÀN HỆ THỐNG    — sáu nhóm cũ, giữ nguyên, gấp lại bên dưới
 
    BẢO MẬT LÀ LÕI. Mỗi khoá màn ở đây KHÔNG tự mở quyền. Lúc dựng, cột trái
@@ -62,27 +62,31 @@ var G = window.G || {}; window.G = G;
     R03:{cap:8, ds:['van-hanh-gd','nghe-giamdoc','phong-ban','nang-luc-ns','dieu-hanh','crm','tai-chinh-ceo','con-nguoi',
                     'khoa-dao-tao','bang-viec','do-luong-kh','giam-sat','tang-truong']},
     /* R04 Quản lý chuyên môn — giữ chuẩn nghề toàn đội */
-    R04:{cap:5, ds:['nghe-qlcm','nang-luc-ns','tt-cskh','ra-soat-kh',
+    R04:{cap:6, ds:['dk-cua-toi','nghe-qlcm','nang-luc-ns','tt-cskh','ra-soat-kh',
                     'phong-ban','do-luong-kh','bang-viec','assessment','trai-nghiem-kh']},
     /* R05 Trưởng nhóm Coach */
-    R05:{cap:5, ds:['nghe-tncoach','doi-ngu','ban-coach','bando-coach','bang-viec','xu-ly-ca','coach-deck']},
+    R05:{cap:6, ds:['dk-cua-toi','nghe-tncoach','doi-ngu','ban-coach','bando-coach','bang-viec','xu-ly-ca','coach-deck']},
     /* R06 Senior Coach · R07 Coach */
-    R06:{cap:5, ds:['nghe-coach','ban-coach','coach-deck','bando-coach','xu-ly-ca','bang-viec','doi-ngu']},
-    R07:{cap:5, ds:['nghe-coach','ban-coach','coach-deck','bando-coach','xu-ly-ca','bang-viec','doi-ngu']},
+    R06:{cap:6, ds:['dk-cua-toi','nghe-coach','ban-coach','coach-deck','bando-coach','xu-ly-ca','bang-viec','doi-ngu']},
+    R07:{cap:6, ds:['dk-cua-toi','nghe-coach','ban-coach','coach-deck','bando-coach','xu-ly-ca','bang-viec','doi-ngu']},
     /* R08 Giáo viên */
-    R08:{cap:5, ds:['nghe-giaovien','khoa-dao-tao','sat-hach','ban-coach','xu-ly-ca','bang-viec']},
+    R08:{cap:6, ds:['dk-cua-toi','nghe-giaovien','khoa-dao-tao','sat-hach','ban-coach','xu-ly-ca','bang-viec']},
     /* R09 Mentor (lv9 — không mở pro_coach, dùng consult/ca) */
-    R09:{cap:5, ds:['nghe-mentor','xu-ly-ca','do-luong-kh','ra-soat-kh','bang-viec','assessment','tt-cskh']},
+    R09:{cap:6, ds:['dk-cua-toi','nghe-mentor','xu-ly-ca','do-luong-kh','ra-soat-kh','bang-viec','assessment','tt-cskh']},
     /* R10 Chuyên gia đánh giá */
-    R10:{cap:5, ds:['nghe-danhgia','assessment','do-luong-kh','ra-soat-kh','bang-viec','sat-hach','trai-nghiem-kh']},
+    R10:{cap:6, ds:['dk-cua-toi','nghe-danhgia','assessment','do-luong-kh','ra-soat-kh','bang-viec','sat-hach','trai-nghiem-kh']},
     /* R11 Chuyên gia tư vấn — CRM là CÔNG CỤ CHĂM SÓC KHÁCH của Tư vấn,
        đặt trong Nghiệp vụ; chỉ hiện khi tài khoản được cấp CRM (G.S.crmMuc
        qua màn Phân quyền CRM) — cấp từng người, không mở đại trà. */
-    R11:{cap:5, ds:['nghe-tu-van','tt-cskh','crm','ban-tu-van','pheu-chot','bang-viec','do-luong-kh']},
+    R11:{cap:6, ds:['dk-cua-toi','nghe-tu-van','tt-cskh','crm','ban-tu-van','pheu-chot','bang-viec','do-luong-kh']},
     /* R12 Phân tích dữ liệu (lv12 — bộ màn phân tích nghe_chung) */
-    R12:{cap:5, ds:['nghe-phantich','chieu-sau','ma-tran','giam-sat','tu-dong','phuong-phap','bo-nao','ra-soat']},
+    R12:{cap:6, ds:['dk-cua-toi','nghe-phantich','chieu-sau','ma-tran','giam-sat','tu-dong','phuong-phap','bo-nao','ra-soat']},
+    /* R13 Phụ huynh · R14 Học viên — bảng điều khiển 10 màn của nhà mình
+       (dk-vai.js) đứng đầu, rồi hai màn mở mỗi ngày. */
+    R13:{cap:3, ds:['dk-cua-toi','hom-nay','nhiem-vu']},
+    R14:{cap:3, ds:['dk-cua-toi','hom-nay','nhiem-vu']},
     /* R15 CTV / Đại sứ giới thiệu */
-    R15:{cap:5, ds:['nghe-daisu','dai-su','hoa-hong','su-kien','ket-noi','ve-tinh']}
+    R15:{cap:6, ds:['dk-cua-toi','nghe-daisu','dai-su','hoa-hong','su-kien','ket-noi','ve-tinh']}
   };
 
   /* Bộ mô tả cho cột trái. KHÔNG tự lọc quyền ở đây — chỉ trả danh sách

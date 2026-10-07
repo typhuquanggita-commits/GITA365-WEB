@@ -241,6 +241,10 @@ G.VIEWS = G.VIEWS || {};
     return o;
   }
 
+  /* Chuẩn nghề dùng chung cho Bảng điều khiển theo vai (dk-vai.js) — chỉ đọc. */
+  G.NGHE_DATA = G.NGHE_DATA || {};
+  G.NGHE_DATA['nghe-coach'] = { vaiTen: 'Coach', khung: KHUNG, cap: CAP, nhom: NHOM, viec: VIEC };
+
   G.VIEWS['nghe-coach'] = function () {
     if (!(typeof G.can === 'function' && G.can('pro_coach')))
       return U.lockCard('Trang chuyên môn hoá nghề Coach mở cho Coach trở lên. Đăng nhập đúng vai để xem.');
