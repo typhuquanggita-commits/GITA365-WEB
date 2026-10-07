@@ -3884,3 +3884,84 @@ html[data-may="yeu"] *,html[data-may="yeu"] *::before,html[data-may="yeu"] *::af
 .dk-w{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 4px;margin-left:4px;border-radius:6px;
   font-size:10.5px;font-weight:800;color:var(--gita-do,#BE0E16);background:color-mix(in srgb,var(--gita-do,#BE0E16) 10%,transparent);vertical-align:1px}
 .gdv-nv li.dk-xong{color:var(--ink-4);text-decoration:line-through}
+
+/* ═══ HỆ ĐIỀU HÀNH COACH (co-*) — dùng chung cho coach-*.js ═══ */
+.co-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 16px}
+.co-tab{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:11px;border:1px solid var(--line);
+  background:var(--surface);color:var(--ink-2);font-size:13px;font-weight:600;cursor:pointer}
+.co-tab svg{width:14px;height:14px}
+.co-tab:hover{border-color:var(--gita-vien-2,var(--gita))}
+.co-tab.on{background:var(--gita);border-color:var(--gita);color:#fff}
+.co-tab:focus-visible,.co-btn:focus-visible{outline:2px solid var(--gita);outline-offset:2px}
+.co-den{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--m)}
+.co-den i{width:10px;height:10px;border-radius:50%;background:var(--m);box-shadow:0 0 0 3px color-mix(in srgb,var(--m) 18%,transparent)}
+.co-mau{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 14px;margin-bottom:14px;border-radius:12px;font-size:13px;
+  border:1px dashed var(--warn,#B4720F);background:color-mix(in srgb,var(--warn,#B4720F) 7%,var(--surface))}
+.co-mau span{flex:1;min-width:200px}
+.co-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.04em;padding:1px 7px;border-radius:999px;vertical-align:1px;
+  color:var(--warn,#B4720F);background:color-mix(in srgb,var(--warn,#B4720F) 12%,transparent)}
+.co-f{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:600;color:var(--ink-3)}
+.co-f > span{letter-spacing:.02em}
+.co-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.co-luoi{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.co-the{border:1px solid var(--line);border-radius:var(--r,16px);background:var(--surface);padding:14px 16px;display:flex;flex-direction:column;gap:8px;position:relative}
+.co-the.nhan{border-color:var(--c,var(--gita))}
+.co-the h3{margin:0;font-size:15px;line-height:1.35}
+.co-the .co-meta{display:flex;flex-wrap:wrap;gap:6px;font-size:11.5px;color:var(--ink-4)}
+.co-so{font-variant-numeric:tabular-nums}
+.co-hang{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.co-grow{flex:1;min-width:0}
+.co-ds{display:flex;flex-direction:column;gap:8px}
+.co-dong{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.co-tb{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r,16px);background:var(--surface)}
+.co-tb table{width:100%;border-collapse:collapse;font-size:13px;min-width:560px}
+.co-tb th{text-align:left;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-4);padding:9px 11px;border-bottom:1px solid var(--line);white-space:nowrap}
+.co-tb td{padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+.co-tb tr:last-child td{border-bottom:0}
+.co-tb td.so{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.co-cb{display:flex;flex-direction:column;gap:6px}
+.co-cb > div{display:flex;gap:8px;align-items:flex-start;font-size:13px;padding:7px 10px;border-radius:10px;
+  background:color-mix(in srgb,var(--m) 8%,var(--surface));border-left:3px solid var(--m)}
+.co-thanhbar{height:8px;border-radius:99px;background:var(--phu-4,var(--line));overflow:hidden}
+.co-thanhbar i{display:block;height:100%;border-radius:99px;background:var(--m,var(--gita))}
+.co-muc{display:inline-grid;grid-auto-flow:column;gap:4px}
+.co-muc button{min-width:30px;height:28px;border-radius:8px;border:1px solid var(--line);background:var(--surface);font-size:12px;font-weight:700;color:var(--ink-3);cursor:pointer}
+.co-muc button.on{background:var(--m,var(--gita));border-color:var(--m,var(--gita));color:#fff}
+@media(max-width:560px){.co-the{padding:12px}.co-tab{padding:7px 11px;font-size:12.5px}}
+@media print{.co-tabs,.co-mau,.co-noprint{display:none!important}}
+
+/* coach-pt: in bản tóm tắt một trang — chỉ in hộp thoại, không in cả màn */
+@media print{
+  body.co-pt-in > *:not(#modal):not(#wm){display:none!important}
+  body.co-pt-in #modal{position:static!important;display:block!important;padding:0!important}
+  body.co-pt-in #modal .bd,body.co-pt-in #modal .mx,body.co-pt-in .co-noprint{display:none!important}
+  body.co-pt-in #modal .bx{max-height:none!important;overflow:visible!important;width:100%!important;box-shadow:none!important;border:0!important}
+}
+/* ── coach-ct · coach-tk: trục giai đoạn, khung soạn bài + máy soát, bản in ── */
+.co-ct-truc{display:flex;gap:3px;height:12px;border-radius:99px;overflow:hidden;background:var(--line)}
+.co-ct-truc i{display:block;height:100%;min-width:4px}
+.co-tk-khung{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}
+.co-tk-ben{position:sticky;top:76px;max-height:calc(100vh - 92px);overflow-y:auto}
+.co-tk-luat{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;line-height:1.45;padding:7px 0;border-bottom:1px dashed var(--line)}
+.co-tk-luat:last-child{border-bottom:0}
+.co-tk-luat > b{flex:none;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:11px;color:#fff;background:var(--m)}
+@media(max-width:1020px){.co-tk-khung{grid-template-columns:minmax(0,1fr)}.co-tk-ben{position:static;max-height:none;overflow:visible}}
+@media print{
+  body.co-tk-dangin > *:not(#modal):not(#wm){display:none!important}
+  body.co-tk-dangin #modal{position:static;display:block;padding:0}
+  body.co-tk-dangin #modal .bd,body.co-tk-dangin #modal .mx,body.co-tk-dangin .co-noprint{display:none!important}
+  body.co-tk-dangin #modal .bx{max-height:none;overflow:visible;box-shadow:none;border:0;background:#fff;color:#111;width:100%;padding:0;animation:none}
+  body.co-tk-dangin .co-tk-in .co-tb{overflow:visible;border-color:#bbb;background:#fff}
+  body.co-tk-dangin .co-tk-in .co-tb table{min-width:0}
+  body.co-tk-dangin .co-tk-in td,body.co-tk-dangin .co-tk-in th{color:#111;border-color:#ccc}
+}
+/* ── coach-nlp: dải bước kỹ thuật, thanh năm pha, sơ đồ quy trình ngang/dọc ── */
+.co-nlp-buoc{list-style:none;margin:6px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;counter-reset:none}
+.co-nlp-buoc li{display:flex;gap:8px;align-items:flex-start;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);font-size:12.5px;line-height:1.45;color:var(--ink-2)}
+.co-nlp-buoc li b{flex:none;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:11px;color:#fff;background:var(--gita)}
+.co-nlp-pha{display:flex;gap:4px}
+.co-nlp-pha > div{min-width:0;display:flex;flex-direction:column;gap:3px;padding:9px 10px;border-radius:10px;border-top:4px solid var(--m);background:color-mix(in srgb,var(--m) 12%,transparent)}
+.co-nlp-pha b{font-size:12px;color:var(--m)}
+.co-nlp-pha span{font-size:12px;line-height:1.35;color:var(--ink-2)}
+.co-nlp-doc{display:none}
+@media(max-width:700px){.co-nlp-ngang{display:none}.co-nlp-doc{display:block}.co-nlp-pha{flex-direction:column}.co-nlp-pha > div{flex:none!important}}

@@ -35,6 +35,10 @@ function save(){
        duyệt — không ghi tên chủ sổ thì bằng chứng đóng việc của Coach,
        viết về nhà nào có chuyện gì, nằm lại trong máy cho người sau. */
     viec:G.S.viec, chotNgay:G.S.chotNgay, chotKhNgay:G.S.chotKhNgay, caiTien:G.S.caiTien, mua:G.S.mua, vet:G.S.vet, viecCua:G.S.viecCua, cvSangKien:G.S.cvSangKien, ltXuLy:G.S.ltXuLy, ltLichSu:G.S.ltLichSu, nlDiem:G.S.nlDiem, gdNV:G.S.gdNV, axNV:G.S.axNV, axPhim:G.S.axPhim, axActive:G.S.axActive, axBC:G.S.axBC, axN:G.S.axN, axDA:G.S.axDA,
+    /* Sổ Hệ điều hành Coach (coach-loi.js): chương trình, bài, phiếu chất
+       lượng, phân tích, ghép chương trình và NHẬT KÝ HOẠT ĐỘNG. Gắn tên chủ
+       sổ bên trong (coach.chu) và bị dọn khi đổi người — như viecCua. */
+    coach:G.S.coach,
     /* Bàn cờ hành trình. Thiếu dòng này thì mọi quân nhà mình đặt bay
        hết khi tải lại trang — và một bàn cờ xoá được mỗi lần F5 thì
        nhìn nó không còn nghĩa gì. */
@@ -90,6 +94,7 @@ function load(){
     G.S.axBC = d.axBC || null;
     G.S.axN = d.axN || null;
     G.S.axDA = d.axDA || null;
+    G.S.coach = d.coach || null;
     G.S.mua = d.mua || null;
     G.S.vet = d.vet || [];
     G.S.viecCua = d.viecCua || null;
@@ -626,7 +631,7 @@ function vaoPhien(a){
   /* Đổi người là dọn sổ việc. Sổ việc mang bằng chứng đóng việc — tên
      nhà, chuyện của nhà, chỗ đang vướng — nên nó không được ở lại máy
      khi người khác đăng nhập. Cùng luật với donKho() bên kho khoá. */
-  if (G.S.viecCua && G.S.viecCua !== a.u) { G.S.viec = {}; G.S.chotNgay = {}; G.S.chotKhNgay = {}; G.S.caiTien = {}; G.S.mua = null; G.S.vet = []; }
+  if (G.S.viecCua && G.S.viecCua !== a.u) { G.S.coach = null; G.S.viec = {}; G.S.chotNgay = {}; G.S.chotKhNgay = {}; G.S.caiTien = {}; G.S.mua = null; G.S.vet = []; }
   G.S.viecCua = a.u;
   /* Chỉ mục của trợ lý dựng theo ĐÚNG kho mà vai trước được cấp. Giữ
      lại qua lượt đăng nhập sau là để vai mới tra được kho của vai cũ —

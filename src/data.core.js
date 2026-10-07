@@ -804,6 +804,19 @@ G.NAV = [
     {v:'dien-thu',    t:'Diễn thử — hai buổi khó nhất', h:'2 bài × 20 lượt · mỗi lượt truy về kho và bộ lọc · câu dễ nói mà luật cấm', ic:'chat', star:1, perm:'pro_coach', capMo:'nghe'},
     {v:'hoat-dong',   t:'Đăng ký hoạt động — việc nào không ai nhận', h:'21 hoạt động · 3 mức tự động · 4 việc máy không được nhận · đường rơi của từng việc', ic:'grid', star:1, perm:'pro_coach', capMo:'nghe'},
     {v:'ban-coach',   t:'Bàn làm việc của Coach', h:'5 ngăn vét cạn · gói 8 ô đóng sẵn · trợ lý nhắc việc có hạn giờ · 4 lượt rà soát', ic:'pulse', star:1, perm:'pro_coach', capMo:'nghe'},
+    /* HỆ ĐIỀU HÀNH COACH (coach-*.js) — bảy hệ thống vận hành chung một sổ và
+       một bộ công thức (coach-loi.js). Phân tích khách mở thêm cho Tư vấn /
+       Đánh giá (pro_consult); còn lại cho đội dẫn dắt (pro_coach). */
+    {v:'coach-he',  t:'Hệ điều hành Coach',          h:'7 hệ thống · chương trình · thiết kế bài · chất lượng · giải pháp · kho · phân tích · điều phối', ic:'grid', star:1, perm:'pro_coach', capMo:'chung'},
+    {v:'coach-ct',  t:'Chương trình coach',          h:'10 chương trình · giai đoạn · buổi · cổng nghiệm thu · KPI · ghép cho nhà', ic:'compass', perm:'pro_coach', capMo:'chung'},
+    {v:'coach-tk',  t:'Thiết kế bài coach',          h:'Sáu nhịp · mục tiêu đo được · nhiệm vụ có tiêu chí xong · máy soát 10 luật', ic:'edit', perm:'pro_coach', capMo:'chung'},
+    {v:'coach-cl',  t:'Kiểm soát chất lượng coach',  h:'Chấm buổi 10 tiêu chí · lằn ranh đỏ · chỉ số chất lượng · kết quả gia đình', ic:'shield', perm:'pro_coach', capMo:'chung'},
+    {v:'coach-gp',  t:'Giải pháp coach',             h:'24 giải pháp theo G–I–T–A · bước · nhiệm vụ mẫu · dấu hiệu · khi nào chuyển', ic:'spark', perm:'pro_coach', capMo:'chung'},
+    {v:'coach-kho', t:'Kho tài liệu coach',          h:'Mô thức · phác đồ · kịch bản · bài học · bộ test · tài liệu tải lên · ghim', ic:'vault', perm:'pro_coach', capMo:'chung'},
+    {v:'coach-pt',  t:'Phân tích vấn đề – nhu cầu – tiềm năng', h:'20 vấn đề G–I–T–A · 12 nhu cầu · 8 chiều tiềm năng · tầng & chương trình đề xuất', ic:'target', perm:'pro_consult', capMo:'chung'},
+    {v:'coach-dp',  t:'Điều phối & giám sát chương trình', h:'Lịch buổi · nhật ký từng hoạt động · gắn kết · đèn · cảnh báo · xuất CSV', ic:'pulse', star:1, perm:'pro_coach', capMo:'chung'},
+    {v:'coach-v20', t:'Kiến tạo chương trình V20',  h:'Đọc lời kể + dữ liệu → chẩn đoán · mục tiêu chuẩn · lộ trình 5 pha · từng buổi có kịch bản · đo thành quả · duy trì', ic:'sparkle', star:1, perm:'pro_coach', capMo:'chung'},
+    {v:'coach-nlp', t:'Thư viện NLP × GITA · chuẩn ICF', h:'18 kỹ thuật có minh hoạ · quy trình 7 bước · chuỗi hành động GITA · 8 năng lực ICF · lộ trình bền vững', ic:'book', perm:'pro_coach', capMo:'chung'},
     {v:'ban-ve',      t:'Bộ bản vẽ — 50 ô, mỗi ô một tag', h:'4 nguyên tắc · 50 cấp độ · 4 cổng · 10 nhịp · 20 tín hiệu đỏ · bản đồ nâng cấp', ic:'map', star:1, perm:'pro_coach', capMo:'nghe'},
     {v:'tang5-pro',   t:'Chương trình VIP T5-PRO', h:'Khởi nghiệp · hệ sinh thái doanh nghiệp · cửa tuyển chọn · giá 500 triệu–2 tỷ', ic:'vault', star:1, perm:'pro_gia_nghiep', capMo:'nghe'},
     {v:'nam-dau',     t:'Sổ tay năm đầu',              h:'12 tháng · 6 mốc kiểm · 8 kịch bản lần đầu', ic:'compass', star:1, perm:'nghe_chung', capMo:'nghe'},
