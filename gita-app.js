@@ -1052,6 +1052,7 @@ G.NAV = [
     {v:'phap-ly-rui-ro', t:'Pháp lý & rủi ro', h:'Hai luật có hiệu lực 01/01/2026 — bảy việc của Luật 91 chia theo AI LÀM · ba ô đồng ý tách bạch, ô về con do CHA MẸ ký · nút xoá chạy thật, hai phía đo-được và lời-khai · bốn câu hỏi mang tới luật sư, KHÔNG có câu trả lời', ic:'shield', star:1, perm:'nghe_chung', capMo:'chung'},
     {v:'he-dieu-hanh', t:'Hệ điều hành CEO', h:'GITA-CEO-OS v3.0 — bốn nhịp vận hành, mỗi nhịp có THỜI LƯỢNG · bảng 12 chỉ số chia theo nguồn, chín cửa đo được và ba ô người khai · năm bước quyết định với hai mốc thời gian · năm chặng lộ trình, không nhảy cóc · bốn câu lệnh, câu thứ tư là phép thử', ic:'compass', star:1, perm:'fin_view', capMo:'chung'},
     {v:'bo-prompt', t:'Bộ prompt · 4 vai', h:'Bốn bản dán thẳng A · B · C · D — DỰNG LÚC CHẠY từ kho, không chép sẵn một chữ nào · vai C phải ở nhà cung cấp KHÁC vai A, soạn không tự duyệt được · sáu bước của một nội dung công khai, hai bước cuối là NGƯỜI · nối vào bảy cửa đã chạy sẵn', ic:'quote', star:1, perm:'nghe_chung', capMo:'chung'},
+    {v:'credit-gita', t:'Hệ thống Credit (5 tầng × 10 cấp)', h:'10 đồng = 1 credit · gói → 5 quỹ → 50 cấp theo độ khó · giá credit từng hoạt động · credit thưởng · mã coach · chờ R01 duyệt', ic:'vault', star:1, perm:'fin_view', capMo:'chung'},
     {v:'bang-gia', t:'Bảng giá', h:'Số sửa được ngay, khung ở kho — giá là con số TẠM trong lúc dựng nên phải sửa được, còn bậc ấy hứa giao gì thì đổi qua một lượt phát hành · mỗi lần đổi là MỘT DÒNG MỚI có người ký và lý do · giá đã chốt vào lịch thu KHÔNG đổi theo · đổi giá không tự dời thang duyệt chi', ic:'star', star:1, perm:'fin_view', capMo:'chung'},
     {v:'luat-giao-dien', t:'Luật giao diện', h:'Mười hai luật phủ quyết sinh ra từ ba mươi phần của khoá học — và răng nằm ở MÁY CHỦ chứ không ở màn hình, vì giao diện là thứ bị viết lại nhiều nhất trong mọi kho · bảy luật có cổng chặn thật, năm luật nói về màn chưa dựng nên được canh bằng phép đo về thứ CHƯA ĐƯỢC TỒN TẠI · không xếp hạng gia đình · không tụt cấp · vòng đỏ không rời máy · máy không soạn hộ lời xin lỗi', ic:'shield', star:1, perm:'nghe_chung', capMo:'chung'},
     {v:'tu-nang-cap', t:'Vòng tự nâng cấp', h:'Một hệ tự nâng cấp mà sửa được chính đường nâng cấp của nó là một hệ KHÔNG CÓ GIỚI HẠN NÀO CẢ — nên bảy vùng không chạm được dựng trước vòng năm cửa · chạm bảy vùng ấy KHÔNG phải "cần duyệt cao hơn", vì mọi cái thang đều leo được · MÁY xếp cấp việc, người đề xuất không tự chọn — để họ tự xếp thì mọi thứ đều là Cấp 1 · cửa chạy thử so HAI MỐC THẬT chứ không đọc một ô tích · đường lùi phải được THỬ, không chỉ được viết', ic:'shield', star:1, perm:'nghe_chung', capMo:'chung'},
@@ -72265,6 +72266,325 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     }
     if(cur === 'nguon') o += dsKeHoach();
     o += '<p class="tiny muted" style="margin-top:14px">'+ic('shield','w-3 h-3')+' Máy đề xuất, Coach quyết. GITA bám khung năng lực ICF để dạy và chấm — đây không phải chứng nhận ICF. Kỹ thuật NLP được ghi rõ mức bằng chứng; không dùng để chẩn đoán hay hứa kết quả.</p>';
+    return o;
+  };
+})();
+
+})();
+
+/* ═════════ src/data-credit.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — THAM SỐ HỆ THỐNG CREDIT (BẢN CHỜ CHỦ HỆ DUYỆT)
+
+   Một chỗ cho mọi con số của hệ credit. Màn "Hệ thống Credit" và bảng
+   duyệt đều TÍNH từ đây — đổi một tham số là cả bảng 5 tầng × 10 cấp,
+   bảng quy đổi hoạt động và mã coach đổi theo, không ai sửa tay từng ô.
+
+     ty          10 đồng = 1 credit (chủ hệ chốt)
+     tang        giá gói từng tầng: đọc giá đang chạy ở máy chủ (docBangGia)
+                 khi đã nối; chưa nối thì dùng đúng GIA_KHOI_DAU của máy chủ.
+     quy         gói chia vào 5 quỹ (tổng 100%)
+     trongSoCap  độ khó tăng dần trong tầng: cấp c có trọng số 1 + 0,1·(c−1)
+     nhom        nhóm khách hàng → mã + hệ số công sức coach
+     tuyen       tuyến chuyên môn → tiền tố mã
+     tieu        hoạt động TIÊU credit, tính bằng bội số của "1 buổi coach chuẩn"
+     thuong      hoạt động TÍCH credit thưởng, chia từ quỹ thưởng của gói
+     luat        luật dùng chung cho mọi cấp, mọi tầng
+
+   TRẠNG THÁI: 'cho-duyet' — chưa áp vào ví khách nào. Sau khi R01 duyệt,
+   ví credit thật phải đặt ở máy chủ (sổ cái), không đặt ở trình duyệt.
+   Không đụng máy chủ · giấy phép · mã hoá.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+
+G.CR_THAMSO = {
+  phienBan:'CR-2026.10-a', trangThai:'cho-duyet',
+  ty:10,
+  /* gia: đồng · ngay: thời lượng chuẩn · buoi: buổi coach chính của chương trình tầng (G.CO_CT)
+     · pha: số cổng nghiệm thu · tang: credit TẶNG khi gói 0đ (Học viện chịu, không đổi ra tiền) */
+  tang:[
+    { t:1, ten:'NHẬN DIỆN', gia:0,        ngay:30,  buoi:3,  pha:3, tangCr:30000 },
+    { t:2, ten:'GIẢI MÃ',   gia:500000,   ngay:21,  buoi:6,  pha:3 },
+    { t:3, ten:'KIẾN TẠO',  gia:10000000, ngay:90,  buoi:12, pha:4 },
+    { t:4, ten:'CHUYỂN HÓA',gia:30000000, ngay:365, buoi:24, pha:4 },
+    { t:5, ten:'BỨT PHÁ',   gia:50000000, ngay:365, buoi:24, pha:4 }
+  ],
+  quy:[
+    { ma:'coach',   ten:'Dịch vụ coach',          ty:0.60, mo:'Buổi 1-1, buổi nhóm, buổi riêng cha mẹ, nghiệm thu cổng' },
+    { ma:'hoclieu', ten:'Học liệu & đánh giá',    ty:0.15, mo:'Tài liệu mở thêm ngoài trần 30%, bộ test, đánh giá chuyên sâu, chứng nhận' },
+    { ma:'sukien',  ten:'Sự kiện & cộng đồng',    ty:0.10, mo:'Lớp nhóm, sự kiện, kết nối gia đình cùng tầng' },
+    { ma:'thuong',  ten:'Quỹ thưởng hoạt động',   ty:0.10, mo:'Credit thưởng trả lại cho từng hoạt động của khách — quỹ có sẵn trong gói nên không phát sinh nợ' },
+    { ma:'duphong', ten:'Dự phòng & chăm sóc',    ty:0.05, mo:'Hỗ trợ khẩn, gia hạn, ca phát sinh' }
+  ],
+  trongSoCap:function(c){ return 1 + 0.1*(c-1); },
+  nguongLenCap:0.6,     /* lên cấp: tích ≥ 60% credit thưởng của cấp + đạt mốc cấp do Coach xác nhận */
+  nhom:[
+    { ma:'TH', ten:'Tiểu học (6–10 tuổi, cha mẹ dẫn)',   hs:0.90 },
+    { ma:'CS', ten:'THCS (11–14 tuổi)',                  hs:1.00 },
+    { ma:'PT', ten:'THPT & thi cử (15–18 tuổi)',         hs:1.15 },
+    { ma:'SV', ten:'Sinh viên & người trẻ (18–24)',      hs:1.00 },
+    { ma:'PH', ten:'Phụ huynh đồng hành',                hs:0.90 },
+    { ma:'GD', ten:'Gia đình toàn diện (≥ 3 người)',     hs:1.30 }
+  ],
+  tuyen:[ { ma:'GT', ten:'GITA365' }, { ma:'EN', ten:'ENGWIN365' }, { ma:'MA', ten:'MATH365' }, { ma:'SA', ten:'SAT365' }, { ma:'HS', ten:'HSA365' } ],
+  /* bs: bội số của 1 buổi coach chuẩn của tầng · quy: quỹ chi trả */
+  tieu:[
+    { ma:'buoi-11',   ten:'Buổi coach 1-1 (60 phút)',           bs:1.00, quy:'coach' },
+    { ma:'buoi-nhom', ten:'Buổi coach nhóm (≤ 6 nhà)',          bs:0.40, quy:'coach' },
+    { ma:'buoi-pm',   ten:'Buổi riêng cho cha mẹ',              bs:0.80, quy:'coach' },
+    { ma:'cong',      ten:'Nghiệm thu cổng với Quản lý chuyên môn', bs:0.50, quy:'coach' },
+    { ma:'danh-gia',  ten:'Đánh giá chuyên sâu (Assessor)',     bs:1.00, quy:'hoclieu' },
+    { ma:'test',      ten:'Bộ test nhận diện chuyên sâu',       bs:0.15, quy:'hoclieu' },
+    { ma:'tai-lieu',  ten:'Mở thêm 1 tài liệu ngoài trần 30%',  bs:0.03, quy:'hoclieu' },
+    { ma:'su-kien',   ten:'Lớp / sự kiện cộng đồng',            bs:0.30, quy:'sukien' },
+    { ma:'khan',      ten:'Hỗ trợ khẩn ngoài lịch (30 phút)',   bs:0.50, quy:'duphong' },
+    { ma:'gia-han',   ten:'Gia hạn 30 ngày giữ chỗ Coach',      bs:0.60, quy:'duphong' }
+  ],
+  /* ty: phần của quỹ thưởng · dem(tang): số lần tối đa trong cả tầng */
+  thuong:[
+    { ma:'tick',    ten:'Tick việc hôm nay',               ty:0.25, dem:function(T){ return T.ngay; } },
+    { ma:'nhatky',  ten:'Ghi nhật ký',                     ty:0.10, dem:function(T){ return Math.floor(T.ngay/2); } },
+    { ma:'nv',      ten:'Hoàn thành nhiệm vụ đúng hạn',    ty:0.20, dem:function(T){ return T.buoi*3; } },
+    { ma:'mc',      ten:'Minh chứng được Coach duyệt',     ty:0.15, dem:function(T){ return T.buoi*3; } },
+    { ma:'chuoi',   ten:'Giữ chuỗi đủ 7 ngày',             ty:0.10, dem:function(T){ return Math.max(1, Math.floor(T.ngay/7)); } },
+    { ma:'cong',    ten:'Đạt cổng nghiệm thu',             ty:0.15, dem:function(T){ return T.pha; } },
+    { ma:'phanhoi', ten:'Chấm buổi coach (1–5)',           ty:0.05, dem:function(T){ return T.buoi; } }
+  ],
+  luat:[
+    '1 credit = 10 đồng, cố định cho mọi cấp, mọi tầng, mọi tuyến.',
+    'Credit TRẢ PHÍ nạp từ gói: dùng ở mọi cấp và mọi tầng; còn dư khi lên tầng thì trừ thẳng vào giá tầng sau.',
+    'Credit THƯỞNG chia từ quỹ thưởng 10% của gói: chỉ dùng trong hệ (tài liệu, sự kiện, buổi bổ sung, trừ tối đa 10% giá tầng sau); không đổi ra tiền; hạn 12 tháng.',
+    'Credit TẶNG của tầng 1 do Học viện chịu: không đổi ra tiền, hết hạn khi kết thúc tầng 1.',
+    'Lên cấp: tích ≥ 60% credit thưởng của cấp và đạt mốc cấp do Coach xác nhận bằng bằng chứng.',
+    'Giá credit của một hoạt động = bội số × 1 buổi coach chuẩn của tầng × hệ số độ khó của cấp × hệ số nhóm khách hàng.',
+    'Hoàn tiền: chỉ phần credit trả phí chưa dùng, theo điều khoản hoàn của gói (HP_TANG). Credit thưởng và credit tặng không hoàn.',
+    'Ví credit thật đặt ở máy chủ (sổ cái ghi từng giao dịch, không ghi đè); trình duyệt chỉ hiển thị.'
+  ]
+};
+
+})();
+
+/* ═════════ src/credit.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — HỆ THỐNG CREDIT · BỘ MÁY + MÀN DUYỆT (credit-gita)
+
+   G.CR tính MỌI con số từ G.CR_THAMSO (data-credit.js):
+     G.CR.bang(t)          10 cấp của tầng t: bậc khó 1–50, hệ số độ khó,
+                           ngân sách credit, VNĐ, buổi coach, credit/buổi,
+                           credit thưởng tối đa, ngưỡng lên cấp
+     G.CR.thuong(t)        credit thưởng từng hoạt động của tầng t
+     G.CR.gia(t,c,nhom,ma) giá credit một hoạt động
+     G.CR.ma(tuyen,nhom,t,c) mã coach, ví dụ GT-PT-3.05·D25
+     G.CR.quyDoi(dong)     số tiền → credit và 5 quỹ
+
+   Tên 10 cấp đọc từ hành trình 50 cấp đã có (G.KTL_CAP50). Giá gói đọc
+   từ máy chủ (docBangGia) khi đã nối; chưa nối thì dùng tham số.
+
+   Màn mở cho fin_view (R01–R04). DUYỆT chỉ R01. Bản này là BẢN CHỜ DUYỆT:
+   chưa trừ / cộng credit của khách nào. Không đụng máy chủ · giấy phép.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
+(function(){
+  var P = function(){ return G.CR_THAMSO; };
+  var CR = G.CR = {};
+  var giaMayChu = null, daHoi = false;
+
+  function so(n){ return Math.round(Number(n)||0).toLocaleString('vi-VN'); }
+  CR.so = so;
+  CR.tang = function(t){
+    var T = P().tang.filter(function(x){ return x.t===Number(t); })[0];
+    if(!T) return null;
+    T = Object.assign({}, T);
+    if(giaMayChu && giaMayChu[T.t] != null) { T.gia = Number(giaMayChu[T.t]); T.nguonGia = 'máy chủ'; } else T.nguonGia = 'tham số (GIA_KHOI_DAU)';
+    T.laTang = !T.gia;
+    T.cr = T.gia ? Math.round(T.gia / P().ty) : (T.tangCr || 0);
+    return T;
+  };
+  CR.quy = function(ma){ return P().quy.filter(function(q){ return q.ma===ma; })[0] || { ty:0 }; };
+  CR.buoiChuan = function(T){ return T.buoi ? T.cr * CR.quy('coach').ty / T.buoi : 0; };
+  function W(){ var a = []; for(var c=1;c<=10;c++) a.push(P().trongSoCap(c)); return a; }
+  function chiaBuoi(n){            /* chia n buổi cho 10 cấp theo trọng số, phần dư lớn nhất */
+    var w = W(), s = w.reduce(function(a,b){ return a+b; },0), ra = w.map(function(x){ return n*x/s; });
+    var nguyen = ra.map(Math.floor), du = n - nguyen.reduce(function(a,b){ return a+b; },0);
+    ra.map(function(x,i){ return [x - Math.floor(x), i]; }).sort(function(a,b){ return b[0]-a[0] || b[1]-a[1]; })
+      .slice(0, du).forEach(function(x){ nguyen[x[1]]++; });
+    return nguyen;
+  }
+  function tenCap(t, c){
+    var x = (G.KTL_CAP50||[]).filter(function(k){ return k.tang==='T'+t && Number(k.cap)===c; })[0];
+    return x ? { ten:x.ten, khi:x.khi||'' } : { ten:'Cấp '+c, khi:'' };
+  }
+  /* Cân quỹ coach: buổi dồn về cấp cao (hệ số > 1) nên Σ buổi × giá buổi phải
+     kéo về đúng quỹ coach của tầng — không tiêu quá phần đã chia. */
+  CR.heSoCan = function(T){
+    var w = W(), tb = w.reduce(function(a,b){ return a+b; },0)/10, n = chiaBuoi(T.buoi), base = CR.buoiChuan(T);
+    var tong = n.reduce(function(a, x, i){ return a + x * base * w[i]/tb; }, 0);
+    return tong ? (T.cr * CR.quy('coach').ty) / tong : 1;
+  };
+  CR.bang = function(t){
+    var T = CR.tang(t), w = W(), sw = w.reduce(function(a,b){ return a+b; },0), tb = sw/10;
+    var base = CR.buoiChuan(T) * CR.heSoCan(T), pool = T.cr * CR.quy('thuong').ty, buoi = chiaBuoi(T.buoi);
+    return w.map(function(wc, i){
+      var c = i+1, k = wc/tb, nm = tenCap(t, c), ngan = T.cr*wc/sw, th = pool*wc/sw;
+      return { ma:t+'.'+(c<10?'0':'')+c, t:t, c:c, ten:nm.ten, khi:nm.khi, L:(t-1)*10+c, k:k,
+        ngan:Math.round(ngan), vnd:Math.round(ngan*P().ty), buoi:buoi[i], crBuoi:Math.round(base*k),
+        thuongMax:Math.round(th), nguong:Math.round(th*P().nguongLenCap) };
+    });
+  };
+  CR.thuong = function(t){
+    var T = CR.tang(t), pool = T.cr * CR.quy('thuong').ty;
+    return P().thuong.map(function(a){ var n = a.dem(T); return { ma:a.ma, ten:a.ten, ty:a.ty, dem:n, cr:Math.round(pool*a.ty/Math.max(1,n)) }; });
+  };
+  CR.nhom = function(ma){ return P().nhom.filter(function(n){ return n.ma===ma; })[0] || P().nhom[1]; };
+  CR.gia = function(t, c, nhom, maTieu){
+    var T = CR.tang(t), a = P().tieu.filter(function(x){ return x.ma===maTieu; })[0];
+    if(!T || !a) return 0;
+    var k = P().trongSoCap(c) / (W().reduce(function(x,y){ return x+y; },0)/10);
+    return Math.round(a.bs * CR.buoiChuan(T) * CR.heSoCan(T) * k * CR.nhom(nhom).hs);
+  };
+  CR.ma = function(tuyen, nhom, t, c){ var L = (t-1)*10+c; return tuyen+'-'+nhom+'-'+t+'.'+(c<10?'0':'')+c+'·D'+L; };
+  CR.quyDoi = function(dong){ var cr = Math.floor((Number(dong)||0) / P().ty); return { cr:cr, quy:P().quy.map(function(q){ return { ma:q.ma, ten:q.ten, ty:q.ty, cr:Math.round(cr*q.ty) }; }) }; };
+  CR.hoiGia = function(){
+    if(daHoi || typeof G.goiMayChu!=='function' || !G.API_CAP_PHEP) return; daHoi = true;
+    G.goiMayChu('docBangGia', {}).then(function(x){ if(x && x.ok && x.gia){ giaMayChu = x.gia; if(G.S && G.S.view==='credit-gita' && G.render) G.render(); } });
+  };
+  CR.giaTuMayChu = function(){ return !!giaMayChu; };
+
+  /* ═══════════ MÀN ═══════════ */
+  var U = G.U, h = U.h, ic = U.ic, VIEW = 'credit-gita';
+  var KHOA_DUYET = 'gita365_credit_duyet';
+  var st = { tab:'bang', tang:3, nhom:'CS', tuyen:'GT', cap:5, dong:'' };
+  function duyet(){ try{ return JSON.parse(localStorage.getItem(KHOA_DUYET)||'null'); }catch(e){ return null; } }
+  var MAU = ['#185AB4','#5140B4','#0B6675','#0B7350','#BE0E16'];
+
+  function tabs(){
+    var ds = [['bang','Bảng 5 tầng × 10 cấp','grid'],['goi','Quy đổi gói','vault'],['tieu','Giá hoạt động','list'],['thuong','Credit thưởng','star'],['ma','Mã coach','target'],['luat','Luật & duyệt','shield']];
+    return '<div class="co-tabs" role="tablist">'+ds.map(function(x){ return '<button class="co-tab'+(st.tab===x[0]?' on':'')+'" role="tab" data-cr="tab" data-v2="'+x[0]+'">'+ic(x[2],'w-3 h-3')+h(x[1])+'</button>'; }).join('')+'</div>';
+  }
+  function chonTang(tatCa){
+    return '<div class="co-hang mb">'+(tatCa?'<button class="btn sm '+(st.tang===0?'':'ghost')+'" data-cr="tang" data-v2="0">Cả 5 tầng</button>':'')+
+      P().tang.map(function(T){ return '<button class="btn sm '+(st.tang===T.t?'':'ghost')+'" data-cr="tang" data-v2="'+T.t+'">T'+T.t+' · '+h(T.ten)+'</button>'; }).join('')+'</div>';
+  }
+  function bangTang(t){
+    var T = CR.tang(t), rows = CR.bang(t);
+    var o = '<div class="card pad-sm mb" style="border-left:4px solid '+MAU[t-1]+'"><div class="co-hang"><b style="color:'+MAU[t-1]+'">T'+t+' · '+h(T.ten)+'</b>'+
+      '<span class="sm co-grow">'+(T.laTang ? 'Gói 0đ → <b>'+so(T.cr)+'</b> credit TẶNG (Học viện chịu)' : 'Gói '+so(T.gia)+'đ → <b>'+so(T.cr)+'</b> credit')+' · '+T.ngay+' ngày · '+T.buoi+' buổi coach · 1 buổi chuẩn = '+so(CR.buoiChuan(T))+' credit ('+so(CR.buoiChuan(T)*P().ty)+'đ)</span></div></div>';
+    o += '<div class="co-tb mb"><table><thead><tr><th>Mã</th><th>Cấp</th><th>Bậc khó</th><th>Hệ số</th><th>Ngân sách credit</th><th>Quy đổi</th><th>Buổi coach</th><th>Credit/buổi</th><th>Thưởng tối đa</th><th>Ngưỡng lên cấp</th></tr></thead><tbody>'+
+      rows.map(function(r){ return '<tr><td class="co-so"><b>'+r.ma+'</b></td><td><b>'+h(r.ten)+'</b>'+(r.khi?'<div class="tiny muted">'+h(r.khi)+'</div>':'')+'</td>'+
+        '<td class="so">D'+r.L+'</td><td class="so">×'+r.k.toFixed(2)+'</td><td class="so"><b>'+so(r.ngan)+'</b></td><td class="so">'+so(r.vnd)+'đ</td>'+
+        '<td class="so">'+r.buoi+'</td><td class="so">'+so(r.crBuoi)+'</td><td class="so">'+so(r.thuongMax)+'</td><td class="so">'+so(r.nguong)+'</td></tr>'; }).join('')+
+      '<tr><td></td><td><b>Cộng tầng</b></td><td></td><td></td><td class="so"><b>'+so(rows.reduce(function(a,r){ return a+r.ngan; },0))+'</b></td><td class="so">'+so(rows.reduce(function(a,r){ return a+r.vnd; },0))+'đ</td>'+
+      '<td class="so">'+rows.reduce(function(a,r){ return a+r.buoi; },0)+'</td><td></td><td class="so">'+so(rows.reduce(function(a,r){ return a+r.thuongMax; },0))+'</td><td></td></tr>'+
+      '</tbody></table></div>';
+    return o;
+  }
+  function vBang(){
+    var o = chonTang(true);
+    o += '<p class="sm muted" style="margin-top:0">Ngân sách credit của tầng chia cho 10 cấp theo độ khó tăng dần (cấp 1 hệ số ×0,69 → cấp 10 ×1,31). <b>Bậc khó D1–D50</b> là thang độ khó chung của cả hệ. <b>Thưởng tối đa</b> là phần quỹ thưởng 10% thuộc cấp ấy; tích đủ <b>ngưỡng</b> (60%) và đạt mốc cấp thì lên cấp.</p>';
+    if(st.tang===0) P().tang.forEach(function(T){ o += bangTang(T.t); }); else o += bangTang(st.tang);
+    o += '<div class="co-hang"><button class="btn ghost sm" data-cr="csv">'+ic('out','w-3 h-3')+'Xuất CSV cả 50 cấp</button></div>';
+    return o;
+  }
+  function vGoi(){
+    var o = '<div class="card pad-sm mb"><div class="co-form">'+
+      '<label class="co-f"><span>Số tiền gói (đồng)</span><input class="inp" id="cr-dong" inputmode="numeric" value="'+h(st.dong)+'" placeholder="VD: 10000000"></label></div>'+
+      '<div class="co-hang mt"><button class="btn sm" data-cr="tinh">Quy đổi</button><span class="tiny muted">10 đồng = 1 credit</span></div></div>';
+    var dong = Number(String(st.dong).replace(/\D/g,''));
+    var ds = dong ? [{ ten:'Gói đã nhập', dong:dong }] : P().tang.map(function(t){ var T = CR.tang(t.t); return { ten:'T'+T.t+' · '+T.ten, dong:T.gia, tang:T.laTang ? T.cr : 0 }; });
+    o += '<div class="co-tb"><table><thead><tr><th>Gói</th><th>Số tiền</th><th>Credit</th>'+P().quy.map(function(q){ return '<th>'+h(q.ten)+' ('+Math.round(q.ty*100)+'%)</th>'; }).join('')+'</tr></thead><tbody>'+
+      ds.map(function(x){ var q = x.tang ? { cr:x.tang, quy:P().quy.map(function(k){ return { cr:Math.round(x.tang*k.ty) }; }) } : CR.quyDoi(x.dong);
+        return '<tr><td><b>'+h(x.ten)+'</b>'+(x.tang?' <span class="co-tag">credit tặng</span>':'')+'</td><td class="so">'+so(x.dong)+'đ</td><td class="so"><b>'+so(q.cr)+'</b></td>'+q.quy.map(function(k){ return '<td class="so">'+so(k.cr)+'</td>'; }).join('')+'</tr>'; }).join('')+
+      '</tbody></table></div>';
+    o += '<div class="co-luoi mt">'+P().quy.map(function(q){ return '<div class="co-dong"><b class="co-so">'+Math.round(q.ty*100)+'%</b><span class="co-grow sm"><b>'+h(q.ten)+'</b><br><span class="tiny muted">'+h(q.mo)+'</span></span></div>'; }).join('')+'</div>';
+    return o;
+  }
+  function vTieu(){
+    var o = chonTang(false) + '<div class="card pad-sm mb"><div class="co-form">'+
+      '<label class="co-f"><span>Cấp</span><select class="inp" id="cr-cap" data-cr-ch="cap">'+[1,2,3,4,5,6,7,8,9,10].map(function(c){ return '<option value="'+c+'"'+(st.cap===c?' selected':'')+'>Cấp '+c+' · '+h(tenCap(st.tang||3,c).ten)+'</option>'; }).join('')+'</select></label>'+
+      '<label class="co-f"><span>Nhóm khách hàng</span><select class="inp" id="cr-nhom" data-cr-ch="nhom">'+P().nhom.map(function(n){ return '<option value="'+n.ma+'"'+(st.nhom===n.ma?' selected':'')+'>'+n.ma+' · '+h(n.ten)+' (×'+n.hs+')</option>'; }).join('')+'</select></label></div></div>';
+    var t = st.tang||3;
+    o += '<div class="co-tb"><table><thead><tr><th>Hoạt động khách chọn</th><th>Bội số buổi chuẩn</th><th>Quỹ chi trả</th><th>Credit</th><th>Quy đổi</th></tr></thead><tbody>'+
+      P().tieu.map(function(a){ var g = CR.gia(t, st.cap, st.nhom, a.ma); return '<tr><td><b>'+h(a.ten)+'</b></td><td class="so">×'+a.bs+'</td><td class="tiny">'+h(CR.quy(a.quy).ten)+'</td><td class="so"><b>'+so(g)+'</b></td><td class="so">'+so(g*P().ty)+'đ</td></tr>'; }).join('')+
+      '</tbody></table></div><p class="tiny muted">Giá = bội số × 1 buổi chuẩn T'+t+' ('+so(CR.buoiChuan(CR.tang(t)))+') × hệ số cấp '+st.cap+' × hệ số nhóm '+st.nhom+'. Mã coach của suất này: <b>'+h(CR.ma(st.tuyen, st.nhom, t, st.cap))+'</b>.</p>';
+    return o;
+  }
+  function vThuong(){
+    var o = '<p class="sm muted" style="margin-top:0">Mỗi hoạt động của khách được trả lại credit thưởng từ quỹ thưởng 10% của chính gói — quỹ có sẵn nên tổng thưởng không bao giờ vượt tiền đã thu. Nhà làm đủ mọi hoạt động trong tầng thì nhận đúng 100% quỹ.</p>';
+    o += '<div class="co-tb"><table><thead><tr><th>Hoạt động</th><th>Phần quỹ</th>'+P().tang.map(function(T){ return '<th>T'+T.t+'</th>'; }).join('')+'</tr></thead><tbody>'+
+      P().thuong.map(function(a, i){ return '<tr><td><b>'+h(a.ten)+'</b></td><td class="so">'+Math.round(a.ty*100)+'%</td>'+P().tang.map(function(T){ var x = CR.thuong(T.t)[i]; return '<td class="so">'+so(x.cr)+'<div class="tiny muted">tối đa '+x.dem+' lần</div></td>'; }).join('')+'</tr>'; }).join('')+
+      '<tr><td><b>Quỹ thưởng cả tầng</b></td><td class="so">100%</td>'+P().tang.map(function(T){ return '<td class="so"><b>'+so(CR.tang(T.t).cr*CR.quy('thuong').ty)+'</b></td>'; }).join('')+'</tr>'+
+      '</tbody></table></div>';
+    return o;
+  }
+  function vMa(){
+    var o = '<div class="card pad-sm mb"><p class="sm" style="margin-top:0"><b>Cấu trúc mã coach:</b> <code>TUYẾN-NHÓM-TẦNG.CẤP·D bậc khó</code> — ví dụ <code>GT-PT-3.05·D25</code> = GITA365 · THPT & thi cử · tầng 3 cấp 5 · bậc khó 25/50.</p><div class="co-form">'+
+      '<label class="co-f"><span>Tuyến</span><select class="inp" data-cr-ch="tuyen">'+P().tuyen.map(function(x){ return '<option value="'+x.ma+'"'+(st.tuyen===x.ma?' selected':'')+'>'+x.ma+' · '+h(x.ten)+'</option>'; }).join('')+'</select></label>'+
+      '<label class="co-f"><span>Nhóm khách hàng</span><select class="inp" data-cr-ch="nhom">'+P().nhom.map(function(n){ return '<option value="'+n.ma+'"'+(st.nhom===n.ma?' selected':'')+'>'+n.ma+' · '+h(n.ten)+'</option>'; }).join('')+'</select></label></div></div>';
+    o += '<div class="co-tb"><table><thead><tr><th>Cấp</th>'+P().tang.map(function(T){ return '<th>T'+T.t+' · '+h(T.ten)+'</th>'; }).join('')+'</tr></thead><tbody>'+
+      [1,2,3,4,5,6,7,8,9,10].map(function(c){ return '<tr><td class="so">'+c+'</td>'+P().tang.map(function(T){ return '<td class="co-so tiny"><b>'+h(CR.ma(st.tuyen, st.nhom, T.t, c))+'</b><div class="muted">'+so(CR.gia(T.t, c, st.nhom, 'buoi-11'))+' cr/buổi</div></td>'; }).join('')+'</tr>'; }).join('')+
+      '</tbody></table></div>';
+    o += '<div class="co-luoi mt">'+P().nhom.map(function(n){ return '<div class="co-dong"><b class="co-so">'+n.ma+'</b><span class="co-grow sm">'+h(n.ten)+'<br><span class="tiny muted">hệ số công sức coach ×'+n.hs+'</span></span></div>'; }).join('')+'</div>';
+    return o;
+  }
+  function vLuat(){
+    var d = duyet(), la01 = (G.S && G.S.roleObj && G.S.roleObj.id) === 'R01';
+    var o = '<div class="card pad-sm mb"><ol class="sm" style="padding-left:18px;line-height:1.75;margin:0">'+P().luat.map(function(l){ return '<li>'+h(l)+'</li>'; }).join('')+'</ol></div>';
+    o += '<div class="card pad-sm"><b class="sm">Duyệt bảng credit · phiên bản '+h(P().phienBan)+'</b>'+
+      (d && d.phienBan===P().phienBan ? '<p class="sm mt" style="color:#0B7350">'+ic('check','w-4 h-4')+' Đã duyệt bởi '+h(d.ai)+' lúc '+h(new Date(d.luc).toLocaleString('vi-VN'))+(d.ghi?' · Ghi chú: '+h(d.ghi):'')+'</p>' :
+        '<p class="sm mt muted">Chưa duyệt. Bảng chưa áp vào ví khách nào.</p>')+
+      (la01 ? '<label class="co-f mt"><span>Ghi chú khi duyệt (điều chỉnh mong muốn)</span><textarea class="inp" id="cr-ghi" rows="2" maxlength="500"></textarea></label>'+
+        '<div class="co-hang mt"><button class="btn pri sm" data-cr="duyet">'+ic('check','w-3 h-3')+'Duyệt phiên bản này</button></div>' :
+        '<p class="tiny muted mt">Chỉ Super Admin (R01) duyệt được — đặt và đổi giá thuộc Vùng Đỏ của Hiến pháp.</p>')+
+      '<p class="tiny muted mt">Duyệt ở đây ghi trên máy này. Khi áp thật, phiên bản được duyệt phải ghi vào sổ máy chủ cùng ví credit của khách.</p></div>';
+    return o;
+  }
+
+  document.addEventListener('click', function(e){
+    var el = e.target.closest && e.target.closest('[data-cr]'); if(!el) return;
+    var a = el.getAttribute('data-cr'), v = el.getAttribute('data-v2'); e.preventDefault();
+    if(a==='tab'){ st.tab = v; if(v==='tieu' && !st.tang) st.tang = 3; }
+    else if(a==='tang') st.tang = Number(v);
+    else if(a==='tinh'){ var x = document.getElementById('cr-dong'); st.dong = x ? x.value : ''; }
+    else if(a==='csv'){
+      var dong = []; P().tang.forEach(function(T){ CR.bang(T.t).forEach(function(r){ dong.push([r.ma, 'T'+T.t+' '+T.ten, r.ten, 'D'+r.L, r.k.toFixed(2), r.ngan, r.vnd, r.buoi, r.crBuoi, r.thuongMax, r.nguong]); }); });
+      if(G.CO && G.CO.csv) G.CO.csv('gita365-credit-5x10.csv', ['Mã','Tầng','Cấp','Bậc khó','Hệ số','Ngân sách credit','Quy đổi đồng','Buổi coach','Credit/buổi','Thưởng tối đa','Ngưỡng lên cấp'], dong);
+      return;
+    }
+    else if(a==='duyet'){
+      if((G.S.roleObj||{}).id !== 'R01') return U.toast('Chỉ Super Admin duyệt được.','err');
+      try{ localStorage.setItem(KHOA_DUYET, JSON.stringify({ phienBan:P().phienBan, luc:Date.now(), ai:(G.S.acc||{}).u||'', ghi:String((document.getElementById('cr-ghi')||{}).value||'').slice(0,500) })); }catch(x){}
+      U.toast('Đã duyệt phiên bản '+P().phienBan+'.','ok');
+    }
+    if(G.render) G.render();
+  });
+  document.addEventListener('change', function(e){
+    var el = e.target.closest && e.target.closest('[data-cr-ch]'); if(!el) return;
+    var a = el.getAttribute('data-cr-ch');
+    if(a==='cap') st.cap = Number(el.value); else if(a==='nhom') st.nhom = el.value; else if(a==='tuyen') st.tuyen = el.value;
+    if(G.render) G.render();
+  });
+
+  G.VIEWS[VIEW] = function(){
+    if(!(typeof G.can==='function' && G.can('fin_view'))) return U.lockCard('Hệ thống Credit mở cho ban điều hành và tài chính (R01–R04).');
+    CR.hoiGia();
+    var d = duyet(), daDuyet = d && d.phienBan===P().phienBan;
+    var tong = P().tang.reduce(function(a,T){ return a + CR.tang(T.t).cr; }, 0);
+    var o = U.ph({ eyebrow:'TÀI CHÍNH · HỆ THỐNG CREDIT', ic:'vault', grad:1, t:'Hệ thống Credit GITA365 — 5 tầng × 10 cấp',
+      lead:'Tiền gói của khách đổi thành credit (10 đồng = 1 credit). Credit chia vào 5 quỹ, phân cho 10 cấp mỗi tầng theo thang độ khó; mọi hoạt động của khách đều có giá credit (tiêu) hoặc credit thưởng (tích). Mã coach gắn nhóm khách hàng, tầng, cấp và bậc khó.' });
+    o += '<div class="co-mau" style="'+(daDuyet?'border-color:#0B7350;background:color-mix(in srgb,#0B7350 7%,var(--surface))':'')+'">'+ic(daDuyet?'check':'alert','w-4 h-4')+
+      '<span>'+(daDuyet ? '<b>Đã duyệt</b> phiên bản '+h(P().phienBan)+'.' : '<b>Bản chờ duyệt</b> — phiên bản '+h(P().phienBan)+'. Chưa áp vào ví khách nào.')+
+      ' Giá gói: '+(CR.giaTuMayChu() ? 'đọc từ máy chủ.' : 'theo GIA_KHOI_DAU (chưa đọc được máy chủ).')+'</span></div>';
+    o += '<div class="grid g4 mb">'+
+      U.stat({ k:'Tỷ lệ quy đổi', v:'10đ = 1', d:'credit, mọi cấp mọi tầng' })+
+      U.stat({ k:'Cấp trong hệ', v:'50', d:'5 tầng × 10 cấp · bậc khó D1–D50' })+
+      U.stat({ k:'Credit 5 gói cộng lại', v:so(tong), d:'gồm '+so(CR.tang(1).cr)+' credit tặng T1' })+
+      U.stat({ k:'Buổi chuẩn T3', v:so(CR.buoiChuan(CR.tang(3))), d:'credit · '+so(CR.buoiChuan(CR.tang(3))*P().ty)+'đ' })+'</div>';
+    o += tabs();
+    o += st.tab==='bang' ? vBang() : st.tab==='goi' ? vGoi() : st.tab==='tieu' ? vTieu() : st.tab==='thuong' ? vThuong() : st.tab==='ma' ? vMa() : vLuat();
     return o;
   };
 })();
