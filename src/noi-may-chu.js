@@ -25,7 +25,7 @@ G.VIEWS = G.VIEWS || {};
 var KHO = 'gita365_may_chu';
 
 G.diaChiMayChu = function(){
-  try{ return localStorage.getItem(KHO) || ''; }catch(e){ return ''; }
+  try{ var u = localStorage.getItem(KHO) || ''; return (!u || !G.laMayChuHopLe || G.laMayChuHopLe(u)) ? u : ''; }catch(e){ return ''; }
 };
 
 G.datMayChu = function(url){
@@ -36,9 +36,9 @@ G.datMayChu = function(url){
     G.API_CAP_PHEP = '';
     return {ok:true, xoa:true};
   }
-  if(!/^https:\/\/[^\s]+$/i.test(url))
-    return {ok:false, ly:'Địa chỉ máy chủ phải là một đường dẫn https — dạng '+
-      'https://gita365.<tên-tài-khoản>.workers.dev (Cloudflare Worker của Học viện).'};
+  if(!/^https:\/\/[^\s]+$/i.test(url) || (G.laMayChuHopLe && !G.laMayChuHopLe(url)))
+    return {ok:false, ly:'Chỉ nhận máy chủ của Học viện — dạng https://<tên>.typhuquanggita.workers.dev '+
+      '(Cloudflare Worker thuộc tài khoản của Học viện). Địa chỉ khác bị chặn để mật khẩu và phiên không bị gửi ra ngoài.'};
   try{ localStorage.setItem(KHO, url); }catch(e){ return {ok:false, ly:'Trình duyệt không cho ghi.'}; }
   if(G.API_CAP_PHEP !== url && G.dangXuatMayChu) G.dangXuatMayChu();
   G.API_CAP_PHEP = url;

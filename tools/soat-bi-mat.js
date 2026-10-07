@@ -33,7 +33,16 @@ const MAU = [
   ['HuggingFace', /\bhf_[A-Za-z0-9]{34,}\b/],
   ['Slack', /\bxox[baprs]-[A-Za-z0-9-]{20,}/],
   ['Khoá riêng PEM', /-----BEGIN (?:RSA |EC |OPENSSH |DSA |)PRIVATE KEY-----/],
-  ['Cloudflare token gán cứng', /\b(?:CLOUDFLARE_API_TOKEN|CF_API_TOKEN)\s*[:=]\s*['"][A-Za-z0-9_-]{30,}['"]/]
+  ['Cloudflare token gán cứng', /\b(?:CLOUDFLARE_API_TOKEN|CF_API_TOKEN)\s*[:=]\s*['"][A-Za-z0-9_-]{30,}['"]/],
+  /* Bổ sung 10/2026 — các nhà cung cấp hệ đang dùng mà bản đầu chưa có */
+  ['Resend', /\bre_[A-Za-z0-9]{8,}_[A-Za-z0-9]{16,}\b/],
+  ['fal.ai', /\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}:[0-9a-f]{32}\b/],
+  ['Modal', /\b(?:ak|as)-[A-Za-z0-9]{22,}\b/],
+  ['Telegram bot', /\b\d{8,10}:AA[A-Za-z0-9_-]{33}\b/],
+  ['Discord webhook', /discord(?:app)?\.com\/api\/webhooks\/\d+\/[A-Za-z0-9_-]{30,}/],
+  ['Kaggle key gán cứng', /\bKAGGLE_KEY\s*[:=]\s*['"]?[0-9a-f]{32}\b/],
+  ['R2 / S3 secret gán cứng', /\b(?:R2_SECRET_ACCESS_KEY|AWS_SECRET_ACCESS_KEY)\s*[:=]\s*['"]?[A-Za-z0-9/+]{40,64}\b/],
+  ['Mật khẩu / khoá gán cứng', /\b(?:GITA_[A-Z_]*KHOA[A-Z_]*|SUBMIT_TOKEN|GITA_KHOA_QUAY|KHOA_APP)\s*[:=]\s*['"][A-Za-z0-9_\-]{16,}['"]/]
 ];
 
 const BO_QUA_DUOI = /\.(png|jpe?g|gif|webp|ico|woff2?|ttf|otf|mp3|mp4|webm|pdf|zip|gz|wasm)$/i;

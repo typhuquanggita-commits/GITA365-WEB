@@ -107,6 +107,18 @@ function anhTuB64(b64, toiDa) {
 /* Dịch vụ ngoài tương thích OpenAI Images API — CHỈ chạy khi chủ hệ tự
    cấu hình (mặc định tắt để giữ 0đ). Khoá đặt bằng wrangler secret,
    không bao giờ ghi trong kho mã. */
+/* Chỉ tải ảnh trả về từ đúng máy chủ đã cấu hình hoặc kho ảnh quen của các
+   dịch vụ vẽ ảnh — không để một phản hồi lạ lái Worker đi gọi địa chỉ bất kỳ. */
+const NGUON_ANH_TIN = ['blob.core.windows.net', 'fal.media', 'storage.googleapis.com', 'replicate.delivery', 'r2.cloudflarestorage.com'];
+function anhTuNguonTin(u, cauHinh) {
+  try {
+    const x = new URL(u);
+    if (x.protocol !== 'https:') return false;
+    const goc = cauHinh ? new URL(cauHinh).hostname : '';
+    return x.hostname === goc || NGUON_ANH_TIN.some(h => x.hostname === h || x.hostname.endsWith('.' + h));
+  } catch (e) { return false; }
+}
+
 async function veCanhNgoai(env, prompt) {
   const url = chu(env && env.GITA_VE_ANH_URL, 300);
   const khoa = chu(env && env.GITA_VE_ANH_KHOA, 300);
@@ -123,7 +135,7 @@ async function veCanhNgoai(env, prompt) {
     const j = await r.json();
     const d = j && j.data && j.data[0];
     if (d && d.b64_json) return anhTuB64(String(d.b64_json), 1500000);
-    if (d && d.url) {
+    if (d && d.url && anhTuNguonTin(String(d.url), url)) {
       const a = await fetch(String(d.url));
       if (!a.ok) return null;
       return anhHopLe(new Uint8Array(await a.arrayBuffer()), 1500000);

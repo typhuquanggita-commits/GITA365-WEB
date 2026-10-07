@@ -67,13 +67,20 @@ export async function napVaoR2(env, ten, layVe) {
   const bamXong = hai.pipeTo(bam).then(() => bam.digest);
   const codinh = new FixedLengthStream(m.dai);
   const chep = mot.pipeTo(codinh.writable);
-  const ghi = env.HOSO.put(KHOA + ten, codinh.readable, { httpMetadata: { contentType: m.kieu } });
+  /* Ghi vào khoá TẠM trước — khoá thật chỉ có tệp khi SHA-256 đã khớp, nên
+     không có khoảnh khắc nào một yêu cầu đọc được tệp chưa kiểm. */
+  const tam = KHOA + 'tam/' + ten + '.' + Date.now().toString(36);
+  const ghi = env.HOSO.put(tam, codinh.readable, { httpMetadata: { contentType: m.kieu } });
   await Promise.all([chep, ghi]);
   const sha = hex(await bamXong);
   if (sha !== m.sha) {
-    await env.HOSO.delete(KHOA + ten);
+    await env.HOSO.delete(tam);
     throw new Error('SHA-256 không khớp');
   }
+  const o = await env.HOSO.get(tam);
+  const lai = new FixedLengthStream(m.dai);          /* R2 cần biết trước độ dài luồng */
+  await Promise.all([o.body.pipeTo(lai.writable), env.HOSO.put(KHOA + ten, lai.readable, { httpMetadata: { contentType: m.kieu } })]);
+  await env.HOSO.delete(tam);
 }
 
 export async function phucVuTaiNguyen(req, env) {

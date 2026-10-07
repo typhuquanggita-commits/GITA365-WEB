@@ -134,7 +134,15 @@ export async function baoDongCuuHe(y, env, db) {
     error: 'Chưa nạp GITA_MAIL_CUU — địa chỉ email cứu hệ. Đây là địa chỉ KHÁC ' +
       'email tài khoản, để hacker chiếm tài khoản vẫn không đọc được báo động.' };
 
-  const bt = await soatBatThuong(db, Number(y.phut || 15));
+  /* Cửa này mở không cần đăng nhập (người bị chiếm tài khoản vẫn gọi được),
+     nên chặn hai đường lạm dụng: cửa sổ soi tối đa 60 phút, và mỗi 10 phút
+     chỉ một thư báo động — kẻ xấu không dùng nó để dội thư vào hòm cứu hệ. */
+  const phut = Math.min(60, Math.max(5, Number(y.phut) || 15));
+  const ganDay = await db.prepare("SELECT luc FROM cuuHe WHERE loai = 'BAODONG' AND luc >= ? ORDER BY luc DESC LIMIT 1")
+    .bind(new Date(Date.now() - 600e3).toISOString()).first();
+  if (ganDay) return { ok: true, baoDong: true, daGuiGanDay: true,
+    vi: 'Báo động vừa được gửi lúc ' + ganDay.luc + ' — token còn hiệu lực trong email cứu hệ. Mỗi 10 phút chỉ gửi một lần.' };
+  const bt = await soatBatThuong(db, phut);
   /* Cho phép kích tay (y.tay===true) kể cả khi chưa đủ dấu hiệu: người
      thật thấy máy mình lạ có quyền gọi báo động ngay, không phải chờ
      bộ dò đủ ngưỡng. */
@@ -164,7 +172,7 @@ export async function baoDongCuuHe(y, env, db) {
     '  4. Nhập MẬT KHẨU CŨ để xác nhận đúng chủ.\n\n' +
     'Hệ sẽ đá sạch mọi phiên, đóng băng mọi cửa ghi, và truy hồi.\n' +
     'Token sống một giờ. Không chuyển tiếp thư này cho ai.';
-  const guiOk = await guiThu(env, { den: mailCuu, batBuoc: true,
+  const guiOk = await guiThu(env, { den: mailCuu, batBuoc: true, bimat: true,
     tieuDe: 'GITA 365 — CẢNH BÁO CỨU HỆ', than });
 
   return { ok: true, baoDong: true, guiOk, gui: mailCuu,

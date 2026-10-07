@@ -20,9 +20,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       # node:sqlite (thử đồng bộ giả lập) cần Node >= 22.5
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '22'
 
@@ -82,3 +82,6 @@ jobs:
 
       - name: Soát bí mật (không khoá API nào trong repo)
         run: node tools/soat-bi-mat.js
+
+      - name: Kỷ luật kho mã (cửa ↔ nhánh · ES5 · gỡ lỗi sót · .gitignore · giấy phép · gói độc · CSP · action ghim)
+        run: node tools/thu-ky-luat.mjs

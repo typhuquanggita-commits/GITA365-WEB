@@ -17179,7 +17179,7 @@ G.VIEWS = G.VIEWS || {};
 var KHO = 'gita365_may_chu';
 
 G.diaChiMayChu = function(){
-  try{ return localStorage.getItem(KHO) || ''; }catch(e){ return ''; }
+  try{ var u = localStorage.getItem(KHO) || ''; return (!u || !G.laMayChuHopLe || G.laMayChuHopLe(u)) ? u : ''; }catch(e){ return ''; }
 };
 
 G.datMayChu = function(url){
@@ -17190,9 +17190,9 @@ G.datMayChu = function(url){
     G.API_CAP_PHEP = '';
     return {ok:true, xoa:true};
   }
-  if(!/^https:\/\/[^\s]+$/i.test(url))
-    return {ok:false, ly:'Địa chỉ máy chủ phải là một đường dẫn https — dạng '+
-      'https://gita365.<tên-tài-khoản>.workers.dev (Cloudflare Worker của Học viện).'};
+  if(!/^https:\/\/[^\s]+$/i.test(url) || (G.laMayChuHopLe && !G.laMayChuHopLe(url)))
+    return {ok:false, ly:'Chỉ nhận máy chủ của Học viện — dạng https://<tên>.typhuquanggita.workers.dev '+
+      '(Cloudflare Worker thuộc tài khoản của Học viện). Địa chỉ khác bị chặn để mật khẩu và phiên không bị gửi ra ngoài.'};
   try{ localStorage.setItem(KHO, url); }catch(e){ return {ok:false, ly:'Trình duyệt không cho ghi.'}; }
   if(G.API_CAP_PHEP !== url && G.dangXuatMayChu) G.dangXuatMayChu();
   G.API_CAP_PHEP = url;
@@ -44956,6 +44956,11 @@ var G = window.G || {}; window.G = G;
      Mọi tệp giọng tải từ Worker của GITA (R2 Cloudflare, đường /tn/);
      onnxruntime từ cdnjs.cloudflare.com (CDN của Cloudflare). */
   var ORT = 'https://cdnjs.cloudflare.com/ajax/libs/onnxruntime-web/1.18.0/';
+  /* Dấu vân tay SHA-384 của ort.min.js 1.18.0 (lấy từ gói npm gốc). Trình duyệt
+     từ chối chạy nếu tệp CDN bị tráo — không còn chạy mù mã của bên thứ ba.
+     CDN chính không khớp thì thử bản npm nguyên gốc trên jsDelivr, cùng dấu vân tay. */
+  var ORT_SRI = 'sha384-+sDrjb5Otytk3e52a47vPhUx98dLh5PCPk8NHBLoekdIAC8urCZbpRWfw/mMXYQv';
+  var ORT_DU_PHONG = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.18.0/dist/';
   function tn(ten) { return String(G.API_CAP_PHEP || 'https://gita365.typhuquanggita.workers.dev').replace(/\/+$/, '') + '/tn/' + ten; }
   var MO_HINH = {vais: 'vi_VN-vais1000-medium', vivos: 'vi_VN-vivos-x_low'};
   /* Tên giọng cũ (MiniMax) → giọng Piper. Người vivos đã đo cao độ: nam < 160 Hz, nữ > 215 Hz. */
@@ -44971,9 +44976,10 @@ var G = window.G || {}; window.G = G;
     return {mo: 'vivos', sid: VIVOS_NU[(i - 1) % VIVOS_NU.length]};
   };
 
-  function napScript(src) {
+  function napScript(src, sri) {
     return new Promise(function (ok, hong) {
       var s = document.createElement('script'); s.src = src; s.async = true;
+      if (sri) { s.integrity = sri; s.crossOrigin = 'anonymous'; }
       s.onload = ok; s.onerror = function () { hong(new Error('không tải được ' + src)); };
       document.head.appendChild(s);
     });
@@ -44993,8 +44999,11 @@ var G = window.G || {}; window.G = G;
   }
   var ortHua = null, glueHua = null, phien = {};
   function sanSangOrt() {
-    if (!ortHua) ortHua = (window.ort ? Promise.resolve() : napScript(ORT + 'ort.min.js')).then(function () {
-      window.ort.env.wasm.numThreads = 1; window.ort.env.wasm.wasmPaths = ORT;
+    var goc = ORT;
+    if (!ortHua) ortHua = (window.ort ? Promise.resolve() : napScript(ORT + 'ort.min.js', ORT_SRI).catch(function () {
+      goc = ORT_DU_PHONG; return napScript(ORT_DU_PHONG + 'ort.min.js', ORT_SRI);
+    })).then(function () {
+      window.ort.env.wasm.numThreads = 1; window.ort.env.wasm.wasmPaths = goc;
     }, function (e) { ortHua = null; throw e; });
     return ortHua;
   }

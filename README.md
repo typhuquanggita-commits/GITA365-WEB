@@ -1,318 +1,136 @@
-# LongCat-Video
+# GITA 365 · v9.99.254 — Hệ Sinh Thái Gia Đình Thịnh Vượng
 
-<div align="center">
-  <img src="assets/longcat-video_logo.svg" width="45%" alt="LongCat-Video" />
-</div>
-<hr>
+> ⚠ **TÀI SẢN ĐỘC QUYỀN.** Toàn bộ nội dung chuyên môn của GITA 365 được mã hoá
+> AES-256-GCM và chỉ mở cho tài khoản đã đăng nhập, trong đúng phạm vi vai và
+> tầng được cấp phép. Xem [`LICENSE`](LICENSE) và
+> [`docs/BAO_VE_TAI_SAN.md`](docs/BAO_VE_TAI_SAN.md).
+> Cấm dùng bất kỳ phần nào để huấn luyện trí tuệ nhân tạo.
 
+> **Một gia đình vận hành được — không cần ai canh.**
 
-<div align="center" style="line-height: 1;">
-  <img src='assets/longcat_video_title.svg' alt="LongCat-Video">
-  <a href='https://meituan-longcat.github.io/LongCat-Video/'><img src='https://img.shields.io/badge/Project-Page-green'></a>
-  <a href='https://arxiv.org/abs/2510.22200'><img src='https://img.shields.io/badge/Technique-Report-red'></a>
-  <a href='https://huggingface.co/meituan-longcat/LongCat-Video'><img src='https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Model-blue'></a>
-</div>
-<div align="center" style="line-height: 1;">
-  <img src='assets/longcat_video_avatar_1.5_title.svg' alt="LongCat-Video-Avatar 1.5">
-  <a href='https://meigen-ai.github.io/LongCat-Video-Avatar-1.5-Page/'><img src='https://img.shields.io/badge/Project-Page-green'></a>
-  <a href='https://github.com/meituan-longcat/LongCat-Video/blob/main/assets/LongCat-Video-Avatar-1.5-Tech-Report.pdf'><img src='https://img.shields.io/badge/Technique-Report-red'></a>
-  <a href='https://huggingface.co/meituan-longcat/LongCat-Video-Avatar-1.5'><img src='https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Model-blue'></a>
-  <a href='https://www.modelscope.cn/models/meituan-longcat/LongCat-Video-Avatar-1.5'><img src='https://img.shields.io/badge/ModelScope-Model-purple'></a>
-</div>
-<div align="center" style="line-height: 1;">
-  <img src='assets/title_placeholder.svg' alt="placeholder">
-  </a>
-  <a href='https://github.com/meituan-longcat/LongCat-Flash-Chat/blob/main/figures/wechat_official_accounts.png'><img src='https://img.shields.io/badge/WeChat-LongCat-brightgreen?logo=wechat&logoColor=white'></a>  
-  <a href='https://x.com/Meituan_LongCat'><img src='https://img.shields.io/badge/Twitter-LongCat-white?logo=x&logoColor=white'></a>
-<a href="https://discord.gg/EXsG52D8SW"><img src="https://img.shields.io/badge/Discord-Join%20Chat-5865F2?logo=discord&logoColor=white"></a>
-  <a href='LICENSE'><img src='https://img.shields.io/badge/License-MIT-f5de53?&color=f5de53'></a>
-</div>
+Web app + ứng dụng cài đặt được (PWA) cho hệ thống GITA 365. Nối tiếp nền tảng
+v6.9 (Apps Script): giữ nguyên chuẩn phân quyền 15 vai, mô thức **G–I–T–A**,
+**năm tầng** T1–T5 và toàn bộ kho tri thức — dựng lại thành một giao diện dẫn dắt
+theo **Bản Đồ Gia Đình Thịnh Vượng**.
 
-## Model Introduction
-We introduce LongCat-Video, a foundational video generation model with 13.6B parameters, delivering strong performance across *Text-to-Video*, *Image-to-Video*, and *Video-Continuation* generation tasks. It particularly excels in efficient and high-quality long video generation, representing our first step toward world models.
-
-### Key Features
-- 🌟 **Unified architecture for multiple tasks**: LongCat-Video unifies *Text-to-Video*, *Image-to-Video*, and *Video-Continuation* tasks within a single video generation framework. It natively supports all these tasks with a single model and consistently delivers strong performance across each individual task.
-- 🌟 **Long video generation**: LongCat-Video is natively pretrained on *Video-Continuation* tasks, enabling it to produce minutes-long videos without color drifting or quality degradation.
-- 🌟 **Efficient inference**: LongCat-Video generates $720p$, $30fps$ videos within minutes by employing a coarse-to-fine generation strategy along both the temporal and spatial axes. Block Sparse Attention further enhances efficiency, particularly at high resolutions
-- 🌟 **Strong performance with multi-reward RLHF**: Powered by multi-reward Group Relative Policy Optimization (GRPO), comprehensive evaluations on both internal and public benchmarks demonstrate that LongCat-Video achieves performance comparable to leading open-source video generation models as well as the latest commercial solutions.
-
-For more detail, please refer to the comprehensive [***LongCat-Video Technical Report***](https://arxiv.org/abs/2510.22200).
-
-## 🎥 Teaser Video
-
-<div align="center">
-  <video src="https://github.com/user-attachments/assets/00fa63f0-9c4e-461a-a79e-c662ad596d7d" width="2264" height="384"> </video>
-</div>
-
-## 🔥 Latest News!!
-- May 21, 2026: 🚀 We release [***LongCat-Video-Avatar-1.5***](https://meigen-ai.github.io/LongCat-Video-Avatar-1.5-Page/), an upgraded open-source framework for audio-driven human video generation. v1.5 replaces Wav2Vec2 with Whisper-Large for more accurate lip synchronization, achieves production-ready physical rationality and temporal stability with robust long-video generation, generalizes to stylized domains (anime, animals, complex real-world conditions), supports both single-stream and multi-stream audio inputs, and accelerates inference to 8 steps via step distillation. [ [***code***](https://github.com/meituan-longcat/LongCat-Video) | 🤗 [***weights***](https://huggingface.co/meituan-longcat/LongCat-Video-Avatar-1.5) | [***project page***](https://meigen-ai.github.io/LongCat-Video-Avatar-1.5-Page/) ]
-- Dec 16, 2025: 🚀 We are excited to announce the release of [***LongCat-Video-Avatar***](https://meigen-ai.github.io/LongCat-Video-Avatar/), a unified model that delivers expressive and highly dynamic audio-driven character animation, supporting native tasks including *Audio-Text-to-Video*, *Audio-Text-Image-to-Video*, and *Video Continuation* with seamless compatibility for both *single-stream* and *multi-stream* audio inputs. The release includes our [***Technical Report***](https://github.com/meituan-longcat/LongCat-Video), [***inference code***](https://github.com/meituan-longcat/LongCat-Video), 🤗 [***model weights***](https://huggingface.co/meituan-longcat/LongCat-Video-Avatar), and [***project page***](https://meigen-ai.github.io/LongCat-Video-Avatar/).
-- Oct 25, 2025: 🚀 We've released LongCat-Video, a foundational video generation model.  Tech report and models are available at [***LongCat-Video Technical Report***](https://arxiv.org/abs/2510.22200) and 🤗 [***Huggingface***](https://huggingface.co/meituan-longcat/LongCat-Video) !
+---
 
 
+## Bắt đầu từ đâu
 
-## Quick Start
+Mọi việc thường ngày nằm ở **[docs/CACH_LAM.md](docs/CACH_LAM.md)** — một trang.
+Một lệnh làm hết: `node tools/phat-hanh.js`
 
-### Installation
+Không đăng nhập được? **[docs/DANG_NHAP.md](docs/DANG_NHAP.md)** — bấm thẳng vào một vai là vào, không cần mật khẩu.
 
-Clone the repo:
+## Chạy thử — ba cách
 
-```shell
-git clone --single-branch --branch main https://github.com/meituan-longcat/LongCat-Video
-cd LongCat-Video
-```
+| Cách | Làm gì | Dùng khi |
+|---|---|---|
+| **Mở thẳng** | Bấm đúp `index.html` | Xem nhanh, không cần cài gì |
+| **Chạy web** | `npx http-server -p 8099` rồi mở `http://localhost:8099` | Bật được service worker và cài app |
+| **Cài như ứng dụng** | Mở bản web → biểu tượng **＋** trên thanh trên, hoặc trình đơn trình duyệt → *Cài đặt GITA 365* | Dùng trên máy tính và điện thoại, chạy cả khi mất mạng |
+| **Bản giới thiệu một tệp** | `python3 tools/dong-goi.py` → mở tệp HTML | Gửi email, chép USB — chế độ mẫu, **không kèm kho tri thức** |
+| **Cài trên máy tính** | Bộ cài `.exe` / `.dmg` / `.AppImage` — xem [`docs/CAI_DAT_MAY_TINH.md`](docs/CAI_DAT_MAY_TINH.md) | Vận hành hằng ngày: trình đơn tiếng Việt, sao lưu, xuất PDF, hoàn toàn ngoại tuyến |
 
-Install dependencies:
+Dựng lại sau khi sửa nội dung: `python3 tools/dong-goi.py` (bản một tệp) ·
+`cd desktop && npm run dist` (bộ cài máy tính)
 
-```shell
-# create conda environment
-conda create -n longcat-video python=3.10
-conda activate longcat-video
+Không có bước dựng, không phụ thuộc thư viện ngoài. Chỉ cần một trình duyệt.
 
-# install torch (configure according to your CUDA version)
-pip install torch==2.6.0+cu124 torchvision==0.21.0+cu124 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu124
+### Cài trên điện thoại
+- **Android · Chrome** — trình đơn ⋮ → *Thêm vào màn hình chính*
+- **iPhone · iPad · Safari** — nút Chia sẻ → *Thêm vào MH chính*
+- **Máy tính · Chrome/Edge** — biểu tượng cài đặt ở thanh địa chỉ
 
-# install flash-attn-2
-pip install ninja 
-pip install psutil 
-pip install packaging 
-pip install flash_attn==2.7.4.post1
+---
 
-# install other requirements
-pip install -r requirements.txt
+## Có gì bên trong
 
-# install longcat-video-avatar requirements
-conda install -c conda-forge librosa
-conda install -c conda-forge ffmpeg
-pip install -r requirements_avatar.txt
+**Năm nhóm chính · 56 màn hình · 15 vai · 2 ngôn ngữ**
+
+| Nhóm | Nội dung |
+|---|---|
+| **01 · BẢN ĐỒ THỊNH VƯỢNG** | Bắt đầu ở đây · Bản đồ 5 khoang – 9 vai · Chân dung nhà mình · Định vị · Tầm nhìn 5–20 năm · Từ nỗi đau đến khát khao · Hành trình của con · Bản đồ điểm chạm · Người đồng hành · Chuỗi WOW |
+| **02 · HÀNH TRÌNH 5 TẦNG** | Lộ trình T1→T5 · Bản đồ G–I–T–A · Chu kỳ 21/90 ngày · Nhiệm vụ & Nhật ký 365 · 10 chân dung thành công · Cổng nghiệm thu · Kiến trúc 100 năm |
+| **03 · KHO BÁU VẬT** | 220 phác đồ · 1.000 kịch bản · 42 mô thức gốc · 14 bài học · Sách gốc Học viện · Ngôn từ dẫn dắt · Nhận diện thương hiệu · Trợ lý GITA (có micro) |
+| **04 · CÚ HÍCH & NHỊP SỐNG** | Chín vai giữ trong nhà · Thói quen & nghi lễ · Cú hích lớn · Bảng số gia đình · Ghi nhận · Cấp độ · Quà tặng · Vinh danh · Sáu ranh giới · Chuẩn vận hành |
+| **05 · HỆ SINH THÁI & VẬN HÀNH** | Vệ tinh · Đại sứ · Cơ chế hoa hồng (trần 10%) · Sự kiện · Buồng lái Coach · Khoang mở cửa · Hành trình người dẫn dắt · Trung tâm điều hành · Quản trị con người · Kiểm duyệt · Tài chính · Hài lòng · Tài liệu khách gửi · Phòng kiểm thử 4 chuyên gia · Chuẩn 1000 điểm · AI điều phối · Lá chắn dữ liệu · Học từ những hệ thống lớn · Rà soát hệ thống · Nhật ký |
+
+**Thanh phải — La bàn văn hoá** đi cùng mọi màn hình: Tầm nhìn · Sứ mệnh ·
+6 kim chỉ nam · 7 giá trị cốt lõi · 10 nội quy · 4 nhịp · 6 ranh giới ·
+nhịp sống · câu giữ lửa · giá trị cho cộng đồng.
+
+---
+
+## Tài khoản trải nghiệm
+
+15 vị trí (R01–R15) + 4 chuyên gia phản biện — xem đầy đủ ở
+[`docs/TAI_KHOAN.md`](docs/TAI_KHOAN.md) hoặc bấm **“Xem 15 tài khoản trải nghiệm”**
+ngay ở Cổng vào.
 
 ```
-
-FlashAttention-2 is enabled in the model config by default; you can also change the model config ("./weights/LongCat-Video/dit/config.json") to use FlashAttention-3 or xformers once installed.
-
-### Model Download
-
-| Models | Description | Download Link |
-| --- | --- | --- |
-| LongCat-Video | foundational video generation | 🤗 [Huggingface](https://huggingface.co/meituan-longcat/LongCat-Video) |
-| LongCat-Video-Avatar | single- and multi-character audio-driven video generation (wav2vec2) | 🤗 [Huggingface](https://huggingface.co/meituan-longcat/LongCat-Video-Avatar) |
-| LongCat-Video-Avatar-1.5 | upgraded avatar model with Whisper-large-v3 audio encoder, distillation-based fast inference | 🤗 [Huggingface](https://huggingface.co/meituan-longcat/LongCat-Video-Avatar-1.5) |
-
-Download models using huggingface-cli:
-```shell
-pip install "huggingface_hub[cli]"
-huggingface-cli download meituan-longcat/LongCat-Video --local-dir ./weights/LongCat-Video
-huggingface-cli download meituan-longcat/LongCat-Video-Avatar --local-dir ./weights/LongCat-Video-Avatar
-huggingface-cli download meituan-longcat/LongCat-Video-Avatar-1.5 --local-dir ./weights/LongCat-Video-Avatar-1.5
+admin@gita365.vn     Gita#Admin02      → Trung tâm điều hành
+coach@gita365.vn     Gita#Coach07      → Buồng lái Coach
+tuvan@gita365.vn     Gita#Tuvan11      → Khoang mở cửa
+phuhuynh@gita365.vn  Gita#Phuhuynh13   → Bản đồ nhà mình
+hocvien@gita365.vn   Gita#Hocvien14    → Hành trình của con
+daisu@gita365.vn     Gita#Daisu15      → Vệ tinh lan toả
 ```
 
-### Run Text-to-Video
+> ⚠ **Đây là lớp đăng nhập DEMO chạy trong trình duyệt** để kiểm tra giao diện và
+> phạm vi của từng vai. **Không phải hệ thống xác thực thật.** Trước khi mở cho
+> khách bên ngoài, phải nối `02_Security.gs` của v6.9 — xem
+> [`docs/BAO_MAT.md`](docs/BAO_MAT.md).
 
-```shell
-# Single-GPU inference
-torchrun run_demo_text_to_video.py --checkpoint_dir=./weights/LongCat-Video --enable_compile
+---
 
-# Multi-GPU inference
-torchrun --nproc_per_node=2 run_demo_text_to_video.py --context_parallel_size=2 --checkpoint_dir=./weights/LongCat-Video --enable_compile
-```
+## Đa ngôn ngữ
 
-### Run Image-to-Video
+Tiếng Việt (gốc) và tiếng Anh. Bấm **VI / EN** ở thanh trên hoặc Cổng vào.
+Bản tiếng Anh phủ trọn giao diện, la bàn văn hoá, năm tầng và bản đồ điểm chạm.
+Kho chuyên môn 1.000 kịch bản giữ tiếng Việt gốc — bản địa hoá theo từng thị trường.
+Thêm ngôn ngữ mới: chép khối `en` trong `src/i18n.js` và dịch, không phải sửa mã.
 
-```shell
-# Single-GPU inference
-torchrun run_demo_image_to_video.py --checkpoint_dir=./weights/LongCat-Video --enable_compile
+---
 
-# Multi-GPU inference
-torchrun --nproc_per_node=2 run_demo_image_to_video.py --context_parallel_size=2 --checkpoint_dir=./weights/LongCat-Video --enable_compile
-```
-
-### Run Video-Continuation
-
-```shell
-# Single-GPU inference
-torchrun run_demo_video_continuation.py --checkpoint_dir=./weights/LongCat-Video --enable_compile
-
-# Multi-GPU inference
-torchrun --nproc_per_node=2 run_demo_video_continuation.py --context_parallel_size=2 --checkpoint_dir=./weights/LongCat-Video --enable_compile
-```
-
-### Run Long-Video Generation
-
-```shell
-# Single-GPU inference
-torchrun run_demo_long_video.py --checkpoint_dir=./weights/LongCat-Video --enable_compile
-
-# Multi-GPU inference
-torchrun --nproc_per_node=2 run_demo_long_video.py --context_parallel_size=2 --checkpoint_dir=./weights/LongCat-Video --enable_compile
-```
-
-### Run Interactive Video Generation
-
-```shell
-# Single-GPU inference
-torchrun run_demo_interactive_video.py --checkpoint_dir=./weights/LongCat-Video --enable_compile
-
-# Multi-GPU inference
-torchrun --nproc_per_node=2 run_demo_interactive_video.py --context_parallel_size=2 --checkpoint_dir=./weights/LongCat-Video --enable_compile
-```
-
-### Run LongCat-Video-Avatar
-<details>
-<summary>💡 User tips for 1.5</summary>
-
-> - **Lip synchronization accuracy:** Audio CFG works optimally between 3–5. Increase the audio CFG value for better synchronization.
-> - **Prompt Enhancement:** Longer, more descriptive prompts yield better consistency and naturalness than short ones. We recommend including rich details such as character appearance, actions, and scene context (e.g., *"A young woman with long black hair is speaking and smiling, wearing a white blouse, sitting in a bright café"*) for best results.
-> - **Mitigate repeated actions:** Setting the reference image index（--ref_img_index, default to 10） between 0 and 24 ensures better consistency; setting it to 30 helps reduce repeated actions. Additionally, increasing the mask frame range (--mask_frame_range, default to 3) can further help mitigate repeated actions, but excessively large values may introduce artifacts.
-> - **Super resolution:** Our model is compatible with both 480P and 720P, which can be controlled via --resolution.
-> - **Dual-Audio Modes:** Merge mode (set audio_type to para) requires two audio clips of equal length, and the resulting audio is obtained by summing the two clips; Concatenation mode (set audio_type to add) does not require equal-length inputs, and the resulting audio is formed by sequentially concatenating the two clips with silence padding for any gaps, where by default person1 speaks first and person2 speaks afterward.
-> - **Model versions:** `--model_type avatar-v1.0` uses wav2vec2 audio encoder (default); `--model_type avatar-v1.5` uses Whisper-large-v3 audio encoder for better lip sync quality.
-> - **Distillation mode:** Add `--use_distill` to enable distillation sampling (fewer steps, faster inference). This is **required** when using `--model_type avatar-v1.5`.
-> - **INT8 quantization:** Add `--use_int8` to load the INT8 quantized DiT model for reduced VRAM usage. Only supported with `--model_type avatar-v1.5`.
-
-</details>
-
-<details>
-<summary>💡 User tips for 1.0</summary>
-
-> - Lip synchronization accuracy:​​ Audio CFG works optimally between 3–5. Increase the audio CFG value for better synchronization.
-> - Prompt Enhancement: Include clear verbal-action cues (e.g., talking, speaking) in the prompt to achieve more natural lip movements.
-> - Mitigate repeated actions: Setting the reference image index（--ref_img_index, default to 10） between 0 and 24 ensures better consistency, while selecting other ranges (e.g., -10 or 30) helps reduce repeated actions. Additionally, increasing the mask frame range (--mask_frame_range, default to 3) can further help mitigate repeated actions, but excessively large values may introduce artifacts.
-> - Super resolution: Our model is compatible with both 480P and 720P, which can be controlled via --resolution.
-> - Dual-Audio Modes: Merge mode (set audio_type to para) requires two audio clips of equal length, and the resulting audio is obtained by summing the two clips; Concatenation mode (set audio_type to add) does not require equal-length inputs, and the resulting audio is formed by sequentially concatenating the two clips with silence padding for any gaps, where by default person1 speaks first and person2 speaks afterward.
-
-</details>
-
-#### LongCat-Video-Avatar-1.5
-
-- Single-Audio-to-Video Generation
-```shell
-# Audio-Text-to-Video
-torchrun --nproc_per_node=2 run_demo_avatar_single_audio_to_video.py --context_parallel_size=2 --checkpoint_dir=./weights/LongCat-Video-Avatar-1.5 --stage_1=at2v --input_json=assets/avatar/single_example_1.json --use_distill --model_type avatar-v1.5 --use_int8
-
-# Audio-Image-to-Video
-torchrun --nproc_per_node=2 run_demo_avatar_single_audio_to_video.py --context_parallel_size=2 --checkpoint_dir=./weights/LongCat-Video-Avatar-1.5 --stage_1=ai2v --input_json=assets/avatar/single_example_1.json --use_distill --model_type avatar-v1.5 --use_int8
-
-# Audio-Text-to-Video and Video-Continuation
-torchrun --nproc_per_node=2 run_demo_avatar_single_audio_to_video.py --context_parallel_size=2 --checkpoint_dir=./weights/LongCat-Video-Avatar-1.5 --stage_1=at2v --input_json=assets/avatar/single_example_1.json --num_segments=5 --ref_img_index=10 --mask_frame_range=3 --use_distill --model_type avatar-v1.5 --use_int8
-
-# Audio-Image-to-Video and Video-Continuation
-torchrun --nproc_per_node=2 run_demo_avatar_single_audio_to_video.py --context_parallel_size=2 --checkpoint_dir=./weights/LongCat-Video-Avatar-1.5 --stage_1=ai2v --input_json=assets/avatar/single_example_1.json --num_segments=5 --ref_img_index=10 --mask_frame_range=3 --use_distill --model_type avatar-v1.5 --use_int8
-```
-
-- Multi-Audio-to-Video Generation
-```shell
-# Audio-Image-to-Video
-torchrun --nproc_per_node=2 run_demo_avatar_multi_audio_to_video.py --context_parallel_size=2 --checkpoint_dir=./weights/LongCat-Video-Avatar-1.5 --input_json=assets/avatar/multi_example_1.json --use_distill --model_type avatar-v1.5 --use_int8
-
-# Audio-Image-to-Video and Video-Continuation
-torchrun --nproc_per_node=2 run_demo_avatar_multi_audio_to_video.py --context_parallel_size=2 --checkpoint_dir=./weights/LongCat-Video-Avatar-1.5 --input_json=assets/avatar/multi_example_1.json --num_segments=5 --ref_img_index=10 --mask_frame_range=3 --use_distill --model_type avatar-v1.5 --use_int8
-```
-
-### Run Streamlit
-
-```shell
-# Single-GPU inference
-streamlit run ./run_streamlit.py --server.fileWatcherType none --server.headless=false
-```
-
-
-
-## Evaluation Results
-
-### Text-to-Video
-The *Text-to-Video* MOS evaluation results on our internal benchmark.
-
-| **MOS score** | **Veo3** | **PixVerse-V5** | **Wan 2.2-T2V-A14B** | **LongCat-Video** |
-|---------------|-------------------|--------------------|-------------|-------------|
-| **Accessibility** | Proprietary | Proprietary | Open Source | Open Source |
-| **Architecture** | - | - | MoE | Dense |
-| **# Total Params** | - | - | 28B | 13.6B |
-| **# Activated Params** | - | - | 14B | 13.6B |
-| Text-Alignment↑ | 3.99 | 3.81 | 3.70 | 3.76 |
-| Visual Quality↑ | 3.23 | 3.13 | 3.26 | 3.25 |
-| Motion Quality↑ | 3.86 | 3.81 | 3.78 | 3.74 |
-| Overall Quality↑ | 3.48 | 3.36 | 3.35 | 3.38 |
-
-### Image-to-Video
-The *Image-to-Video* MOS evaluation results on our internal benchmark.
-
-| **MOS score** | **Seedance 1.0** | **Hailuo-02** | **Wan 2.2-I2V-A14B** | **LongCat-Video** |
-|---------------|-------------------|--------------------|-------------|-------------|
-| **Accessibility** | Proprietary | Proprietary | Open Source | Open Source |
-| **Architecture** | - | - | MoE | Dense |
-| **# Total Params** | - | - | 28B | 13.6B |
-| **# Activated Params** | - | - | 14B | 13.6B |
-| Image-Alignment↑ | 4.12 | 4.18 | 4.18 | 4.04 |
-| Text-Alignment↑ | 3.70 | 3.85 | 3.33 | 3.49 |
-| Visual Quality↑ | 3.22 | 3.18 | 3.23 | 3.27 |
-| Motion Quality↑ | 3.77 | 3.80 | 3.79 | 3.59 |
-| Overall Quality↑ | 3.35 | 3.27 | 3.26 | 3.17 |
-
-## Community Works
-
-Community works are welcome! Please PR or inform us in Issue to add your work.
-
-- [CacheDiT](https://github.com/vipshop/cache-dit) offers Fully Cache Acceleration support for LongCat-Video with DBCache and TaylorSeer, achieved nearly 1.7x speedup without obvious loss of precision. Visit their [example](https://github.com/vipshop/cache-dit/blob/main/examples/pipeline/run_longcat_video.py) for more details.
-
-
-## License Agreement
-
-The **model weights** are released under the **MIT License**. 
-
-Any contributions to this repository are licensed under the MIT License, unless otherwise stated. This license does not grant any rights to use Meituan trademarks or patents. 
-
-See the [LICENSE](LICENSE) file for the full license text.
-
-
-## Usage Considerations 
-This model has not been specifically designed or comprehensively evaluated for every possible downstream application. 
-
-Developers should take into account the known limitations of large language models, including performance variations across different languages, and carefully assess accuracy, safety, and fairness before deploying the model in sensitive or high-risk scenarios. 
-It is the responsibility of developers and downstream users to understand and comply with all applicable laws and regulations relevant to their use case, including but not limited to data protection, privacy, and content safety requirements. 
-
-Nothing in this Model Card should be interpreted as altering or restricting the terms of the MIT License under which the model is released. 
-
-## Citation
-We kindly encourage citation of our work if you find it useful.
+## Cấu trúc
 
 ```
-@misc{meituanlongcatteam2025longcatvideotechnicalreport,
-      title={LongCat-Video Technical Report}, 
-      author={Meituan LongCat Team and Xunliang Cai and Qilong Huang and Zhuoliang Kang and Hongyu Li and Shijun Liang and Liya Ma and Siyu Ren and Xiaoming Wei and Rixu Xie and Tong Zhang},
-      year={2025},
-      eprint={2510.22200},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV},
-      url={https://arxiv.org/abs/2510.22200}, 
-}
-
-@misc{meituanlongcatteam2026longcatvideoavatar15technicalreport,
-      title={LongCat-Video-Avatar 1.5 Technical Report}, 
-      author={Meituan LongCat Team and Xunliang Cai and Meng Cheng and Feng Gao and Zhe Kong and Jiamu Li and Le Li and Weiheng Li and Hongyu Liu and Shuai Tan and Xiaoming Wei and Tianyu Yang and Yong Zhang},
-      year={2026},
-      eprint={2605.26486},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV},
-      url={https://arxiv.org/abs/2605.26486}, 
-}
-
-@misc{meituanlongcatteam2025longcatvideoavatartechnicalreport,
-      title={LongCat-Video-Avatar Technical Report}, 
-      author={Meituan LongCat Team},
-      year={2025},
-      eprint={},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV},
-      url={}, 
-}
+index.html                 khung ứng dụng
+manifest.webmanifest       khai báo cài đặt (PWA)
+sw.js                      chạy được khi mất mạng
+assets/style.css           hệ thiết kế "Trường năng lượng"
+assets/icons/              biểu tượng ứng dụng
+assets/fonts/              bộ chữ nhúng sẵn — không gọi ra mạng ngoài
+desktop/                   bản cài đặt máy tính (Electron)
+.github/workflows/         tự dựng bộ cài Windows · macOS · Linux
+src/data.core.js           vai · quyền · năm tầng · điều hướng · la bàn văn hoá
+src/kho-khoa.js            xin khoá · giải mã kho trong bộ nhớ
+kho/*.enc                  kho tri thức đã mã hoá — vô nghĩa nếu không có khoá
+kho-goc/                   nội dung gốc (KHÔNG lên kho mã)
+server/GITA_CapPhep.gs     máy chủ cấp khoá theo vai và tầng
+src/i18n.js                đa ngôn ngữ
+src/ui.js                  mảnh giao diện dùng chung
+src/guard.js               lá chắn dữ liệu chạy thật
+src/views*.js              56 màn hình
+src/app.js                 trạng thái · phân quyền · định tuyến
+docs/                      tài khoản · bảo mật · bảo vệ tài sản · kiến trúc · chi phí · cài đặt
 ```
 
-## Acknowledgements
+Đổi nội dung chỉ sửa `src/data.*.js`, không đụng vào mã hiển thị.
 
-We would like to thank the contributors to the [Wan](https://huggingface.co/Wan-AI), [UMT5-XXL](https://huggingface.co/google/umt5-xxl), [Diffusers](https://github.com/huggingface/diffusers) and [HuggingFace](https://huggingface.co) repositories, for their open research.
+---
 
+## Đã kiểm
 
-## Contact
-Please contact us at <a href="mailto:longcat-team@meituan.com">longcat-team@meituan.com</a> or scan the QR code to join our WeChat Group if you have any questions.  
-<img src="https://raw.githubusercontent.com/meituan-longcat/LongCat-Flash-Chat/main/wechat-assets/Wechat.png" width="200px">
+- **1.064 lượt** (19 vai × 56 màn hình) — không lỗi runtime, 260 lượt chặn đúng quyền
+- Không tiêm được mã qua ô nhập của người dùng
+- 55 mục điều hướng ↔ 56 màn hình khớp 100%, không mục nào trỏ vào khoảng trống
+- 1.000 kịch bản / 220 phác đồ đủ trường bắt buộc, không mã tầng lạ
+
+Biên bản đầy đủ nằm trong app: **Nhóm 05 → Rà soát hệ thống**.
+
+---
+
+*Hotline 08.5555.4688 · truongnhatquang.com*

@@ -424,15 +424,29 @@ def lam_srt(kich_ban, thoi_luong, ra):
 # ── KHỚP MÔI (MuseTalk, dự phòng Wav2Lip) — chỉ cảnh có thoại ──
 _muse_san_sang = None
 
+# Mã nguồn bên thứ ba được GHIM đúng một commit đã soát — kho upstream có đổi
+# (hoặc bị chiếm) cũng không lọt mã mới vào máy đang cầm khoá xưởng quay.
+GHIM_MUSETALK = "0a89dec45a0192b824e3cf4daf96c239440c5ed8"   # TMElyralab/MuseTalk
+GHIM_WAV2LIP = "ebe4687d9ecc5a1e255793d149e2738f9f927d09"    # justinjohn0306/Wav2Lip
+
+def clone_ghim(url, dich, sha):
+    """Lấy đúng một commit: init → fetch theo SHA → checkout. Sai SHA thì dừng."""
+    dich = str(dich)
+    subprocess.run(["git", "init", "-q", dich], check=True, capture_output=True)
+    subprocess.run(["git", "-C", dich, "remote", "add", "origin", url], check=True, capture_output=True)
+    subprocess.run(["git", "-C", dich, "fetch", "-q", "--depth", "1", "origin", sha], check=True, capture_output=True)
+    subprocess.run(["git", "-C", dich, "checkout", "-q", "FETCH_HEAD"], check=True, capture_output=True)
+    dau = subprocess.run(["git", "-C", dich, "rev-parse", "HEAD"], check=True, capture_output=True, text=True).stdout.strip()
+    if dau != sha:
+        raise RuntimeError("Commit tải về không khớp mã đã ghim: %s" % dau)
+
 def cai_musetalk():
     global _muse_san_sang
     if _muse_san_sang is not None:
         return _muse_san_sang
     try:
         if not (STUDIO / "MuseTalk").exists():
-            subprocess.run(["git", "clone", "--depth", "1",
-                            "https://github.com/TMElyralab/MuseTalk", str(STUDIO / "MuseTalk")],
-                           check=True, capture_output=True)
+            clone_ghim("https://github.com/TMElyralab/MuseTalk", STUDIO / "MuseTalk", GHIM_MUSETALK)
             subprocess.run([sys.executable, "-m", "pip", "install", "-q",
                             "-r", str(STUDIO / "MuseTalk" / "requirements.txt")], check=True)
             from huggingface_hub import snapshot_download
@@ -452,9 +466,7 @@ def cai_wav2lip():
         return _w2l_san_sang
     try:
         if not (STUDIO / "Wav2Lip").exists():
-            subprocess.run(["git", "clone", "--depth", "1",
-                            "https://github.com/justinjohn0306/Wav2Lip", str(STUDIO / "Wav2Lip")],
-                           check=True, capture_output=True)
+            clone_ghim("https://github.com/justinjohn0306/Wav2Lip", STUDIO / "Wav2Lip", GHIM_WAV2LIP)
             ck = STUDIO / "Wav2Lip" / "checkpoints"
             ck.mkdir(exist_ok=True)
             subprocess.run(["wget", "-q", "-O", str(ck / "wav2lip_gan.pth"),

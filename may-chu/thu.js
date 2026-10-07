@@ -164,13 +164,18 @@ export function duongGuiThu(env, den) {
  *           người dùng biết. Dùng cho mã OTP và đường dẫn kích hoạt:
  *           báo "đã gửi mã" trong khi thư không đi là để người ta ngồi
  *           đợi một thứ không bao giờ tới.
+ * bimat   — thư mang mã dùng một lần / token cứu hệ: KHÔNG đi đường hộp
+ *           thư GitHub khi còn đường khác (Gmail · Resend), vì issue GitHub
+ *           giữ nội dung vĩnh viễn trong lịch sử. Chỉ còn mỗi đường GitHub
+ *           thì vẫn gửi — mất đường cứu hệ còn nguy hơn.
  */
-export async function guiThu(env, {den, tieuDe, than, batBuoc}) {
+export async function guiThu(env, {den, tieuDe, than, batBuoc, bimat}) {
   /* Không có khoá gửi thư thì KHÔNG im lặng coi như đã gửi. Ở máy phát
      triển và trong bộ thử, env.GHI_THU nhận lá thư để soi được nội dung
      mà không gửi đi thật. */
   if (env.GHI_THU) { env.GHI_THU.push({den, tieuDe, than}); return true; }
-  const ds = duongGuiThu(env, den);
+  let ds = duongGuiThu(env, den);
+  if (bimat && ds.some(d => d.ten !== 'github')) ds = ds.filter(d => d.ten !== 'github');
   if (!ds.length) {
     if (batBuoc) throw new Error('Máy chủ chưa cấu hình đường gửi thư tới địa chỉ này ' +
       '(hộp thư GitHub GITA_GH_KHOA_THU cho hòm chủ hệ; cầu nối Gmail GITA_CAU_NOI_GMAIL + GITA_KHOA_CAU_NOI, hoặc Resend cho mọi người).');

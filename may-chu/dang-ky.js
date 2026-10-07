@@ -169,7 +169,7 @@ export async function dangKy(y, env, db) {
      gửi mã" trong khi thư không đi là để người ta ngồi đợi một thứ
      không bao giờ tới. */
   try {
-    await guiThu(env, {den: email, batBuoc: true,
+    await guiThu(env, {den: email, batBuoc: true, bimat: true,
       tieuDe: 'GITA 365 — mã xác nhận đăng ký',
       than: 'Chào ' + hoTen + ',\n\nMã xác nhận của anh chị là: ' + ma + '\n\n' +
         'Mã sống ' + OTP_PHUT + ' phút. Nhập mã vào màn hình đang mở để đi tiếp.\n\n' +
@@ -203,7 +203,7 @@ export async function guiLaiOtp(y, env, db) {
     .bind(muoi, await bamOtp(ma, muoi, env.GITA_TIEU),
       Date.now() + OTP_PHUT * 60000, c.id).run();
 
-  await guiThu(env, {den: email, tieuDe: 'GITA 365 — mã xác nhận mới',
+  await guiThu(env, {den: email, bimat: true, tieuDe: 'GITA 365 — mã xác nhận mới',
     than: 'Mã mới của anh chị: ' + ma + '\n\nMã cũ đã hết hiệu lực. Mã này sống ' +
       OTP_PHUT + ' phút.' + CHAN_THU});
   await Kho.ghiNhatKy(db, {viec: 'DANG_KY_GUI_LAI_OTP', doiTuong: email});
@@ -246,7 +246,7 @@ export async function xacThucOtp(y, env, db) {
   const web = String(env.GITA_DIA_CHI_WEB || '').split(',')[0].trim().replace(/\/+$/, '');
   const lien = (web || 'https://gita365.pages.dev') + '#kichhoat=' + token;
   try {
-    await guiThu(env, {den: email, batBuoc: true,
+    await guiThu(env, {den: email, batBuoc: true, bimat: true,
       tieuDe: 'GITA 365 — bước cuối để mở tài khoản',
       than: 'Chào ' + c.hoTen + ',\n\nMã xác nhận đã đúng. Còn một bước: bấm vào đường ' +
         'dẫn dưới đây để đặt mật khẩu và mở tài khoản.\n\n' + lien + '\n\n' +

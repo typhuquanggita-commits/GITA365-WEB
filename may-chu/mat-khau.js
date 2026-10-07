@@ -93,7 +93,7 @@ export async function quenMatKhau(y, env, db) {
   /* Thư này KHÔNG batBuoc: gửi hỏng thì vẫn trả lời y hệt, vì một câu
      lỗi ở đây nói cho người dò biết rằng tài khoản CÓ THẬT. Ghi vào
      nhật ký để người trong nhà còn tìm ra. */
-  const daGui = await guiThu(env, {den: email,
+  const daGui = await guiThu(env, {den: email, bimat: true,
     tieuDe: 'GITA 365 — mã lấy lại mật khẩu',
     than: 'Chào ' + (nd.hoTen || 'anh chị') + ',\n\n' +
       'Mã lấy lại mật khẩu của tài khoản ' + nd.username + ' là:\n\n' +

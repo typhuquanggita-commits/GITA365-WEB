@@ -45,7 +45,7 @@
 </main>
 <script>
 (async function () {
-  var api = (window.GITA_API || localStorage.getItem('gita_api') || 'https://gita365.typhuquanggita.workers.dev').replace(/\/+$/, '');
+  var api = 'https://gita365.typhuquanggita.workers.dev';   /* cố định — không nhận địa chỉ ghi đè từ trình duyệt */
   function chet(msg) {
     document.getElementById('cham').classList.add('chet');
     document.getElementById('trang-thai').textContent = msg;
