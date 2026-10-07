@@ -83,6 +83,9 @@ jobs:
       - name: Thử phạm vi nhà · ngang cấp · tự vá lược đồ
         run: node tools/thu-pham-vi.mjs
 
+      - name: Thử lớp hội thoại trợ lý (nghe như tư vấn viên · phân vai · đúng giới hạn)
+        run: node tools/thu-tro-ly-hoi-thoai.mjs
+
       - name: Thử Truy vấn đa chiều (bốn dòng chảy · bảng điểm 16 ban)
         run: node tools/thu-dong-chay.mjs
 

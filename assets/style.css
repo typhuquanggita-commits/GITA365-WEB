@@ -4047,3 +4047,6 @@ html[data-may="yeu"] *,html[data-may="yeu"] *::before,html[data-may="yeu"] *::af
 .tc-rr > div{min-width:0}
 .tc-rr-so{display:flex;flex-direction:column;align-items:flex-end;text-align:right;flex:none;max-width:45%}
 @media(max-width:700px){.tc-luoi{grid-template-columns:1fr}}
+
+/* V50·168 — lượt gọn của trợ lý: nút hành động một hàng */
+.ht-nut{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}

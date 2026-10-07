@@ -83,6 +83,12 @@ function tachTu(s) {
    DANH SÁCH CẤM — ba lý do, mỗi tên phải có một
    ═══════════════════════════════════════════════════════════════ */
 G.TL_CAM = {
+  /* ── TRẠNG THÁI PHIÊN, KHÔNG PHẢI KHO (V50·168) ──
+     G.CHAT là cuộc trò chuyện đang diễn ra: để nó trong chỉ mục thì câu
+     người dùng vừa gõ quay lại thành một "tư liệu KHO CHAT" khớp nhất với
+     chính nó. G.XIN_THEM là danh sách xin tư liệu của nhà mình. */
+  CHAT:         'phiên · cuộc trò chuyện đang diễn ra, không phải tri thức',
+  XIN_THEM:     'phiên · lời xin tư liệu của nhà đang dùng máy',
   /* ── HIẾN PHÁP THỊ GIÁC: SỔ TAY CỦA MỘT PHÒNG, KHÔNG PHẢI TRI THỨC CHUNG ──
 
      Mười một kho TG_ là luật thiết kế của Kiến trúc sư thị giác, và

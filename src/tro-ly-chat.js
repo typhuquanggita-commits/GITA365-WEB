@@ -40,6 +40,9 @@ G.CHAT = G.CHAT || [];
    chỗ thì mọi phép đo về kho đều phải học cách bỏ qua ngoại lệ. */
 var kbDa = [], kbCau = '';
 var chuPhien = null;
+/* Câu "lần trước anh chị kể…" chụp MỘT lần khi phiên mở: lời chào vẽ lại
+   mỗi lượt, đọc trí nhớ mỗi lượt thì nó nhắc cả câu vừa gõ năm phút trước. */
+var nhoPhien = '';
 
 function kiemTraPhien(){
   var a = G.S && G.S.acc;
@@ -47,6 +50,7 @@ function kiemTraPhien(){
   var id = a && [a.uid || a.u || a.ten, G.S.role, f && f.tier].join('|');
   if(chuPhien !== id){
     chuPhien = id;
+    nhoPhien = G.tlChaoNho ? G.tlChaoNho() : '';
     G.CHAT = [];
     kbDa = [];
     kbCau = '';
@@ -61,22 +65,26 @@ function tenToi(){ return (G.S.acc && G.S.acc.ten) || 'Anh chị'; }
    Trợ lý CHỦ ĐỘNG XƯNG theo tên tài khoản đang chat (chủ hệ yêu cầu), và
    nói rõ mình ĐỊNH HƯỚNG theo kho tài liệu GITA 365. Tên lấy từ hồ sơ
    phiên; chưa có thì lùi về "anh chị" — không bao giờ để trống. */
+/* V50·168 (chủ hệ 07/10/2026): lời chào như một tư vấn viên — ngắn, gọi
+   đúng tên, MỘT câu mời kể. Bỏ câu nói về hệ thống ("em đi theo kho tài
+   liệu…") và dòng hồ sơ từng in ra "Em đang mở hồ sơ Chưa mở hồ sơ". */
+function tenGoi(){
+  var t = tenToi().trim().split(/\s+/);
+  return t.length > 1 ? t[t.length - 1] : t[0];
+}
 function loiChao(){
-  var K = G.KICHBAN_AI, ten = tenToi();
+  var K = G.KICHBAN_AI;
   if(khach()){
-    var f = G.myFamily ? G.myFamily() : null;
-    var nho = G.tlChaoNho ? G.tlChaoNho() : '';
-    var than = (K && K.moDau && K.moDau.nha) ||
-      ('Nhà mình đang mắc chuyện gì, kể em nghe.' +
-       (f && f.nha ? ' Em đang mở hồ sơ ' + f.nha + '.' : ''));
-    return 'Chào ' + ten + '. ' + than +
-      ' Em đi theo kho tài liệu GITA 365 để dẫn nhà mình đúng chặng đang ở.' + nho;
+    var nho = nhoPhien;
+    var rieng = G.htLoiChao ? G.htLoiChao(null, nho ? nho.trim() : '') : null;
+    if(rieng) return rieng;
+    if(nho) return 'Em chào anh/chị ' + tenGoi() + ' ạ.' + nho;
+    return 'Em chào anh/chị ' + tenGoi() + ' ạ. Em là ' +
+      ((G.tlVai && G.tlVai().ten) || 'chuyên viên tư vấn').toLowerCase() + ' của GITA 365. ' +
+      ((K && K.moDau && K.moDau.nha) || 'Nhà mình đang cần em hỗ trợ chuyện gì, anh chị cứ kể tự nhiên nhé.');
   }
-  var thanN = (K && K.moDau && K.moDau.nghe) ||
-    'Em là trợ lý nghiệp vụ của Học viện — hỏi em phác đồ, kịch bản mở cửa, mô thức, ' +
-    'cổng nghiệm thu, KPI, quy trình lương·duyệt chi, hay một tình huống khó với gia đình. ' +
-    'Em tra thẳng kho tài liệu GITA 365 và chỉ đúng tư liệu, có mã để mở lại.';
-  return 'Chào ' + ten + '. ' + thanN;
+  return 'Chào ' + tenToi() + '. ' + ((K && K.moDau && K.moDau.nghe) ||
+    'Anh chị cần tra phác đồ, kịch bản, mô thức, tình huống hay quy trình nào, cứ gõ tự nhiên — em tìm đúng tư liệu trong kho, có mã để mở lại.');
 }
 
 /* Câu gợi ý = KỊCH BẢN MỞ LỜI, phủ trọn hành trình. Với KHÁCH là các
@@ -109,6 +117,48 @@ G.chatHoi = function(cauHoi){
   if(!cauHoi) return;
   kiemTraPhien();
   G.CHAT.push({ai:'toi', loi:cauHoi, luc:new Date()});
+
+  /* ── LỚP HỘI THOẠI (src/tro-ly-hoi-thoai.js, V50·168) ──
+     Câu chào, cảm ơn, đồng ý, tạm biệt, chê, khen được ĐÁP NHƯ NGƯỜI —
+     không đem đi tra kho, không ghi vào trí nhớ. "Xin chào" từng bị đem
+     đi chẩn đoán như một chuyện của con. Câu khẩn luôn đi đường khẩn. */
+  /* B1 · HỒ SƠ: vai, nhóm vai, cấp, tầng, nhà, phạm vi — mọi bước sau đọc từ đây. */
+  var hs = G.htHoSo ? G.htHoSo() : { khach:khach(), nhom:'' };
+  var khanNgay = !!(G.aiCoKhan && G.aiCoKhan(cauHoi));
+  var lc = !khanNgay && G.htLoaiCau ? G.htLoaiCau(cauHoi) : null, chaoKem = false;
+  if(lc && lc.loai === 'chaoKem'){ chaoKem = true; cauHoi = lc.conLai; lc = null; }
+  var dangHoi = coVongDangDo() ? hoiDangDo() : null;
+  /* Chip của vòng đang hỏi ("Được, làm tối nay") là CÂU TRẢ LỜI, không phải "đồng ý" xã giao. */
+  if(lc && lc.loai === 'dongY' && dangHoi && dangHoi.chips.indexOf(cauHoi) >= 0) lc = null;
+  /* Gõ nhầm, một hai ký tự: hỏi lại — không đem vào chuỗi, không tra kho. */
+  if(!lc && !khanNgay && G.htVoNghia && G.htVoNghia(cauHoi) && !(dangHoi && dangHoi.chips.indexOf(cauHoi) >= 0)) lc = { loai:'voNghia' };
+  /* "Em chưa hiểu cách làm" ngay sau khi trợ lý đưa một việc: nói rõ việc ấy. */
+  if(!khanNgay && G.htHoiGiaiThem && G.htHoiGiaiThem(cauHoi)){
+    var gt = viecVua ? G.htGiaiThem(viecVua, hs) : null;
+    /* Chưa đưa việc nào mà khách nói "chưa hiểu" giữa chuỗi: là chưa hiểu
+       CÂU HỎI — hỏi lại đơn giản hơn, không đọc câu ấy thành câu trả lời. */
+    if(!gt && dangHoi) gt = { mo: hs.nhom === 'hocVien' ? 'Mình hỏi đơn giản hơn nhé.' : 'Dạ, em hỏi đơn giản hơn ạ.',
+      chinh: 'Anh chị chọn một ý gần nhất bên dưới là được — không cần đúng hẳn.', hoi:dangHoi.hoi, chips:dangHoi.chips };
+    if(gt){ phatTung({ gon:gt, vai:G.tlVai ? G.tlVai() : null, nguon:[], chuoi: !!dangHoi }); return; }
+  }
+  if(lc && G.htDapXaGiao){
+    if(lc.loai === 'che'){ kbCau = ''; kbDa = []; }
+    var gx = G.htDapXaGiao(lc.loai, { cau:cauHoi, cauDangDo: dangHoi ? kbCau : '', hoiDangDo: dangHoi }, hs);
+    if(gx){ phatTung({ gon:gx, vai:G.tlVai ? G.tlVai() : null, nguon:[], chuoi: lc.loai === 'dongY' || lc.loai === 'voNghia' ? !!dangHoi : false }); return; }
+  }
+  /* Câu hỏi thẳng của gia đình — học phí, chặng, lên chặng, hôm nay — trả
+     lời thẳng bằng dữ liệu của nhà mình, không mở chuỗi chẩn đoán. */
+  /* B2 · SUY LUẬN: câu hỏi thẳng theo NHÓM VAI — gia đình hỏi học phí,
+     đại sứ hỏi hoa hồng, nhân sự hỏi KPI / quyền / quy trình tiền. */
+  var yd = !khanNgay && G.htSuyLuan ? G.htSuyLuan(cauHoi, hs) : null;
+  if(yd){
+    var gy = G.htTraLoiThang(yd, G.aiTraLoi(cauHoi), hs);
+    if(gy){
+      if(chaoKem) gy.mo = 'Dạ, em chào anh chị.';
+      phatTung({ gon:gy, vai:G.tlVai ? G.tlVai() : null, nguon:[] });
+      return;
+    }
+  }
   /* CÂU HỎI MỚI hay CÂU TRẢ LỜI cho vòng đang hỏi?
      Một câu dài, hoặc có dấu hỏi, là một câu hỏi MỚI — mở lại chuỗi từ
      đầu. Một câu ngắn ("buổi tối", "vừa bị nhắc") là câu trả lời cho
@@ -124,10 +174,15 @@ G.chatHoi = function(cauHoi){
   }).length);
   var laCauMoi = !coVong || /[?？]/.test(cauHoi) ||
     /^(chuyển chủ đề|chuyện khác|học phí|giá|đăng nhập|làm sao|tôi muốn hỏi|mình muốn hỏi)/i.test(cauHoi);
-  if(G.aiCoKhan && G.aiCoKhan(cauHoi)) laCauMoi = true;
+  if(khanNgay) laCauMoi = true;
+  /* Vòng VỪA hỏi (trước khi cộng câu trả lời này) — để câu đón nói đúng chỗ. */
+  var vongVua = (!laCauMoi && G.kbChuoi) ? ((G.kbChuoi(kbCau, kbDa) || {}).vong || {}).ma : null;
   if(laCauMoi){ kbCau = cauHoi; kbDa = []; }
   else kbDa.push(cauHoi);
   var d = G.aiTraLoi(laCauMoi ? cauHoi : kbCau);
+  /* Giữ việc và tư liệu GỐC của chuyện: lượt trả lời trong chuỗi xoá
+     chúng khỏi d, mà lượt chốt cần đúng việc ấy và một bài đọc. */
+  var viecGoc = d.viec, nguonGoc = d.nguon || [];
   /* Chuỗi chạy cho những vai kho khai ở KB_LUAT.chayChoAi — hôm nay là
      Tư vấn và nhánh Coach. Bản đầu chạy cho MỖI khách hàng, tức là đúng
      nhóm KHÔNG có kho tình huống trên máy: chuỗi rỗng cho người có nó
@@ -139,6 +194,13 @@ G.chatHoi = function(cauHoi){
     (G.thKhachDangCo ? G.thKhachDangCo().co : false);
   var chay = laKhachCoKho ||
     ((G.KB_LUAT || {}).chayChoAi || []).indexOf(G.S.role) >= 0;
+  /* B3 · PHƯƠNG ÁN: chuỗi chẩn đoán viết cho PHỤ HUYNH — học viên và đại
+     sứ không đi chuỗi ấy (câu hỏi "con chưa làm được hay không tin…"
+     hỏi một em học sinh là hỏi sai người). */
+  if(hs.khach && hs.nhom !== 'phuHuynh') chay = false;
+  /* Nhân sự: chuỗi là công cụ của người TRÒ CHUYỆN với gia đình — Coach và
+     Tư vấn. Admin tra một mô thức không cần năm câu hỏi dành cho phụ huynh. */
+  if(!hs.khach && hs.nhom !== 'coach' && hs.nhom !== 'tuVan') chay = false;
   if(G.kbChuoi && chay && !d.khan){
     d.chuoi = G.kbChuoi(kbCau, kbDa);
     if(d.chuoi && !laCauMoi && khach()){
@@ -169,12 +231,60 @@ G.chatHoi = function(cauHoi){
   if(G.gnPhatSinh && !d.khan) d.phatSinh = G.gnPhatSinh(cauHoi);
   /* Gắn VAI đang trả lời, câu "hiểu ý" của chuyên gia ngôn ngữ, phân tích
      số liệu của nhà khoa học toán, và ghi nhớ nhà mình (src/tro-ly-nang.js). */
-  if(G.tlPhanTich) G.tlPhanTich(cauHoi, d);
+  /* Chỉ ghi nhớ khi mở một CHUYỆN mới — không ghi câu chào, không ghi chip trả lời. */
+  if(G.tlPhanTich) G.tlPhanTich(cauHoi, d, laCauMoi);
+  /* GIA ĐÌNH: mỗi lượt đúng một câu đón · một ý chính · một câu hỏi. */
+  if(khach() && !d.khan && G.htGon){
+    d.gon = G.htGon(d, { cau:cauHoi, laCauMoi:laCauMoi, chaoKem:chaoKem, daTra:kbDa.length,
+      vongVua: vongVua, chipVua: !!(dangHoi && dangHoi.chips.indexOf(cauHoi) >= 0),
+      daChon:kbDa.slice(), viec:viecGoc, baiDoc:baiDocDau(nguonGoc), moHoTruoc:gonTruocMoHo() }, hs);
+    if(viecGoc && !viecGoc.vuotTang) viecVua = viecGoc;
+    if(d.gon.chot || d.gon.moHo){ kbCau = ''; kbDa = []; }
+    if(d.gon.moHo) d.chuoi = null;
+  }
+  /* NHÂN SỰ: nói rõ đang trả lời theo vai nào, trong phạm vi nào (B1),
+     và dẫn sang đúng một màn làm việc của vai (B6). */
+  if(!hs.khach && !d.khan){
+    d.ngucanh = 'Theo vai ' + hs.tenVai + ' · phạm vi: ' + hs.phamVi;
+    if(G.htDanNhanSu) d.danDuong = G.htDanNhanSu(d, hs);
+  }
   if(G.secLog) G.secLog('Hỏi trợ lý',
     cauHoi.slice(0, 80) + ' → ' + (d.khan ? 'chuyển người thật' : d.nguon.length + ' nguồn'),
     d.khan ? 'Cảnh báo' : 'Ghi nhận');
   phatTung(d);
 };
+
+/* Chuỗi đang dở: đã có câu mở chuyện và lượt trước của trợ lý đang hỏi một vòng. */
+function coVongDangDo(){
+  if(!kbCau) return false;
+  for(var i = G.CHAT.length - 1; i >= 0; i--){
+    var m = G.CHAT[i];
+    if(m.ai === 'trolY') return !!(m.dap && m.dap.chuoi && !(m.dap.gon && m.dap.gon.chot));
+  }
+  return false;
+}
+function hoiDangDo(){
+  var c = G.kbChuoi ? G.kbChuoi(kbCau, kbDa) : null;
+  return c ? { hoi:c.hoi, chips:(c.goiY || []).slice(0, 4) } : null;
+}
+/* Một bài đọc gia đình MỞ ĐƯỢC — chỉ đưa ở lượt chốt, đúng một bài. */
+function baiDocDau(ds){
+  for(var i = 0; i < (ds || []).length; i++){
+    var n = ds[i];
+    if(n && n.go && (!G.khachMoDuoc || G.khachMoDuoc(n.loai, n.ma))){
+      /* tom của kho thường mở bằng "MÃ · Tên · ý…" — chỉ giữ phần ý. */
+      var tom = String(n.tom || ''), k = tom.lastIndexOf(' · ');
+      return { ten:n.ten, go:n.go, tom: k >= 0 ? tom.slice(k + 3) : tom };
+    }
+  }
+  return null;
+}
+/* Việc vừa đưa cho gia đình — để "chưa hiểu cách làm" giải thích đúng việc ấy. */
+var viecVua = null;
+function gonTruocMoHo(){
+  for(var i = G.CHAT.length - 2; i >= 0; i--){ var m = G.CHAT[i]; if(m.ai === 'trolY') return !!(m.dap && m.dap.gon && m.dap.gon.moHo); }
+  return false;
+}
 
 /* ═══════ ĐƯA TỪNG ĐOẠN — như một người đọc rồi mới trả lời ═══════
    Chủ hệ: đừng đổ cả khối tức thì (đọc ra máy móc, khách hết hứng). Nên
@@ -185,7 +295,8 @@ G.chatHoi = function(cauHoi){
    còn treo của lượt cũ tự bỏ (không chồng lên nhau). */
 var luot = 0;
 function chamGo(len){ return Math.max(650, Math.min(2600, Math.round((len||400)*15))); }
-function doDaiDap(d){
+ function doDaiDap(d){
+  if(d.gon) return ((d.gon.mo||'') + (d.gon.chinh||'') + (d.gon.hoi||'')).length || 120;
   var n = (d.loi?d.loi.length:0) + (d.chot?d.chot.length:0);
   if(d.kbs){ var k=d.kbs;
     n += (k.traLoi?String(k.traLoi).length:0) + (k.chanDoan?String(k.chanDoan).length:0); }
@@ -215,7 +326,7 @@ function phatTung(d){
     var mo = moDauAm(d);
     /* Không tách đoạn hiểu-ý khi đã có chuỗi vòng dẫn — chuỗi tự có "bắt
        nhịp", thêm một đoạn nữa là thừa. */
-    if(mo && !d.chuoi) seg1 = { vai:d.vai, loi:mo, _doanDau:true };
+    if(mo && !d.chuoi && !d.gon) seg1 = { vai:d.vai, loi:mo, _doanDau:true };
   }
   if(seg1){
     var d2 = d; d2._khongVai = true; delete d2.phanAnh;
@@ -240,7 +351,7 @@ function hienDan(id){
 /* Xoá cuộc trò chuyện: tăng luot để mọi nhịp còn treo tự bỏ, không đẩy
    một đoạn cũ vào một khung vừa dọn sạch. */
 G.chatXoa = function(){
-  luot++; G.CHAT = []; kbDa = []; kbCau = '';
+  luot++; G.CHAT = []; kbDa = []; kbCau = ''; viecVua = null;
   if(G.tlQuenNgu) G.tlQuenNgu();
   ve();
 };
@@ -306,6 +417,14 @@ function theDap(d){
       '<a class="btn sm pri mt" href="tel:0855554688">'+ic('bell','w-3 h-3')+'Gọi 08.5555.4688</a>'+
       '</div></div>';
 
+  if(d.gon){
+    if(d.noiThat) o += '<p class="ai-loi gn-that">'+h(d.noiThat)+'</p>';
+    if(d.toan && d.toan.co) o += '<div class="ai-toan"><div class="ai-toan-h">'+ic('compass','w-3 h-3')+' '+h(d.toan.tieuDe)+'</div>'+
+      '<p class="ai-toan-cach">'+h(d.toan.cach)+' = <b>'+h(d.toan.ketQua)+'</b></p></div>';
+    return o + G.htVe(d.gon);
+  }
+  /* Nhân sự: dòng ngữ cảnh — trả lời theo vai nào, phạm vi nào (B1). */
+  if(d.ngucanh) o += '<div class="ai-nhip">'+ic('shield','w-3 h-3')+'<span>'+h(d.ngucanh)+'</span></div>';
   if(d.y) o += '<div class="ai-nhip">'+ic('compass','w-3 h-3')+
     '<span>'+h(d.y.ten)+' · nhịp '+h(d.y.nhip)+'</span></div>';
   if(d.loi) o += '<p class="ai-loi">'+h(d.loi)+'</p>';
@@ -395,7 +514,9 @@ function theDap(d){
   /* Câu bật ra giữa chừng: nói RÕ trả lời dựa vào đâu và ranh giới ở
      đâu, rồi mới quay lại vòng. Giấu ranh giới đi thì tới lúc chạm vào
      nó, người ta thấy mình bị chặn chứ không thấy mình được nói trước. */
-  if(d.phatSinh){
+  /* Nhân sự đang tra một phác đồ: câu "bật ra giữa chừng" (vd chữ "tầng 2"
+     bị đọc thành hỏi về tầng sau) là đọc nhầm — bỏ. */
+  if(d.phatSinh && (khach() || d.phatSinh.chuyenNguoiThat)){
     var ps = d.phatSinh;
     o += '<div class="gn-ps'+(ps.chuyenNguoiThat ? ' gn-ps-nguoi' : '')+'">'+
       '<span class="gn-ps-loai">'+h(ps.loai)+'</span>'+
@@ -407,15 +528,16 @@ function theDap(d){
       '</div>';
   }
 
+  var chuoiHtml = '';
   if(d.chuoi){
-    var c = d.chuoi;
+    var c = d.chuoi, batDauChuoi = o.length;
     /* Câu mở của vòng — xoay vòng, không lặp lượt kế. Đứng trước tiêu đề
-       vòng vì đây là câu người ta đọc đầu tiên. */
-    if(d.mo) o += '<p class="gn-mo">'+h(d.mo)+'</p>';
+       vòng vì đây là câu người ta đọc đầu tiên. Nhân sự đang tra cứu thì
+       không cần câu "em hình dung được rồi". */
+    if(d.mo && khach()) o += '<p class="gn-mo">'+h(d.mo)+'</p>';
     /* Bắt nhịp: nhắc lại đúng CHỮ của nhà mình, không dịch sang thuật ngữ. */
-    if(d.batNhip && d.batNhip.length)
-      o += '<p class="gn-nhip">'+ic('compass','w-3 h-3')+' Em giữ nguyên chữ anh chị dùng: '+
-        d.batNhip.map(function(w){ return '<b>'+h(w)+'</b>'; }).join(' · ')+'</p>';
+    /* Dòng "Em giữ nguyên chữ anh chị dùng: ôm · điện · thoại" bỏ ở V50·168:
+       đọc lại từng chữ rời là dấu hiệu của máy, không phải của người đang nghe. */
     o += '<div class="kb-vong">'+
       '<div class="kb-vong-h"><span class="kb-vong-no">'+c.vong.no+'/'+c.soVong+'</span>'+
       '<b>'+h(c.vong.ten)+'</b>'+
@@ -433,8 +555,9 @@ function theDap(d){
       o += '<p class="kb-khuc kb-thieu">Kho chưa có khúc này cho chuyện ấy ('+h(c.docTu)+
         '). Em không bịa cho tròn.</p>';
     else if(!c.khoanhDuoc)
-      o += '<p class="kb-khuc kb-thieu">Em chưa khoanh được đúng chuyện của nhà mình. '+
-        'Anh chị kể thêm một chi tiết nữa được không?</p>';
+      o += '<p class="kb-khuc kb-thieu">'+(khach() ? 'Em chưa khoanh được đúng chuyện của nhà mình. '+
+        'Anh chị kể thêm một chi tiết nữa được không?' : 'Kho chưa khớp được một tình huống cụ thể — thêm tầng, '+
+        'lúc xảy ra hoặc mã nhà để khoanh sát hơn.')+'</p>';
 
     /* Câu hỏi của vòng — đúng MỘT câu. */
     o += '<p class="kb-hoi">'+h(c.hoi)+'</p>'+
@@ -446,6 +569,9 @@ function theDap(d){
         ' Trả lời xong vòng này, mình quay lại vòng một — lần sau với một con số thật của '+
         'nhà mình thay vì một câu kể.</p>';
     o += '</div>';
+    /* NHÂN SỰ: chuỗi 5 câu là công cụ dùng KHI trò chuyện với gia đình —
+       gập lại, đứng sau phần nghiệp vụ của vai (thứ người hỏi cần trước). */
+    if(!khach()){ chuoiHtml = o.slice(batDauChuoi); o = o.slice(0, batDauChuoi); }
 
     /* Nghiệp vụ của chính vai đang đọc — ba vai ba cột khác nhau. */
     if(d.nghiepVu && d.nghiepVu.phacDo){
@@ -455,14 +581,21 @@ function theDap(d){
         '<span class="ai-n-ma mono">'+h(nv.phacDo.ma)+'</span>'+
         '<b>'+h(nv.phacDo.ten)+'</b></div>'+
         '<p class="kb-nv-lam">'+h(nv.vai.lam)+'</p>';
-      o += nv.muc.map(function(m){
+      /* Chỉ hiện trường CÓ nội dung; trường kho chưa khai gom một dòng — ba
+         dòng "kho chưa khai" liền nhau che mất phần dùng được. */
+      o += nv.muc.filter(function(m){ return !m.thieu; }).map(function(m){
         return '<div class="kb-nv-muc"><span class="kb-nv-tr mono">'+h(m.truong)+'</span>'+
-          (m.thieu ? '<p class="kb-thieu">Kho chưa khai trường này cho phác đồ ấy.</p>'
-                   : '<p>'+h(m.loi)+'</p>')+'</div>';
+          '<p>'+h(m.loi)+'</p></div>';
       }).join('');
+      var soThieu = nv.muc.filter(function(m){ return m.thieu; }).length;
+      if(soThieu) o += '<p class="kb-thieu tiny">Kho chưa khai '+soThieu+'/'+nv.muc.length+
+        ' trường cho phác đồ này ('+h(nv.muc.filter(function(m){ return m.thieu; }).map(function(m){ return m.truong; }).join(', '))+').</p>';
       o += '<p class="tiny dim" style="margin-top:8px;line-height:1.6">Phác đồ chưa khai '+
         'tầng nên phần này chưa lọc theo tầng được — em nói rõ chỗ đó.</p></div>';
     }
+    if(chuoiHtml)
+      o += '<details class="ai-tulieu"><summary>'+ic('compass','w-3 h-3')+
+        ' Chuỗi 5 câu hỏi khi trò chuyện với gia đình</summary>'+chuoiHtml+'</details>';
 
     /* Mời vượt tầng — CHỈ sau khi đã đưa xong phần dùng được. */
     if(c.soVuot && c.tangVuot){
@@ -546,6 +679,14 @@ function theDap(d){
        bức tường thẻ — nằm trong một mục bấm-mở. Một cú bấm, đổi lại câu trả
        lời dẫn trước còn thẻ tư liệu đứng sau. */
     var dsHtml = '';
+    var coChinh = !!(d.soan || d.viec || d.kbs || d.loi || (d.toan && d.toan.co) || (d.nghiepVu && d.nghiepVu.phacDo));
+    if(!coChinh && mo.length){
+      /* Kho chỉ khớp tư liệu: ba tư liệu sát nhất LÀ câu trả lời — đưa ra
+         mặt, không giấu sau một nút bấm. */
+      o += '<div class="ai-nguon-nhan">'+ic('compass','w-3 h-3')+' Ba tư liệu sát nhất trong kho</div>'+
+        '<div class="ai-ds">'+ mo.slice(0, 3).map(function(n){ return theNguon(n, true); }).join('') +'</div>';
+      mo = mo.slice(3);
+    }
     if(mo.length){
       dsHtml += '<div class="ai-nguon-nhan">'+mo.length+' tư liệu mở được ngay — bấm để đọc</div>';
       dsHtml += '<div class="ai-ds">'+ mo.map(function(n){ return theNguon(n, true); }).join('') +'</div>';
@@ -557,13 +698,13 @@ function theDap(d){
     }
     if(dsHtml)
       o += '<details class="ai-tulieu"><summary>'+ic('compass','w-3 h-3')+
-        ' Tư liệu trong kho ('+(mo.length+cho.length)+') — bấm để xem</summary>'+dsHtml+'</details>';
+        (coChinh ? ' Tư liệu trong kho (' : ' Tư liệu khác trong kho (')+(mo.length+cho.length)+') — bấm để xem</summary>'+dsHtml+'</details>';
   }
   /* Câu "chưa tìm được gì khớp" CHỈ đúng khi thật sự chưa có gì. Dẫn
      xong bốn nhịp của một việc rồi vẫn in câu ấy là tự cãi mình ngay
      trong một lượt trả lời — người đọc sẽ tin câu sau và bỏ qua câu
      trước, tức là bỏ qua đúng phần dùng được. */
-  if(!mo.length && !cho.length && !d.viec && !d.chuoi)
+  if(!(d.nguon || []).length && !d.viec && !d.chuoi)
     o += '<p class="ai-loi">Em chưa tìm được gì khớp. Anh chị kể cụ thể hơn một chút được không?</p>';
   /* NÓI RA CÁI KHÔNG ĐƯA. Giấu con số này thì nhà mình tưởng kho chỉ có
      bấy nhiêu; nói ra thì họ biết còn đường phía trước, và biết đường ấy
@@ -584,6 +725,8 @@ function theDap(d){
       ' kho chưa khai tầng nên em chưa lọc theo tầng được ở đó — phần ấy vẫn đi ' +
       'qua trần 30% như cũ.</p>';
   if(d.chot) o += '<p class="ai-chot">'+h(d.chot)+'</p>';
+  /* B6: đúng một màn làm việc của vai, theo thứ vừa tra. */
+  if(d.danDuong) o += '<div class="ht-nut"><button class="btn sm" data-v="'+h(d.danDuong.v)+'">'+h(d.danDuong.nhan)+'</button></div>';
   return o;
 }
 
@@ -604,12 +747,12 @@ function bongSoan(m){
     '<div class="ch-bong ch-bong-ai ch-soan">'+bongVai(vai)+
     '<span class="soan-cham" aria-label="đang soạn"><i></i><i></i><i></i></span></div></div>';
 }
-function bongTroLy(m){
+function bongTroLy(m, xung){
   var d = m.dap || {};
   /* Xưng vai một lần: đoạn đầu (hiểu-ý) đã xưng thì đoạn trả lời không
      lặp lại (_khongVai). Câu khẩn không xưng vai — đó là lúc chuyển
      người thật, không phải lúc trò chuyện. */
-  var vai = (!d.khan && !d._khongVai) ? d.vai : null;
+  var vai = (xung && !d.khan && !d._khongVai) ? d.vai : null;
   return '<div class="ch-luot ch-troly">'+
     '<div class="ch-anh ch-anh-ai">'+ic('spark','w-4 h-4')+'</div>'+
     '<div class="ch-bong ch-bong-ai">'+bongVai(vai)+theDap(d)+
@@ -626,11 +769,13 @@ function cuonChat(live){
   return '<div class="cs-vach">Hôm nay</div>' +
     '<div class="ch-luot ch-troly"><div class="ch-anh ch-anh-ai">'+ic('spark','w-4 h-4')+'</div>'+
     '<div class="ch-bong ch-bong-ai"><p class="ai-loi">'+h(loiChao())+'</p></div></div>' +
-    G.CHAT.map(function(m){
+    /* Xưng vai MỘT lần (bóng đầu của trợ lý) — in lại ở mọi bóng là giọng máy. */
+    (function(){ var daXung = false; return G.CHAT.map(function(m){
       if(m.ai === 'toi') return bongToi(m);
       if(live && m._hien && m._hien > bay) return bongSoan(m);
-      return bongTroLy(m);
-    }).join('');
+      var x = !daXung; daXung = true;
+      return bongTroLy(m, x);
+    }).join(''); })();
 }
 
 function ve(){
@@ -641,6 +786,12 @@ function ve(){
   var list = document.querySelectorAll('.ch-khung');
   if(!list.length) return;
   var html = cuonChat(true);
+  /* Gia đình: hàng câu gợi ý chỉ đứng trước lượt đầu — có chuyện rồi thì ô gõ là chính. */
+  var gy = document.querySelectorAll('.cs-goiy');
+  for(var q = 0; q < gy.length; q++) gy[q].hidden = !!(khach() && G.CHAT.length);
+  /* Ô chat nổi: gợi ý chỉ đứng trước lượt đầu — kể cả khi lượt đến từ một chip. */
+  var tg = document.getElementById('tlnGoiy');
+  if(tg && G.CHAT.length) tg.innerHTML = '';
   for(var i = 0; i < list.length; i++){
     list[i].innerHTML = html; list[i].scrollTop = list[i].scrollHeight;
   }
@@ -690,7 +841,7 @@ G.VIEWS['tro-ly'] = function(){
          một hàng và cuộn, hết 35px thay vì 175px. Sửa cái chiếm chỗ,
          đừng bỏ cái có ích. */
       '<div class="cs-goiy">' +
-      goiY().map(function(g){ return '<button class="chip" data-aiq="'+h(g)+'">'+h(g)+'</button>'; }).join('') +
+      ((kh && G.CHAT.length) ? [] : kh ? goiY().slice(0, 4) : goiY()).map(function(g){ return '<button class="chip" data-aiq="'+h(g)+'">'+h(g)+'</button>'; }).join('') +
       '</div>' +
       '<div class="cs-o">' +
         '<textarea id="aiQ" rows="1" autocomplete="off" placeholder="'+

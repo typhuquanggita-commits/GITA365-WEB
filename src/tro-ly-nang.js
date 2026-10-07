@@ -168,8 +168,10 @@ var G = window.G || {}; window.G = G;
       if (cd) {
         n.chuDe = n.chuDe || [];
         /* Giữ TÓM chủ đề gần đây, không cộng dồn vô hạn — một dòng là một
-           lượt đọc, không phải một ô tổng ghi đè (luật kho). */
-        n.chuDe.unshift({ c: cd, luc: Date.now() });
+           lượt đọc, không phải một ô tổng ghi đè (luật kho).
+           V50·168: giữ cả CÂU GỐC có dấu (g) — lời chào đọc lại câu của nhà
+           mình, không đọc ba chữ bỏ dấu kiểu "dien thoai bat". */
+        n.chuDe.unshift({ c: cd, g: String(cau).replace(/\s+/g, ' ').trim().slice(0, 80), luc: Date.now() });
         n.chuDe = n.chuDe.slice(0, 8);
       }
       n.capNhat = Date.now();
@@ -181,15 +183,20 @@ var G = window.G || {}; window.G = G;
     if (!(G.LA_KHACH && G.LA_KHACH())) return '';
     var n = G.tlNhoDoc();
     if (!n || !n.soLuot || !(n.chuDe && n.chuDe.length)) return '';
-    return ' Lần trước nhà mình có nhắc tới "' + n.chuDe[0].c + '" — mình nói tiếp chỗ đó nhé.';
+    /* Chỉ nhắc câu gốc có dấu, trong 30 ngày; bản ghi cũ (ba chữ bỏ dấu) im lặng. */
+    var cu = n.chuDe[0];
+    if (!cu.g || Date.now() - (cu.luc || 0) > 30 * 864e5) return '';
+    var g = G.htNgan ? G.htNgan(cu.g, 60) : cu.g;
+    return ' Lần trước anh chị có kể chuyện “' + g + '”. Mình nói tiếp chuyện đó, hay hôm nay có chuyện khác ạ?';
   };
 
   /* ─────────── ORCHESTRATOR: gắn vào một lượt trả lời ───────────
      Gọi từ G.chatHoi sau khi đã dựng d. Không đụng bộ tra kho — chỉ THÊM.
      Đường khẩn (d.khan) KHÔNG gắn gì: đó là đường chuyển người thật, để
      trống cho sạch. */
-  G.tlPhanTich = function (cau, d) {
-    if (!d || d.khan) { if (!(d && d.khan)) G.tlNhoGhi(cau); return d; }
+  G.tlPhanTich = function (cau, d, ghiNho) {
+    if (ghiNho === undefined) ghiNho = true;
+    if (!d || d.khan) { if (!(d && d.khan) && ghiNho) G.tlNhoGhi(cau); return d; }
     d.vai = G.tlVai();
     var ng = G.tlNgonNgu(cau);
     /* Chỉ nói câu "hiểu ý" khi KHÔNG có chuỗi vòng dẫn (tránh trùng với
@@ -197,8 +204,7 @@ var G = window.G || {}; window.G = G;
     if (ng.phanAnh && !d.chuoi) d.phanAnh = ng.phanAnh;
     var t = G.tlToan(cau);
     if (t.co) d.toan = t;
-    var nhac = G.tlChaoNho ? '' : '';   /* nhắc để ở lời chào, không lặp ở đây */
-    G.tlNhoGhi(cau);
+    if (ghiNho) G.tlNhoGhi(cau);
     return d;
   };
 })();
