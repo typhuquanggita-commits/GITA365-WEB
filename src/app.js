@@ -9,7 +9,7 @@ var KEY = 'gita365.v7';
 
 /* ─────────── Trạng thái ─────────── */
 G.S = {
-  role:null, acc:null, roleObj:null, crmMuc:null,
+  role:null, acc:null, roleObj:null, crmMuc:null, taiChinhMuc:null,
   view:'ban-do', open:['g1'], rtab:'labon', rightOpen:false, leftOpen:false, thuCot:false,
   checks:{}, vision:{}, journal:{}, test:{}, bando:{}, nhatky:{}, baithi:{}, thoigian:{}, sathach:{}, khoahoc:{}, mtb:{}, famId:'F-001', kbShown:60,
   /* Danh sách mục đã từng thấy trong cột trái. Dùng để nhận ra lúc thăng
@@ -21,7 +21,7 @@ G.S = {
 function save(){
   try{ localStorage.setItem(KEY, JSON.stringify({
     role:G.S.role, u:G.S.acc && G.S.acc.u, tuMayChu:!!(G.S.acc && G.S.acc.tuMayChu),
-    crmMuc:G.S.crmMuc, view:G.S.view, open:G.S.open, rtab:G.S.rtab,
+    crmMuc:G.S.crmMuc, taiChinhMuc:G.S.taiChinhMuc, view:G.S.view, open:G.S.open, rtab:G.S.rtab,
     checks:G.S.checks, vision:G.S.vision, journal:G.S.journal, test:G.S.test, bando:G.S.bando, nhatky:G.S.nhatky, baithi:G.S.baithi, thoigian:G.S.thoigian, sathach:G.S.sathach, khoahoc:G.S.khoahoc,
     rightOpen:G.S.rightOpen, thuCot:G.S.thuCot, mood:G.S.mood, daThay:G.S.daThay,
     /* Sổ việc và sổ chốt ngày. Thiếu hai dòng này thì mọi thứ người ta
@@ -66,6 +66,7 @@ function load(){
     var d = JSON.parse(localStorage.getItem(KEY) || 'null'); if(!d) return null;
     G.S.view = d.view || G.S.view; G.S.open = d.open || G.S.open; G.S.rtab = d.rtab || G.S.rtab;
     G.S.crmMuc = d.crmMuc || null;   /* giữ mục CRM hiện qua lần tải lại trang cho bộ phận được cấp */
+    G.S.taiChinhMuc = (d.taiChinhMuc && d.taiChinhMuc.length) ? d.taiChinhMuc : null;
     G.S.checks = d.checks || {}; G.S.vision = d.vision || {}; G.S.journal = d.journal || {};
     G.S.banCo = d.banCo || {}; G.S.bcTang = d.bcTang || 'T1';
     G.S.bcVai = d.bcVai || null;
@@ -239,6 +240,9 @@ G.can = function(perm){
      nên một bộ phận được cấp bật crm_view qua G.S.crmMuc, dù bậc vai của
      họ nằm ngoài lv≤3 mặc định. Máy chủ vẫn gác mọi thao tác (mucCua ở
      từng cửa); đây chỉ bật MỤC trên máy khách. */
+  /* Ban tài chính: vị trí do Super Admin cấp (keToanThu/Chi/Truong/quanLyPhong)
+     bật màn Tài chính dù bậc vai nằm ngoài lv≤4 mặc định. Máy chủ gác từng cửa tiền. */
+  if(perm==='fin_view' && G.S && G.S.taiChinhMuc && G.S.taiChinhMuc.length) return true;
   if(perm==='crm_view' && G.S){
     if(G.S.crmMuc) return true;                       /* cấp theo người (vai khác) */
     /* Tư vấn (R11): chăm sóc khách là NGHỀ của họ → bật CRM mặc định.
@@ -576,6 +580,7 @@ function luuPhienMayChu(payload){
       tier: Number(payload.tier) || 0,
       maKhachHang: payload.maKhachHang || '',
       crmMuc: payload.crmMuc || '',
+      taiChinhMuc: payload.taiChinhMuc || [],
       api: G.API_CAP_PHEP || '',
       token: payload.token
     }));
@@ -595,7 +600,7 @@ function khoiPhucPhienMayChu(u){
       G.PHIEN_TOKEN = typeof p.token === 'string' ? p.token : '';
       return {
         u:p.u, role:p.role, ten:p.hoTen || p.u, tang:Number(p.tier) || 0,
-        maKhachHang:p.maKhachHang || '', crmMuc:p.crmMuc || '', tuMayChu:true
+        maKhachHang:p.maKhachHang || '', crmMuc:p.crmMuc || '', taiChinhMuc:p.taiChinhMuc || [], tuMayChu:true
       };
     } else if(p){
       sessionStorage.removeItem(KHOA_PHIEN_MAY_CHU);
@@ -621,7 +626,7 @@ function vaoBangPhienMayChu(payload){
   luuPhienMayChu(payload);
   var a = { u: payload.u, role: payload.role, ten: payload.hoTen || payload.u,
             tang: Number(payload.tier) || 0, maKhachHang: payload.maKhachHang || '',
-            crmMuc: payload.crmMuc || null, tuMayChu: true };
+            crmMuc: payload.crmMuc || null, taiChinhMuc: payload.taiChinhMuc || [], tuMayChu: true };
   vaoPhien(a);
 }
 G.vaoBangPhienMayChu = vaoBangPhienMayChu;
@@ -647,11 +652,15 @@ function vaoPhien(a){
 
   G.S.acc = a; G.S.role = a.role; G.S.roleObj = G.roleById(a.role);
   G.S.crmMuc = a.crmMuc || null;   /* mức CRM được cấp — bật mục CRM cho bộ phận được cấp */
+  G.S.taiChinhMuc = (a.taiChinhMuc && a.taiChinhMuc.length) ? a.taiChinhMuc.slice() : null;   /* vị trí ban tài chính được cấp */
   G.nkData = null;                 /* sổ nhật ký của người trước không ở lại cho người sau */
   G.dpGiamSat = null;              /* sổ giám sát Agent cũng không ở lại */
   var portal = G.PORTALS[G.S.roleObj.portal];
   G.S.view = (portal && portal.home) || 'ban-do';
   /* R01–R03 vào thẳng Trung tâm đo lường & tối ưu — số thật thay cho số mẫu của dieu-hanh. */
+  /* V50·168: vào thẳng phần đầu của màn chính đầu tiên của vai — không rơi
+     vào màn mẫu của cổng cũ (coach-deck, tuvan-deck) mà vai không mở được. */
+  if (G.v50ManDau) { var d168 = G.v50ManDau(); if (d168) G.S.view = d168; }
   if (G.S.roleObj.lv <= 3 && G.VIEWS['trung-tam-do']) G.S.view = 'trung-tam-do';
   G.S.open = [groupOf(G.S.view) || 'g1'];
   save();
@@ -862,7 +871,10 @@ function leftNav(){
     return o + '</div>';
   }
 
-  return '<div class="scroll">'+ dai + daiMoi + khoiKG() +
+  /* V50·168: cột trái chỉ còn MÀN CHÍNH của vai (3 · 5 · 10 · 12) — src/v50-cot.js.
+     Tắt V50 (Thư viện vận hành) là về khối không gian + sáu nhóm như cũ. */
+  var than168 = (G.v50Bat168 && G.v50Bat168() && G.v50CotTrai) ? G.v50CotTrai() : null;
+  return '<div class="scroll">'+ dai + daiMoi + (than168 !== null ? than168 : khoiKG() +
     '<div class="nav-eyebrow nav-eyebrow-all">'+h(G.LANG==='en'?G.L('fiveGroups'):'Toàn hệ thống')+'</div>' +
     NAV.map(function(g){
       /* V50: màn học thuyết / mẫu / trùng rút khỏi cột của nhân sự — đọc ở
@@ -885,7 +897,7 @@ function leftNav(){
           '<p class="tiny muted" style="padding:2px 10px 9px;line-height:1.5">'+h(G.gess(g))+'</p>'+
           mo.map(nut).join('')+
         '</div></div>';
-    }).join('') + '</div>'+
+    }).join('')) + '</div>'+
     '<div class="foot"><button class="nav-i" data-v="toi">'+ic('home')+'<span class="lb">'+h(G.L('myAccount'))+'</span></button>'+
     (G.can('sua_noi_dung') ? '<button class="nav-i" data-v="sap-xep">'+ic('orbit')+
       '<span class="lb">Sắp xếp thư mục</span></button>' : '')+
@@ -900,6 +912,7 @@ function leftNav(){
    một tab; bấm thì THẢ panel trái xuống, mở đúng nhóm ấy để chọn tiếp.
    Chỉ hiện khổ ≥861px (điện thoại đã có ☰ + thanh dưới). */
 function hnav(){
+  if(G.v50Bat168 && G.v50Bat168() && G.v50Hnav) return G.v50Hnav();
   var NAV = G.navDung ? G.navDung() : G.NAV;
   return NAV.map(function(g){
     var mo = g.items.filter(function(it){ return visible(it) && !(G.V50 && G.V50.an(it.v)); });
@@ -1219,7 +1232,7 @@ function render(){
     ? '<div class="hd-thanh">' + G.hdNut(G.S.view, '', 'Xem video hướng dẫn màn này') + '</div>' : '';
   /* V50: màn học thuyết có thêm thanh ÁP DỤNG (bảng việc đo được + chỉ số
      chịu tác động) — src/v50-ap-dung.js. Màn vừa được gộp có dòng báo. */
-  var v50 = G.v50Thanh ? G.v50Thanh(G.S.view) : '';
+  var v50 = (G.v50PhanBar ? G.v50PhanBar(G.S.view) : '') + (G.v50Thanh ? G.v50Thanh(G.S.view) : '');
   main.innerHTML = '<div class="view">' + nhac + hdThanh + v50 + noiDung + '</div>';
   if(G.a11yNhan) G.a11yNhan(main);   /* bù tên đọc được cho mọi ô nhập (a11y) */
   /* Màn trợ lý là một CỬA SỔ chiếm trọn chiều cao, nên nó cần lề dưới
@@ -1970,7 +1983,7 @@ window.addEventListener('hashchange', function(){
 G.raNgoai = function(){
   if(G.xoaThongTinNhanThanhToan) G.xoaThongTinNhanThanhToan();
   G.dangXuatMayChu();
-  G.S.acc = null; G.S.role = null; G.S.roleObj = null; G.S.crmMuc = null; G.nkData = null; G.dpGiamSat = null;
+  G.S.acc = null; G.S.role = null; G.S.roleObj = null; G.S.crmMuc = null; G.S.taiChinhMuc = null; G.nkData = null; G.dpGiamSat = null;
   if(G.donKho) G.donKho();          /* nội dung đã giải mã không ở lại trong bộ nhớ */
   save();
   try{ history.replaceState(null, '', location.pathname + location.search); }catch(e){}
@@ -1992,7 +2005,7 @@ G.boot = function(){
      được dấu # trên thanh địa chỉ. */
   if(window.GITA_RA_NGOAI || CUA_DANG_NHAP.indexOf(dau) >= 0){
     G.dangXuatMayChu();
-    G.S.acc = null; G.S.role = null; G.S.roleObj = null; G.S.crmMuc = null;
+    G.S.acc = null; G.S.role = null; G.S.roleObj = null; G.S.crmMuc = null; G.S.taiChinhMuc = null;
     save();
     try{ history.replaceState(null, '', location.pathname + location.search); }catch(e){}
     gate();

@@ -17,7 +17,7 @@ export async function quyenT5ProDangHieuLuc(db, uid) {
 }
 
 export async function capQuyenT5Pro(y, env, db, hoSo) {
-  if (!laAdmin(hoSo))
+  if (hoSo.role !== 'R01')   /* V50·168: cấp quyền 100% do Super Admin */
     return {ok: false, code: 'NOPERM',
       error: 'Chỉ Super Admin hoặc Admin hệ thống cấp quyền T5-PRO.'};
 
@@ -58,7 +58,7 @@ export async function capQuyenT5Pro(y, env, db, hoSo) {
 }
 
 export async function thuHoiQuyenT5Pro(y, env, db, hoSo) {
-  if (!laAdmin(hoSo))
+  if (hoSo.role !== 'R01')   /* V50·168: cấp quyền 100% do Super Admin */
     return {ok: false, code: 'NOPERM',
       error: 'Chỉ Super Admin hoặc Admin hệ thống thu hồi quyền T5-PRO.'};
 

@@ -353,6 +353,12 @@ export async function congNo(y, env, db, hoSo) {
     const nd = await Kho.nguoiTheoId(db, hoSo.uid);
     if (!nd || String(nd.maKhachHang || '') !== nha)
       return {ok: false, code: 'NOPERM', error: 'Chỉ xem được công nợ của chính nhà mình.'};
+  } else if (lv > 3 && !oDauTien(await quyenCua(db, hoSo.u), 'thu')) {
+    /* V50·168: lời hứa ở trên giờ có cổng thật — đội ngũ ngoài ban tài chính
+       chỉ xem công nợ của nhà mình là Coach / Tư vấn phụ trách. */
+    const cua = await db.prepare('SELECT 1 AS c FROM hoSoKhach WHERE maKhachHang = ? AND (coach = ? OR tuVan = ?) LIMIT 1')
+      .bind(nha, hoSo.u, hoSo.u).first();
+    if (!cua) return {ok: false, code: 'NOPERM', error: 'Chỉ xem được công nợ của nhà mình phụ trách.'};
   }
 
   const r = await db.prepare(

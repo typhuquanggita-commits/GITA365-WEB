@@ -129,7 +129,7 @@ import { nganHangBao, nhapGiaoDichTay, doiChieuNganHang, khopGiaoDich,
   hopThongBao, danhDauDaDoc } from './ngan-hang.js';
 import { ghiChi, duyetChi, huyChi, soChi, chotKet, dsChotKet,
   xemThangDuyetChi, baoCaoChi, tongHopChi,
-  capQuyenTaiChinh, thuHoiQuyenTaiChinh, dsQuyenTaiChinh } from './chi-tieu.js';
+  capQuyenTaiChinh, thuHoiQuyenTaiChinh, dsQuyenTaiChinh, quyenCua as quyenTaiChinhCua } from './chi-tieu.js';
 import { capQuyenCRM, thuHoiQuyenCRM, dsQuyenCRM, crmDanhSach, crmChiTiet,
   crmBangDieuKhien, crmUuTien, crmGhiKhach, crmQuanTri,
   crmGhiCoHoi, crmCoHoi, mucCrmCua } from './crm.js';
@@ -927,11 +927,15 @@ async function traLoiDangNhap(db, nd, chiTiet) {
      có dòng quyenCRM còn hiệu lực. Máy chủ vẫn là cổng thật cho mọi thao
      tác (mucCua ở từng cửa); crmMuc này chỉ để bật/tắt MỤC trên máy khách. */
   const crmMuc = await mucCrmCua(db, nd.role, nd.username);
+  /* V50·168: vị trí ban tài chính Super Admin đã cấp (còn hiệu lực) — để máy
+     khách mở màn Tài chính đúng phạm vi. Mọi cửa tiền vẫn tự gác ở máy chủ. */
+  let taiChinhMuc = [];
+  try { const q = await quyenTaiChinhCua(db, nd.username); taiChinhMuc = ['keToanThu', 'keToanChi', 'keToanTruong', 'quanLyPhong'].filter(k => q[k]); } catch (e) { taiChinhMuc = []; }
   await Kho.ghiNhatKy(db, {uid: nd.id, username: nd.username, viec: 'DANG_NHAP',
     chiTiet: chiTiet || ''});
   return {ok: true, token: token, u: nd.username, role: nd.role, portal: nd.portal,
     hoTen: nd.hoTen, tier: hv ? Number(hv.tier || 0) : 0,
-    maKhachHang: nd.maKhachHang || '', crmMuc: crmMuc || '',
+    maKhachHang: nd.maKhachHang || '', crmMuc: crmMuc || '', taiChinhMuc: taiChinhMuc,
     phaiDoiMk: !!Number(nd.mustChangePw),
     hetHan: new Date(Date.now() + HAN_PHIEN_GIO * 3600e3).toISOString()};
 }

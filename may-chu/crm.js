@@ -105,9 +105,10 @@ export async function mucCrmCua(db, role, u) { return mucCua(db, {role: role, u:
 
 /* ═══════════════ CẤP QUYỀN CRM — chỉ R01–R02 ═══════════════ */
 export async function capQuyenCRM(y, env, db, hoSo) {
-  if ((BAC[hoSo.role] || 99) > 2)
+  /* V50·168: cấp quyền hệ thống 100% do Super Admin. */
+  if (hoSo.role !== 'R01')
     return {ok: false, code: 'NOPERM',
-      error: 'Chỉ Super Admin và Admin hệ thống cấp được quyền CRM.'};
+      error: 'Chỉ Super Admin cấp được quyền CRM.'};
 
   const ten = String(y.username || '').trim().toLowerCase();
   const muc = String(y.muc || '').trim();
@@ -158,8 +159,8 @@ export async function capQuyenCRM(y, env, db, hoSo) {
 
 /* ═══════════════ THU HỒI QUYỀN CRM — chỉ R01–R02 ═══════════════ */
 export async function thuHoiQuyenCRM(y, env, db, hoSo) {
-  if ((BAC[hoSo.role] || 99) > 2)
-    return {ok: false, code: 'NOPERM', error: 'Chỉ R01–R02 thu hồi được quyền CRM.'};
+  if (hoSo.role !== 'R01')
+    return {ok: false, code: 'NOPERM', error: 'Chỉ Super Admin thu hồi được quyền CRM.'};
   const goc = String(y.username || '').trim().toLowerCase();
   if (!goc) return {ok: false, error: 'Thiếu tên đăng nhập.'};
   /* Quy về tên chính tắc để thu hồi khớp cả khi cấp bằng email. */

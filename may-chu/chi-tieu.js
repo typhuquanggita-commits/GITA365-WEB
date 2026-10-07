@@ -804,6 +804,11 @@ export async function duyetChi(y, env, db, hoSo) {
    bản 9.97. Giám đốc KHÔNG tự cấp được quyền cho người sẽ ký thay
    mình: đó là tự nới cổng của chính mình. */
 export async function capQuyenTaiChinh(y, env, db, hoSo) {
+  /* V50·168: cấp quyền hệ thống 100% do Super Admin — kể cả vị trí ban
+     tài chính. Người quản lý phòng vẫn điều hành phòng, nhưng không tự
+     cấp vị trí cho người khác. */
+  if (hoSo.role !== 'R01')
+    return {ok: false, code: 'NOPERM', error: 'Vị trí ban tài chính do Super Admin cấp.'};
   const quyenMinh = await quyenCua(db, hoSo.u);
   if (!quanLyDuocPhong(hoSo.role, quyenMinh))
     return {ok: false, code: 'NOPERM',
@@ -870,6 +875,8 @@ export async function capQuyenTaiChinh(y, env, db, hoSo) {
 }
 
 export async function thuHoiQuyenTaiChinh(y, env, db, hoSo) {
+  if (hoSo.role !== 'R01')
+    return {ok: false, code: 'NOPERM', error: 'Vị trí ban tài chính do Super Admin thu hồi.'};
   const quyenMinh = await quyenCua(db, hoSo.u);
   if (!quanLyDuocPhong(hoSo.role, quyenMinh))
     return {ok: false, code: 'NOPERM',

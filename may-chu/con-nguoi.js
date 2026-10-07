@@ -66,7 +66,8 @@ function duocVaoCN(hoSo) {
   return /^R(0[1-9]|1[0-2])$/.test(String((hoSo || {}).role || ''));
 }
 function duocKhaiCu(hoSo) {
-  return /^R0[12]$/.test(String((hoSo || {}).role || ''));
+  /* Khai hộ ba cửa = mở quyền liên hệ khách cho một nhân sự → V50·168: chỉ Super Admin. */
+  return String((hoSo || {}).role || '') === 'R01';
 }
 
 /* ═══════════════ CỬA 1 · HIẾN PHÁP ═══════════════
@@ -327,7 +328,7 @@ export async function ghiCua(y, env, db, hoSo) {
    sổ đọc ra được là dòng nào thuộc loại nào. */
 export async function lapBaCua(y, env, db, hoSo) {
   if (!duocKhaiCu(hoSo)) return { ok: false, code: 'NOPERM',
-    error: 'Chỉ R01–R02 khai hộ được cửa đã qua từ trước. Khai hộ là nói thay cho ' +
+    error: 'Chỉ Super Admin khai hộ được cửa đã qua từ trước. Khai hộ là nói thay cho ' +
       'một phép đo chưa từng chạy, nên nó phải có một cái tên chịu trách nhiệm.' };
 
   const x = y || {};

@@ -18,9 +18,10 @@ import { BAC } from './vai-tro.js';
 
 function duocQuanLy(hoSo, muc) { return (BAC[hoSo.role] || 99) <= muc; }
 
-/** Tạo tài khoản nội bộ (R01/R02). */
+/** Tạo tài khoản nội bộ — CHỈ Super Admin (V50·168: "việc cấp quyền hệ
+    thống 100% do Super Admin"; mở tài khoản = cấp một vai). */
 export async function taoTaiKhoanNoiBo(y, env, db, hoSo) {
-  if (!duocQuanLy(hoSo, 2)) return { ok: false, code: 'NOPERM' };
+  if (!duocQuanLy(hoSo, 1)) return { ok: false, code: 'NOPERM', error: 'Mở tài khoản và cấp vai do Super Admin.' };
   const d = y || {};
   const username = String(d.username || '').trim().toLowerCase();
   const email = String(d.email || '').trim().toLowerCase();
@@ -34,7 +35,7 @@ export async function taoTaiKhoanNoiBo(y, env, db, hoSo) {
   if (!RE_EMAIL.test(email)) return { ok: false, error: 'Email chưa đúng.' };
   if (!hoTen) return { ok: false, error: 'Chưa điền họ tên.' };
   if (!BAC[role]) return { ok: false, error: 'Vai trò không hợp lệ.' };
-  if ((BAC[hoSo.role] || 99) > (BAC[role] || 99))
+  if ((BAC[hoSo.role] || 99) >= (BAC[role] || 99))
     return { ok: false, error: 'Không thể tạo tài khoản cấp cao hơn hoặc ngang cấp mình.' };
 
   const muoi = muoiMoi();
@@ -43,9 +44,11 @@ export async function taoTaiKhoanNoiBo(y, env, db, hoSo) {
   const luc = new Date().toISOString();
   try {
     await db.prepare(
+      /* Phòng ban vào ĐÚNG cột phongBan — bản cũ ghi nhầm vào maKhachHang (nhân
+         sự mới mang "mã khách hàng" là tên phòng). '' thay "" (chuỗi chuẩn SQL). */
       'INSERT INTO users (id,username,hoTen,email,dienThoai,role,portal,' +
-      'pwSalt,pwHash,active,createdAt,maKhachHang,boTro,mustChangePw) ' +
-      'VALUES (?,?,?,?,?,?,?,?,?,1,?,?,"",1)'
+      'pwSalt,pwHash,active,createdAt,phongBan,boTro,mustChangePw) ' +
+      "VALUES (?,?,?,?,?,?,?,?,?,1,?,?,'',1)"
     ).bind(uid, username, hoTen, email, dienThoai, role, 'noibo',
       muoi, hash, luc, phongBan || '').run();
   } catch (e) {
@@ -67,7 +70,7 @@ export async function taoTaiKhoanNoiBo(y, env, db, hoSo) {
   return { ok: true, uid, username, role, phongBan, ghiChu: 'Mật khẩu tạm đã gửi qua email.' };
 }
 
-/** Cập nhật thông tin tài khoản (R01/R02). */
+/** Cập nhật thông tin tài khoản (R01/R02). ĐỔI VAI chỉ Super Admin. */
 export async function capNhatTaiKhoan(y, env, db, hoSo) {
   if (!duocQuanLy(hoSo, 2)) return { ok: false, code: 'NOPERM' };
   const d = y || {};
@@ -86,8 +89,14 @@ export async function capNhatTaiKhoan(y, env, db, hoSo) {
 
   const set = ['updatedAt = ?'];
   const val = [new Date().toISOString()];
-  if (role && BAC[role] && BAC[role] >= mucChoPhep) { set.push('role = ?'); val.push(role); }
-  if (phongBan !== undefined) { set.push('phongBan = ?'); val.push(phongBan); }
+  if (role && role !== taiKhoan.role) {
+    if (hoSo.role !== 'R01') return { ok: false, code: 'NOPERM', error: 'Đổi vai (cấp quyền) do Super Admin.' };
+    if (!BAC[role] || BAC[role] <= mucChoPhep) return { ok: false, error: 'Vai không hợp lệ hoặc ngang cấp Super Admin.' };
+    set.push('role = ?'); val.push(role);
+  }
+  /* Chỉ ghi phòng ban khi lượt gọi CÓ gửi trường này — trước đây mọi lượt
+     cập nhật không kèm phòng ban đều xoá trắng phòng ban của tài khoản. */
+  if (d.phongBan !== undefined) { set.push('phongBan = ?'); val.push(phongBan); }
   if (d.active !== undefined) { set.push('active = ?'); val.push(active); }
   if (String(d.hoTen || '').trim()) { set.push('hoTen = ?'); val.push(String(d.hoTen).trim()); }
   if (String(d.email || '').trim() && RE_EMAIL.test(String(d.email).trim())) {

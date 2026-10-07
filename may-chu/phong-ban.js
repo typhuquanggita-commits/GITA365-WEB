@@ -121,14 +121,15 @@ export async function chiTietPhongBan(y, env, db, hoSo) {
 
 /** Gán nhân sự vào phòng ban (chỉ R01/R02). */
 export async function ganPhongBan(y, env, db, hoSo) {
-  if (bacVai(hoSo) > 2) return { ok: false, code: 'NOPERM',
-    error: 'Chỉ Super Admin/Admin gán phòng ban.' };
+  if (hoSo.role !== 'R01') return { ok: false, code: 'NOPERM',   /* V50·168: cấp quyền 100% do Super Admin */
+    error: 'Chỉ Super Admin gán phòng ban.' };
   const username = String(y.username || '').trim().toLowerCase();
   const maPB = String(y.maPB || '').trim().toUpperCase();
   if (!PHONG_BAN.find(p => p.ma === maPB))
     return { ok: false, error: 'Phòng ban không hợp lệ.' };
 
-  await db.prepare('UPDATE users SET phongBan = ?, capNhatLuc = ? WHERE username = ?')
+  /* Bảng users không có cột capNhatLuc — cột đúng là updatedAt (lỗi cũ làm cửa này luôn hỏng). */
+  await db.prepare('UPDATE users SET phongBan = ?, updatedAt = ? WHERE username = ?')
     .bind(maPB, new Date().toISOString(), username).run();
   await Kho.ghiNhatKy(db, { uid: hoSo.uid, username: hoSo.u,
     viec: 'GAN_PHONG_BAN', doiTuong: username, chiTiet: maPB });

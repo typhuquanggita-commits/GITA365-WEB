@@ -636,7 +636,7 @@ CREATE TABLE IF NOT EXISTS quyenTaiChinh (
   chucNang   TEXT NOT NULL,      -- keToan · keToanTruong
   mocToiDa   TEXT,               -- C1…C6, chỉ có nghĩa với keToanTruong
   lyDo       TEXT NOT NULL,
-  boiAi      TEXT NOT NULL,      -- chỉ R01–R02 cấp được
+  boiAi      TEXT NOT NULL,      -- chỉ R01 cấp được (V50·168)
   capLuc     TEXT NOT NULL,
   hetHan     TEXT,               -- vắng nghĩa là không hết hạn
   thuHoiLuc  TEXT,
@@ -684,7 +684,7 @@ CREATE TABLE IF NOT EXISTS quyenCRM (
   username   TEXT NOT NULL,
   muc        TEXT NOT NULL,      -- xem · sua · quanly
   lyDo       TEXT NOT NULL,
-  boiAi      TEXT NOT NULL,      -- chỉ R01–R02 cấp được
+  boiAi      TEXT NOT NULL,      -- chỉ R01 cấp được (V50·168)
   capLuc     TEXT NOT NULL,
   hetHan     TEXT,
   thuHoiLuc  TEXT,

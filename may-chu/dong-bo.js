@@ -136,7 +136,7 @@ async function locCaiDat(db, cu, lv, uid) {
     if (k === '__quaLon') { ra[k] = cu[k]; continue; }
     if (k === 'ca' && lv > 11) continue;          /* hồ sơ ca: chỉ người trong nghề */
     if (k === 'tainguyen' && lv > 2) continue;    /* mức dùng tài nguyên của đội ngũ */
-    if (k === 'phanquyen' && lv > 2) continue;    /* bảng phân quyền */
+    if (k === 'phanquyen' && lv > 2) continue;    /* bảng phân quyền: R01–R02 ĐỌC; chỉ R01 GHI (dưới) */
     if (k === 'khothem' || k === 'xinthem') {
       if (lv <= 11) { ra[k] = cu[k]; continue; }  /* đội ngũ: nhận cả */
       const v = cu[k];
@@ -169,7 +169,8 @@ async function dongBoCaiDat(db, y, hoSo) {
   if (lv <= 11) { for (const k of Object.keys(gui)) if (CUM_NGHE.includes(k)) await nhan(k); }
   else await nhan('xinthem');   /* gia đình và CTV: chỉ đẩy được LỜI XIN, không hơn */
 
-  if (lv <= 2) { for (const k of Object.keys(gui)) if (CUM_QUAN_TRI.includes(k)) await nhan(k); }
+  /* Bảng phân quyền (vai → quyền) là cấp quyền → V50·168: chỉ Super Admin ghi. */
+  if (lv <= 2) { for (const k of Object.keys(gui)) if (CUM_QUAN_TRI.includes(k) && (k !== 'phanquyen' || lv === 1)) await nhan(k); }
 
   if (doi) await Kho.ghiNhatKy(db, {uid: hoSo.uid, username: hoSo.u,
     viec: 'DONG_BO_CAI_DAT', chiTiet: 'Cập nhật ' + doi + ' cụm'});

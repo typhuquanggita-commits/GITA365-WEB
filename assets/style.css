@@ -4002,3 +4002,14 @@ html[data-may="yeu"] *,html[data-may="yeu"] *::before,html[data-may="yeu"] *::af
 .v50-tt-da{background:var(--ok)} .v50-tt-dang{background:var(--warn)} .v50-tt-chua{background:var(--bad)} .v50-tt-kl{background:var(--ink-4)}
 .v50-kq{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:13px}
 @media(max-width:700px){.v50-cums{grid-template-columns:1fr}.v50-thanh-than{flex-direction:column;align-items:flex-start}}
+
+/* ═══ V50·168 · thanh phần của màn chính + kho nghề (src/v50-cot.js · v50-kho.js) ═══ */
+.v50-phan{margin:0 0 12px;padding:8px 10px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.v50-phan-dau{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:13.5px;margin-bottom:6px;color:var(--ink)}
+.v50-phan-ds{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin}
+.v50-pc{flex:none;display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--ink-2);font-size:12.5px;white-space:nowrap;cursor:pointer}
+.v50-pc:hover,.v50-pc:focus-visible{border-color:var(--gita);color:var(--ink)}
+.v50-pc.on{background:var(--gita);border-color:var(--gita);color:var(--surface);font-weight:700}
+.v50-pc-khoa{color:var(--ink-4);border-style:dashed}
+.v50-pc-kho{border-color:var(--line-2);background:var(--gita-mo-1)}
+.v50-khoa{cursor:default;border-style:dashed;color:var(--ink-4)}

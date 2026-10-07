@@ -65,6 +65,9 @@ jobs:
       - name: Thử Soát toàn bộ màn (mã hoá trong trình duyệt · khuôn bản mã · chỉ R01 gửi · cửa công khai chỉ trả bản mã)
         run: node tools/thu-soat-man.mjs
 
+      - name: Thử V50·168 (≤168 trang · 15 màn chính · trần màn theo vai · cấp quyền chỉ Super Admin · Coach↔CRM · tài chính & CRM theo giới hạn)
+        run: node tools/thu-v50-168.mjs
+
       - name: Thử Truy vấn đa chiều (bốn dòng chảy · bảng điểm 16 ban)
         run: node tools/thu-dong-chay.mjs
 

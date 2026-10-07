@@ -346,6 +346,17 @@ export async function tieuCredit(y, env, db, hoSo) {
       return { ok: false, code: 'DOI', error: 'Số dư vừa thay đổi — thử lại.' };
     }
   }
+  /* V50·168 · COACH ↔ CRM: buổi coach đã ghi tiêu credit thì vào luôn sổ chạm —
+     chính sổ CRM đọc (dòng thời gian, "chạm cuối", KPI). Một lượt ghi, hai
+     nơi thấy; khoá chống trùng là mã tham chiếu của buổi. */
+  if (vai !== 'nha' && /^buoi/.test(ma)) {
+    try {
+      await db.prepare('INSERT INTO soCham (id,maNha,ngay,kieu,denLuc,noiDung,canCu,aiDuyet,boiAi,ghiLuc) ' +
+        "SELECT ?,?,?,'buoi',NULL,?,?,?,?,? WHERE NOT EXISTS (SELECT 1 FROM soCham WHERE maNha = ? AND canCu = ?)")
+        .bind('CH-' + id(), maNha, gio.slice(0, 10), ('Buổi coach · ' + (String(x.ghiChu || '').trim() || ma)).slice(0, 300),
+          'credit:' + tc, hoSo.u, hoSo.u, gio, maNha, 'credit:' + tc).run();
+    } catch (e) { /* sổ chạm là phần nối — không làm hỏng lượt trừ credit đã xong */ }
+  }
   return { ok: true, so: gia, chiTiet: daGhi.map(([l, s]) => ({ loai: l, so: s })), soDu: await soDu(db, maNha) };
 }
 

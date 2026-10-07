@@ -1702,9 +1702,10 @@ export async function baiTreo(y, env, db, hoSo) {
 /* ═══════════════ CẤP QUYỀN KÝ ═══════════════
    Chỉ R01–R02, và không ai tự cấp cho mình — y như quyenTaiChinh. */
 export async function capQuyenNoiDung(y, env, db, hoSo) {
-  if ((BAC[hoSo.role] || 99) > CAP_QUYEN_KY)
+  /* V50·168: cấp quyền hệ thống 100% do Super Admin. */
+  if (hoSo.role !== 'R01')
     return {ok: false, error: 'KHONGQUYEN',
-      vi: 'Chỉ R01–R02 cấp được quyền ký nội dung.'};
+      vi: 'Chỉ Super Admin cấp được quyền ký nội dung.'};
 
   const ten = String(y.username || '').trim();
   const chuc = String(y.chucNang || '').trim();
@@ -1747,8 +1748,8 @@ export async function capQuyenNoiDung(y, env, db, hoSo) {
 }
 
 export async function thuHoiQuyenNoiDung(y, env, db, hoSo) {
-  if ((BAC[hoSo.role] || 99) > CAP_QUYEN_KY)
-    return {ok: false, error: 'KHONGQUYEN', vi: 'Chỉ R01–R02 thu hồi được.'};
+  if (hoSo.role !== 'R01')
+    return {ok: false, error: 'KHONGQUYEN', vi: 'Chỉ Super Admin thu hồi được.'};
   const r = await db.prepare(
     'UPDATE quyenNoiDung SET thuHoiLuc = ?, thuHoiBoi = ? ' +
     'WHERE lower(username) = lower(?) AND chucNang = ? AND thuHoiLuc IS NULL')

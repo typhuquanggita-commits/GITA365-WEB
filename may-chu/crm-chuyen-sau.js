@@ -15,6 +15,7 @@
 import { Kho } from './nen.js';
 
 import { BAC } from './vai-tro.js';
+import { mucCrmCua } from './crm.js';
 
 function ngayTruoc(n) {
   return new Date(Date.now() - n * 864e5).toISOString().slice(0, 10);
@@ -93,12 +94,10 @@ function deXuatLoTrinh(kh, cham, thu) {
 
 /** Điểm số + phân khúc + rủi ro cho một nhà (R01–R04 hoặc CRM quản lý). */
 export async function crmPhanTichKhach(y, env, db, hoSo) {
-  if ((BAC[hoSo.role] || 99) > 4) {
-    const mucCrm = await db.prepare(
-      'SELECT muc FROM quyenCRM WHERE username=? AND thuHoiLuc IS NULL ORDER BY capLuc DESC LIMIT 1'
-    ).bind(String(hoSo.u || '').toLowerCase()).first();
-    if (!mucCrm || mucCrm.muc !== 'quanly') return { ok: false, code: 'NOPERM' };
-  }
+  /* V50·168: cùng một luật với mọi cửa CRM — R01–R02 quản lý đương nhiên,
+     người khác cần quyền "quanly" ĐANG HIỆU LỰC do Super Admin cấp (trước
+     đây R03–R04 xem mọi khách không cần cấp, và quyền hết hạn vẫn dùng được). */
+  if ((await mucCrmCua(db, hoSo.role, hoSo.u)) !== 'quanly') return { ok: false, code: 'NOPERM' };
   const maKH = String(y.maKH || '').trim();
   if (!maKH) return { ok: false, error: 'Thiếu mã khách hàng.' };
 
@@ -132,12 +131,10 @@ export async function crmPhanTichKhach(y, env, db, hoSo) {
 
 /** Danh sách khách cần ưu tiên theo phân khúc/rủi ro. */
 export async function crmUuTienNangCao(y, env, db, hoSo) {
-  if ((BAC[hoSo.role] || 99) > 4) {
-    const mucCrm = await db.prepare(
-      'SELECT muc FROM quyenCRM WHERE username=? AND thuHoiLuc IS NULL ORDER BY capLuc DESC LIMIT 1'
-    ).bind(String(hoSo.u || '').toLowerCase()).first();
-    if (!mucCrm || mucCrm.muc !== 'quanly') return { ok: false, code: 'NOPERM' };
-  }
+  /* V50·168: cùng một luật với mọi cửa CRM — R01–R02 quản lý đương nhiên,
+     người khác cần quyền "quanly" ĐANG HIỆU LỰC do Super Admin cấp (trước
+     đây R03–R04 xem mọi khách không cần cấp, và quyền hết hạn vẫn dùng được). */
+  if ((await mucCrmCua(db, hoSo.role, hoSo.u)) !== 'quanly') return { ok: false, code: 'NOPERM' };
   const limit = Math.min(100, Math.max(10, Number((y || {}).limit) || 50));
   const loai = String((y || {}).loai || '').trim();
 
@@ -146,7 +143,7 @@ export async function crmUuTienNangCao(y, env, db, hoSo) {
     'u.hoTen, u.dienThoai, c.phuTrach, c.giaiDoan, c.henTiep ' +
     'FROM hoSoKhach k LEFT JOIN users u ON u.id=k.uidPhuHuynh ' +
     'LEFT JOIN crmKhach c ON c.maKH=k.maKhachHang ' +
-    'WHERE k.deletedAt IS NULL OR k.deletedAt = "" ' +
+    /* hoSoKhach không có cột deletedAt — bộ lọc cũ làm cửa này luôn hỏng. */
     'ORDER BY k.vaoLuc DESC LIMIT ?'
   ).bind(limit * 3).all();
 

@@ -101,6 +101,9 @@ G.PERM = {
      Ba mức này cộng với tài chính (R01–R03) tạo ra đúng bậc thang:
      100% · 95% · 91% · 90% — xem G.TAM_NHIN bên dưới. */
   qt_trang:2, dh_toan_he:4, nghe_chung:12,
+  /* V50·168 — chủ hệ: "việc cấp quyền hệ thống 100% do Super Admin". Mở
+     tài khoản, phân quyền, cấp quyền CRM chỉ R01; máy chủ gác cùng luật. */
+  cap_quyen:1,
 
   /* ══ THƯ VIỆN TÀI LIỆU ══
      Mọi vị trí đều được gửi tài liệu lên làm giàu kho chung — đó là
@@ -160,6 +163,7 @@ G.PERM_TEN = {
   kh_qua_tang:'Kho quà theo tầng',
   ctv_lien_ket:'Mã liên kết cộng tác viên', ctv_hoa_hong:'Hoa hồng và tài khoản nhận tiền',
   qt_trang:'Quản trị trang — tài khoản và phân quyền',
+  cap_quyen:'Cấp quyền hệ thống (chỉ Super Admin)',
   tl_gui:'Gửi tài liệu lên thư viện',
   tl_xem_het:'Xem toàn bộ tài liệu đã gửi',
   tl_duyet:'Kiểm duyệt tài liệu',
@@ -861,6 +865,20 @@ G.NAV = [
        đình, không kèm mục lục kho nghề. */
     {v:'kho-tong',    t:'Kho tổng — toàn cảnh',        h:'9 nhóm · hơn 50 kho · số đếm thật', ic:'vault', perm:'nghe_chung', capMo:'chung', star:1},
     {v:'thu-vien-v50', t:'Thư viện vận hành',          h:'V50 · 154 màn học thuyết gom 14 cụm · mỗi cụm một bảng việc áp dụng đo được, nối thẳng chỉ số ở Trung tâm đo lường', ic:'book', capMo:'chung', star:1},
+    {v:'kn-pp', t:'Kho nghề · Phương pháp & lộ trình GITA', h:'V50 · chương học thuyết của cụm, mở theo vai · tầng · gói · bảng việc áp dụng đo được', ic:'vault', perm:'nghe_chung', capMo:'chung'},
+    {v:'kn-kho', t:'Kho nghề · Kho chuyên môn', h:'V50 · chương học thuyết của cụm, mở theo vai · tầng · gói · bảng việc áp dụng đo được', ic:'vault', perm:'nghe_chung', capMo:'chung'},
+    {v:'kn-nghe', t:'Kho nghề · Chuẩn nghề các vai', h:'V50 · chương học thuyết của cụm, mở theo vai · tầng · gói · bảng việc áp dụng đo được', ic:'vault', perm:'nghe_chung', capMo:'chung'},
+    {v:'kn-coach', t:'Kho nghề · Coach & chăm sóc hằng ngày', h:'V50 · chương học thuyết của cụm, mở theo vai · tầng · gói · bảng việc áp dụng đo được', ic:'vault', perm:'nghe_chung', capMo:'chung'},
+    {v:'kn-tuvan', t:'Kho nghề · Tư vấn & chuyển đổi', h:'V50 · chương học thuyết của cụm, mở theo vai · tầng · gói · bảng việc áp dụng đo được', ic:'vault', perm:'nghe_chung', capMo:'chung'},
+    {v:'kn-vip', t:'Kho nghề · VIP & khách lớn', h:'V50 · chương học thuyết của cụm, mở theo vai · tầng · gói · bảng việc áp dụng đo được', ic:'vault', perm:'nghe_chung', capMo:'chung'},
+    {v:'kn-trai', t:'Kho nghề · Trải nghiệm & lan toả', h:'V50 · chương học thuyết của cụm, mở theo vai · tầng · gói · bảng việc áp dụng đo được', ic:'vault', capMo:'chung'},
+    {v:'kn-mk', t:'Kho nghề · Thương hiệu & nội dung', h:'V50 · chương học thuyết của cụm, mở theo vai · tầng · gói · bảng việc áp dụng đo được', ic:'vault', perm:'nghe_chung', capMo:'chung'},
+    {v:'kn-gd', t:'Kho nghề · Cam kết với gia đình', h:'V50 · chương học thuyết của cụm, mở theo vai · tầng · gói · bảng việc áp dụng đo được', ic:'vault', capMo:'chung'},
+    {v:'kn-nha', t:'Kho nghề · Hành trình nhà mình', h:'V50 · chương học thuyết của cụm, mở theo vai · tầng · gói · bảng việc áp dụng đo được', ic:'vault', capMo:'chung'},
+    {v:'kn-pl', t:'Kho nghề · Pháp lý, quyền & dữ liệu', h:'V50 · chương học thuyết của cụm, mở theo vai · tầng · gói · bảng việc áp dụng đo được', ic:'vault', perm:'nghe_chung', capMo:'chung'},
+    {v:'kn-tc', t:'Kho nghề · Quy trình tài chính', h:'V50 · chương học thuyết của cụm, mở theo vai · tầng · gói · bảng việc áp dụng đo được', ic:'vault', perm:'nghe_chung', capMo:'chung'},
+    {v:'kn-kt', t:'Kho nghề · Kiến trúc & tự vận hành hệ', h:'V50 · chương học thuyết của cụm, mở theo vai · tầng · gói · bảng việc áp dụng đo được', ic:'vault', perm:'nghe_chung', capMo:'chung'},
+    {v:'kn-ct', t:'Kho nghề · Cải tiến & kiểm soát', h:'V50 · chương học thuyết của cụm, mở theo vai · tầng · gói · bảng việc áp dụng đo được', ic:'vault', perm:'nghe_chung', capMo:'chung'},
     {v:'thu-vien',    t:'Thư viện tài liệu',           h:'Gửi tài liệu lên · kho lớn lên từ đây', ic:'book', capMo:'chung', star:1},
     {v:'noi-nhan-tai',t:'Nôi nuôi dưỡng nhân tài',     h:'Hành trình cha mẹ thông thái · 6 quyển · 10 chương · 3 hành trình (90 ngày · 365 ngày · một đời)', ic:'seed', capMo:'chung', star:1},
     {v:'minh-chung',  t:'Minh chứng nhiệm vụ',         h:'Nộp ảnh, báo cáo xác nhận đã làm',   ic:'check', capMo:'chung', star:1},
@@ -1058,9 +1076,9 @@ G.NAV = [
     {v:'suc-chua-toc-do', t:'Sức chứa & Tốc độ', h:'Bộ não chạy nhanh và chứa nhiều trên Cloudflare bằng NĂM TRỤ (việc nặng ở máy khách · chỉ mục đường tra nóng · bộ nhớ đệm ở biên · Workers tự co giãn · R2 cho tệp lớn), không bằng một con số · "1TB" là dung lượng, đạt bằng R2 (hàng TB) + chia mảnh D1, không phải mức của bộ não · sức chứa ĐO ĐƯỢC lúc gọi (cửa doSucChua), không tự khai · nói ra cả trần Cloudflare lẫn đường vượt trần', ic:'vault', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'thanh-tra-soi', t:'Mười tổ thanh tra soi', h:'Mười thanh tra ĐỘC LẬP chuyên phá các điểm chưa tốt, mười CẤP × 100 bậc = 1000 bậc tiêu chuẩn liền mạch · mỗi tổ NEO vào một phép soi CÓ THẬT trong mã nguồn (soatRaNgoai · truyHoiHe · capDuyetTheoTien · nhaCuaMinh · xuatDuLieuNha · danhDauXoa · dieuPhoiTroLy · a11yNhan · lapTheVungManh · kiemPhien), không phải một dòng khẩu hiệu — mục 114 đối chiếu tên ấy tồn tại trong tệp, trỏ vào cái tên bịa thì đỏ · cấp cao = hậu quả nặng hơn khi hỏng, cấp 10 là rò dữ liệu một đứa trẻ ra ngoài', ic:'shield', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'kien-truc-thi-giac', t:'Kiến trúc sư thị giác', h:'Đọc màn · tài liệu · đề xuất · kho · hiến pháp · luật thương hiệu', ic:'spark', star:1, perm:'qt_trang', capMo:'chung'},
-    {v:'phan-quyen',   t:'Phân công & cấp quyền',      h:'15 vị trí × 31 quyền · bấm ô để đổi', ic:'shield', star:1, perm:'qt_trang', capMo:'quantri'},
-    {v:'phan-quyen-crm',t:'Phân quyền CRM',            h:'Cấp quyền CRM cho bộ phận · xem/sửa/quản lý · ai được cấp mới thấy', ic:'lock', star:1, perm:'qt_trang', capMo:'quantri'},
-    {v:'cap-tai-khoan',t:'Mở tài khoản mới',           h:'Cấp cho vị trí từ Tư vấn trở lên',    ic:'plus', star:1, perm:'qt_trang', capMo:'quantri'},
+    {v:'phan-quyen',   t:'Phân công & cấp quyền',      h:'15 vị trí × 31 quyền · bấm ô để đổi', ic:'shield', star:1, perm:'cap_quyen', capMo:'quantri'},
+    {v:'phan-quyen-crm',t:'Phân quyền CRM',            h:'Cấp quyền CRM cho bộ phận · xem/sửa/quản lý · ai được cấp mới thấy', ic:'lock', star:1, perm:'cap_quyen', capMo:'quantri'},
+    {v:'cap-tai-khoan',t:'Mở tài khoản mới',           h:'Cấp cho vị trí từ Tư vấn trở lên',    ic:'plus', star:1, perm:'cap_quyen', capMo:'quantri'},
     {v:'khoa-tai-khoan',t:'Khoá · mở lại · xoá',       h:'Vòng đời một tài khoản, có lý do',    ic:'lock', perm:'qt_trang', capMo:'quantri'},
     {v:'nguoi-dung',   t:'Danh bạ người dùng',         h:'Ai đang ở vị trí nào, hoạt động ra sao',ic:'users', perm:'qt_trang', capMo:'quantri'},
     {v:'sap-xep',     t:'Sắp xếp thư mục',              h:'Đổi thứ tự · ẩn bớt · thêm thư mục mới', ic:'orbit', star:1, perm:'qt_trang', capMo:'quantri'},

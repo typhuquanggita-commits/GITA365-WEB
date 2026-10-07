@@ -24,6 +24,7 @@
    ═══════════════════════════════════════════════════════════════ */
 
 import { Kho } from './nen.js';
+import { BAC } from './vai-tro.js';
 import * as BoNao from './bo-nao.js';
 import * as ConNguoi from './con-nguoi.js';
 import * as PhapLy from './phap-ly-rui-ro.js';
@@ -239,8 +240,19 @@ export async function ghiCham(y, env, db, hoSo) {
   const aiDuyet = String(x.aiDuyet || '').trim();
 
   if (!maNha || !noiDung) return { ok: false, error: 'Thiếu mã gia đình hoặc nội dung.' };
-  if (['nhan', 'goi', 'wow'].indexOf(kieu) < 0) return { ok: false, code: 'KIEULA',
-    error: 'Kiểu chạm phải là nhan · goi · wow.' };
+  if (['nhan', 'goi', 'wow', 'buoi'].indexOf(kieu) < 0) return { ok: false, code: 'KIEULA',
+    error: 'Kiểu chạm phải là nhan · goi · wow · buoi.' };
+
+  /* ── CỔNG 0 · CHỈ GHI CHO NHÀ MÌNH PHỤ TRÁCH (V50·168) ──
+     Sổ chạm là tiến trình chăm sóc mà CRM đọc. Trước đây mọi R01–R12 ghi
+     được vào BẤT KỲ nhà nào. Nay từ Trưởng nhóm Coach trở xuống chỉ ghi
+     được cho nhà mình là Coach hoặc Tư vấn phụ trách; R01–R04 ghi mọi nhà. */
+  if ((BAC[hoSo.role] || 99) > 4) {
+    const cua = await db.prepare('SELECT 1 AS c FROM hoSoKhach WHERE maKhachHang = ? AND (coach = ? OR tuVan = ?) LIMIT 1')
+      .bind(maNha, hoSo.u, hoSo.u).first();
+    if (!cua) return { ok: false, code: 'NGOAINHA',
+      error: 'Chỉ Coach hoặc Tư vấn phụ trách nhà này mới ghi được tiến trình chăm sóc của nhà.' };
+  }
 
   /* ── CỔNG 1 · HAI CỘT LÀM CHO CẢ SỔ CÓ NGHĨA ── */
   const thieu = [];
@@ -267,7 +279,7 @@ export async function ghiCham(y, env, db, hoSo) {
 
   /* ── CỔNG 3 · ĐỎ PHẢI GỌI, VÀ NGƯỜI GỌI PHẢI LÀ NGƯỜI ── */
   if (den.den === DEN_GOI) {
-    if (kieu !== 'goi') return { ok: false, code: 'DOPHAIGOI', den: 'DO',
+    if (kieu !== 'goi' && kieu !== 'buoi') return { ok: false, code: 'DOPHAIGOI', den: 'DO',
       error: 'Nhà này đang ở đèn ĐỎ, nên lượt chạm phải là một CUỘC GỌI. Một cái ' +
         'đèn đỏ đóng lại được bằng tin nhắn thì nó không phải đèn đỏ — nhắn tin rẻ, ' +
         'nhanh, và đóng được việc trong sổ, nên nếu cho phép thì mọi đèn đỏ đều ' +
