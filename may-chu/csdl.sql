@@ -2420,3 +2420,24 @@ CREATE TABLE IF NOT EXISTS viCredit (
   suaLuc TEXT,
   boiAi  TEXT
 );
+
+-- ═════════════════════════════════════════════════════════════
+--  ĐO LƯỜNG TOÀN DIỆN KHÁCH HÀNG (may-chu/do-luong-kh.js · DL-2026.10-a)
+--  thoiGianNgay: giây dùng app theo ngày × màn — app gửi tổng cả ngày,
+--    máy chủ giữ MAX nên gửi lại không cộng dồn; trần 16 giờ/màn/ngày.
+--  suKienKH: mỗi bài học / test / sát hạch / nhật ký / cảm xúc MỘT dòng
+--    (khoaDuy UNIQUE). danhGiaKH: NPS + CSAT mỗi nhà mỗi tháng.
+--  hoSoThang: bản chốt hồ sơ tháng — chốt một lần, không ghi đè.
+--  do-luong-kh.js tự tạo các bảng này lúc chạy; khai ở đây để lược đồ đủ.
+-- ═════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS thoiGianNgay (maNha TEXT NOT NULL, uid TEXT NOT NULL, ngay TEXT NOT NULL,
+  man TEXT NOT NULL, giay INTEGER NOT NULL, suaLuc TEXT, PRIMARY KEY (maNha, uid, ngay, man));
+CREATE INDEX IF NOT EXISTS ix_tgn_ngay ON thoiGianNgay (ngay, maNha);
+CREATE TABLE IF NOT EXISTS suKienKH (id TEXT PRIMARY KEY, maNha TEXT NOT NULL, uid TEXT NOT NULL,
+  loai TEXT NOT NULL, giaTri REAL, ngay TEXT NOT NULL, khoaDuy TEXT NOT NULL, ghiChu TEXT, luc TEXT NOT NULL);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_skkh_khoa ON suKienKH (khoaDuy);
+CREATE INDEX IF NOT EXISTS ix_skkh_nha ON suKienKH (maNha, ngay);
+CREATE TABLE IF NOT EXISTS danhGiaKH (maNha TEXT NOT NULL, uid TEXT NOT NULL, thang TEXT NOT NULL,
+  nps INTEGER, csat INTEGER, ghiChu TEXT, luc TEXT NOT NULL, PRIMARY KEY (maNha, uid, thang));
+CREATE TABLE IF NOT EXISTS hoSoThang (maNha TEXT NOT NULL, thang TEXT NOT NULL, duLieu TEXT NOT NULL,
+  tiemNang INTEGER, tangCS TEXT, chot INTEGER NOT NULL DEFAULT 0, boiAi TEXT, luc TEXT NOT NULL, PRIMARY KEY (maNha, thang));

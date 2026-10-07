@@ -50,6 +50,9 @@ jobs:
       - name: Thử ví credit (sổ cái · quyền · thứ tự trừ · khớp app)
         run: node tools/thu-credit.mjs
 
+      - name: Thử đo lường khách hàng (số đo · gom tháng · sáu điểm · phân tầng · quyền · khớp app)
+        run: node tools/thu-do-luong.mjs
+
       - name: Thử Truy vấn đa chiều (bốn dòng chảy · bảng điểm 16 ban)
         run: node tools/thu-dong-chay.mjs
 
