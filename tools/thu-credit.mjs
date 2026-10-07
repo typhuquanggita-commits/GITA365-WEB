@@ -107,6 +107,29 @@ kiem('R01 điều chỉnh có lý do', (await C.dieuChinhCredit({ maNha: 'K1', l
 kiem('Coach không xem tổng quan', (await C.tongQuanCredit({}, {}, db, C1)).code === 'NOPERM');
 const tq = await C.tongQuanCredit({}, {}, db, A4);
 kiem('R04 xem tổng quan, phiên bản đúng', tq.ok && tq.phienBan === C.PHIEN_BAN && tq.soVi === 2);
+/* ── gói tầng 2: 500.000đ → 300.000 credit · 868.000đ → 1.000.000 credit (vẫn 10đ = 1 credit) ── */
+user('P3', 'phuhuynh3', 'R13', 'K3'); user('P4', 'phuhuynh4', 'R13', 'K4');
+sq.prepare("INSERT INTO hoSoKhach (maKhachHang, uidPhuHuynh, tang, coach) VALUES ('K3','P3',2,'coach1')").run();
+sq.prepare("INSERT INTO hoSoKhach (maKhachHang, uidPhuHuynh, tang, coach) VALUES ('K4','P4',2,'coach1')").run();
+[['PT5','K3',500000], ['PT8','K4',868000], ['PT7','K3',700000], ['PT9','K1',500000]].forEach(p => sq.prepare("INSERT INTO phieuThu (id, maKhachHang, soTien, hinhThuc, nguoiGhi, ghiLuc, trangThai, nguoiDuyet, duyetLuc) VALUES (?,?,?,'chuyenKhoan','nv','2026-10-03','daDuyet','kt','2026-10-04')").run(...p));
+const ds2 = await C.dsPhieuThuChuaNap({}, {}, db, A1), d5 = ds2.ds.find(x => x.id === 'PT5'), d8 = ds2.ds.find(x => x.id === 'PT8');
+kiem('danh sách chờ nạp báo trước credit tặng theo gói T2', d5 && d5.credit === 50000 && d5.tangGoi === 250000 && d8 && d8.tangGoi === 913200);
+const tr3 = (await C.viCredit({ maNha: 'K3' }, {}, db, A1)).soDu;
+let g2 = await C.napCreditPhieu({ idPhieu: 'PT5' }, {}, db, A1);
+kiem('T2 lựa chọn 1: 500.000đ → 50.000 trả phí + 250.000 tặng = 300.000 credit', g2.ok && g2.so === 50000 && g2.tangGoi === 250000 &&
+  g2.soDu.traPhi === 50000 && g2.soDu.tang === tr3.tang + 250000);
+g2 = await C.napCreditPhieu({ idPhieu: 'PT5' }, {}, db, A1);
+kiem('nạp lại phiếu T2 không cộng lần hai', g2.ok && g2.trung && g2.soDu.traPhi === 50000 && g2.soDu.tang === tr3.tang + 250000);
+const tr4 = (await C.viCredit({ maNha: 'K4' }, {}, db, A1)).soDu;
+g2 = await C.napCreditPhieu({ idPhieu: 'PT8' }, {}, db, A1);
+kiem('T2 lựa chọn 2: 868.000đ → 86.800 trả phí + 913.200 tặng = 1.000.000 credit', g2.ok && g2.so === 86800 && g2.tangGoi === 913200 && g2.soDu.tong - tr4.tong === 1000000);
+g2 = await C.napCreditPhieu({ idPhieu: 'PT7' }, {}, db, A1);
+kiem('phiếu T2 không đúng giá lựa chọn: chỉ 10đ = 1 credit, không tặng gói', g2.ok && g2.so === 70000 && !g2.tangGoi);
+g2 = await C.napCreditPhieu({ idPhieu: 'PT9' }, {}, db, A1);
+kiem('nhà tầng 3 trả 500.000đ: không nhận tặng gói tầng 2', g2.ok && g2.so === 50000 && !g2.tangGoi);
+const T2a = C.thongSoTang(2, 500000), T2b = C.thongSoTang(2, 3000000);
+kiem('bảng giá hoạt động T2 tính trên 300.000 credit chuẩn, không theo giá gói', T2a.cr === 300000 && C.giaHoatDong(T2a, 5, 'CS', 'buoi-11') === C.giaHoatDong(T2b, 5, 'CS', 'buoi-11'));
+
 kiem('sổ chỉ thêm dòng: không có UPDATE/DELETE trên soCredit trong mã', !/UPDATE soCredit|DELETE FROM soCredit/.test(fs.readFileSync(ROOT + '/may-chu/credit.js', 'utf8')));
 
 /* ── tham số máy chủ KHỚP app ── */
@@ -126,6 +149,8 @@ for (let tg = 1; tg <= 5; tg++) {
 }
 kiem('mọi giá buổi, thưởng, tiêu của app khớp máy chủ (5 tầng × cấp × nhóm)' + (lech.length ? ' — lệch: ' + lech.slice(0, 5).join(', ') : ''), lech.length === 0);
 kiem('tặng T1 app = máy chủ (2.000)', CR.tang(1).cr === C.TANG_T1);
+kiem('gói T2 app = máy chủ (500.000đ → 300.000 · 868.000đ → 1.000.000)', JSON.stringify(CR.tang(2).goi.map(g => [g.ma, g.gia, g.cr])) === JSON.stringify(C.GOI[2].map(g => [g.ma, g.gia, g.cr])) &&
+  CR.tang(2).goi[0].tangGoi === 250000 && CR.tang(2).goi[1].tangGoi === 913200);
 kiem('thứ tự trừ app nói = máy chủ làm', /tặng.*thưởng.*trả phí/.test(PS.luat.join(' ')) && C.THU_TU_TRU.join() === 'tang,thuong,traPhi');
 
 console.log('\n' + dat + ' đạt · ' + truot + ' sai');

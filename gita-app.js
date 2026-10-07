@@ -72300,23 +72300,26 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
 
    TRẠNG THÁI: ĐÃ DUYỆT (R01, 07/10/2026). Ví credit thật ở máy chủ
    (may-chu/credit.js) — hai bên phải khớp; tools/thu-credit.mjs so từng số.
-   Giá T2 3.000.000đ: tham số đã đổi; giá chính thức vẫn đổi ở màn Bảng giá
-   (doiGia, R01, có lý do) — máy chủ đọc giá ấy.
+   Gói T2 (CR-2026.10-d): hai lựa chọn 500.000đ → 300.000 credit và
+   868.000đ → 1.000.000 credit. Vẫn 10đ = 1 credit — phần vượt tiền đã trả
+   là credit TẶNG theo gói. Bảng giá hoạt động T2 tính trên ngân sách chuẩn
+   crChuan 300.000 credit, không theo giá gói.
    Không đụng máy chủ · giấy phép · mã hoá.
    ═══════════════════════════════════════════════════════════════ */
 'use strict';
 var G = window.G || {}; window.G = G;
 
 G.CR_THAMSO = {
-  phienBan:'CR-2026.10-c', trangThai:'da-duyet',
-  duyet:{ boi:'R01 · Trương Nhật Quang', ngay:'2026-10-07', ghi:'Đồng ý toàn bộ phương án đề xuất: giá T2 3.000.000đ, T1 tặng 2.000, đăng ký tặng 3.000/5.000/8.000/12.000, thứ tự trừ tặng → thưởng → trả phí, T1 tính 30 ngày.' },
+  phienBan:'CR-2026.10-d', trangThai:'da-duyet',
+  duyet:{ boi:'R01 · Trương Nhật Quang', ngay:'2026-10-07', ghi:'Tầng 2 hai lựa chọn: 500.000đ → 300.000 credit · 868.000đ → 1.000.000 credit (thay mức 3.000.000đ); giữ 10đ = 1 credit, phần vượt tiền đã trả là credit tặng theo gói. Giữ nguyên: T1 tặng 2.000, đăng ký tặng 3.000/5.000/8.000/12.000, thứ tự trừ tặng → thưởng → trả phí, T1 tính 30 ngày.' },
   ty:10,
   /* gia: đồng · ngay: thời lượng chuẩn · buoi: buổi coach chính của chương trình tầng (G.CO_CT)
      · pha: số cổng nghiệm thu · tangCr: credit TẶNG của tầng 1 (gói 0đ) · dangKy: credit TẶNG khi
      thành viên đăng ký tài khoản ở tầng ấy. Hai mức tặng do chủ hệ chốt 10/2026; Học viện chịu. */
   tang:[
     { t:1, ten:'NHẬN DIỆN', gia:0,        ngay:30,  buoi:3,  pha:3, tangCr:2000, dangKy:0 },
-    { t:2, ten:'GIẢI MÃ',   gia:3000000,   ngay:21,  buoi:6,  pha:3, dangKy:3000 },
+    { t:2, ten:'GIẢI MÃ',   gia:500000,   ngay:21,  buoi:6,  pha:3, dangKy:3000, crChuan:300000,
+      goi:[ { ma:'T2-500', ten:'Lựa chọn 1', gia:500000, cr:300000 }, { ma:'T2-868', ten:'Lựa chọn 2', gia:868000, cr:1000000 } ] },
     { t:3, ten:'KIẾN TẠO',  gia:10000000, ngay:90,  buoi:12, pha:4, dangKy:5000 },
     { t:4, ten:'CHUYỂN HÓA',gia:30000000, ngay:365, buoi:24, pha:4, dangKy:8000 },
     { t:5, ten:'BỨT PHÁ',   gia:50000000, ngay:365, buoi:24, pha:4, dangKy:12000 }
@@ -72367,11 +72370,12 @@ G.CR_THAMSO = {
     'Credit TRẢ PHÍ nạp từ gói: dùng ở mọi cấp và mọi tầng; còn dư khi lên tầng thì trừ thẳng vào giá tầng sau.',
     'Credit THƯỞNG chia từ quỹ thưởng 10% của gói: chỉ dùng trong hệ (tài liệu, sự kiện, buổi bổ sung, trừ tối đa 10% giá tầng sau); không đổi ra tiền; hạn 12 tháng.',
     'Credit TẶNG tầng 1: 2.000 credit (chủ hệ chốt) — Học viện chịu, không đổi ra tiền, hết hạn khi kết thúc tầng 1.',
+    'Gói tầng 2 (chủ hệ chốt): lựa chọn 1 — 500.000đ nhận 300.000 credit (50.000 trả phí + 250.000 tặng theo gói); lựa chọn 2 — 868.000đ nhận 1.000.000 credit (86.800 trả phí + 913.200 tặng theo gói). Credit tặng theo gói ghi khi nạp phiếu thu đúng giá lựa chọn; Học viện chịu, dùng trước, không đổi ra tiền, không hoàn.',
     'Credit TẶNG khi đăng ký tài khoản (chủ hệ chốt): tầng 2 · 3.000 · tầng 3 · 5.000 · tầng 4 · 8.000 · tầng 5 · 12.000 credit — cộng thêm vào ví, ngoài credit của gói; Học viện chịu; không đổi ra tiền, không hoàn; mỗi tài khoản nhận một lần cho mỗi tầng.',
     'Thứ tự trừ (đã duyệt): credit tặng trừ trước, rồi credit thưởng, sau cùng mới tới credit trả phí.',
     'Lên cấp: tích ≥ 60% credit thưởng của cấp và đạt mốc cấp do Coach xác nhận bằng bằng chứng.',
     'Giá credit của một hoạt động = bội số × 1 buổi coach chuẩn của tầng × hệ số độ khó của cấp × hệ số nhóm khách hàng.',
-    'Hoàn tiền: chỉ phần credit trả phí chưa dùng, theo điều khoản hoàn của gói (HP_TANG). Credit thưởng và credit tặng (tầng 1, đăng ký) không hoàn.',
+    'Hoàn tiền: chỉ phần credit trả phí chưa dùng, theo điều khoản hoàn của gói (HP_TANG). Credit thưởng và credit tặng (tầng 1, đăng ký, theo gói) không hoàn.',
     'Ví credit thật đặt ở máy chủ (sổ cái ghi từng giao dịch, không ghi đè); trình duyệt chỉ hiển thị.'
   ]
 };
@@ -72413,7 +72417,9 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     T = Object.assign({}, T);
     if(giaMayChu && giaMayChu[T.t] != null) { T.gia = Number(giaMayChu[T.t]); T.nguonGia = 'máy chủ'; } else T.nguonGia = 'tham số (GIA_KHOI_DAU)';
     T.laTang = !T.gia;
-    T.cr = T.gia ? Math.round(T.gia / P().ty) : (T.tangCr || 0);
+    /* Ngân sách chuẩn của tầng (bảng giá hoạt động tính trên số này) */
+    T.cr = T.crChuan || (T.gia ? Math.round(T.gia / P().ty) : (T.tangCr || 0));
+    T.goi = (T.goi || []).map(function(g){ var tp = Math.floor(g.gia / P().ty); return { ma:g.ma, ten:g.ten, gia:g.gia, cr:g.cr, traPhi:tp, tangGoi:Math.max(0, g.cr - tp) }; });
     T.dk = Number(T.dangKy) || 0;              /* credit tặng khi đăng ký tài khoản ở tầng này */
     T.vi = T.cr + T.dk;                         /* ví đầu kỳ của khách */
     return T;
@@ -72486,7 +72492,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   function bangTang(t){
     var T = CR.tang(t), rows = CR.bang(t);
     var o = '<div class="card pad-sm mb" style="border-left:4px solid '+MAU[t-1]+'"><div class="co-hang"><b style="color:'+MAU[t-1]+'">T'+t+' · '+h(T.ten)+'</b>'+
-      '<span class="sm co-grow">'+(T.laTang ? 'Gói 0đ → <b>'+so(T.cr)+'</b> credit TẶNG (Học viện chịu)' : 'Gói '+so(T.gia)+'đ → <b>'+so(T.cr)+'</b> credit'+(T.dk ? ' + <b>'+so(T.dk)+'</b> credit tặng đăng ký' : ''))+' · '+T.ngay+' ngày · '+T.buoi+' buổi coach · 1 buổi chuẩn = '+so(CR.buoiChuan(T))+' credit ('+so(CR.buoiChuan(T)*P().ty)+'đ)</span></div></div>';
+      '<span class="sm co-grow">'+(T.laTang ? 'Gói 0đ → <b>'+so(T.cr)+'</b> credit TẶNG (Học viện chịu)' : T.goi.length ? T.goi.map(function(g){ return h(g.ten)+': '+so(g.gia)+'đ → <b>'+so(g.cr)+'</b> credit'; }).join(' · ')+' · bảng tính trên '+so(T.cr)+' credit chuẩn' : 'Gói '+so(T.gia)+'đ → <b>'+so(T.cr)+'</b> credit')+(T.laTang ? '' : (T.dk ? ' + <b>'+so(T.dk)+'</b> credit tặng đăng ký' : ''))+' · '+T.ngay+' ngày · '+T.buoi+' buổi coach · 1 buổi chuẩn = '+so(CR.buoiChuan(T))+' credit ('+so(CR.buoiChuan(T)*P().ty)+'đ)</span></div></div>';
     o += '<div class="co-tb mb"><table><thead><tr><th>Mã</th><th>Cấp</th><th>Bậc khó</th><th>Hệ số</th><th>Ngân sách credit</th><th>Quy đổi</th><th>Buổi coach</th><th>Credit/buổi</th><th>Thưởng tối đa</th><th>Ngưỡng lên cấp</th></tr></thead><tbody>'+
       rows.map(function(r){ return '<tr><td class="co-so"><b>'+r.ma+'</b></td><td><b>'+h(r.ten)+'</b>'+(r.khi?'<div class="tiny muted">'+h(r.khi)+'</div>':'')+'</td>'+
         '<td class="so">D'+r.L+'</td><td class="so">×'+r.k.toFixed(2)+'</td><td class="so"><b>'+so(r.ngan)+'</b></td><td class="so">'+so(r.vnd)+'đ</td>'+
@@ -72508,10 +72514,14 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       '<label class="co-f"><span>Số tiền gói (đồng)</span><input class="inp" id="cr-dong" inputmode="numeric" value="'+h(st.dong)+'" placeholder="VD: 10000000"></label></div>'+
       '<div class="co-hang mt"><button class="btn sm" data-cr="tinh">Quy đổi</button><span class="tiny muted">10 đồng = 1 credit</span></div></div>';
     var dong = Number(String(st.dong).replace(/\D/g,''));
-    var ds = dong ? [{ ten:'Gói đã nhập', dong:dong }] : P().tang.map(function(t){ var T = CR.tang(t.t); return { ten:'T'+T.t+' · '+T.ten, dong:T.gia, tang:T.laTang ? T.cr : 0, dk:T.dk }; });
+    var ds = [];
+    if(dong) ds.push({ ten:'Gói đã nhập', dong:dong });
+    else P().tang.forEach(function(t){ var T = CR.tang(t.t);
+      if(T.goi.length) T.goi.forEach(function(g){ ds.push({ ten:'T'+T.t+' · '+T.ten+' · '+g.ten, dong:g.gia, goi:g, dk:T.dk }); });
+      else ds.push({ ten:'T'+T.t+' · '+T.ten, dong:T.gia, tang:T.laTang ? T.cr : 0, dk:T.dk }); });
     o += '<div class="co-tb"><table><thead><tr><th>Gói</th><th>Số tiền</th><th>Credit gói</th><th>Tặng đăng ký</th><th>Ví đầu kỳ</th>'+P().quy.map(function(q){ return '<th>'+h(q.ten)+' ('+Math.round(q.ty*100)+'%)</th>'; }).join('')+'</tr></thead><tbody>'+
-      ds.map(function(x){ var q = x.tang ? { cr:x.tang, quy:P().quy.map(function(k){ return { cr:Math.round(x.tang*k.ty) }; }) } : CR.quyDoi(x.dong);
-        return '<tr><td><b>'+h(x.ten)+'</b>'+(x.tang?' <span class="co-tag">credit tặng</span>':'')+'</td><td class="so">'+so(x.dong)+'đ</td><td class="so"><b>'+so(q.cr)+'</b></td>'+
+      ds.map(function(x){ var tong = x.tang || (x.goi && x.goi.cr); var q = tong ? { cr:tong, quy:P().quy.map(function(k){ return { cr:Math.round(tong*k.ty) }; }) } : CR.quyDoi(x.dong);
+        return '<tr><td><b>'+h(x.ten)+'</b>'+(x.tang?' <span class="co-tag">credit tặng</span>':'')+(x.goi?'<div class="tiny muted">'+so(x.goi.traPhi)+' trả phí + '+so(x.goi.tangGoi)+' tặng theo gói</div>':'')+'</td><td class="so">'+so(x.dong)+'đ</td><td class="so"><b>'+so(q.cr)+'</b></td>'+
           '<td class="so">'+(x.dk ? '+'+so(x.dk) : '—')+'</td><td class="so"><b>'+so(q.cr + (x.dk||0))+'</b></td>'+q.quy.map(function(k){ return '<td class="so">'+so(k.cr)+'</td>'; }).join('')+'</tr>'; }).join('')+
       '</tbody></table></div>';
     o += '<div class="co-luoi mt">'+P().quy.map(function(q){ return '<div class="co-dong"><b class="co-so">'+Math.round(q.ty*100)+'%</b><span class="co-grow sm"><b>'+h(q.ten)+'</b><br><span class="tiny muted">'+h(q.mo)+'</span></span></div>'; }).join('')+'</div>';
@@ -72635,7 +72645,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   function tenThuong(ma){ var x = ((G.CR_THAMSO||{}).thuong||[]).filter(function(a){ return a.ma===ma; })[0]; return x ? x.ten : ma; }
   function tenViec(v){
     v = String(v||'');
-    if(v==='tang-T1') return 'Tặng tầng 1'; if(v==='dang-ky') return 'Tặng khi đăng ký'; if(v==='nap') return 'Nạp từ gói';
+    if(v==='tang-goi') return 'Tặng theo gói'; if(v==='tang-T1') return 'Tặng tầng 1'; if(v==='dang-ky') return 'Tặng khi đăng ký'; if(v==='nap') return 'Nạp từ gói';
     if(v==='dieu-chinh') return 'Điều chỉnh'; if(v==='hoan-tieu') return 'Hoàn lượt tiêu';
     if(v.indexOf('thuong:')===0) return 'Thưởng · '+tenThuong(v.slice(7));
     if(v.indexOf('tieu:')===0) return 'Dùng · '+tenTieu(v.slice(5));
@@ -72713,10 +72723,10 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
         ['tang','thuong','traPhi'].map(function(l){ return U.stat({ k:TEN_LOAI[l]+' đang lưu hành', v:so(L[l]||0), d:'≈ '+so((L[l]||0)*10)+'đ', c:MAU_LOAI[l] }); }).join('')+'</div>';
       o += '<p class="tiny muted">Credit trả phí đang lưu hành là tiền khách đã trả trước chưa dùng (doanh thu chưa thực hiện). Credit tặng và thưởng là cam kết Học viện chịu.</p>';
     } else o += '<div class="co-cb mb"><div style="--m:#BE0E16"><span>'+h(st.qt.error||'Không đọc được tổng quan.')+'</span></div></div>';
-    o += U.sec('Phiếu thu đã duyệt chưa nạp credit', 'Nạp chỉ từ phiếu ĐÃ DUYỆT (người ghi khác người duyệt) · mỗi phiếu nạp một lần · 10đ = 1 credit');
+    o += U.sec('Phiếu thu đã duyệt chưa nạp credit', 'Nạp chỉ từ phiếu ĐÃ DUYỆT (người ghi khác người duyệt) · mỗi phiếu nạp một lần · 10đ = 1 credit · phiếu đúng giá gói tầng 2 thì cộng thêm credit tặng theo gói');
     if(st.phieu && st.phieu.ok){
       o += st.phieu.ds.length ? '<div class="co-tb mb"><table><thead><tr><th>Phiếu</th><th>Mã nhà</th><th>Số tiền</th><th>Credit</th><th>Duyệt lúc</th><th></th></tr></thead><tbody>'+
-        st.phieu.ds.map(function(p){ return '<tr><td class="co-so">'+h(p.id)+'</td><td>'+h(p.maKhachHang)+'</td><td class="so">'+so(p.soTien)+'đ</td><td class="so"><b>'+so(p.credit)+'</b></td><td class="tiny">'+h(p.duyetLuc||'')+'</td>'+
+        st.phieu.ds.map(function(p){ return '<tr><td class="co-so">'+h(p.id)+'</td><td>'+h(p.maKhachHang)+'</td><td class="so">'+so(p.soTien)+'đ</td><td class="so"><b>'+so(p.credit)+'</b>'+(p.tangGoi ? '<div class="tiny" style="color:#5140B4">+'+so(p.tangGoi)+' tặng gói '+h(p.goi)+'</div>' : '')+'</td><td class="tiny">'+h(p.duyetLuc||'')+'</td>'+
           '<td><button class="btn sm" data-crv="nap" data-id="'+h(p.id)+'">Nạp</button></td></tr>'; }).join('')+'</tbody></table></div>' : '<p class="sm muted mb">Không còn phiếu nào chờ nạp.</p>';
     } else if(st.phieu) o += '<p class="tiny muted mb">'+h(st.phieu.error||'')+'</p>';
     o += U.sec('Tra ví một nhà', 'Xem số dư, sổ giao dịch; Coach của nhà và Trưởng nhóm trở lên đặt được cấp và nhóm');
@@ -72760,7 +72770,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     if(a==='qt-moi'){ st.qt = null; st.phieu = null; veLai(); return; }
     if(a==='nap'){
       G.goiMayChu('napCreditPhieu', { idPhieu:el.getAttribute('data-id') }).then(function(r){
-        U.toast(r && r.ok ? (r.trung ? 'Phiếu này đã nạp từ trước.' : 'Đã nạp '+so(r.so)+' credit cho nhà '+r.maNha+'.') : ((r && r.error) || 'Không nạp được.'), r && r.ok ? 'ok' : 'err');
+        U.toast(r && r.ok ? (r.trung ? 'Phiếu này đã nạp từ trước.' : 'Đã nạp '+so(r.so)+' credit'+(r.tangGoi ? ' + '+so(r.tangGoi)+' credit tặng theo gói' : '')+' cho nhà '+r.maNha+'.') : ((r && r.error) || 'Không nạp được.'), r && r.ok ? 'ok' : 'err');
         st.qt = null; st.phieu = null; veLai();
       });
       return;

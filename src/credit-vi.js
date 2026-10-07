@@ -28,7 +28,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   function tenThuong(ma){ var x = ((G.CR_THAMSO||{}).thuong||[]).filter(function(a){ return a.ma===ma; })[0]; return x ? x.ten : ma; }
   function tenViec(v){
     v = String(v||'');
-    if(v==='tang-T1') return 'Tặng tầng 1'; if(v==='dang-ky') return 'Tặng khi đăng ký'; if(v==='nap') return 'Nạp từ gói';
+    if(v==='tang-goi') return 'Tặng theo gói'; if(v==='tang-T1') return 'Tặng tầng 1'; if(v==='dang-ky') return 'Tặng khi đăng ký'; if(v==='nap') return 'Nạp từ gói';
     if(v==='dieu-chinh') return 'Điều chỉnh'; if(v==='hoan-tieu') return 'Hoàn lượt tiêu';
     if(v.indexOf('thuong:')===0) return 'Thưởng · '+tenThuong(v.slice(7));
     if(v.indexOf('tieu:')===0) return 'Dùng · '+tenTieu(v.slice(5));
@@ -106,10 +106,10 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
         ['tang','thuong','traPhi'].map(function(l){ return U.stat({ k:TEN_LOAI[l]+' đang lưu hành', v:so(L[l]||0), d:'≈ '+so((L[l]||0)*10)+'đ', c:MAU_LOAI[l] }); }).join('')+'</div>';
       o += '<p class="tiny muted">Credit trả phí đang lưu hành là tiền khách đã trả trước chưa dùng (doanh thu chưa thực hiện). Credit tặng và thưởng là cam kết Học viện chịu.</p>';
     } else o += '<div class="co-cb mb"><div style="--m:#BE0E16"><span>'+h(st.qt.error||'Không đọc được tổng quan.')+'</span></div></div>';
-    o += U.sec('Phiếu thu đã duyệt chưa nạp credit', 'Nạp chỉ từ phiếu ĐÃ DUYỆT (người ghi khác người duyệt) · mỗi phiếu nạp một lần · 10đ = 1 credit');
+    o += U.sec('Phiếu thu đã duyệt chưa nạp credit', 'Nạp chỉ từ phiếu ĐÃ DUYỆT (người ghi khác người duyệt) · mỗi phiếu nạp một lần · 10đ = 1 credit · phiếu đúng giá gói tầng 2 thì cộng thêm credit tặng theo gói');
     if(st.phieu && st.phieu.ok){
       o += st.phieu.ds.length ? '<div class="co-tb mb"><table><thead><tr><th>Phiếu</th><th>Mã nhà</th><th>Số tiền</th><th>Credit</th><th>Duyệt lúc</th><th></th></tr></thead><tbody>'+
-        st.phieu.ds.map(function(p){ return '<tr><td class="co-so">'+h(p.id)+'</td><td>'+h(p.maKhachHang)+'</td><td class="so">'+so(p.soTien)+'đ</td><td class="so"><b>'+so(p.credit)+'</b></td><td class="tiny">'+h(p.duyetLuc||'')+'</td>'+
+        st.phieu.ds.map(function(p){ return '<tr><td class="co-so">'+h(p.id)+'</td><td>'+h(p.maKhachHang)+'</td><td class="so">'+so(p.soTien)+'đ</td><td class="so"><b>'+so(p.credit)+'</b>'+(p.tangGoi ? '<div class="tiny" style="color:#5140B4">+'+so(p.tangGoi)+' tặng gói '+h(p.goi)+'</div>' : '')+'</td><td class="tiny">'+h(p.duyetLuc||'')+'</td>'+
           '<td><button class="btn sm" data-crv="nap" data-id="'+h(p.id)+'">Nạp</button></td></tr>'; }).join('')+'</tbody></table></div>' : '<p class="sm muted mb">Không còn phiếu nào chờ nạp.</p>';
     } else if(st.phieu) o += '<p class="tiny muted mb">'+h(st.phieu.error||'')+'</p>';
     o += U.sec('Tra ví một nhà', 'Xem số dư, sổ giao dịch; Coach của nhà và Trưởng nhóm trở lên đặt được cấp và nhóm');
@@ -153,7 +153,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     if(a==='qt-moi'){ st.qt = null; st.phieu = null; veLai(); return; }
     if(a==='nap'){
       G.goiMayChu('napCreditPhieu', { idPhieu:el.getAttribute('data-id') }).then(function(r){
-        U.toast(r && r.ok ? (r.trung ? 'Phiếu này đã nạp từ trước.' : 'Đã nạp '+so(r.so)+' credit cho nhà '+r.maNha+'.') : ((r && r.error) || 'Không nạp được.'), r && r.ok ? 'ok' : 'err');
+        U.toast(r && r.ok ? (r.trung ? 'Phiếu này đã nạp từ trước.' : 'Đã nạp '+so(r.so)+' credit'+(r.tangGoi ? ' + '+so(r.tangGoi)+' credit tặng theo gói' : '')+' cho nhà '+r.maNha+'.') : ((r && r.error) || 'Không nạp được.'), r && r.ok ? 'ok' : 'err');
         st.qt = null; st.phieu = null; veLai();
       });
       return;

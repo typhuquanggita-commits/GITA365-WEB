@@ -31,7 +31,9 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     T = Object.assign({}, T);
     if(giaMayChu && giaMayChu[T.t] != null) { T.gia = Number(giaMayChu[T.t]); T.nguonGia = 'máy chủ'; } else T.nguonGia = 'tham số (GIA_KHOI_DAU)';
     T.laTang = !T.gia;
-    T.cr = T.gia ? Math.round(T.gia / P().ty) : (T.tangCr || 0);
+    /* Ngân sách chuẩn của tầng (bảng giá hoạt động tính trên số này) */
+    T.cr = T.crChuan || (T.gia ? Math.round(T.gia / P().ty) : (T.tangCr || 0));
+    T.goi = (T.goi || []).map(function(g){ var tp = Math.floor(g.gia / P().ty); return { ma:g.ma, ten:g.ten, gia:g.gia, cr:g.cr, traPhi:tp, tangGoi:Math.max(0, g.cr - tp) }; });
     T.dk = Number(T.dangKy) || 0;              /* credit tặng khi đăng ký tài khoản ở tầng này */
     T.vi = T.cr + T.dk;                         /* ví đầu kỳ của khách */
     return T;
@@ -104,7 +106,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   function bangTang(t){
     var T = CR.tang(t), rows = CR.bang(t);
     var o = '<div class="card pad-sm mb" style="border-left:4px solid '+MAU[t-1]+'"><div class="co-hang"><b style="color:'+MAU[t-1]+'">T'+t+' · '+h(T.ten)+'</b>'+
-      '<span class="sm co-grow">'+(T.laTang ? 'Gói 0đ → <b>'+so(T.cr)+'</b> credit TẶNG (Học viện chịu)' : 'Gói '+so(T.gia)+'đ → <b>'+so(T.cr)+'</b> credit'+(T.dk ? ' + <b>'+so(T.dk)+'</b> credit tặng đăng ký' : ''))+' · '+T.ngay+' ngày · '+T.buoi+' buổi coach · 1 buổi chuẩn = '+so(CR.buoiChuan(T))+' credit ('+so(CR.buoiChuan(T)*P().ty)+'đ)</span></div></div>';
+      '<span class="sm co-grow">'+(T.laTang ? 'Gói 0đ → <b>'+so(T.cr)+'</b> credit TẶNG (Học viện chịu)' : T.goi.length ? T.goi.map(function(g){ return h(g.ten)+': '+so(g.gia)+'đ → <b>'+so(g.cr)+'</b> credit'; }).join(' · ')+' · bảng tính trên '+so(T.cr)+' credit chuẩn' : 'Gói '+so(T.gia)+'đ → <b>'+so(T.cr)+'</b> credit')+(T.laTang ? '' : (T.dk ? ' + <b>'+so(T.dk)+'</b> credit tặng đăng ký' : ''))+' · '+T.ngay+' ngày · '+T.buoi+' buổi coach · 1 buổi chuẩn = '+so(CR.buoiChuan(T))+' credit ('+so(CR.buoiChuan(T)*P().ty)+'đ)</span></div></div>';
     o += '<div class="co-tb mb"><table><thead><tr><th>Mã</th><th>Cấp</th><th>Bậc khó</th><th>Hệ số</th><th>Ngân sách credit</th><th>Quy đổi</th><th>Buổi coach</th><th>Credit/buổi</th><th>Thưởng tối đa</th><th>Ngưỡng lên cấp</th></tr></thead><tbody>'+
       rows.map(function(r){ return '<tr><td class="co-so"><b>'+r.ma+'</b></td><td><b>'+h(r.ten)+'</b>'+(r.khi?'<div class="tiny muted">'+h(r.khi)+'</div>':'')+'</td>'+
         '<td class="so">D'+r.L+'</td><td class="so">×'+r.k.toFixed(2)+'</td><td class="so"><b>'+so(r.ngan)+'</b></td><td class="so">'+so(r.vnd)+'đ</td>'+
@@ -126,10 +128,14 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       '<label class="co-f"><span>Số tiền gói (đồng)</span><input class="inp" id="cr-dong" inputmode="numeric" value="'+h(st.dong)+'" placeholder="VD: 10000000"></label></div>'+
       '<div class="co-hang mt"><button class="btn sm" data-cr="tinh">Quy đổi</button><span class="tiny muted">10 đồng = 1 credit</span></div></div>';
     var dong = Number(String(st.dong).replace(/\D/g,''));
-    var ds = dong ? [{ ten:'Gói đã nhập', dong:dong }] : P().tang.map(function(t){ var T = CR.tang(t.t); return { ten:'T'+T.t+' · '+T.ten, dong:T.gia, tang:T.laTang ? T.cr : 0, dk:T.dk }; });
+    var ds = [];
+    if(dong) ds.push({ ten:'Gói đã nhập', dong:dong });
+    else P().tang.forEach(function(t){ var T = CR.tang(t.t);
+      if(T.goi.length) T.goi.forEach(function(g){ ds.push({ ten:'T'+T.t+' · '+T.ten+' · '+g.ten, dong:g.gia, goi:g, dk:T.dk }); });
+      else ds.push({ ten:'T'+T.t+' · '+T.ten, dong:T.gia, tang:T.laTang ? T.cr : 0, dk:T.dk }); });
     o += '<div class="co-tb"><table><thead><tr><th>Gói</th><th>Số tiền</th><th>Credit gói</th><th>Tặng đăng ký</th><th>Ví đầu kỳ</th>'+P().quy.map(function(q){ return '<th>'+h(q.ten)+' ('+Math.round(q.ty*100)+'%)</th>'; }).join('')+'</tr></thead><tbody>'+
-      ds.map(function(x){ var q = x.tang ? { cr:x.tang, quy:P().quy.map(function(k){ return { cr:Math.round(x.tang*k.ty) }; }) } : CR.quyDoi(x.dong);
-        return '<tr><td><b>'+h(x.ten)+'</b>'+(x.tang?' <span class="co-tag">credit tặng</span>':'')+'</td><td class="so">'+so(x.dong)+'đ</td><td class="so"><b>'+so(q.cr)+'</b></td>'+
+      ds.map(function(x){ var tong = x.tang || (x.goi && x.goi.cr); var q = tong ? { cr:tong, quy:P().quy.map(function(k){ return { cr:Math.round(tong*k.ty) }; }) } : CR.quyDoi(x.dong);
+        return '<tr><td><b>'+h(x.ten)+'</b>'+(x.tang?' <span class="co-tag">credit tặng</span>':'')+(x.goi?'<div class="tiny muted">'+so(x.goi.traPhi)+' trả phí + '+so(x.goi.tangGoi)+' tặng theo gói</div>':'')+'</td><td class="so">'+so(x.dong)+'đ</td><td class="so"><b>'+so(q.cr)+'</b></td>'+
           '<td class="so">'+(x.dk ? '+'+so(x.dk) : '—')+'</td><td class="so"><b>'+so(q.cr + (x.dk||0))+'</b></td>'+q.quy.map(function(k){ return '<td class="so">'+so(k.cr)+'</td>'; }).join('')+'</tr>'; }).join('')+
       '</tbody></table></div>';
     o += '<div class="co-luoi mt">'+P().quy.map(function(q){ return '<div class="co-dong"><b class="co-so">'+Math.round(q.ty*100)+'%</b><span class="co-grow sm"><b>'+h(q.ten)+'</b><br><span class="tiny muted">'+h(q.mo)+'</span></span></div>'; }).join('')+'</div>';

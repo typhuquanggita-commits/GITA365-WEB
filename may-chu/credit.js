@@ -10,6 +10,14 @@
                                thưởng 10% của gói tầng.
        traPhi  credit TRẢ PHÍ — nạp từ phiếu thu ĐÃ DUYỆT (soTien / 10).
 
+   ══ GÓI TẦNG 2 (chủ hệ chốt CR-2026.10-d) ══
+   Hai lựa chọn: 500.000đ → 300.000 credit · 868.000đ → 1.000.000 credit.
+   Vẫn 10đ = 1 credit: phiếu thu đúng giá một lựa chọn thì nạp soTien/10
+   credit TRẢ PHÍ + phần còn lại là credit TẶNG theo gói (Học viện chịu,
+   dùng trước, không hoàn). Bảng giá hoạt động tầng 2 tính trên ngân sách
+   chuẩn 300.000 credit (CR_CHUAN) — không phụ thuộc giá gói đang chạy,
+   nên lựa chọn 1.000.000 credit thật sự mua được nhiều hoạt động hơn.
+
        Trừ: tang → thuong → traPhi.
 
    ══ SỔ CHỈ THÊM DÒNG ══
@@ -41,7 +49,7 @@ import { docGiaHienHanh } from './bang-gia.js';
 import { quyenCua, oDauTien } from './chi-tieu.js';
 import { BAC } from './vai-tro.js';
 
-export const PHIEN_BAN = 'CR-2026.10-c';
+export const PHIEN_BAN = 'CR-2026.10-d';
 export const TY = 10;
 export const TANG = {
   1: { ngay: 30,  buoi: 3,  pha: 3 },
@@ -52,6 +60,10 @@ export const TANG = {
 };
 export const TANG_T1 = 2000;
 export const DANG_KY = { 2: 3000, 3: 5000, 4: 8000, 5: 12000 };
+/* Lựa chọn gói theo tầng (gia: đồng · cr: tổng credit nhà nhận) và ngân sách chuẩn để tính bảng giá */
+export const GOI = { 2: [{ ma: 'T2-500', gia: 500000, cr: 300000 }, { ma: 'T2-868', gia: 868000, cr: 1000000 }] };
+export const CR_CHUAN = { 2: 300000 };
+export function goiKhop(t, soTien) { return (GOI[t] || []).filter(g => g.gia === Math.round(Number(soTien))).shift() || null; }
 export const QUY = { coach: 0.60, hoclieu: 0.15, sukien: 0.10, thuong: 0.10, duphong: 0.05 };
 export const NHOM = { TH: 0.90, CS: 1.00, PT: 1.15, SV: 1.00, PH: 0.90, GD: 1.30 };
 /* bs: bội số 1 buổi chuẩn · tu: nhà tự chọn được (không cần Coach ghi) */
@@ -89,7 +101,7 @@ export function chiaBuoi(n) {
 export function thongSoTang(t, gia) {
   const T = Object.assign({ t }, TANG[t]);
   T.gia = Number(gia) || 0;
-  T.cr = T.gia ? Math.round(T.gia / TY) : (t === 1 ? TANG_T1 : 0);
+  T.cr = CR_CHUAN[t] || (T.gia ? Math.round(T.gia / TY) : (t === 1 ? TANG_T1 : 0));
   T.base = T.buoi ? T.cr * QUY.coach / T.buoi : 0;
   const n = chiaBuoi(T.buoi);
   const tong = n.reduce((a, x, i) => a + x * T.base * w(i + 1) / TB_W, 0);
@@ -355,14 +367,19 @@ export async function napCreditPhieu(y, env, db, hoSo) {
   await moVi(db, pt.maKhachHang, hoSo.u);
   const t = await tangCuaNha(db, pt.maKhachHang);
   const n = await ghi(db, { maNha: pt.maKhachHang, loai: 'traPhi', so, viec: 'nap', khoaDuy: 'nap:' + pt.id, tang: t, thamChieu: pt.id, ghiChu: 'Nạp từ phiếu thu ' + pt.id + ' · ' + Number(pt.soTien).toLocaleString('vi-VN') + 'đ', boiAi: hoSo.u });
-  return { ok: true, daNap: n === 1, trung: n === 0, so: n ? so : 0, maNha: pt.maKhachHang, soDu: await soDu(db, pt.maKhachHang) };
+  const g = goiKhop(t, pt.soTien), them = g ? g.cr - so : 0;
+  const n2 = them > 0 ? await ghi(db, { maNha: pt.maKhachHang, loai: 'tang', so: them, viec: 'tang-goi', khoaDuy: 'nap-tang:' + pt.id, tang: t, thamChieu: pt.id, ghiChu: 'Credit tặng theo gói ' + g.ma + ' (' + g.gia.toLocaleString('vi-VN') + 'đ → ' + g.cr.toLocaleString('vi-VN') + ' credit)', boiAi: hoSo.u }) : 0;
+  return { ok: true, daNap: n === 1, trung: n === 0 && n2 === 0, so: n ? so : 0, tangGoi: n2 ? them : 0, goi: g ? g.ma : '', maNha: pt.maKhachHang, soDu: await soDu(db, pt.maKhachHang) };
 }
 export async function dsPhieuThuChuaNap(y, env, db, hoSo) {
   await taoBang(db);
   if (!(await duocNap(db, hoSo))) return { ok: false, code: 'NOPERM', error: 'Cần R01–R03 hoặc Kế toán thu.' };
-  const r = await db.prepare("SELECT p.id, p.maKhachHang, p.soTien, p.duyetLuc FROM phieuThu p WHERE p.trangThai = 'daDuyet' " +
-    "AND NOT EXISTS (SELECT 1 FROM soCredit s WHERE s.khoaDuy = 'nap:' || p.id) ORDER BY p.duyetLuc DESC LIMIT 200").all();
-  return { ok: true, ds: (r.results || []).map(p => Object.assign(p, { credit: Math.floor(Number(p.soTien) / TY) })) };
+  const r = await db.prepare("SELECT p.id, p.maKhachHang, p.soTien, p.duyetLuc, h.tang FROM phieuThu p LEFT JOIN hoSoKhach h ON h.maKhachHang = p.maKhachHang " +
+    "WHERE p.trangThai = 'daDuyet' AND NOT EXISTS (SELECT 1 FROM soCredit s WHERE s.khoaDuy = 'nap:' || p.id) ORDER BY p.duyetLuc DESC LIMIT 200").all();
+  return { ok: true, ds: (r.results || []).map(p => {
+    const credit = Math.floor(Number(p.soTien) / TY), g = goiKhop(Number(p.tang) || 0, p.soTien);
+    return Object.assign(p, { credit, tangGoi: g ? Math.max(0, g.cr - credit) : 0, goi: g ? g.ma : '' });
+  }) };
 }
 
 /* ═══════════ CỬA 6 · ĐẶT CẤP / NHÓM CỦA VÍ ═══════════ */
