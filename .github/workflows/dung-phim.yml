@@ -38,7 +38,7 @@ jobs:
       CAST: ${{ secrets.KAGGLE_CAST_DATASET }}
     steps:
       - name: Lấy mã
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Chuẩn bị công cụ
         run: |
