@@ -62,6 +62,9 @@ jobs:
       - name: Thử Kiến trúc vận hành V50 (bản đồ màn · 14 cụm học thuyết · tự soát áp dụng · quyền · khớp app)
         run: node tools/thu-ap-dung.mjs
 
+      - name: Thử Soát toàn bộ màn (mã hoá trong trình duyệt · khuôn bản mã · chỉ R01 gửi · cửa công khai chỉ trả bản mã)
+        run: node tools/thu-soat-man.mjs
+
       - name: Thử Truy vấn đa chiều (bốn dòng chảy · bảng điểm 16 ban)
         run: node tools/thu-dong-chay.mjs
 

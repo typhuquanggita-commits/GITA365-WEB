@@ -87,6 +87,7 @@ import { docTrungTamDo, lichSuTrungTamDo, goiYPhanBo, taoKeHoachToiUu, capNhatKe
   dsKeHoachToiUu } from './trung-tam-toi-uu.js';
 import { docChienLuocV20, dsMucTieuCL, taoMucTieuCL, capNhatMucTieuCL } from './chien-luoc-v20.js';
 import { ghiApDung, docApDung, tongApDung } from './ap-dung.js';
+import { ghiSoatMan, layBaoCaoSoat } from './soat-man.js';
 import { docLuatGiaoDien } from './luat-giao-dien.js';
 import { capLenhGiamSat, thuLenhGiamSat, docLenhGiamSat, soatSoDen,
   docTranGiamSat } from './giam-sat.js';
@@ -343,7 +344,9 @@ const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau'
   /* Nền tảng chiến lược V20 (chien-luoc-v20.js) — North Star · động lực · nhóm khách · dự báo · bất thường · mục tiêu. */
   'docChienLuocV20', 'dsMucTieuCL', 'taoMucTieuCL', 'capNhatMucTieuCL',
   /* V50 · mức áp dụng học thuyết (ap-dung.js) — 14 cụm, tự soát, tổng hợp cho R01–R03. */
-  'ghiApDung', 'docApDung', 'tongApDung'];
+  'ghiApDung', 'docApDung', 'tongApDung',
+  /* Soát toàn bộ màn (soat-man.js) — R01 gửi báo cáo ĐÃ MÃ HOÁ trong trình duyệt. */
+  'ghiSoatMan'];
 
 async function lam(fn, y, env, db) {
   if (fn === 'dangNhap')  return await dangNhap(y, env, db);
@@ -396,6 +399,10 @@ async function lam(fn, y, env, db) {
      kiểm phiên — đây là cửa duy nhất cho phép vậy, và nó không chạm
      bảng người dùng. */
   if (fn === 'trangThaiCongKhai') return await trangThaiCongKhai(y, env, db);
+  /* Báo cáo soát toàn màn: KHÔNG phiên, nhưng chỉ trả BẢN MÃ (AES-GCM bọc
+     RSA-OAEP, khoá riêng không ở máy chủ) và không trả tên người gửi — để
+     workflow GitHub chuyển cho người giữ khoá riêng. soat-man.js. */
+  if (fn === 'layBaoCaoSoat') return await layBaoCaoSoat(y, env, db);
 
   if (CAN_PHIEN.indexOf(fn) < 0) return {ok: false, error: 'Yêu cầu không hợp lệ.'};
 
@@ -710,6 +717,7 @@ async function lam(fn, y, env, db) {
   if (fn === 'ghiApDung')         return await ghiApDung(y, env, db, hoSo);
   if (fn === 'docApDung')         return await docApDung(y, env, db, hoSo);
   if (fn === 'tongApDung')        return await tongApDung(y, env, db, hoSo);
+  if (fn === 'ghiSoatMan')        return await ghiSoatMan(y, env, db, hoSo);
   if (fn === 'boViecHomNay')      return await boViecHomNay(y, env, db, hoSo);
   if (fn === 'batCheDoBao')       return await batCheDoBao(y, env, db, hoSo);
   if (fn === 'ghiGhimCon')        return await ghiGhimCon(y, env, db, hoSo);

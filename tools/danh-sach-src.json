@@ -201,6 +201,8 @@
     "src/trung-tam-v20.js",
     "src/trung-tam-do.js",
     "src/v50-ap-dung.js",
+    "src/khoa-soat.js",
+    "src/soat-toan-man.js",
     "src/studio-he.js",
     "src/studio-lam-phim.js",
     "src/studio-ban-dung.js",

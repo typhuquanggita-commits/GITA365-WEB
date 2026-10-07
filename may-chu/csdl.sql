@@ -2473,3 +2473,10 @@ CREATE TABLE IF NOT EXISTS mucTieuChienLuoc (id TEXT PRIMARY KEY, ten TEXT NOT N
 -- ═════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS apDung (u TEXT NOT NULL, vai TEXT NOT NULL, cum TEXT NOT NULL, diem REAL, da INTEGER NOT NULL,
   dang INTEGER NOT NULL, tong INTEGER NOT NULL, chiTiet TEXT NOT NULL, luc TEXT NOT NULL, PRIMARY KEY (u, cum));
+
+-- ═════════════════════════════════════════════════════════════
+--  SOÁT TOÀN BỘ MÀN (may-chu/soat-man.js · SOAT-2026.10-a)
+--  soatMan: CHỈ bản mã báo cáo (mã hoá trong trình duyệt Super Admin,
+--    khoá riêng không ở máy chủ). Giữ 3 bản mới nhất, xoá sau 14 ngày.
+-- ═════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS soatMan (id TEXT PRIMARY KEY, luc TEXT NOT NULL, u TEXT NOT NULL, so INTEGER NOT NULL, dv TEXT NOT NULL, goi TEXT NOT NULL);
