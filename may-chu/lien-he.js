@@ -11,10 +11,15 @@
    1. KHÔNG CẦN PHIÊN — người hỏi tư vấn chưa có tài khoản. Nên cửa này
       đứng trước cổng phiên, và vì thế nó là cửa dễ bị lạm dụng: mọi chỗ
       chặt nằm ở đây, không trông vào trang.
-   2. KHÔNG LƯU vào cơ sở dữ liệu. Lời nhắn đi thẳng tới hòm thư chủ hệ
-      (GITA_THU_TRA_LOI) rồi thôi. Không có bảng nào giữ tên + số điện
-      thoại của người lạ, nên một bản dump cơ sở dữ liệu không mang theo
-      nó. Nhật ký chỉ ghi "có một lượt liên hệ", không ghi nội dung.
+   2. HAI ĐƯỜNG, KHÔNG ĐƯỜNG NÀO RA DỊCH VỤ NGOÀI. Lời nhắn được ghi thành
+      THÔNG BÁO TRONG HỆ (bảng thongBao, đọc ở màn Trung tâm đo lường) cho
+      Super Admin và Giám đốc — cùng chốt baoLenCapCao của 9.98 — và thử
+      gửi thư tới hòm chủ hệ (GITA_THU_TRA_LOI). Một trong hai thành là
+      Học viện đã nhận. Bản đầu (9/10/2026) chỉ đi đường thư: máy chủ chưa
+      có đường gửi thư nào chạy được thì mọi lời nhắn đều rơi — chính chủ
+      hệ thử form và nhận "Chưa gửi được". Thông báo đã xem quá 90 ngày thì
+      lịch dọn xoá (worker.js → HAN); chưa xem thì giữ. Nhật ký chỉ ghi
+      "có một lượt liên hệ", không ghi nội dung.
    3. NGƯỜI NHẬN CỐ ĐỊNH — cửa không nhận địa chỉ nhận từ trình duyệt,
       nên không thành chỗ để gửi thư tới người lạ (cùng luật thuGuiThu).
    4. GỬI HỎNG THÌ NÓI THẬT. Báo "đã nhận" trong khi thư không đi là để
@@ -22,6 +27,7 @@
    ═══════════════════════════════════════════════════════════════ */
 import { Kho } from './nen.js';
 import { guiThu, sachChoThu } from './thu.js';
+import { baoLenCapCao } from './ngan-hang.js';
 
 const CHU_DE = { '7ngay': 'Gói 7 ngày trải nghiệm', '90ngay': 'Lộ trình 90 ngày',
   '365ngay': 'Đồng hành 365 ngày', 'khac': 'Câu hỏi khác' };
@@ -48,14 +54,13 @@ export async function guiLienHe(y, env, db, req) {
   const sdt = sachChoThu(y.phone, 24);
   const thu = sachChoThu(y.email, 254);
   const chuDe = Object.prototype.hasOwnProperty.call(CHU_DE, y.topic) ? y.topic : 'khac';
-  const loi = sachNhieuDong(y.message, 2000);
+  const loi = sachNhieuDong(y.message, 1500);
 
   if (!SDT.test(sdt)) return { ok: false, code: 'SDT', error: 'Số điện thoại chưa đúng. Ví dụ: 0912 345 678.' };
   if (thu && !THU.test(thu)) return { ok: false, code: 'THU', error: 'Địa chỉ email chưa đúng — hoặc để trống ô này.' };
   if (loi.length < 2) return { ok: false, code: 'LOI', error: 'Anh/chị viết đôi dòng về điều đang băn khoăn nhé.' };
 
   const den = String(env.GITA_THU_TRA_LOI || '').split(',')[0].trim();
-  if (!den) return { ok: false, code: 'CHUACAUHINH', error: 'Hòm thư chưa sẵn sàng. Anh/chị gọi 08.5555.4688 giúp Học viện nhé.' };
 
   /* Đếm trên D1 chứ không chỉ trong bộ nhớ: mỗi isolate Worker có bộ đếm
      riêng, nên trần trong bộ nhớ (ve-chi-phi.js) xoay vòng là lách được. */
@@ -73,16 +78,22 @@ export async function guiLienHe(y, env, db, req) {
     'Quan tâm: ' + CHU_DE[chuDe] + '\n\n' +
     'Lời nhắn:\n' + loi + '\n\n' +
     '— Lời hứa trên trang: phản hồi trong 24 giờ.\n' +
-    'Thư này không lưu lại ở máy chủ. Muốn giữ thì giữ ở hòm thư này.';
-  try {
-    /* bimat: tên + số điện thoại của một gia đình không đi đường hộp thư
-       GitHub khi còn đường khác — issue giữ nội dung vĩnh viễn. */
-    await guiThu(env, { den, batBuoc: true, bimat: true,
-      tieuDe: 'GITA 365 — Yêu cầu tư vấn: ' + CHU_DE[chuDe], than });
-  } catch (e) {
-    console.error('LIEN_HE_HONG', String(e && e.message || e).slice(0, 200));
-    return { ok: false, code: 'GUIHONG', error: 'Chưa gửi được. Anh/chị gọi 08.5555.4688 hoặc viết tới typhuquanggita@gmail.com nhé.' };
+    'Bản này cũng nằm ở Hộp thông báo, đầu màn Trung tâm đo lường trong ứng dụng.';
+  const tieuDe = 'Yêu cầu tư vấn: ' + CHU_DE[chuDe] + ' — ' + (ten || sdt);
+  /* Đường 1 — thông báo trong hệ: ở lại dưới khoá của Học viện, đọc ngay
+     trong ứng dụng, không phụ thuộc nhà gửi thư nào. */
+  let trongHe = false, quaThu = false;
+  try { await baoLenCapCao(db, { loai: 'lienHe', mucDo: 'canXem', tieuDe, than }); trongHe = true; }
+  catch (e) { console.error('LIEN_HE_TB_HONG', String(e && e.message || e).slice(0, 200)); }
+  /* Đường 2 — thư: để biết khi không mở máy. bimat: tên + số điện thoại
+     của một gia đình không đi đường hộp thư GitHub khi còn đường khác —
+     issue giữ nội dung vĩnh viễn. */
+  if (den) {
+    try { await guiThu(env, { den, batBuoc: true, bimat: true, tieuDe: 'GITA 365 — ' + tieuDe, than }); quaThu = true; }
+    catch (e) { console.error('LIEN_HE_THU_HONG', String(e && e.message || e).slice(0, 200)); }
   }
-  try { await Kho.ghiNhatKy(db, { viec: 'LIEN_HE', doiTuong: 'trang lien-he', chiTiet: 'đã chuyển tới hòm chủ hệ' }); } catch (e) { /* nhật ký hỏng không làm hỏng lượt gửi */ }
+  if (!trongHe && !quaThu)
+    return { ok: false, code: 'GUIHONG', error: 'Chưa gửi được. Anh/chị gọi 08.5555.4688 hoặc viết tới typhuquanggita@gmail.com nhé.' };
+  try { await Kho.ghiNhatKy(db, { viec: 'LIEN_HE', doiTuong: 'trang lien-he', chiTiet: (trongHe ? 'thông báo trong hệ' : '') + (trongHe && quaThu ? ' + ' : '') + (quaThu ? 'thư tới hòm chủ hệ' : '') }); } catch (e) { /* nhật ký hỏng không làm hỏng lượt gửi */ }
   return { ok: true };
 }

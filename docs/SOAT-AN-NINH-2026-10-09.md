@@ -84,8 +84,11 @@ sẻ), `gitavideo` (chủ hệ tạo 5/10, chưa rõ dụng ý).
    duyệt lại một lần. Mạng nội bộ vẫn là HTTP thường — chỉ bật trong mạng tin cậy.
 3. ~~Khoá riêng của báo cáo soát toàn màn~~ → **đã chốt**, xem mục dưới.
 4. ~~**Biểu mẫu liên hệ** gửi sang `formspree.io`~~ → **đã chuyển** về Worker của Học
-   viện (cửa `guiLienHe`, `may-chu/lien-he.js`): thư tới hòm chủ hệ, máy chủ không lưu
-   nội dung, ô mồi chặn máy quét, trần 3 lượt/giờ/IP trên D1. Bộ thử `tools/thu-lien-he.mjs`.
+   viện (cửa `guiLienHe`, `may-chu/lien-he.js`): ghi **thông báo trong hệ** cho Super Admin
+   + Giám đốc (đọc ở khối Hộp thông báo, đầu màn Trung tâm đo lường) VÀ thử gửi thư tới
+   hòm chủ hệ — một trong hai thành là đã nhận, nên máy chủ chưa có đường thư cũng không
+   rơi lời nhắn (lỗi chủ hệ gặp ngày 9/10). Đã xem quá 90 ngày thì lịch dọn xoá. Ô mồi chặn
+   máy quét, trần 3 lượt/giờ/IP trên D1. Bộ thử `tools/thu-lien-he.mjs`.
 7. **Dấu đỏ "Workers Builds"** trên mỗi commit: lối nối Git cũ của Cloudflare tự triển
    khai KHÔNG qua bộ kiểm. Gỡ bằng Actions → **Tắt Workers Builds** (chọn `tat`), hoặc
    bấm tay: Workers & Pages → gita365 / gita365-web → Settings → Build → Disconnect.
