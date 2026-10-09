@@ -300,3 +300,52 @@ export function mkQuaDeDoan(mk, nd) {
     return 'Mật khẩu không được chứa tên đăng nhập.';
   return '';
 }
+
+/* ═══════════════ MẬT KHẨU ĐÃ LỘ — HỎI MÀ KHÔNG NÓI RA ═══════════════
+
+   Danh sách DE_DOAN ở trên chặn mười chuỗi. Kẻ gian thì thử hàng trăm
+   triệu chuỗi đã rò từ các vụ lộ dữ liệu trước — 'Hanoi@2024', 'Iloveyou1'
+   qua được mười ký tự và không chứa chữ nào trong DE_DOAN, mà vẫn nằm
+   trong mọi bộ từ điển dò mật khẩu. Hướng dẫn NIST SP 800-63B đòi soát
+   mật khẩu mới với danh sách đã lộ; đây là cách làm điều ấy.
+
+   Hỏi bằng k-anonymity (dịch vụ Pwned Passwords, chọn từ danh mục
+   public-apis): băm SHA-1 rồi gửi ĐÚNG NĂM ký tự đầu. Năm ký tự ấy khớp
+   với hàng trăm mật khẩu khác nhau; dịch vụ trả về cả danh sách đuôi, và
+   máy chủ của Học viện TỰ so phần đuôi ở nhà. Mật khẩu không rời hệ, mã
+   băm đầy đủ cũng không, và không có tên hay thư nào đi kèm. Thêm
+   'Add-Padding' để độ dài phản hồi không lộ ra năm ký tự ấy là gì.
+
+   MỞ khi dịch vụ không trả lời (hết 2,5 giây, mất mạng, lỗi): một dịch vụ
+   ngoài sập thì khách vẫn kích hoạt được tài khoản, và luật mkQuaDeDoan
+   vẫn chạy. Đóng ở đây là để một bên thứ ba khoá cửa vào của Học viện.
+
+   Bật bằng biến GITA_KIEM_MK_RO = "1" ở wrangler.toml. Bộ thử không bật
+   nên không gọi ra mạng; thu-nguon-ngoai.mjs bật và thay fetch để đo. */
+const NGUON_MK_RO = 'https://api.pwnedpasswords.com/range/';
+export async function mkDaLo(mk, env) {
+  if (String((env && env.GITA_KIEM_MK_RO) || '') !== '1' || !mk) return '';
+  try {
+    const bam = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(String(mk)));
+    const hex = Array.from(new Uint8Array(bam), b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+    const r = await fetch(NGUON_MK_RO + hex.slice(0, 5), {
+      headers: { 'Add-Padding': 'true', 'User-Agent': 'gita365-worker' },
+      redirect: 'error', signal: AbortSignal.timeout(2500)
+    });
+    if (!r || !r.ok) return '';
+    const duoi = hex.slice(5);
+    for (const dong of String(await r.text()).split('\n')) {
+      const [h, n] = dong.trim().split(':');
+      /* Dòng đệm mang số 0 — không phải mật khẩu thật nào. */
+      if (h === duoi && Number(n) > 0)
+        return 'Mật khẩu này đã nằm trong các vụ lộ dữ liệu trên mạng, nên kẻ gian sẽ thử nó đầu tiên. Chọn chuỗi khác.';
+    }
+    return '';
+  } catch (e) { return ''; }
+}
+
+/* Một chỗ gọi cho mọi cửa ĐẶT mật khẩu mới: luật tại chỗ trước (rẻ, không
+   ra mạng), rồi mới hỏi danh sách đã lộ. */
+export async function kiemMkMoi(mk, nd, env) {
+  return mkQuaDeDoan(mk, nd || {}) || await mkDaLo(mk, env);
+}

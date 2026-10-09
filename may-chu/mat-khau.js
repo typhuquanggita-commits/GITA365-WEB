@@ -16,7 +16,7 @@
        khác hẳn biết muộn một tuần.
    ═══════════════════════════════════════════════════════════════ */
 
-import { Kho, muoiMoi, bamMoi, soSanhAnToan, mkQuaDeDoan } from './nen.js';
+import { Kho, muoiMoi, bamMoi, soSanhAnToan, kiemMkMoi } from './nen.js';
 import { guiThu, CHAN_THU } from './thu.js';
 
 const HAN_MA_PHUT   = 15;   /* mã sống bao lâu */
@@ -147,7 +147,7 @@ export async function datLaiMatKhau(y, env, db) {
   /* Kiểm mật khẩu SAU khi mã đã đúng. Kiểm trước thì một người có mật
      khẩu yếu nhận câu "mật khẩu quá dễ đoán" mà chưa cần biết mã — tức
      là biết mình đoán đúng tên tài khoản. */
-  const che = mkQuaDeDoan(moi, nd);
+  const che = await kiemMkMoi(moi, nd, env);
   if (che) return {ok: false, code: 'WEAK', error: che};
 
   const muoi = muoiMoi();
