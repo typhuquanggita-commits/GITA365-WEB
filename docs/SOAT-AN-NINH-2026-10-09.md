@@ -79,8 +79,7 @@ sẻ), `gitavideo` (chủ hệ tạo 5/10, chưa rõ dụng ý).
 2. **Bản .exe**: máy chủ khoá trong mạng nội bộ (`desktop/may-chu.js`) cấp khoá
    theo tên tài khoản mà không hỏi mật khẩu — đừng phát hành bản .exe trước khi
    vá. Chi tiết ở `docs/quy-trinh-chua-bat/README.md`.
-3. **Khoá riêng của báo cáo soát toàn màn** (`src/khoa-soat.js`, dấu `e465da4f…`):
-   ai giữ khoá riêng thì đọc được nội dung kho trong báo cáo — xác nhận người giữ.
+3. ~~Khoá riêng của báo cáo soát toàn màn~~ → **đã chốt**, xem mục dưới.
 4. **Biểu mẫu liên hệ** gửi họ tên, số điện thoại sang `formspree.io` (ngoài
    Cloudflare) — xác nhận đây là chủ ý và có trong chính sách dữ liệu.
 5. **Mô hình tải về không có dấu vân tay**: `wav2lip_gan.pth` (máy quay Kaggle)
@@ -88,3 +87,13 @@ sẻ), `gitavideo` (chủ hệ tạo 5/10, chưa rõ dụng ý).
    SHA-256 khi có bản tải chuẩn.
 6. **CSP còn `'unsafe-inline'`** vì app dùng hàng trăm `onclick=` viết thẳng. Gỡ
    được là việc lớn: chuyển dần sang `data-*` + một bộ nghe chung.
+
+## Đã chốt
+
+- **Khoá riêng của báo cáo soát toàn màn** (`src/khoa-soat.js`, dấu vân tay
+  `e465da4f04ff3283`) — **Super Admin đảm nhận** (chủ hệ chốt 9/10/2026).
+  Chỉ Super Admin giữ khoá riêng, nên chỉ Super Admin đọc được nội dung kho trong
+  báo cáo. Kéo theo: khoá riêng không được nằm trong kho mã (móc
+  `tools/chan-commit.mjs` chặn `*.pem` / `*.key`), không gửi qua chat hay email;
+  mất máy giữ khoá thì dựng cặp khoá mới, thay khoá công khai ở `src/khoa-soat.js`
+  và coi mọi báo cáo cũ là đã lộ.
