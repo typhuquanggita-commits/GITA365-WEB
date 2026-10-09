@@ -281,8 +281,8 @@ export async function truyHoiHe(y, env, db) {
   } catch (e) { dungChu = false; }
 
   const moi = String(y.mkMoi || '');
-  const che = await import('./nen.js').then(m => m.mkQuaDeDoan
-    ? m.mkQuaDeDoan(moi, nd) : (moi.length < 8 ? 'Mật khẩu mới quá ngắn.' : ''));
+  const che = await import('./nen.js').then(m => m.kiemMkMoi
+    ? m.kiemMkMoi(moi, nd, env) : (moi.length < 8 ? 'Mật khẩu mới quá ngắn.' : ''));
   if (che) return { ok: false, code: 'MKYEU', error: che };
 
   const nen = await import('./nen.js');

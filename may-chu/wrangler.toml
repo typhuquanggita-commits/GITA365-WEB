@@ -103,6 +103,11 @@ GITA_PHIM_TRAN_NEURON = "9000"
 # tháng; 1.000 neuron ≈ 0,011 USD; một ảnh 9B ≈ 1.500 neuron). "0" =
 # tắt: Bom tấn vẫn chạy 0 đồng bằng klein 4B khung lớn.
 GITA_PHIM_TRAN_TRA_PHI = "0"
+# Soát mật khẩu MỚI với danh sách đã lộ (Pwned Passwords, miễn phí, không
+# khoá). Chỉ gửi 5 ký tự đầu của mã băm SHA-1 — không gửi mật khẩu, không
+# gửi tên hay thư. Dịch vụ không trả lời thì cửa vẫn mở (xem mkDaLo ở
+# nen.js). "0" = tắt.
+GITA_KIEM_MK_RO = "1"
 
 # VẼ ẢNH CẢNH BẰNG DỊCH VỤ NGOÀI (tuỳ chọn, MẶC ĐỊNH TẮT để giữ 0đ —
 # may-chu/phim-phan-tu.js). Chỉ khi chủ hệ tự muốn dùng tài khoản riêng

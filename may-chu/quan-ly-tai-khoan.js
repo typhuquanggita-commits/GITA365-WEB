@@ -9,7 +9,7 @@
      - Danh sách + tìm kiếm
    ═══════════════════════════════════════════════════════════════ */
 
-import { Kho, kiemMatKhau, bamMoi, muoiMoi, mkQuaDeDoan } from './nen.js';
+import { Kho, kiemMatKhau, bamMoi, muoiMoi, kiemMkMoi } from './nen.js';
 import { guiThu, CHAN_THU } from './thu.js';
 
 const RE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -172,8 +172,8 @@ export async function adminKhoiPhucMatKhau(y, env, db, hoSo) {
   const username = String((y || {}).username || '').trim().toLowerCase();
   const matKhauMoi = String((y || {}).matKhauMoi || '').trim();
   if (!username) return { ok: false, error: 'Thiếu username.' };
-  if (!matKhauMoi || mkQuaDeDoan(matKhauMoi, {username}))
-    return { ok: false, error: 'Mật khẩu mới cần ≥ 10 ký tự và không quá dễ đoán.' };
+  const cheMk = matKhauMoi ? await kiemMkMoi(matKhauMoi, {username}, env) : 'Thiếu mật khẩu mới.';
+  if (cheMk) return { ok: false, code: 'WEAK', error: cheMk };
 
   const taiKhoan = await db.prepare('SELECT id, email, role FROM users WHERE lower(username)=? LIMIT 1')
     .bind(username).first();

@@ -18,7 +18,7 @@
    dưới đều có lý do cụ thể chứ không phải cẩn thận cho có.
    ═══════════════════════════════════════════════════════════════ */
 
-import { Kho, tokenMoi, muoiMoi, bamMoi, soSanhAnToan, mkQuaDeDoan } from './nen.js';
+import { Kho, tokenMoi, muoiMoi, bamMoi, soSanhAnToan, kiemMkMoi } from './nen.js';
 import { guiThu, sachChoThu, CHAN_THU } from './thu.js';
 import { moTepKhach } from './ho-so-khach.js';
 import { O_DONGY_BAT_BUOC } from './phap-ly-rui-ro.js';
@@ -277,7 +277,7 @@ export async function kichHoat(y, env, db) {
   /* CÙNG MỘT LUẬT MẠNH YẾU VỚI CHỖ ĐỔI MẬT KHẨU — xem chú giải ở
      mkQuaDeDoan trong nen.js. Nền cũ để cửa này chỉ đòi mười ký tự,
      nên '1234567890' mở được một tài khoản mới. */
-  const che = mkQuaDeDoan(mk, {username: c.email});
+  const che = await kiemMkMoi(mk, {username: c.email}, env);
   if (che) return {ok: false, code: 'WEAK', error: che};
 
   const uid = 'U' + tokenMoi().slice(0, 18);

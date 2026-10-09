@@ -28,7 +28,7 @@
    chỗ suốt buổi.
    ═══════════════════════════════════════════════════════════════ */
 
-import { Kho, kiemPhien, kiemMatKhau, bamMoi, muoiMoi, soSanhAnToan, mkQuaDeDoan } from './nen.js';
+import { Kho, kiemPhien, kiemMatKhau, bamMoi, muoiMoi, soSanhAnToan, kiemMkMoi } from './nen.js';
 import { dongBo, quetSaoLuuMoCoi } from './dong-bo.js';
 import { veChiPhi, maYeuCau } from './ve-chi-phi.js';
 import { guiLienHe } from './lien-he.js';
@@ -856,7 +856,10 @@ async function taoAdminDau(y, env, db) {
   const mk = String(y.mk || '');
   const hoTen = String(y.hoTen || 'Super Admin').trim().slice(0, 80) || 'Super Admin';
   if (u.length < 3)  return {ok: false, error: 'Tên đăng nhập cần ít nhất 3 ký tự.'};
-  if (mk.length < 8) return {ok: false, error: 'Mật khẩu cần ít nhất 8 ký tự.'};
+  /* Cùng một luật với mọi cửa đặt mật khẩu khác. Bản cũ chỉ đòi tám ký tự
+     — đúng ở cửa tạo tài khoản quyền CAO NHẤT, luật lại lỏng nhất. */
+  const cheMk = await kiemMkMoi(mk, {username: u}, env);
+  if (cheMk) return {ok: false, code: 'WEAK', error: cheMk};
 
   const trung = await Kho.nguoiTheoTen(db, u);
   if (trung) return {ok: false, error: 'Tên đăng nhập đã có người dùng. Chọn tên khác.'};
@@ -989,7 +992,7 @@ async function doiMatKhau(y, env, db, hoSo) {
   if (!congMat.ok) return congMat;
 
   const moi = String(y.moi || '');
-  const che = mkQuaDeDoan(moi, nd);
+  const che = await kiemMkMoi(moi, nd, env);
   if (che) return {ok: false, error: che};
 
   const muoi = muoiMoi();
