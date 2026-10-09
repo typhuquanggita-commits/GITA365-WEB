@@ -21,7 +21,7 @@
     "dist:all": "npm run chuan-bi && electron-builder -mwl"
   },
   "devDependencies": {
-    "electron": "^33.4.11",
+    "electron": "^44.5.1",
     "electron-builder": "^25.1.8"
   }
 }
