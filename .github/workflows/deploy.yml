@@ -99,6 +99,10 @@ jobs:
           workingDirectory: may-chu
           command: deploy
 
+      # Lệnh nạp khoá ghim wrangler 4.148.0 — bản đã chạy xanh ở lượt triển khai
+      # 07/10/2026. Lượt 09/10 ghim 4.149.0 (phát hành 08/10) thì bước nạp khoá
+      # hỏng sau 1 giây trong khi bước deploy Worker vẫn xanh. Muốn nâng bản thì
+      # nâng ở nhánh thử trước, đừng nâng thẳng trên main.
       # Secret của cầu nối Gmail: đặt ở GitHub (Settings → Secrets → Actions)
       # thì workflow nạp vào Worker, chủ hệ không phải chạy wrangler trên máy.
       - name: Nạp secret cầu nối Gmail vào Worker (nếu có)
@@ -116,7 +120,7 @@ jobs:
           fi
           f="$RUNNER_TEMP/bi-mat-thu.json"
           node -e "require('fs').writeFileSync(process.argv[1], JSON.stringify({GITA_CAU_NOI_GMAIL: process.env.GITA_CAU_NOI_GMAIL, GITA_KHOA_CAU_NOI: process.env.GITA_KHOA_CAU_NOI}))" "$f"
-          npx --yes wrangler@4.149.0 secret bulk "$f"
+          npx --yes wrangler@4.148.0 secret bulk "$f"
           rm -f "$f"
 
       # Khoá fal.ai cho "Xưởng phim tự động A-Z" (chỉ Super Admin dùng).
@@ -134,7 +138,7 @@ jobs:
           fi
           f="$RUNNER_TEMP/bi-mat-fal.json"
           node -e "require('fs').writeFileSync(process.argv[1], JSON.stringify({GITA_KHOA_FAL: process.env.GITA_KHOA_FAL}))" "$f"
-          npx --yes wrangler@4.149.0 secret bulk "$f"
+          npx --yes wrangler@4.148.0 secret bulk "$f"
           rm -f "$f"
 
       # Hộp thư GitHub: Worker nhờ kho riêng tư gita365-hop-thu mở issue →
@@ -153,7 +157,7 @@ jobs:
           fi
           f="$RUNNER_TEMP/bi-mat-gh-thu.json"
           node -e "require('fs').writeFileSync(process.argv[1], JSON.stringify({GITA_GH_KHOA_THU: process.env.GITA_GH_KHOA_THU.trim()}))" "$f"
-          npx --yes wrangler@4.149.0 secret bulk "$f"
+          npx --yes wrangler@4.148.0 secret bulk "$f"
           rm -f "$f"
 
       - name: Nạp khoá xưởng quay khớp môi vào Worker (nếu có)
@@ -170,7 +174,7 @@ jobs:
           fi
           f="$RUNNER_TEMP/bi-mat-quay.json"
           node -e "require('fs').writeFileSync(process.argv[1], JSON.stringify({GITA_KHOA_XUONG_QUAY: process.env.GITA_KHOA_XUONG_QUAY.trim()}))" "$f"
-          npx --yes wrangler@4.149.0 secret bulk "$f"
+          npx --yes wrangler@4.148.0 secret bulk "$f"
           rm -f "$f"
 
       - name: Verify Worker health
