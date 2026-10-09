@@ -39,7 +39,7 @@ export const VIEC_TRA_PHI = new Set([
 /* Việc KHÔNG cần phiên, dễ bị dò — đếm theo IP. */
 export const VIEC_CUA = new Set([
   'dangNhap', 'dangNhapMatBatDau', 'dangNhapMatXong', 'dangKy', 'guiLaiOtp',
-  'xacThucOtp', 'kichHoat', 'quenMatKhau', 'datLaiMatKhau', 'taoAdminDau'
+  'xacThucOtp', 'kichHoat', 'quenMatKhau', 'datLaiMatKhau', 'taoAdminDau', 'guiLienHe'
 ]);
 
 /* Hạn mỗi 60 giây cho MỘT người/IP trong MỘT isolate. Người dùng thật

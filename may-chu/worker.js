@@ -31,6 +31,7 @@
 import { Kho, kiemPhien, kiemMatKhau, bamMoi, muoiMoi, soSanhAnToan, mkQuaDeDoan } from './nen.js';
 import { dongBo, quetSaoLuuMoCoi } from './dong-bo.js';
 import { veChiPhi, maYeuCau } from './ve-chi-phi.js';
+import { guiLienHe } from './lien-he.js';
 import { chanKhoang, ghiLoiKhoang, ghiTotKhoang, dsKhoang, datKhoang } from './khoang.js';
 import { tuSoatVaChua, sucKhoeHe } from './tu-chua.js';
 import { dangKy, guiLaiOtp, xacThucOtp, kichHoat } from './dang-ky.js';
@@ -353,7 +354,7 @@ const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau'
   /* Tự vá lược đồ D1 (va-luoc-do.js) — R01: thêm cột còn thiếu so với csdl.sql. */
   'soatLuocDo', 'docBoNao', 'chayThuBoNao', 'datTuChayTuyen'];
 
-async function lam(fn, y, env, db) {
+async function lam(fn, y, env, db, req) {
   if (fn === 'dangNhap')  return await dangNhap(y, env, db);
   if (fn === 'dangXuat')  return await dangXuat(y, db);
 
@@ -404,6 +405,10 @@ async function lam(fn, y, env, db) {
      kiểm phiên — đây là cửa duy nhất cho phép vậy, và nó không chạm
      bảng người dùng. */
   if (fn === 'trangThaiCongKhai') return await trangThaiCongKhai(y, env, db);
+  /* Form "Đăng ký tư vấn" của trang Liên hệ: KHÔNG phiên (người hỏi chưa có
+     tài khoản), không lưu nội dung, người nhận cố định là hòm chủ hệ.
+     Thay formspree.io — dữ liệu cha mẹ không rời tay Học viện. lien-he.js. */
+  if (fn === 'guiLienHe') return await guiLienHe(y, env, db, req);
   /* Báo cáo soát toàn màn: KHÔNG phiên, nhưng chỉ trả BẢN MÃ (AES-GCM bọc
      RSA-OAEP, khoá riêng không ở máy chủ) và không trả tên người gửi — để
      workflow GitHub chuyển cho người giữ khoá riêng. soat-man.js. */
@@ -1286,7 +1291,7 @@ export default {
          Rồi tới cổng KHOANG: phần bị khoá/đang tự nghỉ trả lời ngay,
          các phần khác vẫn chạy. */
       const chan = await veChiPhi(fn, y, env, req) || await chanKhoang(fn, env, env.CSDL);
-      const kq = chan || await lam(fn, y, env, env.CSDL);
+      const kq = chan || await lam(fn, y, env, env.CSDL, req);
       if (!chan) ghiTotKhoang(fn);
       /* V50·168: sau mỗi thao tác nhạy cảm thành công, tự soát dấu hiệu chiếm
          tài khoản (đổi mật khẩu + một loạt việc phá trong 15 phút) — chạy nền,

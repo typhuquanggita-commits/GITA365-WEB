@@ -1,0 +1,114 @@
+# ═══════════════════════════════════════════════════════════════
+# GITA 365 — Tắt "Workers Builds" (nối Git của Cloudflare) cho gita365 / gita365-web
+#
+# Vì sao: mỗi commit lên kho này hiện hai dấu đỏ "Workers Builds: gita365" và
+# "Workers Builds: gita365-web". Đó là lối nối Git CŨ bật ở bảng điều khiển
+# Cloudflare — nó tự dựng và tự triển khai từ kho, KHÔNG qua bộ kiểm. Đường
+# triển khai thật là deploy.yml (kiểm trước, triển khai sau). Hai đường cùng
+# triển khai là hai bản sự thật; đường không qua bộ kiểm phải tắt.
+#
+# Quy trình này CHỈ gỡ "build trigger" (lối nối Git). Nó KHÔNG xoá Worker,
+# không đụng mã, không đụng dữ liệu, không đụng khoá. Chạy hai lần không sao.
+#
+# Cách dùng: Actions → "Tắt Workers Builds" → Run workflow → chọn:
+#   · xem — chỉ liệt kê (mặc định, không đổi gì)
+#   · tat — gỡ các lối nối Git tìm thấy
+#
+# Khoá CLOUDFLARE_API_TOKEN cần thêm quyền "Workers CI: Edit" (Workers Builds
+# Configuration) và phải là khoá CỦA NGƯỜI DÙNG (user token). Thiếu quyền thì
+# quy trình KHÔNG đoán — nó in ra đúng ba bước bấm tay ở bảng điều khiển.
+# ═══════════════════════════════════════════════════════════════
+name: Tắt Workers Builds
+
+on:
+  workflow_dispatch:
+    inputs:
+      viec:
+        description: 'xem = chỉ liệt kê · tat = gỡ lối nối Git'
+        type: choice
+        options: [xem, tat]
+        default: xem
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tat-workers-builds
+  cancel-in-progress: false
+
+jobs:
+  tat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
+        with:
+          egress-policy: audit
+
+      - name: Liệt kê và (nếu chọn) gỡ lối nối Git
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          VIEC: ${{ inputs.viec }}
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const TEN = ['gita365', 'gita365-web'];
+          const token = process.env.CLOUDFLARE_API_TOKEN || '';
+          const acc = process.env.CLOUDFLARE_ACCOUNT_ID || '';
+          const tat = process.env.VIEC === 'tat';
+          const tom = [];
+          const ghi = s => { console.log(s); tom.push(s); };
+          const tay = () => {
+            ghi('');
+            ghi('### Bấm tay (3 bước, khoảng một phút)');
+            ghi('1. Mở https://dash.cloudflare.com → **Workers & Pages**.');
+            ghi('2. Bấm **gita365** → **Settings** → mục **Build** → **Disconnect** (ngắt kết nối Git) → xác nhận.');
+            ghi('3. Làm y hệt cho **gita365-web**. Không xoá Worker, chỉ ngắt Git.');
+          };
+          const ket = (ma) => { try { fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, tom.join('\n') + '\n'); } catch {} process.exit(ma); };
+          if (!token || /\s/.test(token) || !/^[0-9a-f]{32}$/.test(acc)) {
+            ghi('::error::Thiếu hoặc sai CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID ở GitHub secrets.'); tay(); ket(1);
+          }
+          const goc = 'https://api.cloudflare.com/client/v4/accounts/' + acc;
+          async function goi(phuong, duong) {
+            const r = await fetch(goc + duong, { method: phuong, headers: { Authorization: 'Bearer ' + token } });
+            let j = null; try { j = await r.json(); } catch {}
+            return { ma: r.status, j };
+          }
+          (async () => {
+            ghi('## Workers Builds — ' + (tat ? 'GỠ lối nối Git' : 'chỉ xem'));
+            const ds = await goi('GET', '/workers/scripts');
+            if (ds.ma !== 200 || !ds.j || !ds.j.success) {
+              ghi('::error::Không đọc được danh sách Worker (HTTP ' + ds.ma + ').'); tay(); ket(1);
+            }
+            let canTay = false, daGo = 0, thay = 0;
+            for (const ten of TEN) {
+              const w = (ds.j.result || []).find(x => x && x.id === ten);
+              if (!w) { ghi('- `' + ten + '`: không có Worker tên này — bỏ qua.'); continue; }
+              if (!w.tag) { ghi('- `' + ten + '`: API không trả mã định danh (tag).'); canTay = true; continue; }
+              const tr = await goi('GET', '/builds/workers/' + w.tag + '/triggers');
+              if (tr.ma === 401 || tr.ma === 403 || !tr.j || !tr.j.success) {
+                ghi('- `' + ten + '`: khoá thiếu quyền **Workers CI** (HTTP ' + tr.ma + ').'); canTay = true; continue;
+              }
+              const ts = tr.j.result || [];
+              if (!ts.length) { ghi('- `' + ten + '`: không còn lối nối Git nào. ✓'); continue; }
+              for (const t of ts) {
+                const id = t.trigger_uuid || t.uuid || t.id;
+                const nhanh = (t.branch_includes || []).join(',') || '(mọi nhánh khác)';
+                thay++;
+                if (!tat) { ghi('- `' + ten + '`: lối nối Git `' + (t.trigger_name || id) + '` · nhánh ' + nhanh); continue; }
+                const x = await goi('DELETE', '/builds/triggers/' + id);
+                if (x.ma >= 200 && x.ma < 300 && (!x.j || x.j.success !== false)) { daGo++; ghi('- `' + ten + '`: đã gỡ lối nối Git · nhánh ' + nhanh + ' ✓'); }
+                else { ghi('- `' + ten + '`: gỡ hỏng (HTTP ' + x.ma + ').'); canTay = true; }
+              }
+            }
+            if (!tat && thay) ghi('\nChạy lại và chọn **tat** để gỡ ' + thay + ' lối nối Git trên.');
+            if (tat) ghi('\nĐã gỡ ' + daGo + ' lối nối Git.');
+            ghi('\nLưu ý: lối nối nhánh phụ (preview) có khi API không liệt kê — nếu dấu đỏ còn hiện ở commit sau, làm ba bước bấm tay dưới đây.');
+            if (canTay) { tay(); ket(1); }
+            tay();
+            ket(0);
+          })().catch(e => { ghi('::error::' + String(e && e.message || e).slice(0, 200)); tay(); ket(1); });
+          NODE
