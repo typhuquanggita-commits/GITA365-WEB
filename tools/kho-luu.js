@@ -57,7 +57,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { execSync, execFileSync } = require('child_process');
 const { moGoi } = require('./so-cho.js');
 
 const GOC = path.resolve(__dirname, '..');
@@ -77,7 +77,8 @@ function git(lenh, nhiPhan) {
      màn thì mười bảy dòng 'fatal' đỏ lòm nằm chen giữa dòng tiến độ, và
      người đọc tưởng bộ soi đang hỏng trong khi nó đang chạy đúng.
      Thiếu gói đã được xử đúng ở docBan(): bỏ qua, không tính là mất. */
-  return execSync('git -C ' + JSON.stringify(GOC) + ' ' + lenh,
+  /* Truyền đối số dạng MẢNG cho git, không ghép chuỗi qua shell. */
+  return execFileSync('git', ['-C', GOC].concat(lenh),
     { encoding: nhiPhan ? null : 'utf8', maxBuffer: 1 << 28,
       stdio: ['ignore', 'pipe', 'ignore'] });
 }
@@ -104,7 +105,7 @@ function danhSachBan() {
   /* Đóng nháy quanh --format: dấu | không đóng nháy thì shell hiểu nó là
      ống dẫn, và git chỉ nhận được "%H" rồi shell đi tìm lệnh tên "%h".
      Bắt được ngay lượt chạy đầu. */
-  const dong = git('log "--format=%H%x09%h%x09%ad%x09%s" --date=short -- kho/')
+  const dong = git(['log', '--format=%H%x09%h%x09%ad%x09%s', '--date=short', '--', 'kho/'])
     .trim().split('\n');
   return dong.filter(Boolean).map(d => {
     const [H, h, ngay, ...tieuDe] = d.split('\t');
@@ -127,7 +128,7 @@ function docBan(khoa, H) {
   const kho = {};
   for (const g of GOI) {
     let buf;
-    try { buf = git('show ' + H + ':kho/' + g + '.enc', true); } catch { continue; }
+    try { buf = git(['show', H + ':kho/' + g + '.enc'], true); } catch { continue; }
     if (!buf || !buf.length) continue;
     let d;
     try { d = moGoi(khoa[g], buf); } catch { continue; }
@@ -390,7 +391,7 @@ function soi() {
     let ok = false;
     for (const g of GOI) {
       let buf;
-      try { buf = git('show ' + b.H + ':kho/' + g + '.enc', true); } catch { continue; }
+      try { buf = git(['show', b.H + ':kho/' + g + '.enc'], true); } catch { continue; }
       try { moGoi(khoa[g], buf); ok = true; break; } catch { /* thử gói sau */ }
     }
     if (ok) mo++; else khong.push(b);

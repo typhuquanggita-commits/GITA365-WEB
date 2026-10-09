@@ -391,7 +391,7 @@ function doiBanGita() {
 function docCommit() {
   try {
     return require('child_process')
-      .execSync('git -C ' + JSON.stringify(GOC) + ' rev-parse --short HEAD', { encoding: 'utf8' }).trim();
+      .execFileSync('git', ['-C', GOC, 'rev-parse', '--short', 'HEAD'], { encoding: 'utf8' }).trim();
   } catch { return '(không có git)'; }
 }
 

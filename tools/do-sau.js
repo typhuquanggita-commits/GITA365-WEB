@@ -35,6 +35,9 @@
    khai thì đỏ.
    ═══════════════════════════════════════════════════════════════ */
 'use strict';
+/* Thoát MỌI ký tự đặc biệt của regex, kể cả dấu \ — bản cũ chỉ thoát $,
+   nên một tên có dấu \ làm regex sai mà không báo gì (CodeQL 9/10/2026). */
+function thoatRe(x) { return String(x).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 const fs = require('fs');
 const path = require('path');
 
@@ -69,9 +72,9 @@ Object.entries(DOC).forEach(([f, s]) => {
     /* BỌC hay ĐÈ: nhìn 400 ký tự TRƯỚC chỗ gán. Bọc thì ở đó có một
        biến đọc lại chính G.VIEWS['x'] — đọc trước rồi mới gán đè. */
     const truoc = s.slice(Math.max(0, m.index - 400), m.index);
-    const giu = truoc.match(new RegExp("(?:var\\s+)?([a-zA-Z_$][\\w$]*)\\s*=\\s*G\\.VIEWS\\['" + v + "'\\]"));
+    const giu = truoc.match(new RegExp("(?:var\\s+)?([a-zA-Z_$][\\w$]*)\\s*=\\s*G\\.VIEWS\\['" + thoatRe(v) + "'\\]"));
     const than = s.slice(m.index, m.index + 900);
-    const boc = !!(giu && new RegExp('\\b' + giu[1].replace(/\$/g, '\\$') + '\\b\\s*[.(]').test(than));
+    const boc = !!(giu && new RegExp('\\b' + thoatRe(giu[1]) + '\\b\\s*[.(]').test(than));
     if (man[v] && !boc) do_('MÀN BỊ ĐÈ', v + ' khai ở cả ' + manO[v] + ' và ' + f +
       ' — tệp nạp sau thắng, im lặng');
     if (!man[v]) { man[v] = 1; manO[v] = f; }
@@ -121,9 +124,9 @@ Object.entries(DOC).forEach(([f, s]) => {
        Nên phép nhận dạng là: bản mới có GỌI bản cũ trong thân nó
        không. Có thì bọc; không thì đè, dù tham chiếu còn nằm đó. */
     const truoc = s.slice(Math.max(0, m.index - 400), m.index);
-    const giu = truoc.match(new RegExp('(?:var\\s+)?([a-zA-Z_$][\\w$]*)\\s*=\\s*G\\.' + n + '\\b'));
+    const giu = truoc.match(new RegExp('(?:var\\s+)?([a-zA-Z_$][\\w$]*)\\s*=\\s*G\\.' + thoatRe(n) + '\\b'));
     const than = s.slice(m.index, m.index + 900);
-    const boc = !!(giu && new RegExp('\\b' + giu[1].replace(/\$/g, '\\$') + '\\b\\s*[.(]').test(than));
+    const boc = !!(giu && new RegExp('\\b' + thoatRe(giu[1]) + '\\b\\s*[.(]').test(than));
     if (ham[n] && hamO[n] !== f) {
       if (!boc) deLen.push({ ham: n, cu: hamO[n], moi: f });
     }

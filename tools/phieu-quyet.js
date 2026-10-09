@@ -85,8 +85,7 @@ function soatChoGhi(ra) {
   if (!trongKho) return;
   let biChan = false;
   try {
-    require('child_process').execSync(
-      'git -C ' + JSON.stringify(GOC) + ' check-ignore -q ' + JSON.stringify(ra),
+    require('child_process').execFileSync('git', ['-C', GOC, 'check-ignore', '-q', ra],
       { stdio: 'ignore' });
     biChan = true;
   } catch { biChan = false; }

@@ -3905,7 +3905,7 @@ const { chromium } = require(PW);
     const chuCua = f => {
       if (!fs39.existsSync(px39.join(goc39, f))) return -1;
       return doc39(f).replace(/<(script|style|head)[\s\S]*?<\/\1>/g, '')
-        .replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().length;
+        .replace(/<[^>]+>/g, ' ').replace(/[<>]/g, ' ').replace(/\s+/g, ' ').trim().length;
     };
     const dai = TRANG_CON.map(f => ({ f, n: chuCua(f) }));
     bao(dai.every(x => x.n >= 2000),
@@ -3920,13 +3920,13 @@ const { chromium } = require(PW);
        Hai địa chỉ cùng nội dung thì Google không biết xếp cái nào, nên
        xếp thấp cả đôi. Đo bằng tiêu đề mục: mục đã sâu ở trang con thì
        không được còn nguyên ở trang chủ. */
-    const mucChu = (khung.match(/<h2>([^<]+)<\/h2>/g) || []).map(x => x.replace(/<[^>]+>/g, ''));
+    const mucChu = (khung.match(/<h2>([^<]+)<\/h2>/g) || []).map(x => x.replace(/<[^>]+>/g, '').replace(/[<>]/g, ''));
     const lapLai = [];
     for (const f of TRANG_CON) {
       if (!fs39.existsSync(px39.join(goc39, f))) continue;
       for (const m of (doc39(f).match(/<h2>([^<]+)<\/h2>/g) || []))
-        if (mucChu.indexOf(m.replace(/<[^>]+>/g, '')) >= 0)
-          lapLai.push(f + ': ' + m.replace(/<[^>]+>/g, ''));
+        if (mucChu.indexOf(m.replace(/<[^>]+>/g, '').replace(/[<>]/g, '')) >= 0)
+          lapLai.push(f + ': ' + m.replace(/<[^>]+>/g, '').replace(/[<>]/g, ''));
     }
     bao(!lapLai.length, 'trang chủ và trang con không lặp lại phần nào của nhau',
       lapLai.length ? lapLai.slice(0, 3).join(' · ') : mucChu.length + ' mục ở trang chủ, không mục nào trùng');
@@ -15843,9 +15843,8 @@ ra.tgNeoKhop && ra.tgDuTang && ra.tgLoaiDu && ra.tgChanThat && ra.tgMauKhop &&
         for (const g of GOI_TH) {
           let buf;
           try {
-            buf = require('child_process').execSync(
-              'git -C ' + JSON.stringify(pathGoc.join(__dirname, '..')) +
-              ' show ' + b.H + ':kho/' + g + '.enc',
+            buf = require('child_process').execFileSync('git',
+              ['-C', pathGoc.join(__dirname, '..'), 'show', b.H + ':kho/' + g + '.enc'],
               { encoding: null, maxBuffer: 1 << 28, stdio: ['ignore', 'pipe', 'ignore'] });
           } catch { continue; }
           try { moGoi(khoaTh[g], buf); ok = true; break; } catch { /* thử gói sau */ }

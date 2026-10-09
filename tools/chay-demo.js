@@ -225,7 +225,8 @@ function dungR2() {
       } catch (e) {
         rs.writeHead(500, {'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*'});
-        rs.end(JSON.stringify({ok: false, error: String(e && e.message || e)}));
+        /* Không gửi thông báo lỗi/vết ngăn xếp về trình duyệt — chỉ in ở cửa sổ lệnh. */
+        rs.end(JSON.stringify({ok: false, error: 'Lỗi máy chủ thử — xem cửa sổ dòng lệnh.'}));
         console.error('   ✗ ' + String(e && e.stack || e).split('\n')[0]);
       }
     });
