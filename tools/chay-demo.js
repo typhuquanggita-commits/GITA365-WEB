@@ -94,9 +94,9 @@ function dungR2() {
     GHI_THU: hopThu,
     GITA_DIA_CHI_WEB: 'http://127.0.0.1:8099',
     GITA_TIEU: 'tieu-demo-tai-cho-khong-dung-that',
-    GITA_KHOA_KY: 'khoa-' + 'ky-demo-khong-dung-that',  // khoá giả lập cho bài thử, không phải khoá thật
+    GITA_KHOA_KY: 'khoa-ky-demo-khong-dung-that',  // gita-bi-mat:bo-qua — khoá giả lập cho bài thử
     GITA_KHOA_THU: 'khoa-thu-demo',
-    GITA_KHOA_NGANHANG: 'khoa-' + 'ngan-hang-demo',  // khoá giả lập cho bài thử, không phải khoá thật
+    GITA_KHOA_NGANHANG: 'khoa-ngan-hang-demo',  // gita-bi-mat:bo-qua — khoá giả lập cho bài thử
     GITA_THU_DOANH_THU: 'chuhe@vidu.vn',
     /* Cửa đi ra bộ tạo ảnh: TẮT SẴN, đúng như máy chủ thật — không nạp
        thì cổng trả về CUADONG. Bật bằng CUA_VE=1 khi cần xem đề bài đi
@@ -104,7 +104,7 @@ function dungR2() {
        guiDeBaiRaNgoai dựng đề bài rồi ghi sổ, không mở một lượt mạng
        nào. Nên đây là chỗ đọc đề bài, không phải chỗ sinh ảnh. */
     ...(process.env.CUA_VE ? {
-      GITA_KHOA_VE: 'khoa-' + 've-demo-khong-dung-that',  // khoá giả lập cho bài thử, không phải khoá thật
+      GITA_KHOA_VE: 'khoa-ve-demo-khong-dung-that',  // gita-bi-mat:bo-qua — khoá giả lập cho bài thử
       GITA_CONG_VE: 'demo://doc-de-bai-tai-cho'} : {}),
     GITA_KHOA_KHO: JSON.stringify(khoaKho || {
       nen: 'k', nghe: 'k', 'nghe-cao': 'k',

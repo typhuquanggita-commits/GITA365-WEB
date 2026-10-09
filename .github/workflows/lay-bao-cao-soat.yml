@@ -17,7 +17,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: lay-bao-cao-soat
@@ -26,6 +26,9 @@ concurrency:
 jobs:
   lay:
     runs-on: ubuntu-latest
+    # Quyền ghi chỉ ở job này (đẩy nhánh bao-cao-soat), không ở cả quy trình.
+    permissions:
+      contents: write
     steps:
       - name: Lấy bản mã mới nhất từ máy chủ
         run: |
@@ -36,7 +39,10 @@ jobs:
           node <<'NODE'
           const fs = require('fs');
           const r = JSON.parse(fs.readFileSync('tra.json', 'utf8'));
-          const loi = m => { console.log('::error::' + m); process.exit(1); };
+          // Chữ từ máy chủ không được mang dòng mới hay "::" — nếu không, một phản hồi
+          // bị sửa có thể chèn lệnh điều khiển runner của GitHub Actions.
+          const sach = x => String(x).replace(/[\r\n]+/g, ' ').replace(/::/g, ': :').slice(0, 300);
+          const loi = m => { console.log('::error::' + sach(m)); process.exit(1); };
           if (!r.ok) loi('Máy chủ trả lỗi: ' + (r.error || '?'));
           if (r.trong) loi('Chưa có báo cáo nào trong 14 ngày — Super Admin bấm "Gửi bản mã hoá" ở màn Soát toàn bộ màn trước.');
           const g = JSON.parse(r.goi);
@@ -46,7 +52,7 @@ jobs:
           if (!dung) loi('Gói không đúng khuôn bản mã — không đẩy.');
           fs.mkdirSync('ra', { recursive: true });
           fs.writeFileSync('ra/soat-ban-ma.json', JSON.stringify({ luc: r.luc, so: r.so, goi: g }));
-          console.log('::notice::Bản mã lúc ' + r.luc + ' · ' + r.so + ' màn · khoá ' + g.dv + ' · ' + Math.round(r.goi.length / 1024) + ' KB');
+          console.log('::notice::Bản mã lúc ' + sach(r.luc) + ' · ' + sach(r.so) + ' màn · khoá ' + g.dv + ' · ' + Math.round(r.goi.length / 1024) + ' KB');
           NODE
           rm -f tra.json
 

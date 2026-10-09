@@ -1418,8 +1418,17 @@ G.xuat = function(ma){
   if(G.chamTaiNguyen) b.dong.forEach(function(d, i){
     G.chamTaiNguyen('Xuất bảng', ma + '·' + i);
   });
-  var tsv = [b.cot.join('\t')]
-    .concat(b.dong.map(function(r){ return r.map(function(o){ return String(o==null?'':o); }).join('\t'); }))
+  /* Ô bắt đầu bằng = + - @ thì Google Sheets / Excel chạy thành CÔNG THỨC khi
+     dán vào. Một tên nhà gõ "=IMPORTXML(...)" là lệnh gửi dữ liệu trong bảng
+     tính của nhân viên ra ngoài. Thêm dấu ' phía trước để ô luôn là chữ; số
+     thật (kiểu number) giữ nguyên. Tab/xuống dòng trong ô làm lệch cột. */
+  function oTSV(o){
+    if(typeof o === 'number') return String(o);
+    var s = String(o==null?'':o).replace(/[\t\r\n]+/g, ' ');
+    return /^[=+\-@]/.test(s) ? "'" + s : s;
+  }
+  var tsv = [b.cot.map(oTSV).join('\t')]
+    .concat(b.dong.map(function(r){ return r.map(oTSV).join('\t'); }))
     .join('\n');
   G.SHEET_MOI = { ten:b.ten, luc:new Date().toLocaleString('vi-VN'), ma:maBan };
   U.modal('<h2 style="font-size:21px;font-weight:800;margin-bottom:10px">Bảng '+U.h(b.ten)+'</h2>'+
@@ -2004,6 +2013,9 @@ G.raNgoai = function(){
 };
 
 G.boot = function(){
+  /* Bị nhúng vào khung của trang khác (guard.js đã xoá trắng và để lại
+     liên kết mở cửa sổ riêng) — không dựng app đè lên lời báo ấy. */
+  if(G.BI_NHUNG) return;
   if(G.batMaGioiThieu) G.batMaGioiThieu();
   if(G.batLinkKichHoat) G.batLinkKichHoat();
   sparks();

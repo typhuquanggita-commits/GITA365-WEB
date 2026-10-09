@@ -78,7 +78,7 @@ kiem('K3 · không còn dấu gỡ lỗi tạm [DEBUG-…] trong src/ và may-ch
 
 /* K4 */
 const gi = doc('.gitignore').split('\n').map(x => x.trim());
-const canCo = ['kho-goc/', 'kho/khoa.json', 'giay-phep/', '*.gita', '*.bien-nhan.txt'];
+const canCo = ['kho-goc/', 'kho/khoa.json', 'giay-phep/', '*.gita', '*.bien-nhan.txt', '.dev.vars', '.env', '*.pem', '*.key', '.wrangler/'];
 const mat = canCo.filter(x => !gi.includes(x));
 kiem('K4 · .gitignore còn đủ dòng chặn tài sản mật', !mat.length, 'thiếu: ' + mat.join(', '));
 let lot = [];
@@ -99,6 +99,10 @@ kiem('K6 · không khai gói PyPI bị cách ly / tên gói trống (' + tepDs.l
 /* K7 */
 const csp = (doc('index.html').match(/Content-Security-Policy" content="([^"]+)"/) || [])[1] || '';
 kiem('K7 · CSP không mở cho mọi *.workers.dev / *.pages.dev', !!csp && !/https:\/\/\*\.workers\.dev/.test(csp) && !/https:\/\/\*\.pages\.dev/.test(csp));
+/* cdn.jsdelivr.net và cdnjs phục vụ mã của BẤT KỲ ai (mọi gói npm, mọi kho GitHub).
+   Mở cả tên miền là cho một lỗ chèn mã đi vòng qua CSP — chỉ được mở đúng thư mục. */
+const cdnTran = csp.split(/[\s;]+/).filter(x => /^https:\/\/(cdn\.jsdelivr\.net|cdnjs\.cloudflare\.com)\/?$/.test(x));
+kiem('K7 · CSP không mở trọn cdn.jsdelivr.net / cdnjs (chỉ đúng thư mục thư viện)', !!csp && !cdnTran.length, cdnTran.join(' '));
 
 /* K8 */
 const khongGhim = [];

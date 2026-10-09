@@ -1,0 +1,72 @@
+# ═══════════════════════════════════════════════════════════════
+# GITA 365 — An ninh kho mã (9/10/2026)
+#
+# Ba công cụ nguồn mở được dùng rộng rãi, chạy bằng TỆP CHẠY ĐÃ GHIM PHIÊN
+# BẢN và ĐỐI CHIẾU CHECKSUM (không tải "bản mới nhất", không curl | bash):
+#   · gitleaks  — dò khoá rò trên TOÀN BỘ lịch sử git (không chỉ bản hiện tại).
+#                 Bổ sung cho tools/soat-bi-mat.js, vốn chỉ soát tệp đang có.
+#   · actionlint — soát lỗi cú pháp/ngữ nghĩa của các quy trình GitHub Actions.
+#   · zizmor    — soát lỗ an ninh trong quy trình (chèn lệnh, quyền thừa…).
+#
+# Cấu hình bỏ qua báo nhầm của gitleaks: .gitleaks.toml (phải soát tay).
+# ═══════════════════════════════════════════════════════════════
+name: An ninh kho ma
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '17 2 * * 1'   # sáng thứ Hai giờ Việt Nam
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: an-ninh-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  soat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Harden runner (ghi lại mọi kết nối ra ngoài)
+        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: gitleaks — toàn bộ lịch sử
+        run: |
+          set -eu
+          V=8.30.1
+          SHA=551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+          curl -fsSLo gl.tgz "https://github.com/gitleaks/gitleaks/releases/download/v${V}/gitleaks_${V}_linux_x64.tar.gz"
+          echo "${SHA}  gl.tgz" | sha256sum -c -
+          tar xzf gl.tgz gitleaks
+          ./gitleaks git --redact --no-banner --exit-code 1 -c .gitleaks.toml .
+
+      - name: actionlint — quy trình GitHub Actions
+        run: |
+          set -eu
+          V=1.7.12
+          SHA=8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8
+          curl -fsSLo al.tgz "https://github.com/rhysd/actionlint/releases/download/v${V}/actionlint_${V}_linux_amd64.tar.gz"
+          echo "${SHA}  al.tgz" | sha256sum -c -
+          tar xzf al.tgz actionlint
+          ./actionlint -color -shellcheck= -pyflakes=
+
+      - name: zizmor — lỗ an ninh trong quy trình
+        run: |
+          set -eu
+          python3 -m pip install --quiet --disable-pip-version-check 'zizmor==1.16.0'
+          zizmor --offline --min-severity medium .github/workflows/
+
+      - name: Móc chặn commit — tệp mật, tệp nén, tệp quá lớn
+        run: node tools/chan-commit.mjs --tat-ca

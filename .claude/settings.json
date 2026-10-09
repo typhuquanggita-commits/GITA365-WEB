@@ -1,10 +1,34 @@
 {
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "git config core.hooksPath .githooks 2>/dev/null; echo 'Móc chặn commit đã bật (tools/chan-commit.mjs). Đẩy lên main = triển khai thật.'",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  },
   "permissions": {
+    "ask": [
+      "Bash(git push origin main:*)",
+      "Bash(git push origin HEAD:main:*)",
+      "Bash(git push origin HEAD:refs/heads/main:*)",
+      "Bash(git push -u origin main:*)"
+    ],
     "deny": [
       "Bash(git push --force:*)",
       "Bash(git push -f:*)",
       "Bash(git push --force-with-lease:*)",
       "Bash(git reset --hard:*)",
+      "Bash(git add -f:*)",
+      "Bash(git add --force:*)",
+      "Bash(git commit --no-verify:*)",
+      "Bash(git commit -n:*)",
+      "Bash(git config core.hooksPath /dev/null:*)",
       "Edit(gita-nghe.js)",
       "Write(gita-nghe.js)",
       "Edit(gita-app.js)",
@@ -14,7 +38,14 @@
       "Write(kho/khoa.json)",
       "Read(kho-goc/**)",
       "Read(giay-phep/**)",
-      "Read(**/*.gita)"
+      "Read(**/*.gita)",
+      "Read(**/.dev.vars)",
+      "Read(**/.env)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)",
+      "Read(**/kaggle.json)",
+      "Edit(.githooks/**)",
+      "Write(.githooks/**)"
     ]
   }
 }

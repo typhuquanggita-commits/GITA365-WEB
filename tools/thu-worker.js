@@ -112,7 +112,7 @@ const env = {
   GHI_THU: hopThu,
   GITA_DIA_CHI_WEB: 'https://gita.edu.vn',
   GITA_TIEU: 'tieu-thu-nghiem-khong-dung-that',
-  GITA_KHOA_KY: 'khoa-' + 'ky-thu-nghiem-khong-dung-that',  // khoá giả lập cho bài thử, không phải khoá thật
+  GITA_KHOA_KY: 'khoa-ky-thu-nghiem-khong-dung-that',  // gita-bi-mat:bo-qua — khoá giả lập cho bài thử
   GITA_KHOA_KHO: JSON.stringify({
     nen: 'khoa-nen', nghe: 'khoa-nghe', 'nghe-cao': 'khoa-nghe-cao',
     tang1: 'k1', tang2: 'k2', tang3: 'k3', tang4: 'k4', tang5: 'k5'
@@ -1974,7 +1974,7 @@ bao(!(await goi({fn:'capQuyenTaiChinh', token:tkSA, u:'superadmin@gita365.vn',
 
 /* ── NỐI SỔ VỚI TÀI KHOẢN NGÂN HÀNG · CHỐT 9.98 ── */
 console.log('\n15e · NGÂN HÀNG VÀ THÔNG BÁO');
-env.GITA_KHOA_NGANHANG = 'khoa-' + 'ngan-hang-thu-nghiem';  // khoá giả lập cho bài thử, không phải khoá thật
+env.GITA_KHOA_NGANHANG = 'khoa-ngan-hang-thu-nghiem';  // gita-bi-mat:bo-qua — khoá giả lập cho bài thử
 
 bao(!(await goi({fn:'nganHangBao', khoa:'sai-khoa',
   giaoDich:{soTaiKhoan:'0011', maGiaoDich:'FT1', huong:'vao', soTien:100000}})).than.ok,
@@ -3327,7 +3327,7 @@ bao(!cuaDong.than.ok && cuaDong.than.code === 'CUADONG' &&
   'nối một bộ vẽ bên ngoài là một quyết định phải bấm, không phải một thứ có sẵn · ' +
   'cần nạp: ' + (cuaDong.than.canNap || []).join(', '));
 
-env.GITA_KHOA_VE = 'khoa-' + 've-thu-nghiem';  // khoá giả lập cho bài thử, không phải khoá thật
+env.GITA_KHOA_VE = 'khoa-ve-thu-nghiem';  // gita-bi-mat:bo-qua — khoá giả lập cho bài thử
 env.GITA_CONG_VE = 'https://bo-ve-thu-nghiem.vidu/api';
 
 /* ══ CỔNG GIẢ, ĐỂ ĐO ĐƯỢC CẢ PHẦN VỀ ══

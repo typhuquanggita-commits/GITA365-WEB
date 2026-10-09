@@ -1,0 +1,4 @@
+#!/bin/sh
+# GITA 365 — móc chạy trước mỗi lần commit. Cài một lần: git config core.hooksPath .githooks
+# Chặn tệp mật, khoá, tệp nén, tệp quá lớn và dáng khoá thật trước khi chúng vào lịch sử git.
+exec node tools/chan-commit.mjs

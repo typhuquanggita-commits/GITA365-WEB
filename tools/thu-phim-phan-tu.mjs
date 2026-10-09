@@ -188,5 +188,20 @@ kiem(mauNgoai.ok && mauNgoai.duAnh === true && goiNgoai === 4, 'dịch vụ ngo�
 kiem((await dongGoiPhanTu({ canh: [] }, env, env.CSDL, R01)).code === 'THIEU_CANH', 'từ chối phim không có cảnh');
 kiem((await dongGoiPhanTu({ canh: [{ loi: 'x' }], anh: [{ khoa: 'a', duLieu: 'abc' }] }, env, env.CSDL, R01)).code === 'ANH', 'từ chối ảnh hỏng');
 
+/* Người lạ mở /phim/* không được kích dịch vụ vẽ ảnh TRẢ PHÍ bên ngoài
+   (9/10/2026). Chỉ lượt của chủ hệ (dongGoiPhanTu mau) mới được gọi. */
+{
+  const envTraPhi = { CSDL: taoD1(), HOSO: taoR2(), GITA_VE_ANH_URL: 'https://ve-anh.thu/v1/images', GITA_VE_ANH_KHOA: 'khoa-thu' };
+  const fetchGoc = globalThis.fetch; let goiTraPhi = 0;
+  globalThis.fetch = async (u) => { if (String(u).startsWith('https://ve-anh.thu/')) goiTraPhi++; return new Response('{}', { status: 500 }); };
+  try {
+    await phucVuPhimPhanTu(new Request('https://x/phim/mau'), envTraPhi, '/phim/mau');
+    await phucVuPhimPhanTu(new Request('https://x/phim/xem/mau-gita-365'), envTraPhi, '/phim/xem/mau-gita-365');
+    kiem(goiTraPhi === 0, 'người lạ mở /phim/* không gọi dịch vụ vẽ trả phí (gọi ' + goiTraPhi + ' lần)');
+    await dongGoiPhanTu({ mau: true }, envTraPhi, envTraPhi.CSDL, R01);
+    kiem(goiTraPhi > 0, 'lượt của chủ hệ vẫn gọi được dịch vụ vẽ (phép đo có thể đỏ)');
+  } finally { globalThis.fetch = fetchGoc; }
+}
+
 console.log(hong ? ('Hỏng ' + hong + '/' + (dat + hong)) : ('Đạt ' + dat + '/' + dat));
 process.exit(hong ? 1 : 0);
