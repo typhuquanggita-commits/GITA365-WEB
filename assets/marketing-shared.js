@@ -70,21 +70,35 @@
     if(form && status){
       form.addEventListener('submit', function(e){
         e.preventDefault();
-        var data = new FormData(form);
-        fetch(form.action, {method:'POST', body:data, headers:{Accept:'application/json'}})
-          .then(function(r){
-            if(r.ok){
+        var en = window.G && G.MK_LANG==='en';
+        /* Gửi về Worker của Học viện (cửa guiLienHe) — không qua dịch vụ ngoài.
+           Máy chủ tự soát mọi ô; ở đây chỉ gom và báo lại đúng lời máy chủ nói. */
+        var o = {fn:'guiLienHe'};
+        ['name','phone','email','topic','message','website'].forEach(function(k){
+          var el = form.elements[k]; o[k] = el ? String(el.value || '') : '';
+        });
+        var nut = form.querySelector('button[type="submit"]');
+        if(nut) nut.disabled = true;
+        status.textContent = en ? 'Sending…' : 'Đang gửi…';
+        status.style.color = '';
+        fetch(form.getAttribute('data-may-chu'), {method:'POST', body:JSON.stringify(o),
+          headers:{'Content-Type':'application/json'}})
+          .then(function(r){ return r.json(); })
+          .then(function(kq){
+            if(kq && kq.ok){
               form.reset();
-              status.textContent = (window.G && G.MK_LANG==='en') ? 'Thank you. We will call you within 24 hours.' : 'Cảm ơn bạn. Chúng tôi sẽ gọi lại trong 24 giờ.';
+              status.textContent = en ? 'Thank you. We will call you within 24 hours.' : 'Cảm ơn bạn. Chúng tôi sẽ gọi lại trong 24 giờ.';
               status.style.color = 'var(--ok)';
             }else{
-              throw new Error('fail');
+              status.textContent = (kq && kq.error) || (en ? 'Could not send. Please call 08.5555.4688.' : 'Gửi không thành công. Vui lòng gọi 08.5555.4688.');
+              status.style.color = 'var(--gita-do)';
             }
           })
           .catch(function(){
-            status.textContent = (window.G && G.MK_LANG==='en') ? 'Could not send. Please call 08.5555.4688.' : 'Gửi không thành công. Vui lòng gọi 08.5555.4688.';
+            status.textContent = en ? 'Could not send. Please call 08.5555.4688.' : 'Gửi không thành công. Vui lòng gọi 08.5555.4688.';
             status.style.color = 'var(--gita-do)';
-          });
+          })
+          .then(function(){ if(nut) nut.disabled = false; });
       });
     }
 

@@ -91,7 +91,12 @@
           </div>
         </div>
       </div>
-      <form class="m-form" id="contactForm" action="https://formspree.io/f/xnqevwna" method="POST">
+      <!-- Form gửi về Worker của chính Học viện (cửa guiLienHe, may-chu/lien-he.js) —
+           không qua dịch vụ ngoài. Thư tới hòm chủ hệ, máy chủ không lưu nội dung. -->
+      <form class="m-form" id="contactForm" data-may-chu="https://gita365.typhuquanggita.workers.dev/">
+        <div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden">
+          <label>Bỏ trống ô này <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+        </div>
         <input type="text" name="name" placeholder="Họ tên" data-m-placeholder="contactFormName" required>
         <input type="tel" name="phone" placeholder="Số điện thoại" data-m-placeholder="contactFormPhone" required>
         <input type="email" name="email" placeholder="Email" data-m-placeholder="contactFormEmail">

@@ -131,5 +131,11 @@ jobs:
       - name: Phim phân tử — người lạ không kích dịch vụ vẽ trả phí
         run: node tools/thu-phim-phan-tu.mjs
 
+      - name: Liên hệ — thư tới hòm chủ hệ, không lưu, không ra dịch vụ ngoài
+        run: node tools/thu-lien-he.mjs
+
+      - name: Máy chủ cấp khoá bản .exe — dấu máy không chép được, duyệt đúng một tài khoản
+        run: node tools/thu-may-chu-may-tinh.mjs
+
       - name: Móc chặn commit — quét toàn bộ tệp đang theo dõi
         run: node tools/chan-commit.mjs --tat-ca

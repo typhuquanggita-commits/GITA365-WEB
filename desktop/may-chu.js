@@ -107,13 +107,33 @@ function ghiMayQuen() {
   } catch { /* không ghi được thì vẫn chạy, chỉ là lần sau phải duyệt lại */ }
 }
 
-/* Vân tay máy: đủ để phân biệt hai máy trong nhà, không phải để định danh người.
-   Lấy từ địa chỉ mạng + chuỗi trình duyệt. Đổi trình duyệt là phải duyệt lại —
-   đúng ý: mỗi đường vào mới là một lần chủ hệ thống nhìn thấy. */
-function vanTay(req) {
-  const ip = (req.socket.remoteAddress || '').replace(/^::ffff:/, '');
-  const ua = String(req.headers['user-agent'] || '').slice(0, 200);
-  return crypto.createHash('sha256').update(ip + '|' + ua).digest('hex').slice(0, 16);
+/* Vân tay máy = MÃ NGẪU NHIÊN riêng của mỗi máy, giữ trong cookie HttpOnly.
+
+   Bản cũ lấy địa chỉ mạng + chuỗi trình duyệt — hai thứ ấy CHÉP ĐƯỢC: một
+   máy khác sau cùng bộ phát wifi (cùng IP ra ngoài) đặt cùng chuỗi trình
+   duyệt là mang được dấu của một máy đã duyệt (soát an ninh 9/10/2026).
+   Mã ngẫu nhiên 144 bit do máy chủ phát thì không đoán được; HttpOnly nên
+   mã chạy trong trang cũng không đọc ra được. Đổi trình duyệt hay xoá
+   cookie là phải duyệt lại — đúng ý: mỗi đường vào mới là một lần chủ hệ
+   thống nhìn thấy. */
+const COOKIE_MAY = 'gita_may';
+function maMayTuCookie(req) {
+  const c = String(req.headers.cookie || '');
+  const m = c.match(/(?:^|;\s*)gita_may=([A-Za-z0-9_-]{24})(?:;|$)/);
+  return m ? m[1] : '';
+}
+function vanTayTuMa(ma) {
+  return crypto.createHash('sha256').update('may|' + ma).digest('hex').slice(0, 16);
+}
+/* Máy chưa có mã thì phát mã mới NGAY ở lượt này (trả kèm Set-Cookie). */
+function vanTay(req, res) {
+  let ma = maMayTuCookie(req);
+  if (!ma) {
+    ma = crypto.randomBytes(18).toString('base64url');
+    if (res) res.setHeader('Set-Cookie', COOKIE_MAY + '=' + ma +
+      '; HttpOnly; SameSite=Strict; Path=/; Max-Age=31536000');
+  }
+  return vanTayTuMa(ma);
 }
 function tenMay(req) {
   const ip = (req.socket.remoteAddress || '').replace(/^::ffff:/, '');
@@ -218,7 +238,7 @@ function trangKhach() {
 /* ─────────── Bộ xử lý ─────────── */
 function xuLy(req, res) {
   don();
-  const van = vanTay(req);
+  const van = vanTay(req, res);
   let u;
   try { u = new URL(req.url, 'http://x'); } catch { return traJSON(res, 400, { ok: false, error: 'Đường dẫn hỏng' }); }
   const duong = decodeURIComponent(u.pathname);
@@ -301,14 +321,28 @@ function capPhep(req, res, van, d) {
   if (!d || d.fn !== 'capKhoa')
     return traJSON(res, 400, { ok: false, error: 'Máy chủ này chỉ cấp khoá mở kho. Đổi mật khẩu và đồng bộ vẫn đi qua máy chủ của Học viện.' });
 
+  const u = String(d.u || '').trim().toLowerCase();
   let m = mayQuen.get(van);
   if (!m) {
-    m = { ten: tenMay(req), duyet: 'cho', luc: Date.now(), lanCuoi: Date.now(), soPhien: 0, taiKhoan: d.u || '' };
+    m = { ten: tenMay(req), duyet: 'cho', luc: Date.now(), lanCuoi: Date.now(), soPhien: 0, taiKhoan: u };
     mayQuen.set(van, m);
-    bao('Máy lạ xin vào', m.ten + ' — tài khoản ' + (d.u || 'chưa rõ'), 'Đang chờ chủ hệ thống duyệt');
+    bao('Máy lạ xin vào', m.ten + ' — tài khoản ' + (u || 'chưa rõ'), 'Đang chờ chủ hệ thống duyệt');
   }
   m.lanCuoi = Date.now();
-  m.taiKhoan = d.u || m.taiKhoan;
+  /* DUYỆT MÁY = DUYỆT CHO ĐÚNG MỘT TÀI KHOẢN. Chủ hệ thống bấm duyệt khi
+     nhìn thấy "máy X · tài khoản Y". Bản cũ ghi đè tài khoản ở MỖI lượt
+     xin, nên một máy đã duyệt cho một Coach xin được khoá của tài khoản
+     Super Admin chỉ bằng cách gõ tên khác — máy chủ này không hỏi mật khẩu
+     (soát an ninh 9/10/2026). Nay tài khoản chỉ còn đổi được khi máy CÒN
+     CHỜ duyệt; đã duyệt rồi thì muốn dùng tài khoản khác phải được duyệt lại. */
+  if (m.duyet === 'cho') m.taiKhoan = u || m.taiKhoan;
+  else if (m.duyet === 'thuan' && u !== String(m.taiKhoan || '').toLowerCase()) {
+    bao('Đổi tài khoản trên máy đã duyệt', m.ten + ' được duyệt cho "' + (m.taiKhoan || '?') +
+      '" nhưng xin khoá cho "' + (u || '?') + '"', 'Đã từ chối');
+    return traJSON(res, 403, { ok: false, code: 'SAITAIKHOAN',
+      error: 'Máy này chỉ được duyệt cho tài khoản ' + (m.taiKhoan || '?') +
+        '. Muốn dùng tài khoản khác, nhờ chủ hệ thống "Quên máy" rồi duyệt lại.' });
+  }
 
   if (m.duyet === 'chan')
     return traJSON(res, 403, { ok: false, code: 'BICHAN', error: 'Máy này đã bị chủ hệ thống cắt quyền dùng.' });
@@ -324,13 +358,13 @@ function capPhep(req, res, van, d) {
      Nên máy chủ bỏ qua nó và tra bảng cấp phát theo TÊN ĐĂNG NHẬP. Tài khoản
      lạ thì không có dòng nào trong bảng, và không gói nào được mã hoá cho nó. */
   const bang = (layBangCap && layBangCap()) || {};
-  const hoSo = bang[String(d.u || '').toLowerCase()];
+  const hoSo = bang[u];
   if (!hoSo) {
-    bao('Từ chối cấp khoá', tenMay(req) + ' đăng nhập "' + (d.u || '') + '"', 'Không có tài khoản này trong bảng cấp phát');
+    bao('Từ chối cấp khoá', tenMay(req) + ' đăng nhập "' + u + '"', 'Không có tài khoản này trong bảng cấp phát');
     return traJSON(res, 403, { ok: false, error: 'Tài khoản này chưa có trong bảng cấp phát của máy chủ.' });
   }
   if (d.vai && d.vai !== hoSo.vai)
-    bao('Máy khách khai sai vai', (d.u || '') + ' khai "' + d.vai + '", hồ sơ là "' + hoSo.vai + '"', 'Đã dùng vai trong hồ sơ');
+    bao('Máy khách khai sai vai', u + ' khai "' + d.vai + '", hồ sơ là "' + hoSo.vai + '"', 'Đã dùng vai trong hồ sơ');
 
   /* Lọc TRƯỚC khi mã. Gói ngoài phạm vi không được sinh ra bản mã nào cả —
      máy khách không có gì để mà tải. */
@@ -339,7 +373,7 @@ function capPhep(req, res, van, d) {
   const ds = xin.filter(t => duoc.indexOf(t) >= 0 && khoaGoc[t]);
 
   const maPhien = crypto.randomBytes(24).toString('base64url');
-  const p = { van, vai: hoSo.vai, taiKhoan: d.u || '', mo: new Map(), khoa: {}, luc: Date.now() };
+  const p = { van, vai: hoSo.vai, taiKhoan: u, mo: new Map(), khoa: {}, luc: Date.now() };
   const truot = [];
   for (const ten of ds) {
     let ro;
@@ -379,7 +413,7 @@ function capPhep(req, res, van, d) {
   phien.set(maPhien, p);
   m.soPhien++;
   ghiMayQuen();
-  bao('Cấp khoá phiên', m.ten + ' · ' + (d.u || '?') + ' · vai ' + hoSo.vai,
+  bao('Cấp khoá phiên', m.ten + ' · ' + (u || '?') + ' · vai ' + hoSo.vai,
     ds.length + ' gói, khoá dùng một lần, hết hạn sau 8 giờ');
 
   traJSON(res, 200, {

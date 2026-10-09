@@ -76,12 +76,19 @@ sẻ), `gitavideo` (chủ hệ tạo 5/10, chưa rõ dụng ý).
 1. **Bảo vệ nhánh `main`** (Settings → Branches): bắt buộc qua bộ kiểm, cấm đẩy
    ép. Đổi cách làm việc (tải tệp lên trang web sẽ phải qua Pull Request), nên
    chủ hệ quyết.
-2. **Bản .exe**: máy chủ khoá trong mạng nội bộ (`desktop/may-chu.js`) cấp khoá
-   theo tên tài khoản mà không hỏi mật khẩu — đừng phát hành bản .exe trước khi
-   vá. Chi tiết ở `docs/quy-trinh-chua-bat/README.md`.
+2. ~~**Bản .exe**: máy chủ khoá nội bộ cấp khoá theo tên tài khoản không hỏi mật khẩu~~
+   → **đã vá**: dấu máy là mã ngẫu nhiên 144 bit trong cookie HttpOnly (không còn IP +
+   trình duyệt, thứ chép được); duyệt một máy là duyệt cho ĐÚNG MỘT tài khoản — máy đã
+   duyệt cho Coach xin khoá Super Admin bị chặn `SAITAIKHOAN`. Bộ thử
+   `tools/thu-may-chu-may-tinh.mjs`. Hệ quả: các máy đã duyệt trước bản này phải được
+   duyệt lại một lần. Mạng nội bộ vẫn là HTTP thường — chỉ bật trong mạng tin cậy.
 3. ~~Khoá riêng của báo cáo soát toàn màn~~ → **đã chốt**, xem mục dưới.
-4. **Biểu mẫu liên hệ** gửi họ tên, số điện thoại sang `formspree.io` (ngoài
-   Cloudflare) — xác nhận đây là chủ ý và có trong chính sách dữ liệu.
+4. ~~**Biểu mẫu liên hệ** gửi sang `formspree.io`~~ → **đã chuyển** về Worker của Học
+   viện (cửa `guiLienHe`, `may-chu/lien-he.js`): thư tới hòm chủ hệ, máy chủ không lưu
+   nội dung, ô mồi chặn máy quét, trần 3 lượt/giờ/IP trên D1. Bộ thử `tools/thu-lien-he.mjs`.
+7. **Dấu đỏ "Workers Builds"** trên mỗi commit: lối nối Git cũ của Cloudflare tự triển
+   khai KHÔNG qua bộ kiểm. Gỡ bằng Actions → **Tắt Workers Builds** (chọn `tat`), hoặc
+   bấm tay: Workers & Pages → gita365 / gita365-web → Settings → Build → Disconnect.
 5. **Mô hình tải về không có dấu vân tay**: `wav2lip_gan.pth` (máy quay Kaggle)
    và điểm kiểm OpenVoice — tệp mô hình PyTorch chạy được mã khi nạp; nên ghim
    SHA-256 khi có bản tải chuẩn.
