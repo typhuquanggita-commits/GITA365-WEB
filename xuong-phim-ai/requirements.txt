@@ -2,7 +2,7 @@
 # Cài theo nhu cầu từng bước để tiết kiệm thời gian/giờ GPU.
 
 # Lõi
-torch>=2.1
+torch>=2.14.1
 diffusers>=0.30.0
 transformers>=4.44
 accelerate>=0.33
