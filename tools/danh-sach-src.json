@@ -136,6 +136,7 @@
     "src/giam-sat.js",
     "src/supreme.js",
     "src/tu-nang-cap.js",
+    "src/xuong-tai-lieu.js",
     "src/tu-hoan-thien.js",
     "src/quyen-nang-ai.js",
     "src/crm.js",

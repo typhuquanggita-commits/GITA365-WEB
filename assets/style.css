@@ -3173,6 +3173,21 @@ body.hdp-khoa{overflow:hidden}
 .dtc-cot{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
 .dtc-cot .dtc-hang{margin-bottom:6px}
 
+/* Ngăn Xưởng tài liệu (src/xuong-tai-lieu.js) — Vòng tự hoàn thiện. */
+.xtl-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;align-items:end;margin-bottom:12px}
+.xtl-o{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--ink-2)}
+.xtl-o input,.xtl-o select{width:100%}
+.xtl-rong{grid-column:1 / -1}
+.xtl-chk{display:flex;gap:8px;align-items:center;font-size:12.5px;min-height:32px}
+.xtl-bao{margin:0 0 10px}
+.xtl-dsda{display:grid;gap:10px}
+.xtl-da{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--surface)}
+.xtl-xem{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
+.xtl-ds{margin:4px 0 10px;padding-left:20px}
+.xtl-ch{margin:6px 0}
+.xtl-ch summary{cursor:pointer;font-weight:700;min-height:32px;display:flex;align-items:center;gap:6px}
+.xtl-van{white-space:pre-wrap;font-size:14.5px;line-height:1.6;max-height:420px;overflow:auto;padding:8px 0}
+
 @media(pointer:coarse){
   .chip{min-height:34px;padding-block:6px}
   select,select.inp{min-height:40px}

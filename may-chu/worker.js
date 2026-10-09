@@ -112,6 +112,7 @@ import { phimMienPhi, phimTrangThaiDu } from './phim-0d.js';
 import { hoiDaTri, hoiDongDaTri, chamDaTri, soDaTri, luuGiaiPhap, duyetGiaiPhap, dsGiaiPhap, boSungGiaiPhap,
   canhMauDaTri, canhMauTuDong, thuMauDaTri, vongKhoaHocTuDong, docVongKhoaHoc,
   taoTuyenDaTri, datTuChayTuyen, chayChangDaTri, docTuyenDaTri } from './bo-nao-da-tri.js';
+import { lapDeAnTaiLieu, chayBuocTaiLieu, docDeAnTaiLieu, datTuChayTaiLieu } from './xuong-tai-lieu.js';
 import { docKpiCayTien } from './cay-tien.js';
 import { docDongChay } from './dong-chay.js';
 import { trangThaiCongKhai } from './trang-thai.js';
@@ -336,7 +337,8 @@ const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau'
   'hoiChatbot', 'lichSuChat', 'soanDeBaiNgoai',
   'hoiDaTri', 'hoiDongDaTri', 'chamDaTri', 'soDaTri',
   'luuGiaiPhap', 'duyetGiaiPhap', 'dsGiaiPhap', 'boSungGiaiPhap', 'canhMauDaTri', 'thuMauDaTri', 'docVongKhoaHoc',
-  'taoTuyenDaTri', 'chayChangDaTri', 'docTuyenDaTri', 'docKpiCayTien', 'docDongChay',
+  'taoTuyenDaTri', 'chayChangDaTri', 'docTuyenDaTri',
+  'lapDeAnTaiLieu', 'chayBuocTaiLieu', 'docDeAnTaiLieu', 'datTuChayTaiLieu', 'docKpiCayTien', 'docDongChay',
   'phimTrangThai', 'phimGuiViec', 'phimXemViec', 'phimTinhHuong', 'phimMienPhi', 'quayKhopMoi', 'quayChuyenDong', 'quayVideoDong', 'taoNhanVatAI', 'quayXem', 'quayXoa', 'quayGiongNoi', 'quayPhimMoi', 'dongGoiPhanTu', 'xemPhanTu',
   'guiBaoCaoNgay', 'tongHopBaoCao', 'dsBaoCaoNgay',
   /* Ví credit (credit.js) — sổ cái chỉ thêm dòng, bảng chủ hệ đã duyệt. */
@@ -776,6 +778,10 @@ async function lam(fn, y, env, db, req) {
   if (fn === 'docVongKhoaHoc')    return await docVongKhoaHoc(y, env, db, hoSo);
   if (fn === 'taoTuyenDaTri')     return await taoTuyenDaTri(y, env, db, hoSo);
   if (fn === 'chayChangDaTri')    return await chayChangDaTri(y, env, db, hoSo);
+  if (fn === 'lapDeAnTaiLieu')    return await lapDeAnTaiLieu(y, env, db, hoSo);
+  if (fn === 'chayBuocTaiLieu')   return await chayBuocTaiLieu(y, env, db, hoSo);
+  if (fn === 'docDeAnTaiLieu')    return await docDeAnTaiLieu(y, env, db, hoSo);
+  if (fn === 'datTuChayTaiLieu')  return await datTuChayTaiLieu(y, env, db, hoSo);
   if (fn === 'datTuChayTuyen')    return await datTuChayTuyen(y, env, db, hoSo);
   if (fn === 'docTuyenDaTri')     return await docTuyenDaTri(y, env, db, hoSo);
   if (fn === 'docKpiCayTien')     return await docKpiCayTien(y, env, db, hoSo);

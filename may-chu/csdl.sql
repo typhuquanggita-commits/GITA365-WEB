@@ -2513,3 +2513,29 @@ CREATE TABLE IF NOT EXISTS doTrang (
   dem    INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (ngay, trang, su, nhan, nguon, may)
 );
+
+-- Xưởng tài liệu gia đình (may-chu/xuong-tai-lieu.js, 9/10/2026 · tinh tuý
+-- ainovel-cli). Mỗi dòng một đề án: kiến trúc sư → người viết → biên tập
+-- máy đo → đóng gói thành bản nháp chờ BA chữ ký (banNhapKho). Không cột
+-- "đã duyệt": duyệt hay chưa đọc ở banNhapKho + duyetNhap.
+CREATE TABLE IF NOT EXISTS deAnTaiLieu (
+  id         TEXT PRIMARY KEY,
+  chuDe      TEXT NOT NULL,
+  doiTuong   TEXT NOT NULL,                     -- phuHuynh · con6_10 · con11_14 · con15_18 · caNha
+  tang       TEXT NOT NULL,                     -- T1–T5
+  soChuong   INTEGER NOT NULL,                  -- 3–8
+  dieuNho    TEXT,
+  trangThai  TEXT NOT NULL DEFAULT 'kienTruc',  -- kienTruc · viet · dongGoi · choDuyet · dung
+  dangChuong INTEGER NOT NULL DEFAULT 0,
+  danY       TEXT,                              -- JSON: sổ nhất quán + dàn ý
+  chuong     TEXT NOT NULL DEFAULT '[]',        -- JSON: các chương đã qua biên tập
+  phatSinhId TEXT,                              -- dòng sổ phát sinh (khoRong) mà đề án lấp
+  banNhapId  TEXT,
+  tuChay     INTEGER NOT NULL DEFAULT 0,
+  soLuot     INTEGER NOT NULL DEFAULT 0,        -- lượt AI đã dùng (có trần)
+  loiCuoi    TEXT,
+  nccCuoi    TEXT,
+  taoBoi     TEXT,
+  taoLuc     TEXT,
+  suaLuc     TEXT
+);
