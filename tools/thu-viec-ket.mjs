@@ -109,5 +109,19 @@ kiem('Mạch không tự gỡ: phiếu thu kẹt vẫn chờ người xác nhậ
 const ma = fs.readFileSync(ROOT + '/may-chu/viec-ket.js', 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
 kiem('Mã mạch việc kẹt CHỈ ĐỌC: không INSERT · UPDATE · DELETE', !/\b(INSERT|UPDATE|DELETE)\b/i.test(ma));
 
+console.log('6 · XƯỞNG PHIM CÓ TRẦN: TIỀN GIỮ NẰM IM · CẦU DAO');
+sq.prepare("INSERT INTO duAnPhim (id,ten,soTap,phutTap,tranTapUsd,chatLuong,trangThai,lyDoDung,taoBoi,taoLuc,suaLuc) VALUES ('PH-D','Phim dừng',10,30,10,'canBang','dung','vượt giờ','gd',?,?)").run(truoc(30), truoc(1));
+sq.prepare("INSERT INTO duAnPhim (id,ten,soTap,phutTap,tranTapUsd,chatLuong,trangThai,taoBoi,taoLuc,suaLuc) VALUES ('PH-C','Phim chạy',10,30,10,'canBang','chay','gd',?,?)").run(truoc(30), truoc(1));
+sq.prepare("INSERT INTO quay_viec (ma,uid,trangThai,taoLuc,nhanLuc,may,loai) VALUES ('Q-DANG','U-SA','dang',?,?,'gpu-thue-1','vd')").run(Date.now() - 40 * 60e3, Date.now() - 30 * 60e3);
+sq.prepare("INSERT INTO chiPhiPhim (id,duAnId,tap,canh,loaiCanh,giuUsd,tranGiayGpu,trangThai,giuLuc) VALUES ('CP-IM','PH-C',1,'c1','dong',0.09,80,'giu',?)").run(truoc(3));
+sq.prepare("INSERT INTO chiPhiPhim (id,duAnId,tap,canh,loaiCanh,giuUsd,tranGiayGpu,maViec,trangThai,giuLuc) VALUES ('CP-CHAY','PH-C',1,'c2','dong',0.09,80,'Q-DANG','giu',?)").run(truoc(0.5));
+sq.prepare("INSERT INTO chiPhiPhim (id,duAnId,tap,canh,loaiCanh,giuUsd,tranGiayGpu,thatUsd,trangThai,giuLuc) VALUES ('CP-XONG','PH-C',1,'c3','dong',0.09,80,0.05,'xong',?)").run(truoc(9));
+const kqP = await VK.doViecKet(db);
+const giu = hang(kqP, 'GIU_TIEN_PHIM'), dungP = hang(kqP, 'PHIM_DUNG');
+kiem('Tiền giữ 3 giờ mà chưa máy trả phí nào nhận → KẸT; khoản đang có máy chạy → đang chạy; cảnh đã xong không tính',
+  giu.so.ket === 1 && giu.so.dang === 1 && giu.so.cho === 0 && giu.mau[0].id === 'CP-IM' && /không ai cầm/.test(giu.mau[0].viSao), JSON.stringify(giu.so));
+kiem('Dự án phim nhảy cầu dao → KẸT ngay (chờ Super Admin); dự án đang chạy không tính',
+  dungP.so.ket === 1 && dungP.so.dang + dungP.so.cho === 0 && dungP.mau[0].id === 'PH-D', JSON.stringify(dungP.so));
+
 console.log(sai ? `\n✗ ${sai} phép đo sai` : '\n✓ Mạch việc kẹt: phân biệt kẹt với chờ, nói "không biết" khi không đọc được, báo một lần, không tự gỡ');
 process.exit(sai ? 1 : 0);

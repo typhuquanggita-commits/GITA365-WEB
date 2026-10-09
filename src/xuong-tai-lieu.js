@@ -15,8 +15,13 @@ var G = window.G || {}; window.G = G;
   var U = G.U, h = U.h;
   var DOI_TUONG = [['phuHuynh','Cha mẹ'],['con6_10','Con 6–10 tuổi (đọc cùng cha mẹ)'],['con11_14','Con 11–14 tuổi'],
     ['con15_18','Con 15–18 tuổi'],['caNha','Cả nhà cùng đọc']];
+  var DOI_NGU = [['coach','Coach đồng hành'],['tuVan','Tư vấn viên'],['chuyenGia','Chuyên gia']];
+  /* Ba loại đề án — trùng đúng bảng LOAI_DE_AN ở máy chủ; máy chủ mới là
+     chỗ quyết người đọc nào hợp loại nào. */
+  var LOAI = [['giaDinh','Tài liệu gia đình'],['taiNguyen','Phiếu tài nguyên cho gia đình'],['doiNgu','Cẩm nang đội ngũ (nội bộ)']];
+  var TEN_LOAI = { giaDinh:'Tài liệu', taiNguyen:'Phiếu', doiNgu:'Cẩm nang' };
   var TRANG_THAI = { kienTruc:'Đang lập dàn ý', viet:'Đang viết', dongGoi:'Sắp đóng gói', choDuyet:'Chờ ba chữ ký', dung:'Đang dừng — cần người xem' };
-  var st = { ai:'', ds:null, dang:false, loi:'', bao:'', xem:null, dangXem:'' };
+  var st = { ai:'', ds:null, dang:false, loi:'', bao:'', xem:null, dangXem:'', loai:'giaDinh' };
   function coMayChu(){ return !!(G.API_CAP_PHEP && G.PHIEN_TOKEN); }
   function vai(){ return String((G.S && G.S.acc && G.S.acc.role) || ''); }
   function duocDung(){ var m = /^R0([1-4])$/.exec(vai()); return !!m; }
@@ -32,7 +37,7 @@ var G = window.G || {}; window.G = G;
   }
   function nap(){
     var ai = String((G.S && G.S.acc && G.S.acc.u) || '');
-    if(st.ai !== ai) st = { ai:ai, ds:null, dang:false, loi:'', bao:'', xem:null, dangXem:'' };
+    if(st.ai !== ai) st = { ai:ai, ds:null, dang:false, loi:'', bao:'', xem:null, dangXem:'', loai:'giaDinh' };
     if(coMayChu() && !st.ds && !st.dang && !st.loi) tai();
   }
   function giaTri(id){ var el = document.getElementById(id); return el ? el.value : ''; }
@@ -43,11 +48,19 @@ var G = window.G || {}; window.G = G;
     if(viec === 'lap'){
       var c = document.getElementById('xtl-tu-chay');
       b.disabled = true; st.bao = 'Đang đặt đề án…'; veLai();
-      G.goiMayChu('lapDeAnTaiLieu', { chuDe: giaTri('xtl-chu-de'), dieuNho: giaTri('xtl-dieu-nho'),
+      G.goiMayChu('lapDeAnTaiLieu', { loai: st.loai, chuDe: giaTri('xtl-chu-de'), dieuNho: giaTri('xtl-dieu-nho'),
         doiTuong: giaTri('xtl-doi-tuong'), tang: giaTri('xtl-tang'), soChuong: Number(giaTri('xtl-so-chuong')),
         tuChay: !!(c && c.checked) }).then(function(r){
         st.bao = r && r.ok ? 'Đã đặt đề án ' + r.id + (r.tuChay ? ' — bộ não sẽ tự đi tiếp từng bước.' : ' — bấm "Chạy một bước" hoặc bật "Tự chạy".')
           : ((r && r.error) || 'Chưa đặt được đề án.');
+        st.ds = null; tai();
+      });
+    } else if(viec === 'bo'){
+      b.disabled = true; st.bao = 'Đang đặt bộ chủ đề khởi đầu…'; veLai();
+      G.goiMayChu('lapKeHoachKho', { bo:'khoiDau' }).then(function(r){
+        st.bao = r && r.ok ? r.vi + (r.boQua ? ' Bỏ qua ' + r.boQua + ' đề án đã có.' : '') +
+          (r.uocTinh && r.daTao ? ' Ước tính khoảng ' + r.uocTinh.ngay + ' ngày với ngân sách AI miễn phí hiện tại.' : '')
+          : ((r && r.error) || 'Chưa đặt được bộ chủ đề.');
         st.ds = null; tai();
       });
     } else if(viec === 'buoc'){
@@ -74,19 +87,26 @@ var G = window.G || {}; window.G = G;
       return '<option value="' + h(x[0]) + '"' + (x[0] === mac ? ' selected' : '') + '>' + h(x[1]) + '</option>';
     }).join('') + '</select>';
   }
+  G.xtlDoiLoai = function(el){ st.loai = el && el.value || 'giaDinh'; veLai(); };
   function form(){
     var so = []; for(var i = 3; i <= 8; i++) so.push([String(i), i + ' chương']);
+    var nguoi = st.loai === 'doiNgu' ? DOI_NGU : DOI_TUONG;
     return '<div class="xtl-form">' +
+      '<label class="xtl-o"><span>Loại</span><select class="inp" id="xtl-loai" onchange="G.xtlDoiLoai(this)">' + LOAI.map(function(x){
+        return '<option value="' + h(x[0]) + '"' + (x[0] === st.loai ? ' selected' : '') + '>' + h(x[1]) + '</option>'; }).join('') + '</select></label>' +
       '<label class="xtl-o xtl-rong"><span>Chủ đề — tài liệu giúp nhà làm được việc gì</span>' +
         '<input class="inp" id="xtl-chu-de" maxlength="200" placeholder="Ví dụ: Cùng con lập thời gian biểu buổi tối không cãi nhau"></label>' +
       '<label class="xtl-o xtl-rong"><span>Đọc xong, người đọc làm được (tuỳ chọn)</span>' +
         '<input class="inp" id="xtl-dieu-nho" maxlength="200" placeholder="Ví dụ: cùng con viết ba việc tối nay và dán lên tủ lạnh"></label>' +
-      '<label class="xtl-o"><span>Người đọc</span>' + chon('xtl-doi-tuong', DOI_TUONG, 'phuHuynh') + '</label>' +
+      '<label class="xtl-o"><span>Người đọc</span>' + chon('xtl-doi-tuong', nguoi, nguoi[0][0]) + '</label>' +
       '<label class="xtl-o"><span>Tầng</span>' + chon('xtl-tang', [['T1','T1'],['T2','T2'],['T3','T3'],['T4','T4'],['T5','T5']], 'T1') + '</label>' +
       '<label class="xtl-o"><span>Độ dài</span>' + chon('xtl-so-chuong', so, '5') + '</label>' +
       '<label class="xtl-chk"><input type="checkbox" id="xtl-tu-chay" checked> Tự chạy — bộ não đi tiếp từng bước, không cần bấm</label>' +
       '<button class="btn pri" data-xtl="lap">Đặt đề án</button>' +
-      '</div>';
+      '</div>' +
+      '<div class="xtl-bo"><div><b>Bộ khởi đầu · 31 đề án</b><p class="tiny muted">16 tài liệu gia đình theo năm tầng · 5 phiếu tài nguyên · ' +
+      '10 cẩm nang đội ngũ (coach, tư vấn, chuyên gia). Bộ não viết dần mỗi lượt; đề án đã có thì bỏ qua.</p></div>' +
+      '<button class="btn" data-xtl="bo">Nạp bộ khởi đầu</button></div>';
   }
   function chiTiet(d){
     if(!d) return '<p class="tiny muted">Đang đọc…</p>';
@@ -126,7 +146,7 @@ var G = window.G || {}; window.G = G;
     o += '<div class="xtl-dsda">' + st.ds.map(function(d){
       var chay = ['kienTruc','viet','dongGoi'].indexOf(d.trangThai) >= 0;
       var x = '<div class="xtl-da"><div class="row" style="gap:8px;flex-wrap:wrap;align-items:center">' +
-        '<b class="grow">' + h(d.chuDe) + '</b>' +
+        '<b class="grow">' + (d.loai && d.loai !== 'giaDinh' ? '<span class="tiny muted">' + h(TEN_LOAI[d.loai] || d.loai) + ' · </span>' : '') + h(d.chuDe) + '</b>' +
         '<span class="pill">' + h(TRANG_THAI[d.trangThai] || d.trangThai) + '</span></div>' +
         '<div class="tiny muted">' + h(d.id) + ' · ' + h(d.tang) + ' · chương ' + h(String(Math.min(d.dangChuong, d.soChuong))) + '/' + h(String(d.soChuong)) +
         ' · lượt AI ' + h(String(d.soLuot)) + '/' + h(String(d.tranLuot)) + (d.tuChay ? ' · tự chạy' : '') +

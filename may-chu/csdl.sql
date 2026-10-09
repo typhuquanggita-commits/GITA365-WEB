@@ -2525,6 +2525,7 @@ CREATE TABLE IF NOT EXISTS deAnTaiLieu (
   tang       TEXT NOT NULL,                     -- T1–T5
   soChuong   INTEGER NOT NULL,                  -- 3–8
   dieuNho    TEXT,
+  loai       TEXT NOT NULL DEFAULT 'giaDinh',   -- giaDinh · taiNguyen (chuỗi 'kho') · doiNgu (chuỗi 'camNang')
   trangThai  TEXT NOT NULL DEFAULT 'kienTruc',  -- kienTruc · viet · dongGoi · choDuyet · dung
   dangChuong INTEGER NOT NULL DEFAULT 0,
   danY       TEXT,                              -- JSON: sổ nhất quán + dàn ý
@@ -2539,3 +2540,44 @@ CREATE TABLE IF NOT EXISTS deAnTaiLieu (
   taoLuc     TEXT,
   suaLuc     TEXT
 );
+
+-- Xưởng phim có trần ngân sách (may-chu/phim-ngan-sach.js, 9/10/2026).
+-- Chủ hệ mở 3–10 USD cho mỗi video 30 phút. Không cột "đã chi" tổng nào:
+-- đã chi = tiền thật của cảnh xong + tiền đang giữ của cảnh chưa xong,
+-- tính lúc đọc. Tiền do máy chủ tính từ giây GPU, không nhận từ máy thợ.
+CREATE TABLE IF NOT EXISTS duAnPhim (
+  id         TEXT PRIMARY KEY,
+  ten        TEXT NOT NULL,
+  soTap      INTEGER NOT NULL,
+  phutTap    INTEGER NOT NULL,
+  tranTapUsd REAL NOT NULL,                     -- ≤ 10 (lời chủ hệ), chỉ hạ được
+  chatLuong  TEXT NOT NULL,                     -- tietKiem · canBang · caoNhat
+  trangThai  TEXT NOT NULL DEFAULT 'chay',      -- chay · dung (cầu dao giờ GPU)
+  lyDoDung   TEXT,
+  taoBoi     TEXT,
+  taoLuc     TEXT,
+  suaLuc     TEXT
+);
+CREATE TABLE IF NOT EXISTS chiPhiPhim (
+  id          TEXT PRIMARY KEY,
+  duAnId      TEXT NOT NULL,
+  tap         INTEGER NOT NULL,
+  canh        TEXT NOT NULL,
+  loaiCanh    TEXT NOT NULL,                    -- dong · khau
+  giuUsd      REAL NOT NULL,                    -- tiền giữ trước khi giao việc
+  tranGiayGpu INTEGER NOT NULL,                 -- máy phải dừng khi chạm
+  thatUsd     REAL,                             -- máy chủ tính từ gpuGiay
+  gpuGiay     REAL,
+  giayRa      REAL,
+  say         TEXT,                             -- một câu ≤ 200 ký tự của máy
+  khoaR2      TEXT,
+  maViec      TEXT,                             -- quay_viec.ma
+  trangThai   TEXT NOT NULL DEFAULT 'giu',      -- giu · xong · vuotGio · loi · huy
+  may         TEXT,
+  giuLuc      TEXT NOT NULL,
+  xongLuc     TEXT,
+  UNIQUE (duAnId, tap, canh)
+);
+CREATE INDEX IF NOT EXISTS ix_cpp_du_an ON chiPhiPhim (duAnId, tap, trangThai);
+CREATE INDEX IF NOT EXISTS ix_cpp_luc ON chiPhiPhim (giuLuc);
+CREATE INDEX IF NOT EXISTS ix_cpp_viec ON chiPhiPhim (maViec);

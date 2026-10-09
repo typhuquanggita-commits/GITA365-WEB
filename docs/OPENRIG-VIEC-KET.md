@@ -22,11 +22,11 @@ chủ hệ yêu cầu. Nên ở đây không chép mã, chỉ lấy ý tưởng 
 | Chẩn đoán tính lúc đọc, không lưu | Không có cột "kẹt" nào; mỗi lần đọc tính lại từ dữ liệu thật |
 | Hệ chẩn đoán không tự sửa | Mạch **chỉ đọc**; bộ não vận hành chỉ ghi một dòng vào hộp thông báo mỗi ngày |
 
-Mười bốn hàng đợi được canh: phiếu thu chờ xác nhận · khoản chi · hoàn tiền ·
+Mười sáu hàng đợi được canh: phiếu thu chờ xác nhận · khoản chi · hoàn tiền ·
 miễn giảm · tin tài chính · bản nháp chờ ba chữ ký · phát sinh chưa ai soạn · đề
 án tài liệu · yêu cầu xoá dữ liệu (hạn luật 30 ngày) · khách mới chưa có Tư vấn ·
 hẹn CRM quá hạn · đề xuất nâng cấp chưa ký · thông báo cần xem chưa đọc · việc
-quay phim chờ máy.
+quay phim chờ máy · tiền giữ cho cảnh phim trả phí · dự án phim dừng vì cầu dao.
 
 Super Admin, Admin và Giám đốc xem ở **Trung tâm đo lường → khối "Việc kẹt"**:
 mỗi hàng có số việc kẹt, chờ, đang chạy; mở ra thấy từng việc, vì sao kẹt, và nút

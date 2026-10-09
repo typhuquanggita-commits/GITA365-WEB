@@ -2098,6 +2098,12 @@ main{container-type:inline-size}
      dung (hai cột ăn bớt bề ngang thay đổi theo viewport — media query
      không thấy). Rộng thì dựng vòng; hẹp thì giữ cụm gọn. */
   container:nhaVong / inline-size;
+  /* Lớp quay của vòng bánh đà là một hình vuông cỡ cả vòng; xoay 45° thì
+     hộp bao của nó rộng gấp 1,41 lần, và trình duyệt tính hộp đã xoay vào
+     bề ngang cuộn của trang — đo được 66px tràn ở khổ 1280, 147px ở 1024,
+     chập chờn theo nhịp quay. clip (không phải hidden): không biến trục kia
+     thành hộp cuộn, nhãn GITA 365 vắt trên mép vẫn hiện. */
+  overflow-x:clip;
 }
 .nha-vong-nhan{
   position:absolute;top:-15px;left:50%;transform:translateX(-50%);
@@ -3193,6 +3199,8 @@ body.hdp-khoa{overflow:hidden}
 .xtl-rong{grid-column:1 / -1}
 .xtl-chk{display:flex;gap:8px;align-items:center;font-size:12.5px;min-height:32px}
 .xtl-bao{margin:0 0 10px}
+.xtl-bo{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;border:1px dashed var(--line);border-radius:12px;padding:10px 12px;margin:0 0 12px}
+.xtl-bo p{margin:2px 0 0}
 .xtl-dsda{display:grid;gap:10px}
 .xtl-da{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--surface)}
 .xtl-xem{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
@@ -3200,6 +3208,47 @@ body.hdp-khoa{overflow:hidden}
 .xtl-ch{margin:6px 0}
 .xtl-ch summary{cursor:pointer;font-weight:700;min-height:32px;display:flex;align-items:center;gap:6px}
 .xtl-van{white-space:pre-wrap;font-size:14.5px;line-height:1.6;max-height:420px;overflow:auto;padding:8px 0}
+/* Ngân sách phim AI thật — src/phim-ngan-sach.js. Ba màu của ba loại cảnh
+   lấy từ token thương hiệu, để thanh chia tiền đọc được ở cả hai nền. */
+.pns-so{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:12px 0 8px}
+.pns-so > div{display:flex;flex-direction:column;gap:3px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.pns-so b{font-size:18px;color:var(--ink);font-variant-numeric:tabular-nums}
+.pns-vach{display:block;height:6px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:4px}
+.pns-vach span{display:block;height:100%;background:var(--gita-sau,var(--ok))}
+.pns-lap,.pns-giao{border:1px dashed var(--line);border-radius:12px;padding:8px 12px;margin:0 0 12px}
+.pns-lap summary,.pns-giao summary{cursor:pointer;font-weight:700;min-height:32px;display:flex;align-items:center}
+.pns-luoi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:8px 0 10px}
+.pns-da{border:1px solid var(--line);border-radius:12px;margin:0 0 10px;background:var(--surface)}
+.pns-dau{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;width:100%;text-align:left;background:none;border:0;padding:10px 12px;min-height:44px;cursor:pointer;color:var(--ink)}
+.pns-ten{font-weight:700;flex:1 1 200px}
+.pns-mo{padding:0 12px 12px}
+.pns-h4{margin:12px 0 6px;font-size:14.5px}
+.pns-thanh{display:flex;height:12px;border-radius:99px;overflow:hidden;background:var(--line)}
+.pns-dong{background:var(--gita-do)}
+.pns-khau{background:var(--t3,var(--warn))}
+.pns-tinh{background:var(--t1,var(--ink-4))}
+.pns-chu{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:4px;font-size:12.5px}
+.pns-chu i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:middle}
+.pns-bang{overflow-x:auto}
+.pns-bang td,.pns-bang th{font-variant-numeric:tabular-nums;white-space:nowrap}
+.pns-sai td{background:var(--line);background:color-mix(in srgb,var(--gita-do) 8%,transparent)}
+.pns-bn{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.pns-bn li{border-left:3px solid var(--line);padding:2px 0 2px 10px}
+.pns-dung{border:1px solid var(--gita-do);border-radius:10px;padding:8px 10px;margin:0 0 10px}
+/* Thanh ngăn dùng chung — tám màn (crm · giam-sat · ke-toan-thue ·
+   kho-tai-lieu · luat-giao-dien · quyen-nang-ai · tu-hoan-thien ·
+   tu-nang-cap) dựng <div class="tabs"><button class="tab"> mà không có
+   luật nào, nên nút rơi về kiểu mặc định của trình duyệt và nhãn dính
+   liền nhau. Cùng dáng với .chip để cả app nói một ngôn ngữ ngăn. */
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.tabs .tab{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:6px 14px;border-radius:99px;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink-2);font:inherit;font-size:14.5px;font-weight:600;cursor:pointer}
+.tabs .tab svg{width:15px;height:15px}
+.tabs .tab:hover{border-color:var(--gita-vien-2)}
+.tabs .tab.on{background:var(--gita-mo-2);border-color:var(--gita-vien-2);color:var(--gold-2)}
+.tabs .tab:focus-visible{outline:2px solid var(--gita-vien-2);outline-offset:2px}
+/* Dòng giải thích của bảng rỗng — U.tbl (src/ui.js). */
+.tbl td.tbl-rong{color:var(--ink-3);font-style:italic;text-align:left;white-space:normal}
 
 @media(pointer:coarse){
   .chip{min-height:34px;padding-block:6px}

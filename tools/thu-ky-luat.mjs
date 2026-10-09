@@ -20,6 +20,10 @@
    K7  CSP của index.html không mở cửa cho mọi *.workers.dev / *.pages.dev —
        chỉ Worker thuộc tài khoản của Học viện.
    K8  Workflow GitHub chỉ dùng action đã GHIM theo mã commit (40 ký tự).
+   K9  G.MAN_NGHE (tools/entete-app.txt, khai TAY) khớp đúng các màn của gói
+       nghề. Thiếu một màn thì trước khi gói nghề nạp, G.manCoThat nói màn ấy
+       không có thật — nút trỏ tới nó bấm không ăn gì, không báo gì. Đã xảy
+       ra với phim-cau-noi (9/10/2026), ba màn có nút chết.
 
    Dùng: node tools/thu-ky-luat.mjs */
 import fs from 'node:fs';
@@ -113,6 +117,16 @@ for (const f of fs.readdirSync(path.join(ROOT, '.github/workflows')).filter(x =>
   });
 }
 kiem('K8 · mọi action trong workflow đã ghim theo mã commit', !khongGhim.length, khongGhim.slice(0, 6).join(' · '));
+
+/* K9 */
+const ds9 = JSON.parse(doc('tools/danh-sach-src.json'));
+const manNghe = new Set();
+for (const f of ds9.nghe) for (const m of doc(f).matchAll(/G\.VIEWS\[\s*'([a-z0-9-]+)'\s*\]\s*=/g)) manNghe.add(m[1]);
+const khai9 = ((doc('tools/entete-app.txt').match(/MAN_NGHE\s*=\s*(\[[^\]]*\])/) || [])[1]) || '[]';
+const ds9Khai = JSON.parse(khai9);
+const thieu9 = [...manNghe].filter(v => ds9Khai.indexOf(v) < 0), thua9 = ds9Khai.filter(v => !manNghe.has(v));
+kiem('K9 · G.MAN_NGHE khớp đúng ' + manNghe.size + ' màn của gói nghề', manNghe.size > 0 && !thieu9.length && !thua9.length,
+  (thieu9.length ? 'thiếu: ' + thieu9.join(', ') : '') + (thua9.length ? ' · khai mà không có màn: ' + thua9.join(', ') : ''));
 
 console.log('\n' + dat + ' đạt · ' + truot + ' sai');
 process.exit(truot ? 1 : 0);

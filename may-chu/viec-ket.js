@@ -103,7 +103,19 @@ export const HANG_DOI = [
       "WHERE docLuc IS NULL AND mucDo IN ('canXem','gap')" },
   { ma: 'QUAY_PHIM', ten: 'Việc quay phim chờ máy', cua: 'xuong-phim', nguong: 24, tuMs: true,
     vi: 'Việc chờ quá lâu nghĩa là không máy quay nào đang nhận việc.',
-    sql: "SELECT ma AS id, loai AS tomTat, may AS chu, COALESCE(nhanLuc, taoLuc) AS tu, NULL AS han FROM quay_viec WHERE trangThai IN ('cho','dang')" }
+    sql: "SELECT ma AS id, loai AS tomTat, may AS chu, COALESCE(nhanLuc, taoLuc) AS tu, NULL AS han FROM quay_viec WHERE trangThai IN ('cho','dang')" },
+  /* Tiền đã giữ cho cảnh trả phí mà chưa máy GPU trả phí nào nhận: tiền nằm
+     im trong trần tháng, chặn cảnh khác. Sau 3 giờ lịch dọn tự trả về; ngưỡng
+     2 giờ để người thấy trước khi tiền bị trả — thường nghĩa là chưa bật máy. */
+  { ma: 'GIU_TIEN_PHIM', ten: 'Tiền giữ cho cảnh phim trả phí', cua: 'xuong-phim', nguong: 2,
+    vi: 'Không máy trả phí nào nhận thì tiền giữ nằm im trong trần — bật máy may-tra-phi.py hoặc để lịch dọn trả tiền về.',
+    sql: "SELECT c.id, ('Tập ' || c.tap || ' · ' || c.canh) AS tomTat, q.may AS chu, c.giuLuc AS tu, NULL AS han " +
+      "FROM chiPhiPhim c LEFT JOIN quay_viec q ON q.ma = c.maViec WHERE c.trangThai = 'giu'" },
+  /* Dự án phim nhảy cầu dao (máy chạy quá giờ GPU): đứng chờ Super Admin. Không
+     ai cầm và hạn coi như đã qua — một cầu dao nằm im là cả bộ phim nằm im. */
+  { ma: 'PHIM_DUNG', ten: 'Dự án phim dừng vì cầu dao', cua: 'xuong-phim', nguong: 24,
+    vi: 'Máy GPU chạy quá giờ đã giữ — Super Admin xem biên nhận rồi mở lại kèm lý do.',
+    sql: "SELECT id, ten AS tomTat, NULL AS chu, suaLuc AS tu, suaLuc AS han FROM duAnPhim WHERE trangThai = 'dung'" }
 ];
 
 function lucMs(v, tuMs) {

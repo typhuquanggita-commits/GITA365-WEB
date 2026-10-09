@@ -140,6 +140,35 @@ const b1 = that1.buoc.find(b => b.ma === 'XUONG_TAI_LIEU');
 kiem('Nhịp thật: đi tiếp đúng một bước', b1 && b1.daChay === 1 &&
   sq.prepare('SELECT trangThai FROM deAnTaiLieu WHERE id=?').get(lap3.id).trangThai === 'viet', JSON.stringify(b1));
 
+/* ── 5b · Ba loại đề án · máy xây kho hàng loạt ── */
+console.log('5b · BA LOẠI ĐỀ ÁN · XÂY KHO HÀNG LOẠT');
+kiem('Cẩm nang đội ngũ không nhận người đọc là phụ huynh', (await X.lapDeAnTaiLieu({ ...DE, loai: 'doiNgu', chuDe: 'Cuộc gọi đầu tiên với phụ huynh mới' }, env, db, SP)).code === 'SAI');
+const dn = await X.lapDeAnTaiLieu({ chuDe: 'Buổi đầu với một gia đình tầng 1: nghe, ghi, chưa chữa', loai: 'doiNgu', doiTuong: 'coach', tang: 'T1', soChuong: 3 }, env, db, SP);
+kiem('Cẩm nang đội ngũ cho Coach đặt được', dn.ok && dn.loai === 'doiNgu', JSON.stringify(dn));
+kichBan = {};
+let rr; for (let i = 0; i < 5; i++) rr = await X.chayBuocTaiLieu({ id: dn.id }, env, db, SP);
+const deBaiCN = daGui[daGui.length - 1];
+const bnDn = sq.prepare('SELECT * FROM banNhapKho WHERE id=?').get(String(rr.banNhapId || '')) || {};
+kiem('Cẩm nang đi chuỗi "camNang" vào kho CAMNANG_DOI_NGU, không đi chuỗi của khách', bnDn.loaiDuyet === 'camNang' && bnDn.tenKho === 'CAMNANG_DOI_NGU', JSON.stringify({ l: bnDn.loaiDuyet, k: bnDn.tenKho, r: rr && rr.code }));
+kiem('Người viết cẩm nang nhận đúng khuôn nghề (tình huống · dấu hiệu · điều không làm)', /CHƯƠNG \d+\//.test(deBaiCN));
+const TC = { role: 'R05', u: 'truongcoach', uid: 'U-TC' };
+await THT.duyetCap({ napId: bnDn.id, cap: 'coachCao', ghiChu: 'Đúng nghề, dùng được' }, env, db, TC);
+await THT.duyetCap({ napId: bnDn.id, cap: 'giamDoc', ghiChu: 'Đồng ý phát hành nội bộ' }, env, db, GD);
+await THT.duyetCap({ napId: bnDn.id, cap: 'superAdmin', ghiChu: 'Cho nhập kho' }, env, db, SA);
+const nhapDn = await THT.nhapKho({ napId: bnDn.id }, env, db, SA);
+const khachDoc = await THT.traBoSung({ tenKho: 'CAMNANG_DOI_NGU' }, env, db, { role: 'R13', u: 'ph' });
+const coachDoc = await THT.traBoSung({ tenKho: 'CAMNANG_DOI_NGU' }, env, db, { role: 'R07', u: 'coach1' });
+kiem('Đã nhập kho mà phụ huynh vẫn KHÔNG đọc được cẩm nang nội bộ; Coach đọc được', nhapDn.ok && khachDoc.bo.length === 0 && coachDoc.bo.length === 1);
+kiem('Khách không đặt được bộ chủ đề', (await X.lapKeHoachKho({ bo: 'khoiDau' }, env, db, { role: 'R13', u: 'ph' })).code === 'NOPERM');
+const kh1 = await X.lapKeHoachKho({ bo: 'khoiDau' }, env, db, SP);
+kiem('Bộ khởi đầu: đặt 30 đề án mới, bỏ qua đúng 1 đề án đã có, bật tự chạy', kh1.ok && kh1.daTao === 30 && kh1.boQua === 1 &&
+  dem("SELECT COUNT(*) n FROM deAnTaiLieu WHERE tuChay = 1") >= 30, JSON.stringify({ t: kh1.daTao, b: kh1.boQua, l: kh1.loi }));
+kiem('Bộ khởi đầu phủ đủ ba loại và năm tầng', ['giaDinh', 'taiNguyen', 'doiNgu'].every(l => dem("SELECT COUNT(*) n FROM deAnTaiLieu WHERE loai = ?", l) > 0) &&
+  ['T1', 'T2', 'T3', 'T4', 'T5'].every(t => dem("SELECT COUNT(*) n FROM deAnTaiLieu WHERE tang = ?", t) > 0));
+kiem('Ước tính ghi rõ là ước tính, có số ngày', kh1.uocTinh && kh1.uocTinh.la === 'uocTinh' && kh1.uocTinh.ngay >= 1);
+const kh2 = await X.lapKeHoachKho({ bo: 'khoiDau' }, env, db, SP);
+kiem('Đặt lại lần hai: không tạo trùng đề án nào', kh2.ok && kh2.daTao === 0 && kh2.boQua === 31);
+
 /* ── 6 · Soát tĩnh: không đường tắt ── */
 console.log('6 · KHÔNG ĐƯỜNG TẮT');
 const ma = fs.readFileSync(ROOT + '/may-chu/xuong-tai-lieu.js', 'utf8');
