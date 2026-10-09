@@ -143,6 +143,9 @@ jobs:
       - name: Xưởng tài liệu gia đình — máy soạn từng bước, máy đo biên tập, ba chữ ký mới tới gia đình
         run: node tools/thu-xuong-tai-lieu.mjs
 
+      - name: Mạch việc kẹt — phân biệt kẹt với chờ, nói không biết khi không đọc được, báo một lần, không tự gỡ
+        run: node tools/thu-viec-ket.mjs
+
       - name: Máy chủ cấp khoá bản .exe — dấu máy không chép được, duyệt đúng một tài khoản
         run: node tools/thu-may-chu-may-tinh.mjs
 

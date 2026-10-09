@@ -214,6 +214,7 @@
     "src/bo-nao-van-hanh.js",
     "src/hop-thong-bao.js",
     "src/do-trang-cong-khai.js",
+    "src/viec-ket.js",
     "src/studio-he.js",
     "src/studio-lam-phim.js",
     "src/studio-ban-dung.js",
