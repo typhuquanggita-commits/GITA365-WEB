@@ -4,7 +4,7 @@
 # Lõi
 torch>=2.1
 diffusers>=0.30.0
-transformers>=4.44
+transformers>=5.18.0
 accelerate>=0.33
 safetensors
 imageio[ffmpeg]
