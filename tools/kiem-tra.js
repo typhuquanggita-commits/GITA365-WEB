@@ -3902,10 +3902,29 @@ const { chromium } = require(PW);
        học phải làm sao" cần hai trang riêng. */
     const TRANG_CON = ['mo-thuc-huan-luyen-gita.html', 'nam-tang-dong-hanh.html',
       'hanh-trinh-12-chang.html', 'duong-vao.html', 'cau-hoi-thuong-gap.html'];
+    /* Lấy phần CHỮ của trang bằng cách duyệt từng ký tự, không bằng regex
+       xoá thẻ: xoá thẻ bằng regex một lượt thì "<scr<script>ipt>" vẫn còn
+       sót thẻ (CodeQL, 9/10/2026). Bỏ hẳn khối script/style/head. */
+    const chuThuan = html => {
+      const thap = html.toLowerCase(); let ra = '', i = 0;
+      while (i < html.length) {
+        if (html[i] !== '<') { ra += html[i++]; continue; }
+        const khoi = ['script', 'style', 'head'].find(t => thap.startsWith('<' + t, i) && !/[a-z0-9-]/.test(thap[i + t.length + 1] || ''));
+        if (khoi) {
+          const dong = thap.indexOf('</' + khoi, i);
+          const het = dong < 0 ? -1 : thap.indexOf('>', dong);
+          i = het < 0 ? html.length : het + 1;
+        } else {
+          const het = html.indexOf('>', i);
+          i = het < 0 ? html.length : het + 1;
+        }
+        ra += ' ';
+      }
+      return ra;
+    };
     const chuCua = f => {
       if (!fs39.existsSync(px39.join(goc39, f))) return -1;
-      return doc39(f).replace(/<(script|style|head)[\s\S]*?<\/\1>/g, '')
-        .replace(/<[^>]+>/g, ' ').replace(/[<>]/g, ' ').replace(/\s+/g, ' ').trim().length;
+      return chuThuan(doc39(f)).replace(/\s+/g, ' ').trim().length;
     };
     const dai = TRANG_CON.map(f => ({ f, n: chuCua(f) }));
     bao(dai.every(x => x.n >= 2000),
@@ -3920,13 +3939,13 @@ const { chromium } = require(PW);
        Hai địa chỉ cùng nội dung thì Google không biết xếp cái nào, nên
        xếp thấp cả đôi. Đo bằng tiêu đề mục: mục đã sâu ở trang con thì
        không được còn nguyên ở trang chủ. */
-    const mucChu = (khung.match(/<h2>([^<]+)<\/h2>/g) || []).map(x => x.replace(/<[^>]+>/g, '').replace(/[<>]/g, ''));
+    const tieuDeH2 = html => [...html.matchAll(/<h2>([^<]+)<\/h2>/g)].map(x => x[1]);
+    const mucChu = tieuDeH2(khung);
     const lapLai = [];
     for (const f of TRANG_CON) {
       if (!fs39.existsSync(px39.join(goc39, f))) continue;
-      for (const m of (doc39(f).match(/<h2>([^<]+)<\/h2>/g) || []))
-        if (mucChu.indexOf(m.replace(/<[^>]+>/g, '').replace(/[<>]/g, '')) >= 0)
-          lapLai.push(f + ': ' + m.replace(/<[^>]+>/g, '').replace(/[<>]/g, ''));
+      for (const m of tieuDeH2(doc39(f)))
+        if (mucChu.indexOf(m) >= 0) lapLai.push(f + ': ' + m);
     }
     bao(!lapLai.length, 'trang chủ và trang con không lặp lại phần nào của nhau',
       lapLai.length ? lapLai.slice(0, 3).join(' · ') : mucChu.length + ' mục ở trang chủ, không mục nào trùng');
