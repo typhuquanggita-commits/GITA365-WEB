@@ -14,6 +14,7 @@ của GITA365. Không dùng dịch vụ AI trả phí. Bản thiết kế đầy
 | `chay_xuong.py` | Chạy một yêu cầu: kiểm → MetaGPT trong thư mục riêng → canh gác → quét → báo cáo |
 | `vung_cam.py` | Luật chặn: tệp cấm, bí mật, chỉ mô hình cục bộ. Máy không được tự sửa tệp này |
 | `test_vung_cam.py` | Kiểm thử luật chặn (7 bài) |
+| `duyet_cong1.sh` | Cổng 1 có ghi nhận: trang duyệt, ý kiến có mức độ, chỉ đóng khi có người duyệt có tên và hết BLOCKER (dùng kỹ năng human-gate) |
 | `may_gia_lap.py` | Máy giả lập mô hình, chỉ để thử đường ống khi chưa có Ollama |
 | `va-terminal-dong-cuoi.patch` | Vá hai lỗi treo trong công cụ dòng lệnh của MetaGPT 1.0.0 |
 | `rang-buoc.txt` | Hai ràng buộc thư viện để MetaGPT 1.0.0 cài được |

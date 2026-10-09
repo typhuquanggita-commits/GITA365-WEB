@@ -123,6 +123,7 @@ def viet_bao_cao(lan: Path, **tt) -> Path:
 
 ## Ba cổng của người (máy không đánh dấu được các ô này)
 - [ ] **Cổng 1 · Ghép mã:** người đã đọc mã, chạy thử trong máy cách ly, và tự tay ghép.
+  Duyệt có ghi nhận: `bash duyet_cong1.sh mo {tt['duong_lan']}`, rồi `dong` khi xong.
 - [ ] **Cổng 2 · Phát hành:** đủ ba chữ ký trước khi tới tay khách hàng.
 - [ ] **Cổng 3 · Tiền và quyền:** không có chi tiêu, khoá hay quyền truy cập nào mới, hoặc đã được người cấp.
 
@@ -206,7 +207,7 @@ def main() -> int:
     else:
         ket_luan = "SẴN SÀNG CHO CỔNG 1: máy đã kiểm xong phần của máy. Người đọc và quyết."
 
-    bc = viet_bao_cao(lan, ten=a.ten, yeu_cau=a.yeu_cau, luc=f"{luc:%d/%m/%Y %H:%M}",
+    bc = viet_bao_cao(lan, duong_lan=str(lan.relative_to(GOC)), ten=a.ten, yeu_cau=a.yeu_cau, luc=f"{luc:%d/%m/%Y %H:%M}",
                       mo_hinh=llm.get("model", "?"), base_url=llm.get("base_url", "?"),
                       giay=giay, ma_thoat=ma_thoat,
                       san_pham=str(sp.relative_to(GOC)) if sp.is_dir() else "",
