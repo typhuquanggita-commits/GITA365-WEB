@@ -3,14 +3,17 @@
 //
 // Vì sao có: tới 9/10/2026 form ở lien-he.html gửi tên + số điện thoại của
 // cha mẹ sang formspree.io. Nay nó đi vào Worker của Học viện — bộ thử này
-// đo HÀNH VI: thư tới đúng hòm chủ hệ, KHÔNG có dòng nào lưu nội dung,
-// ô mồi chặn máy quét, trần nhịp theo IP, và trang không còn trỏ ra ngoài.
+// đo HÀNH VI: thông báo trong hệ tới Super Admin + Giám đốc, thư tới đúng hòm
+// chủ hệ, nội dung CHỈ nằm ở bảng thongBao, đường thư hỏng vẫn không rơi lời
+// nhắn, ô mồi chặn máy quét, trần nhịp theo IP, trang không trỏ ra ngoài.
 import { DatabaseSync } from 'node:sqlite';
 import fs from 'node:fs';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 const ROOT = fileURLToPath(new URL('..', import.meta.url)).replace(/[\\/]$/, '');
 const worker = (await import(pathToFileURL(ROOT + '/may-chu/worker.js').href)).default;
 const { _xoaBoDem } = await import(pathToFileURL(ROOT + '/may-chu/ve-chi-phi.js').href);
+const { donDep } = await import(pathToFileURL(ROOT + '/may-chu/worker.js').href);
+const { hopThongBao } = await import(pathToFileURL(ROOT + '/may-chu/ngan-hang.js').href);
 
 const sq = new DatabaseSync(':memory:');
 sq.exec(fs.readFileSync(ROOT + '/may-chu/csdl.sql', 'utf8'));
@@ -42,12 +45,20 @@ kiem('Thư mang đủ tên · số điện thoại · lời nhắn (giữ xuốn
   /Nguyễn Thị Hoa/.test(thu[0].than) && /0912 345 678/.test(thu[0].than) && /10 tuổi\.\nTôi muốn/.test(thu[0].than));
 kiem('Chủ đề dịch sang chữ người đọc', /Lộ trình 90 ngày/.test(thu[0].tieuDe));
 
-/* KHÔNG LƯU: soát mọi bảng, không bảng nào được giữ tên hay số điện thoại. */
+/* Nội dung CHỈ nằm ở thongBao (dưới khoá của Học viện), đúng hai dòng: R01 + R03. */
+const tb = sq.prepare("SELECT * FROM thongBao WHERE loai='lienHe'").all();
+kiem('Ghi đúng hai thông báo trong hệ: Super Admin (R01) và Giám đốc (R03)',
+  tb.length === 2 && tb.map(x => x.denVai).sort().join() === 'R01,R03', JSON.stringify(tb.map(x => x.denVai)));
+kiem('Thông báo mang đủ tên · số điện thoại · lời nhắn', tb.every(x => /Nguyễn Thị Hoa/.test(x.than) && /0912 345 678/.test(x.than) && /10 tuổi/.test(x.than)));
 const bang = sq.prepare("SELECT name FROM sqlite_master WHERE type='table'").all().map(x => x.name);
 const lo = [];
-for (const b of bang) for (const dong of sq.prepare('SELECT * FROM "' + b + '"').all())
+for (const b of bang) if (b !== 'thongBao') for (const dong of sq.prepare('SELECT * FROM "' + b + '"').all())
   if (/0912 345 678|Nguyễn Thị Hoa|hoa@vi-du/.test(JSON.stringify(dong))) lo.push(b);
-kiem('Không bảng nào trong cơ sở dữ liệu giữ tên/số điện thoại', lo.length === 0, lo.join(','));
+kiem('Ngoài thongBao, không bảng nào giữ tên/số điện thoại', lo.length === 0, lo.join(','));
+const hop = await hopThongBao({}, env, db, { role: 'R01', u: 'sa' });
+kiem('Super Admin đọc được yêu cầu trong Hộp thông báo', hop.ok && hop.ds.some(x => x.loai === 'lienHe' && /Nguyễn Thị Hoa/.test(x.tieuDe)));
+const hopKhach = await hopThongBao({}, env, db, { role: 'R13', u: 'phuhuynh' });
+kiem('Phụ huynh (R13) không thấy yêu cầu của người khác', hopKhach.ok && !hopKhach.ds.some(x => x.loai === 'lienHe'));
 kiem('Nhật ký có một dòng "có lượt liên hệ" (không nội dung)',
   sq.prepare("SELECT COUNT(*) n FROM audit WHERE viec='LIEN_HE'").get().n === 1);
 
@@ -71,21 +82,45 @@ _xoaBoDem();
 r = await gui(HOP_LE, ip);
 kiem('Lượt thứ tư trong một giờ cùng IP → NHIP (đếm trên D1, không chỉ bộ nhớ)', r.code === 'NHIP', JSON.stringify(r));
 
-/* Gửi hỏng phải nói thật. */
-const envHong = { CSDL: db, GITA_THU_TRA_LOI: 'typhuquanggita@gmail.com' };
+/* Đường thư hỏng (chính lỗi chủ hệ gặp 9/10/2026) → lời nhắn KHÔNG rơi. */
+const envKhongThu = { CSDL: db, GITA_THU_TRA_LOI: 'typhuquanggita@gmail.com' };
+const truoc = sq.prepare("SELECT COUNT(*) n FROM thongBao WHERE loai='lienHe'").get().n;
+_xoaBoDem();
+const rk = await (await worker.fetch(new Request('https://x.example/', { method: 'POST',
+  headers: { 'Content-Type': 'application/json', 'CF-Connecting-IP': '198.51.100.98' },
+  body: JSON.stringify({ fn: 'guiLienHe', ...HOP_LE }) }), envKhongThu, { waitUntil() {} })).json();
+kiem('Máy chủ chưa có đường thư → vẫn ok, vì thông báo trong hệ đã ghi', rk.ok === true &&
+  sq.prepare("SELECT COUNT(*) n FROM thongBao WHERE loai='lienHe'").get().n === truoc + 2, JSON.stringify(rk));
+
+/* Cả hai đường hỏng → nói thật. */
+const dbHong = { prepare(sql) { if (/INSERT INTO thongBao/.test(sql)) return { bind() { return { run() { return Promise.reject(new Error('hỏng')); } }; } }; return db.prepare(sql); } };
 _xoaBoDem();
 const rh = await (await worker.fetch(new Request('https://x.example/', { method: 'POST',
   headers: { 'Content-Type': 'application/json', 'CF-Connecting-IP': '198.51.100.99' },
-  body: JSON.stringify({ fn: 'guiLienHe', ...HOP_LE }) }), envHong, { waitUntil() {} })).json();
-kiem('Không có đường gửi thư → GUIHONG kèm số hotline, không báo "đã nhận"', rh.ok === false && rh.code === 'GUIHONG' && /08\.5555\.4688/.test(rh.error), JSON.stringify(rh));
+  body: JSON.stringify({ fn: 'guiLienHe', ...HOP_LE }) }), { CSDL: dbHong, GITA_THU_TRA_LOI: 'typhuquanggita@gmail.com' }, { waitUntil() {} })).json();
+kiem('Cả thông báo lẫn thư đều hỏng → GUIHONG kèm số hotline, không báo "đã nhận"', rh.ok === false && rh.code === 'GUIHONG' && /08\.5555\.4688/.test(rh.error), JSON.stringify(rh));
+
+/* Lịch dọn: đã xem quá 90 ngày thì xoá; chưa xem thì giữ bất kể bao lâu. */
+const cu = new Date(Date.now() - 100 * 86400e3).toISOString();
+sq.prepare("INSERT INTO thongBao (id,denVai,loai,mucDo,tieuDe,than,luc,docLuc) VALUES ('TB-cu-doc','R01','lienHe','canXem','x','x',?,?)").run(cu, cu);
+sq.prepare("INSERT INTO thongBao (id,denVai,loai,mucDo,tieuDe,than,luc) VALUES ('TB-cu-chua','R01','lienHe','canXem','x','x',?)").run(cu);
+sq.prepare("INSERT INTO thongBao (id,denVai,loai,mucDo,tieuDe,than,luc,docLuc) VALUES ('TB-chi-cu','R01','chiCho','canXem','x','x',?,?)").run(cu, cu);
+await donDep(env);
+const con = id => !!sq.prepare('SELECT 1 FROM thongBao WHERE id=?').get(id);
+kiem('Lịch dọn xoá yêu cầu đã xem quá 90 ngày, giữ yêu cầu chưa xem, không đụng thông báo loại khác',
+  !con('TB-cu-doc') && con('TB-cu-chua') && con('TB-chi-cu'));
 
 /* Trang không còn gửi dữ liệu ra dịch vụ ngoài. */
 const trang = fs.readFileSync(ROOT + '/lien-he.html', 'utf8');
 kiem('lien-he.html không còn trỏ formspree', !/formspree/i.test(trang));
 kiem('Form trỏ về Worker của Học viện', /data-may-chu="https:\/\/gita365\.typhuquanggita\.workers\.dev\/"/.test(trang));
 kiem('Form có ô mồi "website" ẩn', /name="website"/.test(trang));
+const khoi = fs.readFileSync(ROOT + '/src/hop-thong-bao.js', 'utf8');
+kiem('Màn Trung tâm đo lường (màn đích R01–R03) gọi Hộp thông báo, khối gọi đúng hai cửa đã có',
+  /G\.htbKhoi\(\)/.test(fs.readFileSync(ROOT + '/src/trung-tam-do.js', 'utf8')) && /'hopThongBao'/.test(khoi) && /'danhDauDaDoc'/.test(khoi));
+kiem('Mọi chữ người ngoài gõ qua h() trong Hộp thông báo', /h\(x\.tieuDe\)/.test(khoi) && /h\(x\.than\)/.test(khoi));
 const js = fs.readFileSync(ROOT + '/assets/marketing-shared.js', 'utf8');
 kiem('marketing-shared.js gửi fn guiLienHe dạng JSON', /guiLienHe/.test(js) && /application\/json/.test(js));
 
-console.log(sai ? `\n✗ ${sai} phép đo sai` : '\n✓ Cửa liên hệ: thư tới hòm chủ hệ, không lưu, không ra dịch vụ ngoài');
+console.log(sai ? `\n✗ ${sai} phép đo sai` : '\n✓ Cửa liên hệ: thông báo trong hệ + thư, không rơi lời nhắn, không ra dịch vụ ngoài');
 process.exit(sai ? 1 : 0);

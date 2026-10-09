@@ -1153,7 +1153,13 @@ const HAN = [
    cau: "DELETE FROM dangKyCho WHERE createdAt < ? AND trangThai <> 'choKichHoat'",
    dv: () => [new Date(Date.now() - 30 * 86400e3).toISOString()],
    vi: 'đăng ký bỏ dở quá ba mươi ngày thì người ta không quay lại nữa; ' +
-       'lượt ĐANG CHỜ kích hoạt thì giữ bất kể bao lâu'}
+       'lượt ĐANG CHỜ kích hoạt thì giữ bất kể bao lâu'},
+
+  {bang: 'thongBao',
+   cau: "DELETE FROM thongBao WHERE loai = 'lienHe' AND docLuc IS NOT NULL AND docLuc < ?",
+   dv: () => [new Date(Date.now() - 90 * 86400e3).toISOString()],
+   vi: 'yêu cầu tư vấn từ trang Liên hệ mang tên + số điện thoại của người lạ; ' +
+       'đã xem quá chín mươi ngày thì xoá, CHƯA xem thì giữ bất kể bao lâu'}
 ];
 
 export async function donDep(env) {

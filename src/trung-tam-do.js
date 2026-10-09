@@ -295,6 +295,9 @@ var G = window.G || {}; window.G = G;
     var o = U.ph({ eyebrow:'SUPER ADMIN · ĐO LƯỜNG & TỐI ƯU', ic:'chart', grad:1, t: laQL() ? 'Trung tâm đo lường & tối ưu' : 'Việc tối ưu của tôi',
       lead: laQL() ? 'Một chỗ đo toàn hệ: 7 khối gom 16 ban, 41 chỉ số, từng vai, từng người, từng hoạt động và kết quả kiểm tra — kèm phân tích, 2–5 giải pháp cho mỗi vấn đề, phân bổ người đúng vai và theo dõi triển khai tới khi đo lại.'
                    : 'Các giải pháp tối ưu Super Admin giao cho anh/chị: tick từng bước, đóng khi xong — máy tự đo lại chỉ số.' });
+    /* Hộp thông báo trong hệ (src/hop-thong-bao.js) đứng ĐẦU màn cấp quản lý:
+       yêu cầu tư vấn và việc chờ duyệt là việc của hôm nay, không phải số đo. */
+    if(laQL() && G.htbKhoi) o += G.htbKhoi();
     if(!coMayChu()) o += '<div class="co-mau">'+ic('alert','w-4 h-4')+'<span><b>Ví dụ minh hoạ.</b> Số liệu giả định, chấm bằng đúng công thức đang chạy ở máy chủ. Đăng nhập tài khoản thật trên máy chủ của Học viện để xem số thật và giao việc.</span></div>';
     if(laQL()) o += '<div class="co-hang mb" role="group" aria-label="Tầng xem"><button class="btn '+(st.lop==='vh'?'pri':'ghost')+'" data-ttd="lop" data-v2="vh">'+ic('pulse','w-3 h-3')+'Vận hành · hôm nay</button>'+
       '<button class="btn '+(st.lop==='v20'?'pri':'ghost')+'" data-ttd="lop" data-v2="v20">'+ic('target','w-3 h-3')+'Chiến lược V20 · đi về đâu</button></div>';
