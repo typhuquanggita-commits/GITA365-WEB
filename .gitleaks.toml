@@ -1,0 +1,16 @@
+# Cấu hình gitleaks cho GITA365-WEB — dùng nguyên bộ luật mặc định của gitleaks,
+# chỉ bỏ qua đúng MỘT hình báo nhầm đã soát tay ngày 9/10/2026.
+#
+# Hình báo nhầm: tên ô localStorage, ví dụ `var KEY = 'gita365_...'`. Đó là
+# TÊN chỗ cất dữ liệu trong trình duyệt, không phải khoá. Luật bỏ qua buộc
+# vế phải bắt đầu bằng 'gita' và vế trái là biến KEY…, nên một khoá thật
+# gán vào biến khác (hay một giá trị không bắt đầu bằng gita) vẫn bị bắt.
+#
+# Thêm luật bỏ qua ở đây là nới cổng: phải soát tay và ghi lý do như trên.
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Tên ô localStorage dạng var KEY = 'gita…' — không phải khoá"
+regexTarget = "line"
+regexes = ['''\bvar\s+KEY[A-Z_]*\s*=\s*['"]gita[a-z0-9_.-]*['"]\s*;''']

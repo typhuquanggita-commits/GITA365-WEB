@@ -1,0 +1,230 @@
+# ═══════════════════════════════════════════════════════════════
+# GITA 365 — Đóng gói bộ cài cho Windows, macOS và Linux
+#
+# Chạy tự động khi đẩy một thẻ phiên bản (ví dụ v7.0.0), hoặc bấm
+# tay ở tab Actions. Kết quả: bộ cài tải về được ở mục Releases.
+# ═══════════════════════════════════════════════════════════════
+name: Đóng gói bản máy tính
+
+on:
+  push:
+    # Đẩy lên nhánh phát triển → dựng ngay bộ cài Windows (không phát hành)
+    branches: ['claude/**']
+    paths:
+      - 'desktop/**'
+      - 'src/**'
+      - 'assets/**'
+      - 'kho/**'              # đổi nội dung kho cũng phải dựng lại bộ cài
+      - 'index.html'
+      - 'cau-hinh.js'
+      - 'manifest.webmanifest'
+      - '.github/workflows/**'
+    # thu-*  → chỉ dựng bộ cài, KHÔNG tạo bản phát hành công khai
+    # v*     → dựng đủ ba hệ và đưa lên Releases
+    tags: ['v*', 'thu-*']
+  workflow_dispatch:
+    inputs:
+      he:
+        description: 'Dựng cho hệ nào'
+        required: true
+        default: 'windows'
+        type: choice
+        options: [windows, macos, linux, tat-ca]
+
+permissions:
+  contents: write
+
+jobs:
+  dong-goi:
+    name: ${{ matrix.ten }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            ma: windows
+            ten: Windows · .exe
+            lenh: npm run dist:win
+          - os: macos-latest
+            ma: macos
+            ten: macOS · .dmg
+            lenh: npm run dist:mac
+          - os: ubuntu-latest
+            ma: linux
+            ten: Linux · AppImage + deb
+            lenh: npm run dist:linux
+
+    steps:
+      - name: Bỏ qua hệ không được chọn
+        id: loc
+        shell: bash
+        run: |
+          CHON="${{ github.event.inputs.he }}"
+          TAG="${{ github.ref_name }}"
+          if [ -z "$CHON" ] && [ "${{ github.ref_type }}" = "branch" ]; then
+            CHON=windows            # đẩy lên nhánh: chỉ dựng Windows cho nhanh
+          fi
+          if [ -z "$CHON" ]; then
+            case "$TAG" in
+              thu-win*)   CHON=windows ;;
+              thu-mac*)   CHON=macos ;;
+              thu-linux*) CHON=linux ;;
+              *)          CHON=tat-ca ;;
+            esac
+          fi
+          if [ "$CHON" = "tat-ca" ] || [ "$CHON" = "${{ matrix.ma }}" ]; then
+            echo "chay=co" >> $GITHUB_OUTPUT
+          else
+            echo "chay=khong" >> $GITHUB_OUTPUT
+            echo "Bỏ qua ${{ matrix.ten }} — lần này chỉ dựng $CHON"
+          fi
+
+      - name: Lấy mã nguồn
+        if: steps.loc.outputs.chay == 'co'
+        uses: actions/checkout@v4
+
+      - name: Cài Node
+        if: steps.loc.outputs.chay == 'co'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+
+      - name: Cài phụ thuộc
+        if: steps.loc.outputs.chay == 'co'
+        working-directory: desktop
+        run: npm ci
+
+      - name: Đóng gói
+        if: steps.loc.outputs.chay == 'co'
+        working-directory: desktop
+        run: ${{ matrix.lenh }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Chưa ký số: bỏ qua bước ký để bộ cài vẫn tạo được.
+          # Khi có chứng thư, đặt CSC_LINK / CSC_KEY_PASSWORD (Windows)
+          # và APPLE_ID / APPLE_APP_SPECIFIC_PASSWORD / APPLE_TEAM_ID (macOS).
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+
+      - name: Giữ lại bộ cài
+        if: steps.loc.outputs.chay == 'co'
+        uses: actions/upload-artifact@v4
+        with:
+          name: GITA365-${{ matrix.os }}
+          retention-days: 30
+          if-no-files-found: error
+          path: |
+            desktop/dist/*.exe
+            desktop/dist/*.dmg
+            desktop/dist/*.zip
+            desktop/dist/*.AppImage
+            desktop/dist/*.deb
+
+  # Mỗi lần đẩy nhánh phát triển: cập nhật bản tải mới nhất tại một
+  # đường dẫn cố định, để anh Quang lúc nào cũng tải được bộ cài Windows
+  # mà không phải đăng nhập vào tab Actions.
+  moi-nhat:
+    name: Cập nhật bản tải mới nhất
+    needs: dong-goi
+    if: github.ref_type == 'branch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Tải bộ cài về
+        uses: actions/download-artifact@v4
+        with:
+          path: bo-cai
+          merge-multiple: true
+
+      # Bản pin "mới nhất" chỉ được có MỘT bộ cài. Không dọn thì mỗi lần
+      # dựng lại thêm một tệp mang số phiên bản mới, và trang tải về đầy
+      # 7.2.0, 7.3.0, 7.4.0… — người tải không biết bấm cái nào.
+      - name: Dọn bộ cài của bản cũ khỏi trang tải
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          KHO: ${{ github.repository }}
+        run: |
+          set -e
+          moi=$(ls bo-cai | tr '\n' ' ')
+          echo "Bộ cài vừa dựng: $moi"
+          id=$(curl -sS -H "Authorization: Bearer $GH_TOKEN" \
+                 "https://api.github.com/repos/$KHO/releases/tags/may-tinh-moi-nhat" \
+               | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('id',''))")
+          if [ -z "$id" ]; then echo "Chưa có bản pin — lần đầu dựng, không phải dọn."; exit 0; fi
+          curl -sS -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/$KHO/releases/$id/assets?per_page=100" \
+            | python3 -c "import sys,json; [print(a['id'],a['name']) for a in json.load(sys.stdin)]" \
+            | while read aid ten; do
+                case " $moi " in
+                  *" $ten "*) echo "  giữ  $ten (sẽ được ghi đè)" ;;
+                  *) echo "  xoá  $ten"
+                     curl -sS -X DELETE -H "Authorization: Bearer $GH_TOKEN" \
+                       "https://api.github.com/repos/$KHO/releases/assets/$aid" ;;
+                esac
+              done
+          echo "✓ Trang tải chỉ còn bộ cài của bản mới nhất"
+
+      - name: Cập nhật bản tải mới nhất
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: may-tinh-moi-nhat
+          name: GITA 365 — bản máy tính mới nhất
+          files: bo-cai/*
+          draft: false
+          prerelease: true
+          body: |
+            ## GITA 365 — bản máy tính mới nhất
+
+            Bản này được dựng lại sau mỗi lần cập nhật mã nguồn, từ nhánh
+            `${{ github.ref_name }}` (`${{ github.sha }}`).
+
+            | Máy | Tệp |
+            |---|---|
+            | Windows — bộ cài | `GITA365-*-win-x64.exe` |
+            | Windows — chạy ngay, không cài | `GITA365-*-ban-chay-ngay.exe` |
+
+            Sau khi cài, mở ứng dụng rồi vào **Trợ giúp → Nạp giấy phép** và
+            chọn tệp giấy phép do Học viện GITA cấp riêng cho máy này. Chưa
+            nạp giấy phép thì ứng dụng chạy ở chế độ mẫu.
+
+            Bộ cài chưa ký số nên Windows SmartScreen sẽ hỏi một lần ở lần mở
+            đầu: bấm **More info → Run anyway**. Xem `docs/CAI_DAT_MAY_TINH.md`.
+
+  phat-hanh:
+    name: Đưa lên Releases
+    needs: dong-goi
+    if: startsWith(github.ref, 'refs/tags/v')   # thẻ thu-* chỉ dựng, không phát hành
+    runs-on: ubuntu-latest
+    steps:
+      - name: Tải bộ cài về
+        uses: actions/download-artifact@v4
+        with:
+          path: bo-cai
+          merge-multiple: true
+
+      - name: Tạo bản phát hành
+        uses: softprops/action-gh-release@v2
+        with:
+          files: bo-cai/*
+          draft: false
+          generate_release_notes: true
+          body: |
+            ## GITA 365 — bản máy tính
+
+            Tải đúng tệp cho máy của anh chị:
+
+            | Máy | Tệp | Ghi chú |
+            |---|---|---|
+            | Windows | `GITA365-*-win-x64.exe` | Bộ cài — chọn được thư mục, tạo lối tắt |
+            | Windows (không cài) | `GITA365-*-ban-chay-ngay.exe` | Chép vào USB, bấm là chạy |
+            | macOS (Apple Silicon) | `GITA365-*-mac-arm64.dmg` | Máy Mac từ 2020 trở đi |
+            | macOS (Intel) | `GITA365-*-mac-x64.dmg` | Máy Mac đời cũ hơn |
+            | Linux | `GITA365-*-linux-x86_64.AppImage` | Cấp quyền chạy rồi bấm |
+            | Ubuntu · Debian | `GITA365-*-linux-amd64.deb` | Cài bằng trình quản lý gói |
+
+            Chạy hoàn toàn ngoại tuyến. Dữ liệu của nhà mình nằm trong máy,
+            không gửi đi đâu cả. Sao lưu bằng **Tệp → Sao lưu dữ liệu nhà mình**.
+
+            Bộ cài chưa ký số, nên Windows SmartScreen và macOS Gatekeeper sẽ
+            hỏi một lần ở lần mở đầu — xem `docs/CAI_DAT_MAY_TINH.md`.

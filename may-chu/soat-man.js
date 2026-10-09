@@ -51,7 +51,7 @@ export async function ghiSoatMan(y, env, db, hoSo) {
   await taoBang(db);
   const id = 'SM-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), luc = new Date().toISOString();
   await db.prepare('INSERT INTO soatMan (id, luc, u, so, dv, goi) VALUES (?,?,?,?,?,?)').bind(id, luc, hoSo.u, so, goi.dv, than).run();
-  await db.prepare('DELETE FROM soatMan WHERE id NOT IN (SELECT id FROM soatMan ORDER BY luc DESC LIMIT 3)').run();
+  await db.prepare('DELETE FROM soatMan WHERE id NOT IN (SELECT id FROM soatMan ORDER BY luc DESC, rowid DESC LIMIT 3)').run();
   await Kho.ghiNhatKy(db, { uid: hoSo.uid, username: hoSo.u, viec: 'SOAT_TOAN_MAN', doiTuong: id, chiTiet: so + ' màn · bản mã ' + Math.round(than.length / 1024) + ' KB · khoá ' + goi.dv });
   return { ok: true, id, luc, kb: Math.round(than.length / 1024) };
 }
@@ -60,7 +60,7 @@ export async function layBaoCaoSoat(y, env, db) {
   await taoBang(db);
   const moc = new Date(Date.now() - HAN_NGAY * 86400000).toISOString();
   await db.prepare('DELETE FROM soatMan WHERE luc < ?').bind(moc).run();
-  const r = await db.prepare('SELECT luc, so, dv, goi FROM soatMan ORDER BY luc DESC LIMIT 1').first();
+  const r = await db.prepare('SELECT luc, so, dv, goi FROM soatMan ORDER BY luc DESC, rowid DESC LIMIT 1').first();
   if (!r) return { ok: true, trong: true };
   return { ok: true, luc: r.luc, so: r.so, dv: r.dv, goi: r.goi };
 }

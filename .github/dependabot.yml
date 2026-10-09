@@ -1,4 +1,5 @@
-# Repo không có package.json gốc — chỉ giữ GitHub Actions luôn mới, vá lỗ hổng.
+# Dependabot: báo khi có bản vá an ninh cho thư viện bên thứ ba.
+# Kho không có package.json ở gốc — mỗi khu có thư viện riêng khai một mục.
 version: 2
 updates:
   - package-ecosystem: github-actions
@@ -8,3 +9,19 @@ updates:
     groups:
       actions:
         patterns: ['*']
+  # Bộ đóng gói máy tính (Electron) — Electron lỗi thời là lỗ an ninh thật.
+  - package-ecosystem: npm
+    directory: /desktop
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+  - package-ecosystem: npm
+    directory: /xuong-phim-ai/tu-dong/worker
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+  - package-ecosystem: pip
+    directory: /xuong-phim-ai
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3

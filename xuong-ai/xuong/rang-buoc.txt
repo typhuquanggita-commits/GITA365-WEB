@@ -1,0 +1,4 @@
+# Hai chỗ MetaGPT 1.0.0 (commit 11cdf46) không cài được nguyên trạng:
+# lancedb==0.4.0 đã bị gỡ khỏi PyPI; click>=8.2 làm hỏng typer==0.9.0 của dòng lệnh metagpt.
+lancedb>=0.4.0
+click<8.2

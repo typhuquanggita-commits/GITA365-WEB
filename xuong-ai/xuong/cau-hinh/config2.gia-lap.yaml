@@ -1,0 +1,9 @@
+# Chỉ để thử đường ống: trỏ vào máy giả lập (may_gia_lap.py), không có AI thật.
+llm:
+  api_type: "openai"
+  base_url: "http://127.0.0.1:8765/v1"
+  api_key: "gia-lap"
+  model: "gia-lap"
+  timeout: 60
+  stream: false
+repair_llm_output: true

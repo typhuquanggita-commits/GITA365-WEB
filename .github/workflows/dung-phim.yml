@@ -40,8 +40,14 @@ jobs:
       KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
       CAST: ${{ secrets.KAGGLE_CAST_DATASET }}
     steps:
+      - name: Soát mã việc (đi vào GITHUB_ENV và đường dẫn R2)
+        run: |
+          [[ "$JOBID" =~ ^[a-z0-9-]{8,40}$ ]] || { echo "Mã việc không hợp lệ"; exit 1; }
+
       - name: Lấy mã
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
 
       - name: Chuẩn bị công cụ
         run: |

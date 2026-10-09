@@ -7,12 +7,16 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # deploy.yml gọi lại đúng bộ kiểm này làm CỔNG trước khi triển khai
+  workflow_call:
 
 permissions:
   contents: read
 
 concurrency:
-  group: kiem-tra-${{ github.ref }}
+  # github.workflow là tên quy trình GỌI: lượt do deploy.yml gọi không huỷ
+  # nhầm lượt chạy riêng của chính bộ kiểm trên cùng nhánh (và ngược lại).
+  group: kiem-tra-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -21,6 +25,8 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
       # node:sqlite (thử đồng bộ giả lập) cần Node >= 22.5
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
@@ -115,3 +121,15 @@ jobs:
 
       - name: Kỷ luật kho mã (cửa ↔ nhánh · ES5 · gỡ lỗi sót · .gitignore · giấy phép · gói độc · CSP · action ghim)
         run: node tools/thu-ky-luat.mjs
+
+      - name: Trang công khai đủ tệp, không lọt mã nội bộ (dựng lại đúng _site)
+        run: node tools/thu-trang-cong-khai.mjs
+
+      - name: Xin thêm — mỗi nhà chỉ chạm phần của mình
+        run: node tools/thu-xin-them.mjs
+
+      - name: Phim phân tử — người lạ không kích dịch vụ vẽ trả phí
+        run: node tools/thu-phim-phan-tu.mjs
+
+      - name: Móc chặn commit — quét toàn bộ tệp đang theo dõi
+        run: node tools/chan-commit.mjs --tat-ca

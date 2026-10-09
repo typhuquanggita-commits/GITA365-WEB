@@ -42,6 +42,8 @@ jobs:
       KD: xuong-phim-ai/kho-drive/kho_drive.py
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.11"
@@ -63,9 +65,16 @@ jobs:
           python - <<'PY'
           import json, os
           kh = json.load(open("viec/ke-hoach.json", encoding="utf-8"))
+          # du_an đến từ kế hoạch người dùng soạn → phải SOÁT trước khi ghi vào
+          # GITHUB_ENV. Một ký tự xuống dòng trong đó là đặt được biến tuỳ ý
+          # (BASH_ENV…) cho mọi bước sau, mà các bước sau giữ khoá Kaggle/Drive.
+          import re, sys
+          du_an = str(kh.get('du_an') or '')
+          if not re.fullmatch(r'[A-Za-z0-9_-]{0,80}', du_an):
+              sys.exit("du_an không hợp lệ (chỉ chữ, số, '-', '_', tối đa 80 ký tự)")
           with open(os.environ["GITHUB_ENV"], "a") as f:
               f.write(f"CHI_CLIP={'1' if kh.get('chi_clip') else ''}\n")
-              f.write(f"DU_AN={kh.get('du_an') or ''}\n")
+              f.write(f"DU_AN={du_an}\n")
           PY
           # Dự án: ảnh khung đầu từng cảnh (Anh/05.jpg) + giọng mẫu (Giong/<tên>.wav) — link tạm, xong khoá lại
           if [ -n "$(grep -o '"du_an": *"[^"]*"' viec/ke-hoach.json)" ]; then

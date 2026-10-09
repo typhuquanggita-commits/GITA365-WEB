@@ -1,0 +1,5 @@
+.venv/
+metagpt-src/
+xuong/lan-chay/
+__pycache__/
+.pytest_cache/

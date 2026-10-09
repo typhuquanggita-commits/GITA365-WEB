@@ -13,15 +13,32 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # CỔNG: chạy trọn bộ kiểm (kiem-tra.yml) TRƯỚC khi đụng tới production.
+  # Trước 9/10/2026 bộ kiểm chạy song song và chỉ báo cáo — một lượt tải tệp
+  # lên qua trang web GitHub đi thẳng ra trang thật dù bộ kiểm đỏ.
+  kiem:
+    name: Bộ kiểm trước khi triển khai
+    uses: ./.github/workflows/kiem-tra.yml
+    permissions:
+      contents: read
+
   worker:
     name: Deploy API worker
+    needs: kiem
     runs-on: ubuntu-latest
     # Luôn deploy Worker khi có thay đổi trên main: lọc theo đường dẫn bằng
     # github.event.commits.*.modified không đáng tin (mảng lồng mảng) và đã
     # khiến Worker bị bỏ qua. Deploy lại cùng mã là vô hại.
     steps:
+      - name: Harden runner (ghi lại mọi kết nối ra ngoài)
+        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
+        with:
+          egress-policy: audit
+
       - name: Check out application
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
 
       - name: Validate Cloudflare credentials and API token
         env:
@@ -78,6 +95,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '4.149.0'
           workingDirectory: may-chu
           command: deploy
 
@@ -98,7 +116,7 @@ jobs:
           fi
           f="$RUNNER_TEMP/bi-mat-thu.json"
           node -e "require('fs').writeFileSync(process.argv[1], JSON.stringify({GITA_CAU_NOI_GMAIL: process.env.GITA_CAU_NOI_GMAIL, GITA_KHOA_CAU_NOI: process.env.GITA_KHOA_CAU_NOI}))" "$f"
-          npx --yes wrangler@4 secret bulk "$f"
+          npx --yes wrangler@4.149.0 secret bulk "$f"
           rm -f "$f"
 
       # Khoá fal.ai cho "Xưởng phim tự động A-Z" (chỉ Super Admin dùng).
@@ -116,7 +134,7 @@ jobs:
           fi
           f="$RUNNER_TEMP/bi-mat-fal.json"
           node -e "require('fs').writeFileSync(process.argv[1], JSON.stringify({GITA_KHOA_FAL: process.env.GITA_KHOA_FAL}))" "$f"
-          npx --yes wrangler@4 secret bulk "$f"
+          npx --yes wrangler@4.149.0 secret bulk "$f"
           rm -f "$f"
 
       # Hộp thư GitHub: Worker nhờ kho riêng tư gita365-hop-thu mở issue →
@@ -135,7 +153,7 @@ jobs:
           fi
           f="$RUNNER_TEMP/bi-mat-gh-thu.json"
           node -e "require('fs').writeFileSync(process.argv[1], JSON.stringify({GITA_GH_KHOA_THU: process.env.GITA_GH_KHOA_THU.trim()}))" "$f"
-          npx --yes wrangler@4 secret bulk "$f"
+          npx --yes wrangler@4.149.0 secret bulk "$f"
           rm -f "$f"
 
       - name: Nạp khoá xưởng quay khớp môi vào Worker (nếu có)
@@ -152,7 +170,7 @@ jobs:
           fi
           f="$RUNNER_TEMP/bi-mat-quay.json"
           node -e "require('fs').writeFileSync(process.argv[1], JSON.stringify({GITA_KHOA_XUONG_QUAY: process.env.GITA_KHOA_XUONG_QUAY.trim()}))" "$f"
-          npx --yes wrangler@4 secret bulk "$f"
+          npx --yes wrangler@4.149.0 secret bulk "$f"
           rm -f "$f"
 
       - name: Verify Worker health
@@ -173,11 +191,20 @@ jobs:
   pages:
     name: Deploy static application
     needs: worker
-    if: always() && !cancelled()
+    # Chỉ đưa trang lên khi Worker đã lên THÀNH CÔNG — trước đây là
+    # always(), nên Worker hỏng mà trang mới vẫn lên, hai bên lệch nhau.
+    if: needs.worker.result == 'success'
     runs-on: ubuntu-latest
     steps:
+      - name: Harden runner (ghi lại mọi kết nối ra ngoài)
+        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
+        with:
+          egress-policy: audit
+
       - name: Check out application
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
 
       - name: Build browser bundles from source
         run: |
@@ -186,25 +213,9 @@ jobs:
           node tools/gop-src.js --kiem
 
       - name: Assemble public Pages artifact
-        run: |
-          set -eu
-          mkdir -p _site
-          find . -maxdepth 1 -type f -name '*.html' -exec cp {} _site/ \;
-          cp gita-app.js gita-nghe.js cau-hinh.js sw.js manifest.webmanifest \
-            _headers _redirects robots.txt sitemap.xml _site/
-          cp -R assets kho _site/
-          touch _site/.nojekyll
-          test -s _site/index.html
-          test -s _site/gita-app.js
-          test -s _site/gita-nghe.js
-          test -d _site/kho
-          test ! -e _site/may-chu
-          test ! -e _site/tools
-          # Khoá chủ của kho nội dung KHÔNG BAO GIỜ được lên trang công khai
-          rm -f _site/kho/khoa.json
-          test ! -e _site/kho/khoa.json
-          test -z "$(find _site -name '*.gita' -o -name '*.bien-nhan.txt' -o -name 'PHIEU-QUYET.md')"
-          printf 'Prepared Cloudflare Pages artifact: %s files\n' "$(find _site -type f | wc -l)"
+        # Danh sách trắng nằm ở tools/dung-site.sh — CHUNG với bộ kiểm
+        # tools/thu-trang-cong-khai.mjs, để thứ được kiểm là thứ được đưa lên.
+        run: bash tools/dung-site.sh _site
 
       - name: Upload artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -260,6 +271,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '4.149.0'
           command: pages deploy _site --project-name=gita365 --branch=main
 
   github-pages:
@@ -275,7 +287,7 @@ jobs:
       id-token: write
     steps:
       - name: Download Pages artifact
-        uses: actions/download-artifact@87c55149d96e628cc2ef7e6fc2aab372015aec85 # v4.1.3
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: _site
           path: _site

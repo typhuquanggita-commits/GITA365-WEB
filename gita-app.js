@@ -5560,6 +5560,30 @@ G.canCapPhep = function (goi) {
 'use strict';
 (function(){
 var G = window.G;
+
+/* Chống nhúng khung (clickjacking). gita365.pages.dev đã chặn bằng tiêu đề
+   X-Frame-Options trong _headers, nhưng bản phụ trên GitHub Pages KHÔNG đọc
+   _headers — một trang lạ nhúng app vào khung trong suốt rồi lừa người đang
+   đăng nhập bấm hộ. App không tự nhúng chính mình ở đâu cả (khung chỉ chứa
+   video ngoài), nên bị nhúng là đáng ngờ: xoá trắng trang, chỉ để lại một
+   liên kết mở ở cửa sổ riêng (9/10/2026).
+   Không dựa vào việc tự đẩy cửa sổ cha đi: Chrome CỐ Ý chặn khung con điều
+   hướng trang cha khi người dùng chưa bấm gì, và chặn LẶNG LẼ — không ném
+   lỗi. Phá thử bản đầu cho thấy app vẫn chạy nguyên trong khung. */
+if (window.top !== window.self) {
+  var dauTrang = document.documentElement;
+  dauTrang.innerHTML = '<head></head><body style="font-family:sans-serif;padding:24px"></body>';
+  var p = document.createElement('p');
+  p.textContent = 'GITA 365 không chạy bên trong trang của nơi khác. ';
+  var a = document.createElement('a');
+  a.href = window.location.href; a.target = '_top'; a.rel = 'noopener';
+  a.textContent = 'Mở GITA 365 ở cửa sổ riêng';
+  p.appendChild(a);
+  document.body.appendChild(p);
+  G.BI_NHUNG = true;
+  return;
+}
+
 G.SECLOG = [];
 G.CONSENT = false;
 
@@ -47796,6 +47820,7 @@ document.addEventListener('keydown', function (e) {
 
 /* Dựng tấm điều khiển một lần, ngay sau khi trang có thân. */
 function dung() {
+  if (window.G && window.G.BI_NHUNG) return;   // bị nhúng khung: guard.js đã xoá trắng trang
   if (document.getElementById('phongBang')) return;
   var d = document.createElement('div');
   d.id = 'phongBang';
@@ -82574,8 +82599,17 @@ G.xuat = function(ma){
   if(G.chamTaiNguyen) b.dong.forEach(function(d, i){
     G.chamTaiNguyen('Xuất bảng', ma + '·' + i);
   });
-  var tsv = [b.cot.join('\t')]
-    .concat(b.dong.map(function(r){ return r.map(function(o){ return String(o==null?'':o); }).join('\t'); }))
+  /* Ô bắt đầu bằng = + - @ thì Google Sheets / Excel chạy thành CÔNG THỨC khi
+     dán vào. Một tên nhà gõ "=IMPORTXML(...)" là lệnh gửi dữ liệu trong bảng
+     tính của nhân viên ra ngoài. Thêm dấu ' phía trước để ô luôn là chữ; số
+     thật (kiểu number) giữ nguyên. Tab/xuống dòng trong ô làm lệch cột. */
+  function oTSV(o){
+    if(typeof o === 'number') return String(o);
+    var s = String(o==null?'':o).replace(/[\t\r\n]+/g, ' ');
+    return /^[=+\-@]/.test(s) ? "'" + s : s;
+  }
+  var tsv = [b.cot.map(oTSV).join('\t')]
+    .concat(b.dong.map(function(r){ return r.map(oTSV).join('\t'); }))
     .join('\n');
   G.SHEET_MOI = { ten:b.ten, luc:new Date().toLocaleString('vi-VN'), ma:maBan };
   U.modal('<h2 style="font-size:21px;font-weight:800;margin-bottom:10px">Bảng '+U.h(b.ten)+'</h2>'+
@@ -83160,6 +83194,9 @@ G.raNgoai = function(){
 };
 
 G.boot = function(){
+  /* Bị nhúng vào khung của trang khác (guard.js đã xoá trắng và để lại
+     liên kết mở cửa sổ riêng) — không dựng app đè lên lời báo ấy. */
+  if(G.BI_NHUNG) return;
   if(G.batMaGioiThieu) G.batMaGioiThieu();
   if(G.batLinkKichHoat) G.batLinkKichHoat();
   sparks();

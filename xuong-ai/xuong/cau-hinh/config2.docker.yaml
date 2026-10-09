@@ -1,0 +1,9 @@
+# Dùng khi chạy bằng docker-compose.yml: Ollama là một máy trong mạng nội bộ không có Internet.
+llm:
+  api_type: "openai"
+  base_url: "http://ollama:11434/v1"
+  api_key: "ollama"
+  model: "qwen2.5-coder:14b"
+  timeout: 900
+  stream: false
+repair_llm_output: true

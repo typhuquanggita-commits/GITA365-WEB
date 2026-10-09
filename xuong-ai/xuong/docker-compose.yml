@@ -1,0 +1,40 @@
+# Hộp kín cho xưởng: không Internet, không khoá, chỉ ghi được vào lan-chay/.
+#
+# Lần đầu (CÓ Internet), tải mô hình về ổ của Ollama:
+#   docker compose -f xuong/docker-compose.yml --profile tai run --rm tai-mo-hinh
+# Mỗi lần dùng (KHÔNG Internet):
+#   docker compose -f xuong/docker-compose.yml up -d ollama
+#   docker compose -f xuong/docker-compose.yml run --rm xuong "Viết công cụ đổi phút sang giờ" --ten doi_gio
+services:
+  ollama:
+    image: ollama/ollama:0.12.3
+    volumes: [mo-hinh:/root/.ollama]
+    networks: [noi-bo]
+    deploy:
+      resources:
+        reservations:
+          devices: [{driver: nvidia, count: all, capabilities: [gpu]}]
+
+  tai-mo-hinh:
+    profiles: [tai]
+    image: ollama/ollama:0.12.3
+    volumes: [mo-hinh:/root/.ollama]
+    entrypoint: ["sh", "-c", "ollama serve & sleep 5 && ollama pull qwen2.5-coder:14b"]
+
+  xuong:
+    build: {context: .., dockerfile: xuong/Dockerfile}
+    networks: [noi-bo]          # chỉ thấy máy ollama, không ra được Internet
+    read_only: true             # mọi thứ chỉ đọc, trừ hai chỗ dưới
+    tmpfs: [/tmp]
+    volumes: [./lan-chay:/xuong-ai/xuong/lan-chay]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    environment: {}             # không truyền khoá hay mã truy cập nào vào hộp
+    depends_on: [ollama]
+
+networks:
+  noi-bo:
+    internal: true
+
+volumes:
+  mo-hinh:

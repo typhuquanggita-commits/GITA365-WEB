@@ -206,6 +206,7 @@ document.addEventListener('keydown', function (e) {
 
 /* Dựng tấm điều khiển một lần, ngay sau khi trang có thân. */
 function dung() {
+  if (window.G && window.G.BI_NHUNG) return;   // bị nhúng khung: guard.js đã xoá trắng trang
   if (document.getElementById('phongBang')) return;
   var d = document.createElement('div');
   d.id = 'phongBang';

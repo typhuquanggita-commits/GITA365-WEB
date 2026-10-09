@@ -108,10 +108,13 @@ async function ghiCum(db, cum, v) {
     Vì sao cần: hai cụm khothem và xinthem đồng bộ toàn cục. Trả nguyên
     khối cho gia đình là gửi cho họ tư liệu và lời xin của MỌI nhà khác
     — và tệ hơn, tư liệu gửi riêng cho một nhà sẽ mở khoá cho tất cả. */
-async function catTheoNha(db, cum, du, uid) {
-  let maNha = '';
+async function maNhaCua(db, uid) {
   const nd = await Kho.nguoiTheoId(db, uid);
-  if (nd) maNha = String(nd.maKhachHang || nd.studentId || '');
+  return nd ? String(nd.maKhachHang || nd.studentId || '') : '';
+}
+
+async function catTheoNha(db, cum, du, uid) {
+  const maNha = await maNhaCua(db, uid);
   if (!maNha) return cum === 'xinthem' ? [] : {};
 
   if (cum === 'xinthem')
@@ -167,7 +170,28 @@ async function dongBoCaiDat(db, y, hoSo) {
   };
 
   if (lv <= 11) { for (const k of Object.keys(gui)) if (CUM_NGHE.includes(k)) await nhan(k); }
-  else await nhan('xinthem');   /* gia đình và CTV: chỉ đẩy được LỜI XIN, không hơn */
+  else await nhanXinThemCuaNha();   /* gia đình và CTV: chỉ đẩy được LỜI XIN CỦA NHÀ MÌNH */
+
+  /* GỘP THEO NHÀ, KHÔNG GHI ĐÈ (9/10/2026). xinthem là MỘT khối dùng chung
+     cho mọi nhà, nhưng mỗi nhà chỉ được ĐỌC phần của mình (catTheoNha). Bản
+     cũ cho gia đình ghi bằng nhan() — tức là thay CẢ khối bằng thứ máy họ
+     gửi lên, mà máy họ chỉ giữ phần của chính họ. Hậu quả: mỗi lượt một
+     nhà bấm "xin thêm" là lời xin của MỌI nhà khác biến mất, và một lượt
+     gửi {du:[]} là xoá sạch cả sổ. Nay: giữ nguyên phần của các nhà khác,
+     chỉ thay phần của nhà người gửi, và bỏ mọi dòng mang mã nhà khác. */
+  async function nhanXinThemCuaNha() {
+    const v = gui.xinthem;
+    if (!v || typeof v !== 'object' || !Array.isArray(v.du)) return;
+    if (Number(v.luc || 0) <= Number((cu.xinthem || {}).luc || 0)) return;
+    const maNha = await maNhaCua(db, hoSo.uid);
+    if (!maNha) return;
+    const cuDu = Array.isArray((cu.xinthem || {}).du) ? cu.xinthem.du : [];
+    const cuaNha = v.du.filter(x => x && typeof x === 'object' && String(x.nha) === maNha);
+    const du = cuDu.filter(x => String(x && x.nha) !== maNha).concat(cuaNha);
+    cu.xinthem = {luc: Number(v.luc), du, boi: hoSo.u};
+    await ghiCum(db, 'xinthem', cu.xinthem);
+    doi++;
+  }
 
   /* Bảng phân quyền (vai → quyền) là cấp quyền → V50·168: chỉ Super Admin ghi. */
   if (lv <= 2) { for (const k of Object.keys(gui)) if (CUM_QUAN_TRI.includes(k) && (k !== 'phanquyen' || lv === 1)) await nhan(k); }

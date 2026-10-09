@@ -1,0 +1,23 @@
+diff --git a/metagpt/tools/libs/terminal.py b/metagpt/tools/libs/terminal.py
+index 6f869d5..1be57db 100644
+--- a/metagpt/tools/libs/terminal.py
++++ b/metagpt/tools/libs/terminal.py
+@@ -154,10 +154,14 @@ class Terminal:
+             # '\r' is changed to '\n', resulting in excessive output.
+             tmp = b""
+             while True:
+-                output = tmp + await self.process.stdout.read(1)
+-                if not output:
+-                    continue
+-                *lines, tmp = output.splitlines(True)
++                chunk = await self.process.stdout.read(1)
++                if not chunk:
++                    # Vá của Xưởng AI: vỏ lệnh đã đóng; trả phần đã đọc thay vì quay vòng mãi.
++                    return "".join(cmd_output) + tmp.decode(errors="ignore")
++                output = tmp + chunk
++                lines = output.splitlines(True)
++                # Vá của Xưởng AI: giữ lại phần chưa hết dòng; dòng đã đủ (kể cả dòng cuối) thì xử lý ngay.
++                tmp = lines.pop() if lines and not lines[-1].endswith((b"\n", b"\r")) else b""
+                 for line in lines:
+                     line = line.decode(errors="ignore")
+                     ix = line.rfind(END_MARKER_VALUE)

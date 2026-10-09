@@ -336,7 +336,15 @@ async function ghiCongThuc(db, uid, ten, canh, maCo) {
   return { ma, byteCongThuc: noi.length };
 }
 
-export async function damBaoMau(env, db) {
+/* opt.congKhai: lượt gọi từ đường /phim/* CÔNG KHAI (người lạ, không phiên).
+   Lượt ấy vẫn tự làm tiếp việc dở như thiết kế — vẽ bằng Workers AI (có trần
+   neuron mỗi ngày ở giuNeuron) và nhận clip đã quay — nhưng KHÔNG gọi dịch vụ
+   vẽ ảnh TRẢ PHÍ bên ngoài (veCanhNgoai). Luật của chủ hệ: không để chi tiêu
+   AI trả phí chạy theo lượt bấm của người không đăng nhập (9/10/2026). */
+export async function damBaoMau(env, db, opt) {
+  const veNgoai = !(opt && opt.congKhai)
+    ? (e, p) => veCanhNgoai(e, p)
+    : async () => null;
   await taoBangPhanTu(db);
   const co = await db.prepare('SELECT noiDung FROM phim_pt_cong_thuc WHERE ma = ?').bind(MA_MAU).first();
   const mau = mauCongThuc();
@@ -392,7 +400,7 @@ export async function damBaoMau(env, db) {
   if (env && env.HOSO && canh.some(c => !c.hatNen)) {
     const loaiNV = 'nvmau' + PHIEN_BAN_ANH;
     if (!nvHat && env.AI) {
-      const anhNV = (await veCanhNgoai(env, PROMPT_NHAN_VAT)) || (await veCanhAI(env, db, PROMPT_NHAN_VAT, loiAI, []));
+      const anhNV = (await veNgoai(env, PROMPT_NHAN_VAT)) || (await veCanhAI(env, db, PROMPT_NHAN_VAT, loiAI, []));
       if (anhNV) {
         const luuNV = await luuHat(env, db, anhNV, loaiNV);
         if (luuNV.ok) nvHat = { ma: luuNV.ma };
@@ -409,7 +417,7 @@ export async function damBaoMau(env, db) {
         const r2 = await layRefNhanVat(env, db, canh[i].nv);
         if (r2.length) { refsCanh = r2; maNV = await maRefNhanVat(env, db, canh[i].nv); }
       }
-      const anh = (await veCanhNgoai(env, PROMPT_MAU[i])) || (await veCanhAI(env, db, PROMPT_MAU[i], loiAI, refsCanh));
+      const anh = (await veNgoai(env, PROMPT_MAU[i])) || (await veCanhAI(env, db, PROMPT_MAU[i], loiAI, refsCanh));
       if (anh) {
         const luu = await luuHat(env, db, anh, 'nen');
         if (luu.ok) {
@@ -595,7 +603,7 @@ export async function phucVuPhimPhanTu(req, env, duong) {
   if (!db) return new Response('Chưa có cơ sở dữ liệu.', { status: 500, headers: DAU });
   await taoBangPhanTu(db);
   if (duong === '/phim/mau') {
-    const m = await damBaoMau(env, db);
+    const m = await damBaoMau(env, db, { congKhai: true });
     return Response.redirect(new URL(m.link, req.url).toString(), 302);
   }
   let khop = duong.match(/^\/phim\/xem\/([0-9a-z-]{8,40})$/);
@@ -603,7 +611,7 @@ export async function phucVuPhimPhanTu(req, env, duong) {
     /* Trang xem phim mẫu tự soát lại (vẽ ảnh còn thiếu, nhận clip đã
        quay xong) trước khi trả trình xem — mỗi lần tải lại là một lần
        máy tự làm tiếp việc dở. */
-    if (khop[1] === MA_MAU) { try { await damBaoMau(env, db); } catch (e) { /* xem vẫn tiếp */ } }
+    if (khop[1] === MA_MAU) { try { await damBaoMau(env, db, { congKhai: true }); } catch (e) { /* xem vẫn tiếp */ } }
     const co = await db.prepare('SELECT ma FROM phim_pt_cong_thuc WHERE ma = ?').bind(khop[1]).first();
     if (!co) return new Response('Không có phim này.', { status: 404, headers: DAU });
     return new Response(req.method === 'HEAD' ? null : trangXem(), {
@@ -613,7 +621,7 @@ export async function phucVuPhimPhanTu(req, env, duong) {
   }
   khop = duong.match(/^\/phim\/cong-thuc\/([0-9a-z-]{8,40})$/);
   if (khop) {
-    if (khop[1] === MA_MAU) { try { await damBaoMau(env, db); } catch (e) { /* vẫn trả công thức hiện có */ } }
+    if (khop[1] === MA_MAU) { try { await damBaoMau(env, db, { congKhai: true }); } catch (e) { /* vẫn trả công thức hiện có */ } }
     const co = await db.prepare('SELECT ten, noiDung FROM phim_pt_cong_thuc WHERE ma = ?').bind(khop[1]).first();
     const o = co && jsonCongKhai(co.noiDung);
     if (!o) return new Response('{}', { status: 404, headers: DAU });

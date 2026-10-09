@@ -32,5 +32,12 @@ Chủ hệ: anh Trương Nhật Quang (không phải dân kỹ thuật, viết t
 ## Gỡ hẳn — CHỈ KHI CHỦ HỆ RA LỆNH
 Không xoá mã màn, cửa máy chủ, bảng dữ liệu hay tệp nào đã gộp / đã rút (V50 GOP · CUM · AN) khi chủ hệ chưa ra lệnh gỡ bằng lời rõ ràng trong phiên làm việc. Gộp, ẩn, chuyển hướng thì được (đảo ngược được); gỡ hẳn thì không.
 
+## An ninh (9/10/2026 · `SECURITY.md` · `docs/SOAT-AN-NINH-2026-10-09.md`)
+- Trang công khai = danh sách trắng `tools/dung-site.sh` (CHUNG cho `deploy.yml` và `tools/thu-trang-cong-khai.mjs`). Trang HTML nạp tệp mới thì thêm vào đó, không sửa riêng `deploy.yml`.
+- `deploy.yml` gọi `kiem-tra.yml` làm cổng: bộ kiểm đỏ là không triển khai. Thêm phép kiểm thì thêm vào `kiem-tra.yml`.
+- Móc pre-commit `tools/chan-commit.mjs` (tự bật mỗi phiên): chặn tệp mật, khoá, tệp nén, tệp > 8 MB, dáng khoá. CI chạy `--tat-ca`. Không dùng `--no-verify`.
+- Ví dụ khoá cố ý: ghi `gita-bi-mat:bo-qua` trên dòng ấy (soat-bi-mat); báo nhầm của gitleaks: `.gitleaks.toml`, phải soát tay và ghi lý do.
+- Công cụ tải về trong CI: ghim phiên bản + đối chiếu SHA-256; action ghim mã commit; `npx` ghim phiên bản đúng.
+
 ## Không chạm (trừ khi chủ hệ yêu cầu rõ)
 `crm.js` · `kho/*.enc` · giấy phép · `studio.js` · `kho-goc/` · `kho/khoa.json`. Khoá thật chỉ ở Cloudflare/GitHub Secrets.

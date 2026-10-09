@@ -68,3 +68,21 @@ man-*.png
 *.mp4
 weights/
 __pycache__/
+
+# ── Khoá và bí mật chạy thử — không bao giờ vào kho mã (9/10/2026) ──
+# .dev.vars là chỗ wrangler đọc bí mật khi chạy Worker trên máy: nó mang
+# khoá THẬT. .wrangler/ là bộ nhớ đệm có thể chứa bản D1 cục bộ kèm dữ
+# liệu người. Chặn ở đây, và tools/chan-commit.sh chặn thêm lần nữa.
+.env
+.env.*
+!.env.example
+.dev.vars
+**/.dev.vars
+.wrangler/
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+.venv/
+*.pyc

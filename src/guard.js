@@ -8,6 +8,30 @@
 'use strict';
 (function(){
 var G = window.G;
+
+/* Chống nhúng khung (clickjacking). gita365.pages.dev đã chặn bằng tiêu đề
+   X-Frame-Options trong _headers, nhưng bản phụ trên GitHub Pages KHÔNG đọc
+   _headers — một trang lạ nhúng app vào khung trong suốt rồi lừa người đang
+   đăng nhập bấm hộ. App không tự nhúng chính mình ở đâu cả (khung chỉ chứa
+   video ngoài), nên bị nhúng là đáng ngờ: xoá trắng trang, chỉ để lại một
+   liên kết mở ở cửa sổ riêng (9/10/2026).
+   Không dựa vào việc tự đẩy cửa sổ cha đi: Chrome CỐ Ý chặn khung con điều
+   hướng trang cha khi người dùng chưa bấm gì, và chặn LẶNG LẼ — không ném
+   lỗi. Phá thử bản đầu cho thấy app vẫn chạy nguyên trong khung. */
+if (window.top !== window.self) {
+  var dauTrang = document.documentElement;
+  dauTrang.innerHTML = '<head></head><body style="font-family:sans-serif;padding:24px"></body>';
+  var p = document.createElement('p');
+  p.textContent = 'GITA 365 không chạy bên trong trang của nơi khác. ';
+  var a = document.createElement('a');
+  a.href = window.location.href; a.target = '_top'; a.rel = 'noopener';
+  a.textContent = 'Mở GITA 365 ở cửa sổ riêng';
+  p.appendChild(a);
+  document.body.appendChild(p);
+  G.BI_NHUNG = true;
+  return;
+}
+
 G.SECLOG = [];
 G.CONSENT = false;
 
