@@ -265,7 +265,7 @@ function than() {
   o += '\n<p><strong>Học viện GITA</strong> — Trương Nhật Quang sáng lập và trực tiếp ' +
     'biên soạn mô thức huấn luyện GITA.</p>\n' +
     '<ul>\n' +
-    '<li>Hotline: <a href="tel:+842855554688">08.5555.4688</a></li>\n' +
+    '<li>Hotline: <a href="tel:+84855554688">08.5555.4688</a></li>\n' +
     '<li>Website: <a href="https://truongnhatquang.com" rel="noopener">truongnhatquang.com</a></li>\n' +
     '<li>Ứng dụng: <a href="' + h(GOCURL) + '/">' + h(MIEN) + '</a></li>\n' +
     '</ul>\n</section>\n';
@@ -322,7 +322,9 @@ function coCauTruc() {
     url: GOCURL + '/',
     description: moTa,
     inLanguage: 'vi-VN',
-    telephone: '+84-28-5555-4688',
+    telephone: '+84-85-555-4688',
+    email: 'typhuquanggita@gmail.com',
+    address: { '@type': 'PostalAddress', streetAddress: 'Số 21/27 Vũ Ngọc Phan', addressLocality: 'Phường Láng', addressRegion: 'Hà Nội', addressCountry: 'VN' },
     areaServed: { '@type': 'Country', name: 'Việt Nam' },
     founder: { '@id': GOCURL + '/#nguoisanglap' },
     sameAs: ds(G.KENH_DS).map(k => k.url).filter(Boolean)
@@ -573,7 +575,7 @@ function dieuHuong(tepDang) {
 function chanTrang() {
   return '<footer>\n<p><strong>Học viện GITA</strong> — Trương Nhật Quang sáng lập và trực tiếp ' +
     'biên soạn mô thức huấn luyện GITA.</p>\n' +
-    '<p>Hotline <a href="tel:+842855554688">08.5555.4688</a> · ' +
+    '<p>Hotline <a href="tel:+84855554688">08.5555.4688</a> · ' +
     '<a href="https://truongnhatquang.com" rel="noopener">truongnhatquang.com</a> · ' +
     '<a href="' + GOCURL + '/">Mở ứng dụng GITA 365</a></p>\n' +
     '<p><small>© ' + new Date().getFullYear() + ' Học viện GITA. Nội dung chuyên môn là tài sản ' +

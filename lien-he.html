@@ -19,29 +19,30 @@
 <link rel="stylesheet" href="assets/marketing.css">
 <link rel="icon" href="/assets/icons/icon-192.png">
 </head>
-<body>
+<body class="co-dock">
 
 <div class="m-aura"><b></b><b></b><b></b><b></b><i></i></div>
 <div class="m-grid"></div>
 
-<nav class="m-nav" aria-label="Main">
+<nav class="m-nav" aria-label="Điều hướng chính">
   <div class="m-container">
-    <a href="/landing.html" class="m-logo">
-      <img loading="lazy" decoding="async" src="/assets/icons/icon-192.png" alt="GITA 365">
+    <a href="/landing.html" class="m-logo" aria-label="GITA 365 — Trang chủ">
+      <img src="/assets/icons/icon-192.png" alt="" width="40" height="40">
       <div>GITA 365 <span>Family Prosperity</span></div>
     </a>
-    <div class="m-lang">
-      <button data-lang="vi" class="active">VI</button>
-      <button data-lang="en">EN</button>
+    <div class="m-lang" role="group" aria-label="Ngôn ngữ">
+      <button type="button" data-lang="vi" class="active">VI</button>
+      <button type="button" data-lang="en">EN</button>
     </div>
-    <button class="m-menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">☰</button>
+    <button type="button" class="m-menu-btn" aria-label="Mở menu" aria-expanded="false" aria-controls="navLinks">☰</button>
     <div class="m-nav-links" id="navLinks">
       <a href="/landing.html" data-m="navHome">Trang chủ</a>
       <a href="/ve-chung-toi.html" data-m="navAbout">Về chúng tôi</a>
       <a href="/dich-vu.html" data-m="navServices">Dịch vụ</a>
       <a href="/bang-gia.html" data-m="navPricing">Bảng giá</a>
-      <a href="/lien-he.html" data-m="navContact">Liên hệ</a>
+      <a href="/lien-he.html" data-m="navContact" aria-current="page">Liên hệ</a>
       <a href="/index.html" class="primary" data-m="navApp">Mở ứng dụng</a>
+      <a href="/lien-he.html#dang-ky" class="m-nav-cta" data-m="navCta" data-do="nav-dang-ky">Đăng ký tư vấn</a>
     </div>
   </div>
 </nav>
@@ -58,33 +59,33 @@
   </div>
 </section>
 
-<section class="m-section" style="padding-top:0">
+<section class="m-section" id="dang-ky" style="padding-top:0;scroll-margin-top:96px">
   <div class="m-container">
     <div class="m-contact-grid">
       <div class="m-contact-info">
         <div class="m-contact-item">
-          <div class="icon">📞</div>
+          <div class="icon"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg></div>
           <div>
             <b data-m="contactPhone">Hotline</b>
-            <span><a href="tel:+842855554688" style="color:inherit">08.5555.4688</a></span>
+            <span><a href="tel:+84855554688">08.5555.4688</a></span>
           </div>
         </div>
         <div class="m-contact-item">
-          <div class="icon">✉️</div>
+          <div class="icon"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></div>
           <div>
             <b data-m="contactEmail">Email</b>
-            <span><a href="mailto:typhuquanggita@gmail.com" style="color:inherit">typhuquanggita@gmail.com</a></span>
+            <span><a href="mailto:typhuquanggita@gmail.com">typhuquanggita@gmail.com</a></span>
           </div>
         </div>
         <div class="m-contact-item">
-          <div class="icon">📍</div>
+          <div class="icon"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></div>
           <div>
             <b data-m="contactAddress">Địa chỉ</b>
-            <span data-m="contactAddressVal">TP. Hồ Chí Minh, Việt Nam</span>
+            <span data-m="contactAddressVal">Số 21/27 Vũ Ngọc Phan, phường Láng, TP. Hà Nội</span>
           </div>
         </div>
         <div class="m-contact-item">
-          <div class="icon">🕐</div>
+          <div class="icon"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
           <div>
             <b data-m="contactHours">Giờ làm việc</b>
             <span data-m="contactHoursVal">Thứ Hai – Thứ Bảy · 8:00 – 18:00</span>
@@ -92,24 +93,32 @@
         </div>
       </div>
       <!-- Form gửi về Worker của chính Học viện (cửa guiLienHe, may-chu/lien-he.js) —
-           không qua dịch vụ ngoài. Thư tới hòm chủ hệ, máy chủ không lưu nội dung. -->
-      <form class="m-form" id="contactForm" data-may-chu="https://gita365.typhuquanggita.workers.dev/">
+           không qua dịch vụ ngoài. Lời nhắn thành thông báo trong hệ cho Super Admin +
+           Giám đốc và thư tới hòm chủ hệ. -->
+      <form class="m-form" id="contactForm" data-may-chu="https://gita365.typhuquanggita.workers.dev/" aria-labelledby="dang-ky-tieu-de">
+        <h2 id="dang-ky-tieu-de" class="sr-only" data-m="contactFormTitle">Đăng ký tư vấn</h2>
         <div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden">
           <label>Bỏ trống ô này <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
         </div>
-        <input type="text" name="name" placeholder="Họ tên" data-m-placeholder="contactFormName" required>
-        <input type="tel" name="phone" placeholder="Số điện thoại" data-m-placeholder="contactFormPhone" required>
-        <input type="email" name="email" placeholder="Email" data-m-placeholder="contactFormEmail">
-        <select name="topic" data-m-placeholder="contactFormTopic">
-          <option value="" disabled selected>Bạn quan tâm đến</option>
-          <option value="7ngay">Bảy ngày nhìn lại</option>
-          <option value="90ngay">Lộ trình 90 ngày</option>
-          <option value="365ngay">Lộ trình 365 ngày</option>
-          <option value="khac">Khác</option>
+        <label class="sr-only" for="f-ten" data-m="contactFormName">Họ tên</label>
+        <input id="f-ten" type="text" name="name" placeholder="Họ tên" data-m-placeholder="contactFormName" autocomplete="name" maxlength="80" required>
+        <label class="sr-only" for="f-sdt" data-m="contactFormPhone">Số điện thoại</label>
+        <input id="f-sdt" type="tel" name="phone" placeholder="Số điện thoại" data-m-placeholder="contactFormPhone" autocomplete="tel" inputmode="tel" maxlength="24" required>
+        <label class="sr-only" for="f-thu" data-m="contactFormEmail">Email</label>
+        <input id="f-thu" type="email" name="email" placeholder="Email (không bắt buộc)" data-m-placeholder="contactFormEmail" autocomplete="email" maxlength="254">
+        <label class="sr-only" for="f-chude" data-m="contactFormTopic">Bạn quan tâm đến</label>
+        <select id="f-chude" name="topic">
+          <option value="" selected data-m="contactFormTopic">Bạn quan tâm đến</option>
+          <option value="7ngay" data-m="topic7">Bảy ngày nhìn lại</option>
+          <option value="90ngay" data-m="topic90">Lộ trình 90 ngày</option>
+          <option value="365ngay" data-m="topic365">Lộ trình 365 ngày</option>
+          <option value="khac" data-m="topicKhac">Câu hỏi khác</option>
         </select>
-        <textarea name="message" placeholder="Điều lo nhất trong nhà hiện tại" data-m-placeholder="contactFormMessage" required></textarea>
+        <label class="sr-only" for="f-loi" data-m="contactFormMessage">Điều lo nhất trong nhà hiện tại</label>
+        <textarea id="f-loi" name="message" placeholder="Điều lo nhất trong nhà hiện tại" data-m-placeholder="contactFormMessage" maxlength="1500" required></textarea>
         <button type="submit" class="m-btn m-btn-primary m-btn-block" data-m="contactFormSend">Gửi yêu cầu tư vấn</button>
-        <p id="formStatus" class="m-small" style="margin:0;text-align:center"></p>
+        <p id="formStatus" class="m-small" role="status" aria-live="polite" style="margin:0;text-align:center"></p>
+        <p class="m-form-note" data-m="contactFormNote">Thông tin chỉ dùng để Học viện gọi lại tư vấn. Lưu trong hệ thống của Học viện, không chuyển cho bên thứ ba, và được xoá sau 90 ngày kể từ khi đã xử lý.</p>
       </form>
     </div>
   </div>
@@ -132,21 +141,28 @@
       <div>
         <h4 data-m="footerSupport">Hỗ trợ</h4>
         <a href="/lien-he.html" data-m="navContact">Liên hệ</a>
-        <a href="/cau-hoi-thuong-gap.html">Câu hỏi thường gặp</a>
-        <a href="/duong-vao.html">Đường vào</a>
+        <a href="/cau-hoi-thuong-gap.html" data-m="footerFaq">Câu hỏi thường gặp</a>
+        <a href="/index.html" data-m="navApp">Mở ứng dụng</a>
+        <a href="https://www.facebook.com/hocviengita" rel="noopener noreferrer" target="_blank">Facebook Học viện GITA</a>
       </div>
       <div>
-        <h4 data-m="footerLegal">Pháp lý</h4>
-        <a href="/index.html" data-m="navApp">Mở ứng dụng</a>
-        <a href="tel:+842855554688">08.5555.4688</a>
+        <h4 data-m="footerContact">Liên hệ</h4>
+        <p data-m="contactAddressVal">Số 21/27 Vũ Ngọc Phan, phường Láng, TP. Hà Nội</p>
+        <a href="tel:+84855554688">Hotline 08.5555.4688</a>
+        <a href="mailto:typhuquanggita@gmail.com">typhuquanggita@gmail.com</a>
       </div>
     </div>
     <div class="m-footer-bottom">
       <span data-m="footerCopy">© 2026 Học viện GITA. Mọi quyền được bảo lưu.</span>
-      <span>Hotline <a href="tel:+842855554688">08.5555.4688</a></span>
+      <span data-m="contactHoursVal">Thứ Hai – Thứ Bảy · 8:00 – 18:00</span>
     </div>
   </div>
 </footer>
+
+<div class="m-dock" role="region" aria-label="Liên hệ nhanh">
+  <a href="tel:+84855554688" class="goi"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg><span data-m="dockCall">Gọi ngay</span></a>
+  <a href="/lien-he.html#dang-ky" class="dk" data-do="dock-dang-ky"><span data-m="navCta">Đăng ký tư vấn</span></a>
+</div>
 
 </div>
 
