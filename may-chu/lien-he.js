@@ -45,6 +45,12 @@ function sachNhieuDong(s, dai) {
     .replace(/\n{3,}/g, '\n\n').trim().slice(0, dai);
 }
 
+async function damBaoThongBao(db) {
+  await db.prepare('CREATE TABLE IF NOT EXISTS thongBao (id TEXT PRIMARY KEY, denVai TEXT, denAi TEXT, ' +
+    'loai TEXT NOT NULL, mucDo TEXT NOT NULL, tieuDe TEXT NOT NULL, than TEXT NOT NULL, doiTuong TEXT, ' +
+    'luc TEXT NOT NULL, docLuc TEXT, docBoi TEXT)').run();
+}
+
 export async function guiLienHe(y, env, db, req) {
   /* Ô mồi: người thật không thấy ô "website", máy quét điền tất. Trả "đã
      nhận" để máy quét không biết mình bị chặn ở đâu — và không gửi gì. */
@@ -83,8 +89,16 @@ export async function guiLienHe(y, env, db, req) {
   /* Đường 1 — thông báo trong hệ: ở lại dưới khoá của Học viện, đọc ngay
      trong ứng dụng, không phụ thuộc nhà gửi thư nào. */
   let trongHe = false, quaThu = false;
-  try { await baoLenCapCao(db, { loai: 'lienHe', mucDo: 'canXem', tieuDe, than }); trongHe = true; }
-  catch (e) { console.error('LIEN_HE_TB_HONG', String(e && e.message || e).slice(0, 200)); }
+  const tin = { loai: 'lienHe', mucDo: 'canXem', tieuDe, than };
+  try { await baoLenCapCao(db, tin); trongHe = true; }
+  catch (e) {
+    /* D1 dựng trước 9.98 có thể chưa có bảng thongBao (csdl.sql chỉ chạy
+       tay). Dựng bảng rồi thử lại MỘT lần — rơi lời nhắn vì thiếu một bảng
+       là lý do tệ nhất để rơi. */
+    console.error('LIEN_HE_TB_HONG', String(e && e.message || e).slice(0, 200));
+    try { await damBaoThongBao(db); await baoLenCapCao(db, tin); trongHe = true; }
+    catch (e2) { console.error('LIEN_HE_TB_HONG_2', String(e2 && e2.message || e2).slice(0, 200)); }
+  }
   /* Đường 2 — thư: để biết khi không mở máy. bimat: tên + số điện thoại
      của một gia đình không đi đường hộp thư GitHub khi còn đường khác —
      issue giữ nội dung vĩnh viễn. */

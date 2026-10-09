@@ -40,202 +40,207 @@
  ]
 }</script>
 </head>
-<body>
+<body class="co-dock">
 
 <div class="m-aura"><b></b><b></b><b></b><b></b><i></i></div>
 <div class="m-grid"></div>
 
-<nav class="m-nav" aria-label="Main">
+<nav class="m-nav" aria-label="Điều hướng chính">
   <div class="m-container">
-    <a href="/landing.html" class="m-logo">
-      <img loading="lazy" decoding="async" src="/assets/icons/icon-192.png" alt="GITA 365">
+    <a href="/landing.html" class="m-logo" aria-label="GITA 365 — Trang chủ">
+      <img src="/assets/icons/icon-192.png" alt="" width="40" height="40">
       <div>GITA 365 <span>Family Prosperity</span></div>
     </a>
-    <div class="m-lang">
-      <button data-lang="vi" class="active">VI</button>
-      <button data-lang="en">EN</button>
+    <div class="m-lang" role="group" aria-label="Ngôn ngữ">
+      <button type="button" data-lang="vi" class="active">VI</button>
+      <button type="button" data-lang="en">EN</button>
     </div>
-    <button class="m-menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">☰</button>
+    <button type="button" class="m-menu-btn" aria-label="Mở menu" aria-expanded="false" aria-controls="navLinks">☰</button>
     <div class="m-nav-links" id="navLinks">
-      <a href="/landing.html" data-m="navHome">Trang chủ</a>
+      <a href="/landing.html" data-m="navHome" aria-current="page">Trang chủ</a>
       <a href="/ve-chung-toi.html" data-m="navAbout">Về chúng tôi</a>
       <a href="/dich-vu.html" data-m="navServices">Dịch vụ</a>
       <a href="/bang-gia.html" data-m="navPricing">Bảng giá</a>
       <a href="/lien-he.html" data-m="navContact">Liên hệ</a>
       <a href="/index.html" class="primary" data-m="navApp">Mở ứng dụng</a>
+      <a href="/lien-he.html#dang-ky" class="m-nav-cta" data-m="navCta" data-do="nav-dang-ky">Đăng ký tư vấn</a>
     </div>
   </div>
 </nav>
 
 <div class="m-wrap">
 
-<!-- HERO -->
+<main id="noi-dung">
+<!-- MỞ ĐẦU -->
 <section class="m-hero">
   <div class="m-container">
     <div class="m-hero-grid">
       <div class="m-hero-text">
         <div class="m-eyebrow" data-m="heroEyebrow">HỆ SINH THÁI GIA ĐÌNH THỊNH VƯỢNG</div>
         <h1 data-m="heroH1">Sau 365 ngày, <em>nhà bạn tự chạy</em> — không cần ai đứng canh.</h1>
-        <p class="m-lead" data-m="heroLead">GITA 365 là một hệ thống đồng hành giúp gia đình Việt dựng lại nếp, giảm nhắc nhở và truyền động lực học tập cho con — bằng bản đồ có thứ tự, số liệu thật và người đồng hành đúng việc.</p>
+        <p class="m-lead" data-m="heroLead">GITA 365 đồng hành cùng gia đình Việt dựng lại nếp sống, bớt nhắc nhở và khơi động lực học tập cho con — bằng một bản đồ có thứ tự, số liệu thật của chính nhà bạn và người đồng hành đúng việc.</p>
         <div class="m-hero-btns">
-          <a href="/lien-he.html" class="m-btn m-btn-primary" data-m="ctaPrimary">Bắt đầu bảy ngày nhìn lại</a>
-          <a href="#cach-hoat-dong" class="m-btn m-btn-ghost" data-m="ctaSecondary">Xem cách GITA hoạt động</a>
+          <a href="/lien-he.html#dang-ky" class="m-btn m-btn-primary" data-m="ctaPrimary" data-do="hero-dang-ky">Bắt đầu bảy ngày nhìn lại</a>
+          <a href="#bay-ngay" class="m-btn m-btn-ghost" data-m="ctaSecondary" data-do="hero-xem-cach">Xem bảy ngày đầu diễn ra thế nào</a>
         </div>
+        <ul class="m-trust">
+          <li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg><span data-m="heroTrust1">Bảy ngày đầu miễn phí</span></li>
+          <li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg><span data-m="heroTrust2">Không ép đi tiếp</span></li>
+          <li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg><span data-m="heroTrust3">Dữ liệu mỗi nhà khoá riêng</span></li>
+        </ul>
         <div class="m-hero-stats">
-          <div class="m-stat"><div class="v" data-m="heroStat1v">1,000+</div><div class="k" data-m="heroStat1k">kịch bản chuyên môn</div></div>
+          <div class="m-stat"><div class="v" data-m="heroStat1v">1.000+</div><div class="k" data-m="heroStat1k">kịch bản chuyên môn</div></div>
           <div class="m-stat"><div class="v" data-m="heroStat2v">5 tầng</div><div class="k" data-m="heroStat2k">đồng hành rõ mốc</div></div>
           <div class="m-stat"><div class="v" data-m="heroStat3v">365 ngày</div><div class="k" data-m="heroStat3k">để nhà tự vận hành</div></div>
         </div>
       </div>
       <div class="m-hero-visual">
-        <div class="m-hero-card">
-          <h4 data-m="heroCardTitle">Bảy ngày đầu, bạn không cần tin gì cả</h4>
-          <ul>
-            <li data-m="heroCardLi1">Chỉ nhìn lại nhà mình bằng số liệu thật</li>
-            <li data-m="heroCardLi2">Làm test năng lực học tập & môi trường gia đình</li>
-            <li data-m="heroCardLi3">Đọc bản đồ 5 khoang — 9 vai — 12 chặng</li>
-            <li data-m="heroCardLi4">Quyết định tiếp hay dừng, không ai thuyết phục</li>
-          </ul>
-        </div>
+        <figure class="m-portrait">
+          <picture><source srcset="/assets/anh/nguoi-sang-lap.webp" type="image/webp"><img src="/assets/anh/nguoi-sang-lap.jpg" alt="Trương Nhật Quang, người sáng lập Học viện GITA" width="1024" height="1536" fetchpriority="high"></picture>
+          <figcaption><b>Trương Nhật Quang</b><span data-m="heroPortraitRole">Người sáng lập Học viện GITA · biên soạn mô thức GITA</span></figcaption>
+        </figure>
       </div>
     </div>
   </div>
 </section>
 
-<!-- PAIN POINTS -->
+<!-- NỖI ĐAU -->
 <section class="m-section" style="background:rgba(255,255,255,.02)">
   <div class="m-container">
     <div class="m-section-head">
-      <div class="m-eyebrow" data-m="painEyebrow">NỖI ĐAU PHỤ HUYNH THƯỜNG GẶP</div>
+      <div class="m-eyebrow" data-m="painEyebrow">ĐIỀU CHA MẸ THƯỜNG GẶP</div>
       <h2 data-m="painH2">Bạn không thiếu tình thương. Bạn thiếu một bản đồ.</h2>
-      <p class="m-lead" data-m="painLead">Phần lớn cha mẹ đều cố gắng. Nhưng cố gắng không có hệ thống sẽ dẫn đến ba chỗ mắc kẹt:</p>
+      <p class="m-lead" data-m="painLead">Phần lớn cha mẹ đều cố gắng. Nhưng cố gắng mà không có hệ thống thì thường mắc kẹt ở ba chỗ:</p>
     </div>
     <div class="m-pain-grid">
       <div class="m-pain">
-        <h4 data-m="pain1h">Một trăm lời khuyên, không lời nào làm được</h4>
+        <h3 class="h4" data-m="pain1h">Một trăm lời khuyên, không lời nào làm được</h3>
         <p data-m="pain1p">Mỗi người cho một ý. Tối đến bạn mệt mỏi vì không biết nên bắt đầu từ đâu.</p>
       </div>
       <div class="m-pain">
-        <h4 data-m="pain2h">Đo bằng cảm giác, nên tháng sau quên mình đã đi xa bao nhiêu</h4>
+        <h3 class="h4" data-m="pain2h">Đo bằng cảm giác, nên tháng sau quên mình đã đi xa bao nhiêu</h3>
         <p data-m="pain2p">"Con ngoan hơn" là cảm giác. Số lần phải nhắc, giờ vào bàn, giờ đi ngủ mới là số liệu.</p>
       </div>
       <div class="m-pain">
-        <h4 data-m="pain3h">Người dẫn tốt thì nhà đổi, người dẫn nghỉ thì nhà trôi về chỗ cũ</h4>
+        <h3 class="h4" data-m="pain3h">Người dẫn tốt thì nhà đổi, người dẫn nghỉ thì nhà trôi về chỗ cũ</h3>
         <p data-m="pain3p">Vì cách làm nằm trong đầu một người, không nằm trong hệ thống của chính nhà bạn.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- SOLUTION -->
+<!-- CÁCH GITA LÀM -->
 <section class="m-section" id="cach-hoat-dong">
   <div class="m-container">
     <div class="m-section-head">
-      <div class="m-eyebrow" data-m="solEyebrow">CÁCH GITA 365 GIẢI QUYẾT</div>
+      <div class="m-eyebrow" data-m="solEyebrow">CÁCH GITA 365 LÀM</div>
       <h2 data-m="solH2">Một bản đồ. Một nhịp. Một người đồng hành đúng việc.</h2>
-      <p class="m-lead" data-m="solLead">GITA 365 không phải khoá học. Đó là hệ sinh thái giúp nhà bạn tự vận hành.</p>
+      <p class="m-lead" data-m="solLead">GITA 365 không phải một khoá học. Đó là một hệ thống giúp nhà bạn tự vận hành.</p>
     </div>
     <div class="m-grid-2">
-      <div class="m-card">
-        <div class="icon">🗺</div>
+      <div class="m-card"><div class="icon"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg></div>
         <h3 data-m="sol1h">Bản đồ có thứ tự</h3>
-        <p data-m="sol1p">5 khoang, 9 vai, 12 chặng. Biết rõ ai làm gì, khi nào xong, xong thì trông như thế nào.</p>
-      </div>
-      <div class="m-card">
-        <div class="icon">📊</div>
+        <p data-m="sol1p">5 khoang, 9 vai, 12 chặng. Biết rõ ai làm gì, khi nào xong, xong thì trông như thế nào.</p></div>
+      <div class="m-card"><div class="icon"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div>
         <h3 data-m="sol2h">Mọi thứ đo được</h3>
-        <p data-m="sol2p">Số lần nhắc, giờ ngủ, giờ học, bữa cơm chung. Con số không nói dối — và cho bạn lại quyền kiểm soát.</p>
-      </div>
-      <div class="m-card">
-        <div class="icon">🤝</div>
+        <p data-m="sol2p">Số lần nhắc, giờ ngủ, giờ học, bữa cơm chung. Con số của chính nhà bạn — và nó trả lại cho bạn quyền tự nhìn thấy mình đang đi tới đâu.</p></div>
+      <div class="m-card"><div class="icon"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.6"/><path d="M15.5 14.2A5 5 0 0 1 21 19"/></svg></div>
         <h3 data-m="sol3h">Người đồng hành thật</h3>
-        <p data-m="sol3p">Tư vấn mở cửa, Coach đi từng chặng, Giáo viên dạy đúng chỗ cần. Mọi việc để lại dấu trên hệ thống.</p>
-      </div>
-      <div class="m-card">
-        <div class="icon">🏠</div>
+        <p data-m="sol3p">Tư vấn mở cửa, Coach đi từng chặng, Giáo viên dạy đúng chỗ cần. Mọi việc để lại dấu trên hệ thống.</p></div>
+      <div class="m-card"><div class="icon"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></div>
         <h3 data-m="sol4h">Đích là nhà tự chạy</h3>
-        <p data-m="sol4p">Ngày Học viện thôi nhắc mà nhà vẫn giữ nếp — đó mới là ngày xong.</p>
-      </div>
+        <p data-m="sol4p">Ngày Học viện thôi nhắc mà nhà vẫn giữ nếp — đó mới là ngày xong.</p></div>
     </div>
   </div>
 </section>
 
-<!-- BENEFITS -->
-<section class="m-section" style="background:rgba(255,255,255,.02)">
+<!-- BẢY NGÀY ĐẦU -->
+<section class="m-section" id="bay-ngay" style="background:rgba(255,255,255,.02)">
+  <div class="m-container">
+    <div class="m-section-head">
+      <div class="m-eyebrow" data-m="stepsEyebrow">BẢY NGÀY ĐẦU DIỄN RA THẾ NÀO</div>
+      <h2 data-m="stepsH2">Bạn chỉ cần mười phút mỗi tối</h2>
+      <p class="m-lead" data-m="stepsLead">Bảy ngày đầu chỉ để nhìn lại nhà mình bằng số liệu thật. Chưa thu phí, chưa ai mời mua gói.</p>
+    </div>
+    <div class="m-steps">
+      <div class="m-step"><span class="tag" data-m="step1tag">Ngày 1</span>
+        <h3 data-m="step1h">Gọi làm quen</h3>
+        <p data-m="step1p">Tư vấn gọi lại trong 24 giờ sau khi bạn đăng ký, nghe bạn kể về nhà mình và hướng dẫn cách ghi nhật ký.</p></div>
+      <div class="m-step"><span class="tag" data-m="step2tag">Ngày 2 – 6</span>
+        <h3 data-m="step2h">Ghi ba dòng mỗi tối</h3>
+        <p data-m="step2p">Số lần phải nhắc, giờ vào bàn học, giờ đi ngủ. Làm thêm bài test năng lực học tập và môi trường gia đình.</p></div>
+      <div class="m-step"><span class="tag" data-m="step3tag">Ngày 7</span>
+        <h3 data-m="step3h">Đọc hồ sơ 45 phút</h3>
+        <p data-m="step3p">Cùng nhìn lại số liệu của chính nhà bạn và bản đồ gia đình. Đi tiếp hay dừng là bạn tự quyết.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- MỤC TIÊU 90 NGÀY -->
+<section class="m-section">
   <div class="m-container">
     <div class="m-left-head">
-      <div class="m-eyebrow" data-m="benEyebrow">LỢI ÍCH SAU 90 NGÀY</div>
+      <div class="m-eyebrow" data-m="benEyebrow">MỤC TIÊU ĐO ĐƯỢC CỦA 90 NGÀY ĐẦU</div>
       <h2 data-m="benH2">Không phải con thay đổi ngay. Là nhà bạn bắt đầu nhìn rõ.</h2>
     </div>
     <div class="m-grid-2" style="gap:32px">
-      <div class="m-benefit">
-        <div class="num">1</div>
-        <div>
-          <h4 data-m="ben1h">Giảm ít nhất 1/3 số lần phải nhắc con</h4>
-          <p data-m="ben1p">Việc học chuyển từ "người lớn đẩy" sang "con tự bước".</p>
-        </div>
-      </div>
-      <div class="m-benefit">
-        <div class="num">2</div>
-        <div>
-          <h4 data-m="ben2h">Cả nhà cùng nhìn một bảng số</h4>
-          <p data-m="ben2p">Không còn tranh cãi dựa trên ký ức khác nhau của mỗi người.</p>
-        </div>
-      </div>
-      <div class="m-benefit">
-        <div class="num">3</div>
-        <div>
-          <h4 data-m="ben3h">Nếp giữ được trong tuần biến cố</h4>
-          <p data-m="ben3p">Vì mỗi nếp đều có mức tối thiểu cho ngày mệt nhất.</p>
-        </div>
-      </div>
-      <div class="m-benefit">
-        <div class="num">4</div>
-        <div>
-          <h4 data-m="ben4h">Con nói được cách mình học</h4>
-          <p data-m="ben4p">Không còn học thuộc. Con biết mình học bằng cách nào và tại sao.</p>
-        </div>
-      </div>
+      <div class="m-benefit"><div class="num">1</div><div>
+        <h3 class="h4" data-m="ben1h">Bớt hẳn số lần phải nhắc con</h3>
+        <p data-m="ben1p">Mục tiêu là giảm ít nhất một phần ba so với tuần đầu — đo bằng nhật ký của chính nhà bạn, không đo bằng cảm giác.</p></div></div>
+      <div class="m-benefit"><div class="num">2</div><div>
+        <h3 class="h4" data-m="ben2h">Cả nhà cùng nhìn một bảng số</h3>
+        <p data-m="ben2p">Không còn tranh cãi dựa trên ký ức khác nhau của mỗi người.</p></div></div>
+      <div class="m-benefit"><div class="num">3</div><div>
+        <h3 class="h4" data-m="ben3h">Nếp giữ được cả trong tuần có biến cố</h3>
+        <p data-m="ben3p">Vì mỗi nếp đều có mức tối thiểu cho ngày mệt nhất.</p></div></div>
+      <div class="m-benefit"><div class="num">4</div><div>
+        <h3 class="h4" data-m="ben4h">Con nói được cách mình học</h3>
+        <p data-m="ben4p">Không còn học thuộc lòng. Con biết mình học bằng cách nào và vì sao.</p></div></div>
     </div>
+    <p class="m-note" data-m="benNote">Đây là mục tiêu mỗi nhà cùng Coach theo dõi hằng tuần, không phải lời cam kết kết quả. Mỗi nhà đi một nhịp riêng.</p>
   </div>
 </section>
 
-<!-- SOCIAL PROOF -->
+<!-- LỜI NGƯỜI SÁNG LẬP -->
+<section class="m-section-sm" style="background:rgba(255,255,255,.02)">
+  <div class="m-container">
+    <figure class="m-quote">
+      <img src="/assets/anh/nguoi-sang-lap-tron.webp" alt="" width="120" height="120" loading="lazy" decoding="async">
+      <div>
+        <blockquote><p data-m="quoteText">“Đích cuối không phải là con lên điểm. Đích là nhà bạn tự chạy khi không còn ai đứng sau lưng nhắc.”</p></blockquote>
+        <cite data-m="quoteBy">Trương Nhật Quang · Người sáng lập Học viện GITA</cite>
+      </div>
+    </figure>
+  </div>
+</section>
+
+<!-- CAM KẾT -->
 <section class="m-section">
   <div class="m-container">
     <div class="m-section-head">
-      <div class="m-eyebrow" data-m="proofEyebrow">PHỤ HUYNH NÓI GÌ</div>
-      <h2 data-m="proofH2">Những gia đình đã đi qua 90 ngày đầu</h2>
+      <div class="m-eyebrow" data-m="pledgeEyebrow">BA CAM KẾT CỦA HỌC VIỆN</div>
+      <h2 data-m="pledgeH2">Điều chúng tôi hứa được, và giữ được</h2>
     </div>
-    <div class="m-grid-3">
-      <div class="m-testi">
-        <q data-m="proofPlaceholder">Dữ liệu testimonial sẽ được cập nhật từ hệ thống sau khi có sự đồng ý của gia đình.</q>
-        <div class="author"><div class="av">G</div><div><b>Gia đình đang chờ cập nhật</b><span>Placeholder</span></div></div>
-      </div>
-      <div class="m-testi">
-        <q data-m="proofPlaceholder">Dữ liệu testimonial sẽ được cập nhật từ hệ thống sau khi có sự đồng ý của gia đình.</q>
-        <div class="author"><div class="av">G</div><div><b>Gia đình đang chờ cập nhật</b><span>Placeholder</span></div></div>
-      </div>
-      <div class="m-testi">
-        <q data-m="proofPlaceholder">Dữ liệu testimonial sẽ được cập nhật từ hệ thống sau khi có sự đồng ý của gia đình.</q>
-        <div class="author"><div class="av">G</div><div><b>Gia đình đang chờ cập nhật</b><span>Placeholder</span></div></div>
-      </div>
+    <div class="m-pledges">
+      <div class="m-pledge"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18M12 8S9 3 7 5s5 3 5 3 3-5 5-3-5 3-5 3"/></svg><div><b data-m="pledge1h">Bảy ngày đầu không thu phí</b><span data-m="pledge1p">Bạn nhìn lại nhà mình trước, rồi mới bàn tới lộ trình.</span></div></div>
+      <div class="m-pledge"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4a1 1 0 0 1 1-1h9l4 2v16"/><path d="M3 21h18"/><circle cx="12" cy="12" r=".8"/></svg><div><b data-m="pledge2h">Không ép đi tiếp</b><span data-m="pledge2p">Sau buổi đọc hồ sơ, dừng hay đi tiếp là quyết định của bạn.</span></div></div>
+      <div class="m-pledge"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3z"/><path d="m9 12 2 2 4-4"/></svg><div><b data-m="pledge3h">Dữ liệu nhà bạn ở lại với nhà bạn</b><span data-m="pledge3p">Hồ sơ khoá theo tài khoản. Không bán, không chia sẻ, không dùng để huấn luyện AI bên ngoài.</span></div></div>
     </div>
   </div>
 </section>
 
-<!-- CTA BAND -->
+<!-- LỜI MỜI -->
 <section class="m-section-sm">
   <div class="m-container">
     <div class="m-cta">
       <h2 data-m="ctaH2">Bắt đầu bằng bảy ngày nhìn lại</h2>
       <p data-m="ctaP">Không mất phí, không bắt buộc đi tiếp. Chỉ cần mười phút mỗi tối để ghi lại ba dòng về nhà bạn.</p>
-      <a href="/lien-he.html" class="m-btn m-btn-gold" data-m="ctaPrimary">Bắt đầu bảy ngày nhìn lại</a>
+      <a href="/lien-he.html#dang-ky" class="m-btn m-btn-gold" data-m="ctaPrimary" data-do="bang-moi-dang-ky">Bắt đầu bảy ngày nhìn lại</a>
     </div>
   </div>
 </section>
 
-<!-- FAQ -->
+<!-- CÂU HỎI THƯỜNG GẶP -->
 <section class="m-section" id="faq">
   <div class="m-container">
     <div class="m-section-head">
@@ -244,30 +249,30 @@
     </div>
     <div class="m-narrow m-faq">
       <div class="m-faq-item open">
-        <div class="m-faq-q" data-m="faq1q">Nhà tôi bận lắm, có theo nổi không?</div>
+        <button type="button" class="m-faq-q" data-m="faq1q">Nhà tôi bận lắm, có theo nổi không?</button>
         <div class="m-faq-a" data-m="faq1a">Mức tối thiểu là mười phút mỗi tối, đặt sao cho hôm mệt nhất vẫn làm được. Coach sẽ xếp việc theo dạng vụn thời gian của nhà bạn.</div>
       </div>
       <div class="m-faq-item">
-        <div class="m-faq-q" data-m="faq2q">Con tôi không hợp tác thì sao?</div>
+        <button type="button" class="m-faq-q" data-m="faq2q">Con tôi không hợp tác thì sao?</button>
         <div class="m-faq-a" data-m="faq2a">Chặng đầu không nhắm vào con. Nhắm vào người lớn trước — vì người lớn đổi trước, con đổi sau, và luôn chậm hơn một nhịp.</div>
       </div>
       <div class="m-faq-item">
-        <div class="m-faq-q" data-m="faq3q">Bao lâu thì thấy kết quả?</div>
+        <button type="button" class="m-faq-q" data-m="faq3q">Bao lâu thì thấy kết quả?</button>
         <div class="m-faq-a" data-m="faq3a">Số lần phải nhắc thường giảm rõ ở tuần 3–5. Điểm số thì muộn hơn, thường tuần 9–12. Ai hứa kết quả trong hai tuần thì đang bán hàng.</div>
       </div>
       <div class="m-faq-item">
-        <div class="m-faq-q" data-m="faq4q">Vợ chồng tôi không cùng quan điểm?</div>
+        <button type="button" class="m-faq-q" data-m="faq4q">Vợ chồng tôi không cùng quan điểm?</button>
         <div class="m-faq-a" data-m="faq4a">Được, và rất nhiều nhà bắt đầu như vậy. Một người làm và ghi bảng để trên bàn ăn, không thuyết phục bằng lời. Phần lớn người còn lại nhập cuộc trong khoảng tuần thứ năm.</div>
       </div>
       <div class="m-faq-item">
-        <div class="m-faq-q" data-m="faq5q">Dữ liệu nhà tôi có an toàn không?</div>
+        <button type="button" class="m-faq-q" data-m="faq5q">Dữ liệu nhà tôi có an toàn không?</button>
         <div class="m-faq-a" data-m="faq5a">Hồ sơ mỗi nhà khoá theo tài khoản. Coach của nhà nào chỉ đọc được nhà đó. Không bán, không chia sẻ, không dùng để huấn luyện AI bên ngoài.</div>
       </div>
     </div>
   </div>
 </section>
+</main>
 
-<!-- FOOTER -->
 <footer class="m-footer">
   <div class="m-container">
     <div class="m-footer-grid">
@@ -285,21 +290,28 @@
       <div>
         <h4 data-m="footerSupport">Hỗ trợ</h4>
         <a href="/lien-he.html" data-m="navContact">Liên hệ</a>
-        <a href="/cau-hoi-thuong-gap.html">Câu hỏi thường gặp</a>
-        <a href="/duong-vao.html">Đường vào</a>
+        <a href="/cau-hoi-thuong-gap.html" data-m="footerFaq">Câu hỏi thường gặp</a>
+        <a href="/index.html" data-m="navApp">Mở ứng dụng</a>
+        <a href="https://www.facebook.com/hocviengita" rel="noopener noreferrer" target="_blank">Facebook Học viện GITA</a>
       </div>
       <div>
-        <h4 data-m="footerLegal">Pháp lý</h4>
-        <a href="/index.html" data-m="navApp">Mở ứng dụng</a>
-        <a href="tel:+842855554688">08.5555.4688</a>
+        <h4 data-m="footerContact">Liên hệ</h4>
+        <p data-m="contactAddressVal">Số 21/27 Vũ Ngọc Phan, phường Láng, TP. Hà Nội</p>
+        <a href="tel:+84855554688">Hotline 08.5555.4688</a>
+        <a href="mailto:typhuquanggita@gmail.com">typhuquanggita@gmail.com</a>
       </div>
     </div>
     <div class="m-footer-bottom">
       <span data-m="footerCopy">© 2026 Học viện GITA. Mọi quyền được bảo lưu.</span>
-      <span>Hotline <a href="tel:+842855554688">08.5555.4688</a></span>
+      <span data-m="contactHoursVal">Thứ Hai – Thứ Bảy · 8:00 – 18:00</span>
     </div>
   </div>
 </footer>
+
+<div class="m-dock" role="region" aria-label="Liên hệ nhanh">
+  <a href="tel:+84855554688" class="goi"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg><span data-m="dockCall">Gọi ngay</span></a>
+  <a href="/lien-he.html#dang-ky" class="dk" data-do="dock-dang-ky"><span data-m="navCta">Đăng ký tư vấn</span></a>
+</div>
 
 </div>
 

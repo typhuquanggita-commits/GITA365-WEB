@@ -2493,3 +2493,23 @@ CREATE TABLE IF NOT EXISTS nhipBoNao (
   ketQua  TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS ix_nhipbn_luc ON nhipBoNao (luc DESC);
+
+-- ═════════════════════════════════════════════════════════════
+--  ĐO HÀNH VI KHÁCH TRÊN TRANG CÔNG KHAI (9/10/2026) — may-chu/do-trang.js
+--
+--  Chỉ SỐ ĐẾM đã gộp theo (ngày · trang · việc · nhãn · nguồn · loại máy).
+--  Không IP, không cookie, không mã người xem: bảng này trả lời được
+--  "bao nhiêu người làm việc X", và KHÔNG trả lời được "ai làm việc X".
+--  Mô-đun tự dựng bảng lúc chạy (cùng lối ap-dung.js); khai ở đây để
+--  bản đồ cột (luoc-do-cot.js) biết nó.
+-- ═════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS doTrang (
+  ngay   TEXT NOT NULL,                 -- YYYY-MM-DD theo giờ Việt Nam
+  trang  TEXT NOT NULL,                 -- danh sách trắng TRANG
+  su     TEXT NOT NULL,                 -- danh sách trắng SU
+  nhan   TEXT NOT NULL DEFAULT '',      -- nhãn nút bấm, [a-z0-9-]{1,32}
+  nguon  TEXT NOT NULL DEFAULT 'khac',  -- danh sách trắng NGUON
+  may    TEXT NOT NULL DEFAULT 'may',   -- dt · may
+  dem    INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (ngay, trang, su, nhan, nguon, may)
+);

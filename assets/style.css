@@ -3160,6 +3160,19 @@ body.hdp-khoa{overflow:hidden}
 .k3-noi.x{color:var(--gita-do)}
 @media(max-width:760px){ .k3-noi{transform:rotate(90deg)} }
 
+/* Khối Trang công khai (src/do-trang-cong-khai.js) — đầu màn Trung tâm đo lường. */
+.dtc-so{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0}
+.dtc-so > div{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.dtc-so b{font-size:21px;color:var(--ink);font-variant-numeric:tabular-nums}
+.dtc-pheu{display:grid;gap:6px;margin:6px 0 14px}
+.dtc-hang{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,2fr) 7.5em;gap:10px;align-items:center}
+.dtc-hang > b{text-align:right}
+.dtc-cot .dtc-hang{grid-template-columns:minmax(0,1.2fr) minmax(0,1.4fr) 3.5em}
+.dtc-vach{height:8px;border-radius:99px;background:var(--surface);overflow:hidden}
+.dtc-vach i{display:block;height:100%;border-radius:99px;background:var(--gita)}
+.dtc-cot{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.dtc-cot .dtc-hang{margin-bottom:6px}
+
 @media(pointer:coarse){
   .chip{min-height:34px;padding-block:6px}
   select,select.inp{min-height:40px}

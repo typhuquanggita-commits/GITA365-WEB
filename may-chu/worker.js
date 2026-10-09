@@ -32,6 +32,7 @@ import { Kho, kiemPhien, kiemMatKhau, bamMoi, muoiMoi, soSanhAnToan, mkQuaDeDoan
 import { dongBo, quetSaoLuuMoCoi } from './dong-bo.js';
 import { veChiPhi, maYeuCau } from './ve-chi-phi.js';
 import { guiLienHe } from './lien-he.js';
+import { ghiLuotTrang, docDoTrang, DON_DO_TRANG } from './do-trang.js';
 import { chanKhoang, ghiLoiKhoang, ghiTotKhoang, dsKhoang, datKhoang } from './khoang.js';
 import { tuSoatVaChua, sucKhoeHe } from './tu-chua.js';
 import { dangKy, guiLaiOtp, xacThucOtp, kichHoat } from './dang-ky.js';
@@ -274,7 +275,7 @@ const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau'
   'xemThangDuyetChi', 'baoCaoChi', 'tongHopChi',
   'capQuyenTaiChinh', 'thuHoiQuyenTaiChinh', 'dsQuyenTaiChinh',
   'nhapGiaoDichTay', 'doiChieuNganHang', 'khopGiaoDich',
-  'hopThongBao', 'danhDauDaDoc', 'chamKpiTaiChinh',
+  'hopThongBao', 'danhDauDaDoc', 'docDoTrang', 'chamKpiTaiChinh',
   'dangTinTaiChinh', 'bangTinTaiChinh', 'xuLyTinTaiChinh',
   'hoiTroLyTaiChinh',
   'datHeSoLuong', 'dsHeSoLuong', 'bangLuong', 'chotLuong', 'doiSoatLuong',
@@ -409,6 +410,10 @@ async function lam(fn, y, env, db, req) {
      tài khoản), không lưu nội dung, người nhận cố định là hòm chủ hệ.
      Thay formspree.io — dữ liệu cha mẹ không rời tay Học viện. lien-he.js. */
   if (fn === 'guiLienHe') return await guiLienHe(y, env, db, req);
+  /* Đo hành vi trên trang công khai: KHÔNG phiên (khách chưa đăng nhập),
+     chỉ cộng một vào ô đếm đã gộp, mọi giá trị qua danh sách trắng, không
+     IP, không cookie. do-trang.js. */
+  if (fn === 'ghiLuotTrang') return await ghiLuotTrang(y, env, db);
   /* Báo cáo soát toàn màn: KHÔNG phiên, nhưng chỉ trả BẢN MÃ (AES-GCM bọc
      RSA-OAEP, khoá riêng không ở máy chủ) và không trả tên người gửi — để
      workflow GitHub chuyển cho người giữ khoá riêng. soat-man.js. */
@@ -599,6 +604,7 @@ async function lam(fn, y, env, db, req) {
   if (fn === 'doiChieuNganHang')  return await doiChieuNganHang(y, env, db, hoSo);
   if (fn === 'khopGiaoDich')      return await khopGiaoDich(y, env, db, hoSo);
   if (fn === 'hopThongBao')       return await hopThongBao(y, env, db, hoSo);
+  if (fn === 'docDoTrang')        return await docDoTrang(y, env, db, hoSo);
   if (fn === 'danhDauDaDoc')      return await danhDauDaDoc(y, env, db, hoSo);
   if (fn === 'chamKpiTaiChinh')   return await chamKpiTaiChinh(y, env, db, hoSo);
   if (fn === 'dangTinTaiChinh')   return await dangTinTaiChinh(y, env, db, hoSo);
@@ -1159,7 +1165,9 @@ const HAN = [
    cau: "DELETE FROM thongBao WHERE loai = 'lienHe' AND docLuc IS NOT NULL AND docLuc < ?",
    dv: () => [new Date(Date.now() - 90 * 86400e3).toISOString()],
    vi: 'yêu cầu tư vấn từ trang Liên hệ mang tên + số điện thoại của người lạ; ' +
-       'đã xem quá chín mươi ngày thì xoá, CHƯA xem thì giữ bất kể bao lâu'}
+       'đã xem quá chín mươi ngày thì xoá, CHƯA xem thì giữ bất kể bao lâu'},
+
+  DON_DO_TRANG
 ];
 
 export async function donDep(env) {

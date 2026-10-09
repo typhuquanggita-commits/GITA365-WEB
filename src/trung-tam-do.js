@@ -298,6 +298,8 @@ var G = window.G || {}; window.G = G;
     /* Hộp thông báo trong hệ (src/hop-thong-bao.js) đứng ĐẦU màn cấp quản lý:
        yêu cầu tư vấn và việc chờ duyệt là việc của hôm nay, không phải số đo. */
     if(laQL() && G.htbKhoi) o += G.htbKhoi();
+    /* Trang công khai (src/do-trang-cong-khai.js): khách làm gì trước khi đăng ký. */
+    if(laQL() && G.dtcKhoi) o += G.dtcKhoi();
     if(!coMayChu()) o += '<div class="co-mau">'+ic('alert','w-4 h-4')+'<span><b>Ví dụ minh hoạ.</b> Số liệu giả định, chấm bằng đúng công thức đang chạy ở máy chủ. Đăng nhập tài khoản thật trên máy chủ của Học viện để xem số thật và giao việc.</span></div>';
     if(laQL()) o += '<div class="co-hang mb" role="group" aria-label="Tầng xem"><button class="btn '+(st.lop==='vh'?'pri':'ghost')+'" data-ttd="lop" data-v2="vh">'+ic('pulse','w-3 h-3')+'Vận hành · hôm nay</button>'+
       '<button class="btn '+(st.lop==='v20'?'pri':'ghost')+'" data-ttd="lop" data-v2="v20">'+ic('target','w-3 h-3')+'Chiến lược V20 · đi về đâu</button></div>';
