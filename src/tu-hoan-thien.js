@@ -19,6 +19,7 @@ G.VIEWS = G.VIEWS || {};
   var NGAN = [
     {ma: 'phatsinh', ten: 'Sổ phát sinh', ic: 'list'},
     {ma: 'nhap',     ten: 'Bản nháp chờ duyệt', ic: 'edit'},
+    {ma: 'xuong',    ten: 'Xưởng tài liệu', ic: 'book'},
     {ma: 'rb',       ten: 'Cẩm nang ứng phó', ic: 'shield'},
     {ma: 'giamsat',  ten: 'Giám sát chia sẻ', ic: 'eye'},
     {ma: 'luat',     ten: 'Luật', ic: 'shield'},
@@ -214,6 +215,7 @@ G.VIEWS = G.VIEWS || {};
 
     if (G.thtNgan === 'phatsinh') o += vePhatSinh();
     else if (G.thtNgan === 'nhap') o += veNhap();
+    else if (G.thtNgan === 'xuong') o += (G.xtlKhoi ? G.xtlKhoi() : '');
     else if (G.thtNgan === 'rb') o += veRB();
     else if (G.thtNgan === 'giamsat') o += veGiamSat();
     else if (G.thtNgan === 'luat') o += veLuat();

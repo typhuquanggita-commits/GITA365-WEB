@@ -690,6 +690,8 @@ G.VIEWS = G.VIEWS || {};
       '<p class="sub">Viết kịch bản → máy soạn prompt cho từng cảnh → bạn tạo clip bằng công cụ video AI → nạp clip vào đây ' +
       '→ máy lắp phụ đề, logo, số tập, nhạc và xuất thành phim. Clip, ảnh và nhạc xử lý ngay trên máy, không tải lên đâu.</p></div>';
     o += '<div class="man-xu">';
+    /* Ngân sách phim AI thật (R01–R03): tiền từng tập so với trần — src/phim-ngan-sach.js */
+    if (G.pnsKhoi) o += G.pnsKhoi();
     if (G.xpBoView) o += G.xpBoView();
     if (G.xpKaggleView) o += G.xpKaggleView();
     if (G.xpTuDongView) o += G.xpTuDongView();

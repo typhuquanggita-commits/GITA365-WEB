@@ -12,7 +12,7 @@ import crypto from 'node:crypto';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 const ROOT = fileURLToPath(new URL('..', import.meta.url)).replace(/[\\/]$/, '');
 const MC = ROOT + '/may-chu/';
-const { NGUON_NGOAI, DICH_CAU_HINH, GUI_RA, XAC_THUC } = await import(pathToFileURL(MC + 'nguon-ngoai.js').href);
+const { NGUON_NGOAI, DICH_CAU_HINH, GUI_RA, XAC_THUC, KHI_HONG } = await import(pathToFileURL(MC + 'nguon-ngoai.js').href);
 const { mkDaLo, kiemMkMoi } = await import(pathToFileURL(MC + 'nen.js').href);
 
 let sai = 0; const kiem = (t, d, ct) => { console.log((d ? '  ✓ ' : '  ✗ ') + t + (d || !ct ? '' : ' — ' + ct)); if (!d) sai++; };
@@ -57,6 +57,14 @@ function soat(tepMa, so, cauHinh) {
       if (r.cong && tepMa[f].indexOf(r.cong) < 0) loi.push('KHÔNG QUA CỔNG ' + r.cong + ': ' + r.ma + ' ở ' + f);
     }
   }
+  /* Khi hỏng: mỗi dòng phải nói nó sập thì hệ còn gì — và đường lùi phải có
+     THẬT trong mã của tệp ấy, không chỉ trên giấy. */
+  for (const r of so.concat(cauHinh)) {
+    const k = r.khiHong;
+    if (!k || KHI_HONG.indexOf(k.kieu) < 0 || !k.vi) { loi.push('THIẾU KHI HỎNG: ' + r.ma); continue; }
+    if (k.kieu === 'duongLui' && !(r.tep || []).some(f => tepMa[f] && k.lui && tepMa[f].indexOf(k.lui) >= 0))
+      loi.push('ĐƯỜNG LÙI KHÔNG CÓ TRONG MÃ: ' + r.ma + ' → ' + (k.lui || '(trống)'));
+  }
   const ma = so.map(r => r.ma).concat(cauHinh.map(r => r.ma));
   if (new Set(ma).size !== ma.length) loi.push('TRÙNG MÃ DÒNG');
   return loi;
@@ -74,6 +82,13 @@ kiem('Phá thử: gỡ cổng ẩn danh khỏi một tệp gọi AI ngoài → �
   soat(boCong, NGUON_NGOAI, DICH_CAU_HINH).some(x => /KHÔNG QUA CỔNG soatRaNhaCungCap: NN06 ở quyen-nang-ai\.js/.test(x)));
 const soCu = NGUON_NGOAI.concat([{ ma: 'NN99', mien: 'api.da-bo.example', viec: 'x', xacThuc: 'khong', guiRa: 'khong', tep: ['thu.js'] }]);
 kiem('Phá thử: dòng khai máy chủ mà mã không còn gọi → đỏ', soat(tep, soCu, DICH_CAU_HINH).some(x => /DÒNG CŨ.*NN99/.test(x)));
+
+const luiGia = NGUON_NGOAI.map(r => r.ma === 'NN02' ? Object.assign({}, r, { khiHong: { kieu: 'duongLui', lui: 'duongKhongCoThat', vi: 'x' } }) : r);
+kiem('Phá thử: khai đường lùi không có trong mã → đỏ', soat(tep, luiGia, DICH_CAU_HINH).some(x => /ĐƯỜNG LÙI KHÔNG CÓ TRONG MÃ: NN02/.test(x)));
+const tatCa = NGUON_NGOAI.concat(DICH_CAU_HINH);
+const dung = tatCa.filter(r => r.khiHong && r.khiHong.kieu === 'dungTinhNang').map(r => r.ma);
+kiem('Tự chủ: chỉ ' + dung.length + '/' + tatCa.length + ' nguồn ngoài mà sập thì một tính năng dừng (' + dung.join(', ') + ') — không nguồn nào làm sập việc lõi',
+  dung.length <= 2 && dung.every(m => ['NN09', 'CH02'].indexOf(m) >= 0), dung.join(','));
 
 /* ── Phần 2 · Mọi cửa đặt mật khẩu mới đều đi qua kiemMkMoi ── */
 const CUA_MK = ['mat-khau.js', 'dang-ky.js', 'quan-ly-tai-khoan.js', 'cuu-he.js', 'worker.js'];

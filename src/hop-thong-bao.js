@@ -20,7 +20,7 @@ var G = window.G || {}; window.G = G;
   function coMayChu(){ return !!(G.API_CAP_PHEP && G.PHIEN_TOKEN); }
   function veLai(){ if(G.S && G.S.view === 'trung-tam-do' && G.render) G.render(); }
   function gio(s){ try { var d = new Date(s); return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2) + ' · ' + d.getDate() + '/' + (d.getMonth() + 1); } catch(e){ return ''; } }
-  var LOAI = { lienHe:'Yêu cầu tư vấn' };
+  var LOAI = { lienHe:'Yêu cầu tư vấn', viecKet:'Việc kẹt' };
   var MUC = { gap:['gấp','var(--gita-do)'], canXem:['cần xem','var(--warn)'], tin:['tin','var(--ink-4)'] };
 
   function nap(){

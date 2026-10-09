@@ -35,6 +35,9 @@ import { soatBatThuong, tuSoatBaoDong } from './cuu-he.js';
 import { docTrungTamDo } from './trung-tam-toi-uu.js';
 import { dsQuaHan } from './tai-chinh.js';
 import { chayChangDaTri } from './bo-nao-da-tri.js';
+import { chayBuocTaiLieu, deAnTuChay } from './xuong-tai-lieu.js';
+import { doViecKet, tomTatViecKet } from './viec-ket.js';
+import { baoLenCapCao } from './ngan-hang.js';
 import { vaBang } from './va-luoc-do.js';
 
 /* LÀM 30 PHÚT · NGHỈ 30 PHÚT (chủ hệ 07/10/2026), lặp liên tục 24/7: sáu
@@ -201,6 +204,46 @@ export async function nhipVanHanh(env, opt) {
       ghiChu: loi.some(k => k.loi === 'KHONG_NCC') ? 'Có tuyến chờ nhà cung cấp AI bậc cao.' : '' };
   });
 
+  /* Xưởng tài liệu gia đình: đề án bật "tự chạy" đi tiếp MỘT bước mỗi lượt
+     (một lượt AI). Đóng gói chỉ ra bản nháp — vào kho phục vụ khách vẫn cần
+     ba chữ ký. Chạy thử thì chỉ báo đề án nào sẽ chạy, không gọi AI. */
+  await buoc('XUONG_TAI_LIEU', 'Xưởng tài liệu: đi tiếp một bước các đề án tự chạy', async () => {
+    const ds = await deAnTuChay(db, 2);
+    const tom = ds.map(x => ({ id: x.id, chuDe: x.chuDe, trangThai: x.trangThai, chuong: Number(x.dangChuong) + '/' + x.soChuong }));
+    if (!ds.length) return { so: 0 };
+    if (String(env.GITA_DA_TRI_BAT || '') !== '1') return { so: ds.length, deAn: tom, tt: 'canhBao', ghiChu: 'Bộ não đa trí đang tắt — đề án tự chạy đang chờ.' };
+    if (!that) return { so: ds.length, seChay: tom };
+    const ket = [];
+    for (const x of ds) {
+      const r = await chayBuocTaiLieu({ id: x.id }, env, db, HE);
+      ket.push({ id: x.id, ok: !!(r && r.ok), buoc: r && r.buoc, trangThai: r && r.trangThai, loi: r && !r.ok ? (r.code || r.error) : undefined });
+      if (r && (r.code === 'KHONG_NCC' || r.code === 'CUADONG')) break;
+    }
+    return { so: ds.length, daChay: ket.filter(k => k.ok).length, ket, tt: ket.some(k => !k.ok) ? 'canhBao' : 'ok' };
+  });
+
+  /* Mạch việc kẹt (tinh tuý OpenRig): đọc mọi hàng đợi, đếm việc nằm im
+     không ai cầm hoặc quá hạn. Chỉ ĐỌC; lượt đầu ca của mỗi ngày mới ghi
+     đúng MỘT dòng vào hộp thông báo của Giám đốc và Super Admin — báo, không
+     tự gỡ thay ai. Chạy thử thì không ghi gì. */
+  if (dauCa) await buoc('VIEC_KET', 'Việc kẹt: soát mọi hàng đợi, báo việc nằm im không ai cầm', async () => {
+    const vk = await doViecKet(db);
+    const ds = vk.hang.filter(h => h.so.ket > 0).map(h => ({ ma: h.ma, ten: h.ten, ket: h.so.ket }));
+    const kb = vk.hang.filter(h => h.trangThai === 'khongBiet').map(h => h.ma);
+    const kq2 = { ket: vk.tong.ket, cho: vk.tong.cho, hang: ds, khongBiet: kb.length ? kb : undefined,
+      tt: vk.tong.ket || kb.length ? 'canhBao' : 'ok' };
+    const than = tomTatViecKet(vk);
+    if (!than) return kq2;
+    if (!that) return Object.assign(kq2, { seBao: true });
+    const lan2 = await Kho.demNhip(db, 'viecKet·' + hn, 86400);
+    if (lan2 === 1) {
+      await baoLenCapCao(db, { loai: 'viecKet', mucDo: 'canXem',
+        tieuDe: vk.tong.ket + ' việc đang kẹt trong các hàng đợi', than, doiTuong: 'viec-ket' });
+      kq2.daBao = true;
+    } else kq2.daBaoHomNay = true;
+    return kq2;
+  });
+
   if (dauCa) await buoc('CHUP_DO', 'Chụp Trung tâm đo lường (mỗi ngày một lần)', async () => {
     const homNayUTC = new Date().toISOString().slice(0, 10);
     let m = null;
@@ -236,7 +279,9 @@ function phanHe(env) {
     { ma: 'TU_HOAN_THIEN', ten: 'Tự hoàn thiện kho', bat: true, cheDo: 'Soạn nháp tự động · nhập kho cần 3 chữ ký', moTa: 'Không tự đưa nội dung chưa duyệt tới khách.' },
     { ma: 'TU_NANG_CAP', ten: 'Vòng tự nâng cấp', bat: true, cheDo: 'Đề xuất · cần ký · bảy vùng cấm ngoài đường', moTa: 'Không tự sửa mã, không tự cấp quyền.' },
     { ma: 'THANH_TRA', ten: 'Hệ thanh tra', bat: true, cheDo: 'Ghi sổ · Super Admin xử lý', moTa: '' },
-    { ma: 'AGENT', ten: 'Đội Agent tự chạy', bat: daTri, cheDo: daTri ? 'Mỗi lượt làm việc chạy tiếp chặng kế (tối đa 3 tuyến) · trong ngân sách ngày' : 'Chờ bộ não đa trí bật', moTa: 'Super Admin tạo tuyến ở Bộ não đa trí và bật "Tự chạy". Kết quả chỉ Super Admin đọc — không tự gửi ra khách.' }
+    { ma: 'AGENT', ten: 'Đội Agent tự chạy', bat: daTri, cheDo: daTri ? 'Mỗi lượt làm việc chạy tiếp chặng kế (tối đa 3 tuyến) · trong ngân sách ngày' : 'Chờ bộ não đa trí bật', moTa: 'Super Admin tạo tuyến ở Bộ não đa trí và bật "Tự chạy". Kết quả chỉ Super Admin đọc — không tự gửi ra khách.' },
+    { ma: 'VIEC_KET', ten: 'Mạch việc kẹt', bat: true, cheDo: 'Lượt đầu ca: soát mọi hàng đợi · báo hộp thông báo một lần mỗi ngày', moTa: 'Chỉ đọc. Phân biệt việc kẹt (không ai cầm, quá hạn, nằm im quá ngưỡng) với việc chờ có chủ. Không tự duyệt, không tự giao thay ai.' },
+    { ma: 'XUONG_TAI_LIEU', ten: 'Xưởng tài liệu gia đình', bat: daTri, cheDo: daTri ? 'Mỗi lượt đi tiếp một bước (tối đa 2 đề án) · trần lượt AI mỗi đề án' : 'Chờ bộ não đa trí bật', moTa: 'Đề án đặt ở Vòng tự hoàn thiện → Xưởng tài liệu. Xong thì thành bản nháp chờ ba chữ ký — không tự gửi tới gia đình.' }
   ];
 }
 

@@ -294,6 +294,27 @@ async function goiLeoBac(env, db, hoSo, ds, loai, cau, triThuc, tuy) {
   return { thu };
 }
 
+/* ══ MỘT LƯỢT GỌI CHO MÔ-ĐUN KHÁC ══ (xưởng tài liệu, 9/10/2026)
+   Mô-đun nào cần AI viết thì đi qua ĐÚNG đường này: cùng công tắc
+   GITA_DA_TRI_BAT, cùng cổng Điều 13 trước mọi lượt, cùng định tuyến rẻ
+   trước, cùng sổ token và trần tải. Không dựng đường gọi AI thứ hai —
+   đường thứ hai là chỗ một ngày nào đó quên cổng. */
+export async function goiTheoLoai(env, db, hoSo, loai, cau, tuy) {
+  if (!moBat(env)) return { ok: false, code: 'CUADONG', error: 'Bộ não đa trí đang tắt (GITA_DA_TRI_BAT).' };
+  const l = LOAI[loai];
+  if (!l) return { ok: false, code: 'LOAILA', error: 'Loại việc không hợp lệ.' };
+  await dungBang(db);
+  const sang = await soatRaNhaCungCap({ provider: 'cf-workers-ai', cau, triThuc: '' }, env, db, hoSo);
+  if (!sang.cho) { await ghiLoc(db, 'dieu13'); return { ok: false, code: sang.code, ngo: sang.ngo, error: sang.vi }; }
+  const ds = await ungVien(env, db, l, 0, hoSo);
+  if (!ds.length) return { ok: false, code: 'KHONG_NCC',
+    error: 'Chưa có nhà cung cấp AI nào sẵn sàng (thiếu khoá, hoặc đã chạm trần tải trong ngày).' };
+  const k = await goiLeoBac(env, db, hoSo, ds, loai, cau, '', tuy);
+  if (k.chan) return k.chan;
+  if (!k.n) return { ok: false, code: 'AI_LOI', daThu: k.thu, error: 'Mọi nhà cung cấp đều lỗi; thử lại sau.' };
+  return { ok: true, text: k.text, ncc: k.n.ma, model: k.r.model, token: k.r.vao + k.r.ra };
+}
+
 /* ══ KHO GIẢI PHÁP ══ Hỏi một lần, dùng mãi. Từ khoá bỏ dấu + bỏ hư từ,
    so bằng độ trùng (Jaccard) — đủ cho câu hỏi vận hành lặp lại, chạy
    trong D1 không cần chỉ mục vectơ trả phí. */

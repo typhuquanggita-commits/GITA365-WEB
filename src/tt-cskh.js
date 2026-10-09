@@ -384,7 +384,7 @@ G.VIEWS = G.VIEWS || {};
       { ic: 'bell', ten: 'Hệ thống nhắc', mo: 'Nhắc gọi/chạm đúng nhịp; đèn đỏ & rủi ro cao ưu tiên — không để nhà nào rơi.', cua: 'van-hanh-cham-soc', nut: 'Nhịp chạm & nhắc' },
       { ic: 'share', ten: 'Hệ thống gửi việc', mo: 'Giao & nhận đầu việc theo vai, có hạn, có bằng chứng.', cua: 'bang-viec', nut: 'Bảng công việc' },
       { ic: 'pulse', ten: 'Hệ thống đo lường', mo: 'Điểm sức khoẻ 0–100, 7 chỉ số khách, vòng cải tiến.', cua: 'do-luong-kh', nut: 'Hệ đo lường KH' },
-      { ic: 'spark', ten: 'Hệ giải pháp hỗ trợ', mo: 'Playbook · kịch bản · Trợ lý GITA gợi ý câu nói đúng tình huống.', cua: 'tro-ly-ai', nut: 'Trợ lý GITA' },
+      { ic: 'spark', ten: 'Hệ giải pháp hỗ trợ', mo: 'Playbook · kịch bản · Trợ lý GITA gợi ý câu nói đúng tình huống.', cua: 'tro-ly', nut: 'Trợ lý GITA' },
       { ic: 'chart', ten: 'Hệ tổng hợp', mo: 'Buồng lái CRM: phễu · doanh thu · đọc trọn một nhà.', cua: 'crm', nut: 'Mở CRM' }
     ];
     var o = '<div class="tvc-ht">';

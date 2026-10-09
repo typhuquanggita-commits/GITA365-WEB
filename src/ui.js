@@ -138,11 +138,19 @@ U.ba = function(from,to,kf,kt){
     '<div class="ar">'+U.ic('arrow')+'</div>'+
     '<div class="side to"><div class="k">'+U.h(kt||'ĐẾN — KHÁT KHAO')+'</div><p>'+U.h(to)+'</p></div></div>';
 };
+/* Bảng KHÔNG dòng nào vẫn giữ đầu cột (người đọc biết bảng sẽ hiện gì),
+   nhưng thêm MỘT dòng nói vì sao rỗng. Một khung có đầu cột mà không có
+   dòng đọc ra là "chỗ này chưa làm xong" — bộ soát chữ từng màn
+   (tools/soat-chu-man.mjs) bắt được sáu màn như thế ở 9/10/2026. Vá ở
+   đây — một chỗ — phủ cả 411 bảng hiện có lẫn bảng viết sau. */
 U.tbl = function(cols, rows){
+  cols = Array.isArray(cols) ? cols : [];
+  rows = Array.isArray(rows) ? rows : [];
   return '<div class="tbl-wrap"><table class="tbl"><thead><tr>'+
     cols.map(function(c){return '<th>'+U.h(c)+'</th>';}).join('')+
     '</tr></thead><tbody>'+
-    rows.map(function(r){return '<tr>'+r.map(function(c){return '<td>'+c+'</td>';}).join('')+'</tr>';}).join('')+
+    (rows.length ? rows.map(function(r){return '<tr>'+(Array.isArray(r) ? r : [r]).map(function(c){return '<td>'+c+'</td>';}).join('')+'</tr>';}).join('')
+      : '<tr><td class="tbl-rong" colspan="'+Math.max(1, cols.length)+'">Chưa có dòng nào — dữ liệu của bảng này chưa có, hoặc kho chưa mở với tài khoản đang đăng nhập.</td></tr>')+
     '</tbody></table></div>';
 };
 U.list = function(arr, c){

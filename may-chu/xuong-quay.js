@@ -25,6 +25,7 @@
    7 ngày (donQuay chạy cùng lịch dọn).
    ═══════════════════════════════════════════════════════════════ */
 'use strict';
+import { taoBangPhim, giuChoCuaViec, locNhanViec, chotKhiNopKetQua, bienNhanCanh, chotKhiViecLoi, CO_GIU_CHO } from './phim-ngan-sach.js';
 import { laR01 } from './vai-tro.js';
 import { NHAN_VAT_CHUAN, nhanVatHopLe, loaiHatNV, giongNV } from './nhan-vat-chuan.js';
 
@@ -272,7 +273,10 @@ export function soatLoiNhac(loi, phamVi) {
    Ảnh nhân vật AI + lời nhắc động tác → clip vài giây. Máy Kaggle tự
    nhận việc loại 'vd' qua cùng khoá xưởng quay; máy GitHub vẫn lo 'moi'
    và 'cd' như cũ. */
-export async function quayVideoDong(y, env, db, hoSo) {
+/* opt.ma: mã việc do xưởng phim có trần cấp TRƯỚC (đã gắn vào dòng giữ
+   tiền) — chỉ lời gọi nội bộ datCanhTraPhi truyền vào, cửa công khai gọi
+   bốn tham số nên không chọn được mã. */
+export async function quayVideoDong(y, env, db, hoSo, opt) {
   if (!laR01(hoSo)) return { ok: false, code: 'NOPERM', error: 'Chỉ Super Admin được dùng xưởng quay.' };
   if (!env.HOSO) return { ok: false, code: 'CHUA_CO_R2', error: 'Máy chủ chưa gắn R2.' };
   if (!env.GITA_KHOA_XUONG_QUAY) return { ok: false, code: 'CHUA_CO_XUONG', error: 'Máy chủ chưa có khoá xưởng quay (GITA_KHOA_XUONG_QUAY).' };
@@ -289,7 +293,7 @@ export async function quayVideoDong(y, env, db, hoSo) {
   const uid = String(hoSo.uid || '');
   const dem = await db.prepare("SELECT COUNT(*) AS n FROM quay_viec WHERE uid = ? AND trangThai IN ('cho','dang')").bind(uid).first();
   if (dem && +dem.n >= QUAY.toiDaCho) return { ok: false, code: 'DAY', error: 'Hàng chờ xưởng quay đã đầy, đợi bớt rồi gửi tiếp.' };
-  const ma = maMoi();
+  const ma = opt && /^[0-9a-f]{32}$/.test(String(opt.ma || '')) ? String(opt.ma) : maMoi();
   await env.HOSO.put('quay/' + ma + '/anh', anh, { httpMetadata: { contentType: ka } });
   await env.HOSO.put('quay/' + ma + '/loi', new TextEncoder().encode(loi), { httpMetadata: { contentType: 'text/plain; charset=utf-8' } });
   await db.prepare("INSERT INTO quay_viec (ma, uid, trangThai, kieuAnh, taoLuc, loai, phamVi) VALUES (?, ?, 'cho', ?, ?, 'vd', ?)")
@@ -378,6 +382,15 @@ export async function quayXoa(y, env, db, hoSo) {
   return { ok: true, xoa, boQua, ghiChu: xoa ? ('Đã dọn ' + xoa + ' phim khỏi kho — dung lượng được giải phóng ngay.') : 'Không có việc nào ở trạng thái xong/lỗi để dọn (việc đang chờ/đang quay không bị đụng tới).' };
 }
 
+/* Khoá RIÊNG cho máy trả phí (tuỳ chọn). Máy miễn phí (Kaggle, GitHub)
+   giữ chung khoá xưởng quay; khai GITA_KHOA_MAY_TRA_PHI thì chỉ máy cầm
+   thêm khoá này mới nhận việc trả phí và gửi biên nhận — một khoá miễn phí
+   bị lộ không còn đụng được tới tiền. Không khai thì giữ hành vi cũ. */
+function khoaTraPhiDung(req, env) {
+  if (!env.GITA_KHOA_MAY_TRA_PHI) return true;
+  return bangNhau(req.headers.get('X-Khoa-Tra-Phi'), env.GITA_KHOA_MAY_TRA_PHI);
+}
+
 /* ── LỜI GỌI CỦA MÁY QUAY (GitHub Actions) ── */
 function traMay(o, status) {
   return new Response(JSON.stringify(o), { status: status || 200,
@@ -386,6 +399,14 @@ function traMay(o, status) {
 
 async function traVeHang(db) {
   const bay = Date.now();
+  /* Việc TRẢ PHÍ quá hạn không trả về hàng chờ — xem chotKhiViecLoi. */
+  const treo = ((await db.prepare("SELECT ma FROM quay_viec WHERE trangThai = 'dang' AND nhanLuc < ? AND " + CO_GIU_CHO)
+    .bind(bay - QUAY.quaHanNhan).all()).results) || [];
+  for (const t of treo) {
+    await db.prepare("UPDATE quay_viec SET trangThai = 'loi', loi = ?, xongLuc = ? WHERE ma = ? AND trangThai = 'dang'")
+      .bind('Máy trả phí im lặng quá hạn — không giao lại trên cùng khoản giữ tiền.', bay, t.ma).run();
+    await chotKhiViecLoi(db, t.ma, 'Máy nhận việc rồi im lặng quá hạn — ghi bằng tiền đã giữ.');
+  }
   await db.prepare("UPDATE quay_viec SET trangThai = 'loi', loi = 'Thử ' || lanThu || ' lần vẫn không xong.', xongLuc = ? " +
     "WHERE trangThai = 'dang' AND nhanLuc < ? AND lanThu >= ?").bind(bay, bay - QUAY.quaHanNhan, QUAY.lanThuToiDa).run();
   await db.prepare("UPDATE quay_viec SET trangThai = 'cho', may = NULL WHERE trangThai = 'dang' AND nhanLuc < ?")
@@ -408,6 +429,8 @@ export async function xuLyMayQuay(req, env, duong) {
     return traMay({ ok: false, error: 'Sai khoá.' }, 401);
   const db = env.CSDL;
   await taoBangQuay(db);
+  /* Sổ chi phim phải có trước câu nhận việc — câu ấy hỏi bảng chiPhiPhim. */
+  await taoBangPhim(db);
   const bay = Date.now();
 
   if (req.method === 'GET' && duong === '/quay/can') {
@@ -450,21 +473,43 @@ export async function xuLyMayQuay(req, env, duong) {
        khai thì nhận mọi loại — giữ nguyên hành vi máy GitHub cũ. */
     const locLoai = String(y.loai || '').split(',').map(s => s.trim())
       .filter(s => ['moi', 'cd', 'vd', 'nv', 'tts', 'film'].indexOf(s) >= 0);
+    /* Máy trả phí (khai traPhi) chỉ nhận việc đã giữ tiền; máy miễn phí không
+       bao giờ nhận việc đã giữ tiền. Xem locNhanViec ở phim-ngan-sach.js. */
+    const traPhi = y.traPhi === true, locTien = locNhanViec(traPhi);
+    if (traPhi && !khoaTraPhiDung(req, env)) return traMay({ ok: false, error: 'Sai khoá máy trả phí.' }, 401);
     for (let lan = 0; lan < 5; lan++) {
       const r = locLoai.length
         ? await db.prepare("SELECT ma, kieuAnh, kieuAm, loai, soKhung, phamVi FROM quay_viec WHERE trangThai = 'cho' AND loai IN (" +
-            locLoai.map(() => '?').join(',') + ") ORDER BY taoLuc, rowid LIMIT 1").bind(...locLoai).first()
-        : await db.prepare("SELECT ma, kieuAnh, kieuAm, loai, soKhung, phamVi FROM quay_viec WHERE trangThai = 'cho' ORDER BY taoLuc, rowid LIMIT 1").first();
+            locLoai.map(() => '?').join(',') + ")" + locTien + " ORDER BY taoLuc, rowid LIMIT 1").bind(...locLoai).first()
+        : await db.prepare("SELECT ma, kieuAnh, kieuAm, loai, soKhung, phamVi FROM quay_viec WHERE trangThai = 'cho'" + locTien + " ORDER BY taoLuc, rowid LIMIT 1").first();
       if (!r) return traMay({ ok: true, ma: null });
-      const u = await db.prepare("UPDATE quay_viec SET trangThai = 'dang', nhanLuc = ?, may = ?, lanThu = lanThu + 1 WHERE ma = ? AND trangThai = 'cho'")
+      /* Điều kiện tiền chạy lại ngay trong câu NHẬN: giữa câu chọn và câu này
+         lịch dọn có thể vừa trả tiền về, hoặc khoản giữ vừa được gắn — nhận
+         theo kết quả của câu chọn cũ là để máy chạy một việc không còn tiền. */
+      const u = await db.prepare("UPDATE quay_viec SET trangThai = 'dang', nhanLuc = ?, may = ?, lanThu = lanThu + 1 WHERE ma = ? AND trangThai = 'cho'" + locTien)
         .bind(bay, may, r.ma).run();
       if (u && u.meta && u.meta.changes === 1) {
         const duoi = function (k) { return k === 'image/png' ? 'png' : k === 'image/webp' ? 'webp' : 'jpg'; };
+        /* Việc trả phí mang theo hạn giờ GPU: máy phải dừng khi chạm. */
+        const cp = traPhi ? await giuChoCuaViec(db, r.ma) : null;
         return traMay({ ok: true, ma: r.ma, loai: r.loai || 'moi', soKhung: r.soKhung || 0, phamVi: r.phamVi || '',
-          duoiAnh: duoi(r.kieuAnh), duoiCd: duoi(r.kieuAm) });
+          duoiAnh: duoi(r.kieuAnh), duoiCd: duoi(r.kieuAm),
+          chiPhiId: cp ? cp.id : undefined, tranGiayGpu: cp ? cp.tranGiayGpu : undefined,
+          giayRa: cp ? cp.giayRa : undefined, chatLuong: cp ? (cp.chatLuong || 'canBang') : undefined });
       }
     }
     return traMay({ ok: true, ma: null });
+  }
+
+  /* Biên nhận của máy trả phí: giây GPU · giây phim · một câu. Tiền do máy
+     chủ tính (bienNhanCanh), không nhận con số tiền nào từ máy. */
+  const mBn = /^\/quay\/bien-nhan\/([0-9a-f]{32})$/.exec(duong);
+  if (mBn && req.method === 'POST') {
+    if (!khoaTraPhiDung(req, env)) return traMay({ ok: false, error: 'Sai khoá máy trả phí.' }, 401);
+    let y = {}; try { y = await req.json(); } catch (e) {}
+    const cp = await giuChoCuaViec(db, mBn[1]);
+    if (!cp) return traMay({ ok: false, error: 'Việc này không phải việc trả phí.' }, 404);
+    return traMay(await bienNhanCanh(env, db, Object.assign({}, y, { chiPhiId: cp.id })));
   }
 
   const m = /^\/quay\/(tep|kq|loi)\/([0-9a-f]{32})(?:\/(anh|am|cd|loi|k[0-3]))?$/.exec(duong);
@@ -472,6 +517,11 @@ export async function xuLyMayQuay(req, env, duong) {
   const [, viec, ma, tep] = m;
   const r = await db.prepare('SELECT trangThai, loai FROM quay_viec WHERE ma = ?').bind(ma).first();
   if (!r) return traMay({ ok: false, error: 'Không có việc này.' }, 404);
+  /* Nộp kết quả hay báo hỏng cho một việc TRẢ PHÍ là chạm vào tiền (sổ ghi
+     theo đó). Đã khai khoá riêng máy trả phí thì hai lời gọi ấy cũng đòi
+     khoá riêng — máy miễn phí cầm chung khoá không ghi tiền thay được. */
+  if ((viec === 'kq' || viec === 'loi') && env.GITA_KHOA_MAY_TRA_PHI && !khoaTraPhiDung(req, env) && await giuChoCuaViec(db, ma))
+    return traMay({ ok: false, error: 'Việc trả phí — cần khoá máy trả phí.' }, 401);
 
   if (viec === 'tep' && req.method === 'GET' && tep) {
     const o = await env.HOSO.get('quay/' + ma + '/' + tep);
@@ -490,6 +540,7 @@ export async function xuLyMayQuay(req, env, duong) {
       if (!png && !jpg) return traMay({ ok: false, error: 'Không phải ảnh PNG/JPEG.' }, 400);
       await env.HOSO.put('quay/' + ma + '/kq.png', buf, { httpMetadata: { contentType: png ? 'image/png' : 'image/jpeg' } });
       await db.prepare("UPDATE quay_viec SET trangThai = 'xong', xongLuc = ?, loi = NULL, kieuAm = ? WHERE ma = ?").bind(bay, png ? 'image/png' : 'image/jpeg', ma).run();
+      await chotKhiNopKetQua(db, ma);
       return traMay({ ok: true });
     }
     if (r.loai === 'tts') {
@@ -498,20 +549,26 @@ export async function xuLyMayQuay(req, env, duong) {
       if (!mp3) return traMay({ ok: false, error: 'Không phải MP3.' }, 400);
       await env.HOSO.put('quay/' + ma + '/kq.mp3', buf, { httpMetadata: { contentType: 'audio/mpeg' } });
       await db.prepare("UPDATE quay_viec SET trangThai = 'xong', xongLuc = ?, loi = NULL, kieuAm = 'audio/mpeg' WHERE ma = ?").bind(bay, ma).run();
+      await chotKhiNopKetQua(db, ma);
       return traMay({ ok: true });
     }
     if (buf.length < 1000 || !(buf[4] === 0x66 && buf[5] === 0x74 && buf[6] === 0x79 && buf[7] === 0x70))
       return traMay({ ok: false, error: 'Không phải MP4.' }, 400);
     await env.HOSO.put('quay/' + ma + '/kq.mp4', buf, { httpMetadata: { contentType: 'video/mp4' } });
     await db.prepare("UPDATE quay_viec SET trangThai = 'xong', xongLuc = ?, loi = NULL WHERE ma = ?").bind(bay, ma).run();
+    await chotKhiNopKetQua(db, ma);
     return traMay({ ok: true });
   }
   if (viec === 'loi' && req.method === 'POST' && !tep) {
     let y = {}; try { y = await req.json(); } catch (e) {}
     const loi = String(y.loi || 'Máy quay báo hỏng.').replace(/[\u0000-\u001F]/g, ' ').slice(0, 200);
-    const tamThoi = !!y.tamThoi;
+    const cpLoi = await giuChoCuaViec(db, ma);
+    const laTraPhi = !!(cpLoi && cpLoi.trangThai === 'giu');
+    /* Việc trả phí còn giữ tiền thì "tạm thời" cũng không trả về hàng — xem chotKhiViecLoi. */
+    const tamThoi = !!y.tamThoi && !laTraPhi;
     if (tamThoi) await db.prepare("UPDATE quay_viec SET trangThai = 'cho', may = NULL WHERE ma = ? AND lanThu < ?").bind(ma, QUAY.lanThuToiDa).run();
     await db.prepare("UPDATE quay_viec SET trangThai = 'loi', loi = ?, xongLuc = ? WHERE ma = ? AND trangThai = 'dang'").bind(loi, bay, ma).run();
+    if (laTraPhi) await chotKhiViecLoi(db, ma, 'Máy báo hỏng: ' + loi.slice(0, 150));
     return traMay({ ok: true });
   }
   return traMay({ ok: false, error: 'Không có đường này.' }, 404);

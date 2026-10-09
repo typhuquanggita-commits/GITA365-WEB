@@ -193,6 +193,20 @@ G.troLyVe = function (size) {
     G.cdVaoPhong = null; G.cdTang = 'all'; G.cdMoI = null;
   };
 
+  /* Nhân vật của khách đứng ở bước đang làm. G.nvVe nhận BẢN NHÂN VẬT đã
+     lưu (G.nvTai) và trả về các nét hình chưa bọc — phải tự bọc <svg>.
+     Bản cũ gọi G.nvVe(30): số 30 bị đọc như một nhân vật rỗng, và các nét
+     <rect>/<circle> nằm trần trong nút HTML nên không vẽ ra gì cả.
+     Cỡ ghi thẳng trên thẻ vì luật .cd-here svg (24px, bo tròn) dành cho
+     ảnh vuông — bóp hình 64×96 vào đó thì mất chân và tay. */
+  function veNhanVatNho() {
+    if (typeof G.nvVe !== 'function') return '';
+    var doc = typeof G.nvTai === 'function' ? G.nvTai() : null;
+    return '<svg class="cd-here-nv" viewBox="0 0 64 96" width="20" height="30" ' +
+      'style="width:20px;height:30px;border-radius:0;flex:none" aria-hidden="true" focusable="false">' +
+      G.nvVe(doc) + '</svg>';
+  }
+
   /* Trợ lý AI soạn HƯỚNG DẪN cho bước đang làm — từ đúng dữ liệu bánh
      đà (ten · tang · vong), không bịa. Đây là "gửi hướng dẫn chat" của
      chủ hệ: một bong bóng chat của cô trợ lý, nói việc cần làm. */
@@ -316,8 +330,7 @@ G.troLyVe = function (size) {
       /* tên chính LUÔN hiện trên trục */
       o += '<button class="cd-ten" data-moc="' + ii + '"><b>' + h(b.ten || '') + '</b>' +
         (b.tang ? '<span class="cd-tag">' + h(b.tang) + '</span>' : '') +
-        (laActive ? '<span class="cd-here">' +
-          (typeof G.nvVe === 'function' ? G.nvVe(30) : '') + ' Bạn đang ở đây</span>' : '') +
+        (laActive ? '<span class="cd-here">' + veNhanVatNho() + ' Bạn đang ở đây</span>' : '') +
         '</button>';
 
       if (mo) {

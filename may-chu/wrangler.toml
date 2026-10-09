@@ -108,6 +108,13 @@ GITA_PHIM_TRAN_TRA_PHI = "0"
 # gửi tên hay thư. Dịch vụ không trả lời thì cửa vẫn mở (xem mkDaLo ở
 # nen.js). "0" = tắt.
 GITA_KIEM_MK_RO = "1"
+# Xưởng phim trả phí (may-chu/phim-ngan-sach.js). Chủ hệ mở 3–10 USD cho
+# một video 30 phút: trần mỗi tập KHÔNG BAO GIỜ quá 10 (mã chặn cứng), số
+# này chỉ hạ được. Trần tháng là lưới an toàn thứ hai — đổi khi cần. Đơn giá
+# GPU theo giờ của nhà cho thuê đang dùng (Modal H100 theo README-nhanh).
+GITA_PHIM_TRAN_TAP_USD = "10"
+GITA_PHIM_TRAN_THANG_USD = "100"
+GITA_PHIM_GPU_USD_GIO = "3.95"
 
 # VẼ ẢNH CẢNH BẰNG DỊCH VỤ NGOÀI (tuỳ chọn, MẶC ĐỊNH TẮT để giữ 0đ —
 # may-chu/phim-phan-tu.js). Chỉ khi chủ hệ tự muốn dùng tài khoản riêng
