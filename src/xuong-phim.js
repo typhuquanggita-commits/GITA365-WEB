@@ -142,6 +142,17 @@ G.VIEWS = G.VIEWS || {};
       }
       if (!cur) moi('', d); else cur.hanhDong = (cur.hanhDong ? cur.hanhDong + ' ' : '') + d;
     });
+    /* Người nói chưa có trong sổ thì thêm vào (mô tả để trống, màn hiện cảnh
+       báo vàng). Trước 10/2026 người nói bị bỏ qua: prompt không có ngoại hình
+       của họ, còn nhân vật của dự án mẫu thì nằm lại trong sổ. */
+    ds.forEach(function (c) {
+      c.thoai.concat(c.tinNhan).forEach(function (t) {
+        var ten = String(t.ai || '').trim();
+        if (!ten || ten.length > 30) return;
+        var co = da.nhanVat.some(function (n) { return String(n.ten || '').toLowerCase() === ten.toLowerCase(); });
+        if (!co) da.nhanVat.push({id: ma('nv'), ten: ten, moTa: '', prompt: ''});
+      });
+    });
     ds.forEach(function (c) {
       var chu = c.thoai.concat(c.tinNhan).map(function (t) { return t.loi; }).join(' ').length;
       c.giay = Math.min(10, Math.max(5, Math.ceil(chu / 14) + 2));
@@ -158,24 +169,36 @@ G.VIEWS = G.VIEWS || {};
     }
     var chu = (c.hanhDong + ' ' + c.thoai.map(function (t) { return t.ai; }).join(' ') + ' ' +
       c.tinNhan.map(function (t) { return t.ai; }).join(' ')).toLowerCase();
-    return G.xpDA.nhanVat.filter(function (n) { return n.ten && chu.indexOf(n.ten.toLowerCase()) >= 0; });
+    return G.xpDA.nhanVat.filter(function (n) { return n.ten && coTen(chu, n.ten); });
   }
+  /* Dò TÊN theo biên âm tiết, không dò chuỗi con: "Lan" chứa "an", nên bản cũ
+     (indexOf) gán nhân vật An vào cảnh có Lan — bẫy số 2 của kho. \b không
+     dùng được vì chữ có dấu nằm ngoài \w (bẫy số 1). */
+  function coTen(chu, ten) {
+    var t = String(ten).toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    try { return new RegExp('(?<![\\p{L}\\p{M}])' + t + '(?![\\p{L}\\p{M}])', 'u').test(chu); }
+    catch (e) { return chu.indexOf(String(ten).toLowerCase()) >= 0; }
+  }
+  G.xpCoTen = coTen;
   function boiCanhCua(c) {
     return G.xpDA.boiCanh.filter(function (b) { return b.id === c.boiCanh; })[0] || {ten: '', prompt: ''};
   }
+  function laNgang() { var k = String(G.xpDA.khung || '720x1280').split('x'); return (+k[0] || 0) > (+k[1] || 0); }
+  G.xpLaNgang = laNgang;
+  function khoChu() { return laNgang() ? 'Horizontal 16:9 frame' : 'Vertical 9:16 frame'; }
   G.xpPrompt = function (c) {
     var nv = nvTrongCanh(c), bc = boiCanhCua(c);
     var goc = tra(GOC, c.chiDao) || 'medium shot', may = tra(MAY, c.chiDao) || 'static camera';
     var ai = nv.map(function (n) { return n.ten + ' (' + (n.prompt || n.moTa) + ')'; }).join('; ');
     var noi = c.thoai.length ? ' The character is speaking with natural lip movement and genuine emotion.' : '';
-    var anh = 'Vertical 9:16 frame. ' + G.xpDA.phongCach + '. ' + goc + '. ' +
+    var anh = khoChu() + '. ' + G.xpDA.phongCach + '. ' + goc + '. ' +
       (ai ? 'Characters: ' + ai + '. ' : '') +
       (bc.prompt || bc.ten ? 'Setting: ' + (bc.prompt || bc.ten) + '. ' : '') +
       (c.hinh ? c.hinh + ' ' : 'Scene (Vietnamese description, translate faithfully): ' + c.hanhDong + '. ') +
       (c.tinNhan.length ? 'Close-up of a smartphone screen showing a chat conversation. ' : '') +
       'Consistent character appearance, realistic skin texture, no text, no subtitles, no watermark, no logo.';
     var vid = goc + ', ' + may + '. ' + (ai ? ai + '. ' : '') + (c.chuyenDong || c.hanhDong) + '.' + noi +
-      ' Smooth natural motion, cinematic lighting, vertical 9:16, ' + (+c.giay || 5) +
+      ' Smooth natural motion, cinematic lighting, ' + (laNgang() ? 'horizontal 16:9' : 'vertical 9:16') + ', ' + (+c.giay || 5) +
       ' seconds. No text on screen, no subtitles, no watermark.';
     var am = 'blurry, distorted face, extra fingers, deformed hands, text, subtitles, watermark, logo, cartoon, low quality';
     return {anh: anh, video: vid, am: am, nv: nv};
@@ -192,6 +215,8 @@ G.VIEWS = G.VIEWS || {};
     var v = c.clip && G.xpVat[c.clip];
     var can = 0;
     c.thoai.forEach(function (x) { if (x.am && G.xpVat[x.am] && x.den) can = Math.max(can, x.den + 0.4); });
+    var gc = c.giong && G.xpVat[c.giong];
+    if (gc && gc.buffer) can = Math.max(can, gc.buffer.duration + 0.5);
     if (G.xpDA.theoClip && v && v.loai === 'phim' && v.el && v.el.duration) return Math.max(v.el.duration, can);
     return Math.max(+c.giay || 5, can);
   }
@@ -227,7 +252,7 @@ G.VIEWS = G.VIEWS || {};
     o.push('=== NHÂN VẬT (dùng ảnh chân dung này làm ảnh tham chiếu cho mọi cảnh) ===');
     da.nhanVat.forEach(function (n) {
       o.push('• ' + n.ten + ' — ' + n.moTa);
-      o.push('  Prompt chân dung: Vertical 9:16 portrait, ' + da.phongCach + '. ' + (n.prompt || n.moTa) +
+      o.push('  Prompt chân dung: ' + (laNgang() ? 'Horizontal 16:9' : 'Vertical 9:16') + ' portrait, ' + da.phongCach + '. ' + (n.prompt || n.moTa) +
         ', neutral expression, looking at camera, plain soft background, full face clearly visible, no text.');
     });
     o.push('');
@@ -265,6 +290,15 @@ G.VIEWS = G.VIEWS || {};
     }
     tep.forEach(function (f) {
       var id = ma('v');
+      /* Giọng là TỆP CÓ SẴN hoặc ghi micro người thật — máy không sinh giọng (C20). */
+      if (/^giong:/.test(vai) || vai === 'loiDan') {
+        if (!/^audio\//.test(f.type) && !/^video\//.test(f.type)) { U.toast(f.name + ': giọng đọc cần tệp âm thanh.', 'err'); het(); return; }
+        f.arrayBuffer().then(function (b) { return ac().decodeAudioData(b); }).then(function (buf) {
+          G.xpVat[id] = {ma: id, ten: f.name, loai: 'giong', buffer: buf};
+          ganGiong(vai, id); het();
+        }).catch(function () { U.toast('Không đọc được giọng ' + f.name, 'err'); het(); });
+        return;
+      }
       if (vai === 'nhac') {
         if (!/^audio\//.test(f.type) && !/^video\//.test(f.type)) { U.toast(f.name + ': nhạc nền cần tệp âm thanh.', 'err'); het(); return; }
         f.arrayBuffer().then(function (b) { return ac().decodeAudioData(b); }).then(function (buf) {
@@ -299,6 +333,48 @@ G.VIEWS = G.VIEWS || {};
       }
       U.toast(f.name + ': chưa nhận loại tệp này.', 'err'); het();
     });
+  };
+
+  function ganGiong(vai, id) {
+    if (vai === 'loiDan') { G.xpDA.loiDan = id; return; }
+    var cid = vai.slice(6), c = G.xpDA.canh.filter(function (k) { return k.id === cid; })[0];
+    if (c) c.giong = id;
+  }
+  /* Ghi giọng người thật bằng micro cho một cảnh (hoặc lời dẫn cả phim).
+     Bản ghi đi thẳng MediaRecorder → ArrayBuffer → decodeAudioData, không địa
+     chỉ blob, không rời máy. Bấm lần nữa để dừng. */
+  var dangGhi = null;
+  G.xpGhiGiong = function (vai) {
+    if (dangGhi) { try { dangGhi.ghi.stop(); } catch (e) {} return; }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) {
+      U.toast('Trình duyệt này không ghi âm được. Dùng Chrome hoặc Edge, hoặc nạp tệp giọng có sẵn.', 'err'); return;
+    }
+    navigator.mediaDevices.getUserMedia({audio: true}).then(function (luong) {
+      var manh = [], ghi = new MediaRecorder(luong);
+      dangGhi = {ghi: ghi, vai: vai};
+      ghi.ondataavailable = function (e) { if (e.data && e.data.size) manh.push(e.data); };
+      ghi.onstop = function () {
+        luong.getTracks().forEach(function (t) { t.stop(); });
+        var vaiGhi = dangGhi.vai; dangGhi = null;
+        new Blob(manh, {type: ghi.mimeType || 'audio/webm'}).arrayBuffer()
+          .then(function (b) { return ac().decodeAudioData(b); })
+          .then(function (buf) {
+            var id = ma('g');
+            G.xpVat[id] = {ma: id, ten: 'Ghi âm ' + Math.round(buf.duration) + 's', loai: 'giong', buffer: buf};
+            ganGiong(vaiGhi, id); luuDuAn(); veLai();
+            U.toast('Đã gắn bản ghi ' + Math.round(buf.duration) + ' giây.', 'ok');
+          })
+          .catch(function () { U.toast('Không đọc được bản ghi — thử lại hoặc nạp tệp.', 'err'); veLai(); });
+      };
+      ghi.start(); veLai();
+      U.toast('Đang ghi — bấm "Dừng ghi" khi đọc xong.', 'ok');
+    }, function () { U.toast('Chưa được phép dùng micro. Cho phép micro trong trình duyệt, hoặc nạp tệp giọng có sẵn.', 'err'); });
+  };
+  G.xpDangGhi = function (vai) { return !!(dangGhi && dangGhi.vai === vai); };
+  G.xpBoGiong = function (vai) {
+    if (vai === 'loiDan') G.xpDA.loiDan = '';
+    else { var c = G.xpDA.canh.filter(function (k) { return k.id === vai.slice(6); })[0]; if (c) c.giong = ''; }
+    luuDuAn(); veLai();
   };
 
   /* ══ VẼ MỘT KHUNG ══ */
@@ -339,11 +415,11 @@ G.VIEWS = G.VIEWS || {};
   function veTinNhan(x, W, H, ds, tienDo) {
     var n = Math.max(1, Math.ceil(ds.length * Math.min(1, tienDo * 1.6)));
     x.fillStyle = 'rgba(0,0,0,.55)'; x.fillRect(0, 0, W, H);
-    var pw = W * 0.78, ph = H * 0.62, px = (W - pw) / 2, py = H * 0.16, r = W * 0.05;
+    var S = Math.min(W, H), pw = Math.min(W * 0.78, H * 0.5), ph = H * 0.62, px = (W - pw) / 2, py = H * 0.16, r = S * 0.05;
     x.fillStyle = '#f2f3f5'; x.beginPath();
     x.moveTo(px + r, py); x.arcTo(px + pw, py, px + pw, py + ph, r); x.arcTo(px + pw, py + ph, px, py + ph, r);
     x.arcTo(px, py + ph, px, py, r); x.arcTo(px, py, px + pw, py, r); x.fill();
-    var co = Math.round(W * 0.036), y = py + co * 2.2;
+    var co = Math.round(S * 0.036), y = py + co * 2.2;
     x.font = '600 ' + co + 'px system-ui, sans-serif'; x.textBaseline = 'top';
     var nguoiDau = ds[0] && ds[0].ai;
     ds.slice(0, n).forEach(function (t) {
@@ -360,9 +436,9 @@ G.VIEWS = G.VIEWS || {};
     });
   }
   function vePhuDe(x, W, H, chu) {
-    var co = Math.round(W * 0.05);
+    var co = Math.round(Math.min(W, H) * 0.05);
     x.font = '700 ' + co + 'px system-ui, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'alphabetic';
-    var dong = chuNgat(x, chu, W * 0.86), y0 = H * 0.80 - (dong.length - 1) * co * 1.25;
+    var dong = chuNgat(x, chu, W * (W > H ? 0.7 : 0.86)), y0 = H * (W > H ? 0.86 : 0.80) - (dong.length - 1) * co * 1.25;
     x.lineJoin = 'round'; x.lineWidth = co * 0.18; x.strokeStyle = 'rgba(0,0,0,.9)'; x.fillStyle = '#fff';
     dong.forEach(function (d, i) { x.strokeText(d, W / 2, y0 + i * co * 1.25); x.fillText(d, W / 2, y0 + i * co * 1.25); });
     x.textAlign = 'left';
@@ -402,7 +478,7 @@ G.VIEWS = G.VIEWS || {};
     x.fillStyle = '#000'; x.fillRect(0, 0, W, dai); x.fillRect(0, H - dai, W, dai);
   }
   G.xpVeKhung = function (x, c, tCanh, dCanh, tPhim) {
-    var K = kichThuoc(), W = K.w, H = K.h, v = c && c.clip && G.xpVat[c.clip];
+    var K = kichThuoc(), W = K.w, H = K.h, S = Math.min(W, H), v = c && c.clip && G.xpVat[c.clip];
     x.fillStyle = '#000'; x.fillRect(0, 0, W, H);
     if (v && v.loai === 'phim' && v.el.videoWidth) phuKin(x, v.el, v.el.videoWidth, v.el.videoHeight, W, H);
     else if (v && v.loai === 'anh') {
@@ -411,9 +487,9 @@ G.VIEWS = G.VIEWS || {};
     }
     else if (c) {
       x.fillStyle = '#1f2937'; x.fillRect(0, 0, W, H);
-      x.fillStyle = '#9ca3af'; x.font = '600 ' + Math.round(W * 0.04) + 'px system-ui, sans-serif'; x.textBaseline = 'top';
+      x.fillStyle = '#9ca3af'; x.font = '600 ' + Math.round(S * 0.04) + 'px system-ui, sans-serif'; x.textBaseline = 'top';
       chuNgat(x, 'Chưa có clip · ' + (c.chiDao ? '[' + c.chiDao + '] ' : '') + c.hanhDong, W * 0.8)
-        .forEach(function (d, i) { x.fillText(d, W * 0.1, H * 0.35 + i * W * 0.055); });
+        .forEach(function (d, i) { x.fillText(d, W * 0.1, H * 0.35 + i * S * 0.055); });
     }
     if (c && c.tinNhan.length) veTinNhan(x, W, H, c.tinNhan, tCanh / (dCanh || 1));
     /* Mờ dần đầu/cuối cảnh — chuyển cảnh nhẹ, không giật */
@@ -422,18 +498,18 @@ G.VIEWS = G.VIEWS || {};
     var pd = G.xpPhuDeNay(tPhim);
     if (pd) vePhuDe(x, W, H, pd.chu);
     var lg = G.xpDA.logoAnh && G.xpVat[G.xpDA.logoAnh];
-    if (lg) { var lw = W * 0.2, lh = lw * lg.el.height / lg.el.width; x.globalAlpha = 0.85; x.drawImage(lg.el, W * 0.04, W * 0.04, lw, lh); x.globalAlpha = 1; }
+    if (lg) { var lw = S * 0.2, lh = lw * lg.el.height / lg.el.width; x.globalAlpha = 0.85; x.drawImage(lg.el, S * 0.04, S * 0.04, lw, lh); x.globalAlpha = 1; }
     else if (G.xpDA.logo) {
-      x.font = '800 ' + Math.round(W * 0.04) + 'px system-ui, sans-serif'; x.textBaseline = 'top';
-      x.lineWidth = W * 0.006; x.strokeStyle = 'rgba(0,0,0,.7)'; x.fillStyle = 'rgba(255,255,255,.9)';
-      x.strokeText(G.xpDA.logo, W * 0.04, W * 0.04); x.fillText(G.xpDA.logo, W * 0.04, W * 0.04);
+      x.font = '800 ' + Math.round(S * 0.04) + 'px system-ui, sans-serif'; x.textBaseline = 'top';
+      x.lineWidth = S * 0.006; x.strokeStyle = 'rgba(0,0,0,.7)'; x.fillStyle = 'rgba(255,255,255,.9)';
+      x.strokeText(G.xpDA.logo, S * 0.04, S * 0.04); x.fillText(G.xpDA.logo, S * 0.04, S * 0.04);
     }
     if (G.xpDA.tap) {
       var nhan = 'Tập ' + G.xpDA.tap;
-      x.font = '700 ' + Math.round(W * 0.036) + 'px system-ui, sans-serif'; x.textBaseline = 'top';
+      x.font = '700 ' + Math.round(S * 0.036) + 'px system-ui, sans-serif'; x.textBaseline = 'top';
       var tw = x.measureText(nhan).width;
-      x.fillStyle = 'rgba(0,0,0,.45)'; x.fillRect(W - tw - W * 0.08, W * 0.035, tw + W * 0.04, W * 0.056);
-      x.fillStyle = '#fff'; x.fillText(nhan, W - tw - W * 0.06, W * 0.045);
+      x.fillStyle = 'rgba(0,0,0,.45)'; x.fillRect(W - tw - S * 0.08, S * 0.035, tw + S * 0.04, S * 0.056);
+      x.fillStyle = '#fff'; x.fillText(nhan, W - tw - S * 0.06, S * 0.045);
     }
   };
   var phuDeDem = null;
@@ -468,6 +544,7 @@ G.VIEWS = G.VIEWS || {};
     tatGiong();
     G.xpDA.canh.forEach(function (c) { var v = G.xpVat[c.clip]; if (v && v.loai === 'phim') try { v.el.pause(); } catch (e) {} });
     if (chay.nhac) try { chay.nhac.stop(); } catch (e) {}
+    if (chay.loiDan) try { chay.loiDan.stop(); } catch (e) {}
   }
   G.xpPhat = function (xuat, xongFn, ghiThang) {
     if (chay && !chay.dung) { G.xpDung(); return; }
@@ -484,6 +561,15 @@ G.VIEWS = G.VIEWS || {};
       g.gain.value = +G.xpDA.amLuongNhac >= 0 ? +G.xpDA.amLuongNhac : 0.25;
       src.connect(g); g.connect(a.destination); if (dich) g.connect(dich);
       src.start(); chay.nhac = src;
+    }
+    /* Lời dẫn cả phim: phát MỘT LẦN, không lặp. Bản cũ khuyên trộn giọng vào
+       nhạc nền — mà nhạc nền đặt loop=true, nên lời dẫn đọc lại từ đầu khi hết. */
+    var ld = G.xpDA.loiDan && G.xpVat[G.xpDA.loiDan];
+    if (ld && ld.buffer) {
+      var sl = a.createBufferSource(), gl = a.createGain();
+      sl.buffer = ld.buffer; gl.gain.value = +G.xpDA.amLuongGiong >= 0 ? +G.xpDA.amLuongGiong : 1;
+      sl.connect(gl); gl.connect(a.destination); if (dich) gl.connect(dich);
+      sl.start(); chay.loiDan = sl;
     }
     if (xuat) {
       /* Bậc máy (src/nang-luc-may.js): máy yếu ghi 24 khung/giây, bitrate
@@ -528,6 +614,13 @@ G.VIEWS = G.VIEWS || {};
       tatGiong();
       /* Cảnh đã khớp khẩu hình: giọng nằm sẵn trong clip, không phát thêm lần nữa */
       var giongTrongClip = c && c.khopMoi && v && v.loai === 'phim';
+      var gc = c && !giongTrongClip && c.giong && G.xpVat[c.giong];
+      if (gc && gc.buffer) {
+        var sg = a.createBufferSource(), gg = a.createGain();
+        sg.buffer = gc.buffer; gg.gain.value = +G.xpDA.amLuongGiong >= 0 ? +G.xpDA.amLuongGiong : 1;
+        sg.connect(gg); gg.connect(a.destination); if (dich) gg.connect(dich);
+        sg.start(a.currentTime + 0.15); chay.giong.push(sg);
+      }
       (c && !giongTrongClip ? c.thoai : []).forEach(function (x) {
         var gv = x.am && G.xpVat[x.am];
         if (!gv || gv.loai !== 'giong') return;
@@ -590,6 +683,9 @@ G.VIEWS = G.VIEWS || {};
     if (!duocLuu()) return;
     var thieu = G.xpDA.canh.filter(function (c) { return !c.clip || !G.xpVat[c.clip]; }).length;
     if (thieu && !confirm(thieu + ' cảnh chưa có clip sẽ hiện khung xám. Vẫn xuất?')) return;
+    var ldx = G.xpDA.loiDan && G.xpVat[G.xpDA.loiDan];
+    if (ldx && ldx.buffer && ldx.buffer.duration > tongGiay() + 0.5 &&
+      !confirm('Lời dẫn dài ' + Math.round(ldx.buffer.duration) + ' giây nhưng phim chỉ ' + Math.round(tongGiay()) + ' giây — phần cuối lời dẫn sẽ bị cắt. Kéo dài cảnh cuối hoặc tăng giây các cảnh. Vẫn xuất?')) return;
     /* Hỏi chỗ lưu TRƯỚC khi ghi — hộp lưu cần cú bấm của người dùng */
     var mp4 = window.MediaRecorder && MediaRecorder.isTypeSupported('video/mp4');
     var duoi = mp4 ? '.mp4' : '.webm', mo = mp4 ? 'video/mp4' : 'video/webm';
@@ -662,6 +758,11 @@ G.VIEWS = G.VIEWS || {};
     G.xpDA[ds] = G.xpDA[ds].filter(function (x) { return x.id !== id; }); luuDuAn(); veLai();
   };
   G.xpTach = function () {
+    var mau = duAnMau();
+    if (G.xpDA.ten === mau.ten && G.xpDA.kichBan !== mau.kichBan &&
+      confirm('Kịch bản mới nhưng dự án vẫn là dự án mẫu "' + mau.ten + '" (nhân vật Minh, An). Chuyển sang dự án trống và giữ kịch bản vừa viết?')) {
+      G.xpDA.ten = 'Phim mới'; G.xpDA.nhanVat = []; G.xpDA.boiCanh = [];
+    }
     var cu = G.xpDA.canh;
     G.xpDA.canh = G.xpTachKichBan(G.xpDA.kichBan, G.xpDA);
     /* Giữ clip đã gắn theo thứ tự cảnh */
@@ -681,20 +782,25 @@ G.VIEWS = G.VIEWS || {};
   };
 
   /* ══ MÀN ══ */
+  function hangGiong(vai, id, nhan) {
+    var g = id && G.xpVat[id], ghi = G.xpDangGhi(vai);
+    return '<div class="row xp-giong"><span class="note"><b>' + nhan + ':</b> ' +
+      (g ? '✓ ' + h(g.ten) + ' · ' + (Math.round(g.buffer.duration * 10) / 10) + 's' : (id ? '<em>tệp đã gắn trước khi tải lại trang — nạp lại</em>' : 'chưa có')) + '</span>' +
+      '<label class="btn">Nạp tệp giọng <input type="file" accept="audio/*" hidden onchange="G.xpNhanTep(this.files,\'' + h(vai) + '\')"></label>' +
+      '<button class="btn' + (ghi ? ' btn-chinh' : '') + '" onclick="G.xpGhiGiong(\'' + h(vai) + '\')">' + (ghi ? '■ Dừng ghi' : '● Ghi micro') + '</button>' +
+      (id ? '<button class="btn" onclick="G.xpBoGiong(\'' + h(vai) + '\')">Bỏ giọng</button>' : '') + '</div>';
+  }
   function o_(lbl, val, fn, kieu) {
     return '<label>' + lbl + ' <input type="' + (kieu || 'text') + '" value="' + h(String(val == null ? '' : val)) + '" oninput="' + fn + '"></label>';
   }
   G.VIEWS['xuong-phim'] = function () {
     var da = G.xpDA, o = '';
-    o += '<div class="hd"><h2>' + ic('spark') + ' Xưởng phim ngắn AI · phim dọc 9:16</h2>' +
+    o += '<div class="hd"><h2>' + ic('spark') + ' Xưởng phim ngắn AI · dọc 9:16 hoặc ngang 16:9</h2>' +
       '<p class="sub">Viết kịch bản → máy soạn prompt cho từng cảnh → bạn tạo clip bằng công cụ video AI → nạp clip vào đây ' +
       '→ máy lắp phụ đề, logo, số tập, nhạc và xuất thành phim. Clip, ảnh và nhạc xử lý ngay trên máy, không tải lên đâu.</p></div>';
     o += '<div class="man-xu">';
-    /* Ngân sách phim AI thật (R01–R03): tiền từng tập so với trần — src/phim-ngan-sach.js */
-    if (G.pnsKhoi) o += G.pnsKhoi();
-    if (G.xpBoView) o += G.xpBoView();
-    if (G.xpKaggleView) o += G.xpKaggleView();
-    if (G.xpTuDongView) o += G.xpTuDongView();
+    o += '<p class="note"><b>Chạy ngay trên máy này:</b> mục 1–5 dưới đây làm trọn một tập phim mà không cần nối máy chủ, Drive hay GPU — kịch bản, prompt, giọng người thật, phụ đề, xuất tệp. ' +
+      'Các đường cần máy chủ (bộ phim nhiều tập, Kaggle, tự động A–Z, ngân sách phim AI) nằm ở khối cuối trang.</p>';
 
     /* Hướng dẫn nhanh */
     o += '<details class="giay"' + (da.anHuongDan ? '' : ' open') + ' ontoggle="G.xpSua(\'anHuongDan\',!this.open)"><summary><b>Cách làm một tập phim (đọc một lần)</b></summary>' +
@@ -707,7 +813,7 @@ G.VIEWS = G.VIEWS || {};
       '<li><b>Xem thử</b> rồi <b>Xuất phim</b> (Chrome/Edge trên máy tính). Máy ghi theo thời gian thực: phim 3 phút thì chờ 3 phút, giữ tab mở.</li></ol>' +
       '<p class="note"><b>Công cụ tạo clip AI (bạn tự đăng ký, dùng tài khoản của mình):</b> Kling AI (klingai.com) · Hailuo / MiniMax (hailuoai.video) · ' +
       'Google Veo (qua Gemini / Flow) · Runway (runwayml.com) · Pika (pika.art). Phần lớn có lượt dùng thử miễn phí mỗi ngày; muốn làm nhiều tập thì cần gói trả phí. ' +
-      'Lời thoại tiếng Việt: đưa vào phụ đề (máy tự đè), hoặc tự thu giọng rồi trộn làm nhạc nền.</p>' +
+      'Lời thoại tiếng Việt: đưa vào phụ đề (máy tự đè), và gắn <b>giọng người thật</b> cho từng cảnh ở mục 4 (nạp tệp hoặc ghi micro) hoặc một <b>lời dẫn cả phim</b> ở mục 5 — lời dẫn phát một lần, không lặp như nhạc nền.</p>' +
       '<p class="note"><b>Bản quyền:</b> hãy dùng câu chuyện và nhân vật của chính bạn. Không đăng lại phim, nhân vật, logo của đơn vị khác; không dùng gương mặt người thật khi chưa được đồng ý.</p></details>';
 
     /* 1 · Thông tin phim */
@@ -715,15 +821,21 @@ G.VIEWS = G.VIEWS || {};
       o_('Tên phim', da.ten, "G.xpSua('ten',this.value)") +
       o_('Tập số', da.tap, "G.xpSua('tap',this.value)", 'number') +
       o_('Chữ logo góc trái', da.logo, "G.xpSua('logo',this.value)") +
-      '<label>Độ nét <select onchange="G.xpSua(\'khung\',this.value)">' +
-      ['720x1280', '1080x1920'].map(function (k) { return '<option' + (k === da.khung ? ' selected' : '') + '>' + k + '</option>'; }).join('') +
+      '<label>Độ nét <select onchange="G.xpSua(\'khung\',this.value);G.render()">' +
+      [['720x1280', 'Dọc 9:16 · 720×1280'], ['1080x1920', 'Dọc 9:16 · 1080×1920'], ['1280x720', 'Ngang 16:9 · 1280×720 (YouTube, máy chiếu)'], ['1920x1080', 'Ngang 16:9 · 1920×1080 (hội trường)']]
+        .map(function (k) { return '<option value="' + k[0] + '"' + (k[0] === da.khung ? ' selected' : '') + '>' + k[1] + '</option>'; }).join('') +
       '</select></label></div>' +
+      '<p class="note">Phim đào tạo chiếu hội trường hay đăng YouTube: chọn <b>Ngang 16:9</b>. Prompt, phụ đề, logo và khung tin nhắn tự đổi theo khổ.</p>' +
       '<label>Phong cách hình (tiếng Anh, dùng chung mọi cảnh) <textarea rows="2" oninput="G.xpSua(\'phongCach\',this.value)">' + h(da.phongCach) + '</textarea></label>' +
       '<div class="row"><button class="btn" onclick="G.xpDuAnMoi(false)">Dự án trống</button>' +
       '<button class="btn" onclick="G.xpDuAnMoi(true)">Nạp lại dự án mẫu</button></div></div>';
 
     /* 2 · Sổ nhân vật & bối cảnh */
+    var nvThieu = da.nhanVat.filter(function (n) { return !String(n.prompt || '').trim(); }).length;
+    var bcThieu = da.boiCanh.filter(function (b) { return !String(b.prompt || '').trim(); }).length;
     o += '<div class="giay"><h3>2 · Sổ nhân vật</h3>';
+    if (nvThieu || bcThieu) o += '<p class="note xp-canh-bao">⚠ ' + (nvThieu ? nvThieu + ' nhân vật' : '') + (nvThieu && bcThieu ? ' và ' : '') + (bcThieu ? bcThieu + ' bối cảnh' : '') +
+      ' chưa có mô tả tiếng Anh — prompt của các cảnh có họ sẽ thiếu ngoại hình/bối cảnh, mỗi clip AI vẽ ra một gương mặt khác.</p>';
     da.nhanVat.forEach(function (n) {
       o += '<div class="row">' + o_('Tên', n.ten, "G.xpSuaDS('nhanVat','" + h(n.id) + "','ten',this.value)") +
         o_('Ghi chú (tiếng Việt)', n.moTa, "G.xpSuaDS('nhanVat','" + h(n.id) + "','moTa',this.value)") +
@@ -752,11 +864,13 @@ G.VIEWS = G.VIEWS || {};
     da.canh.forEach(function (c, i) {
       var p = G.xpPrompt(c), bc = boiCanhCua(c);
       o += '<details class="giay xu-canh"><summary><b>Cảnh ' + (i + 1) + '</b> · ' + h(bc.ten) + ' · ' + h(c.chiDao || '—') + ' · ' +
-        h(String(c.giay)) + 's' + (c.clip && G.xpVat[c.clip] ? ' · ✓ ' + h(G.xpVat[c.clip].ten) : ' · <em>chưa có clip</em>') + '</summary>' +
+        h(String(c.giay)) + 's' + (c.clip && G.xpVat[c.clip] ? ' · ✓ ' + h(G.xpVat[c.clip].ten) : ' · <em>chưa có clip</em>') +
+        (c.giong && G.xpVat[c.giong] ? ' · 🎙 giọng' : '') + '</summary>' +
         '<p class="note">' + h(c.hanhDong) + '</p>' +
         (c.thoai.length ? '<p class="note">' + c.thoai.map(function (t) { return '<b>' + h(t.ai) + ':</b> ' + h(t.loi); }).join('<br>') + '</p>' : '') +
         (c.tinNhan.length ? '<p class="note">Tin nhắn: ' + c.tinNhan.map(function (t) { return h(t.ai + ': ' + t.loi); }).join(' · ') + '</p>' : '') +
         (p.nv.length ? '' : '<p class="note">⚠ Không thấy tên nhân vật nào trong cảnh — nhắc tên nhân vật trong hành động để prompt có mô tả ngoại hình.</p>') +
+        hangGiong('giong:' + c.id, c.giong, 'Giọng cảnh này') +
         '<label>Prompt ảnh mở đầu <textarea rows="3" readonly class="cho-chep">' + h(p.anh) + '</textarea></label>' +
         '<label>Prompt video <textarea rows="3" readonly class="cho-chep">' + h(p.video) + '</textarea></label>' +
         '<div class="row"><button class="btn" onclick="G.xpChep(' + i + ',\'anh\')">Chép prompt ảnh</button>' +
@@ -777,13 +891,20 @@ G.VIEWS = G.VIEWS || {};
       '<div class="row">' + o_('Âm lượng clip (0–1)', da.amLuongClip == null ? 1 : da.amLuongClip, "G.xpSua('amLuongClip',this.value)", 'number') +
       o_('Âm lượng nhạc (0–1)', da.amLuongNhac == null ? 0.25 : da.amLuongNhac, "G.xpSua('amLuongNhac',this.value)", 'number') +
       '<label><input type="checkbox"' + (da.theoClip ? ' checked' : '') + ' onchange="G.xpSua(\'theoClip\',this.checked);G.render()"> Thời lượng cảnh theo độ dài clip</label></div>' +
-      (G.xpDA.nhac && G.xpVat[G.xpDA.nhac] ? '<p class="note">Nhạc nền: ' + h(G.xpVat[G.xpDA.nhac].ten) + '</p>' : '') +
+      (G.xpDA.nhac && G.xpVat[G.xpDA.nhac] ? '<p class="note">Nhạc nền: ' + h(G.xpVat[G.xpDA.nhac].ten) + ' (lặp suốt phim)</p>' : '') +
+      hangGiong('loiDan', da.loiDan, 'Lời dẫn cả phim (phát một lần, không lặp)') +
+      '<div class="row">' + o_('Âm lượng giọng (0–1)', da.amLuongGiong == null ? 1 : da.amLuongGiong, "G.xpSua('amLuongGiong',this.value)", 'number') + '</div>' +
+      '<p class="note">Giọng là <b>tệp có sẵn</b> hoặc <b>ghi micro người thật</b> — máy không tự sinh giọng (luật C20). Cảnh có giọng tự kéo dài cho đủ giọng; phụ đề chia theo độ dài giọng.</p>' +
       '<p class="note">Clip chỉ nằm trong bộ nhớ của tab này — tải lại trang thì cần nạp lại (kịch bản và prompt vẫn được giữ).</p>' +
-      '<canvas id="xp-man" style="width:100%;max-width:300px;aspect-ratio:9/16;background:#000;display:block;margin:8px 0;border-radius:8px"></canvas>' +
+      '<canvas id="xp-man" style="width:100%;max-width:' + (laNgang() ? '560px;aspect-ratio:16/9' : '300px;aspect-ratio:9/16') + ';background:#000;display:block;margin:8px 0;border-radius:8px"></canvas>' +
       '<p class="note" id="xp-tt"></p>' +
       '<div class="row"><button class="btn" id="xp-nut-phat" onclick="G.xpPhat(false)">' + (chay && !chay.dung ? 'Dừng' : 'Xem thử cả tập') + '</button>' +
       '<button class="btn btn-chinh" onclick="G.xpXuat()">Xuất phim</button></div></div>';
 
+    /* N10 (soát 10/2026): bốn khối dưới đây cần máy chủ / Kaggle. Bản cũ đặt
+       chúng lên đầu màn, đẩy phần tự tay xuống y≈6670px trên điện thoại. */
+    var khoiMay = (G.pnsKhoi ? G.pnsKhoi() : '') + (G.xpBoView ? G.xpBoView() : '') + (G.xpKaggleView ? G.xpKaggleView() : '') + (G.xpTuDongView ? G.xpTuDongView() : '');
+    if (khoiMay) o += '<details class="giay xp-may"' + (da.moKhoiMay ? ' open' : '') + ' ontoggle="G.xpSua(\'moKhoiMay\',this.open)"><summary><b>Làm bằng máy chủ · Kaggle · tự động A–Z</b> — cần nối máy chủ hoặc khoá ngoài</summary>' + khoiMay + '</details>';
     o += '</div>';
     setTimeout(function () {
       var cv = document.getElementById('xp-man');

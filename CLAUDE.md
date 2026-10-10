@@ -177,3 +177,14 @@ Chủ hệ 10/10 gửi "GITA 365 VVIP — MASTER BLUEPRINT" (theo hướng sách
 - **80% tách ba chỉ số** (doanh thu · lợi nhuận đóng góp · tăng trưởng). Lợi nhuận đóng góp trả `null` vì sổ chưa có chi phí trực tiếp theo nhà. Bảng chỉ R01–R03 (luật tài chính); KPI chưa đo có `vi`, không trả 0.
 - **Hồ sơ 12 tài liệu**: phiên bản nối tiếp; trường lạ bị bỏ; tài liệu 04 đòi đồng ý dữ liệu con; 05/07/09/12 do máy ghép (09 chỉ R01–R03); mỗi lượt mở ghi nhật ký.
 - **Bẫy đã cắn:** viết `var U = window.U || {}` — `window.U` không tồn tại (lớp giao diện ở `G.U`), màn giữ vật rỗng và nổ ĐÚNG ở ngăn có dữ liệu, nên lượt dựng đầu (đang tải) trông lành. Dùng `var U = G.U`. Và `.btn` chung khai `nowrap`: một nhãn dài đẩy trang 390px cuộn ngang — nới trong `.man-vv`, không nới toàn cục.
+
+## Xưởng phim đào tạo — dựng được phim thật (`src/xuong-phim.js` · `tools/thu-xuong-phim.mjs`)
+
+- **Giọng là tệp có sẵn hoặc ghi micro người thật**, từng cảnh và lời dẫn cả phim. Không bộ sinh giọng nào (luật C20) — phép thử đọc mã bỏ chú giải rồi dò `speechSynthesis`/`piper`.
+- **Cảnh tự kéo dài cho đủ giọng** (`giong.duration + 0,5s`); phụ đề chia theo độ dài giọng. Cắt giọng giữa câu là lỗi im lặng: phim xuất ra trông đủ, người xem mất nửa câu cuối.
+- **Lời dẫn phát MỘT lần**, không `loop` — lặp thì đoạn đầu chèn lên đoạn cuối. Dài hơn phim thì cảnh báo trước khi xuất.
+- **Dò tên nhân vật theo biên âm tiết** (`G.xpCoTen`), không chuỗi con: "Lan" không được kéo theo "An".
+- **Khổ 16:9 là vẽ lại**, không đệm: prompt nói Horizontal 16:9, chữ/logo/phụ đề co theo `min(W,H)`.
+- Bốn khối cần máy chủ nằm trong `<details class="xp-may">` SAU mục xuất phim — người mới đi thẳng được tới .mp4 mà không vấp vào thứ chưa nối.
+- Trạm GPU chỉ nhận `*.typhuquanggita.workers.dev` — một địa chỉ dán nhầm là gửi ảnh nhà khách sang máy lạ.
+- **Chưa làm (chờ chủ hệ):** N2/N3 nằm trong `studio.js` (không được đụng); N4 ngoại lệ luật cấm tải tệp cho phim xuất; Piper TTS tiếng Việt va luật C20.

@@ -4586,3 +4586,10 @@ html[data-may="yeu"] *,html[data-may="yeu"] *::before,html[data-may="yeu"] *::af
 .man-vv .btn{white-space:normal;height:auto;min-height:36px;text-align:center}
 .man-vv .vv-cho label{display:flex;flex-direction:column;gap:4px}
 .man-vv .vv-cho textarea{width:100%}
+/* Xưởng phim (N11, soát 10/2026): ô chọn "Phạm vi" của khối Kaggle rộng 243px
+   đẩy trang 1440px cuộn ngang (scrollWidth 1453) — hàng trong xưởng xuống dòng,
+   ô chọn không vượt khung. */
+.man-xu .row{flex-wrap:wrap}
+.man-xu select{max-width:100%}
+.man-xu .xp-giong{align-items:center;gap:8px;margin:6px 0}
+.man-xu .xp-canh-bao{color:var(--warn,var(--gold));font-weight:600}

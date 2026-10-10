@@ -263,6 +263,16 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   };
   G.bd.xuatVideo = function(){
     if(!S.khung.length){ U.toast('Cần ít nhất một khung để xuất phim.','err'); return; }
+    /* N9 (soát 10/2026): ghi dừng ở tổng giây các khung, nên giọng dài hơn
+       phim bị CẮT mất mà không báo (đo được: giọng 8s, phim 4,45s). Hỏi kéo
+       dài khung cuối cho đủ giọng + nửa giây. */
+    var thieuGiay = S.giong ? (S.giong.duration + 0.5 - tongGiay()) : 0;
+    if(thieuGiay > 0.05){
+      var cuoi = S.khung[S.khung.length-1];
+      if(confirm('Giọng đọc dài '+(Math.round(S.giong.duration*10)/10)+' giây nhưng phim chỉ '+(Math.round(tongGiay()*10)/10)+' giây — phần cuối giọng sẽ bị cắt. Kéo dài khung cuối thêm '+(Math.round(thieuGiay*10)/10)+' giây cho đủ giọng?')){
+        cuoi.giay = Math.round(((+cuoi.giay||0) + thieuGiay)*10)/10; veStrip();
+      }
+    }
     var c=cv();
     if(!c.captureStream || typeof MediaRecorder==='undefined'){
       U.toast('Trình duyệt này chưa hỗ trợ xuất video. Dùng Chrome/Edge mới, hoặc xuất từng khung PNG.','err'); return; }

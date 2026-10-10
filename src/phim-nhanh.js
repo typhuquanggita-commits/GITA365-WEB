@@ -214,6 +214,11 @@ var G = window.G || {}; window.G = G;
   axn.luuTram = function(){
     var w=(document.getElementById('axn-w')||{}).value||'', k=(document.getElementById('axn-k')||{}).value||'';
     if(!/^https:\/\//.test(w.trim())) return U.toast('Địa chỉ trạm phải bắt đầu bằng https://','err');
+    /* N7 (soát 10/2026): CSP connect-src/media-src chỉ mở *.typhuquanggita.workers.dev.
+       Trạm ở tên miền khác bị trình duyệt chặn LẶNG LẼ — người dùng chỉ thấy
+       "Failed to fetch". Chặn ngay ở đây và nói vì sao (cùng luật noi-may-chu.js). */
+    var host = ''; try { host = new URL(w.trim()).hostname; } catch(e){}
+    if(!/\.typhuquanggita\.workers\.dev$/.test(host)) return U.toast('Trạm phải là máy chủ của Học viện — dạng https://<tên>.typhuquanggita.workers.dev. Tên miền khác bị chính sách bảo mật của trang chặn, trình duyệt chỉ báo "Failed to fetch".','err');
     lsSet('axWorker', w.trim()); lsSet('axToken', k.trim()); U.toast('Đã lưu cài đặt trạm trên máy này.','ok'); ve();
   };
 
@@ -298,7 +303,7 @@ var G = window.G || {}; window.G = G;
       s.lichSu.map(function(x){ return '<li>'+(x.duong==='drive' ? h(x.ten)+' · <a href="javascript:void 0" onclick="G.ax.tab(\'khophim\')">trong Kho phim</a>' : '<a href="'+h(t.worker+'/api/phim/'+x.job+'/video?tai=1')+'">'+h(x.ten)+'</a>')+' · '+x.canh+' cảnh · '+h(new Date(x.luc).toLocaleString('vi-VN'))+'</li>'; }).join('')+'</ul></div>';
     /* Cài đặt một lần */
     o += '<details class="card pad-sm"><summary class="sm" style="cursor:pointer"><b>Máy GPU thuê (tuỳ chọn, ~15 phút)</b> <span class="tiny muted">'+(t.worker?'· đã nối trạm':'· chưa dùng — mặc định đi đường miễn phí qua Google Drive')+'</span></summary>'+
-      '<div class="grid g2 mt" style="gap:8px"><input id="axn-w" type="url" placeholder="https://gita-xuong-phim….workers.dev" value="'+h(t.worker)+'" style="padding:8px;border:1px solid var(--line);border-radius:8px">'+
+      '<div class="grid g2 mt" style="gap:8px"><input id="axn-w" type="url" placeholder="https://<tên>.typhuquanggita.workers.dev" value="'+h(t.worker)+'" style="padding:8px;border:1px solid var(--line);border-radius:8px">'+
       '<input id="axn-k" type="password" placeholder="Mật khẩu gửi phim" value="'+h(t.token)+'" style="padding:8px;border:1px solid var(--line);border-radius:8px"></div>'+
       '<div class="row mt"><button class="btn sm" onclick="G.axn.luuTram()">Lưu</button></div>'+
       '<p class="bd-tip">Chỉ dùng khi thuê máy GPU (Modal). Đã nối kho Google Drive thì xưởng ưu tiên đường miễn phí. Hướng dẫn: <b>xuong-phim-ai/nhanh/README-nhanh.md</b>.</p></details>';
