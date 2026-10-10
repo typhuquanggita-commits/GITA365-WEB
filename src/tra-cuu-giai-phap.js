@@ -21,7 +21,7 @@
 'use strict';
 var G = window.G, U = G.U, h = U.h, ic = U.ic;
 
-var TC = G.TCGP = G.TCGP || { q:'', chon:null, nk:{}, nhap:{}, dangSoan:{}, dangGhi:false, ngan:'kh', k:{}, kvd:{}, nap:null, cao:null, kcvd:{}, caoTang:0, caoHang:'', gia:null, ap:{}, napCao:null };
+var TC = G.TCGP = G.TCGP || { q:'', chon:null, nk:{}, nhap:{}, dangSoan:{}, dangGhi:false, ngan:'kh', k:{}, kvd:{}, nap:null, cao:null, kcvd:{}, caoTang:0, caoHang:'', gia:null, gio:[], gui:null, nhaXem:'', dxNha:null, napCao:null };
 
 function chuan(s){ return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd'); }
 
@@ -388,21 +388,50 @@ function napVdCao(ma){
   });
 }
 function veGoi(vd){
-  var g = vd.goi || {}, a = TC.ap[vd.ma] || {};
+  var g = vd.goi || {}, trong = TC.gio.indexOf(vd.ma) >= 0;
   var o = U.list(['Phạm vi · ' + (g.phamVi || ''), 'Cá nhân hoá · ' + (g.caNhanHoa || ''), 'Theo dõi · ' + (g.theoDoi || '')]) +
     '<p class="sm mt" style="line-height:1.7"><b>Gia đình cần làm:</b> ' + h(g.dieuKien || '') + '</p>' +
     '<p class="tiny muted mt">Giải pháp phát huy theo mức gia đình thực hiện. Không hứa kết quả.</p>';
   if(!coMayChu()) return o;
-  o += '<details class="mt"' + (a.dang || a.kq ? ' open' : '') + '><summary class="sm" style="cursor:pointer;color:var(--gita-ink)">' + ic('check', 'w-3 h-3') + ' Áp dụng cho một nhà (trừ ' + vd.gia + ' credit của nhà)</summary>' +
-    '<div class="mt" style="display:grid;gap:8px">' +
-      '<input id="kcNha" class="inp" aria-label="Mã khách hàng của nhà" placeholder="Mã khách hàng của nhà (ví dụ GITA-0012)">' +
-      '<input id="kcTc" class="inp" aria-label="Mã tham chiếu" placeholder="Mã ca hoặc mã buổi — gọi lại cùng mã thì không trừ lần hai">' +
-      '<div class="row wrap" style="gap:8px"><button class="btn sm pri" data-kc-ap="1"' + (a.dang ? ' disabled' : '') + '>' + ic('check', 'w-3 h-3') + (a.dang ? 'Đang ghi…' : 'Áp dụng · ' + vd.gia + ' credit') + '</button>' +
-      '<button class="btn sm" data-kc-at="1"' + (a.dang ? ' disabled' : '') + ' style="border-color:var(--gita-do);color:var(--gita-do-ink)">' + ic('shield', 'w-3 h-3') + 'Dấu hiệu an toàn · chuyển ngay, 0 credit</button></div>' +
-      '<p class="tiny muted">An toàn không bao giờ bị khoá theo gói: tự làm đau, ý nghĩ tự tử, bạo lực, xâm hại → chuyển ngay, mọi hạng, không cần số dư.</p>' +
-      (a.kq ? '<p class="tiny" style="color:' + (a.kq.ok ? 'var(--ok)' : 'var(--gita-do-ink)') + '">' + h(a.kq.txt) + '</p>' : '') +
-    '</div></details>';
-  return o;
+  return o + '<div class="row wrap mt" style="gap:8px"><button class="btn sm' + (trong ? '' : ' pri') + '" data-kc-gio="' + h(vd.ma) + '"' + (!trong && TC.gio.length >= 3 ? ' disabled title="Đề xuất tối đa 3 phương án"' : '') + '>' +
+    ic(trong ? 'check' : 'plus', 'w-3 h-3') + (trong ? 'Đã có trong đề xuất · bỏ ra' : 'Thêm vào đề xuất cho nhà') + '</button></div>';
+}
+/* Giỏ đề xuất: Coach gom 1–3 phương án (thường là cùng vấn đề ở các hạng
+   khác nhau) rồi gửi cho một nhà. Credit KHÔNG bị trừ ở bước này — nhà tự
+   chọn trong ví credit của mình, lúc ấy mới trừ. */
+function veGio(){
+  var k = TC.cao && TC.cao.ds ? TC.cao.ds : [], tim = function(m){ return k.filter(function(v){ return v.ma === m; })[0]; };
+  var o = '<div class="card pad-sm mb"><div class="tiny up mb">Đề xuất cho một nhà · ' + TC.gio.length + '/3 phương án</div>';
+  o += TC.gio.length ? U.tbl(['Mã', 'Hạng', 'Credit', ''], TC.gio.map(function(m){ var v = tim(m) || {};
+      return [h(m), h((TC.cao.tenHang || {})[v.hang] || v.hang || ''), h(String(v.gia || '')), '<button class="btn sm ghost" data-kc-gio="' + h(m) + '">Bỏ</button>']; }))
+    : '<p class="tiny muted">Mở một vấn đề rồi bấm "Thêm vào đề xuất". Nên đưa cùng một hướng ở vài hạng để nhà chọn mức phù hợp.</p>';
+  o += '<div class="row wrap mt" style="gap:8px"><input id="kcNha" class="inp" style="max-width:220px" aria-label="Mã khách hàng của nhà" placeholder="Mã khách hàng của nhà" value="' + h(TC.nhaXem) + '">' +
+    '<input id="kcGhi" class="inp" style="flex:1;min-width:200px" aria-label="Lời nhắn cho nhà" placeholder="Lời nhắn cho nhà (không ghi tên, số điện thoại)">' +
+    '<button class="btn sm pri" data-kc-gui="1"' + (!TC.gio.length || TC.gui === 'dang' ? ' disabled' : '') + '>' + ic('check', 'w-3 h-3') + 'Gửi đề xuất · nhà tự chọn</button></div>';
+  o += '<p class="tiny muted mt">Credit chỉ bị trừ khi gia đình chọn một phương án trong ví credit của nhà.</p>';
+  o += '<div class="row wrap mt" style="gap:8px"><button class="btn sm ghost" data-kc-xemnha="1">' + ic('compass', 'w-3 h-3') + 'Xem đề xuất của nhà này</button>' +
+    '<button class="btn sm" data-kc-at="1" style="border-color:var(--gita-do);color:var(--gita-do-ink)">' + ic('shield', 'w-3 h-3') + 'Dấu hiệu an toàn · chuyển ngay, 0 credit</button></div>' +
+    '<p class="tiny muted">An toàn không bao giờ bị khoá theo gói: tự làm đau, ý nghĩ tự tử, bạo lực, xâm hại → chuyển ngay, mọi hạng, không cần số dư. Bấm là báo ngay Giám đốc và Super Admin.</p>';
+  var d = TC.dxNha;
+  if(d && d.loi) o += '<p class="tiny mt" style="color:var(--gita-do-ink)">' + h(d.loi) + '</p>';
+  else if(d && d.ds){
+    o += d.ds.length ? '<div class="mt">' + U.tbl(['Đề xuất', 'Trạng thái', 'Phương án', ''], d.ds.map(function(x){
+      var tt = { cho:'Chờ nhà chọn', chon:'Nhà đã chọn ' + x.maChon, huy:'Đã huỷ' }[x.trangThai] || x.trangThai;
+      return [h(x.id), h(tt), h(x.phuongAn.map(function(p){ return p.ma + ' · ' + p.tenHang + ' · ' + p.gia; }).join(' | ')),
+        x.trangThai === 'chon' ? '<button class="btn sm" data-kc-xong="' + h(x.id) + '">Ghi hoàn thành</button>'
+        : x.trangThai === 'cho' ? '<button class="btn sm ghost" data-kc-huy="' + h(x.id) + '">Huỷ</button>' : ''];
+    })) + '</div>' : '<p class="tiny muted mt">Nhà này chưa có đề xuất nào.</p>';
+  }
+  return o + '</div>';
+}
+function giaTriO(id){ var el = document.getElementById(id); return el ? el.value.trim() : ''; }
+function napDxNha(){
+  TC.nhaXem = giaTriO('kcNha') || TC.nhaXem;
+  if(!TC.nhaXem){ U.toast('Nhập mã khách hàng của nhà.', 'err'); return; }
+  G.goiMayChu('dsDeXuatNha', { maNha:TC.nhaXem }, { moi:true }).then(function(r){
+    TC.dxNha = r && r.ok ? r : { loi:(r && r.error) || 'Chưa đọc được đề xuất.' };
+    G.render && G.render();
+  });
 }
 function veBangGia(){
   var g = TC.gia;
@@ -460,6 +489,7 @@ function veCao(q){
   if(k === 'dang') return o + '<div class="card pad-sm"><p class="sm muted">Đang đọc kho cấp cao…</p></div>';
   if(k.loi) return o + '<div class="card pad-sm"><p class="sm" style="color:var(--gita-do-ink)">' + h(k.loi) + '</p></div>';
   if(!k.tong) return o + U.empty('Kho cấp cao chưa được nạp', 'Super Admin mở gói mã hoá để nạp vấn đề tầng 4–5 vào máy chủ.');
+  o += veGio();
   o += '<p class="sm mb">' + ic('check', 'w-3 h-3') + ' <b>' + k.tong + '</b> vấn đề tầng 4–5 · ' + HANG_CAO.map(function(x){ return h(k.tenHang[x]) + ' ' + (k.dem[x] || 0); }).join(' · ') + '</p>';
   o += '<div class="row wrap mb" style="gap:6px">' +
     [[0, 'Cả hai tầng'], [4, 'Tầng 4'], [5, 'Tầng 5']].map(function(t){ return '<button class="btn sm' + (TC.caoTang === t[0] ? ' pri' : '') + '" data-kc-tang="' + t[0] + '">' + h(t[1]) + '</button>'; }).join('') +
@@ -483,22 +513,6 @@ function veCao(q){
     : '<div class="card pad-sm"><p class="sm muted">Chọn một vấn đề để xem đủ 13 mục và gói giải pháp của hạng.</p></div>') + '</div>';
   return o + '</div>';
 }
-function apDung(anToan){
-  var vd = TC.kcvd[TC.chon]; if(!vd || !vd.ma) return;
-  var gt = function(id){ var el = document.getElementById(id); return el ? el.value.trim() : ''; };
-  var nha = gt('kcNha'), tc = gt('kcTc');
-  if(!nha){ U.toast('Nhập mã khách hàng của nhà.', 'err'); return; }
-  TC.ap[vd.ma] = { dang:true }; G.render && G.render();
-  G.goiMayChu('apDungKhoCao', { ma:vd.ma, maNha:nha, thamChieu:tc, anToan:anToan === true }).then(function(r){
-    var txt = !(r && r.ok) ? ((r && r.error) || 'Chưa ghi được.')
-      : r.anToan ? r.vi
-      : r.trung ? 'Lượt này đã ghi trước đó với cùng mã tham chiếu — không trừ lần hai.'
-      : 'Đã áp dụng · trừ ' + r.so + ' credit · ví nhà còn ' + ((r.soDu || {}).tong) + ' credit.';
-    TC.ap[vd.ma] = { kq:{ ok:!!(r && r.ok), txt:txt } };
-    if(G.render) G.render();
-  });
-}
-
 G.VIEWS['tra-cuu-gp'] = function(){
   if(!G.can('ca_xu_ly')) return U.lockCard();
   var q = chuan(TC.q);
@@ -540,8 +554,45 @@ document.addEventListener('click', function(e){
   if(kt){ TC.caoTang = Number(kt.getAttribute('data-kc-tang')) || 0; G.render && G.render(); return; }
   var kh = e.target.closest && e.target.closest('[data-kc-hang]');
   if(kh){ TC.caoHang = kh.getAttribute('data-kc-hang') || ''; G.render && G.render(); return; }
-  if(e.target.closest && e.target.closest('[data-kc-ap]')){ apDung(false); return; }
-  if(e.target.closest && e.target.closest('[data-kc-at]')){ apDung(true); return; }
+  var kg = e.target.closest && e.target.closest('[data-kc-gio]');
+  if(kg){ var mg = kg.getAttribute('data-kc-gio'), vt = TC.gio.indexOf(mg);
+    if(vt >= 0) TC.gio.splice(vt, 1); else if(TC.gio.length < 3) TC.gio.push(mg);
+    G.render && G.render(); return; }
+  if(e.target.closest && e.target.closest('[data-kc-gui]')){
+    var nha = giaTriO('kcNha'); if(!nha){ U.toast('Nhập mã khách hàng của nhà.', 'err'); return; }
+    TC.gui = 'dang'; TC.nhaXem = nha; G.render && G.render();
+    G.goiMayChu('deXuatKhoCao', { maNha:nha, ds:TC.gio.slice(), ghiChu:giaTriO('kcGhi') }).then(function(r){
+      TC.gui = null;
+      if(r && r.ok){ U.toast('Đã gửi đề xuất ' + r.id + ' — nhà sẽ tự chọn trong ví credit.', 'ok'); TC.gio = []; napDxNha(); }
+      else U.toast((r && r.error) || 'Chưa gửi được.', 'err');
+      G.render && G.render();
+    });
+    return;
+  }
+  if(e.target.closest && e.target.closest('[data-kc-xemnha]')){ napDxNha(); return; }
+  if(e.target.closest && e.target.closest('[data-kc-at]')){
+    var nhaAt = giaTriO('kcNha'); if(!nhaAt){ U.toast('Nhập mã khách hàng của nhà để chuyển an toàn.', 'err'); return; }
+    G.goiMayChu('chuyenAnToan', { maNha:nhaAt, ghiChu:giaTriO('kcGhi') }).then(function(r){
+      U.toast(r && r.ok ? r.vi : ((r && r.error) || 'Chưa ghi được — báo ngay Trưởng nhóm Coach.'), r && r.ok ? 'ok' : 'err');
+    });
+    return;
+  }
+  var kx = e.target.closest && e.target.closest('[data-kc-xong]');
+  if(kx){
+    var bc = window.prompt('Bằng chứng gia đình đã làm (không ghi tên, số điện thoại):', '');
+    if(bc == null) return;
+    G.goiMayChu('hoanThanhKhoCao', { id:kx.getAttribute('data-kc-xong'), bangChung:bc }).then(function(r){
+      U.toast(r && r.ok ? (r.trung ? 'Gói này đã ghi hoàn thành trước đó.' : 'Đã ghi hoàn thành' + (r.thuong ? ' · nhà được thưởng ' + r.thuong + ' credit.' : '.' + (r.thuongLoi ? ' ' + r.thuongLoi : ''))) : ((r && r.error) || 'Chưa ghi được.'), r && r.ok ? 'ok' : 'err');
+      napDxNha();
+    });
+    return;
+  }
+  var kh2 = e.target.closest && e.target.closest('[data-kc-huy]');
+  if(kh2){
+    G.goiMayChu('huyDeXuat', { id:kh2.getAttribute('data-kc-huy') }).then(function(r){
+      U.toast(r && r.ok ? 'Đã huỷ đề xuất.' : ((r && r.error) || 'Chưa huỷ được.'), r && r.ok ? 'ok' : 'err'); napDxNha(); });
+    return;
+  }
   if(e.target.closest && e.target.closest('[data-kc-nap]')){
     var mkc = document.getElementById('kcMk'), mkcv = mkc ? mkc.value : '';
     if(G.S.role !== 'R01' || TC.napCao && TC.napCao.dang) return;

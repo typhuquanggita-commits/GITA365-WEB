@@ -4,10 +4,11 @@
        sửa, phải có lý do, giá phải tăng dần theo hạng; dòng mới nhất thắng
      · nạp: chỉ R01, cả lô hoặc không bản nào, chặn Điều 13
      · đọc: Coach (R01–R07) đọc hệ coach; R08–R11, khách bị chặn
-     · áp dụng: trừ đúng giá hạng × tầng theo thứ tự tang → thuong → traPhi,
-       gọi lại cùng tham chiếu không trừ lần hai, nhà chưa tới tầng bị chặn,
-       Coach không phụ trách bị chặn, thiếu số dư bị chặn
-     · AN TOÀN: không trừ credit, không cần số dư, không cần đúng tầng
+     · Coach đề xuất 1–3 phương án (chưa trừ); NHÀ thấy giá + gói và tự chọn,
+       lúc ấy mới trừ; chọn hai lần không trừ thêm; tầng chưa tới bị chặn
+     · hoàn thành có bằng chứng → thưởng credit nhiệm vụ (một lần)
+     · AN TOÀN: cửa riêng, 0 credit, không cần mã vấn đề, báo R01 + R03
+     · chống trùng bằng khoá chính xác (credit.js)
      · cửa nối vào worker, bảng có trong csdl.sql, màn có ngăn kho cấp cao
    Dùng: node tools/thu-kho-cao.mjs   (Node >= 22.5) */
 import { DatabaseSync } from 'node:sqlite';
@@ -35,7 +36,9 @@ const r01 = ho('chu', 'R01'), r05 = ho('tnc', 'R05'), coach1 = ho('coach1', 'R07
 sq.prepare("INSERT INTO users (id, username, role, active, maKhachHang) VALUES ('U-ph4','ph4','R13',1,'K4')").run();
 sq.prepare("INSERT INTO hoSoKhach (maKhachHang, uidPhuHuynh, tang, coach) VALUES ('K4','U-ph4',4,'coach1')").run();
 sq.prepare("INSERT INTO hoSoKhach (maKhachHang, uidPhuHuynh, tang, coach) VALUES ('K3','P3',3,'coach1')").run();
-sq.prepare("INSERT INTO hoSoKhach (maKhachHang, uidPhuHuynh, tang, coach) VALUES ('K5','P5',5,'coach1')").run();
+sq.prepare("INSERT INTO hoSoKhach (maKhachHang, uidPhuHuynh, tang, coach) VALUES ('K5','U-ph5',5,'coach1')").run();
+sq.prepare("INSERT INTO users (id, username, role, active, maKhachHang) VALUES ('U-ph5','ph5','R13',1,'K5')").run();
+const ph5 = ho('ph5', 'R13', 'K5');
 
 let dat = 0, truot = 0;
 const kiem = (ten, dk, ct) => { if (dk) { dat++; console.log('OK  ' + ten); } else { truot++; console.log('SAI ' + ten + (ct ? ' — ' + ct : '')); } };
@@ -71,18 +74,18 @@ function GIA_GOC() { return Object.assign({}, K.GIA_KHOI_DAU.goc); }
 kiem('sổ giá chỉ thêm dòng (2 dòng sau 2 lần sửa)', sq.prepare('SELECT COUNT(*) n FROM giaKhoCao').get().n === 2);
 
 /* ── nạp ── */
-const lo = [banGhi('C4-A-001', 'S1'), banGhi('C4-A-002', 'VIP'), banGhi('C5-A-001', 'DIAMOND')];
+const lo = [banGhi('C4-A-001', 'S1'), banGhi('C4-A-002', 'VIP'), banGhi('C5-A-001', 'DIAMOND'), banGhi('C4-A-009', 'S3')];
 kiem('Coach không nạp được kho', (await K.napKhoCao({ ds: lo }, env, db, r05)).code === 'NOPERM');
 const hong = await K.napKhoCao({ ds: lo.concat([Object.assign(banGhi('C4-A-003', 'S3'), { van: 'Gọi chị Nguyễn Thị Lan số 0912345678' })]) }, env, db, r01);
 kiem('một bản ghi lộ tên + số điện thoại → từ chối CẢ lô (Điều 13)', hong.code === 'HONG' && /DIEU13/.test(hong.hong.join()) && !sq.prepare('SELECT COUNT(*) n FROM khoCao').get().n, JSON.stringify(hong.hong));
 kiem('bản ghi thiếu ô gói (goi) bị từ chối', (await K.napKhoCao({ ds: [Object.assign(banGhi('C4-A-004', 'S5'), { goi: {} })] }, env, db, r01)).code === 'HONG');
 kiem('hạng lạ bị từ chối', (await K.napKhoCao({ ds: [banGhi('C4-A-005', 'GOLD')] }, env, db, r01)).code === 'HONG');
 const nap = await K.napKhoCao({ ds: lo, ban: 'KC-THU' }, env, db, r01);
-kiem('Super Admin nạp lô sạch: 3 vấn đề, hệ coach', nap.ok && nap.dem.coach === 3, JSON.stringify(nap));
+kiem('Super Admin nạp lô sạch: 4 vấn đề, hệ coach', nap.ok && nap.dem.coach === 4, JSON.stringify(nap));
 
 /* ── đọc ── */
 const ds = await K.dsKhoCao({ he: 'coach' }, env, db, coach1);
-kiem('Coach thấy danh sách kèm hạng + giá, không kèm nội dung', ds.ok && ds.tong === 3 && ds.ds[0].gia && !ds.ds[0].phacDo && ds.dem.VIP === 1, JSON.stringify(ds.ds[0]));
+kiem('Coach thấy danh sách kèm hạng + giá, không kèm nội dung', ds.ok && ds.tong === 4 && ds.ds[0].gia && !ds.ds[0].phacDo && ds.dem.VIP === 1, JSON.stringify(ds.ds[0]));
 kiem('lọc theo tầng 5 + hạng Diamond', (await K.dsKhoCao({ he: 'coach', tang: 5, hang: 'DIAMOND' }, env, db, coach1)).tong === 1);
 kiem('Giáo viên (R08) bị chặn kho Coach ở máy chủ', (await K.dsKhoCao({ he: 'coach' }, env, db, r08)).code === 'NOPERM');
 kiem('Chuyên viên tư vấn (R11) bị chặn kho Coach', (await K.docKhoCao({ ma: 'C4-A-002' }, env, db, r11)).code === 'NOPERM');
@@ -90,44 +93,76 @@ kiem('phụ huynh bị chặn đọc nội dung', (await K.docKhoCao({ ma: 'C4-A
 const doc = await K.docKhoCao({ ma: 'C4-A-002' }, env, db, coach1);
 kiem('Coach đọc đủ 13 mục + gói + giá Vip tầng 4 = 900', doc.ok && doc.vd.goi && doc.vd.phacDo && doc.vd.gia === 900 && doc.vd.tenHang === 'Vip', JSON.stringify({ gia: doc.vd && doc.vd.gia }));
 
-/* ── áp dụng + credit ── */
+/* ── đề xuất → nhà chọn → trừ credit ── */
 await C.viCredit({ maNha: 'K4' }, env, db, coach1);   // mở ví → 8.000 credit tặng tầng 4
 const du0 = (await C.soDu(db, 'K4')).tong;
-const a1 = await K.apDungKhoCao({ ma: 'C4-A-002', maNha: 'K4', thamChieu: 'CA-01' }, env, db, coach1);
-kiem('Coach phụ trách áp dụng Vip tầng 4 → trừ đúng 900 credit', a1.ok && a1.so === 900 && (await C.soDu(db, 'K4')).tong === du0 - 900, JSON.stringify(a1));
-const a1b = await K.apDungKhoCao({ ma: 'C4-A-002', maNha: 'K4', thamChieu: 'CA-01' }, env, db, coach1);
-kiem('gọi lại cùng tham chiếu không trừ lần hai', a1b.ok && a1b.trung && (await C.soDu(db, 'K4')).tong === du0 - 900);
-kiem('Coach không phụ trách nhà bị chặn', (await K.apDungKhoCao({ ma: 'C4-A-001', maNha: 'K4', thamChieu: 'CA-02' }, env, db, coach2)).code === 'NOPERM');
-kiem('phụ huynh không tự lấy gói', (await K.apDungKhoCao({ ma: 'C4-A-001', maNha: 'K4', thamChieu: 'CA-02' }, env, db, ph)).code === 'NOPERM');
-kiem('thiếu tham chiếu bị chặn', (await K.apDungKhoCao({ ma: 'C4-A-001', maNha: 'K4' }, env, db, coach1)).code === 'THIEUTC');
-kiem('nhà tầng 3 không nhận được vấn đề tầng 4 (quyền lợi theo tầng)', (await K.apDungKhoCao({ ma: 'C4-A-001', maNha: 'K3', thamChieu: 'CA-03' }, env, db, coach1)).code === 'TANGCHUA');
-kiem('nhà tầng 4 không nhận được vấn đề tầng 5', (await K.apDungKhoCao({ ma: 'C5-A-001', maNha: 'K4', thamChieu: 'CA-04' }, env, db, coach1)).code === 'TANGCHUA');
+kiem('Coach không phụ trách nhà không đề xuất được', (await K.deXuatKhoCao({ maNha: 'K4', ds: ['C4-A-001'] }, env, db, coach2)).code === 'NOPERM');
+kiem('phụ huynh không tự đề xuất', (await K.deXuatKhoCao({ maNha: 'K4', ds: ['C4-A-001'] }, env, db, ph)).code === 'NOPERM');
+kiem('quá 3 phương án bị chặn', (await K.deXuatKhoCao({ maNha: 'K4', ds: ['C4-A-001', 'C4-A-002', 'C5-A-001', 'C4-A-009'] }, env, db, coach1)).code === 'SAI');
+kiem('nhà tầng 3 không nhận được vấn đề tầng 4 (quyền lợi theo tầng)', (await K.deXuatKhoCao({ maNha: 'K3', ds: ['C4-A-001'] }, env, db, coach1)).code === 'TANGCHUA');
+kiem('nhà tầng 4 không nhận được vấn đề tầng 5', (await K.deXuatKhoCao({ maNha: 'K4', ds: ['C5-A-001'] }, env, db, coach1)).code === 'TANGCHUA');
+const dx = await K.deXuatKhoCao({ maNha: 'K4', ds: ['C4-A-001', 'C4-A-002'], ghiChu: 'Hai mức để nhà chọn' }, env, db, coach1);
+kiem('Coach phụ trách đề xuất 2 phương án — CHƯA trừ credit', dx.ok && (await C.soDu(db, 'K4')).tong === du0, JSON.stringify(dx));
+const xem = await K.dsDeXuatNha({}, env, db, ph);
+const pa = xem.ok && xem.ds[0] ? xem.ds[0].phuongAn : [];
+kiem('phụ huynh thấy từng phương án kèm hạng, giá, gói (nhà mình, không cần gõ mã)', xem.ok && pa.length === 2 && pa[0].gia === 75 && pa[1].gia === 900 && pa[1].goi.phamVi && pa[1].goi.dieuKien && !pa[1].phacDo, JSON.stringify(pa.map(x => [x.hang, x.gia])));
+kiem('Coach không chọn thay nhà', (await K.chonDeXuat({ id: dx.id, ma: 'C4-A-002' }, env, db, coach1)).code === 'NOPERM');
+kiem('chọn mã ngoài đề xuất bị chặn', (await K.chonDeXuat({ id: dx.id, ma: 'C4-A-009' }, env, db, ph)).code === 'SAI');
+const ch = await K.chonDeXuat({ id: dx.id, ma: 'C4-A-002' }, env, db, ph);
+kiem('NHÀ chọn Vip → trừ đúng 900 credit', ch.ok && ch.so === 900 && (await C.soDu(db, 'K4')).tong === du0 - 900, JSON.stringify(ch));
+kiem('chọn lại lần hai không trừ thêm', (await K.chonDeXuat({ id: dx.id, ma: 'C4-A-001' }, env, db, ph)).code === 'DAXONG' && (await C.soDu(db, 'K4')).tong === du0 - 900);
+kiem('đề xuất đã chọn không huỷ được', (await K.huyDeXuat({ id: dx.id }, env, db, coach1)).code === 'DAXONG');
+const dx2 = await K.deXuatKhoCao({ maNha: 'K4', ds: ['C4-A-001'] }, env, db, coach1);
+kiem('nhà từ chối đề xuất chưa chọn → không mất credit', (await K.huyDeXuat({ id: dx2.id }, env, db, ph)).ok && (await C.soDu(db, 'K4')).tong === du0 - 900);
+
+/* ── thực hiện chăm chỉ → thưởng ── */
+kiem('ghi hoàn thành thiếu bằng chứng bị chặn', (await K.hoanThanhKhoCao({ id: dx.id, bangChung: 'xong' }, env, db, coach1)).code === 'SAI');
+kiem('phụ huynh không tự ghi hoàn thành', (await K.hoanThanhKhoCao({ id: dx.id, bangChung: 'Con tự đánh dấu đủ 28 tối' }, env, db, ph)).code === 'NOPERM');
+const ht = await K.hoanThanhKhoCao({ id: dx.id, bangChung: 'Bảng theo dõi 30 ngày: con tự đánh dấu 26/30 tối' }, env, db, coach1);
+kiem('Coach ghi hoàn thành có bằng chứng → nhà được cộng credit thưởng nhiệm vụ', ht.ok && ht.thuong > 0 && (await C.soDu(db, 'K4')).tong === du0 - 900 + ht.thuong, JSON.stringify(ht));
+kiem('ghi hoàn thành lần hai không thưởng thêm', (await K.hoanThanhKhoCao({ id: dx.id, bangChung: 'Bảng theo dõi 30 ngày: con tự đánh dấu 26/30 tối' }, env, db, coach1)).trung === true);
+
+/* ── hết số dư ── */
 await C.viCredit({ maNha: 'K5' }, env, db, coach1);   // 12.000 credit tặng tầng 5
-const a5 = await K.apDungKhoCao({ ma: 'C5-A-001', maNha: 'K5', thamChieu: 'CA-05' }, env, db, r05);
-kiem('Trưởng nhóm Coach áp dụng Diamond tầng 5 → 3750 credit', a5.ok && a5.so === 3750, JSON.stringify(a5));
-await K.apDungKhoCao({ ma: 'C5-A-001', maNha: 'K5', thamChieu: 'CA-06' }, env, db, r05);
-await K.apDungKhoCao({ ma: 'C5-A-001', maNha: 'K5', thamChieu: 'CA-07' }, env, db, r05);
-const het = await K.apDungKhoCao({ ma: 'C5-A-001', maNha: 'K5', thamChieu: 'CA-08' }, env, db, r05);
-kiem('hết số dư → THIEU, ví không âm', het.code === 'THIEU' && (await C.soDu(db, 'K5')).tong >= 0, JSON.stringify(het));
+let daTru = 0;
+for (let i = 0; i < 4; i++) {
+  const d = await K.deXuatKhoCao({ maNha: 'K5', ds: ['C5-A-001'] }, env, db, r05);
+  const c = await K.chonDeXuat({ id: d.id, ma: 'C5-A-001' }, env, db, ph5);
+  if (c.ok) daTru++; else kiem('lượt thứ 4 hết số dư → THIEU, ví không âm, đề xuất còn chờ', c.code === 'THIEU' && (await C.soDu(db, 'K5')).tong >= 0, JSON.stringify(c));
+}
+kiem('Diamond tầng 5 = 3.750 credit, đủ cho đúng 3 lượt từ 12.000', daTru === 3);
 
 /* ── an toàn không bao giờ bị khoá theo gói ── */
-const at = await K.apDungKhoCao({ ma: 'C5-A-001', maNha: 'K5', anToan: true }, env, db, r05);
-kiem('AN TOÀN: nhà hết credit vẫn được chuyển, 0 credit', at.ok && at.anToan && at.so === 0 && /không tính credit/.test(at.vi), JSON.stringify(at));
-const at2 = await K.apDungKhoCao({ ma: 'C5-A-001', maNha: 'K3', anToan: true }, env, db, coach2);
-kiem('AN TOÀN: không cần đúng tầng, không cần là Coach phụ trách', at2.ok && at2.so === 0);
-const so = await K.soKhoCaoNha({ maNha: 'K5' }, env, db, r05);
-kiem('sổ áp dụng của nhà ghi cả lượt an toàn (so = 0)', so.ok && so.ds.some(r => r.anToan === 1 && r.so === 0) && so.ds.filter(r => r.so === 3750).length === 3);
-kiem('phụ huynh xem được sổ nhà mình', (await K.soKhoCaoNha({ maNha: 'K4' }, env, db, ph)).ok);
+const at = await K.chuyenAnToan({ maNha: 'K5', ghiChu: 'Con nói muốn biến mất, nhiều ngày liền' }, env, db, coach1);
+kiem('AN TOÀN: nhà hết credit vẫn được chuyển, 0 credit, không cần mã vấn đề', at.ok && at.so === 0 && /không tính credit/.test(at.vi), JSON.stringify(at));
+const tb = sq.prepare("SELECT denVai, mucDo FROM thongBao WHERE loai = 'anToan'").all();
+kiem('AN TOÀN: báo ngay Giám đốc + Super Admin, mức gấp', tb.length === 2 && tb.every(x => x.mucDo === 'gap') && tb.map(x => x.denVai).sort().join() === 'R01,R03');
+kiem('AN TOÀN: ghi lại trong cùng giờ không báo trùng', (await K.chuyenAnToan({ maNha: 'K5' }, env, db, coach1)).trung === true && sq.prepare("SELECT COUNT(*) n FROM thongBao WHERE loai = 'anToan'").get().n === 2);
+kiem('AN TOÀN: Coach không phụ trách nhà không ghi được (báo Trưởng nhóm)', (await K.chuyenAnToan({ maNha: 'K3' }, env, db, coach2)).code === 'NOPERM');
+kiem('AN TOÀN: không còn cờ anToan để giao gói mà né credit', typeof K.apDungKhoCao === 'undefined' && !/anToan\s*===\s*true/.test(fs.readFileSync(ROOT + '/may-chu/kho-cao.js', 'utf8')));
+
+/* ── sổ ── */
+const so = await K.soKhoCaoNha({}, env, db, ph5);
+kiem('phụ huynh xem sổ nhà mình: 3 gói Diamond đã chọn', so.ok && so.ds.filter(r => r.so === 3750).length === 3);
 kiem('phụ huynh không xem được sổ nhà khác', (await K.soKhoCaoNha({ maNha: 'K5' }, env, db, ph)).code === 'NOPERM');
+
+/* ── chống trùng chính xác (credit.js) ── */
+await C.viCredit({ maNha: 'K3' }, env, db, coach1);
+const t1 = await C.truTheoThuTu(db, { maNha: 'K3', gia: 10, viec: 'thu', tc: 'A:B' });
+const t2 = await C.truTheoThuTu(db, { maNha: 'K3', gia: 10, viec: 'thu', tc: 'A' });
+kiem('mã tham chiếu "A" không bị coi là trùng với "A:B" (khoá chính xác, không dò tiền tố)', t1.ok && !t1.trung && t2.ok && !t2.trung);
+kiem('gọi lại đúng mã cũ thì trùng, không trừ lần hai', (await C.truTheoThuTu(db, { maNha: 'K3', gia: 10, viec: 'thu', tc: 'A' })).trung === true);
 
 /* ── nối dây ── */
 const wk = fs.readFileSync(ROOT + '/may-chu/worker.js', 'utf8');
-const cua = ['giaKhoCao', 'datGiaKhoCao', 'napKhoCao', 'dsKhoCao', 'docKhoCao', 'apDungKhoCao', 'soKhoCaoNha'];
-kiem('7 cửa có trong danh sách phiên và bộ chia của worker', cua.every(c => wk.includes("'" + c + "'") && wk.includes("fn === '" + c + "'")));
+const cua = ['giaKhoCao', 'datGiaKhoCao', 'napKhoCao', 'dsKhoCao', 'docKhoCao', 'deXuatKhoCao', 'dsDeXuatNha', 'chonDeXuat', 'huyDeXuat', 'hoanThanhKhoCao', 'chuyenAnToan', 'soKhoCaoNha'];
+kiem(cua.length + ' cửa có trong danh sách phiên và bộ chia của worker', cua.every(c => wk.includes("'" + c + "'") && wk.includes("fn === '" + c + "'")));
 const sqlTxt = fs.readFileSync(ROOT + '/may-chu/csdl.sql', 'utf8');
-kiem('ba bảng có trong csdl.sql', ['khoCao', 'giaKhoCao', 'luotKhoCao'].every(b => sqlTxt.includes('CREATE TABLE IF NOT EXISTS ' + b + ' ')));
+kiem('năm bảng có trong csdl.sql', ['khoCao', 'giaKhoCao', 'deXuatKhoCao', 'luotKhoCao', 'chuyenAnToan'].every(b => sqlTxt.includes('CREATE TABLE IF NOT EXISTS ' + b + ' ')));
 const man = fs.readFileSync(ROOT + '/src/tra-cuu-giai-phap.js', 'utf8');
-kiem('màn tra cứu có ngăn kho cấp cao gọi đúng cửa', /dsKhoCao/.test(man) && /docKhoCao/.test(man) && /apDungKhoCao/.test(man) && /giaKhoCao/.test(man));
+kiem('màn tra cứu có ngăn kho cấp cao gọi đúng cửa', /dsKhoCao/.test(man) && /docKhoCao/.test(man) && /deXuatKhoCao/.test(man) && /chuyenAnToan/.test(man) && /giaKhoCao/.test(man));
+const vi = fs.readFileSync(ROOT + '/src/credit-vi.js', 'utf8');
+kiem('ví credit của nhà có chỗ xem đề xuất và tự chọn phương án', /dsDeXuatNha/.test(vi) && /chonDeXuat/.test(vi));
 kiem('màn không chép bảng giá thứ hai (đọc giá từ máy chủ)', !/2500|3750/.test(man));
 
 /* ── gói mã hoá trong kho mã ── */

@@ -2398,8 +2398,13 @@ CREATE INDEX IF NOT EXISTS ix_kvd_hang ON khoVanDe (loai, cap, stt);
 CREATE TABLE IF NOT EXISTS khoCao (ma TEXT PRIMARY KEY, he TEXT NOT NULL, tang INTEGER NOT NULL, nhom TEXT NOT NULL, hang TEXT NOT NULL, stt INTEGER NOT NULL, ten TEXT NOT NULL, noiDung TEXT NOT NULL, ban TEXT, napLuc INTEGER NOT NULL);
 CREATE INDEX IF NOT EXISTS ix_kc_loc ON khoCao (he, tang, nhom, stt);
 CREATE TABLE IF NOT EXISTS giaKhoCao (id TEXT PRIMARY KEY, bang TEXT NOT NULL, lyDo TEXT NOT NULL, boiAi TEXT, luc INTEGER NOT NULL);
-CREATE TABLE IF NOT EXISTS luotKhoCao (id TEXT PRIMARY KEY, ma TEXT NOT NULL, maNha TEXT NOT NULL, hang TEXT NOT NULL, tang INTEGER NOT NULL, so INTEGER NOT NULL, anToan INTEGER NOT NULL, thamChieu TEXT NOT NULL, boiAi TEXT, luc INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS deXuatKhoCao (id TEXT PRIMARY KEY, maNha TEXT NOT NULL, luaChon TEXT NOT NULL, ghiChu TEXT, trangThai TEXT NOT NULL, maChon TEXT, boiAi TEXT, luc INTEGER NOT NULL, chonLuc INTEGER, chonBoiAi TEXT);
+CREATE INDEX IF NOT EXISTS ix_dxkc_nha ON deXuatKhoCao (maNha, luc);
+CREATE TABLE IF NOT EXISTS luotKhoCao (id TEXT PRIMARY KEY, deXuat TEXT NOT NULL, ma TEXT NOT NULL, maNha TEXT NOT NULL, hang TEXT NOT NULL, tang INTEGER NOT NULL, so INTEGER NOT NULL, boiAi TEXT, luc INTEGER NOT NULL, xongLuc INTEGER, bangChung TEXT);
 CREATE INDEX IF NOT EXISTS ix_lkc_nha ON luotKhoCao (maNha, luc);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_lkc_dx ON luotKhoCao (deXuat);
+CREATE TABLE IF NOT EXISTS chuyenAnToan (id TEXT PRIMARY KEY, maNha TEXT NOT NULL, ghiChu TEXT, boiAi TEXT, luc INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS ix_cat_nha ON chuyenAnToan (maNha, luc);
 
 -- ═════════════════════════════════════════════════════════════
 --  VÍ CREDIT (may-chu/credit.js) — 1 credit = 10 đồng, bảng chủ hệ

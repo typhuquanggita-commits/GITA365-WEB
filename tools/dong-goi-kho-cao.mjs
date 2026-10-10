@@ -55,6 +55,12 @@ async function dongGoi(nguon) {
   ds.forEach(r => { const l = soatBanGhiCao(r); if (l.length) loi.push(r.id + ': ' + l.join(',')); });
   const ids = ds.map(r => r.id), trung = ids.filter((x, i) => ids.indexOf(x) !== i);
   if (trung.length) loi.push('trùng mã: ' + [...new Set(trung)].join(','));
+  /* "Chia đều cho các cấp" phải đúng TRONG TỪNG TẦNG, không chỉ ở tổng: mỗi
+     hạng lệch tối đa 1 so với n/6 của tầng ấy. */
+  for (const t of [...new Set(ds.map(r => r.id.slice(0, 2)))]) {
+    const cua = ds.filter(r => r.id.startsWith(t)), tb = cua.length / HANG.length;
+    HANG.forEach(h => { const n = cua.filter(r => r.hang === h).length; if (Math.abs(n - tb) > 1) loi.push(t + ': hạng ' + h + ' có ' + n + ' (cần ≈ ' + tb.toFixed(1) + ')'); });
+  }
   if (loi.length) { console.error('KHÔNG ĐÓNG GÓI:\n' + loi.slice(0, 40).join('\n')); process.exit(1); }
 
   const mk = matKhau();

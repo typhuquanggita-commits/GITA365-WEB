@@ -22,9 +22,9 @@
 
    ══ AN TOÀN KHÔNG BAO GIỜ BỊ KHOÁ THEO GÓI ══
    Dấu hiệu an toàn (tự làm đau, ý nghĩ tự tử, bạo lực, xâm hại) → chuyển
-   ngay, MỌI hạng, KHÔNG tính credit, không cần số dư. Cửa áp dụng nhận cờ
-   `anToan` và khi ấy không trừ gì — một nhà hết credit vẫn được giúp ở chỗ
-   ấy. Lượt an toàn vẫn vào sổ (so = 0) để biết đã chuyển.
+   ngay, MỌI hạng, KHÔNG tính credit, không cần số dư. Cửa riêng
+   chuyenAnToan — tách khỏi kho và khỏi credit, báo ngay Giám đốc + Super
+   Admin — nên một nhà hết credit vẫn được giúp ở chỗ ấy.
 
    ══ VÌ SAO KHO Ở MÁY CHỦ ══
    Cùng lý do kho 1000 vấn đề (tra-cuu-giai-phap.js): kho mã công khai, nội
@@ -36,7 +36,8 @@
 import { BAC, roleOf, tenNguoiDung as ten } from './vai-tro.js';
 import { Kho } from './nen.js';
 import { soatRaNgoai } from './bo-nao.js';
-import { truTheoThuTu, soDu, vaiVoiNha, nhaCoThat, tangCuaNha, moVi } from './credit.js';
+import { truTheoThuTu, soDu, vaiVoiNha, nhaCoThat, tangCuaNha, moVi, maNhaCuaToi, thuongCredit } from './credit.js';
+import { baoLenCapCao } from './ngan-hang.js';
 
 export const HANG = Object.freeze(['S1', 'S3', 'S5', 'VIP', 'VVIP', 'DIAMOND']);
 export const TEN_HANG = Object.freeze({ S1: '1 sao', S3: '3 sao', S5: '5 sao', VIP: 'Vip', VVIP: 'VVip', DIAMOND: 'Diamond' });
@@ -84,9 +85,15 @@ async function taoBang(db) {
     'hang TEXT NOT NULL, stt INTEGER NOT NULL, ten TEXT NOT NULL, noiDung TEXT NOT NULL, ban TEXT, napLuc INTEGER NOT NULL)').run();
   await db.prepare('CREATE INDEX IF NOT EXISTS ix_kc_loc ON khoCao (he, tang, nhom, stt)').run();
   await db.prepare('CREATE TABLE IF NOT EXISTS giaKhoCao (id TEXT PRIMARY KEY, bang TEXT NOT NULL, lyDo TEXT NOT NULL, boiAi TEXT, luc INTEGER NOT NULL)').run();
-  await db.prepare('CREATE TABLE IF NOT EXISTS luotKhoCao (id TEXT PRIMARY KEY, ma TEXT NOT NULL, maNha TEXT NOT NULL, hang TEXT NOT NULL, ' +
-    'tang INTEGER NOT NULL, so INTEGER NOT NULL, anToan INTEGER NOT NULL, thamChieu TEXT NOT NULL, boiAi TEXT, luc INTEGER NOT NULL)').run();
+  await db.prepare('CREATE TABLE IF NOT EXISTS deXuatKhoCao (id TEXT PRIMARY KEY, maNha TEXT NOT NULL, luaChon TEXT NOT NULL, ghiChu TEXT, ' +
+    'trangThai TEXT NOT NULL, maChon TEXT, boiAi TEXT, luc INTEGER NOT NULL, chonLuc INTEGER, chonBoiAi TEXT)').run();
+  await db.prepare('CREATE INDEX IF NOT EXISTS ix_dxkc_nha ON deXuatKhoCao (maNha, luc)').run();
+  await db.prepare('CREATE TABLE IF NOT EXISTS luotKhoCao (id TEXT PRIMARY KEY, deXuat TEXT NOT NULL, ma TEXT NOT NULL, maNha TEXT NOT NULL, hang TEXT NOT NULL, ' +
+    'tang INTEGER NOT NULL, so INTEGER NOT NULL, boiAi TEXT, luc INTEGER NOT NULL, xongLuc INTEGER, bangChung TEXT)').run();
   await db.prepare('CREATE INDEX IF NOT EXISTS ix_lkc_nha ON luotKhoCao (maNha, luc)').run();
+  await db.prepare('CREATE UNIQUE INDEX IF NOT EXISTS ux_lkc_dx ON luotKhoCao (deXuat)').run();
+  await db.prepare('CREATE TABLE IF NOT EXISTS chuyenAnToan (id TEXT PRIMARY KEY, maNha TEXT NOT NULL, ghiChu TEXT, boiAi TEXT, luc INTEGER NOT NULL)').run();
+  await db.prepare('CREATE INDEX IF NOT EXISTS ix_cat_nha ON chuyenAnToan (maNha, luc)').run();
   daDung = true;
 }
 
@@ -248,60 +255,175 @@ export async function docKhoCao(y, env, db, hoSo) {
     hang: r.hang, tenHang: TEN_HANG[r.hang], ten: r.ten, gia: giaLuot(g.bang, r.hang, r.tang) }) };
 }
 
-/* CỬA · ÁP DỤNG GIẢI PHÁP CHO MỘT NHÀ — trừ credit của nhà.
-   Ai: Coach phụ trách nhà ấy, hoặc Trưởng nhóm Coach trở lên (cùng luật
-   tieuCredit — vaiVoiNha). Nhà tự bấm thì không: gói giải pháp do Coach
-   giao, không phải món tự lấy.
-   Tầng: vấn đề tầng N chỉ áp cho nhà đã ở tầng ≥ N — quyền lợi đi theo tầng.
-   An toàn: anToan = true → không trừ, không cần số dư, mọi tầng. */
-export async function apDungKhoCao(y, env, db, hoSo) {
-  const x = y || {};
-  const ma = String(x.ma || ''), maNha = sach(x.maNha, 40), thamChieu = sach(x.thamChieu, 60);
-  const anToan = x.anToan === true;
-  if (!MA.test(ma)) return { ok: false, code: 'SAI', error: 'Mã vấn đề không hợp lệ.' };
-  if (!maNha) return { ok: false, code: 'SAI', error: 'Thiếu mã khách hàng của nhà.' };
-  if (!docDuocHe(hoSo, heCuaMa(ma))) return { ok: false, code: 'NOPERM', error: 'Vai này không áp dụng được kho cấp cao ấy.' };
-  if (!(await nhaCoThat(db, maNha))) return { ok: false, code: 'KHONGNHA', error: 'Không có nhà nào mang mã ' + maNha + '.' };
-  await taoBang(db);
-  const r = await db.prepare('SELECT ma, tang, hang, ten FROM khoCao WHERE ma = ?').bind(ma).first();
-  if (!r) return { ok: false, code: 'KHONGCO', error: 'Kho chưa có vấn đề này.' };
-  const luc = Date.now();
-  const idLuot = 'LKC-' + crypto.randomUUID().slice(0, 8).toUpperCase();
-  /* An toàn đứng TRƯỚC cổng "Coach phụ trách" và cổng tầng: người nhìn
-     thấy dấu hiệu là người phải chuyển, dù không phụ trách nhà ấy. */
-  if (anToan) {
-    await db.prepare('INSERT INTO luotKhoCao (id, ma, maNha, hang, tang, so, anToan, thamChieu, boiAi, luc) VALUES (?,?,?,?,?,0,1,?,?,?)')
-      .bind(idLuot, ma, maNha, r.hang, r.tang, thamChieu || 'an-toan', ten(hoSo), luc).run();
-    try { await Kho.ghiNhatKy(db, { uid: hoSo.uid, username: ten(hoSo), viec: 'KHO_CAO_AN_TOAN', doiTuong: maNha, chiTiet: ma }); } catch (e) {}
-    return { ok: true, anToan: true, so: 0,
-      vi: 'Dấu hiệu an toàn — chuyển ngay tới chuyên gia/bộ phận phụ trách, mọi hạng, không tính credit. Không chờ số dư, không chờ gói.' };
-  }
-  const vai = await vaiVoiNha(db, hoSo, maNha);
-  if (vai !== 'coach' && vai !== 'ql') return { ok: false, code: 'NOPERM', error: 'Chỉ Coach phụ trách nhà này, hoặc Trưởng nhóm Coach trở lên, áp dụng giải pháp cho nhà.' };
-  if (!thamChieu || !/^[A-Za-z0-9._:-]{1,60}$/.test(thamChieu)) return { ok: false, code: 'THIEUTC', error: 'Thiếu mã tham chiếu (mã ca, mã buổi…) để không trừ trùng.' };
-  const tangNha = await tangCuaNha(db, maNha);
-  if (tangNha < r.tang) return { ok: false, code: 'TANGCHUA', error: 'Nhà đang ở tầng ' + tangNha + ' — vấn đề này thuộc quyền lợi tầng ' + r.tang + '.' };
-  const g = await bangGiaDangChay(db);
-  const gia = giaLuot(g.bang, r.hang, r.tang);
-  const vi = await moVi(db, maNha, hoSo.u);
-  const tc = 'KC:' + ma + ':' + thamChieu;
-  const k = await truTheoThuTu(db, { maNha, gia, viec: 'khoCao:' + r.hang, tc, tang: tangNha, cap: vi.cap, ghiChu: (TEN_HANG[r.hang] + ' · ' + r.ten).slice(0, 200), boiAi: hoSo.u });
-  if (!k.ok) return k;
-  if (k.trung) return { ok: true, trung: true, so: 0, soDu: k.soDu };
-  await db.prepare('INSERT INTO luotKhoCao (id, ma, maNha, hang, tang, so, anToan, thamChieu, boiAi, luc) VALUES (?,?,?,?,?,?,0,?,?,?)')
-    .bind(idLuot, ma, maNha, r.hang, r.tang, gia, thamChieu, ten(hoSo), luc).run();
-  try { await Kho.ghiNhatKy(db, { uid: hoSo.uid, username: ten(hoSo), viec: 'KHO_CAO_AP_DUNG', doiTuong: maNha, chiTiet: ma + ' · ' + gia + ' credit' }); } catch (e) {}
-  return { ok: true, so: gia, hang: r.hang, chiTiet: k.daGhi.map(([l, s]) => ({ loai: l, so: s })), soDu: await soDu(db, maNha) };
+/* ═══════════ ĐỀ XUẤT → NHÀ CHỌN → TRỪ CREDIT ═══════════
+   "Chọn càng nhiều credit thì giải pháp càng chất lượng" là lựa chọn CỦA
+   GIA ĐÌNH, nên credit không bao giờ bị trừ chỉ vì Coach bấm một nút:
+     1. Coach phụ trách (hoặc Trưởng nhóm Coach trở lên) đề xuất 1–3 phương
+        án — thường là cùng một vấn đề ở các hạng khác nhau, mỗi phương án
+        kèm giá và gói (phạm vi · cá nhân hoá · theo dõi · nhà cần làm).
+     2. Gia đình (tài khoản của chính nhà ấy) xem và CHỌN một phương án.
+        Lúc ấy mới trừ credit — trừ một lần, khoá chống trùng là mã đề xuất.
+     3. Gói giao xong, Coach ghi hoàn thành kèm bằng chứng → nhà nhận credit
+        thưởng "nhiệm vụ" theo bảng thưởng đã duyệt. Đó là phần "thực hiện
+        càng chăm chỉ": làm thật thì credit quay lại cho gói kế tiếp.
+   Quyền lợi theo tầng: vấn đề tầng N chỉ đề xuất được cho nhà tầng ≥ N. */
+const TRAN_LUA_CHON = 3;
+function tomGoi(nd) {
+  const g = (nd && nd.goi) || {};
+  return { phamVi: g.phamVi || '', caNhanHoa: g.caNhanHoa || '', theoDoi: g.theoDoi || '', dieuKien: g.dieuKien || '' };
 }
 
-/* CỬA · SỔ ÁP DỤNG CỦA MỘT NHÀ — ai đã giao gói nào, bao nhiêu credit. */
+export async function deXuatKhoCao(y, env, db, hoSo) {
+  const x = y || {};
+  const maNha = sach(x.maNha, 40), ghiChu = sach(x.ghiChu, 300);
+  const ds = Array.isArray(x.ds) ? [...new Set(x.ds.map(m => String(m || '')))] : [];
+  if (!maNha) return { ok: false, code: 'SAI', error: 'Thiếu mã khách hàng của nhà.' };
+  if (!ds.length || ds.length > TRAN_LUA_CHON || !ds.every(m => MA.test(m))) return { ok: false, code: 'SAI', error: 'Đề xuất từ 1 đến ' + TRAN_LUA_CHON + ' phương án, mỗi phương án một mã vấn đề hợp lệ.' };
+  if (!ds.every(m => docDuocHe(hoSo, heCuaMa(m)))) return { ok: false, code: 'NOPERM', error: 'Vai này không đề xuất được kho cấp cao ấy.' };
+  const vai = await vaiVoiNha(db, hoSo, maNha);
+  if (vai !== 'coach' && vai !== 'ql') return { ok: false, code: 'NOPERM', error: 'Chỉ Coach phụ trách nhà này, hoặc Trưởng nhóm Coach trở lên, đề xuất giải pháp cho nhà.' };
+  if (!(await nhaCoThat(db, maNha))) return { ok: false, code: 'KHONGNHA', error: 'Không có nhà nào mang mã ' + maNha + '.' };
+  if (ghiChu && !soatRaNgoai(ghiChu).sach) return { ok: false, code: 'DIEU13', error: 'Lời nhắn không ghi tên, số điện thoại hay địa chỉ — bỏ đi rồi gửi lại.' };
+  await taoBang(db);
+  const tangNha = await tangCuaNha(db, maNha);
+  for (const m of ds) {
+    const r = await db.prepare('SELECT tang FROM khoCao WHERE ma = ?').bind(m).first();
+    if (!r) return { ok: false, code: 'KHONGCO', error: 'Kho chưa có vấn đề ' + m + '.' };
+    if (tangNha < r.tang) return { ok: false, code: 'TANGCHUA', error: 'Nhà đang ở tầng ' + tangNha + ' — vấn đề ' + m + ' thuộc quyền lợi tầng ' + r.tang + '.' };
+  }
+  const id = 'DX-' + crypto.randomUUID().replace(/-/g, '').slice(0, 12).toUpperCase();
+  await db.prepare("INSERT INTO deXuatKhoCao (id, maNha, luaChon, ghiChu, trangThai, boiAi, luc) VALUES (?,?,?,?,'cho',?,?)")
+    .bind(id, maNha, JSON.stringify(ds), ghiChu || null, ten(hoSo), Date.now()).run();
+  try { await Kho.ghiNhatKy(db, { uid: hoSo.uid, username: ten(hoSo), viec: 'KHO_CAO_DE_XUAT', doiTuong: maNha, chiTiet: id + ' · ' + ds.join(',') }); } catch (e) {}
+  return { ok: true, id };
+}
+
+/* CỬA · ĐỀ XUẤT CỦA MỘT NHÀ — nhà xem phương án kèm giá + gói để chọn;
+   Coach/quản lý xem trạng thái. Nhà không truyền mã thì lấy nhà của phiên. */
+export async function dsDeXuatNha(y, env, db, hoSo) {
+  const maNha = sach((y || {}).maNha, 40) || await maNhaCuaToi(db, hoSo);
+  if (!maNha) return { ok: false, code: 'KHONGNHA', error: 'Tài khoản này chưa gắn với mã khách hàng nào.' };
+  const vai = await vaiVoiNha(db, hoSo, maNha);
+  if (!vai) return { ok: false, code: 'NOPERM', error: 'Không xem được đề xuất của nhà này.' };
+  await taoBang(db);
+  const g = await bangGiaDangChay(db);
+  const rows = (await db.prepare('SELECT id, luaChon, ghiChu, trangThai, maChon, boiAi, luc, chonLuc FROM deXuatKhoCao WHERE maNha = ? ORDER BY luc DESC, rowid DESC LIMIT 30').bind(maNha).all()).results || [];
+  const ds = [];
+  for (const r of rows) {
+    let ma = []; try { ma = JSON.parse(r.luaChon); } catch (e) {}
+    const pa = [];
+    for (const m of ma) {
+      const k = await db.prepare('SELECT ma, tang, hang, ten, noiDung FROM khoCao WHERE ma = ?').bind(m).first();
+      if (!k) continue;
+      let nd = {}; try { nd = JSON.parse(k.noiDung); } catch (e) {}
+      pa.push({ ma: k.ma, ten: k.ten, hang: k.hang, tenHang: TEN_HANG[k.hang], tang: k.tang, gia: giaLuot(g.bang, k.hang, k.tang), goi: tomGoi(nd) });
+    }
+    ds.push({ id: r.id, trangThai: r.trangThai, maChon: r.maChon || '', ghiChu: r.ghiChu || '', boiAi: r.boiAi, luc: r.luc, chonLuc: r.chonLuc || 0, phuongAn: pa });
+  }
+  return { ok: true, maNha, vai, ds, soDu: await soDu(db, maNha) };
+}
+
+/* CỬA · NHÀ CHỌN MỘT PHƯƠNG ÁN — chỉ tài khoản của chính nhà ấy. Trừ credit
+   theo giá đang chạy lúc chọn; khoá chống trùng là mã đề xuất. */
+export async function chonDeXuat(y, env, db, hoSo) {
+  const x = y || {};
+  const id = String(x.id || ''), ma = String(x.ma || '');
+  if (!/^DX-[A-Z0-9]{12}$/.test(id) || !MA.test(ma)) return { ok: false, code: 'SAI', error: 'Thiếu mã đề xuất hoặc mã phương án.' };
+  await taoBang(db);
+  const d = await db.prepare('SELECT id, maNha, luaChon, trangThai FROM deXuatKhoCao WHERE id = ?').bind(id).first();
+  if (!d) return { ok: false, code: 'KHONGCO', error: 'Không có đề xuất này.' };
+  if ((await vaiVoiNha(db, hoSo, d.maNha)) !== 'nha') return { ok: false, code: 'NOPERM', error: 'Chỉ chính gia đình được chọn phương án — credit là của nhà.' };
+  if (d.trangThai !== 'cho') return { ok: false, code: 'DAXONG', error: 'Đề xuất này đã được chọn hoặc đã huỷ.' };
+  let ma0 = []; try { ma0 = JSON.parse(d.luaChon); } catch (e) {}
+  if (!ma0.includes(ma)) return { ok: false, code: 'SAI', error: 'Phương án không nằm trong đề xuất.' };
+  const k = await db.prepare('SELECT ma, tang, hang, ten FROM khoCao WHERE ma = ?').bind(ma).first();
+  if (!k) return { ok: false, code: 'KHONGCO', error: 'Kho chưa có vấn đề này.' };
+  const tangNha = await tangCuaNha(db, d.maNha);
+  if (tangNha < k.tang) return { ok: false, code: 'TANGCHUA', error: 'Nhà đang ở tầng ' + tangNha + ' — phương án này thuộc quyền lợi tầng ' + k.tang + '.' };
+  const g = await bangGiaDangChay(db);
+  const gia = giaLuot(g.bang, k.hang, k.tang);
+  const vi = await moVi(db, d.maNha, hoSo.u);
+  const t = await truTheoThuTu(db, { maNha: d.maNha, gia, viec: 'khoCao:' + k.hang, tc: id, tang: tangNha, cap: vi.cap, ghiChu: (TEN_HANG[k.hang] + ' · ' + k.ten).slice(0, 200), boiAi: hoSo.u });
+  if (!t.ok) return t;
+  const luc = Date.now();
+  await db.batch([
+    db.prepare("UPDATE deXuatKhoCao SET trangThai = 'chon', maChon = ?, chonLuc = ?, chonBoiAi = ? WHERE id = ? AND trangThai = 'cho'").bind(ma, luc, ten(hoSo), id),
+    db.prepare('INSERT INTO luotKhoCao (id, deXuat, ma, maNha, hang, tang, so, boiAi, luc) VALUES (?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO NOTHING')
+      .bind('LKC-' + id.slice(3), id, ma, d.maNha, k.hang, k.tang, t.trung ? 0 : gia, ten(hoSo), luc)
+  ]);
+  try { await Kho.ghiNhatKy(db, { uid: hoSo.uid, username: ten(hoSo), viec: 'KHO_CAO_NHA_CHON', doiTuong: d.maNha, chiTiet: id + ' · ' + ma + ' · ' + gia + ' credit' }); } catch (e) {}
+  return { ok: true, so: t.trung ? 0 : gia, trung: !!t.trung, hang: k.hang, soDu: await soDu(db, d.maNha) };
+}
+
+/* CỬA · HUỶ ĐỀ XUẤT CHƯA CHỌN — Coach/quản lý, hoặc chính nhà từ chối. */
+export async function huyDeXuat(y, env, db, hoSo) {
+  const id = String((y || {}).id || '');
+  if (!/^DX-[A-Z0-9]{12}$/.test(id)) return { ok: false, code: 'SAI', error: 'Thiếu mã đề xuất.' };
+  await taoBang(db);
+  const d = await db.prepare('SELECT maNha, trangThai FROM deXuatKhoCao WHERE id = ?').bind(id).first();
+  if (!d) return { ok: false, code: 'KHONGCO', error: 'Không có đề xuất này.' };
+  if (!(await vaiVoiNha(db, hoSo, d.maNha))) return { ok: false, code: 'NOPERM', error: 'Không huỷ được đề xuất của nhà này.' };
+  if (d.trangThai !== 'cho') return { ok: false, code: 'DAXONG', error: 'Đề xuất đã chọn thì không huỷ được — credit đã trừ đi theo gói.' };
+  await db.prepare("UPDATE deXuatKhoCao SET trangThai = 'huy', chonLuc = ?, chonBoiAi = ? WHERE id = ? AND trangThai = 'cho'").bind(Date.now(), ten(hoSo), id).run();
+  return { ok: true };
+}
+
+/* CỬA · GHI HOÀN THÀNH — Coach phụ trách/quản lý, kèm bằng chứng. Nhà nhận
+   credit thưởng "nhiệm vụ" (bảng thưởng đã duyệt, có trần theo tầng). */
+export async function hoanThanhKhoCao(y, env, db, hoSo) {
+  const x = y || {};
+  const id = String(x.id || ''), bangChung = sach(x.bangChung, 500);
+  if (!/^DX-[A-Z0-9]{12}$/.test(id)) return { ok: false, code: 'SAI', error: 'Thiếu mã đề xuất.' };
+  if (bangChung.length < 10) return { ok: false, code: 'SAI', error: 'Ghi bằng chứng gia đình đã làm (ít nhất 10 ký tự) — thưởng chỉ ghi khi có bằng chứng.' };
+  if (!soatRaNgoai(bangChung).sach) return { ok: false, code: 'DIEU13', error: 'Bằng chứng không ghi tên, số điện thoại, địa chỉ.' };
+  await taoBang(db);
+  const l = await db.prepare('SELECT id, maNha, xongLuc FROM luotKhoCao WHERE deXuat = ?').bind(id).first();
+  if (!l) return { ok: false, code: 'KHONGCO', error: 'Đề xuất này chưa được nhà chọn.' };
+  const vai = await vaiVoiNha(db, hoSo, l.maNha);
+  if (vai !== 'coach' && vai !== 'ql') return { ok: false, code: 'NOPERM', error: 'Chỉ Coach phụ trách hoặc Trưởng nhóm Coach trở lên ghi hoàn thành.' };
+  if (l.xongLuc) return { ok: true, trung: true };
+  await db.prepare('UPDATE luotKhoCao SET xongLuc = ?, bangChung = ? WHERE id = ? AND xongLuc IS NULL').bind(Date.now(), bangChung, l.id).run();
+  const th = await thuongCredit({ maNha: l.maNha, hoatDong: 'nv', thamChieu: id, ghiChu: 'Hoàn thành gói kho cấp cao' }, env, db, hoSo);
+  return { ok: true, thuong: th && th.ok ? th.so : 0, thuongLoi: th && !th.ok ? th.error : '' };
+}
+
+/* CỬA · CHUYỂN AN TOÀN — tách hẳn khỏi kho và khỏi credit.
+   Dấu hiệu an toàn (tự làm đau, ý nghĩ tự tử, bạo lực, xâm hại) → chuyển
+   ngay, MỌI hạng, không tính credit, không cần số dư, không cần mã vấn đề.
+   Ghi được: Coach phụ trách nhà hoặc quản lý (không phải mọi vai cho mọi
+   nhà), mỗi nhà một lượt mỗi giờ. Báo ngay Giám đốc + Super Admin trong hộp
+   thông báo của hệ — "chuyển ngay" phải tới tay một người, không chỉ nằm
+   trong sổ. Lượt này không giao gói nào, nên không phải đường né credit. */
+export async function chuyenAnToan(y, env, db, hoSo) {
+  const x = y || {};
+  const maNha = sach(x.maNha, 40), ghiChu = sach(x.ghiChu, 500);
+  if (!maNha) return { ok: false, code: 'SAI', error: 'Thiếu mã khách hàng của nhà.' };
+  const vai = await vaiVoiNha(db, hoSo, maNha);
+  if (vai !== 'coach' && vai !== 'ql') return { ok: false, code: 'NOPERM', error: 'Chỉ Coach phụ trách nhà này hoặc quản lý ghi được lượt chuyển. Người khác thấy dấu hiệu: báo ngay Trưởng nhóm Coach.' };
+  if (!(await nhaCoThat(db, maNha))) return { ok: false, code: 'KHONGNHA', error: 'Không có nhà nào mang mã ' + maNha + '.' };
+  if (ghiChu && !soatRaNgoai(ghiChu).sach) return { ok: false, code: 'DIEU13', error: 'Ghi chú không ghi tên, số điện thoại, địa chỉ — mô tả dấu hiệu quan sát được.' };
+  await taoBang(db);
+  const gio = Math.floor(Date.now() / 3600000);
+  const id = 'AT-' + maNha.replace(/[^A-Za-z0-9]/g, '').slice(0, 20) + '-' + gio;
+  const r = await db.prepare('INSERT INTO chuyenAnToan (id, maNha, ghiChu, boiAi, luc) VALUES (?,?,?,?,?) ON CONFLICT(id) DO NOTHING')
+    .bind(id, maNha, ghiChu || null, ten(hoSo), Date.now()).run();
+  const moi = Number((r.meta || {}).changes || 0) === 1;
+  if (moi) {
+    try { await baoLenCapCao(db, { loai: 'anToan', mucDo: 'gap', tieuDe: 'Chuyển an toàn · nhà ' + maNha, than: 'Coach ghi dấu hiệu an toàn, cần chuyển chuyên gia ngay. ' + (ghiChu || ''), doiTuong: maNha }); } catch (e) {}
+    try { await Kho.ghiNhatKy(db, { uid: hoSo.uid, username: ten(hoSo), viec: 'CHUYEN_AN_TOAN', doiTuong: maNha, chiTiet: id }); } catch (e) {}
+  }
+  return { ok: true, trung: !moi, so: 0,
+    vi: 'Đã ghi và báo Giám đốc + Super Admin. Chuyển ngay tới chuyên gia/bộ phận phụ trách — mọi hạng, không tính credit, không chờ số dư.' };
+}
+
+/* CỬA · SỔ CỦA MỘT NHÀ — gói đã chọn, credit, hoàn thành. */
 export async function soKhoCaoNha(y, env, db, hoSo) {
-  const maNha = sach((y || {}).maNha, 40);
+  const maNha = sach((y || {}).maNha, 40) || await maNhaCuaToi(db, hoSo);
   if (!maNha) return { ok: false, code: 'SAI', error: 'Thiếu mã khách hàng.' };
   const vai = await vaiVoiNha(db, hoSo, maNha);
   if (!vai) return { ok: false, code: 'NOPERM', error: 'Không xem được sổ của nhà này.' };
   await taoBang(db);
-  const ds = (await db.prepare('SELECT l.ma, l.hang, l.tang, l.so, l.anToan, l.thamChieu, l.boiAi, l.luc, k.ten FROM luotKhoCao l LEFT JOIN khoCao k ON k.ma = l.ma ' +
+  const ds = (await db.prepare('SELECT l.deXuat, l.ma, l.hang, l.tang, l.so, l.boiAi, l.luc, l.xongLuc, k.ten FROM luotKhoCao l LEFT JOIN khoCao k ON k.ma = l.ma ' +
     'WHERE l.maNha = ? ORDER BY l.luc DESC, l.rowid DESC LIMIT 100').bind(maNha).all()).results || [];
   return { ok: true, maNha, ds };
 }

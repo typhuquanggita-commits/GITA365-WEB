@@ -152,7 +152,7 @@ export async function soDu(db, maNha) {
 }
 
 /* ═══════════ NHÀ · TẦNG · QUYỀN ═══════════ */
-async function maNhaCuaToi(db, hoSo) {
+export async function maNhaCuaToi(db, hoSo) {
   if (hoSo.maKhachHang) return String(hoSo.maKhachHang);
   const nd = await Kho.nguoiTheoId(db, hoSo.uid);
   if (nd && nd.maKhachHang) return String(nd.maKhachHang);
@@ -353,8 +353,14 @@ export async function tieuCredit(y, env, db, hoSo) {
 export async function truTheoThuTu(db, d) {
   await taoBang(db);
   const { maNha, gia, viec, tc } = d;
-  const da = await db.prepare("SELECT COUNT(*) AS n FROM soCredit WHERE khoaDuy LIKE ?").bind('tieu:' + maNha + ':' + tc + ':%').first();
-  if (Number((da || {}).n || 0)) return { ok: true, trung: true, so: 0, soDu: await soDu(db, maNha) };
+  /* Khoá CHÍNH XÁC, không dò tiền tố: dò `tieu:nha:tc:%` thì mã "A" trùng
+     nhầm với "A:B". Lượt đã bị hoàn (hết số dư giữa chừng) không tính là
+     đã trừ — nhưng khoá cũ đã dùng, nên phải gọi lại bằng mã tham chiếu mới. */
+  const goc = THU_TU_TRU.map(l => 'tieu:' + maNha + ':' + tc + ':' + l);
+  const co = ((await db.prepare('SELECT khoaDuy FROM soCredit WHERE khoaDuy IN (?,?,?,?,?,?)')
+    .bind(...goc, ...goc.map(k => k + ':hoan')).all()).results || []).map(r => r.khoaDuy);
+  if (goc.some(k => co.includes(k) && !co.includes(k + ':hoan'))) return { ok: true, trung: true, so: 0, soDu: await soDu(db, maNha) };
+  if (co.length) return { ok: false, code: 'DOI', error: 'Lượt này đã được hoàn vì số dư đổi giữa chừng — dùng mã tham chiếu mới để thử lại.' };
   const du = await soDu(db, maNha);
   if (du.tong < gia) return { ok: false, code: 'THIEU', error: 'Ví còn ' + du.tong + ' credit, lượt này cần ' + gia + ' credit.', can: gia, soDu: du };
   let con = gia; const ke = [];
