@@ -510,6 +510,12 @@ G.accountsModal = function(){
 function doLogin(u, p){
   var all = G.ACCOUNTS.concat(G.AUDITORS);
   var a = all.filter(function(x){return x.u.toLowerCase()===String(u||'').trim().toLowerCase();})[0];
+  /* Không phải tài khoản trải nghiệm → hỏi MÁY CHỦ (10/10/2026). Tới bản
+     này form màn đầu chỉ biết tài khoản demo trong trình duyệt: một phụ
+     huynh đã đăng ký thật gõ đúng email và mật khẩu vẫn nhận "Không tìm
+     thấy tài khoản này", và trợ lý không bao giờ chạm tới bộ não máy chủ.
+     Đăng nhập máy chủ đi qua đúng vaoBangPhienMayChu — một nguồn dựng phiên. */
+  if(!a && G.API_CAP_PHEP && p){ dangNhapMayChu(String(u||'').trim(), String(p)); return; }
   if(!a){ U.toast('Không tìm thấy tài khoản này.','err'); return; }
   if(p !== undefined && p !== null && String(p).length && a.p !== p){
     U.toast('Mật khẩu chưa đúng.','err'); return;
@@ -518,6 +524,26 @@ function doLogin(u, p){
   vaoPhien(a);
 }
 G.doLogin = doLogin;
+
+var dangDangNhap = false;
+function dangNhapMayChu(u, p){
+  if(dangDangNhap) return;
+  dangDangNhap = true;
+  U.toast('Đang đăng nhập…','ok');
+  fetch(G.API_CAP_PHEP, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body: JSON.stringify({fn:'dangNhap', u:u, mk:p})})
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      dangDangNhap = false;
+      if(d && d.ok && d.token){
+        vaoBangPhienMayChu(d);
+        if(d.phaiDoiMk) U.toast('Tài khoản cần đổi mật khẩu trước khi dùng tiếp.','err');
+        return;
+      }
+      U.toast((d && d.error) || 'Đăng nhập không thành công.','err');
+    })
+    .catch(function(){ dangDangNhap = false; U.toast('Không gọi được máy chủ. Kiểm tra mạng rồi thử lại.','err'); });
+}
 
 var KHOA_PHIEN_MAY_CHU = 'gita365_phien_may_chu';
 G.xoaPhienMayChu = function(token){
