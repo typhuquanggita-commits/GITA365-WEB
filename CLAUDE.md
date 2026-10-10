@@ -68,3 +68,9 @@ Không xoá mã màn, cửa máy chủ, bảng dữ liệu hay tệp nào đã g
 - Ba loại bước, không gộp: `tuHoc` (lời khai, phải kèm một câu) · `nguoiCham` (người khác chấm 0–100, kèm nhận xét) · `mayCham` (máy đọc thẳng `baCuaConNguoi`, không cửa nào ghi được). Sát hạch là bước NGƯỜI chấm vì điểm sát hạch nằm ở bản đồng bộ của máy khách.
 - Ba bảng chỉ thêm dòng, không có cột "đã đủ": đủ điều kiện tính lúc đọc, chứng nhận hoàn thành là hành động có người ký (không tự ký, người ký khác người chấm, thu hồi phải có lý do). Chứng nhận này KHÔNG thay chứng chỉ hành nghề Coach của `dao-tao-dh` và chưa mở quyền gì — nối nó vào quyền là việc chủ hệ quyết. So "cùng người" bằng `Kho.layUid` — gửi email của chính mình không lách được cổng tự chấm.
 - Tiến độ chỉ nằm ở máy chủ; tài khoản mẫu xem được chương trình nhưng không ghi được — cố ý.
+
+## Kho cấp cao · hệ Tư vấn (`may-chu/kho-cao.js` · ngăn "Cấp cao" ở `src/tra-cuu-giai-phap.js`)
+- 2.000 vấn đề Tư vấn = tầng 1 (200, V1-A/B) · tầng 2 (800, V2-A…H) · tầng 3 (1000, V3-A…J), làm 5 đợt × 400 (đợt 6–10; đợt 1–5 là 2.000 vấn đề Coach C4/C5). Tên đủ 20 nhóm đã đặt sẵn ở `NHOM_CAO` — đợt sau nối vào, không đổi tên.
+- Nguồn trần KHÔNG vào kho mã; chỉ `kho-cao/goi.enc` (một gói chung Coach + Tư vấn). Đóng gói lại phải gồm MỌI nhóm đã có — mở gói cũ bằng `--mo`, so với nguồn, rồi mới đóng.
+- Tầng 1 không chữa (chỉ quan sát · ghi · đọc mô thức · giả thuyết); tầng 2 là vòng thử 7 ngày đổi ít biến. Chạm dấu hiệu an toàn thì `thamVan` phải có "chuyển ngay" (bộ gộp chặn).
+- R11 thao tác với nhà ghi tên mình ở `hoSoKhach.tuVan` qua `vaiKhoCao` — chỉ vấn đề hệ Tư vấn, không mở ví. KHÔNG sửa `vaiVoiNha` của credit.js. Tư vấn viên ghi hoàn thành thì thưởng credit chờ Coach/Trưởng nhóm.

@@ -61,7 +61,19 @@ export const NHOM_CAO = Object.freeze({
   'C5-C': 'Tạo giá trị — dự án của con', 'C5-D': 'Văn hoá và giá trị truyền đời',
   'C5-E': 'Đồng bộ nhiều thế hệ', 'C5-F': 'Cha mẹ phát triển, làm gương ở tầm cao',
   'C5-G': 'Tài chính gia đình và trao quyền tiền bạc', 'C5-H': 'Lãnh đạo bản thân, bền bỉ trước áp lực',
-  'C5-I': 'Lan toả: hạt nhân cộng đồng', 'C5-J': 'Chuyển giao, tốt nghiệp, bền vững sau 365 ngày'
+  'C5-I': 'Lan toả: hạt nhân cộng đồng', 'C5-J': 'Chuyển giao, tốt nghiệp, bền vững sau 365 ngày',
+  /* Hệ Tư vấn · tầng 1 (200) · tầng 2 (800) · tầng 3 (1000). Tên đặt đủ 20 nhóm
+     ngay từ đợt 6 để các đợt sau nối vào đúng chỗ, không đổi tên giữa chừng. */
+  'V1-A': 'Nhận diện ban đầu và lập baseline trung thực', 'V1-B': 'Đọc mô thức, đặt giả thuyết, kỳ vọng ban đầu',
+  'V2-A': 'Kiểm chứng giả thuyết qua vòng 7 ngày', 'V2-B': 'Hết đổ lỗi — hiểu cơ chế trong nhà',
+  'V2-C': 'Nhịp học tập và sự tập trung — vì sao', 'V2-D': 'Cảm xúc và phản ứng trong nhà — vì sao',
+  'V2-E': 'Màn hình và thiết bị — vì sao khó dứt', 'V2-F': 'Giao tiếp cha mẹ–con — vì sao nói không nghe',
+  'V2-G': 'Sinh hoạt, giấc ngủ, việc nhà — vì sao lệch', 'V2-H': 'Quan hệ khách hàng ở tầng 2',
+  'V3-A': 'Dựng cấu trúc chuỗi 21 ngày đầu', 'V3-B': 'Từ cấu trúc sang tự điều hành',
+  'V3-C': 'Thích ứng khi kế hoạch vấp', 'V3-D': 'Chuyển giao cho gia đình',
+  'V3-E': 'Vòng cải tiến và cổng nghiệm thu', 'V3-F': 'Thói quen học tập có hệ thống',
+  'V3-G': 'Cảm xúc và kỷ luật tích cực trong hệ thống mới', 'V3-H': 'Vai trò cha mẹ trong hệ thống mới',
+  'V3-I': 'Màn hình, giấc ngủ, việc nhà trong hệ thống', 'V3-J': 'Quan hệ khách hàng ở tầng 3'
 });
 const MA = /^(C[45]|V[123])-([A-J])-(\d{3})$/;
 const TRAN_LO = 100;
@@ -76,6 +88,21 @@ export function docDuocHe(hoSo, he) {
   return false;
 }
 const heCuaMa = ma => (ma[0] === 'C' ? 'coach' : 'tuvan');
+
+/* Vai với một nhà, cho riêng kho cấp cao. Dùng `vaiVoiNha` của credit.js rồi
+   thêm đúng một nhánh: Chuyên viên tư vấn (R11) được ghi tên ở hoSoKhach.tuVan
+   của nhà ấy → 'tuvan'. Không sửa vaiVoiNha dùng chung, vì nó còn mở ví, tiêu
+   credit, đặt cấp ví — những quyền Tư vấn viên không có. So không phân biệt
+   hoa thường; không có hồ sơ nhà thì trả '' (đóng). */
+async function vaiKhoCao(db, hoSo, maNha) {
+  const v = await vaiVoiNha(db, hoSo, maNha);
+  if (v || BAC[roleOf(hoSo)] !== 11 || !maNha) return v;
+  const h = await db.prepare('SELECT tuVan FROM hoSoKhach WHERE maKhachHang = ?').bind(maNha).first();
+  const tv = String((h && h.tuVan) || '').trim().toLowerCase();
+  return tv && tv === String(ten(hoSo) || '').trim().toLowerCase() ? 'tuvan' : '';
+}
+/* Tư vấn viên chỉ thao tác trên vấn đề hệ Tư vấn (tầng 1–3). */
+const vaiDuoc = (vai, ds) => vai === 'coach' || vai === 'ql' || (vai === 'tuvan' && ds.every(m => heCuaMa(m) === 'tuvan'));
 const sach = (s, n) => String(s == null ? '' : s).replace(/[\u0000-\u0008\u000b-\u001f]+/g, ' ').trim().slice(0, n);
 
 let daDung = false;
@@ -280,8 +307,10 @@ export async function deXuatKhoCao(y, env, db, hoSo) {
   if (!maNha) return { ok: false, code: 'SAI', error: 'Thiếu mã khách hàng của nhà.' };
   if (!ds.length || ds.length > TRAN_LUA_CHON || !ds.every(m => MA.test(m))) return { ok: false, code: 'SAI', error: 'Đề xuất từ 1 đến ' + TRAN_LUA_CHON + ' phương án, mỗi phương án một mã vấn đề hợp lệ.' };
   if (!ds.every(m => docDuocHe(hoSo, heCuaMa(m)))) return { ok: false, code: 'NOPERM', error: 'Vai này không đề xuất được kho cấp cao ấy.' };
-  const vai = await vaiVoiNha(db, hoSo, maNha);
-  if (vai !== 'coach' && vai !== 'ql') return { ok: false, code: 'NOPERM', error: 'Chỉ Coach phụ trách nhà này, hoặc Trưởng nhóm Coach trở lên, đề xuất giải pháp cho nhà.' };
+  const vai = await vaiKhoCao(db, hoSo, maNha);
+  if (!vaiDuoc(vai, ds)) return { ok: false, code: 'NOPERM', error: vai === 'tuvan'
+    ? 'Tư vấn viên chỉ đề xuất vấn đề hệ Tư vấn (tầng 1–3) cho nhà mình phụ trách.'
+    : 'Chỉ Coach hoặc Tư vấn viên phụ trách nhà này, hoặc Trưởng nhóm Coach trở lên, đề xuất giải pháp cho nhà.' };
   if (!(await nhaCoThat(db, maNha))) return { ok: false, code: 'KHONGNHA', error: 'Không có nhà nào mang mã ' + maNha + '.' };
   if (ghiChu && !soatRaNgoai(ghiChu).sach) return { ok: false, code: 'DIEU13', error: 'Lời nhắn không ghi tên, số điện thoại hay địa chỉ — bỏ đi rồi gửi lại.' };
   await taoBang(db);
@@ -303,7 +332,7 @@ export async function deXuatKhoCao(y, env, db, hoSo) {
 export async function dsDeXuatNha(y, env, db, hoSo) {
   const maNha = sach((y || {}).maNha, 40) || await maNhaCuaToi(db, hoSo);
   if (!maNha) return { ok: false, code: 'KHONGNHA', error: 'Tài khoản này chưa gắn với mã khách hàng nào.' };
-  const vai = await vaiVoiNha(db, hoSo, maNha);
+  const vai = await vaiKhoCao(db, hoSo, maNha);
   if (!vai) return { ok: false, code: 'NOPERM', error: 'Không xem được đề xuất của nhà này.' };
   await taoBang(db);
   const g = await bangGiaDangChay(db);
@@ -311,6 +340,9 @@ export async function dsDeXuatNha(y, env, db, hoSo) {
   const ds = [];
   for (const r of rows) {
     let ma = []; try { ma = JSON.parse(r.luaChon); } catch (e) {}
+    /* Tư vấn viên chỉ đọc vấn đề hệ Tư vấn — gói hệ Coach của cùng nhà ấy là
+       nội dung docKhoCao/dsKhoCao chặn với R11, không được lọt qua đây. */
+    if (vai === 'tuvan') { ma = ma.filter(m => heCuaMa(String(m)) === 'tuvan'); if (!ma.length) continue; }
     const pa = [];
     for (const m of ma) {
       const k = await db.prepare('SELECT ma, tang, hang, ten, noiDung FROM khoCao WHERE ma = ?').bind(m).first();
@@ -360,9 +392,12 @@ export async function huyDeXuat(y, env, db, hoSo) {
   const id = String((y || {}).id || '');
   if (!/^DX-[A-Z0-9]{12}$/.test(id)) return { ok: false, code: 'SAI', error: 'Thiếu mã đề xuất.' };
   await taoBang(db);
-  const d = await db.prepare('SELECT maNha, trangThai FROM deXuatKhoCao WHERE id = ?').bind(id).first();
+  const d = await db.prepare('SELECT maNha, trangThai, luaChon FROM deXuatKhoCao WHERE id = ?').bind(id).first();
   if (!d) return { ok: false, code: 'KHONGCO', error: 'Không có đề xuất này.' };
-  if (!(await vaiVoiNha(db, hoSo, d.maNha))) return { ok: false, code: 'NOPERM', error: 'Không huỷ được đề xuất của nhà này.' };
+  const vaiH = await vaiKhoCao(db, hoSo, d.maNha);
+  let dsH = []; try { dsH = JSON.parse(d.luaChon); } catch (e) {}
+  /* Danh sách rỗng/hỏng thì Tư vấn viên KHÔNG được qua: [].every() là true. */
+  if (!vaiH || (vaiH === 'tuvan' && (!Array.isArray(dsH) || !dsH.length || !vaiDuoc(vaiH, dsH)))) return { ok: false, code: 'NOPERM', error: 'Không huỷ được đề xuất của nhà này.' };
   if (d.trangThai !== 'cho') return { ok: false, code: 'DAXONG', error: 'Đề xuất đã chọn thì không huỷ được — credit đã trừ đi theo gói.' };
   await db.prepare("UPDATE deXuatKhoCao SET trangThai = 'huy', chonLuc = ?, chonBoiAi = ? WHERE id = ? AND trangThai = 'cho'").bind(Date.now(), ten(hoSo), id).run();
   return { ok: true };
@@ -377,11 +412,21 @@ export async function hoanThanhKhoCao(y, env, db, hoSo) {
   if (bangChung.length < 10) return { ok: false, code: 'SAI', error: 'Ghi bằng chứng gia đình đã làm (ít nhất 10 ký tự) — thưởng chỉ ghi khi có bằng chứng.' };
   if (!soatRaNgoai(bangChung).sach) return { ok: false, code: 'DIEU13', error: 'Bằng chứng không ghi tên, số điện thoại, địa chỉ.' };
   await taoBang(db);
-  const l = await db.prepare('SELECT id, maNha, xongLuc FROM luotKhoCao WHERE deXuat = ?').bind(id).first();
+  const l = await db.prepare('SELECT id, ma, maNha, xongLuc FROM luotKhoCao WHERE deXuat = ?').bind(id).first();
   if (!l) return { ok: false, code: 'KHONGCO', error: 'Đề xuất này chưa được nhà chọn.' };
-  const vai = await vaiVoiNha(db, hoSo, l.maNha);
-  if (vai !== 'coach' && vai !== 'ql') return { ok: false, code: 'NOPERM', error: 'Chỉ Coach phụ trách hoặc Trưởng nhóm Coach trở lên ghi hoàn thành.' };
+  const vai = await vaiKhoCao(db, hoSo, l.maNha);
+  if (!vaiDuoc(vai, [l.ma])) return { ok: false, code: 'NOPERM', error: 'Chỉ Coach hoặc Tư vấn viên phụ trách nhà (đúng hệ của vấn đề), hoặc Trưởng nhóm Coach trở lên, ghi hoàn thành.' };
   if (l.xongLuc) return { ok: true, trung: true };
+  /* Thưởng credit "nhiệm vụ" theo luật của ví: Coach của nhà hoặc Trưởng nhóm
+     ghi SAU KHI kiểm bằng chứng. Nên Tư vấn viên chỉ NỘP bằng chứng — lượt
+     chưa đóng (xongLuc trống) — và Coach/Trưởng nhóm bấm hoàn thành lần nữa
+     để đóng lượt và cộng thưởng. Đóng lượt ngay ở đây thì lần bấm của Coach
+     trả "đã xong" và phần thưởng mất lặng lẽ. */
+  if (vai === 'tuvan') {
+    await db.prepare('UPDATE luotKhoCao SET bangChung = ? WHERE id = ? AND xongLuc IS NULL').bind(bangChung, l.id).run();
+    return { ok: true, thuong: 0, choXacNhan: true,
+      vi: 'Đã nộp bằng chứng. Coach của nhà hoặc Trưởng nhóm kiểm rồi bấm hoàn thành — lúc ấy lượt mới đóng và nhà mới được cộng thưởng.' };
+  }
   await db.prepare('UPDATE luotKhoCao SET xongLuc = ?, bangChung = ? WHERE id = ? AND xongLuc IS NULL').bind(Date.now(), bangChung, l.id).run();
   const th = await thuongCredit({ maNha: l.maNha, hoatDong: 'nv', thamChieu: id, ghiChu: 'Hoàn thành gói kho cấp cao' }, env, db, hoSo);
   return { ok: true, thuong: th && th.ok ? th.so : 0, thuongLoi: th && !th.ok ? th.error : '' };
@@ -398,8 +443,10 @@ export async function chuyenAnToan(y, env, db, hoSo) {
   const x = y || {};
   const maNha = sach(x.maNha, 40), ghiChu = sach(x.ghiChu, 500);
   if (!maNha) return { ok: false, code: 'SAI', error: 'Thiếu mã khách hàng của nhà.' };
-  const vai = await vaiVoiNha(db, hoSo, maNha);
-  if (vai !== 'coach' && vai !== 'ql') return { ok: false, code: 'NOPERM', error: 'Chỉ Coach phụ trách nhà này hoặc quản lý ghi được lượt chuyển. Người khác thấy dấu hiệu: báo ngay Trưởng nhóm Coach.' };
+  /* Tư vấn viên phụ trách nhà cũng ghi được: người thấy dấu hiệu sớm nhất ở
+     tầng 1–3 thường là họ, và "chuyển ngay" không được chờ qua một người nữa. */
+  const vai = await vaiKhoCao(db, hoSo, maNha);
+  if (vai !== 'coach' && vai !== 'ql' && vai !== 'tuvan') return { ok: false, code: 'NOPERM', error: 'Chỉ Coach hoặc Tư vấn viên phụ trách nhà này, hoặc quản lý, ghi được lượt chuyển. Người khác thấy dấu hiệu: báo ngay Trưởng nhóm Coach.' };
   if (!(await nhaCoThat(db, maNha))) return { ok: false, code: 'KHONGNHA', error: 'Không có nhà nào mang mã ' + maNha + '.' };
   if (ghiChu && !soatRaNgoai(ghiChu).sach) return { ok: false, code: 'DIEU13', error: 'Ghi chú không ghi tên, số điện thoại, địa chỉ — mô tả dấu hiệu quan sát được.' };
   await taoBang(db);
@@ -420,10 +467,11 @@ export async function chuyenAnToan(y, env, db, hoSo) {
 export async function soKhoCaoNha(y, env, db, hoSo) {
   const maNha = sach((y || {}).maNha, 40) || await maNhaCuaToi(db, hoSo);
   if (!maNha) return { ok: false, code: 'SAI', error: 'Thiếu mã khách hàng.' };
-  const vai = await vaiVoiNha(db, hoSo, maNha);
+  const vai = await vaiKhoCao(db, hoSo, maNha);
   if (!vai) return { ok: false, code: 'NOPERM', error: 'Không xem được sổ của nhà này.' };
   await taoBang(db);
-  const ds = (await db.prepare('SELECT l.deXuat, l.ma, l.hang, l.tang, l.so, l.boiAi, l.luc, l.xongLuc, k.ten FROM luotKhoCao l LEFT JOIN khoCao k ON k.ma = l.ma ' +
+  let ds = (await db.prepare('SELECT l.deXuat, l.ma, l.hang, l.tang, l.so, l.boiAi, l.luc, l.xongLuc, k.ten FROM luotKhoCao l LEFT JOIN khoCao k ON k.ma = l.ma ' +
     'WHERE l.maNha = ? ORDER BY l.luc DESC, l.rowid DESC LIMIT 100').bind(maNha).all()).results || [];
+  if (vai === 'tuvan') ds = ds.filter(r => heCuaMa(String(r.ma)) === 'tuvan');
   return { ok: true, maNha, ds };
 }

@@ -219,10 +219,15 @@ function napSo(ma){
    500 vấn đề khách hàng · 500 vấn đề nội bộ. Nội dung không nằm trong gói
    gửi xuống máy: máy chủ chỉ gửi TÊN cho cả danh sách và gửi NỘI DUNG cho
    đúng phần trăm vai được xem — tỷ lệ ở đây được cắt thật ở máy chủ. */
-var NGAN = [['kh', 'Khách hàng · 500'], ['ns', 'Nội bộ · 500'], ['nghe', 'Phác đồ & tình huống'], ['cao', 'Coach cấp cao · 6 hạng']];
-/* Cùng ngưỡng với cổng máy chủ (may-chu/kho-cao.js → docDuocHe): kho Coach
-   cấp cao mở cho R01–R07. Màn chỉ ẩn ngăn; máy chủ mới là cổng. */
-function moCao(){ var r = (G.ROLES || []).filter(function(x){ return x.id === G.S.role; })[0]; return !!r && r.lv <= 7; }
+var NGAN = [['kh', 'Khách hàng · 500'], ['ns', 'Nội bộ · 500'], ['nghe', 'Phác đồ & tình huống'], ['cao', 'Cấp cao · 6 hạng']];
+/* Cùng ngưỡng với cổng máy chủ (may-chu/kho-cao.js → docDuocHe): hệ Coach
+   (tầng 4–5) mở cho R01–R07; hệ Tư vấn (tầng 1–3) mở thêm cho R11. Màn chỉ
+   ẩn ngăn; máy chủ mới là cổng. */
+function lvCao(){ var r = (G.ROLES || []).filter(function(x){ return x.id === G.S.role; })[0]; return r ? r.lv : 99; }
+function moHeCao(he){ var b = lvCao(); return he === 'coach' ? b <= 7 : he === 'tuvan' ? (b <= 7 || b === 11) : false; }
+function moCao(){ return moHeCao('coach') || moHeCao('tuvan'); }
+var HE_CAO = { coach:{ ten:'Hệ Coach', tang:[4, 5] }, tuvan:{ ten:'Hệ Tư vấn', tang:[1, 2, 3] } };
+function heCao(){ var he = TC.caoHe || (moHeCao('coach') ? 'coach' : 'tuvan'); return moHeCao(he) ? he : 'tuvan'; }
 function coMayChu(){ return !!(G.API_CAP_PHEP && G.PHIEN_TOKEN && G.goiMayChu); }
 function napDsKho(loai){
   if(!coMayChu() || TC.k[loai] === 'dang') return;
@@ -375,7 +380,7 @@ function napGia(){
 function napCao(){
   if(!coMayChu() || TC.cao === 'dang') return;
   TC.cao = 'dang';
-  G.goiMayChu('dsKhoCao', { he:'coach' }, { moi:true }).then(function(r){
+  G.goiMayChu('dsKhoCao', { he:heCao() }, { moi:true }).then(function(r){
     TC.cao = r && r.ok ? r : { loi:(r && r.error) || 'Chưa đọc được kho cấp cao.' };
     if(G.S.view === 'tra-cuu-gp' && G.render) G.render();
   });
@@ -438,7 +443,7 @@ function veBangGia(){
   if(!g){ napGia(); return ''; }
   if(g === 'dang' || g.loi) return '';
   var o = '<details class="card pad-sm mb"><summary class="sm" style="cursor:pointer">' + ic('star', 'w-3 h-3') + ' Bảng giá credit theo hạng × tầng' + (g.khoiDau ? ' · thang chủ hệ duyệt' : '') + '</summary>' +
-    '<div class="mt">' + U.tbl(['Tầng'].concat(g.hang.map(function(x){ return g.tenHang[x]; })), [4, 5].map(function(t){
+    '<div class="mt">' + U.tbl(['Tầng'].concat(g.hang.map(function(x){ return g.tenHang[x]; })), HE_CAO[heCao()].tang.map(function(t){
       return ['Tầng ' + t].concat(g.hang.map(function(x){ return h(String(g.theoTang[t][x])); }));
     })) + '<p class="tiny muted mt">1 credit = 10đ. Hạng cao hơn = gói sâu hơn: nhiều buổi hơn, cá nhân hoá hơn, nhiều người hỗ trợ hơn, theo dõi dài hơn.' +
     (g.lyDo ? ' Lần sửa gần nhất: ' + h(g.lyDo) + '.' : '') + '</p>';
@@ -484,15 +489,20 @@ function veCao(q){
   var o = veNapCao();
   if(!coMayChu()) return o + U.empty('Kho cấp cao nằm trên máy chủ', 'Đăng nhập bằng tài khoản thật để tra cứu.');
   o += veBangGia();
-  var k = TC.cao;
+  var k = TC.cao, he = heCao(), T = HE_CAO[he].tang;
+  if(k && k.he && k.he !== he){ TC.cao = k = null; }
   if(!k){ napCao(); k = 'dang'; }
+  if(moHeCao('coach') && moHeCao('tuvan'))
+    o = '<div class="row wrap mb" style="gap:6px">' + ['coach', 'tuvan'].map(function(x){
+      return '<button class="btn sm' + (x === he ? ' pri' : '') + '" data-kc-he="' + x + '">' + h(HE_CAO[x].ten + ' · tầng ' + HE_CAO[x].tang[0] + '–' + HE_CAO[x].tang[HE_CAO[x].tang.length - 1]) + '</button>';
+    }).join('') + '</div>' + o;
   if(k === 'dang') return o + '<div class="card pad-sm"><p class="sm muted">Đang đọc kho cấp cao…</p></div>';
   if(k.loi) return o + '<div class="card pad-sm"><p class="sm" style="color:var(--gita-do-ink)">' + h(k.loi) + '</p></div>';
-  if(!k.tong) return o + U.empty('Kho cấp cao chưa được nạp', 'Super Admin mở gói mã hoá để nạp vấn đề tầng 4–5 vào máy chủ.');
+  if(!k.tong) return o + U.empty('Kho cấp cao chưa được nạp', 'Super Admin mở gói mã hoá để nạp vấn đề tầng ' + T[0] + '–' + T[T.length - 1] + ' của ' + HE_CAO[he].ten.toLowerCase() + ' vào máy chủ.');
   o += veGio();
-  o += '<p class="sm mb">' + ic('check', 'w-3 h-3') + ' <b>' + k.tong + '</b> vấn đề tầng 4–5 · ' + HANG_CAO.map(function(x){ return h(k.tenHang[x]) + ' ' + (k.dem[x] || 0); }).join(' · ') + '</p>';
+  o += '<p class="sm mb">' + ic('check', 'w-3 h-3') + ' <b>' + k.tong + '</b> vấn đề ' + h(HE_CAO[he].ten.toLowerCase()) + ' · tầng ' + T[0] + '–' + T[T.length - 1] + ' · ' + HANG_CAO.map(function(x){ return h(k.tenHang[x]) + ' ' + (k.dem[x] || 0); }).join(' · ') + '</p>';
   o += '<div class="row wrap mb" style="gap:6px">' +
-    [[0, 'Cả hai tầng'], [4, 'Tầng 4'], [5, 'Tầng 5']].map(function(t){ return '<button class="btn sm' + (TC.caoTang === t[0] ? ' pri' : '') + '" data-kc-tang="' + t[0] + '">' + h(t[1]) + '</button>'; }).join('') +
+    [[0, 'Mọi tầng']].concat(T.map(function(t){ return [t, 'Tầng ' + t]; })).map(function(t){ return '<button class="btn sm' + (TC.caoTang === t[0] ? ' pri' : '') + '" data-kc-tang="' + t[0] + '">' + h(t[1]) + '</button>'; }).join('') +
     '<span style="width:8px"></span>' +
     [['', 'Mọi hạng']].concat(HANG_CAO.map(function(x){ return [x, k.tenHang[x]]; })).map(function(x){ return '<button class="btn sm' + (TC.caoHang === x[0] ? ' pri' : '') + '" data-kc-hang="' + x[0] + '">' + h(x[1]) + '</button>'; }).join('') + '</div>';
   var loc = k.ds.filter(function(v){
@@ -550,6 +560,8 @@ document.addEventListener('click', function(e){
   if(ng){ TC.ngan = ng.getAttribute('data-tcgp-ngan'); TC.chon = null; TC.q = ''; G.render && G.render(); return; }
   var kc = e.target.closest && e.target.closest('[data-kc-chon]');
   if(kc){ var m2 = kc.getAttribute('data-kc-chon'); TC.chon = m2; if(!TC.kcvd[m2] || TC.kcvd[m2].loi) napVdCao(m2); if(!TC.nk[m2]) napSo(m2); G.render && G.render(); return; }
+  var khe = e.target.closest && e.target.closest('[data-kc-he]');
+  if(khe){ TC.caoHe = khe.getAttribute('data-kc-he'); TC.caoTang = 0; TC.cao = null; TC.chon = ''; TC.gio = []; G.render && G.render(); return; }
   var kt = e.target.closest && e.target.closest('[data-kc-tang]');
   if(kt){ TC.caoTang = Number(kt.getAttribute('data-kc-tang')) || 0; G.render && G.render(); return; }
   var kh = e.target.closest && e.target.closest('[data-kc-hang]');
@@ -582,7 +594,7 @@ document.addEventListener('click', function(e){
     var bc = window.prompt('Bằng chứng gia đình đã làm (không ghi tên, số điện thoại):', '');
     if(bc == null) return;
     G.goiMayChu('hoanThanhKhoCao', { id:kx.getAttribute('data-kc-xong'), bangChung:bc }).then(function(r){
-      U.toast(r && r.ok ? (r.trung ? 'Gói này đã ghi hoàn thành trước đó.' : 'Đã ghi hoàn thành' + (r.thuong ? ' · nhà được thưởng ' + r.thuong + ' credit.' : '.' + (r.thuongLoi ? ' ' + r.thuongLoi : ''))) : ((r && r.error) || 'Chưa ghi được.'), r && r.ok ? 'ok' : 'err');
+      U.toast(r && r.ok ? (r.choXacNhan ? r.vi : r.trung ? 'Gói này đã ghi hoàn thành trước đó.' : 'Đã ghi hoàn thành' + (r.thuong ? ' · nhà được thưởng ' + r.thuong + ' credit.' : '.' + (r.thuongLoi ? ' ' + r.thuongLoi : ''))) : ((r && r.error) || 'Chưa ghi được.'), r && r.ok ? 'ok' : 'err');
       napDxNha();
     });
     return;

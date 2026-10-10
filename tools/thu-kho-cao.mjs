@@ -9,6 +9,7 @@
      · hoàn thành có bằng chứng → thưởng credit nhiệm vụ (một lần)
      · AN TOÀN: cửa riêng, 0 credit, không cần mã vấn đề, báo R01 + R03
      · chống trùng bằng khoá chính xác (credit.js)
+     · hệ Tư vấn: R11 chỉ thao tác với nhà ghi tên mình ở hoSoKhach.tuVan, chỉ vấn đề hệ Tư vấn
      · cửa nối vào worker, bảng có trong csdl.sql, màn có ngăn kho cấp cao
    Dùng: node tools/thu-kho-cao.mjs   (Node >= 22.5) */
 import { DatabaseSync } from 'node:sqlite';
@@ -152,6 +153,59 @@ const t1 = await C.truTheoThuTu(db, { maNha: 'K3', gia: 10, viec: 'thu', tc: 'A:
 const t2 = await C.truTheoThuTu(db, { maNha: 'K3', gia: 10, viec: 'thu', tc: 'A' });
 kiem('mã tham chiếu "A" không bị coi là trùng với "A:B" (khoá chính xác, không dò tiền tố)', t1.ok && !t1.trung && t2.ok && !t2.trung);
 kiem('gọi lại đúng mã cũ thì trùng, không trừ lần hai', (await C.truTheoThuTu(db, { maNha: 'K3', gia: 10, viec: 'thu', tc: 'A' })).trung === true);
+
+/* ── hệ Tư vấn (đợt 6): R11 phụ trách nhà ở hoSoKhach.tuVan ── */
+sq.prepare("UPDATE hoSoKhach SET tuVan = 'TuVan' WHERE maKhachHang = 'K3'").run();   // viết hoa khác tên phiên — vẫn phải khớp
+const ph3 = ho('ph3', 'R13', 'K3'), r11b = ho('tuvan2', 'R11');
+const loV = [banGhi('V1-A-001', 'S1'), banGhi('V1-A-002', 'DIAMOND'), banGhi('V2-A-001', 'S5')];
+const napV = await K.napKhoCao({ ds: loV, ban: 'KC-THU-V' }, env, db, r01);
+kiem('nạp vấn đề hệ Tư vấn: mã V → hệ tuvan, tầng theo mã', napV.ok && napV.dem.tuvan === 3 &&
+  sq.prepare("SELECT tang FROM khoCao WHERE ma = 'V2-A-001'").get().tang === 2, JSON.stringify(napV));
+const dsV = await K.dsKhoCao({ he: 'tuvan' }, env, db, r11);
+kiem('R11 đọc danh sách hệ Tư vấn, kèm tên nhóm Tư vấn', dsV.ok && dsV.tong === 3 && dsV.nhomTen['V1-A'] && dsV.nhomTen['V3-J'], JSON.stringify(dsV.dem));
+kiem('R11 vẫn bị chặn hệ Coach', (await K.dsKhoCao({ he: 'coach' }, env, db, r11)).code === 'NOPERM');
+kiem('giá tầng 1–3 không nhân hệ số: Diamond tầng 1 = 2500', (await K.docKhoCao({ ma: 'V1-A-002' }, env, db, r11)).vd.gia === 2500);
+kiem('R11 không phụ trách nhà thì không đề xuất được', (await K.deXuatKhoCao({ maNha: 'K3', ds: ['V1-A-001'] }, env, db, r11b)).code === 'NOPERM');
+kiem('R11 phụ trách K3 không đề xuất được cho nhà khác (K4)', (await K.deXuatKhoCao({ maNha: 'K4', ds: ['V1-A-001'] }, env, db, r11)).code === 'NOPERM');
+const dxV = await K.deXuatKhoCao({ maNha: 'K3', ds: ['V1-A-001', 'V1-A-002'] }, env, db, r11);
+kiem('R11 phụ trách nhà (khớp không phân biệt hoa thường) đề xuất vấn đề hệ Tư vấn', dxV.ok, JSON.stringify(dxV));
+kiem('Coach phụ trách vẫn đề xuất được vấn đề hệ Tư vấn cho nhà mình', (await K.deXuatKhoCao({ maNha: 'K3', ds: ['V2-A-001'] }, env, db, coach1)).ok);
+const xemV = await K.dsDeXuatNha({ maNha: 'K3' }, env, db, r11);
+kiem('R11 xem được đề xuất của nhà mình phụ trách', xemV.ok && xemV.ds.length >= 1);
+kiem('R11 không xem được đề xuất của nhà khác', (await K.dsDeXuatNha({ maNha: 'K4' }, env, db, r11)).code === 'NOPERM');
+const chV = await K.chonDeXuat({ id: dxV.id, ma: 'V1-A-001' }, env, db, ph3);
+kiem('nhà tự chọn phương án 1 sao tầng 1 → trừ 50 credit', chV.ok && chV.so === 50, JSON.stringify(chV));
+const htV = await K.hoanThanhKhoCao({ id: dxV.id, bangChung: 'Bảng quan sát 7 ngày đủ cả bảy tối, cả nhà cùng ghi' }, env, db, r11);
+kiem('R11 nộp bằng chứng: lượt CHƯA đóng, chưa thưởng, nói rõ chờ Coach/Trưởng nhóm', htV.ok && htV.thuong === 0 && htV.choXacNhan === true && /Trưởng nhóm/.test(htV.vi) &&
+  sq.prepare('SELECT xongLuc, bangChung FROM luotKhoCao WHERE deXuat = ?').get(dxV.id).xongLuc == null, JSON.stringify(htV));
+const htC = await K.hoanThanhKhoCao({ id: dxV.id, bangChung: 'Đã soát bảng quan sát 7 ngày cùng Tư vấn viên, đủ bảy tối' }, env, db, coach1);
+kiem('Coach của nhà bấm hoàn thành SAU Tư vấn viên → lượt đóng và nhà được cộng thưởng (không mất lặng lẽ)', htC.ok && !htC.trung && htC.thuong > 0 &&
+  sq.prepare('SELECT xongLuc FROM luotKhoCao WHERE deXuat = ?').get(dxV.id).xongLuc > 0, JSON.stringify(htC));
+kiem('R11 không ghi hoàn thành được cho nhà mình không phụ trách', (await K.hoanThanhKhoCao({ id: dx.id, bangChung: 'Bảng theo dõi 30 ngày, đủ bằng chứng' }, env, db, r11)).code === 'NOPERM');
+const dxV2 = await K.deXuatKhoCao({ maNha: 'K3', ds: ['V1-A-002'] }, env, db, r11);
+kiem('R11 huỷ được đề xuất chưa chọn của nhà mình', (await K.huyDeXuat({ id: dxV2.id }, env, db, r11)).ok);
+kiem('R11 không phụ trách không huỷ được', (await K.huyDeXuat({ id: dxV2.id }, env, db, r11b)).code === 'NOPERM');
+const atV = await K.chuyenAnToan({ maNha: 'K3', ghiChu: 'Con nói không muốn sống nữa, cả tuần nay' }, env, db, r11);
+kiem('AN TOÀN: Tư vấn viên phụ trách nhà ghi được lượt chuyển, 0 credit', atV.ok && atV.so === 0, JSON.stringify(atV));
+kiem('AN TOÀN: Tư vấn viên không phụ trách không ghi được', (await K.chuyenAnToan({ maNha: 'K3' }, env, db, r11b)).code === 'NOPERM');
+kiem('R11 xem sổ kho cấp cao của nhà mình phụ trách', (await K.soKhoCaoNha({ maNha: 'K3' }, env, db, r11)).ok);
+sq.prepare("UPDATE hoSoKhach SET tuVan = 'tuvan' WHERE maKhachHang = 'K4'").run();
+const dxC = await K.deXuatKhoCao({ maNha: 'K4', ds: ['C4-A-001'] }, env, db, coach1);
+const xemK4 = await K.dsDeXuatNha({ maNha: 'K4' }, env, db, r11);
+kiem('R11 phụ trách nhà tầng 4 KHÔNG thấy gói hệ Coach trong đề xuất của nhà', xemK4.ok && xemK4.ds.every(d => d.phuongAn.every(p => p.ma[0] === 'V')) && !JSON.stringify(xemK4).includes('C4-A'), JSON.stringify(xemK4.ds.length));
+kiem('R11 phụ trách nhà tầng 4 không huỷ được đề xuất hệ Coach', (await K.huyDeXuat({ id: dxC.id }, env, db, r11)).code === 'NOPERM');
+const soK4 = await K.soKhoCaoNha({ maNha: 'K4' }, env, db, r11);
+kiem('R11 không thấy lượt hệ Coach trong sổ của nhà', soK4.ok && soK4.ds.every(r => r.ma[0] === 'V'));
+await K.huyDeXuat({ id: dxC.id }, env, db, coach1);
+kiem('R11 phụ trách nhà tầng 4 vẫn không ghi hoàn thành gói hệ Coach (chỉ đúng hệ của mình)', (await K.hoanThanhKhoCao({ id: dx.id, bangChung: 'Bảng theo dõi 30 ngày, đủ bằng chứng' }, env, db, r11)).code === 'NOPERM');
+sq.prepare("UPDATE hoSoKhach SET tuVan = NULL WHERE maKhachHang = 'K4'").run();
+/* tên đăng nhập nằm ở ô tuVan nhưng vai KHÔNG phải R11 → không có quyền Tư vấn */
+const r12 = ho('phantich', 'R12');
+sq.prepare("UPDATE hoSoKhach SET tuVan = 'phantich' WHERE maKhachHang = 'K3'").run();
+kiem('vai khác R11 (R12) có tên ở ô tuVan vẫn không đọc, không đề xuất, không ghi an toàn', (await K.dsDeXuatNha({ maNha: 'K3' }, env, db, r12)).code === 'NOPERM' &&
+  (await K.deXuatKhoCao({ maNha: 'K3', ds: ['V1-A-001'] }, env, db, r12)).code === 'NOPERM' && (await K.chuyenAnToan({ maNha: 'K3' }, env, db, r12)).code === 'NOPERM');
+sq.prepare("UPDATE hoSoKhach SET tuVan = 'TuVan' WHERE maKhachHang = 'K3'").run();
+kiem('quyền R11 chỉ mở ở kho cấp cao — không mở ví credit của nhà (vaiVoiNha giữ nguyên)', (await C.viCredit({ maNha: 'K3' }, env, db, r11)).code === 'NOPERM');
 
 /* ── nối dây ── */
 const wk = fs.readFileSync(ROOT + '/may-chu/worker.js', 'utf8');
