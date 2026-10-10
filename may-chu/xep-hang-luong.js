@@ -25,7 +25,7 @@
       điểm cao cũng chưa phải "Coach giỏi nhất".
 
    ══ CHỖ CHỜ CHỦ HỆ ══
-   Trọng số TRONG_SO, ngưỡng hạng HANG_LT và số nhà tối thiểu là MẶC ĐỊNH,
+   Trọng số TRONG_SO đã chốt 10/10 (30 · 30 · 40); ngưỡng hạng HANG_LT và số nhà tối thiểu là MẶC ĐỊNH,
    điều chỉnh sau khi chạy thật. Hạng KHÔNG tự đổi ra tiền: hệ số tiền theo
    hạng là quyết định của chủ hệ, và chưa có bảng lương máy chủ cho Coach /
    Tư vấn viên (bảng lương hiện chỉ cho ba vị trí phòng tài chính).
@@ -175,7 +175,11 @@ export function diemPhieu(p) {
 }
 
 /* ═══════════════ XẾP HẠNG LƯƠNG THƯỞNG THÁNG ═══════════════ */
-export const TRONG_SO = Object.freeze({ thi: 40, phanHoi: 40, cap: 20 });
+/* Chủ hệ chốt 10/10: thi 30 · cấp chứng chỉ (nâng cấp nghiệp vụ) 30 · tỷ lệ
+   khách hài lòng 40. Phần 40 đo bằng TỶ LỆ NHÀ HÀI LÒNG (CSAT ≥ 4/5), không
+   bằng điểm phiếu tổng — cùng thước với điều kiện thưởng, để một người không
+   đạt KPI nhờ phiếu điểm cao mà nhà vẫn chưa hài lòng. */
+export const TRONG_SO = Object.freeze({ thi: 30, cap: 30, phanHoi: 40 });
 export const MAU_TOI_THIEU = 3;
 export const HANG_LT = Object.freeze([{ hang: 'A', tu: 90 }, { hang: 'B', tu: 80 }, { hang: 'C', tu: 65 }, { hang: 'D', tu: 0 }]);
 const hangCua = d => (HANG_LT.find(h => d >= h.tu) || HANG_LT[HANG_LT.length - 1]).hang;
@@ -220,6 +224,11 @@ async function phanHoiCua(db, maNguoi, ky) {
    và cũng không đọc ra "đạt". Máy chỉ nói đủ hay chưa đủ điều kiện; số tiền
    thưởng là quyết định của chủ hệ. */
 export const NGUONG_THUONG = Object.freeze({ kpi: 90, haiLong: 90 });
+/* Mức thưởng 3–5% lương (chủ hệ 10/10), bậc theo KPI: vừa chạm ngưỡng 90 là
+   3%, cao hơn thì nhiều hơn. Bậc là MẶC ĐỊNH, chủ hệ chỉnh. Máy trả về phần
+   trăm; tiền thì nhân với lương của người ấy ở bảng lương. */
+export const MUC_THUONG = Object.freeze([{ tu: 97, pt: 5 }, { tu: 94, pt: 4 }, { tu: 90, pt: 3 }]);
+export const ptThuong = kpi => (MUC_THUONG.find(m => kpi >= m.tu) || { pt: 0 }).pt;
 export function xetThuong(diem, ph) {
   const thieu = [];
   if (diem < NGUONG_THUONG.kpi) thieu.push('KPI ' + diem + ' dưới ' + NGUONG_THUONG.kpi);
@@ -229,8 +238,10 @@ export function xetThuong(diem, ph) {
       lyDo: thieu.concat(['mới ' + ph.soNha + ' nhà có phiếu tháng này, cần ít nhất ' + MAU_TOI_THIEU + ' nhà để tính tỷ lệ hài lòng']).join('; ') };
   }
   if (ph.tyLeHaiLong < NGUONG_THUONG.haiLong) thieu.push('hài lòng ' + ph.tyLeHaiLong + '% dưới ' + NGUONG_THUONG.haiLong + '%');
-  return { trangThai: thieu.length ? 'khongDat' : 'dat', du: !thieu.length, tyLeHaiLong: ph.tyLeHaiLong,
-    lyDo: thieu.length ? thieu.join('; ') : 'KPI ' + diem + ' và ' + ph.tyLeHaiLong + '% nhà hài lòng (' + ph.soNhaHaiLong + '/' + ph.soNha + ')' };
+  const dat = !thieu.length;
+  return { trangThai: dat ? 'dat' : 'khongDat', du: dat, tyLeHaiLong: ph.tyLeHaiLong, ptLuong: dat ? ptThuong(diem) : 0,
+    lyDo: dat ? 'KPI ' + diem + ' và ' + ph.tyLeHaiLong + '% nhà hài lòng (' + ph.soNhaHaiLong + '/' + ph.soNha + ') — thưởng ' + ptThuong(diem) + '% lương'
+      : thieu.join('; ') };
 }
 export async function chamMotNguoi(db, maNguoi, role, ky) {
   const he = role === 'R11' ? 'tuvan' : 'coach';
@@ -241,7 +252,7 @@ export async function chamMotNguoi(db, maNguoi, role, ky) {
   const tp = [
     { ma: 'thi', ten: 'Điểm thi ngày 28', giaTri: thi.diem, trong: TRONG_SO.thi, ghiChu: thi.duThi ? (thi.choCham ? thi.choCham + ' bài chờ chấm' : '') : 'không dự thi' },
     { ma: 'cap', ten: 'Cấp chứng chỉ cuối kỳ', giaTri: Math.round(100 * c.cap / HE_THI[he].soCap), trong: TRONG_SO.cap, ghiChu: 'cấp ' + c.cap + '/' + HE_THI[he].soCap },
-    { ma: 'phanHoi', ten: 'Phản hồi của các nhà phụ trách', giaTri: ph.diem, trong: TRONG_SO.phanHoi,
+    { ma: 'phanHoi', ten: 'Tỷ lệ nhà hài lòng', giaTri: ph.tyLeHaiLong, trong: TRONG_SO.phanHoi,
       ghiChu: ph.soNha + ' nhà có phiếu' + (ph.diem === null ? ' — dưới ' + MAU_TOI_THIEU + ' nhà, chưa đủ mẫu' : '') }
   ];
   const dung = tp.filter(t => t.giaTri !== null), trongDung = dung.reduce((s, t) => s + t.trong, 0);
@@ -266,7 +277,7 @@ export async function xepHangThang(y, env, db, hoSo) {
   ds.sort((a, b) => b.diem - a.diem || a.maNguoi.localeCompare(b.maNguoi));
   const { khai, ten: tenNgay } = await docNgayNghi(db);
   return { ok: true, ky, chiDongCuaToi: rieng, ds, ngayTra: ngayTraLuong(ky, khai, tenNgay),
-    luat: { trongSo: TRONG_SO, hang: HANG_LT, mauToiThieu: MAU_TOI_THIEU, tieuChi: TIEU_CHI, thuong: NGUONG_THUONG, csatHaiLong: CSAT_HAI_LONG },
+    luat: { trongSo: TRONG_SO, hang: HANG_LT, mauToiThieu: MAU_TOI_THIEU, tieuChi: TIEU_CHI, thuong: NGUONG_THUONG, mucThuong: MUC_THUONG, csatHaiLong: CSAT_HAI_LONG },
     gioiHan: 'Máy chỉ nói đủ hay chưa đủ điều kiện thưởng (KPI ≥ ' + NGUONG_THUONG.kpi + ' và ≥ ' + NGUONG_THUONG.haiLong +
-      '% nhà hài lòng); số tiền thưởng chờ chủ hệ chốt. Trọng số điểm KPI là mặc định, điều chỉnh sau khi chạy thật.' };
+      '% nhà hài lòng) và mức thưởng 3–5% lương theo bậc KPI; số tiền = phần trăm × lương của người ấy.' };
 }

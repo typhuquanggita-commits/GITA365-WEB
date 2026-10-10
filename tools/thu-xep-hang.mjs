@@ -130,6 +130,10 @@ kiem('coach1 (thi tốt + phản hồi tốt) xếp trên coach2', r.xhQL.ds.ind
 /* thưởng: KPI ≥ 90 VÀ ≥ 90% nhà hài lòng — hai điều kiện, không bù trừ */
 const P4 = (n, hl) => ({ soNha: n, soNhaHaiLong: hl, tyLeHaiLong: n >= XH.MAU_TOI_THIEU ? Math.round(100 * hl / n) : null });
 kiem('ngưỡng thưởng là 90 KPI và 90% hài lòng', XH.NGUONG_THUONG.kpi === 90 && XH.NGUONG_THUONG.haiLong === 90);
+kiem('trọng số KPI chốt 10/10: thi 30 · cấp 30 · tỷ lệ hài lòng 40', XH.TRONG_SO.thi === 30 && XH.TRONG_SO.cap === 30 && XH.TRONG_SO.phanHoi === 40);
+kiem('phần 40 là TỶ LỆ nhà hài lòng (coach1: 3/3 nhà hài lòng → 100)', q1.thanhPhan.find(t => t.ma === 'phanHoi').giaTri === 100, JSON.stringify(q1.thanhPhan.find(t => t.ma === 'phanHoi')));
+kiem('mức thưởng 3–5% lương theo bậc KPI: 90→3 · 94→4 · 97→5 · 89→0', XH.ptThuong(90) === 3 && XH.ptThuong(93) === 3 && XH.ptThuong(94) === 4 && XH.ptThuong(97) === 5 && XH.ptThuong(100) === 5 && XH.ptThuong(89) === 0);
+kiem('đạt thưởng thì trả kèm phần trăm lương; chưa đạt thì 0', XH.xetThuong(95, P4(4, 4)).ptLuong === 4 && XH.xetThuong(95, P4(4, 3)).ptLuong === 0);
 kiem('KPI 92 và 100% hài lòng: đủ điều kiện thưởng', XH.xetThuong(92, P4(4, 4)).trangThai === 'dat');
 kiem('KPI 95 nhưng hài lòng 75%: chưa đạt, nói rõ phần thiếu', XH.xetThuong(95, P4(4, 3)).trangThai === 'khongDat' && /hài lòng 75%/.test(XH.xetThuong(95, P4(4, 3)).lyDo));
 kiem('hài lòng 100% nhưng KPI 89: chưa đạt', XH.xetThuong(89, P4(5, 5)).trangThai === 'khongDat' && /KPI 89/.test(XH.xetThuong(89, P4(5, 5)).lyDo));
@@ -185,6 +189,8 @@ await pha('08 nghỉ mà không dời tiếp', 'xep-hang-luong.js', 'for (let i 
   (rp, P) => P.ngayTraLuong('2026-07', { '2026-08-05': 1 }).ngay !== '2026-08-10');
 await pha('gửi trùng thông báo', 'xep-hang-luong.js', '    if (co) continue;\n', '',
   rp => rp.baoLai.gui !== 0);
+await pha('thưởng vượt trần 5%', 'xep-hang-luong.js', '{ tu: 97, pt: 5 }', '{ tu: 97, pt: 8 }',
+  (rp, P) => P.ptThuong(99) !== 5);
 await pha('bỏ điều kiện hài lòng', 'xep-hang-luong.js', 'if (ph.tyLeHaiLong < NGUONG_THUONG.haiLong)', 'if (false)',
   (rp, P) => P.xetThuong(95, { soNha: 4, soNhaHaiLong: 3, tyLeHaiLong: 75 }).trangThai === 'dat');
 

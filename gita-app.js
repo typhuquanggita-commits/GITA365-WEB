@@ -16394,7 +16394,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   /* Ba trạng thái, không gộp: đạt · không đạt · CHƯA XÉT (thiếu mẫu phiếu). */
   function oThuong(t){
     if(!t) return '<span class="muted">—</span>';
-    var nhan = t.trangThai === 'dat' ? '<b style="color:var(--gita)">Đủ điều kiện</b>' : t.trangThai === 'chuaXet' ? '<span class="muted">Chưa xét</span>' : '<span>Chưa đạt</span>';
+    var nhan = t.trangThai === 'dat' ? '<b style="color:var(--gita)">Thưởng ' + (t.ptLuong || 0) + '% lương</b>' : t.trangThai === 'chuaXet' ? '<span class="muted">Chưa xét</span>' : '<span>Chưa đạt</span>';
     return nhan + (t.tyLeHaiLong !== null && t.tyLeHaiLong !== undefined ? '<br><span class="tiny muted">hài lòng ' + t.tyLeHaiLong + '%</span>' : '') +
       '<br><span class="tiny muted">' + h(t.lyDo) + '</span>';
   }
@@ -16407,11 +16407,12 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     else {
       var x = st.xh, L = x.luat;
       if(x.ngayTra) o += canhBaoMau('Lương kỳ ' + h(x.ky) + ' trả ngày <b>' + h(x.ngayTra.ngay.split('-').reverse().join('/')) + '</b>' + (x.ngayTra.doi ? ' (dời vì ' + h(x.ngayTra.lyDo) + ')' : '') + '.', 'var(--gita)');
-      o += '<div class="co-cb mb"><div style="--m:var(--ink-4)"><span>Trọng số: thi ' + L.trongSo.thi + ' · phản hồi khách ' + L.trongSo.phanHoi + ' · cấp ' + L.trongSo.cap +
+      o += '<div class="co-cb mb"><div style="--m:var(--ink-4)"><span>Trọng số KPI: thi ngày 28 ' + L.trongSo.thi + ' · cấp chứng chỉ ' + L.trongSo.cap + ' · tỷ lệ nhà hài lòng ' + L.trongSo.phanHoi +
         '. Hạng ' + L.hang.map(function(g){ return g.hang + (g.tu ? ' từ ' + g.tu : ''); }).join(' · ') + '. Dưới ' + L.mauToiThieu + ' nhà có phiếu thì phần phản hồi ghi "chưa đủ mẫu", không tính là 0. ' +
-        (L.thuong ? '<b>Thưởng lương</b> khi KPI từ ' + L.thuong.kpi + ' VÀ từ ' + L.thuong.haiLong + '% nhà hài lòng (nhà hài lòng = điểm hài lòng trung bình từ ' + L.csatHaiLong + '/5). ' : '') + h(x.gioiHan) + '</span></div></div>';
+        (L.thuong ? '<b>Thưởng lương</b> khi KPI từ ' + L.thuong.kpi + ' VÀ từ ' + L.thuong.haiLong + '% nhà hài lòng (nhà hài lòng = điểm hài lòng trung bình từ ' + L.csatHaiLong + '/5); mức thưởng ' +
+          (L.mucThuong || []).slice().reverse().map(function(m){ return m.pt + '% lương từ KPI ' + m.tu; }).join(' · ') + '. ' : '') + h(x.gioiHan) + '</span></div></div>';
       if(!x.ds.length) o += '<p class="sm muted">' + (x.chiDongCuaToi ? 'Vai của bạn không nằm trong thang Coach / Tư vấn.' : 'Chưa có Coach hay Tư vấn viên nào.') + '</p>';
-      else o += '<div class="tcc-bang" role="region" aria-label="Xếp hạng lương thưởng" tabindex="0"><table class="tbl sm"><tr><th>Nhân sự</th><th>Hạng</th><th>Điểm</th><th>Thi ngày 28</th><th>Cấp</th><th>Phản hồi khách</th><th>Thưởng</th></tr>' +
+      else o += '<div class="tcc-bang" role="region" aria-label="Xếp hạng lương thưởng" tabindex="0"><table class="tbl sm"><tr><th>Nhân sự</th><th>Hạng</th><th>Điểm</th><th>Thi ngày 28</th><th>Cấp</th><th>Nhà hài lòng</th><th>Thưởng</th></tr>' +
         x.ds.map(function(d){
           var tp = {}; d.thanhPhan.forEach(function(t){ tp[t.ma] = t; });
           var o2 = function(t){ return (t.giaTri === null ? '<span class="muted">chưa đủ mẫu</span>' : t.giaTri) + (t.ghiChu ? '<br><span class="tiny muted">' + h(t.ghiChu) + '</span>' : ''); };
