@@ -44,6 +44,7 @@
     "src/nghe-chuyen.js",
     "src/sat-hach.js",
     "src/khoa-dao-tao.js",
+    "src/dao-tao-ct.js",
     "src/tu-lieu-day-du.js",
     "src/duong-vao.js",
     "src/cong-dong.js",

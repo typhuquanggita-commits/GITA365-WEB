@@ -295,6 +295,7 @@ G.ITEM_EN = {
   'thi-viet':['Writing contest · 7 – 21 – 90 – 365','Entries passing day 90 and 365 earn a 10% scholarship'],
   'sat-hach':['Competency assessment','5 tiers · 4 graduation papers · 8 assessment axes'],
   'khoa-dao-tao':['My training course','Learn · Do · Submit · the next lesson opens itself'],
+  'chuong-trinh-dt':['Training programmes','Consultant → Staff → Coach · scored by someone else · certificates are signed'],
   'do-thoi-gian':['Time · rewards · penalties','A real clock · three thresholds · completion standard · point conversion'],
   'noi-may-chu':['Connect to the server','Paste the address · test the call · six setup steps'],
   'bo-nao':['GITA 365 Brain','13-article constitution · three delegation zones · 10-point fence · anonymise before anything leaves · seven advisory seats'],

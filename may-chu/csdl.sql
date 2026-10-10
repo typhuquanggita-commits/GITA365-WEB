@@ -2602,3 +2602,49 @@ CREATE TABLE IF NOT EXISTS chiPhiPhim (
 CREATE INDEX IF NOT EXISTS ix_cpp_du_an ON chiPhiPhim (duAnId, tap, trangThai);
 CREATE INDEX IF NOT EXISTS ix_cpp_luc ON chiPhiPhim (giuLuc);
 CREATE INDEX IF NOT EXISTS ix_cpp_viec ON chiPhiPhim (maViec);
+
+-- ═════════════════════════════════════════════════════════════
+--  CHƯƠNG TRÌNH ĐÀO TẠO — Tư vấn · Nhân sự · Coach (dao-tao-ct.js)
+--
+--  Ba bảng, đều CHỈ THÊM DÒNG. Không có cột "đã đủ", "tiến độ" hay
+--  "đã xong": đủ điều kiện tính lúc đọc từ dtBuoc, và chứng chỉ là một
+--  hành động có chữ ký ở dtChungChi. Một cột tóm tắt thì hoặc bị gõ đè
+--  — một phép đo thành một lời khai mà nhìn vẫn y hệt — hoặc cũ đi lặng
+--  lẽ (cùng luật cột conHan · den · ba cửa).
+--
+--  dtBuoc giữ mọi lượt chấm, không sửa đè: chấm lại thì thêm dòng, dòng
+--  cuối thắng, và lịch sử trả lời được câu "ai chấm, lúc nào, bao nhiêu".
+-- ═════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS dtGhiDanh (
+  id        TEXT PRIMARY KEY,
+  maNguoi   TEXT NOT NULL,        -- username viết thường, đã tra chính tắc
+  ct        TEXT NOT NULL,        -- tuvan · nhansu · coach
+  boiAi     TEXT NOT NULL,        -- chính người học, hoặc người kèm ghi danh hộ
+  ghiLuc    TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_dtgd_nguoi ON dtGhiDanh (maNguoi, ct);
+CREATE INDEX IF NOT EXISTS ix_dtgd_ct ON dtGhiDanh (ct, ghiLuc);
+
+CREATE TABLE IF NOT EXISTS dtBuoc (
+  id        TEXT PRIMARY KEY,
+  maNguoi   TEXT NOT NULL,
+  ct        TEXT NOT NULL,
+  buoc      TEXT NOT NULL,        -- TV01 · NS06 · CO07 …
+  loai      TEXT NOT NULL,        -- tuHoc · nguoiCham (mayCham không ghi ở đây)
+  boiAi     TEXT NOT NULL,        -- tuHoc: chính người học · nguoiCham: người chấm (≠ người học)
+  diem      INTEGER,              -- chỉ bước nguoiCham, 0–100
+  ghiChu    TEXT NOT NULL,        -- câu bắt buộc: điều sẽ làm khác / nhận xét của người chấm
+  ghiLuc    TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_dtb_nguoi ON dtBuoc (maNguoi, ct, ghiLuc);
+
+CREATE TABLE IF NOT EXISTS dtChungChi (
+  id        TEXT PRIMARY KEY,
+  maNguoi   TEXT NOT NULL,
+  ct        TEXT NOT NULL,
+  loai      TEXT NOT NULL,        -- cap · thuHoi — trạng thái = dòng cuối
+  boiAi     TEXT NOT NULL,        -- người ký (≠ người học)
+  ghiChu    TEXT,                 -- bắt buộc với thuHoi (lý do)
+  ghiLuc    TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_dtcc_nguoi ON dtChungChi (maNguoi, ct, ghiLuc);

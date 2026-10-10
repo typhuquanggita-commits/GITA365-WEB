@@ -173,6 +173,9 @@ jobs:
       - name: Xưởng phim AI — dò nhịp đúng tới mili-giây, danh mục trỏ vào bộ vẽ có thật, nhạc và ảnh không rời máy
         run: node tools/thu-xuong-ai.mjs
 
+      - name: Chương trình đào tạo — không tự chấm, không tự ký, máy đọc ba cửa, đủ điều kiện kiểm ở máy chủ
+        run: node tools/thu-dao-tao-ct.mjs
+
       - name: Soát thiết kế tĩnh — không chuyển động nảy, không chữ chạy, không màu cấm (cả dạng %23), chữ chuyển sắc không thêm chỗ mới
         run: node tools/thu-thiet-ke-tinh.mjs
 

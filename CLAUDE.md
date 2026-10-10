@@ -61,3 +61,10 @@ Không xoá mã màn, cửa máy chủ, bảng dữ liệu hay tệp nào đã g
 - GITA Studio (`studio`) và Phim ngắn 9:16 (`xuong-phim`) **không** chuyển hướng (GOP): `studio.js`/`xuong-phim.js` chỉ vẽ lại khi `G.S.view` đúng tên chúng, nên hai mã màn ấy tự vẽ khung (`CHU_MAN`), rút khỏi cột trái bằng `V50.AN`. Thứ tự gộp phải để hai tệp ấy TRƯỚC `xuong-ai.js`.
 - Màn con không có mục cột trái (`san-xuat-ai`, `ban-dung`, `studio-he`, `lam-phim-10`) vào khung qua `G.XA_CUA` ở `render()`; `G.ax.tab(...)` được chuyển thành đổi ngăn.
 - Cắt theo nhịp chạy tại máy; dò nhịp là hàm thuần `G.catNhip.timNhip` thử bằng tín hiệu tự dựng (lệch ≤ 20 ms). Không đụng `studio.js`.
+
+## Chương trình đào tạo (`src/dao-tao-ct.js` · `may-chu/dao-tao-ct.js`)
+- Ba chương trình Tư vấn · Nhân sự · Coach, độc lập nhau. Ghi danh theo `vaiChinh`, và mọi bài của chương trình phải mở được với các vai ấy (bộ thử đối chiếu `G.PERM`). Mỗi bước TRỎ vào một màn đã có (`man` phải là mục `G.NAV`); màn này giữ SỔ, không chép nội dung học.
+- Chương trình có hai bản: `CT` (máy chủ) ↔ `G.DTC_CT` (màn). Đổi một bên phải đổi bên kia — `tools/thu-dao-tao-ct.mjs` so từng ô.
+- Ba loại bước, không gộp: `tuHoc` (lời khai, phải kèm một câu) · `nguoiCham` (người khác chấm 0–100, kèm nhận xét) · `mayCham` (máy đọc thẳng `baCuaConNguoi`, không cửa nào ghi được). Sát hạch là bước NGƯỜI chấm vì điểm sát hạch nằm ở bản đồng bộ của máy khách.
+- Ba bảng chỉ thêm dòng, không có cột "đã đủ": đủ điều kiện tính lúc đọc, chứng nhận hoàn thành là hành động có người ký (không tự ký, người ký khác người chấm, thu hồi phải có lý do). Chứng nhận này KHÔNG thay chứng chỉ hành nghề Coach của `dao-tao-dh` và chưa mở quyền gì — nối nó vào quyền là việc chủ hệ quyết. So "cùng người" bằng `Kho.layUid` — gửi email của chính mình không lách được cổng tự chấm.
+- Tiến độ chỉ nằm ở máy chủ; tài khoản mẫu xem được chương trình nhưng không ghi được — cố ý.
