@@ -821,6 +821,7 @@ G.NAV = [
        học viên và cộng tác viên thì không. Khoá ở tầng dữ liệu chứ
        không ở tầng màn hình — kho nằm trong gói nghề. */
     {v:'tu-dong',     t:'Tự động hoá — đo trên hệ đang chạy', h:'34 việc · tỉ lệ đo được chứ không khai · 5 việc máy không được nhận · 5 đường đi tiếp xếp theo gỡ được nhiều nhất', ic:'lightning', star:1, perm:'nghe_chung', capMo:'nghe'},
+    {v:'ban-tin-gita', t:'Bản tin GITA · truyền thông nội bộ', h:'Tầm nhìn · văn hoá · tiêu chuẩn · hiến pháp · vinh danh · vận hành · học tập — có biên tập, lịch phát hành, tính vào KPI nghiệp vụ', ic:'bell', star:1, perm:'nghe_chung', capMo:'chung'},
     {v:'tin-noi-bo',  t:'Bảng tin nội bộ của đội ngũ', h:'5 ngăn theo phạm vi vai · vinh danh ghi nhận việc chứ không xếp hạng · trần 3 tin mỗi ngày · khách và CTV không đọc được', ic:'bell', star:1, perm:'nghe_chung', capMo:'nghe'},
     {v:'ky-ket',      t:'Hướng dẫn ký kết — ba luồng phát sinh', h:'Lao động · dịch vụ khách · tài chính · 7 cửa trước khi đặt bút · cây chọn hợp đồng · 8 việc cấm', ic:'check', star:1, perm:'pro_coach', capMo:'nghe'},
     {v:'ho-so-hop-dong', t:'Bộ hồ sơ hợp đồng và vận hành', h:'16 hợp đồng · 25 điều khoản nền · 6 điều khoản đặc thù đối chiếu ngược · công thức lương máy tự đọc · 3 cấp chữ ký', ic:'book', star:1, perm:'pro_coach', capMo:'nghe'},

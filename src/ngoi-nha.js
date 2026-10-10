@@ -51,17 +51,17 @@ G.VIEWS = G.VIEWS || {};
    Mỗi ngăn TRỎ một màn đã có (không dựng nội dung mới); mục 107 đối
    chiếu mọi `v` với NAV thật. */
 G.NHA_PHAN = [
-  {k:'mai',  o:'mai',  v:'tam-nhin',        ic:'sun',     ten:'Tầm nhìn',            goi:'Tầm Nhìn Gia Đình Thịnh Vượng — 5 đến 20 năm', mau:'var(--gita-sang)', perm:'kh_gia_dinh'},
-  {k:'n1',   o:'ngan', v:'cu-hich',         ic:'target',  ten:'Mục tiêu',            goi:'Cú hích lớn của nhà mình', mau:'var(--t1)', perm:'kh_gia_dinh', chang:'T1'},
-  {k:'n2',   o:'ngan', v:'buc-tranh',       ic:'sun',     ten:'Hành Trình Hạnh Phúc',goi:'Bức tranh hành trình — nhánh nào đang cần tưới', mau:'var(--t2)', chang:'T3'},
-  {k:'n3',   o:'ngan', v:'ban-do-ca-nhan',  ic:'seed',    ten:'Phát triển Bản Thân', goi:'Bản đồ cá nhân — tại sao → tài năng → lộ trình', mau:'var(--t4)', chang:'T2'},
-  {k:'n4',   o:'ngan', v:'chan-dung-nha',   ic:'star',    ten:'Tài năng Thành viên', goi:'Chân dung từng thành viên thật sự là ai', mau:'var(--t3)', perm:'kh_gia_dinh', chang:'T2'},
-  {k:'n5',   o:'ngan', v:'chuyen-hoa',      ic:'heart',   ten:'Giá trị Sống',        goi:'Bảy chuyển dịch làm nên một gia đình khác', mau:'var(--gita-do)', chang:'T4'},
-  {k:'n6',   o:'ngan', v:'chin-vai',        ic:'shield',  ten:'Phẩm Chất Thành Viên',goi:'Chín vai mỗi người giữ trong nhà', mau:'var(--gita)', perm:'kh_gia_dinh', chang:'T4'},
-  {k:'n7',   o:'ngan', v:'vinh-danh',       ic:'crown',   ten:'Vinh Danh Ghi Nhận',  goi:'Vinh danh & kỳ tích của năm', mau:'var(--t5)', chang:'T5'},
-  {k:'n8',   o:'ngan', v:'bang-so',         ic:'chart',   ten:'Tiêu Chuẩn Sống',     goi:'Bảng số gia đình — chuẩn sống đo được', mau:'var(--gita-sau)', perm:'kh_gia_dinh', chang:'T5'},
-  {k:'cua',  o:'cua',  v:'hom-nay',         ic:'home',    ten:'Hành động',           goi:'Việc của tối nay — một việc thôi', mau:'var(--gita-sau)'},
-  {k:'nen',  o:'nen',  v:'thoi-quen',       ic:'ritual',  ten:'Nền móng',            goi:'Văn hoá · quy tắc · thói quen · kỷ luật', mau:'var(--gita-sau)', perm:'kh_gia_dinh'}
+  {k:'mai',  o:'mai',  v:'tam-nhin',        ic:'sun',     ten:'Tầm nhìn',            goi:'Tầm Nhìn Gia Đình Thịnh Vượng — 5 đến 20 năm', mau:'var(--gita-sang)', perm:'kh_gia_dinh', anh:'MAI', triet:'Một mái nhà không che mưa bằng ngói, mà bằng một hướng đi cả nhà cùng nhìn thấy.', hoi:'Năm năm nữa, buổi tối của nhà mình sẽ trông thế nào?'},
+  {k:'n1',   o:'ngan', v:'cu-hich',         ic:'target',  ten:'Mục tiêu',            goi:'Cú hích lớn của nhà mình', mau:'var(--t1)', perm:'kh_gia_dinh', chang:'T1', anh:'P1', triet:'Mong muốn có ngày, có người làm, có bước đầu tiên — lúc ấy nó mới thành mục tiêu.', hoi:'Mong muốn nào của nhà mình đã nằm im lâu nhất?'},
+  {k:'n2',   o:'ngan', v:'buc-tranh',       ic:'sun',     ten:'Hành Trình Hạnh Phúc',goi:'Bức tranh hành trình — nhánh nào đang cần tưới', mau:'var(--t2)', chang:'T3', anh:'P2', triet:'Niềm vui được nhìn thấy thì ở lại; niềm vui không ai nhìn thấy thì trôi đi cùng cái mệt.', hoi:'Tuần này, lúc nào mình thấy nhà mình vui nhất?'},
+  {k:'n3',   o:'ngan', v:'ban-do-ca-nhan',  ic:'seed',    ten:'Phát triển Bản Thân', goi:'Bản đồ cá nhân — tại sao → tài năng → lộ trình', mau:'var(--t4)', chang:'T2', anh:'P3', triet:'Con học theo người lớn đang học, không học theo lời người lớn dặn.', hoi:'Điều gì trong giấc mơ hồi nhỏ của bố mẹ vẫn còn đến hôm nay?'},
+  {k:'n4',   o:'ngan', v:'chan-dung-nha',   ic:'star',    ten:'Tài năng Thành viên', goi:'Chân dung từng thành viên thật sự là ai', mau:'var(--t3)', perm:'kh_gia_dinh', chang:'T2', anh:'P4', triet:'Mỗi người mang một tài năng chờ được gọi tên — muốn gọi được thì phải gỡ cái nhãn cũ xuống.', hoi:'Việc gì làm mình quên cả giờ ăn mà xong vẫn thấy vui?'},
+  {k:'n5',   o:'ngan', v:'chuyen-hoa',      ic:'heart',   ten:'Giá trị Sống',        goi:'Bảy chuyển dịch làm nên một gia đình khác', mau:'var(--gita-do)', chang:'T4', anh:'P5', triet:'Giá trị của một nhà không nằm trên tường, mà nằm trong một tối thứ tư bình thường.', hoi:'Người lạ ở nhà mình một tuần sẽ nói nhà mình coi trọng điều gì?'},
+  {k:'n6',   o:'ngan', v:'chin-vai',        ic:'shield',  ten:'Phẩm Chất Thành Viên',goi:'Chín vai mỗi người giữ trong nhà', mau:'var(--gita)', perm:'kh_gia_dinh', chang:'T4', anh:'P6', triet:'Một ngôi nhà vững khi việc nào cũng có ít nhất hai người biết làm.', hoi:'Việc nào mà một người vắng ba ngày thì không ai biết làm?'},
+  {k:'n7',   o:'ngan', v:'vinh-danh',       ic:'crown',   ten:'Vinh Danh Ghi Nhận',  goi:'Vinh danh & kỳ tích của năm', mau:'var(--t5)', chang:'T5', anh:'P7', triet:'Điều được ghi nhận thì lớn lên; điều chỉ bị nhắc lỗi thì co lại.', hoi:'Việc nhỏ nào tuần này mình thấy mà chưa kịp nói ra?'},
+  {k:'n8',   o:'ngan', v:'bang-so',         ic:'chart',   ten:'Tiêu Chuẩn Sống',     goi:'Bảng số gia đình — chuẩn sống đo được', mau:'var(--gita-sau)', perm:'kh_gia_dinh', chang:'T5', anh:'P8', triet:'Chuẩn sống nói thành lời thì cả nhà cùng giữ; nằm trong đầu thì mỗi người một bản.', hoi:'Một ngày bình thường, nhà mình muốn trông và nghe như thế nào?'},
+  {k:'cua',  o:'cua',  v:'hom-nay',         ic:'home',    ten:'Hành động',           goi:'Việc của tối nay — một việc thôi', mau:'var(--gita-sau)', anh:'CUA', triet:'Tầm nhìn lớn tới đâu cũng chỉ thành thật qua một việc nhỏ tối nay.', hoi:'Việc nào nhà mình hay nói “mai làm” nhất?'},
+  {k:'nen',  o:'nen',  v:'thoi-quen',       ic:'ritual',  ten:'Nền móng',            goi:'Văn hoá · quy tắc · thói quen · kỷ luật', mau:'var(--gita-sau)', perm:'kh_gia_dinh', anh:'NEN', triet:'Nếp nhà là thứ làm mỗi ngày mà không cần ai nhắc — móng của mọi điều lớn.', hoi:'Câu nào nhà mình nói đi nói lại mà chẳng ai nghe nữa?'}
 ];
 
 /* CD-03b · đọc data-* rồi gọi con đường theo chặng. Đọc dataset là ngữ
@@ -201,6 +201,77 @@ G.nhaNutQuay = function () {
     }).join('');
   }
 
+  /* ══ MƯỜI MỘT KHÔNG GIAN — mỗi phòng một triết lý (V50, 10/10/2026) ══
+     Con dấu ở trên trả lời "nhà mình gồm những gì"; khối này trả lời "vì
+     sao phòng ấy quan trọng". Mỗi thẻ: ảnh một gia đình thật đang sống
+     trong không gian ấy · một câu triết lý · một câu hỏi để cả nhà nói với
+     nhau TỐI NAY. Câu hỏi lấy từ cẩm nang cấp 1 của chính ô ấy (kho Ngôi
+     nhà) — thứ khách đọc ở đây và thứ coach dẫn ở buổi gặp là một giọng.
+     Ảnh chỉ hiện khi tệp ĐÃ có trong assets (G.NHA_ANH khai mã → mô tả):
+     một thẻ trỏ vào ảnh chưa có là một ô vỡ, tệ hơn một thẻ không ảnh. */
+  G.NHA_ANH = G.NHA_ANH || {};
+  function veKhongGian() {
+    var ds = G.NHA_PHAN.filter(function (p) { return p.triet; });
+    if (!ds.length) return '';
+    var o = '<section class="nha-kg" aria-labelledby="nha-kg-tieu">' +
+      '<div class="nha-kg-dau"><span class="nha-kg-eb">Mười một không gian</span>' +
+      '<h3 id="nha-kg-tieu">Mỗi phòng một triết lý sống</h3>' +
+      '<p>Một ngôi nhà thịnh vượng không dựng trong một ngày. Nó dựng từ những tối bình thường, khi cả nhà ' +
+      'ngồi lại và trả lời thật một câu hỏi. Chọn một phòng, đọc câu hỏi, và nói với nhau tối nay.</p></div>' +
+      '<div class="nha-kg-luoi">';
+    ds.forEach(function (p) {
+      var mau = /^var\(--[a-z0-9-]+\)$/.test(String(p.mau || '')) ? p.mau : 'var(--gita)';
+      var alt = p.anh && G.NHA_ANH[p.anh];
+      var nut;
+      if (moDuoc(p)) {
+        nut = p.chang
+          ? '<button class="btn nha-kg-nut" data-chang="' + h(p.chang) + '" data-vp="' + h(p.v) + '" data-vpten="' + h(p.ten) +
+            '" onclick="G.nhaMoChang(this)">Bước vào ' + h(p.ten) + ' ' + ic('arrow') + '</button>'
+          : '<button class="btn nha-kg-nut" data-v="' + h(p.v) + '">Bước vào ' + h(p.ten) + ' ' + ic('arrow') + '</button>';
+      } else {
+        nut = '<span class="nha-kg-khoa">' + ic('lock') + ' Phòng mở theo vai của gia đình</span>';
+      }
+      o += '<article class="nha-kg-o' + (alt ? '' : ' khong-anh') + '" style="--ac:' + mau + '">' +
+        (alt ? '<div class="nha-kg-anh"><img src="assets/anh-nha/' + h(p.anh) + '.webp" alt="' + h(alt) +
+          '" loading="lazy" decoding="async" width="1152" height="768"></div>' : '') +
+        '<div class="nha-kg-than">' +
+        '<span class="nha-kg-cho">' + h(p.o === 'mai' ? 'Mái nhà' : p.o === 'cua' ? 'Cửa chính' : p.o === 'nen' ? 'Nền móng' : 'Phòng' + (p.chang ? ' · chặng ' + p.chang : '')) + '</span>' +
+        '<h4>' + h(p.ten) + '</h4>' +
+        '<p class="nha-kg-triet">' + h(p.triet) + '</p>' +
+        '<p class="nha-kg-hoi"><b>Câu hỏi tối nay</b>' + h(p.hoi) + '</p>' +
+        nut + '</div></article>';
+    });
+    return o + '</div></section>';
+  }
+
+  /* ══ MƯỜI BÁNH ĐÀ — mỗi bánh một vòng tự quay ══
+     Bánh đà không phải một việc, nó là một VÒNG: làm → thấy → tin → làm
+     tiếp dễ hơn. Thẻ nói đúng vòng ấy (ô `vong` của G.BD_LON), không kể
+     lại chín bước nhỏ — chi tiết sống ở màn Mười bánh đà. Ảnh theo mã
+     B01…B10 = thứ tự trong kho. */
+  function veBanhDaKG() {
+    var bd = G.BD_LON || [];
+    if (!bd.length) return '';
+    var o = '<section class="nha-kg nha-kg-bd" aria-labelledby="nha-bd-tieu">' +
+      '<div class="nha-kg-dau"><span class="nha-kg-eb">Mười bánh đà</span>' +
+      '<h3 id="nha-bd-tieu">Thứ giữ cho ngôi nhà tự vận hành</h3>' +
+      '<p>Một thói quen tốt mà phải nhắc mỗi ngày thì chưa phải bánh đà. Bánh đà là vòng tự quay: làm, thấy được ' +
+      'kết quả, tin hơn, và lần sau làm dễ hơn. Mười vòng ấy quay quanh ngôi nhà, đẩy cả nhà đi lên từng chặng.</p></div>' +
+      '<div class="nha-kg-luoi">';
+    bd.forEach(function (b, i) {
+      var ma = 'B' + (i < 9 ? '0' : '') + (i + 1), alt = G.NHA_ANH[ma];
+      var mau = BD_MAU[i % BD_MAU.length];
+      o += '<article class="nha-kg-o' + (alt ? '' : ' khong-anh') + '" style="--ac:' + mau + '">' +
+        (alt ? '<div class="nha-kg-anh"><img src="assets/anh-nha/' + ma + '.webp" alt="' + h(alt) +
+          '" loading="lazy" decoding="async" width="1152" height="768"></div>' : '') +
+        '<div class="nha-kg-than"><span class="nha-kg-cho">Bánh đà ' + (i + 1) + (b.tang ? ' · chặng ' + h(b.tang) : '') + '</span>' +
+        '<h4>' + h(b.ten || ('Bánh đà ' + (i + 1))) + '</h4>' +
+        (b.vong ? '<p class="nha-kg-triet">' + h(b.vong) + '</p>' : '') +
+        '<button class="btn nha-kg-nut" data-v="banh-da">Mở bánh đà ' + ic('arrow') + '</button></div></article>';
+    });
+    return o + '</div></section>';
+  }
+
   G.VIEWS['ngoi-nha'] = function () {
     var o = '<div class="hd"><h2>' + ic('home') + ' Ngôi nhà thịnh vượng</h2>' +
       '<p class="sub">Kích vào từng phần để mở nội dung.</p></div>';
@@ -252,6 +323,9 @@ G.nhaNutQuay = function () {
 
     o += '<p class="note nha-nhac">' + ic('lock') +
       ' Phần mờ là phòng của vai khác — đăng nhập đúng vai thì mở.</p>';
+
+    o += veKhongGian();
+    o += veBanhDaKG();
 
     /* BÀN CỜ 365 NGÀY — đặt NGAY DƯỚI ngôi nhà. Gia đình mở nhà ra là
        thấy hành trình của mình ngay bên dưới; các vai khác thấy bàn cờ

@@ -2766,3 +2766,35 @@ CREATE TABLE IF NOT EXISTS viPhamQuyet (
   luc       INTEGER NOT NULL
 );
 CREATE INDEX IF NOT EXISTS ix_vpq ON viPhamQuyet (viPham, luc);
+
+-- ═══ BẢN TIN GITA · truyền thông nội bộ (may-chu/truyen-thong.js) ═══
+-- Không có cột "đã phát hành": bài hiện khi trangThai='daDuyet' AND lich<=bây giờ,
+-- tính lúc đọc. Nội dung bài (gồm đáp án câu kiểm tra) nằm trong noiDungJson;
+-- máy chủ bỏ đáp án trước khi gửi xuống máy khách.
+CREATE TABLE IF NOT EXISTS ttBai (
+  id          TEXT PRIMARY KEY,
+  chuyenMuc   TEXT NOT NULL,
+  noiDungJson TEXT NOT NULL,
+  tacGia      TEXT NOT NULL,
+  tacGiaUid   TEXT NOT NULL,
+  trangThai   TEXT NOT NULL,           -- nhap · choDuyet · traVe · daDuyet · daGo
+  lich        TEXT,                    -- ISO; có hiệu lực khi daDuyet
+  nguoiDuyet  TEXT,
+  ghiChuDuyet TEXT,
+  taoLuc      TEXT NOT NULL,
+  suaLuc      TEXT,
+  nopLuc      TEXT,
+  duyetLuc    TEXT
+);
+CREATE INDEX IF NOT EXISTS ix_tt_lich ON ttBai (trangThai, lich);
+CREATE INDEX IF NOT EXISTS ix_tt_tacgia ON ttBai (tacGiaUid);
+-- Một dòng cho mỗi (bài, người): lần đọc đầu và lần xác nhận bài bắt buộc.
+CREATE TABLE IF NOT EXISTS ttDoc (
+  baiId      TEXT NOT NULL,
+  uid        TEXT NOT NULL,
+  u          TEXT,
+  docLuc     TEXT NOT NULL,
+  xacNhanLuc TEXT,
+  diem       INTEGER,
+  PRIMARY KEY (baiId, uid)
+);

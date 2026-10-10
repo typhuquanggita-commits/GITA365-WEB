@@ -209,6 +209,7 @@ G.ITEM_EN = {
   'bang-chung':['Electronic evidence standard','13 operations x 6 properties · the machine reads the real log and counts · 3 ways evidence loses its value · the 5 nearest fixes'],
   'so-tay-admin':['Super Admin handbook — the left rail from A to Z','Daily/weekly/monthly/quarterly rhythm · the first 7 days · the 12 screens where one wrong click costs most · the full screen list generated from the running app · what one permission actually opens'],
   'tu-dong':['Automation — measured on the running system','34 activities · a ratio measured, not declared · 5 things the machine may never take · 5 next steps ranked by what they unblock'],
+  'ban-tin-gita':['GITA Bulletin · internal communications','Vision · culture · standards · constitution · recognition · operations · learning — edited, scheduled, counted in the professional KPI'],
   'tin-noi-bo':['Internal team board','5 lanes scoped by role · recognition records the work, it never ranks people · a hard cap of 3 pushes a day · clients and ambassadors cannot read a single line'],
   'ky-ket':['Signing guide — three streams of engagement','Employment · client service · finance · 7 gates before the pen touches paper · a contract decision tree · 8 things never to do'],
   'ho-so-hop-dong':['Contract and operations file set','16 contracts · 25 base clauses · 6 special clauses checked in reverse · a pay formula the machine reads itself · 3 signature tiers'],

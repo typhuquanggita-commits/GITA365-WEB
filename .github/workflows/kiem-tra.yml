@@ -189,6 +189,8 @@ jobs:
         run: node tools/thu-kho-nha.mjs
       - name: Đăng nhập khuôn mặt — bộ xác thực giả WebCrypto, đường máy này + điện thoại QR, cổng chống giả mạo
         run: node tools/thu-sinh-trac.mjs
+      - name: Bản tin GITA — người viết khác người duyệt, bài vinh danh phải có việc cụ thể và bằng chứng, câu kiểm tra chấm ở máy chủ, tính vào KPI nghiệp vụ
+        run: node tools/thu-truyen-thong.mjs
 
       - name: Soát thiết kế tĩnh — không chuyển động nảy, không chữ chạy, không màu cấm (cả dạng %23), chữ chuyển sắc không thêm chỗ mới
         run: node tools/thu-thiet-ke-tinh.mjs
