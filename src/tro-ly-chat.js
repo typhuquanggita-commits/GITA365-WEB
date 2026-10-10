@@ -178,7 +178,7 @@ function hoiMayChu(cau){
     for(var j = G.CHAT.length - 1; j >= dau; j--){
       if(G.CHAT[j].ai === 'trolY' && G.CHAT[j].dap){
         G.CHAT[j].dap.luiMa = (r && r.code) || (r && r.ok === false ? 'LOI' : 'MANG');
-        G.CHAT[j].dap.luiLoi = String((r && r.error) || (r && r.message) || '').slice(0, 160);
+        G.CHAT[j].dap.luiLoi = String((r && r.error) || (r && r.message) || '').slice(0, 400);
         break;
       }
     }
