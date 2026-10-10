@@ -95,6 +95,9 @@ jobs:
       - name: Thử Trợ lý GITA V50 (vai từ phiên · cảm xúc · khẩn không tới AI · Điều 13 · không gợi ý · SA gửi bộ não)
         run: node tools/thu-tro-ly-v50.mjs
 
+      - name: Thử Tra cứu giải pháp 13 mục (chỉ R01–R11 · sổ nhật ký không giữ dữ liệu gia đình · nháp AI không tự vào kho)
+        run: node tools/thu-tra-cuu-giai-phap.mjs
+
       - name: Chạy thử bộ não vận hành V50 (nhịp mỗi giờ · có khách là chạy · lịch · quyền)
         run: node tools/thu-bo-nao-van-hanh.mjs
 
