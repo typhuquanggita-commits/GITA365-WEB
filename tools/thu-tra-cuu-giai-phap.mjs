@@ -76,5 +76,35 @@ const muc13 = ['Vấn đề', 'Phân tích vấn đề', 'Phác đồ xử lý',
 const thieu = muc13.filter(m => ui.indexOf("'" + m) < 0);
 kiem('màn dựng đủ 13 mục chủ hệ yêu cầu', !thieu.length, thieu.join(', '));
 
+/* ── tỷ lệ xem theo vai (G.TCGP_TY_LE) — chạy THẬT data.core.js + màn trong vm,
+   không dò chữ: phép đo phải cắt đúng số vấn đề, không chỉ "có bảng". ── */
+import vm from 'node:vm';
+const win = {}; win.window = win; const ctx = vm.createContext(win);
+ctx.document = { addEventListener() {} };
+vm.runInContext(fs.readFileSync(ROOT + '/src/data.core.js', 'utf8'), ctx);
+const G = win.G; G.U = { h: s => s, ic: () => '' }; G.VIEWS = G.VIEWS || {};
+vm.runInContext(fs.readFileSync(ROOT + '/src/tra-cuu-giai-phap.js', 'utf8'), ctx);
+const bang = G.TCGP_TY_LE || [];
+const VAI11 = ['R01', 'R02', 'R03', 'R04', 'R05', 'R06', 'R07', 'R08', 'R09', 'R10', 'R11'];
+const thieuVai = VAI11.filter(v => !bang.some(r => r.vai.indexOf(v) >= 0));
+const trungVai = VAI11.filter(v => bang.filter(r => r.vai.indexOf(v) >= 0).length > 1);
+kiem('bảng tỷ lệ phủ đủ R01–R11, mỗi vai đúng một dòng', !thieuVai.length && !trungVai.length, 'thiếu ' + thieuVai.join(',') + ' · trùng ' + trungVai.join(','));
+const pts = VAI11.map(v => G.tcgpTyLe(v));
+kiem('tỷ lệ không tăng khi bậc vai lùi xuống (R01 ≥ … ≥ R11), trong 1–100', pts.every((p, i) => p >= 1 && p <= 100 && (i === 0 || p <= pts[i - 1])), pts.join(','));
+kiem('R01 mở 100% kho tra cứu', G.tcgpTyLe('R01') === 100);
+kiem('vai ngoài bảng (R12, khách) mở 0%', G.tcgpTyLe('R12') === 0 && G.tcgpTyLe('R13') === 0);
+/* 30 vấn đề trộn tầng; vai 69% phải mở đúng ceil(30×0.69)=21, tầng thấp trước */
+const dsThu = [];
+for (let i = 0; i < 20; i++) dsThu.push({ loai: 'pd', ma: 'PD-' + i, goc: { tang: 'T' + (5 - (i % 5)) } });
+for (let i = 0; i < 10; i++) dsThu.push({ loai: 'th', ma: 'TH-' + i, tang: 'T' + (1 + (i % 5)) });
+const q11 = G.tcgpMo('R11', dsThu), soMo = dsThu.filter(v => q11.mo(v.ma)).length;
+kiem('R11 mở đúng ceil(tổng × tỷ lệ) vấn đề', q11.pt === 69 && q11.so === 21 && soMo === 21, q11.so + ' / ' + soMo);
+const moT1 = dsThu.filter(v => (v.goc ? v.goc.tang : v.tang) === 'T1').every(v => q11.mo(v.ma));
+const moT5 = dsThu.filter(v => (v.goc ? v.goc.tang : v.tang) === 'T5').some(v => q11.mo(v.ma));
+kiem('cắt từ tầng thấp lên: T1 mở hết, T5 khoá hết ở 69%', moT1 && !moT5);
+const q01 = G.tcgpMo('R01', dsThu), q12 = G.tcgpMo('R12', dsThu);
+kiem('R01 mở 30/30 · R12 mở 0/30', dsThu.every(v => q01.mo(v.ma)) && !dsThu.some(v => q12.mo(v.ma)));
+kiem('màn chặn bấm vào vấn đề bị khoá (không chỉ ẩn bằng CSS)', /if\(!G\.tcgpMo\(G\.S\.role\)\.mo\(ma0\)\) return;/.test(ui) && /TC\.chon && quyen\.mo\(TC\.chon\)/.test(ui));
+
 console.log('\n' + (truot ? '✗ ' + truot + ' SAI · ' : '✓ ') + dat + ' đạt');
 process.exit(truot ? 1 : 0);
