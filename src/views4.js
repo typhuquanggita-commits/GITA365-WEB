@@ -195,7 +195,7 @@ G.VIEWS['dong-hanh'] = function(){
   if(cur && traLoi[cur]){
     var r = traLoi[cur];
     o += '<div class="mt2" style="padding:18px 20px;border-radius:16px;background:var(--gita-mo-1);border-left:2px solid var(--gold)">'+
-      '<b class="serif" style="font-size:18px;font-style:italic;color:var(--gold-2);display:block;margin-bottom:8px">'+h(r.t)+'</b>'+
+      '<b class="serif" style="font-size:18px;font-style:italic;color:var(--gold-ink);display:block;margin-bottom:8px">'+h(r.t)+'</b>'+
       '<p class="sm" style="line-height:1.7">'+h(r.d)+'</p>'+
       '<button class="btn pri sm mt2" data-go="'+h(r.v)+'">'+h(r.b)+' '+ic('arrow')+'</button></div>';
   }
@@ -406,7 +406,7 @@ G.VIEWS['thuong-hieu'] = function(){
     '<div class="grow" style="min-width:250px">'+
     '<h2 style="font-size:26px;font-weight:800">'+h(B.ten)+'</h2>'+
     '<p class="up" style="color:var(--ink-4);margin:2px 0 10px">'+h(B.dinhVi)+'</p>'+
-    '<p class="serif" style="font-size:18px;font-style:italic;color:var(--gold-2)">"'+h(B.cauLoi)+'"</p>'+
+    '<p class="serif" style="font-size:18px;font-style:italic;color:var(--gold-ink)">"'+h(B.cauLoi)+'"</p>'+
     '<p class="sm dim mt">'+h(B.giaiNghia)+'</p></div></div></div>';
 
   o += U.sec('BẢNG MÀU','Màu năm tầng giữ nguyên mã của hệ thống v6.9 — không đổi khi in, khi chiếu hay khi làm ảnh');
@@ -423,7 +423,7 @@ G.VIEWS['thuong-hieu'] = function(){
     var serif = c.k.indexOf('Playfair')===0;
     return '<div class="card"><b style="font-size:16px;display:block;margin-bottom:6px">'+h(c.k)+'</b>'+
       '<p class="sm muted" style="line-height:1.6;margin-bottom:12px">'+h(c.d)+'</p>'+
-      '<p class="'+(serif?'serif':'')+'" style="font-size:'+(serif?'19px;font-style:italic':'17px;font-weight:700')+';color:var(--gold-2)">'+h(c.vd)+'</p></div>';
+      '<p class="'+(serif?'serif':'')+'" style="font-size:'+(serif?'19px;font-style:italic':'17px;font-weight:700')+';color:var(--gold-ink)">'+h(c.vd)+'</p></div>';
   }).join('') + '</div>';
 
   o += U.sec('GIỌNG NÓI','Cùng một ý, hai kết quả khác hẳn nhau');

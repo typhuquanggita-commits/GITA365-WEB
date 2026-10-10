@@ -81,7 +81,7 @@ G.VIEWS = G.VIEWS || {};
   function tabKhach(S) {
     var ds = khDs(), that = ds[0] && ds[0].that;
     var o = '<div class="ntv-note">' + ic('map', 'w-4 h-4') + ' ' + S.cNote +
-      (that ? ' <b style="color:#0B7350">Đang chạy trên dữ liệu thật.</b>' : ' <span style="color:#B4720F">(minh hoạ)</span>') + '</div>';
+      (that ? ' <b style="color:#0B7350">Đang chạy trên dữ liệu thật.</b>' : ' <span style="color:var(--warn)">(minh hoạ)</span>') + '</div>';
     o += '<div class="ntv-gdj">';
     S.gdj.forEach(function (g) {
       var so = ds.filter(function (k) { return k.gdj === g.n; }).length;
@@ -106,7 +106,7 @@ G.VIEWS = G.VIEWS || {};
         '<td>' + lk(S.cTLkey, 'Mở') + '</td>' +
         '<td class="tiny ntv-center">' + k.buoi + '</td>' +
         '<td class="tiny ntv-center">' + (k.danhGia != null ? ('<b>' + k.danhGia.toFixed(1) + '</b>/5') : '—') + '</td>' +
-        '<td class="tiny ntv-center">' + (k.bangChung === 'Có' ? '<span style="color:#0B7350;font-weight:700">✓ Có</span>' : '<span style="color:#B4720F">Chưa</span>') + '</td>' +
+        '<td class="tiny ntv-center">' + (k.bangChung === 'Có' ? '<span style="color:#0B7350;font-weight:700">✓ Có</span>' : '<span style="color:var(--warn)">Chưa</span>') + '</td>' +
         '<td><span class="ntv-nhom" style="--nc:' + tnc + '">' + h(tn) + '</span></td>' +
         '<td>' + lk(S.cLoTrinh, 'Mở lộ trình') + '</td>' +
       '</tr>';

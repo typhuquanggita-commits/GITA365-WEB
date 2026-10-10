@@ -48,3 +48,10 @@ Không xoá mã màn, cửa máy chủ, bảng dữ liệu hay tệp nào đã g
 
 ## Không chạm (trừ khi chủ hệ yêu cầu rõ)
 `crm.js` · `kho/*.enc` · giấy phép · `studio.js` · `kho-goc/` · `kho/khoa.json`. Khoá thật chỉ ở Cloudflare/GitHub Secrets.
+
+## Soát thiết kế (`tools/soat-thiet-ke.js` · `tools/thu-thiet-ke-tinh.mjs` · skill `gita-thiet-ke`)
+- 19 luật ở `tools/luat-thiet-ke.json` (ý tưởng từ pbakaus/impeccable, mã viết lại). `chan` = phải 0; `tran` = không thêm màn phạm so với `tools/soat-thiet-ke.nen.json`, nâng trần phải `--nhan-tang "lý do"`.
+- Chữ màu dùng token `-ink` (`--gold-ink`, `--gita-ink`) hoặc `--ok/--warn/--bad` — `--gold-2`/`--gita-sang` là xanh nhạt cho chuyển sắc, 2,91:1, không làm màu chữ. Mã hex gõ tay không đổi theo nền Sáng/Tối.
+- Sửa bậc tiêu đề bằng tên thẻ đúng và đổi luôn bộ chọn CSS (`.kh h4` → `.kh h2`) để cỡ chữ không nhảy.
+- Chữ đặt lên một màu đặc của biểu đồ dùng `--chu-tren-mau`, không gõ `#fff`.
+- Bộ đo đếm theo MÀN THẬT (`G.S.view`) — nhiều mục cột trái chuyển hướng về cùng một công cụ sống.

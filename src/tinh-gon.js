@@ -103,7 +103,7 @@ G.VIEWS = G.VIEWS || {};
         '<b>' + h(g.ten) + '</b><span class="tiny muted">' + h(g.dau) + '</span></div>' +
         '<p class="sm" style="line-height:1.8"><b style="color:#BE0E16">Mối nguy:</b> ' + h(g.nguy) + '</p>' +
         '<p class="sm mt" style="line-height:1.8"><b style="color:#0B7350">Việc chính:</b> ' + h(g.lam) + '</p>' +
-        '<p class="sm mt" style="line-height:1.8"><b style="color:#B4720F">Phải nhịn:</b> ' + h(g.dung) + '</p>' +
+        '<p class="sm mt" style="line-height:1.8"><b style="color:var(--warn)">Phải nhịn:</b> ' + h(g.dung) + '</p>' +
         '<p class="tiny mt" style="line-height:1.7"><b>Xong giai đoạn khi:</b> ' + h(g.ra) + '</p></div>';
     }).join('');
 

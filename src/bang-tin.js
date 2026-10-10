@@ -476,7 +476,7 @@ G.VIEWS = G.VIEWS || {};
        không lời giải thích. */
     if (bt.chuaCoTinSong)
       o += '<div class="card mb"><p class="sm" style="line-height:1.8">' +
-        '<b style="color:#B4720F">Bảng này đang trống vì chưa có tin thật.</b> Trên kia là ' +
+        '<b style="color:var(--warn)">Bảng này đang trống vì chưa có tin thật.</b> Trên kia là ' +
         'ĐÚNG những dòng sẽ hiện khi có nhà đầu tiên vượt tầng. Ba sổ đếm còn thiếu:</p>' +
         '<p class="tiny dim mt" style="line-height:1.75">' +
         bt.nguon.map(function (n) { return h((n.ten || n.ma) + ' — ' + (n.thieu || '')); })
@@ -512,14 +512,14 @@ G.VIEWS = G.VIEWS || {};
         than = '<p class="sm mt" style="line-height:1.75"><b>' + h(String(x.so)) + '</b></p>' +
           '<p class="tiny dim mt" style="line-height:1.7">Đếm từ: ' + h(x.demTu || '') + '</p>';
       else if (x.chuaCoNguon)
-        than = '<p class="sm mt" style="line-height:1.75;color:#B4720F"><b>Thiếu:</b> ' + h(x.thieu || '') + '</p>' +
+        than = '<p class="sm mt" style="line-height:1.75;color:var(--warn)"><b>Thiếu:</b> ' + h(x.thieu || '') + '</p>' +
           '<p class="tiny dim mt" style="line-height:1.7">' + h(x.vi || '') + '</p>';
       else if (x.chuaHoiMayChu)
-        than = '<p class="sm mt" style="line-height:1.75;color:#B4720F">Chưa hỏi được máy chủ. ' +
+        than = '<p class="sm mt" style="line-height:1.75;color:var(--warn)">Chưa hỏi được máy chủ. ' +
           'Sổ đếm có rồi, nhưng chưa nối được thì không in con số cũ ra thay.</p>' +
           '<p class="tiny dim mt" style="line-height:1.7">Đếm từ: ' + h(x.demTu || '') + '</p>';
       else
-        than = '<p class="sm mt" style="line-height:1.75;color:#B4720F">Chưa gộp đủ để hiện' +
+        than = '<p class="sm mt" style="line-height:1.75;color:var(--warn)">Chưa gộp đủ để hiện' +
           (x.nguong ? ' — cần từ ' + h(String(x.nguong)) + ' nhà trở lên' : '') + '.</p>' +
           '<p class="tiny dim mt" style="line-height:1.7">Số nhỏ là chỉ mặt từng nhà mà ' +
           'không cần tên. Sổ đã đếm rồi, chỉ chưa được phép in ra.</p>';
@@ -545,11 +545,11 @@ G.VIEWS = G.VIEWS || {};
     var kn = G.tinSoiSoKhongNguon();
     if (kn.length)
       o += '<div class="card mb" style="border-color:#B4720F5e">' +
-        '<span class="tiny up" style="color:#B4720F">' + kn.length + ' CON SỐ TRONG KHO CHƯA KHAI NGUỒN</span>' +
+        '<span class="tiny up" style="color:var(--warn)">' + kn.length + ' CON SỐ TRONG KHO CHƯA KHAI NGUỒN</span>' +
         '<p class="sm mt" style="line-height:1.8">' + h(kn.join(' · ')) + '</p>' +
         '<p class="tiny dim mt" style="line-height:1.7">' +
         h((G.TIN_NGUON_LUAT || {}).daCoMotChoNhuThe || '') + '</p>' +
-        '<p class="tiny mt" style="line-height:1.7;color:#B4720F">Bảng tin này không mượn lại chúng. ' +
+        '<p class="tiny mt" style="line-height:1.7;color:var(--warn)">Bảng tin này không mượn lại chúng. ' +
         'Sửa nội dung đã phát hành là việc của chủ hệ.</p></div>';
 
     /* ── Bốn loại tin sẽ đăng ── */
@@ -569,7 +569,7 @@ G.VIEWS = G.VIEWS || {};
       return '<div style="padding:10px 0;border-bottom:1px solid var(--gita-vien-2)">' +
         '<b class="sm">' + t.no + '. ' + h(t.t) + '</b>' +
         '<p class="sm mt" style="line-height:1.75;color:#0B7350"><b>Đạt:</b> ' + h(t.dat) + '</p>' +
-        '<p class="sm mt" style="line-height:1.75;color:#B4720F"><b>Trượt:</b> ' + h(t.truot) + '</p></div>';
+        '<p class="sm mt" style="line-height:1.75;color:var(--warn)"><b>Trượt:</b> ' + h(t.truot) + '</p></div>';
     }).join('') + '</div>';
     o += '<p class="tiny dim mb" style="line-height:1.7">' +
       h((G.TIN_TIEUCHI_LUAT || {}).aiChon || '') + '</p>';
@@ -579,9 +579,9 @@ G.VIEWS = G.VIEWS || {};
     o += U.sec('CHUYỆN ĐƯỢC CHỌN THÌ NHÀ ẤY ĐƯỢC GÌ', '');
     o += '<div class="card mb">' +
       '<p class="sm" style="line-height:1.8"><b>Luôn có:</b> ' + h(tw.luonCo || '') + '</p>' +
-      '<p class="sm mt" style="line-height:1.8;color:#B4720F"><b>Chờ chủ hệ chốt:</b> ' +
+      '<p class="sm mt" style="line-height:1.8;color:var(--warn)"><b>Chờ chủ hệ chốt:</b> ' +
       h(tw.diemChoChu || '') + '</p>' +
-      '<p class="sm mt" style="line-height:1.8;color:#B4720F"><b>Chờ chủ hệ chốt:</b> ' +
+      '<p class="sm mt" style="line-height:1.8;color:var(--warn)"><b>Chờ chủ hệ chốt:</b> ' +
       h(tw.quaChoChu || '') + '</p>' +
       '<p class="tiny dim mt" style="line-height:1.7">' + h(tw.viRangBuoc || '') + '</p></div>';
 

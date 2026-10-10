@@ -921,7 +921,7 @@ const { chromium } = require(PW);
         ? fs3.readdirSync(d).filter(x => x.endsWith('.js')).map(x => px3.join(d, x)) : [d];
       ds.forEach(f => {
         const t = fs3.readFileSync(f, 'utf8');
-        if (/#F5B942|#FFD98A|#FF7A45|rgba\(245,\s*185,\s*66/i.test(t)) vang.push(px3.basename(f));
+        if (/(#|%23)(F5B942|FFD98A|FF7A45)|rgba\(245,\s*185,\s*66/i.test(t)) vang.push(px3.basename(f));
       });
     }
     bao(!vang.length, 'không còn mã màu vàng của bản cũ sót lại', vang.join(' ') || 'sạch');

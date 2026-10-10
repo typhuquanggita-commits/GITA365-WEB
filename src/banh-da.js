@@ -287,7 +287,7 @@ G.VIEWS = G.VIEWS || {};
         '<p class="sm mt" style="line-height:1.8"><b>Vòng:</b> ' + h(b.vong) + '</p>' +
         (moRoi
           ? '<p class="sm dim mt" style="line-height:1.8">' + h(b.y) + '</p>' +
-            '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>Dấu hiệu đang đứng:</b> ' + h(b.dau) + '</p>' +
+            '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>Dấu hiệu đang đứng:</b> ' + h(b.dau) + '</p>' +
             '<div class="mt">' + b.nho.map(function (n) {
               return '<div class="tiny" style="padding:5px 0;border-top:1px solid var(--gita-vien-2)">' +
                 '<b>' + h(n.ten) + '</b> — ' + h(n.viec) +

@@ -207,7 +207,7 @@ G.VIEWS = G.VIEWS || {};
       return '<div style="padding:10px 0;border-bottom:1px solid var(--gita-vien-2)">' +
         '<b class="sm">' + n.so + '. ' + h(n.hoi) + '</b>' +
         (n.hepHon ? '<p class="tiny mt" style="line-height:1.7"><b>Hẹp hơn:</b> ' + h(n.hepHon) + '</p>' : '') +
-        (n.chuaTraLoi ? '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>Chưa trả lời được:</b> ' +
+        (n.chuaTraLoi ? '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>Chưa trả lời được:</b> ' +
           h(n.chuaTraLoi) + '</p>' : '') +
         (n.khongDungBua ? '<p class="tiny dim mt" style="line-height:1.7">' + h(n.khongDungBua) + '</p>' : '') +
         '</div>';
@@ -228,7 +228,7 @@ G.VIEWS = G.VIEWS || {};
           '<p class="tiny mt" style="line-height:1.7"><b>Tài liệu đề nghị:</b> ' + h(c.banGoc) + '</p>' +
           '<p class="tiny mt" style="line-height:1.7"><b>Đang giữ:</b> ' + h(c.lenhDung) + '</p>' +
           '<p class="tiny dim mt" style="line-height:1.7">' + h(c.vi) + '</p>' +
-          '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>Cần gì:</b> ' + h(c.canGi) + '</p></div>';
+          '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>Cần gì:</b> ' + h(c.canGi) + '</p></div>';
       }).join('') + '</div>';
     }
 

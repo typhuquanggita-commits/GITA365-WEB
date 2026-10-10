@@ -252,7 +252,7 @@ G.VIEWS['gioi-thieu'] = function(){
         '<p class="sm mt" style="line-height:1.65">'+h(x.d)+'</p></div>';
     }).join('') +'</div></div>';
 
-  o += '<div class="tiny up muted mt2 mb">BỐN BĂNG — HỆ THỐNG ĐỔI CÁCH CHẠM THEO TÌNH TRẠNG, KHÔNG ĐỢI AI BÁO</div>';
+  o += '<div class="sm b mt2 mb" style="color:var(--ink-2)">Bốn băng — hệ thống đổi cách chạm theo tình trạng, không đợi ai báo</div>';
   o += U.tbl(['Băng','Dấu hiệu','Hệ thống làm gì','Không làm gì'],
     (DH.bang || []).map(function(x){
       return ['<b class="sm" style="color:'+x.c+'">'+h(x.ma)+'</b><div class="tiny muted">'+h(x.ten)+'</div>',

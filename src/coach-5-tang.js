@@ -307,7 +307,7 @@ G.VIEWS = G.VIEWS || {};
       '<p class="sm mt" style="line-height:1.8">' + h(loi.baMat || '') + '</p>' +
       '<p class="sm mt" style="line-height:1.8">' + h(loi.quyenCuaNha || '') + '</p>' +
       '<p class="tiny dim mt" style="line-height:1.7">' + h(loi.vi || '') + '</p>' +
-      '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>' + h(loi.hauQuaNeuGiau || '') + '</b></p></div>';
+      '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>' + h(loi.hauQuaNeuGiau || '') + '</b></p></div>';
 
     o += G.kaKhung ? G.kaKhung('coach-5-tang', 'dau') : '';
 
@@ -343,7 +343,7 @@ G.VIEWS = G.VIEWS || {};
           return '<div style="padding:7px 0;border-bottom:1px solid var(--gita-vien-2)">' +
             '<b class="sm">' + (i + 1) + '. ' + h(n.t) + '</b>' +
             '<p class="tiny dim mt" style="line-height:1.7">Đo bằng: ' + h(n.do) +
-            (thieu ? ' <span style="color:#B4720F">· thước ở gói nghề</span>' : '') +
+            (thieu ? ' <span style="color:var(--warn)">· thước ở gói nghề</span>' : '') +
             '</p></div>';
         }).join('') + '</div>' +
         '<p class="sm mt" style="line-height:1.8;color:' + t.c + '"><b>Kết quả:</b> ' + h(t.ketQua) + '</p>' +
@@ -416,7 +416,7 @@ G.VIEWS = G.VIEWS || {};
           (d.co ? '✓ ' : '○ ') + h(d.ten) + '</b>' +
           '<p class="tiny dim mt" style="line-height:1.7">' + h(d.dungDe) + '</p>' +
           (d.co ? '<p class="tiny mt" style="color:#0B7350">Chạy trên kho ' + h(d.theoKho) + '</p>'
-                : '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>Thiếu:</b> ' + h(d.thieu) + '</p>' +
+                : '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>Thiếu:</b> ' + h(d.thieu) + '</p>' +
                   '<p class="tiny dim mt" style="line-height:1.7">' + h(d.viSaoChuaLam || '') + '</p>') +
           '</div>';
       }).join('') + '</div>';
@@ -473,7 +473,7 @@ G.VIEWS = G.VIEWS || {};
         'Ghi lại để lần sau không bàn lại.');
       o += (G.CS_LECH || []).map(function (l) {
         return '<div class="card mb" style="border-color:#B4720F3e">' +
-          '<span class="tiny up" style="color:#B4720F">' + h(l.ma) + ' · ' + h(l.o) + '</span>' +
+          '<span class="tiny up" style="color:var(--warn)">' + h(l.ma) + ' · ' + h(l.o) + '</span>' +
           '<p class="sm mt" style="line-height:1.8"><b>Tranh ghi:</b> ' + h(l.tranhGhi) + '</p>' +
           '<p class="sm mt" style="line-height:1.8"><b>Hệ đã có:</b> ' + h(l.heDaCo) + '</p>' +
           '<p class="sm mt" style="line-height:1.8;color:#0B7350"><b>Xử lý:</b> ' + h(l.xuLy) + '</p>' +

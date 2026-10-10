@@ -2493,9 +2493,16 @@ var G = window.G || {}; window.G = G;
 var U = G.U, h = U.h;
 
 /* Bảng màu phân loại — họ xanh GITA + hai sắc nhấn. Semantic (ok/đỏ) tách
-   riêng, gọi thẳng khi cần, không nằm trong bảng phân loại này. */
-U.bdMau = ['var(--gita)','var(--gita-sau)','var(--gita-sang)','var(--ok)',
-           '--gita-ink','var(--gold-2)','var(--warn)','var(--gita-do)'];
+   riêng, gọi thẳng khi cần, không nằm trong bảng phân loại này.
+   Mỗi màu vừa làm chữ trên nền trang vừa làm nền cho chữ đặt lên nó.
+   Chữ đặt lên màu dùng token --chu-tren-mau: trắng ở nền Sáng, mực sẫm
+   ở nền Tối — vì ở nền Tối cả tám màu đều sáng lên, chữ trắng trên
+   chúng chỉ còn 1,7–3,3:1. Đo: nền Sáng tám màu đạt ≥4,5:1 cả hai
+   chiều; nền Tối chữ sẫm trên màu đạt ≥5,5:1.
+   Bản trước có --gita-sang và --gold-2 — hai tên của CÙNG một xanh nhạt
+   (2,91:1): hai nhóm số cùng một màu và cả hai khó đọc (luật TK01). */
+U.bdMau = ['var(--gita)','var(--t1)','var(--t2)','var(--ok)',
+           '--gita-ink','var(--t3)','var(--warn)','var(--gita-do-ink)'];
 function mau(i){ var m = U.bdMau[i % U.bdMau.length]; return m.slice(0,2)==='--' ? 'var('+m+')' : m; }
 
 /* Rút gọn tiền cho nhãn biểu đồ: 1.250.000.000 → "1,25 tỷ" · 450.000 → "450k".
@@ -2641,7 +2648,7 @@ U.bdPhieu = function(stages){
       ' L '+xNext+' '+(y+rowH-6)+' Z';
     svg += '<path d="'+d+'" fill="'+(s.mau||mau(i))+'" opacity="0.90"/>'+
       '<text x="'+(W/2)+'" y="'+(y+rowH/2-3)+'" text-anchor="middle" font-size="11.5" '+
-      'font-weight="600" fill="#fff">'+h(s.ten)+' · '+h(U.bdGon(s.so))+'</text>';
+      'font-weight="600" fill="var(--chu-tren-mau)">'+h(s.ten)+' · '+h(U.bdGon(s.so))+'</text>';
     if(i>0){ var tl = Math.round(U.num(s.so)/(U.num(stages[i-1].so)||1)*100);
       svg += '<text x="'+(W-6)+'" y="'+(y+4)+'" text-anchor="end" font-size="10.5" '+
         'fill="var(--ink-4)">'+tl+'%</text>'; }
@@ -6000,7 +6007,7 @@ G.VIEWS['ban-do'] = function(){
     return '<button class="kh" data-kh="'+h(k.id)+'" style="color:'+c+'">'+
       '<i class="beam"></i>'+
       '<div class="no">KHOANG '+k.no+'</div>'+
-      '<h4 style="color:'+c+'">'+h(k.ten)+'</h4>'+
+      '<h2 style="color:'+c+'">'+h(k.ten)+'</h2>'+
       '<div class="q">'+h(k.cauHoi)+'</div>'+
       '<div class="mt-tags">'+(k.noiDung||[]).slice(0,4).map(function(x){
         return '<span>'+h(x)+'</span>';}).join('')+'</div>'+
@@ -6078,7 +6085,7 @@ G.VIEWS['chan-dung-nha'] = function(){
       '<h2 style="font-size:26px;font-weight:800;letter-spacing:-.02em">'+h(f.nha)+'</h2>'+
       '<p class="sm dim mt">Học viên <b>'+h(f.hv)+'</b> · '+h(f.lop)+' &nbsp;·&nbsp; Người lớn <b>'+h(f.ph)+'</b></p>'+
       '<p class="sm dim">Coach đồng hành: <b>'+h(f.coach)+'</b></p>'+
-      '<div class="mt2 sm"><span class="up muted">KỲ TÍCH NĂM ĐANG CHẠY</span><p class="mt" style="color:var(--gold-2)">'+h(f.kyTich)+'</p></div>'+
+      '<div class="mt2 sm"><span class="up muted">KỲ TÍCH NĂM ĐANG CHẠY</span><p class="mt" style="color:var(--gold-ink)">'+h(f.kyTich)+'</p></div>'+
     '</div></div></div>';
 
   o += '<div class="grid g4 mt2">'+
@@ -7005,7 +7012,7 @@ G.VIEWS['chin-vai'] = function(){
       '<div class="row" style="gap:7px;margin-bottom:2px"><span class="id" style="color:'+c+'">'+h(v.id)+'</span>'+
       (co?'<span style="color:var(--ok);margin-left:auto">'+ic('check','w-4 h-4')+'</span>'
          :'<span class="chip" style="margin-left:auto;color:var(--warn);border-color:rgba(251,191,36,.3)">còn trống</span>')+'</div>'+
-      '<h5 style="color:'+c+'">'+h(v.ten)+'</h5>'+
+      '<h2 style="color:'+c+'">'+h(v.ten)+'</h2>'+
       '<div class="q">'+h(v.cauHoi)+'</div>'+
       '<p>'+h(v.vaiTro)+'</p>'+
       '<div class="own">'+ic('users','w-3 h-3')+'<span>'+h(v.aiGiu)+'</span></div>'+
@@ -7023,7 +7030,7 @@ G.vaiModal = function(id){
   var o = '<div class="row wrap" style="gap:7px;margin-bottom:9px">'+U.chip(v.id,'var(--gita)')+U.chip('Khoang '+v.khoang)+
     (v.goc?U.chip('Gốc: '+v.goc):'')+'</div>'+
     '<h2 style="font-size:21px;font-weight:800;margin-bottom:8px">'+h(v.ten)+'</h2>'+
-    '<p class="serif" style="font-size:16px;font-style:italic;color:var(--gold-2);margin-bottom:14px">'+h(v.cauHoi)+'</p>'+
+    '<p class="serif" style="font-size:16px;font-style:italic;color:var(--gold-ink);margin-bottom:14px">'+h(v.cauHoi)+'</p>'+
     '<p class="sm dim mb" style="line-height:1.7">'+h(v.vaiTro)+'</p>'+
     '<div class="up muted mb mt2">VIỆC CỤ THỂ</div>'+U.list(v.viecCuThe,'var(--gita)')+
     '<div class="grid g2 mt2" style="gap:10px">'+
@@ -8733,7 +8740,7 @@ G.VIEWS['dong-hanh'] = function(){
   if(cur && traLoi[cur]){
     var r = traLoi[cur];
     o += '<div class="mt2" style="padding:18px 20px;border-radius:16px;background:var(--gita-mo-1);border-left:2px solid var(--gold)">'+
-      '<b class="serif" style="font-size:18px;font-style:italic;color:var(--gold-2);display:block;margin-bottom:8px">'+h(r.t)+'</b>'+
+      '<b class="serif" style="font-size:18px;font-style:italic;color:var(--gold-ink);display:block;margin-bottom:8px">'+h(r.t)+'</b>'+
       '<p class="sm" style="line-height:1.7">'+h(r.d)+'</p>'+
       '<button class="btn pri sm mt2" data-go="'+h(r.v)+'">'+h(r.b)+' '+ic('arrow')+'</button></div>';
   }
@@ -8944,7 +8951,7 @@ G.VIEWS['thuong-hieu'] = function(){
     '<div class="grow" style="min-width:250px">'+
     '<h2 style="font-size:26px;font-weight:800">'+h(B.ten)+'</h2>'+
     '<p class="up" style="color:var(--ink-4);margin:2px 0 10px">'+h(B.dinhVi)+'</p>'+
-    '<p class="serif" style="font-size:18px;font-style:italic;color:var(--gold-2)">"'+h(B.cauLoi)+'"</p>'+
+    '<p class="serif" style="font-size:18px;font-style:italic;color:var(--gold-ink)">"'+h(B.cauLoi)+'"</p>'+
     '<p class="sm dim mt">'+h(B.giaiNghia)+'</p></div></div></div>';
 
   o += U.sec('BẢNG MÀU','Màu năm tầng giữ nguyên mã của hệ thống v6.9 — không đổi khi in, khi chiếu hay khi làm ảnh');
@@ -8961,7 +8968,7 @@ G.VIEWS['thuong-hieu'] = function(){
     var serif = c.k.indexOf('Playfair')===0;
     return '<div class="card"><b style="font-size:16px;display:block;margin-bottom:6px">'+h(c.k)+'</b>'+
       '<p class="sm muted" style="line-height:1.6;margin-bottom:12px">'+h(c.d)+'</p>'+
-      '<p class="'+(serif?'serif':'')+'" style="font-size:'+(serif?'19px;font-style:italic':'17px;font-weight:700')+';color:var(--gold-2)">'+h(c.vd)+'</p></div>';
+      '<p class="'+(serif?'serif':'')+'" style="font-size:'+(serif?'19px;font-style:italic':'17px;font-weight:700')+';color:var(--gold-ink)">'+h(c.vd)+'</p></div>';
   }).join('') + '</div>';
 
   o += U.sec('GIỌNG NÓI','Cùng một ý, hai kết quả khác hẳn nhau');
@@ -9647,7 +9654,7 @@ G.VIEWS['ra-soat-kh'] = function(){
     return '<button class="ck '+(d?'done':'')+'" data-check="m'+i+'" style="align-items:flex-start">'+
       '<span class="bx">'+ic('check','w-3 h-3')+'</span>'+
       '<span class="tx"><b>'+h(m.ma)+' · '+h(m.ten)+'</b>'+
-      '<span style="display:block;margin-top:4px;font-style:italic;color:var(--gold-2)">"'+h(m.hoi)+'"</span>'+
+      '<span style="display:block;margin-top:4px;font-style:italic;color:var(--gold-ink)">"'+h(m.hoi)+'"</span>'+
       '<span style="display:block;margin-top:5px;color:var(--bad)">⚠ '+h(m.dau)+'</span></span></button>';
   }).join('') + '</div>';
   return o;
@@ -9966,7 +9973,7 @@ G.VIEWS['quy-trinh-tc'] = function(){
   o += U.sec(L.ten, L.cot);
   o += '<div class="card glow mb" style="border-color:var(--gita-vien-2)">'+
     '<div class="up mb" style="color:var(--gold-ink)">CÔNG THỨC</div>'+
-    '<p class="mono" style="font-size:14.5px;line-height:1.8;color:var(--gold-2)">'+h(L.congThuc)+'</p></div>';
+    '<p class="mono" style="font-size:14.5px;line-height:1.8;color:var(--gold-ink)">'+h(L.congThuc)+'</p></div>';
   o += '<div class="grid g2 mb">' + L.thanhPhan.map(function(p){
     return '<div class="card" style="border-color:'+p.c+'2a">'+
       '<b style="font-size:16px;display:block;margin-bottom:8px;color:'+p.c+'">'+h(p.t)+'</b>'+
@@ -12709,7 +12716,7 @@ function veMuoiViec(){
         }).join('')+
       '</select>'+
       '<button class="btn ghost sm" data-bdsao="'+i+'" title="Đánh dấu là một trong ba việc quan trọng nhất" '+
-        'style="flex:none;'+(v.sao ? 'color:#B4720F;border-color:#B4720F' : '')+'">'+
+        'style="flex:none;'+(v.sao ? 'color:var(--warn);border-color:#B4720F' : '')+'">'+
         (v.sao ? '★' : '☆')+'</button>'+
       (v.v ? '<button class="btn ghost sm" data-v="'+h(v.v)+'" style="flex:none">Mở màn</button>' : '')+
     '</div>';
@@ -14080,7 +14087,7 @@ G.VIEWS['do-thoi-gian'] = function(){
        chăm, và khen nhầm chỗ ấy là dạy người ta ngồi lâu hơn. */
     if(hn.quaTran.giay > 0)
       o += '<div class="card mb" style="border-color:#B4720F45">' +
-        '<b class="sm" style="color:#B4720F">' + h(phut(hn.quaTran.giay)) +
+        '<b class="sm" style="color:var(--warn)">' + h(phut(hn.quaTran.giay)) +
         ' trong số đó là phút VƯỢT TRẦN của ' + hn.quaTran.man.length + ' màn</b>' +
         '<p class="sm mt" style="line-height:1.75">' + h(M.viKhongKhen || '') + '</p>' +
         '<p class="tiny dim mt" style="line-height:1.7">' +
@@ -14490,7 +14497,7 @@ G.VIEWS['gioi-thieu'] = function(){
         '<p class="sm mt" style="line-height:1.65">'+h(x.d)+'</p></div>';
     }).join('') +'</div></div>';
 
-  o += '<div class="tiny up muted mt2 mb">BỐN BĂNG — HỆ THỐNG ĐỔI CÁCH CHẠM THEO TÌNH TRẠNG, KHÔNG ĐỢI AI BÁO</div>';
+  o += '<div class="sm b mt2 mb" style="color:var(--ink-2)">Bốn băng — hệ thống đổi cách chạm theo tình trạng, không đợi ai báo</div>';
   o += U.tbl(['Băng','Dấu hiệu','Hệ thống làm gì','Không làm gì'],
     (DH.bang || []).map(function(x){
       return ['<b class="sm" style="color:'+x.c+'">'+h(x.ma)+'</b><div class="tiny muted">'+h(x.ten)+'</div>',
@@ -14691,7 +14698,7 @@ G.veChuyenTG = function(c, gon){
 
     (c.luu
       ? '<div class="mt2" style="padding:11px 14px;border-radius:11px;background:#B4720F14;border:1px solid #B4720F44">'+
-        '<span class="tiny up" style="color:#B4720F">'+ic('bell','w-3 h-3')+' NÓI CHO ĐÚNG</span>'+
+        '<span class="tiny up" style="color:var(--warn)">'+ic('bell','w-3 h-3')+' NÓI CHO ĐÚNG</span>'+
         '<p class="tiny mt" style="line-height:1.7">'+h(c.luu)+'</p></div>'
       : '');
 
@@ -14726,7 +14733,7 @@ G.VIEWS['chuyen-the-gioi'] = function(){
     'việc có thật, đều là ghi chép công khai.</p>'+
     '<p class="sm mt" style="line-height:1.75">Vì thế Học viện chỉ ghi phần được ghi chép rộng rãi, không dựng lời '+
     'thoại và không kể đời tư. Con số nào do chính nhân vật kể thì nói rõ là họ kể. Và chỗ nào bản kể phổ biến '+
-    'đã bị thổi lên thì có một dòng <b style="color:#B4720F">NÓI CHO ĐÚNG</b> — vì truyện truyền cảm hứng mà sai '+
+    'đã bị thổi lên thì có một dòng <b style="color:var(--warn)">NÓI CHO ĐÚNG</b> — vì truyện truyền cảm hứng mà sai '+
     'sự thật thì lần sau người đọc không tin cả những phần đúng.</p></div>';
 
   o += '<div class="row wrap mt2" style="gap:12px">'+
@@ -28651,7 +28658,7 @@ G.VIEWS = G.VIEWS || {};
         '<b>' + h(g.ten) + '</b><span class="tiny muted">' + h(g.dau) + '</span></div>' +
         '<p class="sm" style="line-height:1.8"><b style="color:#BE0E16">Mối nguy:</b> ' + h(g.nguy) + '</p>' +
         '<p class="sm mt" style="line-height:1.8"><b style="color:#0B7350">Việc chính:</b> ' + h(g.lam) + '</p>' +
-        '<p class="sm mt" style="line-height:1.8"><b style="color:#B4720F">Phải nhịn:</b> ' + h(g.dung) + '</p>' +
+        '<p class="sm mt" style="line-height:1.8"><b style="color:var(--warn)">Phải nhịn:</b> ' + h(g.dung) + '</p>' +
         '<p class="tiny mt" style="line-height:1.7"><b>Xong giai đoạn khi:</b> ' + h(g.ra) + '</p></div>';
     }).join('');
 
@@ -28964,7 +28971,7 @@ G.VIEWS = G.VIEWS || {};
         '<p class="sm mt" style="line-height:1.8"><b>Vòng:</b> ' + h(b.vong) + '</p>' +
         (moRoi
           ? '<p class="sm dim mt" style="line-height:1.8">' + h(b.y) + '</p>' +
-            '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>Dấu hiệu đang đứng:</b> ' + h(b.dau) + '</p>' +
+            '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>Dấu hiệu đang đứng:</b> ' + h(b.dau) + '</p>' +
             '<div class="mt">' + b.nho.map(function (n) {
               return '<div class="tiny" style="padding:5px 0;border-top:1px solid var(--gita-vien-2)">' +
                 '<b>' + h(n.ten) + '</b> — ' + h(n.viec) +
@@ -29743,7 +29750,7 @@ G.VIEWS = G.VIEWS || {};
     o += U.sec('Chín phần mười', (q.vi || ''));
     o += '<div class="card mb"><div class="row wrap" style="gap:16px">' +
       '<b style="color:#0B7350">Hỏi ' + q.hoi + '%</b>' +
-      '<b style="color:#B4720F">Kể chuyện của chính mình ' + q.keChuyenMinh + '%</b>' +
+      '<b style="color:var(--warn)">Kể chuyện của chính mình ' + q.keChuyenMinh + '%</b>' +
       '<b style="color:#BE0E16">Dạy ' + q.day + '%</b></div>' +
       '<p class="tiny dim mt" style="line-height:1.7"><b>Đo bằng:</b> ' + h(q.doBang || '') + '</p>' +
       '<p class="tiny mt" style="line-height:1.7">' + h(q.lech1 || '') + ' ' + h(q.lech2 || '') + '</p></div>';
@@ -30522,13 +30529,13 @@ G.VIEWS = G.VIEWS || {};
         return '<div style="padding:7px 0;border-bottom:1px solid var(--gita-vien-2)">' +
           '<b class="sm">' + c.so + '. ' + h(c.t) + '</b>' +
           (c.theoDuong ? '<span class="tiny up" style="color:#0B7350"> ĐỌC TỪ ĐƯỜNG TỰ CHỦ</span>' : '') +
-          (c.chuaDo ? '<span class="tiny up" style="color:#B4720F"> CHƯA ĐO ĐƯỢC</span>' : '') +
+          (c.chuaDo ? '<span class="tiny up" style="color:var(--warn)"> CHƯA ĐO ĐƯỢC</span>' : '') +
           (c.thieu ? '<div class="tiny muted">thiếu: ' + h(c.thieu) + '</div>' : '') +
           (c.vi ? '<div class="tiny dim">' + h(c.vi) + '</div>' : '') + '</div>';
       }).join('') +
       '<p class="sm mt" style="line-height:1.8"><b>' + h((G.BN_MORUNG_LUAT || {}).cot || '') + '</b> ' +
       h((G.BN_MORUNG_LUAT || {}).vi || '') + '</p>' +
-      (chuaDo.length ? '<p class="tiny mt" style="line-height:1.7;color:#B4720F">' + chuaDo.length +
+      (chuaDo.length ? '<p class="tiny mt" style="line-height:1.7;color:var(--warn)">' + chuaDo.length +
         ' cửa chưa đo được vì còn chờ một ô chủ hệ điền.</p>' : '') + '</div>';
 
     var gl = G.BN_GIEOLAI || {};
@@ -30865,7 +30872,7 @@ G.VIEWS = G.VIEWS || {};
           '<p class="tiny mt" style="line-height:1.7"><b>Tài liệu đề nghị:</b> ' + h(c.banGoc) + '</p>' +
           '<p class="tiny mt" style="line-height:1.7"><b>Lệnh đứng của chủ hệ:</b> ' + h(c.lenhDung) + '</p>' +
           '<p class="tiny dim mt" style="line-height:1.7">' + h(c.vi) + '</p>' +
-          '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>Cần gì:</b> ' + h(c.canGi) + '</p></div>';
+          '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>Cần gì:</b> ' + h(c.canGi) + '</p></div>';
       }).join('') +
         '<p class="tiny dim mt" style="line-height:1.7">' + h((G.PL_CHOCHU_LUAT || {}).vi || '') + '</p></div>';
     }
@@ -31309,7 +31316,7 @@ G.VIEWS = G.VIEWS || {};
           '<p class="tiny mt" style="line-height:1.7"><b>Sổ tay đề nghị:</b> ' + h(c.banGoc) + '</p>' +
           '<p class="tiny mt" style="line-height:1.7"><b>Trạng thái đang giữ:</b> ' + h(c.lenhDung) + '</p>' +
           '<p class="tiny dim mt" style="line-height:1.7">' + h(c.vi) + '</p>' +
-          '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>Cần gì:</b> ' + h(c.canGi) + '</p></div>';
+          '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>Cần gì:</b> ' + h(c.canGi) + '</p></div>';
       }).join('') +
         '<p class="tiny dim mt" style="line-height:1.7">' + h((G.TV_CHOCHU_LUAT || {}).vi || '') + '</p></div>';
     }
@@ -31928,7 +31935,7 @@ G.VIEWS = G.VIEWS || {};
       '<p class="sm mt" style="line-height:1.8"><b>Đạt:</b> ' + h(k3.dat || '') + '</p>' +
       '<p class="sm mt" style="line-height:1.8;color:#BE0E16"><b>Trượt:</b> ' + h(k3.truot || '') + '</p>' +
       '<p class="tiny dim mt" style="line-height:1.7">' + h(k3.viToanTrang || '') + '</p>' +
-      (k3.chuaDo ? '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>Chưa đo được:</b> ' +
+      (k3.chuaDo ? '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>Chưa đo được:</b> ' +
         h(k3.thieu || '') + '</p>' : '') + '</div>';
 
     o += U.sec('Chuông nhà bấm khác chuông hệ rung', ((G.SG_CHUONG_LUAT || {}).cot || ''));
@@ -31967,7 +31974,7 @@ G.VIEWS = G.VIEWS || {};
           '<p class="tiny mt" style="line-height:1.7"><b>Sổ tay để trống:</b> ' + h(c.banGoc) + '</p>' +
           '<p class="tiny mt" style="line-height:1.7"><b>Đang giữ:</b> ' + h(c.lenhDung) + '</p>' +
           '<p class="tiny dim mt" style="line-height:1.7">' + h(c.vi) + '</p>' +
-          '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>Cần gì:</b> ' + h(c.canGi) + '</p></div>';
+          '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>Cần gì:</b> ' + h(c.canGi) + '</p></div>';
       }).join('') +
         '<p class="tiny dim mt" style="line-height:1.7">' + h((G.SG_CHOCHU_LUAT || {}).vi || '') + '</p></div>';
     }
@@ -32188,7 +32195,7 @@ G.VIEWS = G.VIEWS || {};
       return '<div style="padding:10px 0;border-bottom:1px solid var(--gita-vien-2)">' +
         '<b class="sm">' + n.so + '. ' + h(n.hoi) + '</b>' +
         (n.hepHon ? '<p class="tiny mt" style="line-height:1.7"><b>Hẹp hơn:</b> ' + h(n.hepHon) + '</p>' : '') +
-        (n.chuaTraLoi ? '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>Chưa trả lời được:</b> ' +
+        (n.chuaTraLoi ? '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>Chưa trả lời được:</b> ' +
           h(n.chuaTraLoi) + '</p>' : '') +
         (n.khongDungBua ? '<p class="tiny dim mt" style="line-height:1.7">' + h(n.khongDungBua) + '</p>' : '') +
         '</div>';
@@ -32209,7 +32216,7 @@ G.VIEWS = G.VIEWS || {};
           '<p class="tiny mt" style="line-height:1.7"><b>Tài liệu đề nghị:</b> ' + h(c.banGoc) + '</p>' +
           '<p class="tiny mt" style="line-height:1.7"><b>Đang giữ:</b> ' + h(c.lenhDung) + '</p>' +
           '<p class="tiny dim mt" style="line-height:1.7">' + h(c.vi) + '</p>' +
-          '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>Cần gì:</b> ' + h(c.canGi) + '</p></div>';
+          '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>Cần gì:</b> ' + h(c.canGi) + '</p></div>';
       }).join('') + '</div>';
     }
 
@@ -32897,7 +32904,7 @@ G.VIEWS = G.VIEWS || {};
         '<p class="sm mt" style="line-height:1.8"><b>Vì sao rơi vào:</b> ' + h(r.viSaoRoiVao) + '</p>' +
         '<p class="sm mt" style="line-height:1.8;color:' + r.c + '"><b>Đường về:</b> ' + h(r.duongVe) + '</p>' +
         '<p class="tiny dim mt" style="line-height:1.7">Đo bằng: ' + h(r.doBang) + '</p>' +
-        (r.banGocKhongRo ? '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>Chữ bản gốc:</b> ' +
+        (r.banGocKhongRo ? '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>Chữ bản gốc:</b> ' +
           h(r.banGocKhongRo) + '</p>' : '') + '</div>';
     }).join('');
     o += '<p class="tiny dim mb" style="line-height:1.7"><b>' +
@@ -36421,7 +36428,7 @@ G.VIEWS = G.VIEWS || {};
        không lời giải thích. */
     if (bt.chuaCoTinSong)
       o += '<div class="card mb"><p class="sm" style="line-height:1.8">' +
-        '<b style="color:#B4720F">Bảng này đang trống vì chưa có tin thật.</b> Trên kia là ' +
+        '<b style="color:var(--warn)">Bảng này đang trống vì chưa có tin thật.</b> Trên kia là ' +
         'ĐÚNG những dòng sẽ hiện khi có nhà đầu tiên vượt tầng. Ba sổ đếm còn thiếu:</p>' +
         '<p class="tiny dim mt" style="line-height:1.75">' +
         bt.nguon.map(function (n) { return h((n.ten || n.ma) + ' — ' + (n.thieu || '')); })
@@ -36457,14 +36464,14 @@ G.VIEWS = G.VIEWS || {};
         than = '<p class="sm mt" style="line-height:1.75"><b>' + h(String(x.so)) + '</b></p>' +
           '<p class="tiny dim mt" style="line-height:1.7">Đếm từ: ' + h(x.demTu || '') + '</p>';
       else if (x.chuaCoNguon)
-        than = '<p class="sm mt" style="line-height:1.75;color:#B4720F"><b>Thiếu:</b> ' + h(x.thieu || '') + '</p>' +
+        than = '<p class="sm mt" style="line-height:1.75;color:var(--warn)"><b>Thiếu:</b> ' + h(x.thieu || '') + '</p>' +
           '<p class="tiny dim mt" style="line-height:1.7">' + h(x.vi || '') + '</p>';
       else if (x.chuaHoiMayChu)
-        than = '<p class="sm mt" style="line-height:1.75;color:#B4720F">Chưa hỏi được máy chủ. ' +
+        than = '<p class="sm mt" style="line-height:1.75;color:var(--warn)">Chưa hỏi được máy chủ. ' +
           'Sổ đếm có rồi, nhưng chưa nối được thì không in con số cũ ra thay.</p>' +
           '<p class="tiny dim mt" style="line-height:1.7">Đếm từ: ' + h(x.demTu || '') + '</p>';
       else
-        than = '<p class="sm mt" style="line-height:1.75;color:#B4720F">Chưa gộp đủ để hiện' +
+        than = '<p class="sm mt" style="line-height:1.75;color:var(--warn)">Chưa gộp đủ để hiện' +
           (x.nguong ? ' — cần từ ' + h(String(x.nguong)) + ' nhà trở lên' : '') + '.</p>' +
           '<p class="tiny dim mt" style="line-height:1.7">Số nhỏ là chỉ mặt từng nhà mà ' +
           'không cần tên. Sổ đã đếm rồi, chỉ chưa được phép in ra.</p>';
@@ -36490,11 +36497,11 @@ G.VIEWS = G.VIEWS || {};
     var kn = G.tinSoiSoKhongNguon();
     if (kn.length)
       o += '<div class="card mb" style="border-color:#B4720F5e">' +
-        '<span class="tiny up" style="color:#B4720F">' + kn.length + ' CON SỐ TRONG KHO CHƯA KHAI NGUỒN</span>' +
+        '<span class="tiny up" style="color:var(--warn)">' + kn.length + ' CON SỐ TRONG KHO CHƯA KHAI NGUỒN</span>' +
         '<p class="sm mt" style="line-height:1.8">' + h(kn.join(' · ')) + '</p>' +
         '<p class="tiny dim mt" style="line-height:1.7">' +
         h((G.TIN_NGUON_LUAT || {}).daCoMotChoNhuThe || '') + '</p>' +
-        '<p class="tiny mt" style="line-height:1.7;color:#B4720F">Bảng tin này không mượn lại chúng. ' +
+        '<p class="tiny mt" style="line-height:1.7;color:var(--warn)">Bảng tin này không mượn lại chúng. ' +
         'Sửa nội dung đã phát hành là việc của chủ hệ.</p></div>';
 
     /* ── Bốn loại tin sẽ đăng ── */
@@ -36514,7 +36521,7 @@ G.VIEWS = G.VIEWS || {};
       return '<div style="padding:10px 0;border-bottom:1px solid var(--gita-vien-2)">' +
         '<b class="sm">' + t.no + '. ' + h(t.t) + '</b>' +
         '<p class="sm mt" style="line-height:1.75;color:#0B7350"><b>Đạt:</b> ' + h(t.dat) + '</p>' +
-        '<p class="sm mt" style="line-height:1.75;color:#B4720F"><b>Trượt:</b> ' + h(t.truot) + '</p></div>';
+        '<p class="sm mt" style="line-height:1.75;color:var(--warn)"><b>Trượt:</b> ' + h(t.truot) + '</p></div>';
     }).join('') + '</div>';
     o += '<p class="tiny dim mb" style="line-height:1.7">' +
       h((G.TIN_TIEUCHI_LUAT || {}).aiChon || '') + '</p>';
@@ -36524,9 +36531,9 @@ G.VIEWS = G.VIEWS || {};
     o += U.sec('CHUYỆN ĐƯỢC CHỌN THÌ NHÀ ẤY ĐƯỢC GÌ', '');
     o += '<div class="card mb">' +
       '<p class="sm" style="line-height:1.8"><b>Luôn có:</b> ' + h(tw.luonCo || '') + '</p>' +
-      '<p class="sm mt" style="line-height:1.8;color:#B4720F"><b>Chờ chủ hệ chốt:</b> ' +
+      '<p class="sm mt" style="line-height:1.8;color:var(--warn)"><b>Chờ chủ hệ chốt:</b> ' +
       h(tw.diemChoChu || '') + '</p>' +
-      '<p class="sm mt" style="line-height:1.8;color:#B4720F"><b>Chờ chủ hệ chốt:</b> ' +
+      '<p class="sm mt" style="line-height:1.8;color:var(--warn)"><b>Chờ chủ hệ chốt:</b> ' +
       h(tw.quaChoChu || '') + '</p>' +
       '<p class="tiny dim mt" style="line-height:1.7">' + h(tw.viRangBuoc || '') + '</p></div>';
 
@@ -36870,7 +36877,7 @@ G.VIEWS = G.VIEWS || {};
       '<p class="sm mt" style="line-height:1.8">' + h(loi.baMat || '') + '</p>' +
       '<p class="sm mt" style="line-height:1.8">' + h(loi.quyenCuaNha || '') + '</p>' +
       '<p class="tiny dim mt" style="line-height:1.7">' + h(loi.vi || '') + '</p>' +
-      '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>' + h(loi.hauQuaNeuGiau || '') + '</b></p></div>';
+      '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>' + h(loi.hauQuaNeuGiau || '') + '</b></p></div>';
 
     o += G.kaKhung ? G.kaKhung('coach-5-tang', 'dau') : '';
 
@@ -36906,7 +36913,7 @@ G.VIEWS = G.VIEWS || {};
           return '<div style="padding:7px 0;border-bottom:1px solid var(--gita-vien-2)">' +
             '<b class="sm">' + (i + 1) + '. ' + h(n.t) + '</b>' +
             '<p class="tiny dim mt" style="line-height:1.7">Đo bằng: ' + h(n.do) +
-            (thieu ? ' <span style="color:#B4720F">· thước ở gói nghề</span>' : '') +
+            (thieu ? ' <span style="color:var(--warn)">· thước ở gói nghề</span>' : '') +
             '</p></div>';
         }).join('') + '</div>' +
         '<p class="sm mt" style="line-height:1.8;color:' + t.c + '"><b>Kết quả:</b> ' + h(t.ketQua) + '</p>' +
@@ -36979,7 +36986,7 @@ G.VIEWS = G.VIEWS || {};
           (d.co ? '✓ ' : '○ ') + h(d.ten) + '</b>' +
           '<p class="tiny dim mt" style="line-height:1.7">' + h(d.dungDe) + '</p>' +
           (d.co ? '<p class="tiny mt" style="color:#0B7350">Chạy trên kho ' + h(d.theoKho) + '</p>'
-                : '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>Thiếu:</b> ' + h(d.thieu) + '</p>' +
+                : '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>Thiếu:</b> ' + h(d.thieu) + '</p>' +
                   '<p class="tiny dim mt" style="line-height:1.7">' + h(d.viSaoChuaLam || '') + '</p>') +
           '</div>';
       }).join('') + '</div>';
@@ -37036,7 +37043,7 @@ G.VIEWS = G.VIEWS || {};
         'Ghi lại để lần sau không bàn lại.');
       o += (G.CS_LECH || []).map(function (l) {
         return '<div class="card mb" style="border-color:#B4720F3e">' +
-          '<span class="tiny up" style="color:#B4720F">' + h(l.ma) + ' · ' + h(l.o) + '</span>' +
+          '<span class="tiny up" style="color:var(--warn)">' + h(l.ma) + ' · ' + h(l.o) + '</span>' +
           '<p class="sm mt" style="line-height:1.8"><b>Tranh ghi:</b> ' + h(l.tranhGhi) + '</p>' +
           '<p class="sm mt" style="line-height:1.8"><b>Hệ đã có:</b> ' + h(l.heDaCo) + '</p>' +
           '<p class="sm mt" style="line-height:1.8;color:#0B7350"><b>Xử lý:</b> ' + h(l.xuLy) + '</p>' +
@@ -54079,7 +54086,7 @@ G.VIEWS = G.VIEWS || {};
   function tabKhach() {
     var ds = khDs(), that = ds[0] && ds[0].that;
     var o = '<div class="ntv-note">' + ic('map', 'w-4 h-4') + ' Mỗi khách đi qua <b>5 giai đoạn chăm sóc</b>. Bảng theo dõi trọn hồ sơ: đang ở đâu, bước kế, tài liệu, dữ liệu buổi, đánh giá, bằng chứng và tiềm năng nâng gói.' +
-      (that ? ' <b style="color:#0B7350">Đang chạy trên khách thật.</b>' : ' <span style="color:#B4720F">(minh hoạ)</span>') + '</div>';
+      (that ? ' <b style="color:#0B7350">Đang chạy trên khách thật.</b>' : ' <span style="color:var(--warn)">(minh hoạ)</span>') + '</div>';
     o += '<div class="ntv-gdj">';
     GDJ.forEach(function (g) {
       var so = ds.filter(function (k) { return k.gdj === g.n; }).length;
@@ -54105,7 +54112,7 @@ G.VIEWS = G.VIEWS || {};
         '<td>' + lk('tang34', 'Tài liệu') + '</td>' +
         '<td class="tiny ntv-center">' + k.buoi + ' buổi</td>' +
         '<td class="tiny ntv-center">' + (k.danhGia != null ? ('<b>' + k.danhGia.toFixed(1) + '</b>/5') : '—') + '</td>' +
-        '<td class="tiny ntv-center">' + (k.bangChung === 'Có' ? '<span style="color:#0B7350;font-weight:700">✓ Có</span>' : '<span style="color:#B4720F">Chưa</span>') + '</td>' +
+        '<td class="tiny ntv-center">' + (k.bangChung === 'Có' ? '<span style="color:#0B7350;font-weight:700">✓ Có</span>' : '<span style="color:var(--warn)">Chưa</span>') + '</td>' +
         '<td><span class="ntv-nhom" style="--nc:' + tnc + '">' + h(tn) + '</span></td>' +
         '<td>' + lk('tt-cskh', 'Mở lộ trình') + '</td>' +
       '</tr>';
@@ -65244,7 +65251,7 @@ G.VIEWS = G.VIEWS || {};
   function tabKhach() {
     var ds = khDs(), that = ds[0] && ds[0].that;
     var o = '<div class="ntv-note">' + ic('map', 'w-4 h-4') + ' Mỗi gia đình đi qua <b>5 giai đoạn đồng hành</b>. Bảng theo dõi trọn hồ sơ: đang ở đâu, bước kế, tài liệu Coach, dữ liệu buổi, đánh giá, bằng chứng và tiềm năng nâng gói.' +
-      (that ? ' <b style="color:#0B7350">Đang chạy trên gia đình thật.</b>' : ' <span style="color:#B4720F">(minh hoạ)</span>') + '</div>';
+      (that ? ' <b style="color:#0B7350">Đang chạy trên gia đình thật.</b>' : ' <span style="color:var(--warn)">(minh hoạ)</span>') + '</div>';
     o += '<div class="ntv-gdj">';
     GDJ.forEach(function (g) {
       var so = ds.filter(function (k) { return k.gdj === g.n; }).length;
@@ -65270,7 +65277,7 @@ G.VIEWS = G.VIEWS || {};
         '<td>' + lk('kho-tai-lieu', 'Tài liệu') + '</td>' +
         '<td class="tiny ntv-center">' + k.buoi + ' buổi</td>' +
         '<td class="tiny ntv-center">' + (k.danhGia != null ? ('<b>' + k.danhGia.toFixed(1) + '</b>/5') : '—') + '</td>' +
-        '<td class="tiny ntv-center">' + (k.bangChung === 'Có' ? '<span style="color:#0B7350;font-weight:700">✓ Có</span>' : '<span style="color:#B4720F">Chưa</span>') + '</td>' +
+        '<td class="tiny ntv-center">' + (k.bangChung === 'Có' ? '<span style="color:#0B7350;font-weight:700">✓ Có</span>' : '<span style="color:var(--warn)">Chưa</span>') + '</td>' +
         '<td><span class="ntv-nhom" style="--nc:' + tnc + '">' + h(tn) + '</span></td>' +
         '<td>' + lk('bando-coach', 'Mở lộ trình') + '</td>' +
       '</tr>';
@@ -66243,7 +66250,7 @@ G.VIEWS = G.VIEWS || {};
   function tabKhach(S) {
     var ds = khDs(), that = ds[0] && ds[0].that;
     var o = '<div class="ntv-note">' + ic('map', 'w-4 h-4') + ' ' + S.cNote +
-      (that ? ' <b style="color:#0B7350">Đang chạy trên dữ liệu thật.</b>' : ' <span style="color:#B4720F">(minh hoạ)</span>') + '</div>';
+      (that ? ' <b style="color:#0B7350">Đang chạy trên dữ liệu thật.</b>' : ' <span style="color:var(--warn)">(minh hoạ)</span>') + '</div>';
     o += '<div class="ntv-gdj">';
     S.gdj.forEach(function (g) {
       var so = ds.filter(function (k) { return k.gdj === g.n; }).length;
@@ -66268,7 +66275,7 @@ G.VIEWS = G.VIEWS || {};
         '<td>' + lk(S.cTLkey, 'Mở') + '</td>' +
         '<td class="tiny ntv-center">' + k.buoi + '</td>' +
         '<td class="tiny ntv-center">' + (k.danhGia != null ? ('<b>' + k.danhGia.toFixed(1) + '</b>/5') : '—') + '</td>' +
-        '<td class="tiny ntv-center">' + (k.bangChung === 'Có' ? '<span style="color:#0B7350;font-weight:700">✓ Có</span>' : '<span style="color:#B4720F">Chưa</span>') + '</td>' +
+        '<td class="tiny ntv-center">' + (k.bangChung === 'Có' ? '<span style="color:#0B7350;font-weight:700">✓ Có</span>' : '<span style="color:var(--warn)">Chưa</span>') + '</td>' +
         '<td><span class="ntv-nhom" style="--nc:' + tnc + '">' + h(tn) + '</span></td>' +
         '<td>' + lk(S.cLoTrinh, 'Mở lộ trình') + '</td>' +
       '</tr>';
@@ -69950,7 +69957,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       return '<div class="co-the nhan" style="--c:'+h(c.c||'#185AB4')+';border-top:4px solid '+h(c.c||'#185AB4')+'">'+
         '<div class="co-hang" style="gap:6px">'+(c.tang||[]).map(tangChip).join('')+
           '<span class="co-tag">'+h(LOAI[c.loai]||c.loai||'')+'</span>'+(laTuTK(c)?'<span class="co-tag">tự thiết kế</span>':'')+'</div>'+
-        '<h3>'+h(c.ten)+'</h3>'+
+        '<h2>'+h(c.ten)+'</h2>'+
         '<div class="co-meta"><span>'+icI('calendar')+' '+h(c.ngay)+' ngày</span><span>· '+tongBuoi(c)+' buổi</span><span>· '+(c.gd||[]).length+' giai đoạn</span><span>· Coach từ '+h(vai(c.capCoach).short)+'</span></div>'+
         '<div class="sm"><b>Đối tượng:</b> '+h(c.doiTuong||'—')+'</div>'+
         '<p class="sm muted" style="margin:0;line-height:1.5">'+h(c.muc||'')+'</p>'+
@@ -69982,7 +69989,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     o += '<div class="co-the nhan mb" style="--c:'+h(c)+';border-left:5px solid '+h(c)+'">'+
       '<div class="co-hang" style="gap:6px">'+(ct.tang||[]).map(tangChip).join('')+'<span class="co-tag">'+h(LOAI[ct.loai]||ct.loai||'')+'</span>'+
         (laTuTK(ct)?'<span class="co-tag">tự thiết kế</span>':'')+'<span class="tiny muted">mã '+h(ct.ma)+'</span></div>'+
-      '<h3 style="font-size:19px">'+h(ct.ten)+'</h3>'+
+      '<h2 style="font-size:19px">'+h(ct.ten)+'</h2>'+
       '<div class="co-meta"><span>'+h(ct.ngay)+' ngày</span><span>· '+tongBuoi(ct)+' buổi</span><span>· '+(ct.gd||[]).length+' giai đoạn</span><span>· '+dkDang(ct.ma).length+' nhà đang chạy</span></div>'+
       '<p style="margin:2px 0 0;line-height:1.55"><b>Mục tiêu.</b> '+h(ct.muc||'—')+'</p>'+
       '<div class="co-hang mt"><button class="btn sm" data-co="ct-ghep-mo" data-ma="'+h(ct.ma)+'">'+ic('plus','w-3 h-3')+'Ghép cho nhà</button>'+
@@ -71593,7 +71600,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     return '<div class="co-the nhan" style="--c:'+t.c+'"><div class="co-meta"><span style="color:'+t.c+';font-weight:700">'+h(t.k+' · '+t.short)+'</span>'+
       '<span>'+h(g.ma)+'</span><span>'+h(tangTxt(g.tang))+'</span><span>'+(g.ngay||'—')+' ngày</span>'+
       (laTu(g) ? '<span class="co-tag">'+(g.duyet?'tự soạn · đã duyệt':'tự soạn')+'</span>' : '')+'</div>'+
-      '<h3>'+h(g.ten)+'</h3><p class="tiny muted" style="margin:0;line-height:1.5">'+h(g.muc||'')+'</p>'+(them||'')+
+      '<h2>'+h(g.ten)+'</h2><p class="tiny muted" style="margin:0;line-height:1.5">'+h(g.muc||'')+'</p>'+(them||'')+
       '<div><button class="btn ghost sm" data-co="gp-mo" data-ma="'+h(g.ma)+'">'+ic('eye','w-3 h-3')+'Xem chi tiết</button></div></div>';
   }
 
@@ -74140,7 +74147,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       return '<div class="co-the nhan" data-nlp-tim="'+h(chuoiTim(k))+'" style="--c:'+h(c)+';border-top:4px solid '+h(c)+'">'+
         '<div class="co-hang" style="gap:6px">'+U.chip(TEN_NHOM[k.nhom]||k.nhom, MAU_NHOM[k.nhom])+(k.tru||[]).map(function(t){ return U.chip(t, mauTru(t)); }).join('')+
           (k.icf||[]).map(function(x){ return '<span class="co-tag">'+h(x)+'</span>'; }).join('')+(daGhim(k.ma)?'<span class="co-tag" style="margin-left:auto">'+icI('star')+' đã ghim</span>':'')+'</div>'+
-        '<h3>'+h(k.ten)+'</h3><div class="tiny muted" style="margin-top:-4px"><i>'+h(k.goc||'')+'</i></div>'+
+        '<h2>'+h(k.ten)+'</h2><div class="tiny muted" style="margin-top:-4px"><i>'+h(k.goc||'')+'</i></div>'+
         hinh(k, false)+
         '<p class="sm" style="margin:0;line-height:1.5">'+h(k.muc||'')+'</p>'+
         '<div class="co-hang" style="margin-top:auto;padding-top:6px">'+badge(k)+'<span class="co-grow"></span>'+
@@ -74299,7 +74306,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     o += '<div class="co-ds mb">'+ QT.map(function(q, i){
       return '<div class="co-the" style="border-left:5px solid '+MAU7[i]+'">'+
         '<div class="co-hang"><span class="co-so" style="flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;background:'+MAU7[i]+'">'+(i+1)+'</span>'+
-          '<h3 class="co-grow" style="min-width:160px">'+h(q.ten)+'</h3><span class="co-hang" style="gap:4px">'+q.icf.map(function(c){ return '<span class="co-tag" title="'+h((icf(c)||{}).ten||c)+'">'+h(c)+' · '+h((icf(c)||{}).ten||'')+'</span>'; }).join('')+'</span></div>'+
+          '<h2 class="co-grow" style="min-width:160px">'+h(q.ten)+'</h2><span class="co-hang" style="gap:4px">'+q.icf.map(function(c){ return '<span class="co-tag" title="'+h((icf(c)||{}).ten||c)+'">'+h(c)+' · '+h((icf(c)||{}).ten||'')+'</span>'; }).join('')+'</span></div>'+
         '<p class="sm" style="margin:0;line-height:1.55"><b>Làm gì.</b> '+h(q.lam)+'</p>'+
         '<div class="grid g2" style="gap:8px">'+q.hoi.map(function(c){ return '<div class="co-dong" style="border-left:3px solid '+MAU7[i]+'"><span class="sm"><i>“'+h(c)+'”</i></span></div>'; }).join('')+'</div>'+
         '<div class="co-hang" style="gap:6px"><span class="tiny muted">Công cụ</span>'+q.kt.map(chipKT).join('')+'</div>'+
@@ -74371,7 +74378,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     o += '<div class="co-ds mb">'+ P.map(function(p, i){
       return '<div class="co-the" style="border-left:5px solid '+MAU7[i]+'">'+
         '<div class="co-hang"><span class="co-so" style="flex:none;width:34px;height:30px;border-radius:9px;display:grid;place-items:center;font-weight:800;color:#fff;background:'+MAU7[i]+'">P'+p.so+'</span>'+
-          '<h3 class="co-grow" style="min-width:160px">'+h(p.ten)+'</h3><span class="tiny muted">≈ '+Math.round(p.ty*100)+'% thời lượng</span></div>'+
+          '<h2 class="co-grow" style="min-width:160px">'+h(p.ten)+'</h2><span class="tiny muted">≈ '+Math.round(p.ty*100)+'% thời lượng</span></div>'+
         '<p class="sm" style="margin:0;line-height:1.55"><b>Mục đích.</b> '+h(p.muc)+'</p>'+
         '<div class="co-cb"><div style="--m:'+MAU7[i]+'">'+icI('shield')+'<span class="sm"><b>Cổng:</b> '+h(p.cong)+'</span></div></div>'+
         '<div class="grid g2" style="gap:10px">'+
@@ -77442,7 +77449,7 @@ var G = window.G || {}; window.G = G;
     var nguoi = d.nguoi || [], bayNgay = new Date(Date.now() - 7 * 864e5).toISOString();
     o += U.sec('Từng người (nhân sự)', 'Ai đang quá tải, ai đang ít việc, ai lâu không vào — căn cứ để phân bổ');
     o += '<div class="co-tb mb"><table><thead><tr><th>Người</th><th>Vai</th><th>Lần vào cuối</th><th>Thao tác</th><th>Lượt chạm</th><th>CRM</th><th>Nhà kèm</th><th>Việc tối ưu</th><th>Tín hiệu</th></tr></thead><tbody>'+nguoi.map(function(p){
-      var tin = []; if(!p.lanCuoi || p.lanCuoi < bayNgay) tin.push('<span style="color:#BE0E16">lâu không vào</span>'); if(p.nhaKem > 40 || p.viecMo >= 3) tin.push('<span style="color:#B4720F">quá tải</span>'); if(p.viecTre) tin.push('<span style="color:#BE0E16">'+p.viecTre+' việc trễ</span>');
+      var tin = []; if(!p.lanCuoi || p.lanCuoi < bayNgay) tin.push('<span style="color:#BE0E16">lâu không vào</span>'); if(p.nhaKem > 40 || p.viecMo >= 3) tin.push('<span style="color:var(--warn)">quá tải</span>'); if(p.viecTre) tin.push('<span style="color:#BE0E16">'+p.viecTre+' việc trễ</span>');
       return '<tr><td><b>'+h(p.u)+'</b>'+(p.ten ? '<div class="tiny muted">'+h(p.ten)+'</div>' : '')+'</td><td>'+h(p.vai)+'</td><td class="tiny">'+(p.lanCuoi ? h(new Date(p.lanCuoi).toLocaleDateString('vi-VN')) : '—')+'</td>'+
         '<td class="so">'+so(p.thaoTac)+'</td><td class="so">'+so(p.cham)+'</td><td class="so">'+so(p.crm)+'</td><td class="so">'+so(p.nhaKem)+'</td><td class="so">'+so(p.viecMo)+'</td><td class="tiny">'+(tin.join(' · ') || '<span style="color:#0B7350">ổn</span>')+'</td></tr>'; }).join('')+'</tbody></table></div>';
     return o;
@@ -77541,7 +77548,7 @@ var G = window.G || {}; window.G = G;
     var o = U.sec('Quy trình tối ưu khép kín', 'Bảy bước — mỗi vòng kết thúc bằng một lần đo lại') + '<div class="card pad-sm mb"><ol class="sm" style="margin:0;padding-left:20px;line-height:1.8">'+T().QUY_TRINH.map(function(q){ return '<li><b>'+h(q[0])+'</b> — '+h(q[1])+'</li>'; }).join('')+'</ol></div>';
     o += U.sec('Bản đồ gom màn', 'Mỗi khối dùng các màn này; màn số mẫu trùng việc đã ghi rõ màn thay thế') + T().KHOI.concat([{ ma:'TONG', ten:'Màn tổng quan cũ' }]).map(function(K){
       return '<div class="card pad-sm mb"><b class="sm">'+h(K.ten)+'</b><div class="mt">'+(T().BAN_DO[K.ma]||[]).map(function(m){ var L = LOAI[m[2]] || ['', '#73849F'];
-        return '<div class="co-dong"><span class="co-tag" style="color:'+L[1]+';background:color-mix(in srgb,'+L[1]+' 13%,transparent);min-width:72px;text-align:center">'+h(L[0])+'</span><span class="co-grow sm">'+h(m[1])+(m[3] ? '<br><span class="tiny" style="color:#B4720F">'+h(m[3])+'</span>' : '')+'</span><button class="btn ghost sm" data-v="'+h(m[0])+'">Mở</button></div>'; }).join('')+'</div></div>'; }).join('');
+        return '<div class="co-dong"><span class="co-tag" style="color:'+L[1]+';background:color-mix(in srgb,'+L[1]+' 13%,transparent);min-width:72px;text-align:center">'+h(L[0])+'</span><span class="co-grow sm">'+h(m[1])+(m[3] ? '<br><span class="tiny" style="color:var(--warn)">'+h(m[3])+'</span>' : '')+'</span><button class="btn ghost sm" data-v="'+h(m[0])+'">Mở</button></div>'; }).join('')+'</div></div>'; }).join('');
     return o;
   }
 
@@ -82383,7 +82390,7 @@ var G = window.G || {}; window.G = G;
     return '<div class="row" style="gap:8px;flex-wrap:wrap;align-items:center">'+
         '<span class="bd-chip">'+kh.canh.length+' cảnh</span><span class="bd-chip">'+dem.noi+' cảnh nói</span><span class="bd-chip">'+dem.dien+' cảnh diễn</span>'+
         '<span class="bd-chip">~'+kh.tongGiay+' giây phim</span></div>'+
-      (kh.canhBao.length ? '<p class="bd-tip" style="color:#B4720F;margin-top:6px">'+kh.canhBao.map(h).join('<br>')+'</p>' : '')+
+      (kh.canhBao.length ? '<p class="bd-tip" style="color:var(--warn);margin-top:6px">'+kh.canhBao.map(h).join('<br>')+'</p>' : '')+
       '<details style="margin-top:8px"><summary class="tiny muted" style="cursor:pointer">Xem xưởng phân cảnh thế nào</summary>'+
       '<ol class="tiny" style="margin:6px 0 0 18px;color:var(--ink-2);line-height:1.6">'+kh.canh.map(function(c){
         var ten = c.nv.map(function(id){ return (s.nv.filter(function(n){return n.id===id;})[0]||{}).ten||id; }).join(' + ');
@@ -82643,14 +82650,14 @@ var G = window.G || {}; window.G = G;
       '<span class="bd-chip">'+kh.canh.length+' cảnh · ~'+Math.round(kh.tongGiay/6)/10+' phút</span>'+
       '<span class="bd-chip">'+noi+' cảnh nói (khớp môi)</span><span class="bd-chip">'+(kh.canh.length-noi)+' cảnh diễn</span></div>'+
       '<p class="bd-tip" style="margin-top:6px">≈ '+(Math.round(u.gioGPU*10)/10)+' giờ GPU Kaggle cho phim này (ước tính, chưa đo thật) · Kaggle cho ~30 giờ/tuần → khoảng <b>'+u.phimThang+' phim/tháng</b>.</p>'+
-      (kh.canhBao.length?'<p class="bd-tip" style="color:#B4720F">'+kh.canhBao.map(h).join('<br>')+'</p>':'');
+      (kh.canhBao.length?'<p class="bd-tip" style="color:var(--warn)">'+kh.canhBao.map(h).join('<br>')+'</p>':'');
     o += '<div class="gd-wrap" style="margin-top:8px"><table class="gd-tb"><thead><tr><th>#</th><th>Loại</th><th>Nội dung</th><th>Giây</th><th>Ảnh khung đầu (Anh/số.jpg)</th></tr></thead><tbody>'+
       kh.canh.map(function(c){
         var nd = (c.nv.length?h(c.nv.map(tenNv).join(' + '))+' · ':'')+(c.thoai?'“'+h(c.thoai)+'”':h(c.mo_ta||''))+
           '<br><span class="tiny muted">Ảnh nên có: '+h(goiYAnh(c))+'</span>'+
-          (c.khongRo?'<br><span class="tiny" style="color:#B4720F">⚠ Mô tả không nhắc ai trong dàn nhân vật — đang dùng '+h(tenNv(c.nv[0]))+'. Ảnh Anh/'+c.id+'.jpg của anh/chị sẽ quyết định ai xuất hiện.</span>':'');
+          (c.khongRo?'<br><span class="tiny" style="color:var(--warn)">⚠ Mô tả không nhắc ai trong dàn nhân vật — đang dùng '+h(tenNv(c.nv[0]))+'. Ảnh Anh/'+c.id+'.jpg của anh/chị sẽ quyết định ai xuất hiện.</span>':'');
         var anh = coAnh[c.id] ? '<span style="color:#0B7350">✓ Anh/'+c.id+'.jpg</span>'
-          : (c.nv[0] && coNv[c.nv[0]] ? '<span style="color:#B4720F">dùng ảnh nhân vật</span><br><span class="tiny muted">nên thêm Anh/'+c.id+'.jpg</span>'
+          : (c.nv[0] && coNv[c.nv[0]] ? '<span style="color:var(--warn)">dùng ảnh nhân vật</span><br><span class="tiny muted">nên thêm Anh/'+c.id+'.jpg</span>'
           : '<span style="color:#B42318">thiếu Anh/'+c.id+'.jpg</span>');
         return '<tr><td>'+c.id+'</td><td>'+(c.loai==='noi'?'🗣 Nói':'🎬 Diễn')+'</td><td style="min-width:240px">'+nd+'</td><td>'+c.giay+'</td><td>'+(s.tep?anh:'<span class="tiny muted">Anh/'+c.id+'.jpg</span>')+'</td></tr>'; }).join('')+
       '</tbody></table></div>';
@@ -82665,12 +82672,12 @@ var G = window.G || {}; window.G = G;
       Object.keys(NHOM).map(function(n){ return chip(n).replace('</span>',' · '+Math.round(u.g[n])+'s</span>'); }).join('')+'</div>'+
       '<p class="bd-tip" style="margin-top:6px">AI chỉ chiếm '+(kh.tongGiay?Math.round(u.g.ai/kh.tongGiay*100):0)+'% thời lượng → ≈ '+(Math.round(u.gioGPU*10)/10)+' giờ GPU Kaggle mỗi phim. '+
         'Kaggle cho ~30 giờ/tuần → làm được khoảng <b>'+u.phimThang+' phim/tháng</b> (phần quay thật và ráp không tốn giờ GPU).</p>'+
-      (kh.canhBao.length?'<p class="bd-tip" style="color:#B4720F">'+kh.canhBao.map(h).join('<br>')+'</p>':'');
+      (kh.canhBao.length?'<p class="bd-tip" style="color:var(--warn)">'+kh.canhBao.map(h).join('<br>')+'</p>':'');
     o += '<div class="gd-wrap" style="margin-top:8px"><table class="gd-tb"><thead><tr><th>#</th><th>Làm bằng</th><th>Nội dung</th><th>Giây</th><th>Tệp trên Drive</th></tr></thead><tbody>'+
       kh.canh.map(function(c){
         var noi = (c.nv.length?h(c.nv.map(tenNv).join(' + '))+' · ':'')+(c.thoai?'“'+h(c.thoai.slice(0,80))+(c.thoai.length>80?'…':'')+'”':h((c.mo_ta||'').slice(0,80)))+
-          (c.khongRo?'<br><span class="tiny" style="color:#B4720F">⚠ Mô tả không nhắc ai trong dàn nhân vật — đang tạm dùng '+h(tenNv(c.nv[0]))+'. Thêm nhân vật ở tab Làm phim nhanh nếu cần.</span>':'');
-        var tep = s.tep ? (co[c.id] ? (co[c.id]===c.nhom?'<span style="color:#0B7350">✓ '+c.id+'</span>':'<span style="color:#B4720F">✓ '+c.id+' (ở thư mục '+h(THU_MUC[co[c.id]]||co[c.id])+')</span>') : '<span style="color:#B42318">thiếu '+c.id+'.mp4</span>') : '<span class="tiny muted">'+c.id+'.mp4 → '+THU_MUC[c.nhom]+'</span>';
+          (c.khongRo?'<br><span class="tiny" style="color:var(--warn)">⚠ Mô tả không nhắc ai trong dàn nhân vật — đang tạm dùng '+h(tenNv(c.nv[0]))+'. Thêm nhân vật ở tab Làm phim nhanh nếu cần.</span>':'');
+        var tep = s.tep ? (co[c.id] ? (co[c.id]===c.nhom?'<span style="color:#0B7350">✓ '+c.id+'</span>':'<span style="color:var(--warn)">✓ '+c.id+' (ở thư mục '+h(THU_MUC[co[c.id]]||co[c.id])+')</span>') : '<span style="color:#B42318">thiếu '+c.id+'.mp4</span>') : '<span class="tiny muted">'+c.id+'.mp4 → '+THU_MUC[c.nhom]+'</span>';
         return '<tr><td>'+c.id+'</td><td><select onchange="G.axda.doiNhom(\''+c.khoa+'\',this.value)" style="padding:4px;border:1px solid var(--line);border-radius:8px">'+
           Object.keys(NHOM).map(function(n){ return '<option value="'+n+'"'+(c.nhom===n?' selected':'')+'>'+NHOM[n][0]+(c.tuDong===n?' (gợi ý)':'')+'</option>'; }).join('')+'</select></td>'+
           '<td style="min-width:220px">'+noi+'</td><td>'+c.giay+'</td><td>'+tep+'</td></tr>'; }).join('')+'</tbody></table></div>';
@@ -82691,7 +82698,7 @@ var G = window.G || {}; window.G = G;
     o += '<div class="row mb" style="gap:8px;flex-wrap:wrap">'+
       '<button class="btn sm '+(A?'':'ghost')+'" onclick="G.axda.cheDo(\'ai100\')">✨ 100% AI từ ảnh</button>'+
       '<button class="btn sm '+(A?'ghost':'')+'" onclick="G.axda.cheDo(\'lai\')">🎥 Quay thật + AI</button></div>';
-    if(!k) o += '<div class="card pad-sm mb"><p class="tiny" style="color:#B4720F">Cần nối kho Google Drive trước (tab 🗄 Kho phim → Cài đặt kho Drive).</p></div>';
+    if(!k) o += '<div class="card pad-sm mb"><p class="tiny" style="color:var(--warn)">Cần nối kho Google Drive trước (tab 🗄 Kho phim → Cài đặt kho Drive).</p></div>';
     /* 1 · kịch bản */
     o += '<div class="card pad-sm mb"><b class="sm">① Kịch bản</b>'+
       '<div class="row mt" style="gap:8px;flex-wrap:wrap"><input type="text" value="'+h(s.ten)+'" onchange="G.axda.dat(\'ten\',this.value)" placeholder="Tên dự án" style="flex:1;min-width:200px;padding:8px;border:1px solid var(--line);border-radius:8px">'+
@@ -83380,7 +83387,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     o += '<div class="gd-wrap mb"><table class="gd-tb"><thead><tr><th>#</th><th>Cảnh</th><th>Động cơ sẽ chạy</th><th>Loại</th></tr></thead><tbody>'+
       p.canh.map(function(c,i){ var nv=nvById(c.nvId)||{}; var k=chonDongCo(c,p); var phi=!laMo(k);
         return '<tr><td>'+(i+1)+'</td><td>'+h(nv.ten||'?')+' · '+h((c.boiCanh||'').slice(0,40))+'</td><td>'+h(tenDC(k))+(c.dongCo?' <span class="bd-chip">riêng</span>':'')+'</td>'+
-          '<td><span class="bd-chip" style="'+(phi?'border-color:#B4720F;color:#B4720F':'')+'">'+(phi?('Có phí'+(GIA[k]!=null?' · $'+GIA[k]+'/s':'')):'Free')+'</span></td></tr>'; }).join('')+
+          '<td><span class="bd-chip" style="'+(phi?'border-color:#B4720F;color:var(--warn)':'')+'">'+(phi?('Có phí'+(GIA[k]!=null?' · $'+GIA[k]+'/s':'')):'Free')+'</span></td></tr>'; }).join('')+
       '</tbody></table></div>';
     o += '<div class="card pad-sm"><b class="sm">Dây chuyền hậu kỳ cao cấp</b><div style="margin-top:8px">'+
       HAUKY.map(function(x){ return '<label style="display:flex;gap:9px;align-items:center;padding:6px 0;font-size:13px;color:var(--ink-2)">'+

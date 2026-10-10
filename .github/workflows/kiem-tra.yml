@@ -170,5 +170,8 @@ jobs:
       - name: Máy chủ cấp khoá bản .exe — dấu máy không chép được, duyệt đúng một tài khoản
         run: node tools/thu-may-chu-may-tinh.mjs
 
+      - name: Soát thiết kế tĩnh — không chuyển động nảy, không chữ chạy, không màu cấm (cả dạng %23), chữ chuyển sắc không thêm chỗ mới
+        run: node tools/thu-thiet-ke-tinh.mjs
+
       - name: Móc chặn commit — quét toàn bộ tệp đang theo dõi
         run: node tools/chan-commit.mjs --tat-ca

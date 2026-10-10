@@ -226,7 +226,7 @@ var G = window.G || {}; window.G = G;
     return '<div class="row" style="gap:8px;flex-wrap:wrap;align-items:center">'+
         '<span class="bd-chip">'+kh.canh.length+' cảnh</span><span class="bd-chip">'+dem.noi+' cảnh nói</span><span class="bd-chip">'+dem.dien+' cảnh diễn</span>'+
         '<span class="bd-chip">~'+kh.tongGiay+' giây phim</span></div>'+
-      (kh.canhBao.length ? '<p class="bd-tip" style="color:#B4720F;margin-top:6px">'+kh.canhBao.map(h).join('<br>')+'</p>' : '')+
+      (kh.canhBao.length ? '<p class="bd-tip" style="color:var(--warn);margin-top:6px">'+kh.canhBao.map(h).join('<br>')+'</p>' : '')+
       '<details style="margin-top:8px"><summary class="tiny muted" style="cursor:pointer">Xem xưởng phân cảnh thế nào</summary>'+
       '<ol class="tiny" style="margin:6px 0 0 18px;color:var(--ink-2);line-height:1.6">'+kh.canh.map(function(c){
         var ten = c.nv.map(function(id){ return (s.nv.filter(function(n){return n.id===id;})[0]||{}).ten||id; }).join(' + ');

@@ -208,7 +208,7 @@ G.VIEWS['ra-soat-kh'] = function(){
     return '<button class="ck '+(d?'done':'')+'" data-check="m'+i+'" style="align-items:flex-start">'+
       '<span class="bx">'+ic('check','w-3 h-3')+'</span>'+
       '<span class="tx"><b>'+h(m.ma)+' · '+h(m.ten)+'</b>'+
-      '<span style="display:block;margin-top:4px;font-style:italic;color:var(--gold-2)">"'+h(m.hoi)+'"</span>'+
+      '<span style="display:block;margin-top:4px;font-style:italic;color:var(--gold-ink)">"'+h(m.hoi)+'"</span>'+
       '<span style="display:block;margin-top:5px;color:var(--bad)">⚠ '+h(m.dau)+'</span></span></button>';
   }).join('') + '</div>';
   return o;
@@ -527,7 +527,7 @@ G.VIEWS['quy-trinh-tc'] = function(){
   o += U.sec(L.ten, L.cot);
   o += '<div class="card glow mb" style="border-color:var(--gita-vien-2)">'+
     '<div class="up mb" style="color:var(--gold-ink)">CÔNG THỨC</div>'+
-    '<p class="mono" style="font-size:14.5px;line-height:1.8;color:var(--gold-2)">'+h(L.congThuc)+'</p></div>';
+    '<p class="mono" style="font-size:14.5px;line-height:1.8;color:var(--gold-ink)">'+h(L.congThuc)+'</p></div>';
   o += '<div class="grid g2 mb">' + L.thanhPhan.map(function(p){
     return '<div class="card" style="border-color:'+p.c+'2a">'+
       '<b style="font-size:16px;display:block;margin-bottom:8px;color:'+p.c+'">'+h(p.t)+'</b>'+

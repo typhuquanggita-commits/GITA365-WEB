@@ -208,7 +208,7 @@ G.VIEWS = G.VIEWS || {};
         '<p class="sm mt" style="line-height:1.8"><b>Vì sao rơi vào:</b> ' + h(r.viSaoRoiVao) + '</p>' +
         '<p class="sm mt" style="line-height:1.8;color:' + r.c + '"><b>Đường về:</b> ' + h(r.duongVe) + '</p>' +
         '<p class="tiny dim mt" style="line-height:1.7">Đo bằng: ' + h(r.doBang) + '</p>' +
-        (r.banGocKhongRo ? '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>Chữ bản gốc:</b> ' +
+        (r.banGocKhongRo ? '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>Chữ bản gốc:</b> ' +
           h(r.banGocKhongRo) + '</p>' : '') + '</div>';
     }).join('');
     o += '<p class="tiny dim mb" style="line-height:1.7"><b>' +

@@ -249,7 +249,7 @@ function veMuoiViec(){
         }).join('')+
       '</select>'+
       '<button class="btn ghost sm" data-bdsao="'+i+'" title="Đánh dấu là một trong ba việc quan trọng nhất" '+
-        'style="flex:none;'+(v.sao ? 'color:#B4720F;border-color:#B4720F' : '')+'">'+
+        'style="flex:none;'+(v.sao ? 'color:var(--warn);border-color:#B4720F' : '')+'">'+
         (v.sao ? '★' : '☆')+'</button>'+
       (v.v ? '<button class="btn ghost sm" data-v="'+h(v.v)+'" style="flex:none">Mở màn</button>' : '')+
     '</div>';

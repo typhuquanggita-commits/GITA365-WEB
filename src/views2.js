@@ -399,7 +399,7 @@ G.VIEWS['chin-vai'] = function(){
       '<div class="row" style="gap:7px;margin-bottom:2px"><span class="id" style="color:'+c+'">'+h(v.id)+'</span>'+
       (co?'<span style="color:var(--ok);margin-left:auto">'+ic('check','w-4 h-4')+'</span>'
          :'<span class="chip" style="margin-left:auto;color:var(--warn);border-color:rgba(251,191,36,.3)">còn trống</span>')+'</div>'+
-      '<h5 style="color:'+c+'">'+h(v.ten)+'</h5>'+
+      '<h2 style="color:'+c+'">'+h(v.ten)+'</h2>'+
       '<div class="q">'+h(v.cauHoi)+'</div>'+
       '<p>'+h(v.vaiTro)+'</p>'+
       '<div class="own">'+ic('users','w-3 h-3')+'<span>'+h(v.aiGiu)+'</span></div>'+
@@ -417,7 +417,7 @@ G.vaiModal = function(id){
   var o = '<div class="row wrap" style="gap:7px;margin-bottom:9px">'+U.chip(v.id,'var(--gita)')+U.chip('Khoang '+v.khoang)+
     (v.goc?U.chip('Gốc: '+v.goc):'')+'</div>'+
     '<h2 style="font-size:21px;font-weight:800;margin-bottom:8px">'+h(v.ten)+'</h2>'+
-    '<p class="serif" style="font-size:16px;font-style:italic;color:var(--gold-2);margin-bottom:14px">'+h(v.cauHoi)+'</p>'+
+    '<p class="serif" style="font-size:16px;font-style:italic;color:var(--gold-ink);margin-bottom:14px">'+h(v.cauHoi)+'</p>'+
     '<p class="sm dim mb" style="line-height:1.7">'+h(v.vaiTro)+'</p>'+
     '<div class="up muted mb mt2">VIỆC CỤ THỂ</div>'+U.list(v.viecCuThe,'var(--gita)')+
     '<div class="grid g2 mt2" style="gap:10px">'+

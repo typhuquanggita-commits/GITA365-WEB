@@ -619,7 +619,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     o += '<div class="gd-wrap mb"><table class="gd-tb"><thead><tr><th>#</th><th>Cảnh</th><th>Động cơ sẽ chạy</th><th>Loại</th></tr></thead><tbody>'+
       p.canh.map(function(c,i){ var nv=nvById(c.nvId)||{}; var k=chonDongCo(c,p); var phi=!laMo(k);
         return '<tr><td>'+(i+1)+'</td><td>'+h(nv.ten||'?')+' · '+h((c.boiCanh||'').slice(0,40))+'</td><td>'+h(tenDC(k))+(c.dongCo?' <span class="bd-chip">riêng</span>':'')+'</td>'+
-          '<td><span class="bd-chip" style="'+(phi?'border-color:#B4720F;color:#B4720F':'')+'">'+(phi?('Có phí'+(GIA[k]!=null?' · $'+GIA[k]+'/s':'')):'Free')+'</span></td></tr>'; }).join('')+
+          '<td><span class="bd-chip" style="'+(phi?'border-color:#B4720F;color:var(--warn)':'')+'">'+(phi?('Có phí'+(GIA[k]!=null?' · $'+GIA[k]+'/s':'')):'Free')+'</span></td></tr>'; }).join('')+
       '</tbody></table></div>';
     o += '<div class="card pad-sm"><b class="sm">Dây chuyền hậu kỳ cao cấp</b><div style="margin-top:8px">'+
       HAUKY.map(function(x){ return '<label style="display:flex;gap:9px;align-items:center;padding:6px 0;font-size:13px;color:var(--ink-2)">'+

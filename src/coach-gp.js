@@ -57,7 +57,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     return '<div class="co-the nhan" style="--c:'+t.c+'"><div class="co-meta"><span style="color:'+t.c+';font-weight:700">'+h(t.k+' · '+t.short)+'</span>'+
       '<span>'+h(g.ma)+'</span><span>'+h(tangTxt(g.tang))+'</span><span>'+(g.ngay||'—')+' ngày</span>'+
       (laTu(g) ? '<span class="co-tag">'+(g.duyet?'tự soạn · đã duyệt':'tự soạn')+'</span>' : '')+'</div>'+
-      '<h3>'+h(g.ten)+'</h3><p class="tiny muted" style="margin:0;line-height:1.5">'+h(g.muc||'')+'</p>'+(them||'')+
+      '<h2>'+h(g.ten)+'</h2><p class="tiny muted" style="margin:0;line-height:1.5">'+h(g.muc||'')+'</p>'+(them||'')+
       '<div><button class="btn ghost sm" data-co="gp-mo" data-ma="'+h(g.ma)+'">'+ic('eye','w-3 h-3')+'Xem chi tiết</button></div></div>';
   }
 

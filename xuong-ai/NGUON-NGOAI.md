@@ -46,3 +46,46 @@ chạy bằng Docker Compose.
 
 Nếu sau này anh muốn dùng waoowaoo nội bộ: chạy trên một máy riêng, kho riêng, tài khoản
 OpenRouter có trần chi tiêu, không đưa dữ liệu khách hàng vào. Đó là quyết định của chủ sở hữu.
+
+## pbakaus/impeccable · commit d631a88 (8/10/2026) · Apache-2.0
+
+Bộ hướng dẫn thiết kế cho trợ lý lập trình AI: một kỹ năng, 24 lệnh (soát, phê, đánh bóng…),
+và 59 luật dò lỗi giao diện tất định chạy không cần mô hình AI. Viết bằng Rust, phát hành như một
+chương trình chạy sẵn.
+
+**Quyết định: lấy Ý TƯỞNG luật và bộ từ chung, viết lại bằng mã của mình. Không cài chương trình,
+không cài hook, không chép tệp kỹ năng.**
+
+| Phần | Quyết định | Lý do |
+|---|---|---|
+| Chương trình `impeccable` (Rust) | **Loại** | Bộ khởi chạy tải một tệp chạy được về `~/.impeccable/bin/` ở lần đầu dùng. Chạy tệp nhị phân tải từ mạng là mở một đường chuỗi cung ứng vào máy làm việc. |
+| Hook tự chạy sau mỗi lần sửa tệp | **Loại** | Phải sửa `.claude/settings.json` và chạy mã ngoài mỗi lần sửa. Trái luật "không tự sửa mã", và để chủ sở hữu quyết. |
+| 24 tệp lệnh (tiếng Anh) | **Loại** chép nguyên | Viết cho trang SaaS chung chung. Bộ từ chung thì giữ, viết lại thành `.claude/skills/gita-thiet-ke/` bằng tiếng Việt, gắn vào luật và token của kho này. |
+| 59 luật dò | **Nhận ý tưởng 19 luật** → `tools/luat-thiet-ke.json` | Mã đo viết lại từ đầu bằng JS, chạy trên Playwright có sẵn: `tools/soat-thiet-ke.js` (trình duyệt) và `tools/thu-thiet-ke-tinh.mjs` (CI). Không chép một dòng mã nào. |
+| Luật trùng cái đã có | Không lấy | Tràn ngang, nút nhỏ, chữ dưới 10px, ô nhập dưới 16px: `do-khung-man.js` đã đo. |
+| Luật "chữ Inter, chữ Fraunces", "kem be", "tím–xanh" | Không lấy | Kho đã chốt phông Be Vietnam Pro + Playfair và màu thương hiệu lấy từ logo. Đo lại là đo lời khai đã chốt. |
+| Luật "dùng gạch dài quá nhiều", "từ sáo quảng cáo" | Không lấy | Văn phong của kho dùng gạch dài đúng cách. Lời quảng cáo đã có bộ lọc QC riêng. |
+| Ý `PRODUCT.md` / `DESIGN.md` | Không dựng tệp mới | Sự thật sản phẩm đã ở `CLAUDE.md`, token đã ở `:root` của `style.css`. Tệp thứ hai sẽ là bản chép thứ hai. Bộ đo đọc thẳng `style.css`. |
+
+**Lần chạy đầu đã tìm ra lỗi thật** (đều đã sửa, trừ chỗ nằm trong gói nghề `gita-nghe.js` vốn phải
+giữ nguyên từng byte):
+- favicon vẫn dùng màu vàng cũ `#F5B942` đã bị cấm, viết dạng `%23F5B942` nên phép kiểm cũ không thấy;
+- 17 chỗ dùng `--gold-2` (xanh nhạt, 2,91:1) làm màu chữ — nhãn đang chọn, câu trích, tab đang mở;
+- 52 chỗ chữ cảnh báo gõ tay `#B4720F` (3,92:1) → token `--warn`, đổi được theo nền Sáng/Tối;
+- bảng màu biểu đồ có hai tên cho cùng một xanh nhạt;
+- 8 chỗ tiêu đề nhảy bậc (h1 → h3/h4/h5) → đổi sang `h2` đúng bậc, giữ cỡ chữ bằng cách đổi luôn bộ chọn CSS;
+- chữ đặt lên màu biểu đồ: trắng ở nền Sáng, mực sẫm ở nền Tối (token `--chu-tren-mau`) — chữ trắng trên tám màu sáng của nền Tối chỉ còn 1,7–3,3:1.
+
+**Chưa làm, nói thẳng:** 68 màn còn chữ dưới chuẩn tương phản (trần TK01) — phần lớn là màu dữ liệu gõ tay
+(`#8B5CF6`, `#10B981`…) và 118 chỗ `#B4720F` nằm trong gói nghề không được sửa; 716 chỗ đặt màu chữ bằng mã hex
+(trần TK19); bộ đo trên trình duyệt chỉ đo nền Sáng; luật tương phản bỏ qua chữ nằm trên nền chuyển sắc (nút
+`.btn.pri` chữ nâu sẫm trên dải xanh–vàng–đỏ là chỗ cần mắt người xem).
+
+**Các luật khác của impeccable không lấy ở bản này** (có thể thêm sau, mỗi luật kèm tự thử):
+`text-overflow` · `clipped-overflow-container` · `text-occlusion` (chữ bị cắt trong một ô — tên tiếng Việt dài),
+`cramped-padding`, `heading-rhythm`, `repeated-container-text`. Lệnh `onboard` và `optimize` chưa chuyển thành
+lệnh riêng: phần trạng thái trống nằm trong lệnh `cứng`, tốc độ thì `do-tai-may-chu.js` đã đo.
+
+Ghi công: ý tưởng luật dò © Paul Bakaus và cộng sự, giấy phép Apache-2.0
+(https://github.com/pbakaus/impeccable). Bản hướng dẫn nền tảng trong kho ấy lại lấy từ
+ehmo/platform-design-skills (MIT) — kho này không dùng phần ấy.

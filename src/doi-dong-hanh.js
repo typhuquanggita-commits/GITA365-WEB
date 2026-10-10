@@ -150,7 +150,7 @@ G.VIEWS = G.VIEWS || {};
     o += U.sec('Chín phần mười', (q.vi || ''));
     o += '<div class="card mb"><div class="row wrap" style="gap:16px">' +
       '<b style="color:#0B7350">Hỏi ' + q.hoi + '%</b>' +
-      '<b style="color:#B4720F">Kể chuyện của chính mình ' + q.keChuyenMinh + '%</b>' +
+      '<b style="color:var(--warn)">Kể chuyện của chính mình ' + q.keChuyenMinh + '%</b>' +
       '<b style="color:#BE0E16">Dạy ' + q.day + '%</b></div>' +
       '<p class="tiny dim mt" style="line-height:1.7"><b>Đo bằng:</b> ' + h(q.doBang || '') + '</p>' +
       '<p class="tiny mt" style="line-height:1.7">' + h(q.lech1 || '') + ' ' + h(q.lech2 || '') + '</p></div>';

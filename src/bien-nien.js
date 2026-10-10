@@ -212,13 +212,13 @@ G.VIEWS = G.VIEWS || {};
         return '<div style="padding:7px 0;border-bottom:1px solid var(--gita-vien-2)">' +
           '<b class="sm">' + c.so + '. ' + h(c.t) + '</b>' +
           (c.theoDuong ? '<span class="tiny up" style="color:#0B7350"> ĐỌC TỪ ĐƯỜNG TỰ CHỦ</span>' : '') +
-          (c.chuaDo ? '<span class="tiny up" style="color:#B4720F"> CHƯA ĐO ĐƯỢC</span>' : '') +
+          (c.chuaDo ? '<span class="tiny up" style="color:var(--warn)"> CHƯA ĐO ĐƯỢC</span>' : '') +
           (c.thieu ? '<div class="tiny muted">thiếu: ' + h(c.thieu) + '</div>' : '') +
           (c.vi ? '<div class="tiny dim">' + h(c.vi) + '</div>' : '') + '</div>';
       }).join('') +
       '<p class="sm mt" style="line-height:1.8"><b>' + h((G.BN_MORUNG_LUAT || {}).cot || '') + '</b> ' +
       h((G.BN_MORUNG_LUAT || {}).vi || '') + '</p>' +
-      (chuaDo.length ? '<p class="tiny mt" style="line-height:1.7;color:#B4720F">' + chuaDo.length +
+      (chuaDo.length ? '<p class="tiny mt" style="line-height:1.7;color:var(--warn)">' + chuaDo.length +
         ' cửa chưa đo được vì còn chờ một ô chủ hệ điền.</p>' : '') + '</div>';
 
     var gl = G.BN_GIEOLAI || {};

@@ -173,14 +173,14 @@ var G = window.G || {}; window.G = G;
       '<span class="bd-chip">'+kh.canh.length+' cảnh · ~'+Math.round(kh.tongGiay/6)/10+' phút</span>'+
       '<span class="bd-chip">'+noi+' cảnh nói (khớp môi)</span><span class="bd-chip">'+(kh.canh.length-noi)+' cảnh diễn</span></div>'+
       '<p class="bd-tip" style="margin-top:6px">≈ '+(Math.round(u.gioGPU*10)/10)+' giờ GPU Kaggle cho phim này (ước tính, chưa đo thật) · Kaggle cho ~30 giờ/tuần → khoảng <b>'+u.phimThang+' phim/tháng</b>.</p>'+
-      (kh.canhBao.length?'<p class="bd-tip" style="color:#B4720F">'+kh.canhBao.map(h).join('<br>')+'</p>':'');
+      (kh.canhBao.length?'<p class="bd-tip" style="color:var(--warn)">'+kh.canhBao.map(h).join('<br>')+'</p>':'');
     o += '<div class="gd-wrap" style="margin-top:8px"><table class="gd-tb"><thead><tr><th>#</th><th>Loại</th><th>Nội dung</th><th>Giây</th><th>Ảnh khung đầu (Anh/số.jpg)</th></tr></thead><tbody>'+
       kh.canh.map(function(c){
         var nd = (c.nv.length?h(c.nv.map(tenNv).join(' + '))+' · ':'')+(c.thoai?'“'+h(c.thoai)+'”':h(c.mo_ta||''))+
           '<br><span class="tiny muted">Ảnh nên có: '+h(goiYAnh(c))+'</span>'+
-          (c.khongRo?'<br><span class="tiny" style="color:#B4720F">⚠ Mô tả không nhắc ai trong dàn nhân vật — đang dùng '+h(tenNv(c.nv[0]))+'. Ảnh Anh/'+c.id+'.jpg của anh/chị sẽ quyết định ai xuất hiện.</span>':'');
+          (c.khongRo?'<br><span class="tiny" style="color:var(--warn)">⚠ Mô tả không nhắc ai trong dàn nhân vật — đang dùng '+h(tenNv(c.nv[0]))+'. Ảnh Anh/'+c.id+'.jpg của anh/chị sẽ quyết định ai xuất hiện.</span>':'');
         var anh = coAnh[c.id] ? '<span style="color:#0B7350">✓ Anh/'+c.id+'.jpg</span>'
-          : (c.nv[0] && coNv[c.nv[0]] ? '<span style="color:#B4720F">dùng ảnh nhân vật</span><br><span class="tiny muted">nên thêm Anh/'+c.id+'.jpg</span>'
+          : (c.nv[0] && coNv[c.nv[0]] ? '<span style="color:var(--warn)">dùng ảnh nhân vật</span><br><span class="tiny muted">nên thêm Anh/'+c.id+'.jpg</span>'
           : '<span style="color:#B42318">thiếu Anh/'+c.id+'.jpg</span>');
         return '<tr><td>'+c.id+'</td><td>'+(c.loai==='noi'?'🗣 Nói':'🎬 Diễn')+'</td><td style="min-width:240px">'+nd+'</td><td>'+c.giay+'</td><td>'+(s.tep?anh:'<span class="tiny muted">Anh/'+c.id+'.jpg</span>')+'</td></tr>'; }).join('')+
       '</tbody></table></div>';
@@ -195,12 +195,12 @@ var G = window.G || {}; window.G = G;
       Object.keys(NHOM).map(function(n){ return chip(n).replace('</span>',' · '+Math.round(u.g[n])+'s</span>'); }).join('')+'</div>'+
       '<p class="bd-tip" style="margin-top:6px">AI chỉ chiếm '+(kh.tongGiay?Math.round(u.g.ai/kh.tongGiay*100):0)+'% thời lượng → ≈ '+(Math.round(u.gioGPU*10)/10)+' giờ GPU Kaggle mỗi phim. '+
         'Kaggle cho ~30 giờ/tuần → làm được khoảng <b>'+u.phimThang+' phim/tháng</b> (phần quay thật và ráp không tốn giờ GPU).</p>'+
-      (kh.canhBao.length?'<p class="bd-tip" style="color:#B4720F">'+kh.canhBao.map(h).join('<br>')+'</p>':'');
+      (kh.canhBao.length?'<p class="bd-tip" style="color:var(--warn)">'+kh.canhBao.map(h).join('<br>')+'</p>':'');
     o += '<div class="gd-wrap" style="margin-top:8px"><table class="gd-tb"><thead><tr><th>#</th><th>Làm bằng</th><th>Nội dung</th><th>Giây</th><th>Tệp trên Drive</th></tr></thead><tbody>'+
       kh.canh.map(function(c){
         var noi = (c.nv.length?h(c.nv.map(tenNv).join(' + '))+' · ':'')+(c.thoai?'“'+h(c.thoai.slice(0,80))+(c.thoai.length>80?'…':'')+'”':h((c.mo_ta||'').slice(0,80)))+
-          (c.khongRo?'<br><span class="tiny" style="color:#B4720F">⚠ Mô tả không nhắc ai trong dàn nhân vật — đang tạm dùng '+h(tenNv(c.nv[0]))+'. Thêm nhân vật ở tab Làm phim nhanh nếu cần.</span>':'');
-        var tep = s.tep ? (co[c.id] ? (co[c.id]===c.nhom?'<span style="color:#0B7350">✓ '+c.id+'</span>':'<span style="color:#B4720F">✓ '+c.id+' (ở thư mục '+h(THU_MUC[co[c.id]]||co[c.id])+')</span>') : '<span style="color:#B42318">thiếu '+c.id+'.mp4</span>') : '<span class="tiny muted">'+c.id+'.mp4 → '+THU_MUC[c.nhom]+'</span>';
+          (c.khongRo?'<br><span class="tiny" style="color:var(--warn)">⚠ Mô tả không nhắc ai trong dàn nhân vật — đang tạm dùng '+h(tenNv(c.nv[0]))+'. Thêm nhân vật ở tab Làm phim nhanh nếu cần.</span>':'');
+        var tep = s.tep ? (co[c.id] ? (co[c.id]===c.nhom?'<span style="color:#0B7350">✓ '+c.id+'</span>':'<span style="color:var(--warn)">✓ '+c.id+' (ở thư mục '+h(THU_MUC[co[c.id]]||co[c.id])+')</span>') : '<span style="color:#B42318">thiếu '+c.id+'.mp4</span>') : '<span class="tiny muted">'+c.id+'.mp4 → '+THU_MUC[c.nhom]+'</span>';
         return '<tr><td>'+c.id+'</td><td><select onchange="G.axda.doiNhom(\''+c.khoa+'\',this.value)" style="padding:4px;border:1px solid var(--line);border-radius:8px">'+
           Object.keys(NHOM).map(function(n){ return '<option value="'+n+'"'+(c.nhom===n?' selected':'')+'>'+NHOM[n][0]+(c.tuDong===n?' (gợi ý)':'')+'</option>'; }).join('')+'</select></td>'+
           '<td style="min-width:220px">'+noi+'</td><td>'+c.giay+'</td><td>'+tep+'</td></tr>'; }).join('')+'</tbody></table></div>';
@@ -221,7 +221,7 @@ var G = window.G || {}; window.G = G;
     o += '<div class="row mb" style="gap:8px;flex-wrap:wrap">'+
       '<button class="btn sm '+(A?'':'ghost')+'" onclick="G.axda.cheDo(\'ai100\')">✨ 100% AI từ ảnh</button>'+
       '<button class="btn sm '+(A?'ghost':'')+'" onclick="G.axda.cheDo(\'lai\')">🎥 Quay thật + AI</button></div>';
-    if(!k) o += '<div class="card pad-sm mb"><p class="tiny" style="color:#B4720F">Cần nối kho Google Drive trước (tab 🗄 Kho phim → Cài đặt kho Drive).</p></div>';
+    if(!k) o += '<div class="card pad-sm mb"><p class="tiny" style="color:var(--warn)">Cần nối kho Google Drive trước (tab 🗄 Kho phim → Cài đặt kho Drive).</p></div>';
     /* 1 · kịch bản */
     o += '<div class="card pad-sm mb"><b class="sm">① Kịch bản</b>'+
       '<div class="row mt" style="gap:8px;flex-wrap:wrap"><input type="text" value="'+h(s.ten)+'" onchange="G.axda.dat(\'ten\',this.value)" placeholder="Tên dự án" style="flex:1;min-width:200px;padding:8px;border:1px solid var(--line);border-radius:8px">'+
