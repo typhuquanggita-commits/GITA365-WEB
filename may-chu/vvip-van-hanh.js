@@ -171,11 +171,14 @@ export async function moYeuCauVvip(y, env, db, hoSo) {
   if (noiDung.length < 10) return { ok: false, code: 'THIEU', error: 'Nội dung yêu cầu ít nhất 10 ký tự.' };
   const vao = (await nhomVaLucVao(db))[maNha];
   if (!vao) return { ok: false, code: 'NGOAINHOM', error: 'Bàn hỗ trợ có hạn này dành cho nhà VIP/VVIP; nhà khác dùng kênh chăm sóc chung.' };
-  const id = maMoi('YC');
+  /* Đọc giờ MỘT lần: giờ ghi vào sổ và giờ tính hạn trả về phải là một —
+     hai lượt bayGio() lệch nhau vài mili-giây là hạn báo cho người mở khác
+     hạn máy dùng để chấm trễ. */
+  const id = maMoi('YC'), luc = bayGio();
   await db.prepare('INSERT INTO yeuCauVvip (id, maNha, nhom, kenh, mucDo, noiDung, tiepNhanLuc, moBoi, trangThai) VALUES (?,?,?,?,?,?,?,?,?)')
-    .bind(id, maNha, vao.nhom, kenh, mucDo, noiDung, bayGio(), hoSo.u, 'moi').run();
+    .bind(id, maNha, vao.nhom, kenh, mucDo, noiDung, luc, hoSo.u, 'moi').run();
   try { await Kho.ghiNhatKy(db, { uid: hoSo.uid, username: hoSo.u, viec: 'VVIP_YC_MO', doiTuong: maNha, chiTiet: id + ' · ' + mucDo }); } catch (e) {}
-  return { ok: true, id, han: hanCua({ nhom: vao.nhom, mucDo, tiepNhanLuc: bayGio() }) };
+  return { ok: true, id, han: hanCua({ nhom: vao.nhom, mucDo, tiepNhanLuc: luc }) };
 }
 
 async function layYC(db, id) { return db.prepare('SELECT * FROM yeuCauVvip WHERE id = ?').bind(chuoi(id, 60)).first(); }
