@@ -274,24 +274,24 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
   }
   function nganXepHang(){
     var ky = st.xhKy || kyTruoc();
-    var o = '<p class="sm muted mb">Hạng tháng ghép từ ba thứ đo được trong sổ: điểm thi ngày 28, cấp chứng chỉ, và phiếu tháng của chính các gia đình mình phụ trách. Không ô nào người được xếp hạng tự gõ.</p>';
+    var o = '<p class="sm muted mb">Hạng tháng ghép từ bốn thứ đo được trong sổ: điểm thi ngày 28, cấp chứng chỉ, phiếu tháng của chính các gia đình mình phụ trách, và điểm sát hạch nghiệp vụ do người chấm khác mình ghi. Không ô nào người được xếp hạng tự gõ.</p>';
     o += '<div class="co-form mb"><label class="co-f" for="tcc-xh-ky"><span>Kỳ (tháng)</span><input class="inp" id="tcc-xh-ky" type="month" value="' + h(ky) + '"></label>' +
       '<div class="co-f"><span>&nbsp;</span><button class="btn ghost sm" data-tcc="xhky">Xem kỳ này</button></div></div>';
     if(!st.xh || st.xh.ky !== ky){ doc('xh', 'xepHangThang', { ky:ky }, function(r){ st.xh = r; }); o += st.loi.xh ? canhBaoMau(h(st.loi.xh)) : '<p class="sm muted">Đang tính…</p>'; }
     else {
       var x = st.xh, L = x.luat;
       if(x.ngayTra) o += canhBaoMau('Lương kỳ ' + h(x.ky) + ' trả ngày <b>' + h(x.ngayTra.ngay.split('-').reverse().join('/')) + '</b>' + (x.ngayTra.doi ? ' (dời vì ' + h(x.ngayTra.lyDo) + ')' : '') + '.', 'var(--gita)');
-      o += '<div class="co-cb mb"><div style="--m:var(--ink-4)"><span>Trọng số KPI: thi ngày 28 ' + L.trongSo.thi + ' · cấp chứng chỉ ' + L.trongSo.cap + ' · tỷ lệ nhà hài lòng ' + L.trongSo.phanHoi +
+      o += '<div class="co-cb mb"><div style="--m:var(--ink-4)"><span>Trọng số KPI: thi ngày 28 ' + L.trongSo.thi + ' · cấp chứng chỉ ' + L.trongSo.cap + ' · tỷ lệ nhà hài lòng ' + L.trongSo.phanHoi + ' · thi nghiệp vụ ' + L.trongSo.nghiepVu + ' (sát hạch có người chấm, giá trị ' + L.hanNghiepVu + ' ngày; chưa sát hạch tính 0)' +
         '. Hạng ' + L.hang.map(function(g){ return g.hang + (g.tu ? ' từ ' + g.tu : ''); }).join(' · ') + '. Dưới ' + L.mauToiThieu + ' nhà có phiếu thì phần phản hồi ghi "chưa đủ mẫu", không tính là 0. ' +
         (L.thuong ? '<b>Thưởng lương</b> khi KPI từ ' + L.thuong.kpi + ' VÀ từ ' + L.thuong.haiLong + '% nhà hài lòng (nhà hài lòng = điểm hài lòng trung bình từ ' + L.csatHaiLong + '/5); mức thưởng ' +
           (L.mucThuong || []).slice().reverse().map(function(m){ return m.pt + '% lương từ KPI ' + m.tu; }).join(' · ') + '. ' : '') + h(x.gioiHan) + '</span></div></div>';
       if(!x.ds.length) o += '<p class="sm muted">' + (x.chiDongCuaToi ? 'Vai của bạn không nằm trong thang Coach / Tư vấn.' : 'Chưa có Coach hay Tư vấn viên nào.') + '</p>';
-      else o += '<div class="tcc-bang" role="region" aria-label="Xếp hạng lương thưởng" tabindex="0"><table class="tbl sm"><tr><th>Nhân sự</th><th>Hạng</th><th>Điểm</th><th>Thi ngày 28</th><th>Cấp</th><th>Nhà hài lòng</th><th>Thưởng</th></tr>' +
+      else o += '<div class="tcc-bang" role="region" aria-label="Xếp hạng lương thưởng" tabindex="0"><table class="tbl sm"><tr><th>Nhân sự</th><th>Hạng</th><th>Điểm</th><th>Thi ngày 28</th><th>Cấp</th><th>Nhà hài lòng</th><th>Nghiệp vụ</th><th>Thưởng</th></tr>' +
         x.ds.map(function(d){
           var tp = {}; d.thanhPhan.forEach(function(t){ tp[t.ma] = t; });
           var o2 = function(t){ return (t.giaTri === null ? '<span class="muted">chưa đủ mẫu</span>' : t.giaTri) + (t.ghiChu ? '<br><span class="tiny muted">' + h(t.ghiChu) + '</span>' : ''); };
           return '<tr><td>' + h(d.maNguoi) + '<br><span class="tiny muted">' + h(d.role) + ' · ' + d.soNhaPhuTrach + ' nhà phụ trách</span></td><td><b>' + h(d.hang) + '</b></td><td>' + d.diem +
-            (d.trongBoQua ? '<br><span class="tiny muted">bỏ ' + d.trongBoQua + '% trọng số</span>' : '') + '</td><td>' + o2(tp.thi) + '</td><td>' + o2(tp.cap) + '</td><td>' + o2(tp.phanHoi) + '</td><td>' + oThuong(d.thuong) + '</td></tr>';
+            (d.trongBoQua ? '<br><span class="tiny muted">bỏ ' + d.trongBoQua + '% trọng số</span>' : '') + '</td><td>' + o2(tp.thi) + '</td><td>' + o2(tp.cap) + '</td><td>' + o2(tp.phanHoi) + '</td><td>' + (tp.nghiepVu ? o2(tp.nghiepVu) : '—') + '</td><td>' + oThuong(d.thuong) + '</td></tr>';
         }).join('') + '</table></div>';
     }
     o += U.sec('Lịch trả lương');
