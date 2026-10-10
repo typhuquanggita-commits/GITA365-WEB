@@ -136,12 +136,21 @@ function coMayChu(){
 function nenHoiMayChu(cau){
   if(!coMayChu()) return false;
   if(G.aiCoKhan && G.aiCoKhan(cau)) return false;
+  if(G.htVoNghia && G.htVoNghia(cau)) return false;
+  /* Yêu cầu của nhân sự ("lên phương án…", "lập kế hoạch…") LUÔN lên máy
+     chủ — động cơ trong máy chỉ tra kho, không lập được phương án, và bản
+     đầu để chữ "lên" trong "lên phương án" lọt vào đường câu hỏi thẳng. */
+  if(!khach() && laYeuCau(cau)) return true;
   if(coVongDangDo()) return false;
   if(G.htLoaiCau && G.htLoaiCau(cau)) return false;
-  if(G.htVoNghia && G.htVoNghia(cau)) return false;
   var hs = G.htHoSo ? G.htHoSo() : null;
   if(hs && G.htSuyLuan && G.htSuyLuan(cau, hs)) return false;
   return true;
+}
+function laYeuCau(cau){
+  var c = String(cau || '').toLowerCase();
+  return /^(hãy|lên|lập|làm|xây dựng|đề xuất|thiết kế|tối ưu|cải tiến|triển khai|tổng hợp|phân tích|đánh giá|soạn|viết)\s/.test(c) ||
+    /(phương án|kế hoạch|chiến lược|giải pháp|lộ trình cho|cải tiến|tối ưu)/.test(c);
 }
 /* Chữ của một lượt để gửi kèm làm ngữ cảnh — chỉ phần lời, không HTML. */
 function chuCuaLuot(m){
@@ -156,11 +165,24 @@ function hoiMayChu(cau){
   var lichSu = G.CHAT.slice(-8, -1).map(function(m){ return {ai:m.ai, loi:String(chuCuaLuot(m)).slice(0, 600)}; })
     .filter(function(x){ return x.loi; });
   G.CHAT.push(cho); ve();
-  function luiVeMay(){
+  /* Lùi về động cơ trong máy — và NÓI RA vì sao. Bản đầu lùi im lặng:
+     người dùng thấy dòng "trả lời qua máy chủ" mà nhận câu tra kho, và
+     không ai biết bộ não máy chủ hỏng ở đâu. Nhân sự thấy mã lỗi; khách
+     không thấy chữ kỹ thuật nào. */
+  function luiVeMay(r){
     var i = G.CHAT.indexOf(cho);
     if(i < 0) return;
     G.CHAT.splice(i, 1);
+    var dau = G.CHAT.length;
     traLoiTrongMay(cau);
+    for(var j = G.CHAT.length - 1; j >= dau; j--){
+      if(G.CHAT[j].ai === 'trolY' && G.CHAT[j].dap){
+        G.CHAT[j].dap.luiMa = (r && r.code) || (r && r.ok === false ? 'LOI' : 'MANG');
+        G.CHAT[j].dap.luiLoi = String((r && r.error) || (r && r.message) || '').slice(0, 160);
+        break;
+      }
+    }
+    ve();
   }
   G.goiMayChu('troLyV50', {cau:cau, lichSu:lichSu}).then(function(r){
     var i = G.CHAT.indexOf(cho);
@@ -174,8 +196,8 @@ function hoiMayChu(cau){
     /* Bộ não tắt, chưa có nhà cung cấp, hết lượt ngày: thôi hỏi máy chủ một
        quãng — đừng bắt mỗi câu sau chờ một lượt hỏng. */
     if(r && /^(CUADONG|KHONG_NCC|HETTRAN|NOPERM|AUTH)$/.test(r.code || '')) tatMayChuDen = Date.now() + 10 * 60e3;
-    luiVeMay();
-  }, luiVeMay);
+    luiVeMay(r);
+  }, function(e){ luiVeMay({ code:'MANG', error: String((e && e.message) || e || '') }); });
 }
 /* Super Admin gửi yêu cầu + phương án tới bộ não vận hành (chuỗi Agent). */
 function guiBoNao(i){
@@ -850,6 +872,8 @@ function bongTroLy(m, xung, idx){
   return '<div class="ch-luot ch-troly">'+
     '<div class="ch-anh ch-anh-ai">'+ic('spark','w-4 h-4')+'</div>'+
     '<div class="ch-bong ch-bong-ai">'+bongVai(vai)+theDap(d, idx)+
+      (d.luiMa && !khach() ? '<p class="tiny dim">Bộ não máy chủ chưa trả lời (mã '+h(d.luiMa)+
+        (d.luiLoi ? ': '+h(d.luiLoi) : '')+') — em trả lời bằng kho trong máy.</p>' : '')+
       '<span class="cs-gio">'+h(gio(m.luc))+'</span></div></div>';
 }
 

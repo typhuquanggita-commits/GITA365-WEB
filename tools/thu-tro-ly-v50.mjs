@@ -92,6 +92,10 @@ luot = [];
 const d13 = await V.troLyV50({ cau: 'Bé Nguyễn Thị Lan số 0912345678 hay khóc' }, env, db, r13);
 kiem('Điều 13: tên + số điện thoại bị chặn, KHÔNG gọi ai', !d13.ok && luot.length === 0, JSON.stringify(d13));
 
+luot = [];
+const lsBan = await V.troLyV50({ cau: 'Con hay quên làm bài tập về nhà', lichSu: [{ ai: 'trolY', loi: 'Chào anh Nguyễn Văn Hùng, em là trợ lý.' }] }, env, db, r13);
+kiem('Điều 13: tên ở LƯỢT TRƯỚC không chặn câu sạch hiện tại — thử lại không kèm lịch sử', lsBan.ok && luot.length === 1 && !/Nguyễn/.test(JSON.stringify(luot[0])), JSON.stringify(lsBan));
+
 /* ── 7. Tắt · trần · rỗng → trả mã cho trình duyệt ── */
 const tat = await V.troLyV50({ cau: 'Con hay cãi lời bố mẹ' }, {}, db, r13);
 kiem('bộ não tắt → mã CUADONG (trình duyệt tự trả lời)', !tat.ok && tat.code === 'CUADONG');

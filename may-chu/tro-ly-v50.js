@@ -189,7 +189,13 @@ export async function troLyV50(y, env, db, hoSo) {
      chỉ nới trần chữ ra. Làn chienLuoc bắt đầu ở bậc 3 — tức là nhà cung
      cấp trả phí — mà chi AI trả phí đang tắt theo lệnh chủ hệ; đi làn ấy
      thì mọi yêu cầu của Super Admin rơi về động cơ trong máy. */
-  const k = await goiTheoLoai(env, db, hoSo, 'troLy', de, { he: dungLoiHe(v, cx, yh, laSA), ra: meta.phuongAn ? 1800 : 700 });
+  const tuy = { he: dungLoiHe(v, cx, yh, laSA), ra: meta.phuongAn ? 1800 : 700 };
+  let k = await goiTheoLoai(env, db, hoSo, 'troLy', de, tuy);
+  /* Cổng Điều 13 soát CẢ đoạn trò chuyện gửi kèm. Một cái tên nằm ở lượt
+     trước (lời chào gọi tên, một hồ sơ vừa tra) chặn luôn câu hỏi sạch
+     hiện tại. Thử lại một lần CHỈ với câu hiện tại — câu ấy vẫn qua đúng
+     cổng ấy; bẩn thì vẫn bị chặn. */
+  if (!k.ok && k.code === 'DIEU13' && ls) k = await goiTheoLoai(env, db, hoSo, 'troLy', 'Câu hỏi hiện tại cần trả lời:\n' + cau, tuy);
   if (!k.ok) return Object.assign({ ok: false, code: k.code || 'AI_LOI', error: k.error }, meta);
   const tra = locTra(k.text);
   if (!tra) return Object.assign({ ok: false, code: 'AI_RONG', error: 'Bộ não trả lời rỗng.' }, meta);
