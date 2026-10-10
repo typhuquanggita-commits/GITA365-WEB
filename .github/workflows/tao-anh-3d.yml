@@ -1,0 +1,68 @@
+# ═══════════════════════════════════════════════════════════════
+# GITA 365 — Tạo ảnh minh hoạ 3D cho các phần của web app
+#
+# Chạy khi đề bài tools/anh-3d/de-bai.json đổi (trên nhánh claude/**) hoặc
+# bấm tay. Gọi Workers AI (flux-1-schnell, Apache-2.0) bằng khoá Cloudflare
+# đã có ở GitHub Secrets — khoá không bao giờ vào kho mã. Ảnh ra được đẩy
+# sang nhánh dữ liệu riêng `anh-3d` (một commit, không lịch sử) để người
+# duyệt xem trước khi đưa vào assets/. Máy KHÔNG tự đưa ảnh vào app:
+# chọn ảnh nào lên trang là việc của người.
+# ═══════════════════════════════════════════════════════════════
+name: Tạo ảnh 3D cho web app
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['claude/**']
+    paths:
+      - 'tools/anh-3d/de-bai.json'
+      - '.github/workflows/tao-anh-3d.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tao-anh-3d
+  cancel-in-progress: false
+
+jobs:
+  tao:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    steps:
+      - name: Harden runner (ghi lại mọi kết nối ra ngoài)
+        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Tạo ảnh bằng Workers AI
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: node tools/tao-anh-3d.mjs ra-goc
+
+      - name: Cắt khổ 3:2 và nén WebP
+        run: |
+          python3 -m pip install --quiet pillow
+          python3 -I tools/anh-3d/nen-anh.py ra-goc ra/anh
+          cp ra-goc/nguon.json ra/anh/nguon.json
+
+      - name: Đẩy ảnh sang nhánh dữ liệu anh-3d
+        env:
+          TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          cd ra
+          git init -q -b anh-3d
+          git config user.name "gita-tao-anh-3d"
+          git config user.email "gita-tao-anh-3d@users.noreply.github.com"
+          git add anh
+          git commit -qm "Ảnh 3D cho web app (Workers AI flux-1-schnell)"
+          git push -q -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" anh-3d
+          echo "::notice::Đã đẩy $(ls anh/*.webp | wc -l) ảnh sang nhánh anh-3d."
