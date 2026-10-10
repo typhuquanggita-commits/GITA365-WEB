@@ -204,3 +204,10 @@ Chủ hệ 10/10 gửi "GITA 365 VVIP — MASTER BLUEPRINT" (theo hướng sách
 - Super Admin mở gói **trên máy mình** (`G.moGoiMaHoa`, chung với kho cao) rồi gọi `napSachNoiBo`. Đọc: R01–R11 (bậc pro_consult), mỗi lượt mở chương ghi nhật ký `SACH_DOC`. Trích dài hơn 40 chữ bị chặn — trích dài là chép sách.
 - **Lỗi có sẵn đã sửa:** `tools/dung-site.sh` không chép `kho-van-de/ kho-cao/ kho-nha/` lên trang thật → nút "Mở gói và nạp" nhận 404 trên bản chạy thật. Nay chép (chỉ `.enc`) và chặn mọi tệp khác `.enc` trong `kho-*`.
 - Đóng gói lại: `GITA_MK_TEP=<tệp-mật-khẩu> node tools/dong-goi-sach.mjs cay-tien <thư-mục-C*.json>`; mở ra: `--mo cay-tien <ra>`.
+
+## Vận hành VIP/VVIP — ba bộ máy QD3 (10/2026)
+
+`may-chu/vvip-van-hanh.js`, ngăn **Vận hành · hỗ trợ** của Phòng VVIP, bộ thử `tools/thu-vvip-van-hanh.mjs` (61 phép đo, 8 phá thử). Ba chỉ số bảng 80% từng đứng ở null vì thiếu chỗ ghi — nay chỉ null khi thiếu DÒNG:
+- **Khởi động sáu mốc → M1.** OB1 gọi chào 24h · OB3 hồ sơ 01–04,06 trong 7 ngày · OB4 lượt chạm của coach đúng hạng (VVIP A · VIP A/B) — **máy đọc sổ**, không có nút "xong" (`MAYDO`). OB2 chiến thắng nhỏ · OB5 kế hoạch năm · OB6 rà soát (chỉ từ ngày 21, `SOM`) — người ghi kèm căn cứ ≥ 20 ký tự. Rút về CORE rồi vào lại = khởi động mới (khoá gồm `tuLuc`).
+- **Bàn hỗ trợ → M3 + tỷ lệ xử lý vấn đề (K06).** Hạn phân công/phản hồi/đóng theo nhóm × mức (`HAN_HO_TRO`, thử nghiệm), tính lúc đọc — bảng không có cột "quá hạn". Phụ huynh mở yêu cầu luôn cho nhà của phiên. Người được giao lưu **tên đăng nhập** (giao bằng email vẫn lưu username) — nếu không, phép so "người đóng khiếu nại ≠ người xử lý" so email với username và người xử lý tự đóng được (`TUDONG`).
+- **Chi phí phục vụ → lợi nhuận đóng góp (K04, LOINHUAN).** Nhà chưa ghi chi phí là CHƯA GHI, không phải 0. Tỷ trọng trả null khi chưa nhà ngoài nhóm nào ghi chi phí (chia lợi nhuận trọng điểm cho chính nó ra 100%). Bảng theo nhà chỉ R01–R03.

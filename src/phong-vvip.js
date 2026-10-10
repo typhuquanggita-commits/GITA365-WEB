@@ -37,11 +37,16 @@ G.VIEWS = G.VIEWS || {};
     nhan: function () { goi('nhanDienVvip').then(function (x) { G.VV.nhan = x; ve(); }); },
     phucvu: function () { goi('soatPhucVuVvip').then(function (x) { G.VV.pv = x; ve(); }); },
     wow: function () { goi('dsDiemCham').then(function (x) { G.VV.dc = x; ve(); }); },
-    chiendich: function () { goi('dsChienDichVvip').then(function (x) { G.VV.cd = x; ve(); }); }
+    chiendich: function () { goi('dsChienDichVvip').then(function (x) { G.VV.cd = x; ve(); }); },
+    vanhanh: function () {
+      G.VV.vh = 'dang';
+      var lay = [goi('docKhoiDong'), goi('dsYeuCauVvip'), (G.S && G.S.roleObj && G.S.roleObj.lv <= 3) ? goi('dsChiPhiPhucVu') : Promise.resolve(null)];
+      Promise.all(lay).then(function (r) { G.VV.vh = { kd: r[0], yc: r[1], cp: r[2] }; ve(); });
+    }
   };
   function napNoiDung() { if (!G.VV.nd) goi('noiDungVvip').then(function (x) { G.VV.nd = x; ve(); }); }
   G.vvTab = function (t) { G.VV.tab = t; ve(); window.scrollTo && window.scrollTo(0, 0); };
-  G.vvTaiLai = function () { var t = G.VV.tab; G.VV[{ tong: 'bang', nhan: 'nhan', phucvu: 'pv', wow: 'dc', chiendich: 'cd' }[t]] = null; ve(); };
+  G.vvTaiLai = function () { var t = G.VV.tab; G.VV[{ tong: 'bang', nhan: 'nhan', phucvu: 'pv', wow: 'dc', chiendich: 'cd', vanhanh: 'vh' }[t]] = null; ve(); };
 
   /* ── thao tác ── */
   G.vvDeXuat = function (el) {
@@ -127,7 +132,9 @@ G.VIEWS = G.VIEWS || {};
       '<div class="vv-o"><div class="vv-k">Doanh thu từ nhóm trọng điểm</div><div class="vv-so">' + pct(B.DOANHTHU.giaTri) + '</div>' +
         '<div class="sm muted">đích ' + B.DOANHTHU.dich + '% · VVIP ' + pct(B.DOANHTHU.vvip) + ' · VIP ' + pct(B.DOANHTHU.vip) + '</div>' +
         '<div class="sm">' + tien(B.DOANHTHU.trongDiem) + ' / ' + tien(B.DOANHTHU.tong) + ' · ' + B.DOANHTHU.soNhaVVIP + ' nhà VVIP · ' + B.DOANHTHU.soNhaVIP + ' nhà VIP</div></div>' +
-      '<div class="vv-o"><div class="vv-k">Lợi nhuận đóng góp</div><div class="vv-so vv-chua">chưa đo</div><div class="sm muted">' + h(B.LOINHUAN.vi) + '</div></div>' +
+      '<div class="vv-o"><div class="vv-k">Lợi nhuận đóng góp</div><div class="vv-so">' + (B.LOINHUAN.giaTri == null ? '<span class="vv-chua">chưa đo</span>' : pct(B.LOINHUAN.giaTri)) + '</div>' +
+        (B.LOINHUAN.loiNhuanTrongDiem != null ? '<div class="sm">' + tien(B.LOINHUAN.loiNhuanTrongDiem) + ' / ' + tien(B.LOINHUAN.loiNhuanTatCa) + ' · ' + B.LOINHUAN.nhaCoChiPhi + '/' + B.LOINHUAN.nhaTrongDiem + ' nhà trọng điểm đã ghi chi phí</div>' : '') +
+        '<div class="sm muted">' + h(B.LOINHUAN.vi || 'Thực thu trừ chi phí phục vụ đã ghi, chỉ trên nhà đã ghi chi phí.') + '</div></div>' +
       '<div class="vv-o"><div class="vv-k">Tăng trưởng từ nhóm trọng điểm</div><div class="vv-so">' + (B.TANGTRUONG.giaTri == null ? '<span class="vv-chua">chưa đo</span>' : pct(B.TANGTRUONG.giaTri)) + '</div>' +
         '<div class="sm muted">' + h(B.TANGTRUONG.giaDinh || B.TANGTRUONG.vi || '') + '</div></div></div>';
     o += '<p class="sm muted">' + h(b.canhBao) + ' Cửa sổ ' + h(b.cuaSo.tu) + ' → ' + h(b.cuaSo.den) + '. Doanh thu = phiếu thu đã duyệt trừ hoàn tiền đã duyệt.</p>';
@@ -345,7 +352,7 @@ G.VIEWS = G.VIEWS || {};
     o += '<div class="card"><b>Thứ tự ưu tiên đầu tư</b><ol class="sm">' + n.uuTienDauTu.map(function (x) { return '<li>' + h(x) + '</li>'; }).join('') + '</ol></div>';
     o += U.sec('Phần X · Quyết định của Ban điều hành', 'Máy không chọn hộ — mỗi chốt mang ngày và người chốt, đổi được bằng một lượt phát hành');
     o += U.tbl(['Mã', 'Câu hỏi', 'Đã chốt'], n.quyetDinh5.map(function (q) {
-      return [h(q.ma), h(q.hoi), q.chot ? h(q.chot) + '<div class="sm muted">Chốt ' + h(q.ngay || '') + ' · ' + h(q.boi || '') + '</div>'
+      return [h(q.ma), h(q.hoi), q.chot ? h(q.chot) + '<div class="sm muted">Chốt ' + h(q.ngay || '') + ' · ' + h(q.boi || '') + '</div>' + (q.daDung ? '<div class="sm">' + nhan('đã dựng', 'xanh') + ' ' + h(q.daDung) + '</div>' : '')
         : '<span class="muted">Chưa chốt — đang chạy theo giả định: ' + h(q.giaDinh) + '</span>'];
     }));
     o += U.tbl(['Nguyên tắc bảo vệ', 'Răng trong hệ'], n.baoVe6.map(function (b) { return [h(b.y), h(b.rang)]; }));
@@ -434,7 +441,112 @@ G.VIEWS = G.VIEWS || {};
     return o;
   }
 
-  var TABS = [['tong', 'Bảng 80%', 'chart'], ['nhan', 'Nhận diện · nhóm', 'users'], ['phucvu', 'Phục vụ · phân công', 'clock'],
+
+  /* ══ VẬN HÀNH — ba bộ máy QD3 (may-chu/vvip-van-hanh.js) ══
+     Khởi động sáu mốc · bàn hỗ trợ có hạn · sổ chi phí phục vụ. Màn chỉ
+     trình bày: mốc nào máy đo thì không có nút "xong"; hạn và "quá hạn" do
+     máy chủ tính lúc đọc; lợi nhuận đóng góp chỉ R01–R03 mới nhận về. */
+  function sauKhi(r, okMsg) { bao(r, okMsg); if (r && r.ok) { G.VV.vh = null; ve(); } }
+  function giaTri(f) { var o = {}; Array.prototype.forEach.call(f.querySelectorAll('[name]'), function (e) { o[e.name] = e.value; }); return o; }
+  G.vvGhiMoc = function (el) { goi('ghiMocKhoiDong', giaTri(el.closest('form'))).then(function (r) { sauKhi(r, 'Đã ghi mốc kèm căn cứ.'); }); return false; };
+  G.vvMoYC = function (el) { goi('moYeuCauVvip', giaTri(el.closest('form'))).then(function (r) { sauKhi(r, 'Đã tiếp nhận yêu cầu — hạn phân công tính từ bây giờ.'); }); return false; };
+  G.vvYC = function (el) {
+    var f = el.closest('form'), fn = el.getAttribute('data-fn'), x = giaTri(f); x.id = f.getAttribute('data-id');
+    goi(fn, x).then(function (r) { sauKhi(r, { phanCongYeuCau: 'Đã giao.', phanHoiYeuCau: 'Đã ghi phản hồi.', dongYeuCau: 'Đã đóng yêu cầu.' }[fn]); });
+    return false;
+  };
+  G.vvGhiCP = function (el) { goi('ghiChiPhiPhucVu', giaTri(el.closest('form'))).then(function (r) { sauKhi(r, 'Đã ghi chi phí phục vụ.'); }); return false; };
+  var TT_MOC = { dungHan: ['đúng hạn', 'xanh'], tre: ['trễ', 'vang'], quaHan: ['quá hạn', 'do'], dangCho: ['đang chờ', ''] };
+  var TEN_MUC = { thuong: 'Thường', gap: 'Gấp', khieuNai: 'Khiếu nại' };
+  var TEN_KENH = { dienThoai: 'Điện thoại', tinNhan: 'Tin nhắn', email: 'Email', gapMat: 'Gặp mặt', ungDung: 'Ứng dụng' };
+  function gioDoc(g) { return g < 1 ? Math.round(g * 60) + ' phút' : (g >= 48 ? (g / 24) + ' ngày' : g + ' giờ'); }
+  function ngayGio(s) { return s ? h(String(s).slice(0, 16).replace('T', ' ')) : '—'; }
+  function opt(m) { return Object.keys(m).map(function (k) { return '<option value="' + h(k) + '">' + h(m[k]) + '</option>'; }).join(''); }
+
+  function veKhoiDong(kd) {
+    if (!kd || !kd.ok) return loi(kd);
+    var o = U.sec('Khởi động sáu mốc', 'Tính từ lúc nhà được duyệt vào nhóm VIP/VVIP · ba mốc máy đọc sổ, ba mốc người ghi kèm căn cứ');
+    o += '<p class="sm">M1 hoàn thành đúng hạn: <b>' + (kd.m1 == null ? '<span class="vv-chua">chưa đo</span>' : pct(kd.m1)) + '</b>' +
+      (kd.m1Mau ? ' · trên ' + kd.m1Mau + ' nhà đã qua 30 ngày' : '') + (kd.m1Vi ? ' <span class="muted">— ' + h(kd.m1Vi) + '</span>' : '') + '</p>';
+    o += U.tbl(['Mốc', 'Hạn', 'Ai đo', 'Đo thế nào'], kd.mocChuan.map(function (m) {
+      return [h(m.ma + ' · ' + m.ten), (m.sauGio ? 'ngày ' + (m.sauGio / 24) + '–' : '') + (m.hanGio >= 48 ? (m.hanGio / 24) + ' ngày' : m.hanGio + ' giờ'), m.nguon === 'may' ? nhan('máy', 'xanh') : nhan('người', 'vang'), h(m.do)];
+    }));
+    if (!kd.ds.length) return o + U.empty('Chưa nhà nào trong khởi động', 'Nhà vào nhóm VIP/VVIP (ngăn Nhận diện, hai người duyệt) sẽ hiện ở đây với sáu mốc.');
+    o += U.tbl(['Nhà', 'Nhóm', 'Ngày', 'Sáu mốc'], kd.ds.map(function (d) {
+      return [h(d.maNha), h(d.nhom), d.ngay + '/30' + (d.quaHan ? '<br>' + nhan(d.quaHan + ' quá hạn', 'do') : ''),
+        d.moc.map(function (m) { var t = TT_MOC[m.trangThai] || ['', '']; return '<span title="' + h(m.ten + (m.boiAi ? ' · ' + m.boiAi : '') + (m.canCu ? ' · ' + m.canCu : '')) + '">' + h(m.ma) + ' ' + nhan(t[0], t[1]) + '</span>'; }).join(' ')];
+    }));
+    var nguoi = kd.mocChuan.filter(function (m) { return m.nguon === 'nguoi'; });
+    o += '<form class="card vv-form" onsubmit="return G.vvGhiMoc(this)"><b class="vv-rong">Ghi mốc do người làm</b>' +
+      '<label>Nhà<select name="maNha">' + kd.ds.map(function (d) { return '<option value="' + h(d.maNha) + '">' + h(d.maNha) + '</option>'; }).join('') + '</select></label>' +
+      '<label>Mốc<select name="ma">' + nguoi.map(function (m) { return '<option value="' + h(m.ma) + '">' + h(m.ma + ' · ' + m.ten) + '</option>'; }).join('') + '</select></label>' +
+      '<label class="vv-rong">Căn cứ (≥ 20 ký tự): việc gì, với ai, kết quả<textarea name="canCu" rows="2" minlength="20" required></textarea></label>' +
+      '<button class="btn" type="submit">Ghi mốc</button><p class="tiny muted vv-rong">OB1 · OB3 · OB4 máy đọc thẳng sổ chạm, sổ hồ sơ, sổ phân công — không có nút đánh dấu tay.</p></form>';
+    return o;
+  }
+
+  function veYeuCau(yc, dsNha) {
+    if (!yc || !yc.ok) return loi(yc);
+    var o = U.sec('Bàn hỗ trợ có hạn', 'Hạn phân công · phản hồi · đóng tính theo nhóm × mức, từ giờ tiếp nhận');
+    o += '<p class="sm">M3 phân công đúng hạn: <b>' + (yc.m3 == null ? '<span class="vv-chua">chưa đo</span>' : pct(yc.m3)) + '</b>' + (yc.m3Mau ? ' (' + yc.m3Mau + ')' : '') +
+      ' · Xử lý đúng hạn: <b>' + (yc.xuLy == null ? '<span class="vv-chua">chưa đo</span>' : pct(yc.xuLy)) + '</b>' + (yc.xuLyMau ? ' (' + yc.xuLyMau + ')' : '') +
+      ' · Đang mở <b>' + yc.dangMo + '</b> · Quá hạn <b>' + yc.quaHan + '</b></p>';
+    o += U.tbl(['Nhóm', 'Mức', 'Phân công', 'Phản hồi', 'Đóng'], ['VVIP', 'VIP'].reduce(function (a, g) {
+      return a.concat(['thuong', 'gap', 'khieuNai'].map(function (m) { var H = yc.han[g]; return [g, TEN_MUC[m], gioDoc(H.phanCong[m]), gioDoc(H.phanHoi[m]), gioDoc(H.dong[m])]; }));
+    }, []));
+    o += '<form class="card vv-form" onsubmit="return G.vvMoYC(this)"><b class="vv-rong">Tiếp nhận yêu cầu</b>' +
+      '<label>Nhà<select name="maNha">' + dsNha.map(function (k) { return '<option value="' + h(k) + '">' + h(k) + '</option>'; }).join('') + '</select></label>' +
+      '<label>Mức<select name="mucDo">' + opt(TEN_MUC) + '</select></label><label>Kênh<select name="kenh">' + opt(TEN_KENH) + '</select></label>' +
+      '<label class="vv-rong">Nội dung<textarea name="noiDung" rows="2" minlength="10" required></textarea></label><button class="btn" type="submit">Tiếp nhận</button></form>';
+    if (!yc.ds.length) return o + U.empty('Chưa có yêu cầu nào', 'Yêu cầu tiếp nhận sẽ hiện ở đây kèm ba mốc hạn.');
+    o += yc.ds.map(function (r) {
+      var c = [];
+      if (r.quaHanPhanCong) c.push(nhan('quá hạn phân công', 'do'));
+      if (r.quaHanPhanHoi) c.push(nhan('quá hạn phản hồi', 'do'));
+      if (r.quaHanDong) c.push(nhan('quá hạn đóng', 'do'));
+      var dong = r.trangThai === 'daDong';
+      var x = '<div class="card mb"><div class="row wrap" style="gap:8px;align-items:baseline"><b>' + h(r.maNha) + ' · ' + h(TEN_MUC[r.mucDo] || r.mucDo) + '</b>' +
+        nhan(r.nhom, r.nhom === 'VVIP' ? 'vang' : '') + nhan(dong ? 'đã đóng' : (r.nguoiXuLy ? 'giao ' + r.nguoiXuLy : 'chưa giao'), dong ? 'xanh' : '') + c.join(' ') + '</div>' +
+        '<p class="sm">' + h(r.noiDung) + '</p>' +
+        '<p class="tiny muted">Tiếp nhận ' + ngayGio(r.tiepNhanLuc) + ' qua ' + h(TEN_KENH[r.kenh] || r.kenh) + ' · hạn giao ' + ngayGio(r.han.phanCong) + ' · hạn phản hồi ' + ngayGio(r.han.phanHoi) + ' · hạn đóng ' + ngayGio(r.han.dong) + '</p>' +
+        (r.phanHoi ? '<p class="sm"><b>Phản hồi:</b> ' + h(r.phanHoi) + '</p>' : '') + (r.ketQua ? '<p class="sm"><b>Kết quả:</b> ' + h(r.ketQua) + ' <span class="tiny muted">— ' + h(r.dongBoi || '') + '</span></p>' : '');
+      if (!dong) x += '<form class="vv-form mt" data-id="' + h(r.id) + '" onsubmit="return false">' +
+        '<label>Giao cho (tên đăng nhập)<input name="nguoi"></label><button class="btn ghost" data-fn="phanCongYeuCau" onclick="return G.vvYC(this)">Giao</button>' +
+        '<label class="vv-rong">Phản hồi cho gia đình<textarea name="noiDung" rows="2"></textarea></label><button class="btn ghost" data-fn="phanHoiYeuCau" onclick="return G.vvYC(this)">Ghi phản hồi</button>' +
+        '<label class="vv-rong">Kết quả khi đóng (≥ 15 ký tự)' + (r.mucDo === 'khieuNai' ? ' — khiếu nại do quản lý KHÁC người xử lý đóng' : '') + '<textarea name="ketQua" rows="2"></textarea></label>' +
+        '<button class="btn" data-fn="dongYeuCau" onclick="return G.vvYC(this)">Đóng</button></form>';
+      return x + '</div>';
+    }).join('');
+    return o;
+  }
+
+  function veChiPhi(cp, dsNha) {
+    var o = U.sec('Chi phí phục vụ theo nhà', 'Để lợi nhuận đóng góp đo được — nhà chưa ghi là CHƯA GHI, không phải 0');
+    o += '<form class="card vv-form" onsubmit="return G.vvGhiCP(this)"><b class="vv-rong">Ghi một khoản</b>' +
+      '<label>Nhà<select name="maNha">' + dsNha.map(function (k) { return '<option value="' + h(k) + '">' + h(k) + '</option>'; }).join('') + '</select></label>' +
+      '<label>Loại<select name="loai"><option value="gioNguoi">Giờ người phục vụ</option><option value="taiLieu">Tài liệu · công cụ</option><option value="suKien">Sự kiện · buổi gặp</option><option value="tangPham">Tặng phẩm</option><option value="khac">Khác</option></select></label>' +
+      '<label>Số tiền (đồng)<input name="soTien" type="number" min="1" step="1000" required></label><label>Số giờ (nếu là giờ người)<input name="soGio" type="number" min="0" step="0.5"></label>' +
+      '<label>Ngày<input name="ngay" type="date"></label><label class="vv-rong">Chi cho việc gì (≥ 10 ký tự)<textarea name="ghiChu" rows="2" minlength="10" required></textarea></label>' +
+      '<button class="btn" type="submit">Ghi chi phí</button></form>';
+    if (cp == null) return o + '<p class="sm muted">Bảng lợi nhuận đóng góp theo nhà chỉ R01–R03 (luật tài chính).</p>';
+    if (!cp.ok) return o + loi(cp);
+    var t = cp.tongHop;
+    o += '<p class="sm">Tỷ trọng lợi nhuận đóng góp nhóm trọng điểm: <b>' + (t.giaTri == null ? '<span class="vv-chua">chưa đo</span>' : pct(t.giaTri)) + '</b>' + (t.vi ? ' <span class="muted">— ' + h(t.vi) + '</span>' : '') + '</p>';
+    o += U.tbl(['Nhà', 'Nhóm', 'Thực thu 12 tháng', 'Chi phí phục vụ', 'Lợi nhuận đóng góp'], cp.ds.map(function (d) {
+      return [h(d.maNha), h(d.nhom), tien(d.doanhThu), d.chiPhi == null ? nhan('chưa ghi', 'vang') : tien(d.chiPhi), d.loiNhuan == null ? '—' : tien(d.loiNhuan)];
+    }));
+    return o;
+  }
+
+  function veVanHanh() {
+    var v = G.VV.vh;
+    if (!v) { TAI.vanhanh(); return cho(); }
+    if (v === 'dang') return cho();
+    var dsNha = v.kd && v.kd.ok ? v.kd.ds.map(function (d) { return d.maNha; }) : [];
+    return veKhoiDong(v.kd) + veYeuCau(v.yc, dsNha) + veChiPhi(v.cp, dsNha);
+  }
+
+  var TABS = [['tong', 'Bảng 80%', 'chart'], ['nhan', 'Nhận diện · nhóm', 'users'], ['phucvu', 'Phục vụ · phân công', 'clock'], ['vanhanh', 'Vận hành · hỗ trợ', 'check'],
     ['hoso', 'Hồ sơ 12 tài liệu', 'book'], ['wow', 'Điểm chạm WOW', 'spark'], ['chiendich', 'Chiến dịch', 'flame'], ['blueprint', 'Master Blueprint', 'crown'], ['sach', 'Sách Cây Tiền', 'seed']];
 
   G.VIEWS['phong-vvip'] = function () {
@@ -446,7 +558,7 @@ G.VIEWS = G.VIEWS || {};
     }).join('') + '</div>';
     var tab = G.VV.tab;
     o += tab === 'tong' ? veTong() : tab === 'nhan' ? veNhan() : tab === 'phucvu' ? vePhucVu() : tab === 'hoso' ? veHoSo() :
-      tab === 'wow' ? veWow() : tab === 'chiendich' ? veChienDich() : tab === 'sach' ? veSach() : veBlueprint();
+      tab === 'wow' ? veWow() : tab === 'chiendich' ? veChienDich() : tab === 'sach' ? veSach() : tab === 'vanhanh' ? veVanHanh() : veBlueprint();
     if (tab !== 'blueprint' && tab !== 'hoso' && tab !== 'sach') o += '<p class="mt"><button class="btn ghost" onclick="G.vvTaiLai()">Đọc lại từ máy chủ</button></p>';
     o += '<p class="tiny muted mt">Liên quan: <a data-v="hang-vip">Phân hạng VIP & VVIP</a> · <a data-v="hoso-vip">Chuẩn hồ sơ VIP</a> · <a data-v="cay-tien">Cây tiền</a> · <a data-v="khach-lon">Khách lớn</a> · <a data-v="crm">CRM</a></p>';
     return '<div class="man-vv">' + o + '</div>';

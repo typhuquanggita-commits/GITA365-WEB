@@ -2893,3 +2893,58 @@ CREATE INDEX IF NOT EXISTS ix_cdvvip_ngay ON chienDichVvip (batDau, ketThuc);
 
 -- Sách nội bộ (sổ tri thức Cây Tiền): nội dung nạp từ gói mã hoá kho-sach/*.enc, không nằm trong kho mã.
 CREATE TABLE IF NOT EXISTS sachNoiBo (ma TEXT PRIMARY KEY, sach TEXT NOT NULL, chuong TEXT NOT NULL, ten TEXT NOT NULL, trang TEXT, noiDung TEXT NOT NULL, ban TEXT, napLuc INTEGER NOT NULL);
+
+-- ═══════════════════════════════════════════════════════════════
+-- VẬN HÀNH VIP/VVIP (may-chu/vvip-van-hanh.js) — ba bộ máy QD3 còn thiếu.
+-- mocKhoiDong: CHỈ mốc do NGƯỜI ghi (OB2 · OB5 · OB6). Ba mốc máy đo
+-- (OB1 · OB3 · OB4) đọc thẳng sổ chạm / sổ hồ sơ / sổ phân công, không
+-- có dòng nào ở đây — một mốc máy đo được mà có ô tự đánh dấu là lời khai.
+-- tuLuc = lúc vào nhóm trọng điểm; rút về CORE rồi vào lại là một lượt
+-- khởi động mới, nên khoá gồm cả tuLuc.
+CREATE TABLE IF NOT EXISTS mocKhoiDong (
+  id      TEXT PRIMARY KEY,
+  maNha   TEXT NOT NULL,
+  tuLuc   TEXT NOT NULL,
+  ma      TEXT NOT NULL,             -- OB2 · OB5 · OB6
+  xongLuc TEXT NOT NULL,
+  boiAi   TEXT NOT NULL,
+  canCu   TEXT NOT NULL
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_mockd ON mocKhoiDong (maNha, tuLuc, ma);
+-- yeuCauVvip: bàn hỗ trợ. KHÔNG có cột "quá hạn" — hạn tính lúc đọc từ
+-- tiepNhanLuc × nhóm × mức. Ba mốc phanCongLuc/phanHoiLuc chỉ ghi LẦN ĐẦU
+-- (COALESCE), để giao lại hay phản hồi thêm không xoá được dấu trễ.
+CREATE TABLE IF NOT EXISTS yeuCauVvip (
+  id          TEXT PRIMARY KEY,
+  maNha       TEXT NOT NULL,
+  nhom        TEXT NOT NULL,          -- VVIP · VIP lúc tiếp nhận
+  kenh        TEXT NOT NULL,
+  mucDo       TEXT NOT NULL,          -- thuong · gap · khieuNai
+  noiDung     TEXT NOT NULL,
+  tiepNhanLuc TEXT NOT NULL,
+  moBoi       TEXT NOT NULL,
+  trangThai   TEXT NOT NULL DEFAULT 'moi',  -- moi · daPhanCong · daPhanHoi · daDong
+  nguoiXuLy   TEXT,
+  phanCongLuc TEXT,
+  phanHoiLuc  TEXT,
+  phanHoi     TEXT,
+  dongLuc     TEXT,
+  dongBoi     TEXT,                   -- khiếu nại: KHÁC nguoiXuLy
+  ketQua      TEXT
+);
+CREATE INDEX IF NOT EXISTS ix_ycvvip_nha ON yeuCauVvip (maNha, tiepNhanLuc);
+CREATE INDEX IF NOT EXISTS ix_ycvvip_xl ON yeuCauVvip (nguoiXuLy, trangThai);
+-- chiPhiPhucVu: chi phí phục vụ theo nhà, để lợi nhuận đóng góp (K04) đo
+-- được. Nhà chưa có dòng nào = CHƯA GHI, không phải chi phí 0.
+CREATE TABLE IF NOT EXISTS chiPhiPhucVu (
+  id      TEXT PRIMARY KEY,
+  maNha   TEXT NOT NULL,
+  loai    TEXT NOT NULL,              -- gioNguoi · taiLieu · suKien · tangPham · khac
+  soTien  INTEGER NOT NULL,           -- đồng, số nguyên
+  soGio   REAL,
+  ngay    TEXT NOT NULL,              -- YYYY-MM-DD
+  ghiChu  TEXT NOT NULL,
+  boiAi   TEXT NOT NULL,
+  luc     TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_cppv_nha ON chiPhiPhucVu (maNha, ngay);

@@ -410,7 +410,7 @@ export const THANH_PHAN_8 = Object.freeze([
   { ten: 'Content Engine', bat: 'Nội dung đã duyệt, phiên bản, đối tượng, điều kiện dùng', trongHe: 'diemChamWow (trạng thái + mười tiêu chuẩn) · bản tin có biên tập' },
   { ten: 'Journey Engine', bat: 'Kích hoạt hành trình theo sự kiện và trạng thái khách', trongHe: 'kichHoatDiemCham (kiểm nhóm, tần suất, trùng lặp, từ chối)' },
   { ten: 'AI Assistant', bat: 'Phân loại yêu cầu, soạn phản hồi, tóm tắt hồ sơ, đề xuất bước tiếp', trongHe: 'Quyền năng AI do Super Admin cấp — AI soạn, người duyệt' },
-  { ten: 'Service Desk', bat: 'Tiếp nhận, giao việc, theo dõi hạn, xử lý khiếu nại', trongHe: 'tt-cskh · năm bước khiếu nại' },
+  { ten: 'Service Desk', bat: 'Tiếp nhận, giao việc, theo dõi hạn, xử lý khiếu nại', trongHe: 'yeuCauVvip — hạn phân công · phản hồi · đóng theo nhóm × mức, khiếu nại do người khác đóng · tt-cskh' },
   { ten: 'Product Engine', bat: 'Chương trình, điều kiện tham gia, chi phí, phạm vi cam kết', trongHe: 'Bảng giá (khung ở kho, số ở sổ) · năm tầng' },
   { ten: 'Analytics', bat: 'Phễu chuyển đổi, CAC, doanh thu, lợi nhuận đóng góp, tỷ lệ duy trì', trongHe: 'bangVvip · bảy con số CEO' },
   { ten: 'Governance', bat: 'Quyền truy cập, phê duyệt, nhật ký kiểm toán, chất lượng nội dung', trongHe: 'Phân quyền vai · người đề xuất ≠ người duyệt · audit' }
@@ -439,18 +439,18 @@ export const KPI_10 = Object.freeze([
   { ma: 'K01', nhom: 'Nhận diện', chiSo: 'Lượt tiếp cận đúng đối tượng', dung: 'Đánh giá khả năng tiếp cận thị trường', vi: 'Đo ở máy chủ đo lường trang công khai (không PII), chưa nối vào bảng này' },
   { ma: 'K02', nhom: 'Thu hút', chiSo: 'Số khách hàng tiềm năng phù hợp', dung: 'Đo chất lượng nguồn khách', do: 'crmKhach ở giai đoạn mới/tư vấn' },
   { ma: 'K03', nhom: 'Chuyển đổi', chiSo: 'Tỷ lệ từ tư vấn sang đăng ký', dung: 'Phát hiện điểm nghẽn hành trình', do: 'crmCoHoi thắng ÷ (thắng + thua) trong 12 tháng' },
-  { ma: 'K04', nhom: 'Tài chính', chiSo: 'CAC và lợi nhuận đóng góp', dung: 'Kiểm soát hiệu quả kinh tế', do: 'CAC = chi khoản mục tiếp thị đã duyệt ÷ nhà mới 12 tháng; lợi nhuận đóng góp chưa đo được' },
+  { ma: 'K04', nhom: 'Tài chính', chiSo: 'CAC và lợi nhuận đóng góp', dung: 'Kiểm soát hiệu quả kinh tế', do: 'CAC = chi khoản mục tiếp thị đã duyệt ÷ nhà mới 12 tháng; lợi nhuận đóng góp = (thực thu − chi phí phục vụ) của nhà VIP/VVIP ÷ của mọi nhà đã ghi chi phí (chiPhiPhucVu)' },
   { ma: 'K05', nhom: 'Duy trì', chiSo: 'Tỷ lệ tiếp tục chương trình phù hợp', dung: 'Đánh giá giá trị dịch vụ dài hạn', do: 'Nhà vào trên 90 ngày còn đang học ÷ nhà vào trên 90 ngày' },
-  { ma: 'K06', nhom: 'Trải nghiệm', chiSo: 'Mức độ hài lòng và tỷ lệ xử lý vấn đề', dung: 'Đánh giá chất lượng phục vụ', do: 'Phiếu CSAT ≥ 4 ÷ số phiếu trong 3 tháng; xử lý vấn đề chưa nối' },
+  { ma: 'K06', nhom: 'Trải nghiệm', chiSo: 'Mức độ hài lòng và tỷ lệ xử lý vấn đề', dung: 'Đánh giá chất lượng phục vụ', do: 'Phiếu CSAT ≥ 4 ÷ số phiếu trong 3 tháng; xử lý vấn đề = yêu cầu đóng đúng hạn ÷ yêu cầu đã tới hạn đóng (yeuCauVvip, 90 ngày) — hai con số, không gộp' },
   { ma: 'K07', nhom: 'Giáo dục', chiSo: 'Mức độ đạt mục tiêu đã thống nhất', dung: 'Đánh giá giá trị cốt lõi', vi: 'Cần đối chiếu mốc tài liệu 06 với kết quả — là lời khai của coach, chưa phải phép đo' },
   { ma: 'K08', nhom: 'Giới thiệu', chiSo: 'Tỷ lệ khách giới thiệu tự nguyện', dung: 'Đánh giá sức khoẻ quan hệ', do: 'Nhà mới 12 tháng có nhà giới thiệu ÷ nhà mới 12 tháng' },
   { ma: 'K09', nhom: 'Vận hành', chiSo: 'Tỷ lệ hoàn thành điểm chạm đúng hạn', dung: 'Kiểm soát chất lượng thực thi', do: 'Nhà VIP/VVIP còn trong nhịp chạm ÷ nhà VIP/VVIP' },
   { ma: 'K10', nhom: 'Quản trị', chiSo: 'Sự cố dữ liệu và vi phạm quy trình', dung: 'Theo dõi rủi ro hệ thống', vi: 'Người khai sự cố; lượt bị cổng chặn đếm ở nhật ký nhưng không phải toàn bộ sự cố' }
 ]);
 export const MUC_TIEU_THU_4 = Object.freeze([
-  { ma: 'M1', ten: 'Hoàn thành onboarding đúng hạn', nguong: 90, vi: 'Chưa có mốc "đúng hạn" của bước khởi động trong sổ — chưa đo' },
+  { ma: 'M1', ten: 'Hoàn thành onboarding đúng hạn', nguong: 90, do: 'Nhà đã qua 30 ngày khởi động xong CẢ SÁU mốc OB1–OB6 đúng hạn ÷ nhà đã qua 30 ngày (ba mốc máy đọc sổ, ba mốc người ghi kèm căn cứ)' },
   { ma: 'M2', ten: 'Điểm chạm tự động đạt chuẩn', nguong: 98, do: 'Điểm chạm đang bật đủ bảy lớp và đủ mười tiêu chuẩn ÷ điểm chạm đang bật' },
-  { ma: 'M3', ten: 'Yêu cầu hỗ trợ được phân công đúng hạn', nguong: 95, vi: 'Service Desk chưa ghi hạn phân công — chưa đo' },
+  { ma: 'M3', ten: 'Yêu cầu hỗ trợ được phân công đúng hạn', nguong: 95, do: 'Yêu cầu 90 ngày đã tới hạn phân công mà được giao trong hạn ÷ yêu cầu đã tới hạn phân công' },
   { ma: 'M4', ten: 'Hồ sơ trọng điểm có kế hoạch tiếp theo', nguong: 95, do: 'Nhà VIP/VVIP có người phụ trách + ngày hẹn tiếp chưa quá hạn ÷ nhà VIP/VVIP' }
 ]);
 export const KPI_CANH_BAO = 'Ngưỡng là mục tiêu THỬ NGHIỆM, không phải hiệu suất hiện tại. Không tối ưu bằng cách gửi nhiều tin hơn hay hoàn thành quy trình hình thức — kiểm tra mẫu thực tế, phản hồi khách và tác động tới kết quả giáo dục.';
@@ -484,7 +484,8 @@ export const QUYET_DINH_5 = Object.freeze([
   { ma: 'QD2', hoi: 'Nhóm khách nào được chọn làm nhóm thử nghiệm VVIP, dựa trên dữ liệu và nhu cầu thực tế?', giaDinh: 'Chưa có — danh sách nhận diện nêu nhà đạt ≥5/7 dấu hiệu để Ban điều hành chọn.',
     chot: 'Nhóm thử = các nhà đạt ≥5/7 dấu hiệu ở ngăn Nhận diện, mỗi nhà vào nhóm qua HAI người (đề xuất ≠ duyệt, R01–R03). Máy không chọn nhà; không đặt trần số nhà vì Blueprint không nêu.', ngay: CHOT_NGAY, boi: CHOT_BOI },
   { ma: 'QD3', hoi: 'CRM và Web App hiện tại đáp ứng tới đâu; chức năng nào cần phát triển thêm?', giaDinh: 'Đã dựng phần lõi (hồ sơ, nhóm, điểm chạm, chiến dịch, bảng 80%). Còn thiếu: chi phí phục vụ theo nhà, hạn của Service Desk, mốc đúng hạn của onboarding.',
-    chot: 'Phần lõi đủ cho 90 ngày thử. Ba chức năng phát triển tiếp, theo thứ tự: (1) chi phí phục vụ theo nhà — để tính lợi nhuận đóng góp thật; (2) hạn của Service Desk; (3) mốc đúng hạn của onboarding. Tới khi có, ba chỉ số ấy vẫn trả null kèm lý do.', ngay: CHOT_NGAY, boi: CHOT_BOI },
+    chot: 'Phần lõi đủ cho 90 ngày thử. Ba chức năng phát triển tiếp, theo thứ tự: (1) chi phí phục vụ theo nhà — để tính lợi nhuận đóng góp thật; (2) hạn của Service Desk; (3) mốc đúng hạn của onboarding. Tới khi có, ba chỉ số ấy vẫn trả null kèm lý do.', ngay: CHOT_NGAY, boi: CHOT_BOI,
+    daDung: 'Đã dựng đủ ba (vvip-van-hanh.js): sổ chi phí phục vụ theo nhà → lợi nhuận đóng góp; bàn hỗ trợ có hạn theo nhóm × mức → M3 và tỷ lệ xử lý vấn đề; sáu mốc khởi động → M1. Chỉ số vẫn trả null khi CHƯA CÓ DỮ LIỆU — nay là thiếu dòng trong sổ, không còn thiếu chỗ ghi.' },
   { ma: 'QD4', hoi: 'Mục tiêu 80% tính theo doanh thu, lợi nhuận đóng góp hay tăng trưởng doanh thu; kỳ đánh giá là quý hay năm?', giaDinh: 'Bảng hiện cả ba; mặc định đọc doanh thu, kỳ 12 tháng trượt.',
     chot: 'Đọc theo DOANH THU, kỳ 12 tháng trượt. Bảng vẫn hiện riêng lợi nhuận đóng góp và tăng trưởng — không gộp ba thành một con số.', ngay: CHOT_NGAY, boi: CHOT_BOI },
   { ma: 'QD6', hoi: 'Bản phân bổ năm giai đoạn cộng ra 8.500, không phải 10.000. 1.500 điểm chạm còn lại vào giai đoạn nào (hay giữ làm dự phòng sau 90 ngày thử)?', giaDinh: 'Giữ nguyên năm con số của bản Blueprint; 1.500 nêu riêng là "chưa phân bổ".',

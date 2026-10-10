@@ -38,6 +38,7 @@ import { chamMotNguoi } from './xep-hang-luong.js';
 import { HE_THI } from './thi-cap.js';
 import { CUM_TUYET_DOI } from './noi-dung-tiep-thi.js';
 import { MUC_QUANG_CAO } from './tai-chinh-ceo.js';
+import { docKhoiDong, dsYeuCauVvip, chiPhiTheoNha, loiNhuanDongGop } from './vvip-van-hanh.js';
 import * as PhapLy from './phap-ly-rui-ro.js';
 import { ghiCham } from './van-hanh-cham-soc.js';
 import * as ND from './vvip-noi-dung.js';
@@ -555,7 +556,7 @@ export async function bangVvip(y, env, db, hoSo) {
   const baChiSo = {
     DOANHTHU: { giaTri: tyLe(td, tong), vvip: tyLe(vvip, tong), vip: tyLe(vip, tong), dich: ND.MUC_TIEU_80.dich, tong: Math.round(tong), trongDiem: Math.round(td),
       soNhaVVIP: Object.values(daQuyet).filter(z => z === 'VVIP').length, soNhaVIP: Object.values(daQuyet).filter(z => z === 'VIP').length },
-    LOINHUAN: { giaTri: null, vi: 'Chưa đo được: sổ chưa có chi phí trực tiếp phục vụ theo từng nhà (giờ coach, tài liệu, sự kiện). Cần quyết định QD3 trước khi tính.' },
+    LOINHUAN: loiNhuanDongGop(dt, await chiPhiTheoNha(db, a.slice(0, 10), b.slice(0, 10)), daQuyet),
     TANGTRUONG: tang > 0 ? { giaTri: tyLe(tangTD, tang), tangTong: Math.round(tang), tangTrongDiem: Math.round(tangTD),
       giaDinh: 'So 12 tháng gần nhất với 12 tháng trước đó, theo nhóm HIỆN TẠI của mỗi nhà.' }
       : { giaTri: null, vi: tong0 === 0 ? 'Chưa có dữ liệu kỳ gốc (12 tháng trước).' : 'Doanh thu không tăng so với kỳ gốc — tỷ trọng tăng trưởng không xác định.' }
@@ -568,11 +569,17 @@ export async function bangVvip(y, env, db, hoSo) {
   K.K03 = (Number(ch.t || 0) + Number(ch.u || 0)) ? { giaTri: tyLe(Number(ch.t || 0), Number(ch.t || 0) + Number(ch.u || 0)), donVi: '%' } : { vi: 'Chưa có cơ hội nào đóng (thắng/thua) trong 12 tháng.' };
   const qc = (await db.prepare("SELECT SUM(soTien) s FROM chiPhi WHERE khoanMuc = ? AND trangThai = 'daDuyet' AND ngayChi >= ?").bind(MUC_QUANG_CAO, ngay12).first()).s || 0;
   const nhaMoi = (await db.prepare('SELECT COUNT(*) c FROM hoSoKhach WHERE vaoLuc >= ?').bind(a).first()).c;
-  K.K04 = nhaMoi ? { giaTri: Math.round(qc / nhaMoi), donVi: 'đồng/nhà mới', ghiChu: 'Lợi nhuận đóng góp chưa đo được (xem ba chỉ số).' } : { vi: 'Chưa có nhà mới trong 12 tháng.' };
+  const ln = baChiSo.LOINHUAN;
+  const lnGhi = ln.giaTri != null ? 'Lợi nhuận đóng góp nhóm trọng điểm ' + String(ln.giaTri).replace('.', ',') + '% (' + ln.nhaCoChiPhi + '/' + ln.nhaTrongDiem + ' nhà đã ghi chi phí).' : ln.vi;
+  K.K04 = nhaMoi ? { giaTri: Math.round(qc / nhaMoi), donVi: 'đồng/nhà mới', ghiChu: lnGhi } : { vi: 'Chưa có nhà mới trong 12 tháng. ' + lnGhi };
   const cu = await db.prepare("SELECT COUNT(*) n, SUM(trangThai = 'dangHoc') o FROM hoSoKhach WHERE vaoLuc <= ?").bind(iso(nay - 90 * NGAY)).first();
   K.K05 = cu.n ? { giaTri: tyLe(Number(cu.o || 0), cu.n), donVi: '%' } : { vi: 'Chưa có nhà vào trên 90 ngày.' };
   const hl = await db.prepare('SELECT COUNT(*) n, SUM(csat >= 4) d FROM danhGiaKH WHERE csat IS NOT NULL AND luc >= ?').bind(iso(nay - 90 * NGAY)).first();
-  K.K06 = hl.n ? { giaTri: tyLe(Number(hl.d || 0), hl.n), donVi: '%', ghiChu: 'Phần "tỷ lệ xử lý vấn đề" chưa nối Service Desk.' } : { vi: 'Chưa có phiếu CSAT trong 90 ngày.' };
+  /* Hai con số riêng của K06 — hài lòng là lời khách chấm, xử lý vấn đề là
+     mốc đóng trong sổ; gộp thành một số là trộn lời khai với phép đo. */
+  const yc = await dsYeuCauVvip({}, env, db, hoSo), kd = await docKhoiDong({}, env, db, hoSo);
+  const xuLy = yc.xuLy != null ? 'Xử lý vấn đề đúng hạn ' + String(yc.xuLy).replace('.', ',') + '% (' + yc.xuLyMau + ' yêu cầu tới hạn đóng, 90 ngày).' : 'Xử lý vấn đề: chưa yêu cầu nào tới hạn đóng trong 90 ngày.';
+  K.K06 = hl.n ? { giaTri: tyLe(Number(hl.d || 0), hl.n), donVi: '%', xuLyVanDe: yc.xuLy, ghiChu: xuLy } : { vi: 'Chưa có phiếu CSAT trong 90 ngày. ' + xuLy, xuLyVanDe: yc.xuLy };
   const gt = await db.prepare('SELECT COUNT(*) n, SUM(boTro IS NOT NULL AND boTro <> \'\') g FROM hoSoKhach WHERE vaoLuc >= ?').bind(a).first();
   K.K08 = gt.n ? { giaTri: tyLe(Number(gt.g || 0), gt.n), donVi: '%' } : { vi: 'Chưa có nhà mới trong 12 tháng.' };
   const pv = await soatPhucVuVvip({}, env, db, hoSo);
@@ -580,7 +587,9 @@ export async function bangVvip(y, env, db, hoSo) {
   const kpi = ND.KPI_10.map(k => ({ ...k, ...(K[k.ma] || {}) }));
   const dc = (await db.prepare("SELECT noiDungJson, chuanJson FROM diemChamWow WHERE trangThai = 'daDuyet'").all()).results || [];
   const dcDat = dc.filter(z => soatDiemCham(JSON.parse(z.noiDungJson || '{}')).thieu.length === 0 && (JSON.parse(z.chuanJson || '[]')).length === ND.CHUAN_WOW_10.length).length;
-  const M = { M2: dc.length ? { giaTri: tyLe(dcDat, dc.length) } : { vi: 'Chưa có điểm chạm nào đang bật.' },
+  const M = { M1: kd.m1 != null ? { giaTri: kd.m1, mau: kd.m1Mau } : { vi: kd.m1Vi },
+    M3: yc.m3 != null ? { giaTri: yc.m3, mau: yc.m3Mau } : { vi: 'Chưa yêu cầu hỗ trợ nào tới hạn phân công trong 90 ngày — chưa đo được.' },
+    M2: dc.length ? { giaTri: tyLe(dcDat, dc.length) } : { vi: 'Chưa có điểm chạm nào đang bật.' },
     M4: pv.tong ? { giaTri: tyLe(pv.coKeHoach, pv.tong) } : { vi: 'Chưa có nhà nào được duyệt vào nhóm VIP/VVIP.' } };
   const thuNghiem = ND.MUC_TIEU_THU_4.map(m => ({ ...m, ...(M[m.ma] || {}), dat: M[m.ma] && M[m.ma].giaTri != null ? M[m.ma].giaTri >= m.nguong : undefined }));
   return { ok: true, cuaSo: { tu: a.slice(0, 10), den: homNay }, baChiSo, tapTrung: { soNha: duong.length, top20: tyLe(top20, sumDuong), soNha80, cong10 },
