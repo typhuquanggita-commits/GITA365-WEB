@@ -21,6 +21,14 @@ find . -maxdepth 1 -type f -name '*.html' -exec cp {} "$RA"/ \;
 cp gita-app.js gita-nghe.js cau-hinh.js sw.js manifest.webmanifest \
   _headers _redirects robots.txt sitemap.xml "$RA"/
 cp -R assets kho "$RA"/
+# Gói nội dung MÃ HOÁ mà màn hình tải bằng fetch (kho vấn đề, kho cấp cao,
+# kho nhà, sách nội bộ). Trước 10/10/2026 các thư mục này không có trong
+# danh sách, nên trên trang thật nút "Mở gói và nạp" nhận 404 — mọi bộ kiểm
+# chạy trên máy chủ tĩnh của kho mã nên đều xanh. Chỉ chép tệp .enc: nguồn
+# trần không bao giờ đi theo, kể cả khi ai đó lỡ để nó trong thư mục.
+for d in kho-van-de kho-cao kho-nha kho-sach; do
+  if [ -d "$d" ]; then mkdir -p "$RA/$d"; find "$d" -maxdepth 1 -type f -name '*.enc' -exec cp {} "$RA/$d/" \; ; fi
+done
 # Tệp lẻ trong src/ mà trang HTML nạp trực tiếp (không đi qua gita-app.js)
 mkdir -p "$RA/src"
 cp src/i18n-marketing.js "$RA/src/"
@@ -37,6 +45,7 @@ test ! -e "$RA/desktop"
 # Khoá chủ của kho nội dung KHÔNG BAO GIỜ được lên trang công khai
 rm -f "$RA/kho/khoa.json"
 test ! -e "$RA/kho/khoa.json"
+test -z "$(find "$RA"/kho-* -type f ! -name '*.enc' 2>/dev/null)"
 test -z "$(find "$RA" -name '*.gita' -o -name '*.bien-nhan.txt' -o -name 'PHIEU-QUYET.md' \
   -o -name '*.zip' -o -name '.dev.vars' -o -name '.env' -o -name '*.pem' -o -name '*.key')"
 printf 'Prepared Cloudflare Pages artifact: %s files\n' "$(find "$RA" -type f | wc -l)"

@@ -354,8 +354,88 @@ G.VIEWS = G.VIEWS || {};
     return o;
   }
 
+  /* ══ SÁCH CÂY TIỀN — sổ tri thức đọc đủ tám chương (trang 25–292) ══
+     Nội dung không nằm trong kho mã (sách có bản quyền, kho mã công khai):
+     Super Admin mở gói kho-sach/cay-tien.enc NGAY TRÊN MÁY bằng mật khẩu ở
+     Drive rồi nạp; nhân sự R01–R11 đọc từ máy chủ, mỗi lượt mở có nhật ký. */
+  var TEN_NGAN = { nhan: 'Nhận diện', phucvu: 'Phục vụ', hoso: 'Hồ sơ', wow: 'WOW', chiendich: 'Chiến dịch', blueprint: 'Blueprint' };
+  G.vvMoChuong = function (ma) {
+    G.VV.chuong = 'dang'; ve();
+    goi('docSachNoiBo', { sach: 'cay-tien', chuong: ma }).then(function (x) { G.VV.chuong = x.ok ? x.chuong : { loi: x.error }; ve(); });
+  };
+  G.vvDongChuong = function () { G.VV.chuong = null; ve(); };
+  G.vvNapSach = function () {
+    var o = document.getElementById('vvSachMk'), mk = o ? o.value : '';
+    if (!mk) { U.toast('Nhập mật khẩu gói.', 'err'); return; }
+    if (!G.moGoiMaHoa) { U.toast('Chưa có hàm mở gói.', 'err'); return; }
+    G.VV.napSach = { dang: true }; ve();
+    G.moGoiMaHoa(mk, 'kho-sach/cay-tien.enc').then(function (g) {
+      return goi('napSachNoiBo', { sach: 'cay-tien', ds: g.ds, ban: g.ban });
+    }).then(function (r) {
+      if (!(r && r.ok)) throw new Error(((r && r.error) || 'Máy chủ từ chối.') + (r && r.hong ? ' ' + r.hong.slice(0, 3).join(' · ') : ''));
+      G.VV.napSach = null; G.VV.sach = null; U.toast('Đã nạp ' + r.nap + ' chương sách Cây Tiền.', 'ok'); ve();
+    }).catch(function (e) { G.VV.napSach = { loi: String(e && e.message || e) }; ve(); });
+  };
+  function veNapSach() {
+    if (!(G.S && G.S.roleObj && G.S.roleObj.lv === 1)) return '';
+    var n = G.VV.napSach || {};
+    /* Mở sẵn khi đang nạp hoặc vừa lỗi — báo "sai mật khẩu" nằm trong một ô
+       đã gập thì người nạp không thấy, tưởng máy treo. */
+    return '<details class="card pad-sm mb"' + (G.VV.napSach ? ' open' : '') + '><summary class="sm"><b>Nạp gói sách (Super Admin)</b></summary>' +
+      '<p class="tiny muted">Mật khẩu ở Google Drive của chủ hệ (tài liệu “GITA365 — Mật khẩu gói sách Cây Tiền”). Máy này tự mở gói; mật khẩu không gửi lên máy chủ.</p>' +
+      '<label class="tiny">Mật khẩu gói <input id="vvSachMk" class="inp" type="password" autocomplete="off"></label>' +
+      '<div class="mt"><button class="btn pri"' + (n.dang ? ' disabled' : '') + ' onclick="G.vvNapSach()">' + (n.dang ? 'Đang mở và nạp…' : 'Mở gói và nạp') + '</button></div>' +
+      (n.loi ? '<p class="tiny" style="color:var(--gita-do-ink)">' + h(n.loi) + '</p>' : '') + '</details>';
+  }
+  function veMuc(m) {
+    var o = '<div class="card mb"><div class="row wrap" style="gap:8px;align-items:baseline"><b>' + h(m.ma + ' · ' + m.ten) + '</b>' +
+      (m.trang ? '<span class="tiny muted">tr. ' + h(m.trang) + '</span>' : '') + '</div>';
+    o += '<div class="mt">' + U.list(m.yChinh || []) + '</div>';
+    if ((m.chuanSo || []).length) o += '<div class="tiny up muted mt">Chuẩn và con số của tác giả</div>' +
+      U.tbl(['Nội dung', 'Trang'], m.chuanSo.map(function (c) { return [h(c.noi), h(c.trang || '')]; }));
+    (m.trich || []).forEach(function (t) {
+      o += '<blockquote class="sm mt" style="border-left:3px solid var(--gita-vien-1);padding-left:10px;font-style:italic">“' + h(t.cau) + '” <span class="tiny muted">— tr. ' + h(t.trang || '') + '</span></blockquote>';
+    });
+    if ((m.apGita || []).length) o += '<div class="tiny up muted mt">Áp vào GITA</div>' + U.list(m.apGita, 'var(--gita)');
+    if ((m.noiVvip || []).length) o += '<div class="row wrap mt" style="gap:6px">' + m.noiVvip.map(function (n) {
+      return TEN_NGAN[n] ? '<button class="btn sm ghost" onclick="G.vvTab(\'' + n + '\')">→ ' + h(TEN_NGAN[n]) + '</button>' : '';
+    }).join('') + '</div>';
+    return o + '</div>';
+  }
+  function veSach() {
+    var o = veNapSach(), c = G.VV.chuong;
+    if (c === 'dang') return o + '<p class="sm muted">Đang mở chương…</p>';
+    if (c && c.loi) return o + '<p class="sm" style="color:var(--gita-do-ink)">' + h(c.loi) + '</p><button class="btn ghost" onclick="G.vvDongChuong()">← Mục lục</button>';
+    if (c) {
+      o += '<p><button class="btn ghost" onclick="G.vvDongChuong()">← Mục lục</button></p>';
+      o += U.sec(c.ma + ' · ' + c.ten, 'Trang ' + (c.trang || ''));
+      o += '<div class="card mb"><p class="sm" style="line-height:1.75">' + h(c.tomTat) + '</p></div>';
+      o += (c.muc || []).map(veMuc).join('');
+      if ((c.mauHoSo || []).length) {
+        o += U.sec('Mẫu hồ sơ khách hàng lớn theo sách', 'Đối chiếu với hồ sơ 12 tài liệu VVIP — trường nhạy cảm GITA bỏ');
+        o += U.tbl(['Phần', 'Trường', 'Trang', 'GITA dùng thế nào'], c.mauHoSo.map(function (p) {
+          return [h(p.phan), h((p.truong || []).join(' · ')), h(p.trang || ''), h(p.gitaDung || '')];
+        }));
+      }
+      if ((c.canhBao || []).length) o += '<div class="card mt" style="border-color:rgba(248,113,113,.3)"><b class="sm" style="color:var(--gita-do-ink)">Chỗ sách va luật GITA — đọc trước khi áp</b><div class="mt">' + U.list(c.canhBao, 'var(--gita-do)') + '</div></div>';
+      return o;
+    }
+    var s = G.VV.sach;
+    if (!s) { G.VV.sach = 'dang'; goi('dsSachNoiBo', { sach: 'cay-tien' }).then(function (x) { G.VV.sach = x; ve(); }); s = 'dang'; }
+    if (s === 'dang') return o + '<p class="sm muted">Đang đọc mục lục…</p>';
+    if (!s.ok) return o + U.empty('Chưa đọc được sách', s.error || '');
+    if (!s.ds.length) return o + U.empty('Chưa nạp gói sách', s.vi || '');
+    o += '<p class="sm muted">' + h(s.sach.ten + ' — ' + s.sach.tacGia + ' · ' + s.ds.length + '/' + s.sach.chuong + ' chương') + '. Chỉ nội bộ quản trị — không dạy học viên, không cho khách xem. Mỗi lượt mở chương được ghi nhật ký.</p>';
+    o += s.ds.map(function (c) {
+      return '<div class="card mb"><div class="row wrap" style="gap:8px;align-items:baseline"><b>' + h(c.ma + ' · ' + c.ten) + '</b><span class="tiny muted">tr. ' + h(c.trang || '') + '</span></div>' +
+        '<p class="tiny muted mt">' + h((c.muc || []).map(function (m) { return m.ten; }).join(' · ')) + '</p>' +
+        '<button class="btn sm pri mt" onclick="G.vvMoChuong(\'' + h(c.ma) + '\')">Đọc chương</button></div>';
+    }).join('');
+    return o;
+  }
+
   var TABS = [['tong', 'Bảng 80%', 'chart'], ['nhan', 'Nhận diện · nhóm', 'users'], ['phucvu', 'Phục vụ · phân công', 'clock'],
-    ['hoso', 'Hồ sơ 12 tài liệu', 'book'], ['wow', 'Điểm chạm WOW', 'spark'], ['chiendich', 'Chiến dịch', 'flame'], ['blueprint', 'Master Blueprint', 'crown']];
+    ['hoso', 'Hồ sơ 12 tài liệu', 'book'], ['wow', 'Điểm chạm WOW', 'spark'], ['chiendich', 'Chiến dịch', 'flame'], ['blueprint', 'Master Blueprint', 'crown'], ['sach', 'Sách Cây Tiền', 'seed']];
 
   G.VIEWS['phong-vvip'] = function () {
     napNoiDung();
@@ -366,8 +446,8 @@ G.VIEWS = G.VIEWS || {};
     }).join('') + '</div>';
     var tab = G.VV.tab;
     o += tab === 'tong' ? veTong() : tab === 'nhan' ? veNhan() : tab === 'phucvu' ? vePhucVu() : tab === 'hoso' ? veHoSo() :
-      tab === 'wow' ? veWow() : tab === 'chiendich' ? veChienDich() : veBlueprint();
-    if (tab !== 'blueprint' && tab !== 'hoso') o += '<p class="mt"><button class="btn ghost" onclick="G.vvTaiLai()">Đọc lại từ máy chủ</button></p>';
+      tab === 'wow' ? veWow() : tab === 'chiendich' ? veChienDich() : tab === 'sach' ? veSach() : veBlueprint();
+    if (tab !== 'blueprint' && tab !== 'hoso' && tab !== 'sach') o += '<p class="mt"><button class="btn ghost" onclick="G.vvTaiLai()">Đọc lại từ máy chủ</button></p>';
     o += '<p class="tiny muted mt">Liên quan: <a data-v="hang-vip">Phân hạng VIP & VVIP</a> · <a data-v="hoso-vip">Chuẩn hồ sơ VIP</a> · <a data-v="cay-tien">Cây tiền</a> · <a data-v="khach-lon">Khách lớn</a> · <a data-v="crm">CRM</a></p>';
     return '<div class="man-vv">' + o + '</div>';
   };

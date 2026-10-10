@@ -176,6 +176,9 @@ jobs:
       - name: Xưởng phim đào tạo — giọng từng cảnh, 16:9, Studio xuất thật, lưu phim chỉ qua ngoại lệ N4 có sổ, nhãn giọng máy đọc
         run: node tools/thu-xuong-phim.mjs
 
+      - name: Sách nội bộ Cây Tiền — chỉ Super Admin nạp, R01–R11 đọc có nhật ký, trích ngắn, kho mã chỉ có gói .enc
+        run: node tools/thu-sach-noi-bo.mjs
+
       - name: Chương trình đào tạo — không tự chấm, không tự ký, máy đọc ba cửa, đủ điều kiện kiểm ở máy chủ
         run: node tools/thu-dao-tao-ct.mjs
       - name: Thi chứng chỉ — đề riêng từng người, không tự chấm, tụt cấp theo tháng, vấn đề khó phải xin ý kiến

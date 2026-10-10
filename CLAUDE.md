@@ -196,3 +196,11 @@ Chủ hệ 10/10 gửi "GITA 365 VVIP — MASTER BLUEPRINT" (theo hướng sách
 - **C20 · ngoại lệ có tên cho Piper**: chỉ giọng kho có sẵn, không đường nhái giọng; giọng sinh ra mang cờ `tongHop` và phim tự đè nhãn "Giọng đọc tổng hợp bằng máy" suốt thời lượng. Đọc cờ từ VẬT LIỆU, không từ ô người dùng khai.
 - **VVIP QD1–QD6 đã chốt** ở `QUYET_DINH_5[].chot` kèm `ngay` · `boi`. Chốt không thêm con số nào Blueprint chưa có: không đặt trần số nhà thử, 1.500 điểm chạm giữ dự phòng tới sau 90 ngày thử.
 - **Sách *Cây Tiền*** vẫn chưa có trên Drive (chỉ có mã của chính kho) — nội dung sách trong kho mã hoá dựng từ bản Blueprint, không từ nguyên văn sách.
+
+## Sách nội bộ Cây Tiền — đọc đủ cả cuốn, chỉ gói mã hoá vào kho (`may-chu/sach-noi-bo.js` · `tools/dong-goi-sach.mjs` · `tools/thu-sach-noi-bo.mjs`)
+
+- **Nguồn:** 149 ảnh chụp sách trên Drive của chủ hệ (thư mục ảnh ngày 28/08/2026). Lượt biên soạn đầu chỉ đọc 4 chương; bản này đọc trang 25–292, đủ tám chương → sổ tri thức 8 chương · 42 mục · 217 chuẩn có dẫn trang · 70 câu trích ngắn · 57 chỗ va luật GITA · mẫu hồ sơ 13 phần/137 trường. **Thiếu trang 9–24** (Lời mở đầu + Mở đầu) — chưa từng được chụp.
+- **Kho mã gita365-web CÔNG KHAI, sách có bản quyền** → nội dung KHÔNG nằm trong mã nguồn. Chỉ `kho-sach/cay-tien.enc` (AES-256-GCM, PBKDF2 250k) vào kho; nguồn `C*.json` và bản mở ra bị `.gitignore` chặn. Mật khẩu ở Drive chủ hệ (tài liệu "GITA365 — Mật khẩu gói sách Cây Tiền"), không qua máy chủ.
+- Super Admin mở gói **trên máy mình** (`G.moGoiMaHoa`, chung với kho cao) rồi gọi `napSachNoiBo`. Đọc: R01–R11 (bậc pro_consult), mỗi lượt mở chương ghi nhật ký `SACH_DOC`. Trích dài hơn 40 chữ bị chặn — trích dài là chép sách.
+- **Lỗi có sẵn đã sửa:** `tools/dung-site.sh` không chép `kho-van-de/ kho-cao/ kho-nha/` lên trang thật → nút "Mở gói và nạp" nhận 404 trên bản chạy thật. Nay chép (chỉ `.enc`) và chặn mọi tệp khác `.enc` trong `kho-*`.
+- Đóng gói lại: `GITA_MK_TEP=<tệp-mật-khẩu> node tools/dong-goi-sach.mjs cay-tien <thư-mục-C*.json>`; mở ra: `--mo cay-tien <ra>`.

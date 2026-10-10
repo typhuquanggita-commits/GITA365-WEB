@@ -2890,3 +2890,6 @@ CREATE TABLE IF NOT EXISTS chienDichVvip (
   duyetLuc    TEXT
 );
 CREATE INDEX IF NOT EXISTS ix_cdvvip_ngay ON chienDichVvip (batDau, ketThuc);
+
+-- Sách nội bộ (sổ tri thức Cây Tiền): nội dung nạp từ gói mã hoá kho-sach/*.enc, không nằm trong kho mã.
+CREATE TABLE IF NOT EXISTS sachNoiBo (ma TEXT PRIMARY KEY, sach TEXT NOT NULL, chuong TEXT NOT NULL, ten TEXT NOT NULL, trang TEXT, noiDung TEXT NOT NULL, ban TEXT, napLuc INTEGER NOT NULL);

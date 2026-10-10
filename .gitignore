@@ -86,3 +86,9 @@ __pycache__/
 id_rsa*
 .venv/
 *.pyc
+
+# Sách nội bộ: chỉ gói .enc vào kho mã — nguồn biên soạn và bản mở ra không bao giờ vào (sách có bản quyền, kho mã công khai)
+kho-sach-mo/
+kho-sach-nguon/
+kho-sach/*.json
+kho-sach/*.txt
