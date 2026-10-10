@@ -14,7 +14,10 @@ import { pathToFileURL, fileURLToPath } from 'node:url';
 const ROOT = process.argv[2] || fileURLToPath(new URL('..', import.meta.url)).replace(/[\\/]$/, '');
 globalThis.fetch = async () => { throw new Error('không gọi mạng ngoài'); };
 let dat = 0, truot = 0;
-const kiem = (ten, dk, ct) => { if (dk) { dat++; console.log('OK  ' + ten); } else { truot++; console.log('SAI ' + ten + (ct ? ' — ' + ct : '')); } };
+/* Trên GitHub Actions, dòng SAI in thêm thành chú thích (::error::) — log của
+   job nằm ở máy chủ khác, còn chú thích đọc được qua API ngay trên PR. */
+const kiem = (ten, dk, ct) => { if (dk) { dat++; console.log('OK  ' + ten); } else { truot++; const d = 'SAI ' + ten + (ct ? ' — ' + ct : ''); console.log(d);
+  if (process.env.GITHUB_ACTIONS) console.log('::error title=thu-thi-cap::' + d.replace(/[\r\n%]/g, ' ').slice(0, 900)); } };
 
 const HANG = ['S1', 'S3', 'S5', 'VIP', 'VVIP', 'DIAMOND'];
 const LOI_GIAI = 'Quan sát bảy tối liền, ghi giờ bắt đầu và người có mặt, không nhắc con trong lúc ghi, đọc lại cùng nhau cuối tuần để tìm mô thức lặp lại';
