@@ -124,3 +124,164 @@ export async function soanMucGiaiPhap(y, env, db, hoSo) {
   return { ok: true, muc: String(x.muc), tenMuc: m.ten, nhap: String(k.text || '').replace(/\*\*(.+?)\*\*/g, '$1').trim(), ncc: k.ncc,
     vi: 'Bản nháp máy soạn — chưa duyệt, chưa vào kho. Đối chiếu với kho và người phụ trách chuyên môn trước khi dùng với gia đình.' };
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   KHO 1000 VẤN ĐỀ (chủ hệ 10/10/2026) — 500 vấn đề khách hàng · 500 vấn
+   đề nội bộ (nhân sự, hệ thống, vận hành, công nghệ…), mỗi vấn đề đủ 13
+   mục của hệ thống tra cứu.
+
+   Kho này nằm ở MÁY CHỦ (bảng khoVanDe), không nằm trong gói gửi xuống máy
+   khách. Hai lý do:
+     1. Kho mã là công khai. Nội dung nghề không được nằm trần trong kho mã
+        — gói nguồn đi vào kho mã ĐÃ MÃ HOÁ (kho-van-de/goi.enc), và chỉ
+        Super Admin có mật khẩu mở gói để nạp vào bảng này.
+     2. Tỷ lệ xem theo vai được CẮT Ở ĐÂY. Màn hình chỉ nhận đúng phần vai
+        được xem; vấn đề ngoài tỷ lệ chỉ gửi tên, không gửi nội dung. Kho
+        nghề cũ thì đã nằm sẵn trên máy nên tỷ lệ ở đó chỉ là chính sách
+        hiển thị — kho này thì không.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Bản máy chủ của G.TCGP_TY_LE (src/data.core.js). Hai bản phải khớp — bộ
+   thử tools/thu-tra-cuu-giai-phap.mjs đối chiếu mỗi lần chạy. Máy chủ phải
+   có bản riêng vì nó là chỗ cắt thật; máy khách cần bản của nó cho kho nghề. */
+export const TY_LE = Object.freeze([
+  { vai: ['R01', 'R02'], pt: 100 },
+  { vai: ['R03', 'R04'], pt: 82 },
+  { vai: ['R05', 'R06', 'R07'], pt: 77 },
+  { vai: ['R08'], pt: 76 },
+  { vai: ['R09', 'R10', 'R11'], pt: 69 }
+]);
+export function tyLe(vai) {
+  for (const r of TY_LE) if (r.vai.includes(vai)) return r.pt;
+  return 0;
+}
+
+export const LOAI_KHO = Object.freeze({ kh: 'Khách hàng', ns: 'Nội bộ' });
+export const NHOM_KHO = Object.freeze({
+  'KH-A': 'Học tập & động lực học', 'KH-B': 'Cảm xúc & hành vi của con', 'KH-C': 'Màn hình & công nghệ',
+  'KH-D': 'Giao tiếp cha mẹ – con', 'KH-E': 'Vợ chồng & gia đình nhiều thế hệ', 'KH-F': 'Thói quen, kỷ luật & tự lập',
+  'KH-G': 'Anh chị em & bạn bè', 'KH-H': 'Tài năng, định hướng & giá trị sống', 'KH-I': 'Cha mẹ tự phát triển',
+  'KH-J': 'Khách hàng với dịch vụ GITA',
+  'NS-A': 'Tuyển dụng, hội nhập & giữ người', 'NS-B': 'Năng lực coach & tư vấn viên', 'NS-C': 'Hiệu suất, KPI & lương',
+  'NS-D': 'Văn hoá, xung đột & đạo đức nội bộ', 'NS-E': 'Vận hành quy trình & chăm sóc khách', 'NS-F': 'Hệ thống, tài khoản & phân quyền',
+  'NS-G': 'Công nghệ, ứng dụng & AI', 'NS-H': 'Dữ liệu, bảo mật & pháp lý', 'NS-I': 'Tài chính & chi tiêu nội bộ',
+  'NS-J': 'Nội dung, truyền thông & khủng hoảng'
+});
+const MA_KHO = /^(KH|NS)-([A-J])-(\d{2})$/;
+const TRAN_LO = 100;          // bản ghi mỗi lượt nạp
+const TRAN_BAN_GHI = 14000;   // ký tự nội dung một bản ghi
+
+let daDungKho = false;
+async function taoBangKho(db) {
+  if (daDungKho) return;
+  await db.prepare('CREATE TABLE IF NOT EXISTS khoVanDe (ma TEXT PRIMARY KEY, loai TEXT NOT NULL, nhom TEXT NOT NULL, cap INTEGER NOT NULL, ' +
+    'stt INTEGER NOT NULL, ten TEXT NOT NULL, noiDung TEXT NOT NULL, ban TEXT, napLuc INTEGER NOT NULL)').run();
+  await db.prepare('CREATE INDEX IF NOT EXISTS ix_kvd_hang ON khoVanDe (loai, cap, stt)').run();
+  daDungKho = true;
+}
+
+/* Soát một bản ghi trước khi vào bảng. Trả về danh sách lỗi (rỗng = sạch).
+   Cùng hình với bộ kiểm biên soạn — nạp lại một gói hỏng thì hỏng ở đây,
+   không lặng lẽ thành một vấn đề thiếu mục trên màn. */
+export function soatBanGhiKho(r) {
+  const loi = [];
+  const s = v => typeof v === 'string' && v.trim().length > 0;
+  const mang = (v, a, b) => Array.isArray(v) && v.length >= a && v.length <= b && v.every(s);
+  if (!r || typeof r !== 'object') return ['không phải bản ghi'];
+  if (!MA_KHO.test(r.id || '')) loi.push('id sai dạng');
+  if (!s(r.ten) || r.ten.length > 140) loi.push('ten');
+  if (![1, 2, 3, 4, 5].includes(r.cap)) loi.push('cap');
+  if (!s(r.van)) loi.push('van');
+  const p = r.phanTich || {};
+  if (!s(p.hienTuong) || !s(p.boiCanh) || !mang(p.nguyenNhan, 1, 6) || !s(p.tacDong) || !s(p.donBay)) loi.push('phanTich');
+  if (!mang(r.phacDo, 1, 8)) loi.push('phacDo');
+  if (!r.t2080 || !mang(r.t2080.lam, 1, 5) || !s(r.t2080.gac)) loi.push('t2080');
+  if (!mang(r.kyNang, 1, 8)) loi.push('kyNang');
+  if (!mang(r.buoc, 2, 10)) loi.push('buoc');
+  if (!mang(r.luuY, 1, 8)) loi.push('luuY');
+  if (!r.thamVan || !s(r.thamVan.khi) || !s(r.thamVan.ai)) loi.push('thamVan');
+  if (!Array.isArray(r.phuongAn) || r.phuongAn.length < 2 || r.phuongAn.length > 5 || !r.phuongAn.every(x => x && s(x.ten) && s(x.khi) && s(x.cach))) loi.push('phuongAn');
+  if (!s(r.ketQua)) loi.push('ketQua');
+  if (!mang(r.doBang, 1, 6)) loi.push('doBang');
+  if (!s(r.baiHoc)) loi.push('baiHoc');
+  if (loi.length) return loi;
+  if (JSON.stringify(r).length > TRAN_BAN_GHI) loi.push('quá dài');
+  /* Kho dùng chung cả đội: không giữ dữ liệu nhận dạng một người. */
+  const ra = soatRaNgoai(Object.values(r).map(v => typeof v === 'string' ? v : JSON.stringify(v)).join('\n'));
+  if (!ra.sach) loi.push('DIEU13');
+  return loi;
+}
+function noiDungCua(r) {
+  const { id, ten, cap, ...con } = r;
+  return JSON.stringify(con);
+}
+
+/* ═══════════ CỬA: NẠP KHO (chỉ Super Admin) ═══════════
+   Cả lô hoặc không bản nào: một bản ghi hỏng thì từ chối cả lô và nói đúng
+   mã nào hỏng chỗ nào — nạp một nửa thì kho có lỗ mà không ai biết lỗ ở đâu. */
+export async function napKhoVanDe(y, env, db, hoSo) {
+  if (BAC[roleOf(hoSo)] !== 1) return { ok: false, code: 'NOPERM', error: 'Chỉ Super Admin nạp kho 1000 vấn đề.' };
+  const x = y || {};
+  const ds = Array.isArray(x.ds) ? x.ds : [];
+  if (!ds.length || ds.length > TRAN_LO) return { ok: false, code: 'SAI', error: 'Mỗi lượt nạp từ 1 đến ' + TRAN_LO + ' vấn đề.' };
+  const ban = sach(x.ban, 40) || null;
+  const hong = [];
+  ds.forEach(r => { const l = soatBanGhiKho(r); if (l.length) hong.push((r && r.id || '?') + ': ' + l.join(',')); });
+  if (hong.length) return { ok: false, code: 'HONG', hong: hong.slice(0, 20), error: hong.length + ' vấn đề không qua soát — không nạp bản nào trong lô này.' };
+  await taoBangKho(db);
+  const luc = Date.now();
+  const cau = ds.map(r => {
+    const m = MA_KHO.exec(r.id);
+    const loai = m[1] === 'KH' ? 'kh' : 'ns', nhom = m[1] + '-' + m[2];
+    const stt = ('ABCDEFGHIJ'.indexOf(m[2]) + 1) * 100 + Number(m[3]);
+    return db.prepare('INSERT INTO khoVanDe (ma, loai, nhom, cap, stt, ten, noiDung, ban, napLuc) VALUES (?,?,?,?,?,?,?,?,?) ' +
+      'ON CONFLICT(ma) DO UPDATE SET loai=excluded.loai, nhom=excluded.nhom, cap=excluded.cap, stt=excluded.stt, ten=excluded.ten, ' +
+      'noiDung=excluded.noiDung, ban=excluded.ban, napLuc=excluded.napLuc')
+      .bind(r.id, loai, nhom, r.cap, stt, sach(r.ten, 140), noiDungCua(r), ban, luc);
+  });
+  await db.batch(cau);
+  const tong = await db.prepare('SELECT loai, COUNT(*) n FROM khoVanDe GROUP BY loai').all();
+  const dem = { kh: 0, ns: 0 };
+  (tong.results || []).forEach(r => { if (dem[r.loai] != null) dem[r.loai] = Number(r.n); });
+  try { await Kho.ghiNhatKy(db, { uid: hoSo.uid, username: ten(hoSo), viec: 'NAP_KHO_VAN_DE', doiTuong: ban || '', chiTiet: ds.length + ' vấn đề · kho ' + dem.kh + '/' + dem.ns }); } catch (e) {}
+  return { ok: true, nap: ds.length, dem };
+}
+
+/* Thứ hạng trong một loại: cấp thấp trước, rồi thứ tự gốc. Vai mở
+   ceil(tổng × tỷ lệ) vấn đề đầu — cùng cách cắt với màn hình. */
+async function soMo(db, loai, hoSo) {
+  const n = Number(((await db.prepare('SELECT COUNT(*) n FROM khoVanDe WHERE loai = ?').bind(loai).first()) || {}).n || 0);
+  const pt = tyLe(roleOf(hoSo));
+  return { n, pt, so: Math.ceil(n * pt / 100) };
+}
+
+/* ═══════════ CỬA: DANH SÁCH MỘT LOẠI ═══════════
+   Trả TÊN của mọi vấn đề (vấn đề ngoài tỷ lệ hiện tên kèm ổ khoá), không
+   trả nội dung. */
+export async function dsKhoVanDe(y, env, db, hoSo) {
+  if (!duocTraCuu(hoSo)) return CAM;
+  const loai = String((y || {}).loai || '');
+  if (!LOAI_KHO[loai]) return { ok: false, code: 'SAI', error: 'Loại phải là kh hoặc ns.' };
+  await taoBangKho(db);
+  const { n, pt, so } = await soMo(db, loai, hoSo);
+  const rows = (await db.prepare('SELECT ma, nhom, cap, ten FROM khoVanDe WHERE loai = ? ORDER BY cap ASC, stt ASC').bind(loai).all()).results || [];
+  return { ok: true, loai, pt, so, tong: n, nhomTen: NHOM_KHO,
+    ds: rows.map((r, i) => ({ ma: r.ma, nhom: r.nhom, cap: r.cap, ten: r.ten, mo: i < so })) };
+}
+
+/* ═══════════ CỬA: ĐỌC MỘT VẤN ĐỀ ═══════════ */
+export async function docKhoVanDe(y, env, db, hoSo) {
+  if (!duocTraCuu(hoSo)) return CAM;
+  const ma = String((y || {}).ma || '');
+  if (!MA_KHO.test(ma)) return { ok: false, code: 'SAI', error: 'Mã vấn đề không hợp lệ.' };
+  await taoBangKho(db);
+  const r = await db.prepare('SELECT ma, loai, nhom, cap, stt, ten, noiDung FROM khoVanDe WHERE ma = ?').bind(ma).first();
+  if (!r) return { ok: false, code: 'KHONGCO', error: 'Kho chưa có vấn đề này — Super Admin chưa nạp gói.' };
+  const { so } = await soMo(db, r.loai, hoSo);
+  const hang = Number(((await db.prepare('SELECT COUNT(*) n FROM khoVanDe WHERE loai = ? AND (cap < ? OR (cap = ? AND stt < ?))')
+    .bind(r.loai, r.cap, r.cap, r.stt).first()) || {}).n || 0);
+  if (hang >= so) return { ok: false, code: 'NGOAITYLE', error: 'Vấn đề này nằm ngoài phần trăm vai của anh/chị được xem.' };
+  let nd = {};
+  try { nd = JSON.parse(r.noiDung); } catch (e) {}
+  return { ok: true, vd: Object.assign({}, nd, { ma: r.ma, loai: r.loai, nhom: r.nhom, nhomTen: NHOM_KHO[r.nhom] || '', cap: r.cap, ten: r.ten }) };
+}

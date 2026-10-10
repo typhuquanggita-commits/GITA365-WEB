@@ -922,7 +922,7 @@ G.NAV = [
     {v:'thuong-hieu', t:'Nhận diện thương hiệu',       h:'Màu · chữ · giọng nói · điều cấm kỵ',ic:'star', perm:'nghe_chung', capMo:'nghe'},
     {v:'van-dung',    t:'Năm cấp độ vận dụng',           h:'Chiều sâu nghề · giới hạn tầng · báo cáo', ic:'brain', perm:'nghe_chung', capMo:'nghe', star:1},
     {v:'xu-ly-ca',    t:'Xử lý ca theo quy trình',       h:'7 bước · bằng chứng bắt buộc · 4 ràng buộc', ic:'shield', perm:'ca_xu_ly', capMo:'nghe', star:1},
-    {v:'tra-cuu-gp',  t:'Tra cứu giải pháp · 13 mục',    h:'Vấn đề → phân tích → phác đồ → 20/80 → … → bài học · sổ nhật ký', ic:'compass', perm:'ca_xu_ly', capMo:'nghe', star:1},
+    {v:'tra-cuu-gp',  t:'Tra cứu giải pháp · 13 mục',    h:'Kho 1000 vấn đề: 500 khách hàng · 500 nội bộ — phân tích → phác đồ → 20/80 → … → bài học', ic:'compass', perm:'ca_xu_ly', capMo:'nghe', star:1},
     {v:'gui-tu-lieu', t:'Gửi tư liệu cho gia đình',      h:'Lời xin đang chờ · cửa KPI 80%',      ic:'share', perm:'tl_gui_khach', capMo:'nghe', star:1},
     {v:'tro-ly',      t:'Trợ lý GITA',                 h:'Hỏi bất cứ điều gì, trích dẫn nguồn',ic:'spark', capMo:'chung', star:1}
    ]},

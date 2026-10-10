@@ -2384,12 +2384,17 @@ CREATE TABLE IF NOT EXISTS vongKhoaHocDaTri (luc INTEGER PRIMARY KEY, soPhatHien
 CREATE TABLE IF NOT EXISTS soLocDaTri (ngay TEXT, cua TEXT, luot INTEGER DEFAULT 0, PRIMARY KEY (ngay, cua));
 CREATE TABLE IF NOT EXISTS loiNccDaTri (ngay TEXT, ncc TEXT, soLan INTEGER DEFAULT 0, PRIMARY KEY (ngay, ncc));
 CREATE TABLE IF NOT EXISTS tuyenDaTri (ma TEXT PRIMARY KEY, ten TEXT, cacChang TEXT, dangO INTEGER DEFAULT 0, ketQua TEXT, trangThai TEXT DEFAULT 'dangChay', luc INTEGER, lucSua INTEGER, tuChay INTEGER DEFAULT 0);
+-- Đội Agent (10/10/2026): bộ nhớ chung đọc trước mỗi chặng — Super Admin ghi; máy chỉ đề xuất (bat = 0).
+CREATE TABLE IF NOT EXISTS boNhoAgent (id TEXT PRIMARY KEY, loai TEXT NOT NULL, noiDung TEXT NOT NULL, bat INTEGER NOT NULL DEFAULT 1, boiAi TEXT, luc INTEGER NOT NULL);
 -- Trợ lý V50 (10/10/2026): thông điệp Super Admin gửi bộ não vận hành → một tuyến Agent ba chặng.
 CREATE TABLE IF NOT EXISTS thongDiepBoNao (id TEXT PRIMARY KEY, noiDung TEXT NOT NULL, phuongAn TEXT, mucDo TEXT NOT NULL DEFAULT 'thuong', phanHe TEXT, tuyen TEXT, boiAi TEXT, luc INTEGER NOT NULL, trangThai TEXT NOT NULL DEFAULT 'daGui');
 CREATE INDEX IF NOT EXISTS ix_tdbn_luc ON thongDiepBoNao (luc);
 -- Tra cứu giải pháp 13 mục (10/10/2026): sổ nhật ký mỗi lần đem giải pháp ra dùng — không giữ dữ liệu nhận dạng gia đình.
 CREATE TABLE IF NOT EXISTS soNhatKyGiaiPhap (id TEXT PRIMARY KEY, maVanDe TEXT NOT NULL, tenVanDe TEXT, phuongAn TEXT NOT NULL, ketQua TEXT NOT NULL, danhGia TEXT, baiHoc TEXT, boiAi TEXT, vai TEXT, luc INTEGER NOT NULL);
 CREATE INDEX IF NOT EXISTS ix_nkgp_van_de ON soNhatKyGiaiPhap (maVanDe, luc);
+-- Kho 1000 vấn đề (10/10/2026): 500 khách hàng · 500 nội bộ, mỗi vấn đề đủ 13 mục. Nạp từ gói mã hoá, chỉ Super Admin; tỷ lệ xem theo vai cắt ở máy chủ.
+CREATE TABLE IF NOT EXISTS khoVanDe (ma TEXT PRIMARY KEY, loai TEXT NOT NULL, nhom TEXT NOT NULL, cap INTEGER NOT NULL, stt INTEGER NOT NULL, ten TEXT NOT NULL, noiDung TEXT NOT NULL, ban TEXT, napLuc INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS ix_kvd_hang ON khoVanDe (loai, cap, stt);
 
 -- ═════════════════════════════════════════════════════════════
 --  VÍ CREDIT (may-chu/credit.js) — 1 credit = 10 đồng, bảng chủ hệ

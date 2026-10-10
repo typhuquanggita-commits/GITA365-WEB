@@ -473,8 +473,14 @@ G.dtTaoTuyen = function () {
   var ten = giaTri('dt-ty-ten').trim();
   var dong = giaTri('dt-ty-chang').split('\n').map(function (s) { return s.trim(); }).filter(Boolean);
   var chang = [], sai = '';
-  dong.forEach(function (s) { var p = s.split('|'); if (p.length < 2 || !p[0].trim() || !p[1].trim()) sai = s; else chang.push({ loai: p[0].trim(), de: p.slice(1).join('|').trim() }); });
-  if (sai) { U.toast('Dòng sai khuôn "loai | đề": ' + sai, 'err'); return; }
+  /* Đầu dòng là MÃ VAI của đội (NGHIEN_CUU · PHAN_TICH · SOAN · SOAT · LEAD)
+     hoặc loại việc kiểu cũ (phanTich · chienLuoc… — khi cần bậc mô hình cao). */
+  dong.forEach(function (s) {
+    var p = s.split('|'); if (p.length < 2 || !p[0].trim() || !p[1].trim()) { sai = s; return; }
+    var dau = p[0].trim(), de = p.slice(1).join('|').trim();
+    chang.push(/^[A-Z_]+$/.test(dau) ? { vai: dau, de: de } : { loai: dau, de: de });
+  });
+  if (sai) { U.toast('Dòng sai khuôn "VAI | đề": ' + sai, 'err'); return; }
   var tuChay = !!(document.getElementById('dt-ty-tu') || {}).checked;
   G.goiMayChu('taoTuyenDaTri', { ten: ten, chang: chang, tuChay: tuChay }).then(function (x) {
     U.toast(x && x.ok ? 'Đã tạo tuyến ' + x.ma + ' · ' + x.soChang + ' chặng' + (x.tuChay ? ' · bộ não sẽ tự chạy từng chặng.' : '.') : ((x && x.error) || 'Không tạo được.'), x && x.ok ? 'ok' : 'err');
@@ -486,7 +492,7 @@ G.dtChayChang = function (ma) {
   G.dtChangDangChay = true; veLai();
   G.goiMayChu('chayChangDaTri', { ma: ma }).then(function (x) {
     G.dtChangDangChay = false;
-    if (x && x.ok) { U.toast(x.chotChan, 'ok'); G.dtTuyen = null; G.dtXemTuyen(ma); }
+    if (x && x.ok) { U.toast(x.chotChan, x.dat === false ? 'err' : 'ok'); G.dtTuyen = null; G.dtDoi = null; G.dtXemTuyen(ma); }
     else U.toast((x && x.error) || 'Không chạy được.', 'err');
     veLai();
   });
@@ -498,6 +504,69 @@ G.dtTuChay = function (ma, bat) {
     G.dtTuyen = null; G.dtTuyenTai();
   });
 };
+/* ── Đội Agent: thẻ vai · bộ nhớ chung · đo lường · chấp nhận chặng chưa đạt ── */
+G.dtDoi = G.dtDoi || null;
+G.dtDoiTai = function () {
+  if (!G.goiMayChu || G.dtDoiDangTai) return;
+  G.dtDoiDangTai = true;
+  G.goiMayChu('docDoiAgent', {}).then(function (x) { G.dtDoiDangTai = false; G.dtDoi = x || { ok: false, error: 'Không có phản hồi.' }; veLai(); });
+};
+G.dtGhiNho = function () {
+  G.goiMayChu('ghiBoNhoAgent', { loai: giaTri('dt-nho-loai'), noiDung: giaTri('dt-nho-nd').trim() }).then(function (x) {
+    U.toast(x && x.ok ? 'Đã ghi vào bộ nhớ đội — mọi chặng sau đều đọc.' : ((x && x.error) || 'Không ghi được.'), x && x.ok ? 'ok' : 'err');
+    if (x && x.ok) { G.dtDoi = null; G.dtDoiTai(); }
+  });
+};
+G.dtBatNho = function (id, bat) {
+  G.goiMayChu('batBoNhoAgent', { id: id, bat: !!bat }).then(function (x) {
+    U.toast(x && x.ok ? (bat ? 'Đã bật — mục này vào bộ nhớ đội.' : 'Đã tắt — mục vẫn được giữ trong sổ.') : ((x && x.error) || 'Không đổi được.'), x && x.ok ? 'ok' : 'err');
+    G.dtDoi = null; G.dtDoiTai();
+  });
+};
+G.dtChotChang = function (ma) {
+  G.goiMayChu('chotChangDaTri', { ma: ma, lyDo: giaTri('dt-chot-ly').trim() }).then(function (x) {
+    U.toast(x && x.ok ? 'Đã chấp nhận chặng — lý do ở lại trong tuyến.' : ((x && x.error) || 'Không chấp nhận được.'), x && x.ok ? 'ok' : 'err');
+    if (x && x.ok) { G.dtTuyen = null; G.dtDoi = null; G.dtXemTuyen(ma); }
+  });
+};
+function veDoi() {
+  var d = G.dtDoi;
+  if (!d) { if (G.goiMayChu) G.dtDoiTai(); return ''; }
+  if (!d.ok) return '<div class="card mt tiny" style="color:var(--gita-do)">' + h(d.error || 'Không đọc được đội Agent.') + '</div>';
+  var m = d.doLuong || {}, laR01 = G.S && G.S.role === 'R01';
+  var o = '<div class="card mt"><b>Đội Agent · 5 vai, một Trưởng nhóm</b>' +
+    '<div class="tiny muted mt">' + h(d.luong) + '</div>' +
+    '<div class="row mt" style="gap:6px;flex-wrap:wrap">' +
+      '<span class="chip">7 ngày: ' + (m.tuyenXong || 0) + '/' + (m.tuyen || 0) + ' tuyến xong</span>' +
+      '<span class="chip">' + (m.changDat || 0) + ' chặng đạt</span>' +
+      '<span class="chip" style="color:var(--gita-do-ink)">' + (m.loiBat || 0) + ' lỗi Trưởng nhóm bắt</span>' +
+      '<span class="chip">' + (m.tuSuaDat || 0) + ' tự sửa đạt</span>' +
+      '<span class="chip">' + (m.nguoiChapNhan || 0) + ' người chấp nhận</span>' +
+      '<span class="chip">' + (m.token || 0) + ' token</span>' +
+      '<span class="chip" title="' + h(m.gioTietKiemVi || '') + '">giờ tiết kiệm: chưa đo</span></div>' +
+    (d.the || []).map(function (a) {
+      return '<details class="mt"><summary class="sm" style="cursor:pointer"><span class="chip mono">' + h(a.ma) + '</span> <b>' + h(a.ten) + '</b> — ' + h(a.viec) + '</summary>' +
+        '<div class="tiny mt" style="line-height:1.7"><b>Vào:</b> ' + h(a.vao) + '<br><b>Ra:</b> ' + h(a.raGi) +
+        '<br><b>Không được:</b> ' + h(a.khongDuoc.join(' · ')) + '<br><b>Dừng hỏi người khi:</b> ' + h(a.dungHoi.join(' · ')) +
+        '<br><b>Mô hình:</b> ' + h(a.mau) + '<br><b>Thế nào là tốt:</b> ' + h(a.tot) +
+        '<br><b>Ba kiểu hỏng:</b> ' + h(a.hong.map(function (x) { return x.khi + ' → ' + x.xuLy; }).join(' · ')) +
+        '<br><b>Ví dụ tốt:</b> ' + h(a.viDuTot) + '<br><b>Ví dụ xấu:</b> ' + h(a.viDuXau) + '</div>' +
+        '<details class="mt"><summary class="tiny" style="cursor:pointer">Lời hệ thống (' + a.soChu + ' chữ)</summary><div class="tiny" style="white-space:pre-wrap">' + h(a.he) + '</div></details></details>';
+    }).join('') + '</div>';
+  o += '<div class="card mt"><b>Bộ nhớ chung của đội</b><div class="tiny muted mt">Mọi chặng có vai đều đọc phần này trước khi làm (tối đa 900 ký tự). Chỉ Super Admin ghi; máy chỉ đề xuất lỗi cần tránh — tắt sẵn, người bật mới có hiệu lực.</div>' +
+    ((d.boNho || []).length ? (d.boNho || []).map(function (r) {
+      return '<div class="row mt" style="gap:6px;flex-wrap:wrap;align-items:center"><span class="chip">' + h((d.loaiNho || {})[r.loai] || r.loai) + '</span><span class="sm">' + h(r.noiDung) + '</span>' +
+        (laR01 ? nut('G.dtBatNho(\'' + h(r.id) + '\',false)', 'Tắt') : '') + '</div>';
+    }).join('') : '<div class="tiny muted mt">Chưa có mục nào.</div>') +
+    ((d.deXuat || []).length ? '<div class="tiny up mt">MÁY ĐỀ XUẤT · CHỜ DUYỆT</div>' + d.deXuat.map(function (r) {
+      return '<div class="row mt" style="gap:6px;flex-wrap:wrap;align-items:center"><span class="chip">' + h(r.boiAi || '') + '</span><span class="sm muted">' + h(r.noiDung) + '</span>' +
+        nut('G.dtBatNho(\'' + h(r.id) + '\',true)', 'Bật vào bộ nhớ') + '</div>';
+    }).join('') : '') +
+    (laR01 ? '<div class="row mt" style="gap:6px;flex-wrap:wrap"><select id="dt-nho-loai" aria-label="Loại bộ nhớ">' +
+      Object.keys(d.loaiNho || {}).map(function (k) { return '<option value="' + h(k) + '">' + h(d.loaiNho[k]) + '</option>'; }).join('') + '</select>' +
+      '<input id="dt-nho-nd" style="flex:1;min-width:200px" maxlength="300" placeholder="Một câu ngắn — không tên, không số điện thoại">' + nut('G.dtGhiNho()', 'Ghi', 'pri') + '</div>' : '') + '</div>';
+  return o;
+}
 G.dtXemTuyen = function (ma) {
   G.goiMayChu('docTuyenDaTri', { ma: ma }).then(function (x) { G.dtTuyenChi = x || { ok: false }; veLai(); });
 };
@@ -505,11 +574,13 @@ function veTuyen() {
   var t = G.dtTuyen, o = '';
   if (!t) { if (G.goiMayChu) G.dtTuyenTai(); return chuaNoi(); }
   if (!t.ok) return '<div class="card mt" style="color:var(--gita-do)">' + h(t.error || 'Không đọc được.') + '</div>';
+  o += veDoi();
   o += '<div class="card mt"><b>Tuyến nhiều chặng có chốt chặn</b><div class="tiny muted mt">Một việc lớn đi qua nhiều chặng; hệ <b>dừng sau mỗi chặng</b> ' +
     'chờ Super Admin đọc và kiểm chứng — không tự chạy trọn một mạch. Kết quả chặng trước làm ngữ cảnh chặng sau (vòng lặp đo lường quay lại). Chỉ Super Admin tạo và chạy.</div>' +
-    '<div class="tiny muted mt">Khuôn mỗi dòng: <code>loai | đề chặng</code> · loai ∈ phanLoai · tomTat · soan · phanTich · chienLuoc · 2–7 chặng.</div>' +
+    '<div class="tiny muted mt">Khuôn mỗi dòng: <code>VAI | đề chặng</code> · VAI ∈ LEAD · NGHIEN_CUU · PHAN_TICH · SOAN · SOAT (có thẻ vai, bộ nhớ, bảng kiểm). ' +
+      'Việc cần mô hình bậc cao thì dùng kiểu cũ <code>phanTich | đề</code> hoặc <code>chienLuoc | đề</code>. 2–7 chặng. Sau MỖI chặng Trưởng nhóm soát; chưa đạt thì dừng chờ người.</div>' +
     '<input id="dt-ty-ten" class="mt" style="width:100%" placeholder="Tên tuyến (vd: Ra mắt gói học mới)">' +
-    '<textarea id="dt-ty-chang" rows="4" class="mt" style="width:100%" placeholder="phanTich | Phân tích ba đối thủ chính&#10;soan | Soạn thông điệp giới thiệu"></textarea>' +
+    '<textarea id="dt-ty-chang" rows="4" class="mt" style="width:100%" placeholder="NGHIEN_CUU | Gom phản hồi tuần này&#10;SOAN | Viết thư trả lời mẫu&#10;SOAT | Soát thư trả lời"></textarea>' +
     '<label class="row mt tiny" style="gap:6px;align-items:center"><input type="checkbox" id="dt-ty-tu"> Tự chạy — bộ não vận hành chạy tiếp chặng kế ở mỗi lượt làm việc (làm 30 phút · nghỉ 30 phút), trong ngân sách ngày. Đọc kết quả ở đây khi xong.</label>' +
     '<div class="row mt">' + nut('G.dtTaoTuyen()', 'Tạo tuyến', 'pri') + '</div></div>';
   (t.ds || []).forEach(function (r) {
@@ -527,10 +598,18 @@ function veTuyen() {
     var ty = c2.tuyen;
     o += '<div class="card mt" style="border-color:var(--gita-sau)"><b>' + h(ty.ten) + '</b> <span class="chip mono">' + h(ty.ma) + '</span>';
     ty.cacChang.forEach(function (ch, i) {
-      var kq = (ty.ketQua || []).filter(function (x) { return x.chang === i; })[0];
-      o += '<div class="mt"><span class="chip">' + (i + 1) + '</span> <b>' + h(ch.loai) + '</b> <span class="tiny">' + h(ch.de) + '</span>' +
-        (kq ? '<div class="tiny muted">' + h(kq.ncc) + ' · ' + kq.token + ' token · ' + new Date(kq.luc).toLocaleString('vi-VN') + '</div>' +
-          '<div class="sm" style="white-space:pre-wrap">' + h(kq.traLoi) + '</div>' :
+      var kq = (ty.ketQua || []).filter(function (x) { return x.chang === i; }).pop();
+      var sv = kq && kq.soat, choChot = kq && kq.nhan === false && i === ty.dangO && G.S && G.S.role === 'R01';
+      o += '<div class="mt"><span class="chip">' + (i + 1) + '</span> <b>' + h(ch.vai || ch.loai) + '</b> <span class="tiny">' + h(ch.de) + '</span>' +
+        (kq ? '<div class="tiny muted">' + h(kq.ncc) + ' · ' + kq.token + ' token · ' + new Date(kq.luc).toLocaleString('vi-VN') + (kq.suaLan ? ' · tự sửa 1 lần' : '') + '</div>' +
+          (sv ? '<div class="row" style="gap:6px;flex-wrap:wrap">' + (sv.dat ? '<span class="chip" style="color:var(--ok)">Trưởng nhóm: đạt</span>' :
+            '<span class="chip" style="color:var(--gita-do-ink)">Trưởng nhóm: chưa đạt</span>') +
+            sv.loi.map(function (l) { return '<span class="tiny" style="color:var(--gita-do-ink)">' + h(l.vi) + '</span>'; }).join(' ') +
+            sv.canhBao.map(function (c) { return '<span class="tiny" style="color:var(--gita-sau)">' + h(c.vi) + '</span>'; }).join(' ') + '</div>' : '') +
+          (kq.nguoiNhan ? '<div class="tiny">Chấp nhận bởi <b>' + h(kq.nguoiNhan) + '</b>: ' + h(kq.lyDoNhan || '') + '</div>' : '') +
+          '<div class="sm" style="white-space:pre-wrap">' + h(kq.traLoi) + '</div>' +
+          (choChot ? '<div class="row mt" style="gap:6px;flex-wrap:wrap"><input id="dt-chot-ly" style="flex:1;min-width:200px" placeholder="Lý do chấp nhận dù chưa đạt (≥10 ký tự)">' +
+            nut('G.dtChotChang(\'' + h(ty.ma) + '\')', 'Chấp nhận') + nut('G.dtChayChang(\'' + h(ty.ma) + '\')', 'Chạy lại chặng', 'pri') + '</div>' : '') :
           '<div class="tiny muted">— chưa chạy (chốt chặn đang chờ)</div>') + '</div>';
     });
     o += '</div>';

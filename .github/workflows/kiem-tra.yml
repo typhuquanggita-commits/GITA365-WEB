@@ -98,6 +98,9 @@ jobs:
       - name: Thử Tra cứu giải pháp 13 mục (chỉ R01–R11 · sổ nhật ký không giữ dữ liệu gia đình · nháp AI không tự vào kho)
         run: node tools/thu-tra-cuu-giai-phap.mjs
 
+      - name: Đội Agent — thẻ vai, Trưởng nhóm soát, bộ nhớ chung (5 ca)
+        run: node tools/thu-doi-agent.mjs
+
       - name: Chạy thử bộ não vận hành V50 (nhịp mỗi giờ · có khách là chạy · lịch · quyền)
         run: node tools/thu-bo-nao-van-hanh.mjs
 
