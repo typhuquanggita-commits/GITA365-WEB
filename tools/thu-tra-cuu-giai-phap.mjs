@@ -153,7 +153,7 @@ if (fs.existsSync(goiTep)) {
   const g = JSON.parse(fs.readFileSync(goiTep, 'utf8'));
   const chu = fs.readFileSync(goiTep, 'utf8');
   kiem('gói đúng định dạng màn hình mở được, không lộ chữ nguồn', g.v === 1 && g.n >= 200000 && g.salt && g.iv && g.ct &&
-    !/phanTich|hienTuong|"ten"|Vấn đề/.test(chu) && ui.includes("fetch('kho-van-de/goi.enc'"));
+    !/phanTich|hienTuong|"ten"|Vấn đề/.test(chu) && /fetch\((tep \|\| )?'kho-van-de\/goi\.enc'/.test(ui));
 }
 
 kiem('màn chặn bấm vào vấn đề bị khoá (không chỉ ẩn bằng CSS)', /if\(!G\.tcgpMo\(G\.S\.role\)\.mo\(ma0\)\) return;/.test(ui) && /TC\.chon && quyen\.mo\(TC\.chon\)/.test(ui));

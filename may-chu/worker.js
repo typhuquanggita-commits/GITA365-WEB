@@ -117,6 +117,7 @@ import { lapDeAnTaiLieu, chayBuocTaiLieu, docDeAnTaiLieu, datTuChayTaiLieu, lapK
 import { docViecKet } from './viec-ket.js';
 import { troLyV50, guiThongDiepBoNao, docThongDiepBoNao } from './tro-ly-v50.js';
 import { ghiNhatKyGiaiPhap, docNhatKyGiaiPhap, soanMucGiaiPhap, napKhoVanDe, dsKhoVanDe, docKhoVanDe } from './tra-cuu-giai-phap.js';
+import { giaKhoCao, datGiaKhoCao, napKhoCao, dsKhoCao, docKhoCao, apDungKhoCao, soKhoCaoNha } from './kho-cao.js';
 import { lapDuAnPhim, docXuongPhimNganSach, datCanhTraPhi, moLaiDuAnPhim, DON_GIU_CHO } from './phim-ngan-sach.js';
 import { docKpiCayTien } from './cay-tien.js';
 import { docDongChay } from './dong-chay.js';
@@ -345,6 +346,7 @@ const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau'
   'taoTuyenDaTri', 'chayChangDaTri', 'docTuyenDaTri', 'chotChangDaTri', 'docDoiAgent', 'ghiBoNhoAgent', 'batBoNhoAgent', 'doiSangDoiAgent',
   'troLyV50', 'guiThongDiepBoNao', 'docThongDiepBoNao',
   'ghiNhatKyGiaiPhap', 'docNhatKyGiaiPhap', 'soanMucGiaiPhap', 'napKhoVanDe', 'dsKhoVanDe', 'docKhoVanDe',
+  'giaKhoCao', 'datGiaKhoCao', 'napKhoCao', 'dsKhoCao', 'docKhoCao', 'apDungKhoCao', 'soKhoCaoNha',
   'lapDeAnTaiLieu', 'chayBuocTaiLieu', 'docDeAnTaiLieu', 'datTuChayTaiLieu', 'lapKeHoachKho', 'docViecKet',
   'lapDuAnPhim', 'docXuongPhimNganSach', 'datCanhTraPhi', 'moLaiDuAnPhim', 'docKpiCayTien', 'docDongChay',
   'phimTrangThai', 'phimGuiViec', 'phimXemViec', 'phimTinhHuong', 'phimMienPhi', 'quayKhopMoi', 'quayChuyenDong', 'quayVideoDong', 'taoNhanVatAI', 'quayXem', 'quayXoa', 'quayGiongNoi', 'quayPhimMoi', 'dongGoiPhanTu', 'xemPhanTu',
@@ -800,6 +802,13 @@ async function lam(fn, y, env, db, req) {
   if (fn === 'napKhoVanDe')       return await napKhoVanDe(y, env, db, hoSo);
   if (fn === 'dsKhoVanDe')        return await dsKhoVanDe(y, env, db, hoSo);
   if (fn === 'docKhoVanDe')       return await docKhoVanDe(y, env, db, hoSo);
+  if (fn === 'giaKhoCao')         return await giaKhoCao(y, env, db, hoSo);
+  if (fn === 'datGiaKhoCao')      return await datGiaKhoCao(y, env, db, hoSo);
+  if (fn === 'napKhoCao')         return await napKhoCao(y, env, db, hoSo);
+  if (fn === 'dsKhoCao')          return await dsKhoCao(y, env, db, hoSo);
+  if (fn === 'docKhoCao')         return await docKhoCao(y, env, db, hoSo);
+  if (fn === 'apDungKhoCao')      return await apDungKhoCao(y, env, db, hoSo);
+  if (fn === 'soKhoCaoNha')       return await soKhoCaoNha(y, env, db, hoSo);
   if (fn === 'lapDeAnTaiLieu')    return await lapDeAnTaiLieu(y, env, db, hoSo);
   if (fn === 'chayBuocTaiLieu')   return await chayBuocTaiLieu(y, env, db, hoSo);
   if (fn === 'docDeAnTaiLieu')    return await docDeAnTaiLieu(y, env, db, hoSo);

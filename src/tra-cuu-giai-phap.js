@@ -21,7 +21,7 @@
 'use strict';
 var G = window.G, U = G.U, h = U.h, ic = U.ic;
 
-var TC = G.TCGP = G.TCGP || { q:'', chon:null, nk:{}, nhap:{}, dangSoan:{}, dangGhi:false, ngan:'kh', k:{}, kvd:{}, nap:null };
+var TC = G.TCGP = G.TCGP || { q:'', chon:null, nk:{}, nhap:{}, dangSoan:{}, dangGhi:false, ngan:'kh', k:{}, kvd:{}, nap:null, cao:null, kcvd:{}, caoTang:0, caoHang:'', gia:null, ap:{}, napCao:null };
 
 function chuan(s){ return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd'); }
 
@@ -219,7 +219,10 @@ function napSo(ma){
    500 vấn đề khách hàng · 500 vấn đề nội bộ. Nội dung không nằm trong gói
    gửi xuống máy: máy chủ chỉ gửi TÊN cho cả danh sách và gửi NỘI DUNG cho
    đúng phần trăm vai được xem — tỷ lệ ở đây được cắt thật ở máy chủ. */
-var NGAN = [['kh', 'Khách hàng · 500'], ['ns', 'Nội bộ · 500'], ['nghe', 'Phác đồ & tình huống']];
+var NGAN = [['kh', 'Khách hàng · 500'], ['ns', 'Nội bộ · 500'], ['nghe', 'Phác đồ & tình huống'], ['cao', 'Coach cấp cao · 6 hạng']];
+/* Cùng ngưỡng với cổng máy chủ (may-chu/kho-cao.js → docDuocHe): kho Coach
+   cấp cao mở cho R01–R07. Màn chỉ ẩn ngăn; máy chủ mới là cổng. */
+function moCao(){ var r = (G.ROLES || []).filter(function(x){ return x.id === G.S.role; })[0]; return !!r && r.lv <= 7; }
 function coMayChu(){ return !!(G.API_CAP_PHEP && G.PHIEN_TOKEN && G.goiMayChu); }
 function napDsKho(loai){
   if(!coMayChu() || TC.k[loai] === 'dang') return;
@@ -238,6 +241,7 @@ function napVdKho(ma){
 }
 function vanDeDangChon(){
   if(TC.ngan === 'nghe') return timVanDe(TC.chon);
+  if(TC.ngan === 'cao'){ var c = TC.kcvd[TC.chon]; return c && c.ma ? c : null; }
   var v = TC.kvd[TC.chon];
   return v && v.ma ? v : null;
 }
@@ -246,8 +250,9 @@ function veChiTietKho(vd){
   var CAP = ['', 'Cơ bản', 'Thường gặp', 'Cần kỹ năng', 'Phức tạp', 'Nhạy cảm cao'];
   var o = '';
   o += muc('01', 'Vấn đề', '<b class="sm" style="display:block;margin-bottom:4px">' + h(vd.ten) + '</b>' +
-    '<div class="row wrap" style="gap:6px">' + U.chip(vd.ma) + U.chip(vd.nhomTen || vd.nhom, 'var(--gita)') + U.chip('Cấp ' + vd.cap + ' · ' + (CAP[vd.cap] || '')) + '</div>' + doan(vd.van),
-    vd.loai === 'kh' ? 'khách hàng' : 'nội bộ');
+    '<div class="row wrap" style="gap:6px">' + U.chip(vd.ma) + U.chip(vd.nhomTen || vd.nhom, 'var(--gita)') +
+      (vd.hang ? U.chip(vd.tenHang + ' · ' + vd.gia + ' credit', 'var(--gita-do)') + U.chip('Tầng ' + vd.tang) : U.chip('Cấp ' + vd.cap + ' · ' + (CAP[vd.cap] || ''))) + '</div>' + doan(vd.van),
+    vd.hang ? 'kho cấp cao · ' + (vd.he === 'coach' ? 'Coach' : 'Tư vấn') : vd.loai === 'kh' ? 'khách hàng' : 'nội bộ');
   o += muc('02', 'Phân tích vấn đề (theo quy trình)', U.list([
     'Hiện tượng · ' + (p.hienTuong || ''), 'Bối cảnh · ' + (p.boiCanh || ''),
     'Nguyên nhân gốc · ' + (p.nguyenNhan || []).join(' / '), 'Tác động nếu để yên · ' + (p.tacDong || ''),
@@ -272,14 +277,15 @@ function veChiTietKho(vd){
   o += muc('13', 'Bài học rút ra', doan(vd.baiHoc) +
     bh.map(function(r){ return '<p class="sm mb" style="line-height:1.7">' + h(r.baiHoc) + ' <span class="tiny muted">— ' + h(r.boiAi || '') + ' · ' + h(new Date(r.luc).toLocaleDateString('vi-VN')) + '</span></p>'; }).join(''),
     bh.length ? 'kho + ' + bh.length + ' bài học của đội' : 'kho');
+  if(vd.hang) o += muc('14', 'Gói giải pháp ở hạng ' + vd.tenHang, veGoi(vd), vd.gia + ' credit một lượt');
   return o;
 }
 /* Nạp gói mã hoá (chỉ Super Admin). Gói nằm trong kho mã ở dạng đã mã hoá
    AES-256-GCM; mật khẩu không nằm trong kho mã, không gửi lên máy chủ —
    máy này tự mở gói rồi gửi từng lô bản ghi đã mở cho cửa napKhoVanDe. */
 function b64(s){ var b = atob(s), a = new Uint8Array(b.length); for(var i = 0; i < b.length; i++) a[i] = b.charCodeAt(i); return a; }
-function moGoi(matKhau){
-  return fetch('kho-van-de/goi.enc', { cache:'no-store' }).then(function(r){
+function moGoi(matKhau, tep){
+  return fetch(tep || 'kho-van-de/goi.enc', { cache:'no-store' }).then(function(r){
     if(!r.ok) throw new Error('Không tải được gói (mã ' + r.status + ').');
     return r.json();
   }).then(function(g){
@@ -351,14 +357,157 @@ function veKho(loai, q){
   return o + '</div>';
 }
 
+/* ═══════════ KHO CẤP CAO · 6 HẠNG · TRẢ BẰNG CREDIT ═══════════
+   Coach tầng 4–5: 2000 vấn đề, mỗi vấn đề một hạng (1 sao … Diamond).
+   Hạng cao hơn = vấn đề phức tạp hơn và gói giải pháp sâu hơn; giá một
+   lượt áp dụng do MÁY CHỦ tính (bảng giá Super Admin đặt) — màn không giữ
+   bản giá thứ hai. An toàn không bao giờ bị khoá theo gói: lượt an toàn
+   không trừ credit. */
+var HANG_CAO = ['S1', 'S3', 'S5', 'VIP', 'VVIP', 'DIAMOND'];
+function napGia(){
+  if(!coMayChu() || TC.gia === 'dang') return;
+  TC.gia = 'dang';
+  G.goiMayChu('giaKhoCao', {}, { moi:true }).then(function(r){
+    TC.gia = r && r.ok ? r : { loi:(r && r.error) || 'Chưa đọc được bảng giá.' };
+    if(G.S.view === 'tra-cuu-gp' && G.render) G.render();
+  });
+}
+function napCao(){
+  if(!coMayChu() || TC.cao === 'dang') return;
+  TC.cao = 'dang';
+  G.goiMayChu('dsKhoCao', { he:'coach' }, { moi:true }).then(function(r){
+    TC.cao = r && r.ok ? r : { loi:(r && r.error) || 'Chưa đọc được kho cấp cao.' };
+    if(G.S.view === 'tra-cuu-gp' && G.render) G.render();
+  });
+}
+function napVdCao(ma){
+  TC.kcvd[ma] = 'dang';
+  G.goiMayChu('docKhoCao', { ma:ma }, { moi:true }).then(function(r){
+    TC.kcvd[ma] = r && r.ok ? r.vd : { loi:(r && r.error) || 'Chưa đọc được vấn đề.' };
+    if(G.S.view === 'tra-cuu-gp' && G.render) G.render();
+  });
+}
+function veGoi(vd){
+  var g = vd.goi || {}, a = TC.ap[vd.ma] || {};
+  var o = U.list(['Phạm vi · ' + (g.phamVi || ''), 'Cá nhân hoá · ' + (g.caNhanHoa || ''), 'Theo dõi · ' + (g.theoDoi || '')]) +
+    '<p class="sm mt" style="line-height:1.7"><b>Gia đình cần làm:</b> ' + h(g.dieuKien || '') + '</p>' +
+    '<p class="tiny muted mt">Giải pháp phát huy theo mức gia đình thực hiện. Không hứa kết quả.</p>';
+  if(!coMayChu()) return o;
+  o += '<details class="mt"' + (a.dang || a.kq ? ' open' : '') + '><summary class="sm" style="cursor:pointer;color:var(--gita-ink)">' + ic('check', 'w-3 h-3') + ' Áp dụng cho một nhà (trừ ' + vd.gia + ' credit của nhà)</summary>' +
+    '<div class="mt" style="display:grid;gap:8px">' +
+      '<input id="kcNha" class="inp" aria-label="Mã khách hàng của nhà" placeholder="Mã khách hàng của nhà (ví dụ GITA-0012)">' +
+      '<input id="kcTc" class="inp" aria-label="Mã tham chiếu" placeholder="Mã ca hoặc mã buổi — gọi lại cùng mã thì không trừ lần hai">' +
+      '<div class="row wrap" style="gap:8px"><button class="btn sm pri" data-kc-ap="1"' + (a.dang ? ' disabled' : '') + '>' + ic('check', 'w-3 h-3') + (a.dang ? 'Đang ghi…' : 'Áp dụng · ' + vd.gia + ' credit') + '</button>' +
+      '<button class="btn sm" data-kc-at="1"' + (a.dang ? ' disabled' : '') + ' style="border-color:var(--gita-do);color:var(--gita-do-ink)">' + ic('shield', 'w-3 h-3') + 'Dấu hiệu an toàn · chuyển ngay, 0 credit</button></div>' +
+      '<p class="tiny muted">An toàn không bao giờ bị khoá theo gói: tự làm đau, ý nghĩ tự tử, bạo lực, xâm hại → chuyển ngay, mọi hạng, không cần số dư.</p>' +
+      (a.kq ? '<p class="tiny" style="color:' + (a.kq.ok ? 'var(--ok)' : 'var(--gita-do-ink)') + '">' + h(a.kq.txt) + '</p>' : '') +
+    '</div></details>';
+  return o;
+}
+function veBangGia(){
+  var g = TC.gia;
+  if(!g){ napGia(); return ''; }
+  if(g === 'dang' || g.loi) return '';
+  var o = '<details class="card pad-sm mb"><summary class="sm" style="cursor:pointer">' + ic('star', 'w-3 h-3') + ' Bảng giá credit theo hạng × tầng' + (g.khoiDau ? ' · thang chủ hệ duyệt' : '') + '</summary>' +
+    '<div class="mt">' + U.tbl(['Tầng'].concat(g.hang.map(function(x){ return g.tenHang[x]; })), [4, 5].map(function(t){
+      return ['Tầng ' + t].concat(g.hang.map(function(x){ return h(String(g.theoTang[t][x])); }));
+    })) + '<p class="tiny muted mt">1 credit = 10đ. Hạng cao hơn = gói sâu hơn: nhiều buổi hơn, cá nhân hoá hơn, nhiều người hỗ trợ hơn, theo dõi dài hơn.' +
+    (g.lyDo ? ' Lần sửa gần nhất: ' + h(g.lyDo) + '.' : '') + '</p>';
+  if(G.S.role === 'R01'){
+    o += '<div class="mt" style="display:grid;gap:8px"><p class="tiny up">Super Admin · sửa giá gốc (tầng 1–3) và hệ số tầng</p>' +
+      '<div class="row wrap" style="gap:6px">' + g.hang.map(function(x){ return '<input class="inp" style="width:110px" data-kc-goc="' + x + '" aria-label="Giá gốc ' + h(g.tenHang[x]) + '" value="' + h(String(g.bang.goc[x])) + '">'; }).join('') + '</div>' +
+      '<div class="row wrap" style="gap:6px">' + [1, 2, 3, 4, 5].map(function(t){ return '<input class="inp" style="width:90px" data-kc-heso="' + t + '" aria-label="Hệ số tầng ' + t + '" value="' + h(String(g.bang.heSo[t])) + '">'; }).join('') + '</div>' +
+      '<input id="kcLyDo" class="inp" aria-label="Lý do đổi giá" placeholder="Lý do đổi giá (ít nhất 10 ký tự)">' +
+      '<div><button class="btn sm pri" data-kc-gia="1">' + ic('check', 'w-3 h-3') + 'Lưu bảng giá mới</button></div></div>';
+  }
+  return o + '</div></details>';
+}
+function veNapCao(){
+  if(G.S.role !== 'R01') return '';
+  var n = TC.napCao;
+  return '<details class="card pad-sm mb"' + (n && (n.dang || n.loi) ? ' open' : '') + '><summary class="sm" style="cursor:pointer">' + ic('lock', 'w-3 h-3') +
+    ' Super Admin · nạp kho cấp cao từ gói mã hoá</summary>' +
+    '<div class="mt" style="display:grid;gap:8px">' +
+      '<p class="tiny muted">Mật khẩu gói nằm trong Google Drive của chủ hệ (tài liệu “GITA365 — Mật khẩu gói Kho cấp cao”). Máy này tự mở gói; mật khẩu không gửi lên máy chủ.</p>' +
+      '<input id="kcMk" class="inp" type="password" autocomplete="off" aria-label="Mật khẩu gói kho cấp cao" placeholder="Mật khẩu gói">' +
+      '<div><button class="btn sm pri" data-kc-nap="1"' + (n && n.dang ? ' disabled' : '') + '>' + ic('check', 'w-3 h-3') +
+        (n && n.dang ? 'Đang nạp ' + n.xong + ' / ' + (n.tong || '…') : 'Mở gói và nạp') + '</button></div>' +
+      (n && n.loi ? '<p class="tiny" style="color:var(--gita-do-ink)">' + h(n.loi) + '</p>' : '') +
+    '</div></details>';
+}
+function napGoiCao(matKhau){
+  TC.napCao = { dang:true, xong:0, tong:0, loi:'' }; G.render && G.render();
+  moGoi(matKhau, 'kho-cao/goi.enc').then(function(goi){
+    var ds = goi.ds, LO = 50, i = 0;
+    TC.napCao.tong = ds.length;
+    function lo(){
+      if(i >= ds.length){ TC.napCao.dang = false; TC.cao = null; U.toast('Đã nạp ' + ds.length + ' vấn đề cấp cao.', 'ok'); G.render && G.render(); return; }
+      return G.goiMayChu('napKhoCao', { ds:ds.slice(i, i + LO), ban:goi.ban }).then(function(r){
+        if(!(r && r.ok)) throw new Error(((r && r.error) || 'Máy chủ từ chối lô.') + (r && r.hong ? ' ' + r.hong.slice(0, 3).join(' · ') : ''));
+        i += LO; TC.napCao.xong = Math.min(i, ds.length); G.render && G.render();
+        return lo();
+      });
+    }
+    return lo();
+  }).catch(function(e){ TC.napCao.dang = false; TC.napCao.loi = String(e && e.message || e); G.render && G.render(); });
+}
+function veCao(q){
+  var o = veNapCao();
+  if(!coMayChu()) return o + U.empty('Kho cấp cao nằm trên máy chủ', 'Đăng nhập bằng tài khoản thật để tra cứu.');
+  o += veBangGia();
+  var k = TC.cao;
+  if(!k){ napCao(); k = 'dang'; }
+  if(k === 'dang') return o + '<div class="card pad-sm"><p class="sm muted">Đang đọc kho cấp cao…</p></div>';
+  if(k.loi) return o + '<div class="card pad-sm"><p class="sm" style="color:var(--gita-do-ink)">' + h(k.loi) + '</p></div>';
+  if(!k.tong) return o + U.empty('Kho cấp cao chưa được nạp', 'Super Admin mở gói mã hoá để nạp vấn đề tầng 4–5 vào máy chủ.');
+  o += '<p class="sm mb">' + ic('check', 'w-3 h-3') + ' <b>' + k.tong + '</b> vấn đề tầng 4–5 · ' + HANG_CAO.map(function(x){ return h(k.tenHang[x]) + ' ' + (k.dem[x] || 0); }).join(' · ') + '</p>';
+  o += '<div class="row wrap mb" style="gap:6px">' +
+    [[0, 'Cả hai tầng'], [4, 'Tầng 4'], [5, 'Tầng 5']].map(function(t){ return '<button class="btn sm' + (TC.caoTang === t[0] ? ' pri' : '') + '" data-kc-tang="' + t[0] + '">' + h(t[1]) + '</button>'; }).join('') +
+    '<span style="width:8px"></span>' +
+    [['', 'Mọi hạng']].concat(HANG_CAO.map(function(x){ return [x, k.tenHang[x]]; })).map(function(x){ return '<button class="btn sm' + (TC.caoHang === x[0] ? ' pri' : '') + '" data-kc-hang="' + x[0] + '">' + h(x[1]) + '</button>'; }).join('') + '</div>';
+  var loc = k.ds.filter(function(v){
+    return (!TC.caoTang || v.tang === TC.caoTang) && (!TC.caoHang || v.hang === TC.caoHang) &&
+      (!q || chuan(v.ten + ' ' + (k.nhomTen[v.nhom] || '') + ' ' + v.ma).indexOf(q) >= 0);
+  });
+  o += '<div class="tcgp-lo"><div class="tcgp-ds"><input id="tcgpQ" class="inp" placeholder="Tìm vấn đề, nhóm hoặc mã…" value="' + h(TC.q) + '">' +
+    '<p class="tiny muted mt mb">' + loc.length + ' / ' + k.ds.length + ' vấn đề</p>' +
+    loc.slice(0, 60).map(function(v){
+      return '<button class="card pad-sm lift mb tcgp-mot' + (TC.chon === v.ma ? ' on' : '') + '" data-kc-chon="' + h(v.ma) + '" style="text-align:left;width:100%">' +
+        '<span class="mono tiny muted">' + h(v.ma) + ' · ' + h(k.tenHang[v.hang] || v.hang) + ' · ' + h(String(v.gia)) + ' cr</span> <b class="sm">' + h(v.ten) + '</b>' +
+        '<div class="tiny muted">' + h(k.nhomTen[v.nhom] || '') + '</div></button>';
+    }).join('') + (loc.length > 60 ? '<p class="tiny muted">… gõ thêm chữ hoặc lọc tầng, hạng để thu hẹp.</p>' : '') + '</div>';
+  var vd = TC.kcvd[TC.chon];
+  o += '<div class="tcgp-ct">' + (vd && vd.ma ? veChiTietKho(vd)
+    : vd && vd.loi ? '<div class="card pad-sm"><p class="sm" style="color:var(--gita-do-ink)">' + h(vd.loi) + '</p></div>'
+    : vd === 'dang' ? '<div class="card pad-sm"><p class="sm muted">Đang mở vấn đề…</p></div>'
+    : '<div class="card pad-sm"><p class="sm muted">Chọn một vấn đề để xem đủ 13 mục và gói giải pháp của hạng.</p></div>') + '</div>';
+  return o + '</div>';
+}
+function apDung(anToan){
+  var vd = TC.kcvd[TC.chon]; if(!vd || !vd.ma) return;
+  var gt = function(id){ var el = document.getElementById(id); return el ? el.value.trim() : ''; };
+  var nha = gt('kcNha'), tc = gt('kcTc');
+  if(!nha){ U.toast('Nhập mã khách hàng của nhà.', 'err'); return; }
+  TC.ap[vd.ma] = { dang:true }; G.render && G.render();
+  G.goiMayChu('apDungKhoCao', { ma:vd.ma, maNha:nha, thamChieu:tc, anToan:anToan === true }).then(function(r){
+    var txt = !(r && r.ok) ? ((r && r.error) || 'Chưa ghi được.')
+      : r.anToan ? r.vi
+      : r.trung ? 'Lượt này đã ghi trước đó với cùng mã tham chiếu — không trừ lần hai.'
+      : 'Đã áp dụng · trừ ' + r.so + ' credit · ví nhà còn ' + ((r.soDu || {}).tong) + ' credit.';
+    TC.ap[vd.ma] = { kq:{ ok:!!(r && r.ok), txt:txt } };
+    if(G.render) G.render();
+  });
+}
+
 G.VIEWS['tra-cuu-gp'] = function(){
   if(!G.can('ca_xu_ly')) return U.lockCard();
   var q = chuan(TC.q);
   var o = U.ph({ eyebrow:'TRA CỨU · TỪ CHUYÊN VIÊN TƯ VẤN', ic:'compass', t:'Tra cứu giải pháp · 13 mục',
     lead:'Chọn một vấn đề: mười ba mục từ phân tích tới bài học, đọc từ kho 1000 vấn đề, kho nghề và sổ nhật ký của cả đội.' });
-  o += '<div class="row wrap mb" role="tablist" style="gap:6px">' + NGAN.map(function(n){
+  o += '<div class="row wrap mb" role="tablist" style="gap:6px">' + NGAN.filter(function(n){ return n[0] !== 'cao' || moCao(); }).map(function(n){
     return '<button class="btn sm' + (TC.ngan === n[0] ? ' pri' : '') + '" role="tab" aria-selected="' + (TC.ngan === n[0]) + '" data-tcgp-ngan="' + n[0] + '">' + h(n[1]) + '</button>';
   }).join('') + '</div>';
+  if(TC.ngan === 'cao') return o + (moCao() ? veCao(q) : U.lockCard());
   if(TC.ngan !== 'nghe') return o + veKho(TC.ngan, q);
   var ds = dsVanDe(), quyen = G.tcgpMo(G.S.role, ds);
   var loc = q ? ds.filter(function(v){ return chuan(v.ten + ' ' + v.nhomTen + ' ' + v.ma).indexOf(q) >= 0; }) : ds;
@@ -385,6 +534,33 @@ G.VIEWS['tra-cuu-gp'] = function(){
 document.addEventListener('click', function(e){
   var ng = e.target.closest && e.target.closest('[data-tcgp-ngan]');
   if(ng){ TC.ngan = ng.getAttribute('data-tcgp-ngan'); TC.chon = null; TC.q = ''; G.render && G.render(); return; }
+  var kc = e.target.closest && e.target.closest('[data-kc-chon]');
+  if(kc){ var m2 = kc.getAttribute('data-kc-chon'); TC.chon = m2; if(!TC.kcvd[m2] || TC.kcvd[m2].loi) napVdCao(m2); if(!TC.nk[m2]) napSo(m2); G.render && G.render(); return; }
+  var kt = e.target.closest && e.target.closest('[data-kc-tang]');
+  if(kt){ TC.caoTang = Number(kt.getAttribute('data-kc-tang')) || 0; G.render && G.render(); return; }
+  var kh = e.target.closest && e.target.closest('[data-kc-hang]');
+  if(kh){ TC.caoHang = kh.getAttribute('data-kc-hang') || ''; G.render && G.render(); return; }
+  if(e.target.closest && e.target.closest('[data-kc-ap]')){ apDung(false); return; }
+  if(e.target.closest && e.target.closest('[data-kc-at]')){ apDung(true); return; }
+  if(e.target.closest && e.target.closest('[data-kc-nap]')){
+    var mkc = document.getElementById('kcMk'), mkcv = mkc ? mkc.value : '';
+    if(G.S.role !== 'R01' || TC.napCao && TC.napCao.dang) return;
+    if(mkcv.length < 12){ U.toast('Mật khẩu gói dài ít nhất 12 ký tự.', 'err'); return; }
+    napGoiCao(mkcv); return;
+  }
+  if(e.target.closest && e.target.closest('[data-kc-gia]')){
+    if(G.S.role !== 'R01') return;
+    var goc = {}, heSo = {};
+    document.querySelectorAll('[data-kc-goc]').forEach(function(el){ goc[el.getAttribute('data-kc-goc')] = Number(el.value); });
+    document.querySelectorAll('[data-kc-heso]').forEach(function(el){ heSo[el.getAttribute('data-kc-heso')] = Number(el.value); });
+    var ld = document.getElementById('kcLyDo');
+    G.goiMayChu('datGiaKhoCao', { goc:goc, heSo:heSo, lyDo:ld ? ld.value : '' }).then(function(r){
+      if(r && r.ok){ U.toast('Đã lưu bảng giá mới.', 'ok'); TC.gia = null; TC.cao = null; TC.kcvd = {}; }
+      else U.toast((r && r.error) || 'Chưa lưu được.', 'err');
+      if(G.render) G.render();
+    });
+    return;
+  }
   var kb = e.target.closest && e.target.closest('[data-tcgp-kho]');
   if(kb){
     var mk = kb.getAttribute('data-tcgp-kho'), dsk = TC.k[TC.ngan];

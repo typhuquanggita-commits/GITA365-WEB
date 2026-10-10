@@ -162,24 +162,24 @@ async function maNhaCuaToi(db, hoSo) {
   }
   return '';
 }
-async function hoSoNha(db, maNha) {
+export async function hoSoNha(db, maNha) {
   return await db.prepare('SELECT maKhachHang, tang, coach FROM hoSoKhach WHERE maKhachHang = ?').bind(maNha).first();
 }
-async function tangCuaNha(db, maNha) {
+export async function tangCuaNha(db, maNha) {
   const h = await hoSoNha(db, maNha);
   const t = Number(h && h.tang) || 0;
   return t >= 1 && t <= 5 ? t : 1;
 }
 /* Mã nhà phải CÓ THẬT (hồ sơ khách hoặc tài khoản mang mã ấy) — không
    mở ví, không tặng credit cho một mã gõ sai. */
-async function nhaCoThat(db, maNha) {
+export async function nhaCoThat(db, maNha) {
   if (!maNha) return false;
   if (await hoSoNha(db, maNha)) return true;
   const u = await db.prepare('SELECT 1 AS c FROM users WHERE maKhachHang = ? LIMIT 1').bind(maNha).first();
   return !!u;
 }
 /* 'nha' · 'coach' · 'ql' · '' */
-async function vaiVoiNha(db, hoSo, maNha) {
+export async function vaiVoiNha(db, hoSo, maNha) {
   const lv = BAC[hoSo.role] || 99;
   if (lv <= 5) return 'ql';
   if (lv <= 8) {
@@ -189,7 +189,7 @@ async function vaiVoiNha(db, hoSo, maNha) {
   if (maNha && (await maNhaCuaToi(db, hoSo)) === maNha) return 'nha';
   return '';
 }
-async function moVi(db, maNha, boiAi) {
+export async function moVi(db, maNha, boiAi) {
   const gio = new Date().toISOString();
   await db.prepare('INSERT INTO viCredit (maNha, cap, nhom, moLuc, boiAi) VALUES (?,1,\'CS\',?,?) ON CONFLICT(maNha) DO NOTHING')
     .bind(maNha, gio, boiAi || '').run();
@@ -327,25 +327,9 @@ export async function tieuCredit(y, env, db, hoSo) {
   const T = await thongSoNha(db, maNha);
   const gia = giaHoatDong(T, vi.cap, vi.nhom, ma);
   if (!gia) return { ok: false, code: 'GIA0', error: 'Giá credit của hoạt động này đang bằng 0 ở tầng hiện tại.' };
-  const da = await db.prepare("SELECT COUNT(*) AS n FROM soCredit WHERE khoaDuy LIKE ?").bind('tieu:' + maNha + ':' + tc + ':%').first();
-  if (Number((da || {}).n || 0)) return { ok: true, trung: true, so: 0, soDu: await soDu(db, maNha) };
-  const du = await soDu(db, maNha);
-  if (du.tong < gia) return { ok: false, code: 'THIEU', error: 'Ví còn ' + du.tong + ' credit, lượt này cần ' + gia + ' credit.', can: gia, soDu: du };
-  let con = gia; const ke = [];
-  for (const loai of THU_TU_TRU) { if (con <= 0) break; const lay = Math.min(con, Math.max(0, du[loai])); if (lay > 0) { ke.push([loai, lay]); con -= lay; } }
-  const daGhi = []; const gio = new Date().toISOString();
-  for (const [loai, lay] of ke) {
-    const r = await db.prepare('INSERT INTO soCredit (id,maNha,loai,so,viec,khoaDuy,tang,cap,thamChieu,ghiChu,boiAi,luc) ' +
-      'SELECT ?,?,?,?,?,?,?,?,?,?,?,? WHERE (SELECT COALESCE(SUM(so),0) FROM soCredit WHERE maNha = ? AND loai = ?) >= ? ' +
-      'ON CONFLICT(khoaDuy) DO NOTHING')
-      .bind(id(), maNha, loai, -lay, 'tieu:' + ma, 'tieu:' + maNha + ':' + tc + ':' + loai, T.t, vi.cap, tc,
-        String(x.ghiChu || '').slice(0, 200), hoSo.u, gio, maNha, loai, lay).run();
-    if (Number((r.meta || {}).changes || 0) === 1) daGhi.push([loai, lay]);
-    else {
-      for (const [l2, s2] of daGhi) await ghi(db, { maNha, loai: l2, so: s2, viec: 'hoan-tieu', khoaDuy: 'tieu:' + maNha + ':' + tc + ':' + l2 + ':hoan', tang: T.t, thamChieu: tc, ghiChu: 'Hoàn do số dư vừa đổi', boiAi: 'may' });
-      return { ok: false, code: 'DOI', error: 'Số dư vừa thay đổi — thử lại.' };
-    }
-  }
+  const k = await truTheoThuTu(db, { maNha, gia, viec: 'tieu:' + ma, tc, tang: T.t, cap: vi.cap, ghiChu: x.ghiChu, boiAi: hoSo.u });
+  if (!k.ok || k.trung) return k;
+  const daGhi = k.daGhi; const gio = k.gio;
   /* V50·168 · COACH ↔ CRM: buổi coach đã ghi tiêu credit thì vào luôn sổ chạm —
      chính sổ CRM đọc (dòng thời gian, "chạm cuối", KPI). Một lượt ghi, hai
      nơi thấy; khoá chống trùng là mã tham chiếu của buổi. */
@@ -358,6 +342,37 @@ export async function tieuCredit(y, env, db, hoSo) {
     } catch (e) { /* sổ chạm là phần nối — không làm hỏng lượt trừ credit đã xong */ }
   }
   return { ok: true, so: gia, chiTiet: daGhi.map(([l, s]) => ({ loai: l, so: s })), soDu: await soDu(db, maNha) };
+}
+
+/* Trừ `gia` credit của một nhà theo thứ tự tang → thuong → traPhi. Dùng
+   chung cho tieuCredit và kho cấp cao (kho-cao.js) — một chỗ trừ, không
+   hai bản chép của cùng một phép trừ có điều kiện.
+   Mỗi phần một dòng âm, ghi CÓ ĐIỀU KIỆN (đủ số dư mới ghi) để hai lượt
+   cùng lúc không đẩy ví xuống âm; phần nào không ghi được thì hoàn ngay
+   phần đã ghi của lượt ấy. Cùng tham chiếu `tc` gọi lại → trung:true. */
+export async function truTheoThuTu(db, d) {
+  await taoBang(db);
+  const { maNha, gia, viec, tc } = d;
+  const da = await db.prepare("SELECT COUNT(*) AS n FROM soCredit WHERE khoaDuy LIKE ?").bind('tieu:' + maNha + ':' + tc + ':%').first();
+  if (Number((da || {}).n || 0)) return { ok: true, trung: true, so: 0, soDu: await soDu(db, maNha) };
+  const du = await soDu(db, maNha);
+  if (du.tong < gia) return { ok: false, code: 'THIEU', error: 'Ví còn ' + du.tong + ' credit, lượt này cần ' + gia + ' credit.', can: gia, soDu: du };
+  let con = gia; const ke = [];
+  for (const loai of THU_TU_TRU) { if (con <= 0) break; const lay = Math.min(con, Math.max(0, du[loai])); if (lay > 0) { ke.push([loai, lay]); con -= lay; } }
+  const daGhi = []; const gio = new Date().toISOString();
+  for (const [loai, lay] of ke) {
+    const r = await db.prepare('INSERT INTO soCredit (id,maNha,loai,so,viec,khoaDuy,tang,cap,thamChieu,ghiChu,boiAi,luc) ' +
+      'SELECT ?,?,?,?,?,?,?,?,?,?,?,? WHERE (SELECT COALESCE(SUM(so),0) FROM soCredit WHERE maNha = ? AND loai = ?) >= ? ' +
+      'ON CONFLICT(khoaDuy) DO NOTHING')
+      .bind(id(), maNha, loai, -lay, viec, 'tieu:' + maNha + ':' + tc + ':' + loai, d.tang || null, d.cap || null, tc,
+        String(d.ghiChu || '').slice(0, 200), d.boiAi || '', gio, maNha, loai, lay).run();
+    if (Number((r.meta || {}).changes || 0) === 1) daGhi.push([loai, lay]);
+    else {
+      for (const [l2, s2] of daGhi) await ghi(db, { maNha, loai: l2, so: s2, viec: 'hoan-tieu', khoaDuy: 'tieu:' + maNha + ':' + tc + ':' + l2 + ':hoan', tang: d.tang, thamChieu: tc, ghiChu: 'Hoàn do số dư vừa đổi', boiAi: 'may' });
+      return { ok: false, code: 'DOI', error: 'Số dư vừa thay đổi — thử lại.' };
+    }
+  }
+  return { ok: true, daGhi, gio };
 }
 
 /* ═══════════ CỬA 5 · NẠP TỪ PHIẾU THU ĐÃ DUYỆT ═══════════ */

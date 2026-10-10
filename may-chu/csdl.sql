@@ -2395,6 +2395,11 @@ CREATE INDEX IF NOT EXISTS ix_nkgp_van_de ON soNhatKyGiaiPhap (maVanDe, luc);
 -- Kho 1000 vấn đề (10/10/2026): 500 khách hàng · 500 nội bộ, mỗi vấn đề đủ 13 mục. Nạp từ gói mã hoá, chỉ Super Admin; tỷ lệ xem theo vai cắt ở máy chủ.
 CREATE TABLE IF NOT EXISTS khoVanDe (ma TEXT PRIMARY KEY, loai TEXT NOT NULL, nhom TEXT NOT NULL, cap INTEGER NOT NULL, stt INTEGER NOT NULL, ten TEXT NOT NULL, noiDung TEXT NOT NULL, ban TEXT, napLuc INTEGER NOT NULL);
 CREATE INDEX IF NOT EXISTS ix_kvd_hang ON khoVanDe (loai, cap, stt);
+CREATE TABLE IF NOT EXISTS khoCao (ma TEXT PRIMARY KEY, he TEXT NOT NULL, tang INTEGER NOT NULL, nhom TEXT NOT NULL, hang TEXT NOT NULL, stt INTEGER NOT NULL, ten TEXT NOT NULL, noiDung TEXT NOT NULL, ban TEXT, napLuc INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS ix_kc_loc ON khoCao (he, tang, nhom, stt);
+CREATE TABLE IF NOT EXISTS giaKhoCao (id TEXT PRIMARY KEY, bang TEXT NOT NULL, lyDo TEXT NOT NULL, boiAi TEXT, luc INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS luotKhoCao (id TEXT PRIMARY KEY, ma TEXT NOT NULL, maNha TEXT NOT NULL, hang TEXT NOT NULL, tang INTEGER NOT NULL, so INTEGER NOT NULL, anToan INTEGER NOT NULL, thamChieu TEXT NOT NULL, boiAi TEXT, luc INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS ix_lkc_nha ON luotKhoCao (maNha, luc);
 
 -- ═════════════════════════════════════════════════════════════
 --  VÍ CREDIT (may-chu/credit.js) — 1 credit = 10 đồng, bảng chủ hệ
