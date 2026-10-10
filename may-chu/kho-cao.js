@@ -38,6 +38,7 @@ import { Kho } from './nen.js';
 import { soatRaNgoai } from './bo-nao.js';
 import { truTheoThuTu, soDu, vaiVoiNha, nhaCoThat, tangCuaNha, moVi, maNhaCuaToi, thuongCredit } from './credit.js';
 import { baoLenCapCao } from './ngan-hang.js';
+import { maDuocMo, coChoPhep, congBat, HANG_KHO, maDangThi } from './thi-cap.js';
 
 export const HANG = Object.freeze(['S1', 'S3', 'S5', 'VIP', 'VVIP', 'DIAMOND']);
 export const TEN_HANG = Object.freeze({ S1: '1 sao', S3: '3 sao', S5: '5 sao', VIP: 'Vip', VVIP: 'VVip', DIAMOND: 'Diamond' });
@@ -102,6 +103,9 @@ async function vaiKhoCao(db, hoSo, maNha) {
   return tv && tv === String(ten(hoSo) || '').trim().toLowerCase() ? 'tuvan' : '';
 }
 /* Tư vấn viên chỉ thao tác trên vấn đề hệ Tư vấn (tầng 1–3). */
+/* Có ý kiến đã duyệt cho (người, mã) ở BẤT KỲ nhà nào — đủ để ĐỌC nội dung vượt cấp.
+   Một nguồn với thi-cap.js: chỉ quyết định MỚI NHẤT của mỗi lượt xin có hiệu lực. */
+const coChoPhepBatKy = (db, maNguoi, ma) => coChoPhep(db, maNguoi, '', ma);
 const vaiDuoc = (vai, ds) => vai === 'coach' || vai === 'ql' || (vai === 'tuvan' && ds.every(m => heCuaMa(m) === 'tuvan'));
 const sach = (s, n) => String(s == null ? '' : s).replace(/[\u0000-\u0008\u000b-\u001f]+/g, ' ').trim().slice(0, n);
 
@@ -263,8 +267,13 @@ export async function dsKhoCao(y, env, db, hoSo) {
   const g = await bangGiaDangChay(db);
   const dem = {}; HANG.forEach(h => { dem[h] = 0; });
   rows.forEach(r => { if (dem[r.hang] != null) dem[r.hang]++; });
+  /* Cấp thi mở bao nhiêu % kho (thi-cap.js). Tên vẫn hiện — để biết có vấn đề ấy
+     mà xin ý kiến — nhưng nội dung khoá ở docKhoCao. Cổng tắt / quản lý: mở hết. */
+  const mo = await maDuocMo(db, hoSo, he);
   return { ok: true, he, tong: rows.length, dem, nhomTen: NHOM_CAO, tenHang: TEN_HANG,
-    ds: rows.map(r => ({ ma: r.ma, tang: r.tang, nhom: r.nhom, hang: r.hang, ten: r.ten, gia: giaLuot(g.bang, r.hang, r.tang) })) };
+    pham: mo.het ? { het: true } : { het: false, pct: mo.pv.pct, cap: mo.pv.cap || 0, ly: mo.pv.ly || '', khoaDen: mo.pv.khoaDen || 0 },
+    ds: rows.map(r => ({ ma: r.ma, tang: r.tang, nhom: r.nhom, hang: r.hang, ten: r.ten, gia: giaLuot(g.bang, r.hang, r.tang),
+      khoa: !mo.het && !mo.mo.has(r.ma) })) };
 }
 
 /* CỬA · ĐỌC MỘT VẤN ĐỀ */
@@ -275,6 +284,12 @@ export async function docKhoCao(y, env, db, hoSo) {
   await taoBang(db);
   const r = await db.prepare('SELECT ma, he, tang, nhom, hang, ten, noiDung FROM khoCao WHERE ma = ?').bind(ma).first();
   if (!r) return { ok: false, code: 'KHONGCO', error: 'Kho chưa có vấn đề này — Super Admin chưa nạp gói.' };
+  /* Đang thi một bài có ca này thì không mở lời giải của nó — kể cả với người
+     đã mở phần kho ấy từ trước (cổng tắt thì mọi người đều đã mở). */
+  if ((await maDangThi(db, ten(hoSo))).has(ma)) return { ok: false, code: 'DANGTHI', error: 'Vấn đề này đang nằm trong bài thi chưa nộp của anh/chị — nộp bài rồi mới đọc được.' };
+  const mo = await maDuocMo(db, hoSo, r.he);
+  if (!mo.het && !mo.mo.has(ma) && !(await coChoPhepBatKy(db, ten(hoSo), ma)))
+    return { ok: false, code: 'CAPCHUA', error: 'Vấn đề này vượt cấp thi của anh/chị (đang mở ' + (mo.pv.pct || 0) + '% kho). Xin ý kiến bộ phận quản lý — không tự xử lý.' };
   let nd = {};
   try { nd = JSON.parse(r.noiDung); } catch (e) {}
   const g = await bangGiaDangChay(db);
@@ -308,12 +323,34 @@ export async function deXuatKhoCao(y, env, db, hoSo) {
   if (!ds.length || ds.length > TRAN_LUA_CHON || !ds.every(m => MA.test(m))) return { ok: false, code: 'SAI', error: 'Đề xuất từ 1 đến ' + TRAN_LUA_CHON + ' phương án, mỗi phương án một mã vấn đề hợp lệ.' };
   if (!ds.every(m => docDuocHe(hoSo, heCuaMa(m)))) return { ok: false, code: 'NOPERM', error: 'Vai này không đề xuất được kho cấp cao ấy.' };
   const vai = await vaiKhoCao(db, hoSo, maNha);
-  if (!vaiDuoc(vai, ds)) return { ok: false, code: 'NOPERM', error: vai === 'tuvan'
+  /* Người được quản lý CHUYỂN ca sang (xin ý kiến → chuyển) đề xuất được cho nhà
+     ấy dù không phải người phụ trách — đúng những mã đã được duyệt. */
+  let duocChuyen = false;
+  /* Chỉ ca được CHUYỂN sang mới mở cửa này — bản đầu nhận cả 'cho', nên một
+     người không phụ trách nhà xin ý kiến rồi được "cho" là đề xuất được. */
+  if (!vaiDuoc(vai, ds)) { duocChuyen = true; for (const m of ds) if (!(await coChoPhep(db, ten(hoSo), maNha, m, true))) { duocChuyen = false; break; } }
+  if (!vaiDuoc(vai, ds) && !duocChuyen) return { ok: false, code: 'NOPERM', error: vai === 'tuvan'
     ? 'Tư vấn viên chỉ đề xuất vấn đề hệ Tư vấn (tầng 1–3) cho nhà mình phụ trách.'
     : 'Chỉ Coach hoặc Tư vấn viên phụ trách nhà này, hoặc Trưởng nhóm Coach trở lên, đề xuất giải pháp cho nhà.' };
   if (!(await nhaCoThat(db, maNha))) return { ok: false, code: 'KHONGNHA', error: 'Không có nhà nào mang mã ' + maNha + '.' };
+  const dangThi = await maDangThi(db, ten(hoSo));
+  if (ds.some(m => dangThi.has(m))) return { ok: false, code: 'DANGTHI', error: 'Có vấn đề đang nằm trong bài thi chưa nộp của anh/chị — nộp bài rồi mới đề xuất được.' };
   if (ghiChu && !soatRaNgoai(ghiChu).sach) return { ok: false, code: 'DIEU13', error: 'Lời nhắn không ghi tên, số điện thoại hay địa chỉ — bỏ đi rồi gửi lại.' };
   await taoBang(db);
+  /* Cổng cấp thi (khi Super Admin đã bật): vấn đề vượt cấp, và mọi vấn đề hạng
+     VVIP/Diamond, phải có ý kiến quản lý đã duyệt cho đúng nhà ấy. Quản lý
+     (R01–R04) không qua cổng này. */
+  if (BAC[roleOf(hoSo)] > 4 && await congBat(db)) {
+    for (const m of ds) {
+      const k = await db.prepare('SELECT he, hang FROM khoCao WHERE ma = ?').bind(m).first();
+      if (!k) continue;
+      const mo = await maDuocMo(db, hoSo, k.he);
+      const canXin = (!mo.het && !mo.mo.has(m)) || HANG_KHO.includes(k.hang);
+      if (canXin && !(await coChoPhep(db, ten(hoSo), maNha, m)))
+        return { ok: false, code: 'XINYKIEN', ma: m, error: (HANG_KHO.includes(k.hang) ? 'Vấn đề hạng ' + TEN_HANG[k.hang] + ' là vấn đề khó' : 'Vấn đề ' + m + ' vượt cấp thi của anh/chị') +
+          ' — bắt buộc xin ý kiến bộ phận quản lý trước khi đề xuất cho nhà. Nghiêm cấm tự xử lý.' };
+    }
+  }
   const tangNha = await tangCuaNha(db, maNha);
   for (const m of ds) {
     const r = await db.prepare('SELECT tang FROM khoCao WHERE ma = ?').bind(m).first();

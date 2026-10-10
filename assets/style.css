@@ -4364,3 +4364,13 @@ html[data-may="yeu"] *,html[data-may="yeu"] *::before,html[data-may="yeu"] *::af
 .dtc-form{flex-basis:100%;display:flex;flex-direction:column;gap:8px;padding-top:8px;border-top:1px dashed var(--line)}
 .dtc-form .inp{width:100%}
 .dtc-luat > div{flex-direction:column;gap:2px}
+/* Thi chứng chỉ (src/thi-chung-chi.js) */
+.tcc-ca{display:flex;flex-direction:column;gap:4px}
+.tcc-ca textarea{width:100%}
+.tcc-thang{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-top:8px}
+.tcc-thang > div{display:flex;flex-direction:column;gap:2px;padding:8px 10px;border:1px solid var(--line);border-radius:10px}
+.tcc-bai{white-space:pre-wrap;overflow-wrap:anywhere;padding:10px 12px;border-left:3px solid var(--gita);background:var(--surface);border-radius:8px}
+.tcc-bang{overflow-x:auto;margin-bottom:12px}
+.tcc-chi ul{margin:4px 0 8px 18px}
+.tcc-chi p{margin:6px 0 2px}
+.tcc-chi summary{cursor:pointer;min-height:32px;display:flex;align-items:center;gap:6px}

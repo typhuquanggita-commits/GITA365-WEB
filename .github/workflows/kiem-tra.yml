@@ -175,6 +175,8 @@ jobs:
 
       - name: Chương trình đào tạo — không tự chấm, không tự ký, máy đọc ba cửa, đủ điều kiện kiểm ở máy chủ
         run: node tools/thu-dao-tao-ct.mjs
+      - name: Thi chứng chỉ — đề riêng từng người, không tự chấm, tụt cấp theo tháng, vấn đề khó phải xin ý kiến
+        run: node tools/thu-thi-cap.mjs
 
       - name: Soát thiết kế tĩnh — không chuyển động nảy, không chữ chạy, không màu cấm (cả dạng %23), chữ chuyển sắc không thêm chỗ mới
         run: node tools/thu-thiet-ke-tinh.mjs

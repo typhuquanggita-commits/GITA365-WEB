@@ -80,3 +80,23 @@ Không xoá mã màn, cửa máy chủ, bảng dữ liệu hay tệp nào đã g
 - Cửa nhiều chỉ số: mỗi chỉ số chạy riêng (`doRieng`), hỏng thì `null` + tên vào `chuaDo` — không kèm lời lỗi CSDL. Màn hiện "chưa đo được", không hiện 0.
 - Lọc ngày trên cột ISO viết `cot >= ?` (cùng nghĩa với substr khi mốc dài 10 ký tự, nhưng dùng chỉ mục).
 - Cầu dao máy khách: 500 CÓ `x-gita-ma` là máy chủ đã trả lời — chỉ khoá đúng cửa ấy 30 giây (`CUA_HONG`). Cầu dao chung (`NGAT`) chỉ đếm lỗi mạng và 5xx không mã. `tools/thu-dong-chay.mjs` phá thử cả hai.
+
+## Thi chứng chỉ (`may-chu/thi-cap.js` · `may-chu/thi-cap-du-lieu.js` · màn `thi-chung-chi`)
+- Tư vấn 50 cấp (R11) · Coach 100 cấp (R05–R08). Phần số của mỗi cấp (số ca, biến cố, hạng ca, ngưỡng, số người chấm, phút, % kho) là CÔNG THỨC theo cấp; phần chữ viết riêng từng cấp. `thi-cap-du-lieu.js` do `scratchpad/thi-cap/dung.mjs` sinh — đừng sửa tay. Màn đọc khung từ `khungThi`, không giữ bản chép.
+- Đề KHÔNG nằm trong kho mã: ghép lúc bắt đầu từ kho cấp cao × 14 dạng × 36 biến cố, hạt giống theo người·hệ·cấp·tháng·lượt, ưu tiên ca chưa mở và chưa gặp trong 12 tháng. Đề gửi xuống không kèm lời giải.
+- Cấp tính LÚC ĐỌC bằng phát lại sự kiện (`capCua`): đạt ở cấp ≥ đang giữ thì giữ/lên; bỏ một tháng thì tụt một cấp; vi phạm hạ cấp ngay, Super Admin huỷ thì cấp trở lại. Không bảng nào có cột cấp hiện tại.
+- Người chấm khác người thi (định danh chính tắc), chấm mù; không phải quản lý thì phải giữ cấp cao hơn cấp bài. Bộ dò chép báo khi tỉ lệ cụm 8 chữ trùng > 25% HOẶC trùng ≥ 12 cụm — chỉ đo tỉ lệ thì chép một đoạn rồi pha loãng là lọt.
+- Soát đối kháng (10/2026) bắt 18 lỗ, mỗi lỗ một phép đo ở `thu-thi-cap.mjs` (kịch bản `doiKhang`) và phá thử cho bốn bản sửa chính:
+  - quyền xin ý kiến chỉ theo QUYẾT ĐỊNH MỚI NHẤT của lượt xin (rút lại thì hết);
+  - chỉ ca được CHUYỂN mới cho đề xuất ở nhà mình không phụ trách;
+  - người chuyển ca không được tự nhận ca, và người nhận phải có năng lực cao hơn người xin;
+  - mỗi người chấm một lần (chỉ mục duy nhất), đủ người thì chốt kết quả;
+  - mỗi ca có sàn `SAN_CA`;
+  - kiểm-rồi-ghi một câu khi bắt đầu bài, để gọi dồn không mở được nhiều bài;
+  - bài bắt đầu trước lần bị hạ không dựng lại cấp đã mất;
+  - khoá vi phạm mức 3 áp cả khi cổng tắt, cả với quản lý; người bị khoá không duyệt, không chấm;
+  - đang thi thì kho từ chối đọc và đề xuất ca của bài ấy (`DANGTHI`);
+  - đề chỉ lấy ca NGOÀI phần kho người thi đã mở khi kho đủ ca.
+- Mọi cấp khó hơn cấp trước ở ít nhất độ dài bài tối thiểu (`chuToiThieu`). Thi giữ cấp khó hơn lần đạt cấp ấy: thêm một biến cố, ngưỡng cộng 3, bài dài hơn 40 ký tự (`defThi`).
+- Luật "vấn đề khó phải xin ý kiến" còn gắn với cổng: cổng tắt thì không chặn. Đề xuất tạo lúc cổng tắt không bị soát lại khi nhà chọn sau đó.
+- Cổng (R01 bật) khoá kho cấp cao theo % cấp; hạng VVIP · DIAMOND và vấn đề vượt cấp phải xin ý kiến; người duyệt có thể chuyển ca. Đình chỉ và bồi thường là quyết định của người — máy chỉ gửi đề nghị (`baoLenCapCao`). Mức hệ quả `HE_QUA` và công thức % kho là mặc định chờ chủ hệ chốt.

@@ -50,7 +50,7 @@ var G = window.G || {}; window.G = G;
     { id:'khach-crm', khu:'nhansu', ten:'Khách hàng & CRM',         ic:'heart',   viec:'CRM theo quyền được cấp, CSKH, đo lường khách, trải nghiệm, tài liệu gia đình.',
       phan:['toan-canh-crm','crm','tt-cskh','do-luong-he','trai-nghiem-kh','nguoi-dan-dat','tai-lieu-khach','gui-tu-lieu','tang5-pro','khung-du-lieu'], kho:['TUVAN','VIP','TRAI'] },
     { id:'dao-tao', khu:'nhansu',   ten:'Đào tạo & năng lực',       ic:'book',    viec:'Khoá đào tạo, sát hạch, cuộc thi viết — mở theo cấp bậc đạt được.',
-      phan:['chuong-trinh-dt','khoa-dao-tao','sat-hach','thi-viet'], kho:['NGHE','PP'] },
+      phan:['chuong-trinh-dt','thi-chung-chi','khoa-dao-tao','sat-hach','thi-viet'], kho:['NGHE','PP'] },
     { id:'kho-nghe', khu:'nhansu',  ten:'Kho nghề & tài liệu',      ic:'vault',   viec:'14 kho nghề theo cụm, thư viện tài liệu — chương mở theo vai, tầng, gói.',
       phan:['thu-vien-v50','tra-cuu-gp','kn-pp','kn-kho','kn-nghe','kn-coach','kn-tuvan','kn-vip','kn-trai','kn-mk','kn-gd','kn-nha','kn-pl','kn-tc','kn-kt','kn-ct','thu-vien'], kho:[] },
     { id:'dieu-hanh', khu:'nhansu', ten:'Điều hành & đo lường',     ic:'chart',   viec:'Trung tâm đo lường 41 chỉ số, V20, 16 ban, các vai, phòng ban, năng lực, con người.',
