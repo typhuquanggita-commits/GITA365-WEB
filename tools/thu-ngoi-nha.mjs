@@ -44,7 +44,7 @@ const buoc = goc.map((g, i) => ((goc[(i + 1) % 10] - g) + 360) % 360);
 kiem('mười bánh cách đều 36°, bánh đầu ở đỉnh', buoc.every(b => Math.abs(b - 36) < 0.2) && Math.abs(goc[0]) < 0.2, buoc.map(b => b.toFixed(1)).join(','));
 kiem('mỗi bánh là <button data-v="banh-da"> thật (bấm được, Tab tới được)', (d.html.match(/<button class="nha-bd-o"[^>]*data-v="banh-da"/g) || []).length === 10);
 kiem('bánh đà đọc THẲNG G.BD_LON, không chép mười tên vào màn', /G\.BD_LON/.test(jsNha) && !/'Nhìn thật'|'Nhịp nhà'|'Truyền lại'/.test(jsNha));
-kiem('vòng khẩu hiệu SVG luôn dựng, đứng yên (không gắn animation)', /class="nha-khauhieu"/.test(d.html));
+kiem('vòng khẩu hiệu SVG luôn dựng', /class="nha-khauhieu"/.test(d.html));
 const phan = (d.html.match(/class="nha-o /g) || []).length;
 kiem('đủ 11 phần ngôi nhà: mái · 8 ngăn · cửa · nền', phan === 11 && d.G.NHA_PHAN.length === 11, phan);
 
@@ -86,19 +86,25 @@ kiem('lựa chọn "quay" của người dùng có luật riêng, nặng hơn lu
   /\.nha-ring\.nha-quay \.nha-ring-nodes\{animation:nhaQuay/.test(khoi) && /\.nha-ring\.nha-quay \.nha-ring-nodes \.nha-bd-o\{animation:nhaGiu/.test(khoi));
 kiem('lựa chọn "quay" giữ 60 giây bằng !important — thắng luật *{animation-duration:.01ms!important} của máy giảm chuyển động',
   /\*\{animation-duration:\.01ms!important/.test(css) &&
-  /\.nha-ring\.nha-quay \.nha-ring-nodes,\.nha-ring\.nha-quay \.nha-ring-nodes \.nha-bd-o\{animation-duration:(\d+)s!important\}/.test(khoi) &&
-  khoi.match(/\.nha-ring\.nha-quay \.nha-ring-nodes,\.nha-ring\.nha-quay \.nha-ring-nodes \.nha-bd-o\{animation-duration:(\d+)s!important\}/)[1] === (quay && quay[1]));
-kiem('lựa chọn "dừng" dừng cả vòng lẫn bánh', /\.nha-ring\.nha-dung \.nha-ring-nodes,\.nha-ring\.nha-dung \.nha-ring-nodes \.nha-bd-o\{animation:none\}/.test(khoi));
+  /\.nha-ring\.nha-quay \.nha-ring-nodes,\.nha-ring\.nha-quay \.nha-ring-nodes \.nha-bd-o,\.nha-ring\.nha-quay::before\{animation-duration:(\d+)s!important\}/.test(khoi) &&
+  khoi.match(/\.nha-ring\.nha-quay \.nha-ring-nodes,\.nha-ring\.nha-quay \.nha-ring-nodes \.nha-bd-o,\.nha-ring\.nha-quay::before\{animation-duration:(\d+)s!important\}/)[1] === (quay && quay[1]));
+kiem('lựa chọn "dừng" dừng cả vòng lẫn bánh', /\.nha-ring\.nha-dung \.nha-ring-nodes,\.nha-ring\.nha-dung \.nha-ring-nodes \.nha-bd-o,/.test(khoi));
 kiem('rê/Tab vào bánh thì dừng CẢ vòng lẫn bánh cùng lúc (không nghiêng chữ)',
   /\.nha-ring-nodes:hover,\.nha-ring-nodes:hover \.nha-bd-o,\s*\.nha-ring-nodes:focus-within,\.nha-ring-nodes:focus-within \.nha-bd-o\{animation-play-state:paused\}/.test(khoi));
-kiem('máy xin giảm chuyển động → quay CHẬM 240s (!important thắng luật ép .01ms), không dừng hẳn',
-  /@media\(prefers-reduced-motion:reduce\)\{\.nha-ring-nodes,\.nha-ring-nodes \.nha-bd-o\{animation-duration:240s!important\}\}/.test(khoi));
+/* Chủ hệ 10/10/2026 báo LẦN HAI "vòng tròn không quay": 240 giây/vòng
+   (1,5°/giây) nhìn như đứng yên. Nay 90 giây/vòng — vẫn chậm hơn nhịp
+   thường, vẫn có nút Dừng và rê chuột là đứng (WCAG 2.2.2). */
+kiem('máy xin giảm chuyển động → bánh đà + vòng nét đứt 90s, khẩu hiệu 180s (!important thắng luật ép .01ms), không dừng hẳn',
+  /@media\(prefers-reduced-motion:reduce\)\{\.nha-ring-nodes,\.nha-ring-nodes \.nha-bd-o,\.nha-ring::before\{animation-duration:90s!important\}\s*\.nha-khauhieu\{animation-duration:180s!important\}\}/.test(khoi));
 /* Luật tắt vòng chỉ được sống ở MỘT chỗ: ngoài khối container mà còn một luật
    animation:none cho vòng trong @media giảm chuyển động thì nó đè mất nhịp chậm. */
 const ngoai = css.slice(0, iC) + css.slice(sau + 1);
 kiem('không còn bản chép thứ hai của luật tắt vòng ngoài khối @container',
   !/prefers-reduced-motion:reduce\)\{[^@]*\.nha-ring-nodes[^{]*\{[^}]*animation:none/.test(ngoai), (ngoai.match(/\.nha-ring-nodes[^{]*\{[^}]*animation:none[^}]*\}/g) || []).join(' | '));
-kiem('vòng khẩu hiệu không quay', !/\.nha-khauhieu[^{]*\{[^}]*animation:/.test(css));
+kiem('vòng khẩu hiệu QUAY NGƯỢC chiều, chậm gấp đôi vòng bánh đà (120s) — vòng to nhất phải thấy được chuyển động',
+  /\.nha-khauhieu\{[^}]*animation:nhaQuayNguoc 120s linear infinite/.test(khoi) && /@keyframes nhaQuayNguoc\{from\{transform:rotate\(0\)\}to\{transform:rotate\(-360deg\)\}\}/.test(css));
+kiem('vòng nét đứt quay cùng nhịp vòng bánh đà', /\.nha-ring::before\{[^}]*animation:nhaQuay 60s linear infinite/.test(khoi));
+kiem('lựa chọn "dừng" dừng cả vòng khẩu hiệu và vòng nét đứt', /\.nha-ring\.nha-dung::before,\.nha-ring\.nha-dung \.nha-khauhieu\{animation:none\}/.test(khoi));
 kiem('lớp: khẩu hiệu (0) < nhà (1) < bánh đà (3)', /\.nha-khauhieu\{[^}]*z-index:0/.test(khoi) && /\.nha-ring \.nha\{[^}]*z-index:1/.test(khoi) && /\.nha-ring-nodes\{[^}]*z-index:3/.test(khoi));
 const baseNut = css.indexOf('.nha-quay-nut{display:none');
 kiem('luật ẩn nút ở khổ hẹp đứng TRƯỚC khối @container (dòng sau thắng)', baseNut > 0 && baseNut < iC);

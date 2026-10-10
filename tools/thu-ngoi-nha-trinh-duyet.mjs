@@ -98,7 +98,7 @@ for (const w of [1024, 1280, 1440, 1920]) {
   }
 }
 const pg = await moMan(1440, 'reduce');
-kiem('máy xin giảm chuyển động → vòng QUAY CHẬM êm (240 giây/vòng), không giật', await dangQuay(pg, 240));
+kiem('máy xin giảm chuyển động → vòng quay êm 90 giây/vòng, không giật', await dangQuay(pg, 90));
 await pg.click('text=Quay đủ nhịp');
 kiem('bấm "Quay đủ nhịp" (chuột thật) → quay êm 60 giây/vòng dù máy xin giảm', await dangQuay(pg, 60));
 await pg.click('text=Dừng vòng bánh đà');

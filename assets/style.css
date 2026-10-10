@@ -2666,6 +2666,11 @@ button.nha-o-nen:hover .nha-ic{transform:scale(1.06)}
    nên bánh ĐI THEO VÒNG mà CHỮ ĐỨNG YÊN thẳng đứng. */
 @keyframes nhaQuay{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 @keyframes nhaGiu{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(-360deg)}}
+/* Vòng khẩu hiệu quay NGƯỢC chiều, chậm gấp đôi (10/10/2026). Trước đó nó
+   đứng yên "để đọc được" — và chủ hệ báo đúng nó: vòng tròn to nhất, nhìn
+   thấy rõ nhất, lại là vòng không quay, nên cả con dấu trông như đứng im.
+   Chữ bám vòng vẫn đọc được ở 3°/giây. */
+@keyframes nhaQuayNguoc{from{transform:rotate(0)}to{transform:rotate(-360deg)}}
 
 @container nhaVong (min-width:760px){
   /* .nha-ring là CONTAINER riêng → mọi kích thước bên trong tính bằng cqi
@@ -2674,11 +2679,12 @@ button.nha-o-nen:hover .nha-ic{transform:scale(1.06)}
      · điện thoại), không bao giờ chạm chữ vòng ngoài. */
   .nha-ring{width:min(1000px,100%);aspect-ratio:1/1;margin:22px auto 10px;container:nhaRing / inline-size}
   /* VÒNG KHẨU HIỆU (ngoài, ~47%) — chữ bám vòng, đứng yên, đọc được */
-  .nha-khauhieu{display:block;position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:0}
+  .nha-khauhieu{display:block;position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:0;
+    transform-origin:50% 50%;animation:nhaQuayNguoc 120s linear infinite}
   .nha-khauhieu text{font-family:var(--font);font-weight:800;font-size:3cqi;fill:var(--gita-ink)}
   /* VÒNG BÁNH ĐÀ (trong, bán kính 37%) — cách vòng khẩu hiệu ~10% (~2 cm) */
   .nha-ring::before{content:"";display:block;position:absolute;inset:13%;
-    border:2px dashed var(--gita-vien-2);border-radius:50%;pointer-events:none}
+    border:2px dashed var(--gita-vien-2);border-radius:50%;pointer-events:none;animation:nhaQuay 60s linear infinite}
   /* pointer-events:none — lớp vòng là một HÌNH VUÔNG TRONG SUỐT phủ cả con
      dấu và nằm TRÊN ngôi nhà (z-index 3). Thiếu dòng này thì mọi cú bấm vào
      11 phần của nhà rơi vào lớp vòng: đo ở 9.99.254 ra 0/11 phần bấm trúng
@@ -2721,7 +2727,8 @@ button.nha-o-nen:hover .nha-ic{transform:scale(1.06)}
      nút "Dừng vòng bánh đà" luôn có (WCAG 2.2.2 — chuyển động tự chạy phải
      dừng được). !important vì luật chung *{animation-duration:.01ms!important}
      ở đầu tệp ép mọi hoạt ảnh về 0 — thiếu nó vòng GIẬT góc thay vì quay. */
-  @media(prefers-reduced-motion:reduce){.nha-ring-nodes,.nha-ring-nodes .nha-bd-o{animation-duration:240s!important}}
+  @media(prefers-reduced-motion:reduce){.nha-ring-nodes,.nha-ring-nodes .nha-bd-o,.nha-ring::before{animation-duration:90s!important}
+    .nha-khauhieu{animation-duration:180s!important}}
   /* LỰA CHỌN CỦA NGƯỜI DÙNG thắng mặc định của máy (ngoi-nha.js → nhaDoiQuay).
      Độ nặng 0,3–0,4 thắng các luật "giảm chuyển động" thường (0,1–0,2) ở
      dưới tệp, NHƯNG không thắng được luật `*{animation-duration:.01ms
@@ -2731,8 +2738,9 @@ button.nha-o-nen:hover .nha-ic{transform:scale(1.06)}
   .nha-quay-nut{display:flex}
   .nha-ring.nha-quay .nha-ring-nodes{animation:nhaQuay 60s linear infinite}
   .nha-ring.nha-quay .nha-ring-nodes .nha-bd-o{animation:nhaGiu 60s linear infinite}
-  .nha-ring.nha-quay .nha-ring-nodes,.nha-ring.nha-quay .nha-ring-nodes .nha-bd-o{animation-duration:60s!important}
-  .nha-ring.nha-dung .nha-ring-nodes,.nha-ring.nha-dung .nha-ring-nodes .nha-bd-o{animation:none}
+  .nha-ring.nha-quay .nha-ring-nodes,.nha-ring.nha-quay .nha-ring-nodes .nha-bd-o,.nha-ring.nha-quay::before{animation-duration:60s!important}
+  .nha-ring.nha-quay .nha-khauhieu{animation-duration:120s!important}
+  .nha-ring.nha-dung .nha-ring-nodes,.nha-ring.nha-dung .nha-ring-nodes .nha-bd-o,.nha-ring.nha-dung::before,.nha-ring.nha-dung .nha-khauhieu{animation:none}
   /* Rê chuột / Tab vào MỘT bánh thì cả vòng đứng lại để bấm trúng. Dừng
      CẢ vòng lẫn bánh cùng lúc — dừng một bên thì chữ nghiêng theo góc đang dở. */
   .nha-ring-nodes:hover,.nha-ring-nodes:hover .nha-bd-o,
@@ -4440,3 +4448,7 @@ html[data-may="yeu"] *,html[data-may="yeu"] *::before,html[data-may="yeu"] *::af
 .kn-khoi{display:flex;flex-direction:column;gap:4px;padding:8px 10px;border-left:3px solid var(--gita);background:var(--surface);border-radius:8px;margin:4px 0}
 .kn-so{font-size:12.5px;color:var(--gita)}
 .kn-ds{margin:2px 0 4px 20px;line-height:1.55}
+/* Khoá khuôn mặt — ô tên thiết bị thay cho window.prompt (Electron không hỗ trợ prompt) */
+.st-nhan{display:block;font-size:12.5px;font-weight:700;margin:4px 0 6px}
+.st-ten{max-width:420px;margin-bottom:10px}
+.st-nut{gap:8px;flex-wrap:wrap;align-items:center}

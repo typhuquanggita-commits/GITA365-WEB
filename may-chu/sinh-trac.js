@@ -227,9 +227,19 @@ export async function dangKyKhoaMatBatDau(y, env, db, hoSo) {
     rp: { name: RP_TEN },                       /* bỏ id → trình duyệt lấy đúng miền hiện tại */
     user: { id: b64uMa(new TextEncoder().encode(String(hoSo.uid))), name: hoSo.u, displayName: hoSo.u },
     pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
-    authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required', residentKey: 'preferred' },
+    /* Hai đường, cả hai đều BẮT quét mặt/vân tay thật (userVerification):
+       · 'nenTang'  — Face ID / Windows Hello của CHÍNH máy đang mở trang.
+       · 'dienThoai' — máy tính KHÔNG có Windows Hello (rất nhiều laptop văn
+         phòng): trình duyệt hiện mã QR, người dùng quét bằng điện thoại và
+         mở khoá bằng Face ID của điện thoại. Trước 10/10/2026 chỉ có đường
+         thứ nhất — trên máy không có Hello, bấm nút là hỏng ngay ("lỗi
+         check in khuôn mặt" chủ hệ báo). Mọi giá trị khác → 'nenTang'. */
+    authenticatorSelection: { authenticatorAttachment: y.kieu === 'dienThoai' ? 'cross-platform' : 'platform',
+      userVerification: 'required', residentKey: 'preferred' },
     timeout: 120000, attestation: 'none',
-    excludeCredentials: (daCo.results || []).map(c => ({ type: 'public-key', id: c.credentialId, transports: ['internal'] }))
+    /* KHÔNG khai transports: khai ['internal'] thì trình duyệt chỉ tìm khoá
+       ở chính máy này và bỏ qua khoá đã đăng ký trên điện thoại. */
+    excludeCredentials: (daCo.results || []).map(c => ({ type: 'public-key', id: c.credentialId }))
   } };
 }
 
@@ -298,7 +308,7 @@ export async function dangNhapMatBatDau(y, env, db) {
   const { choId, challenge } = await moCho(db, nd ? nd.id : null, 'dangnhap', origin);
   return { ok: true, choId, publicKey: {
     challenge,
-    allowCredentials: (creds.results || []).map(c => ({ type: 'public-key', id: c.credentialId, transports: ['internal'] })),
+    allowCredentials: (creds.results || []).map(c => ({ type: 'public-key', id: c.credentialId })),
     userVerification: 'required', timeout: 120000
   } };
 }
@@ -381,7 +391,7 @@ export async function xacThucLaiMatBatDau(y, env, db, hoSo) {
   const { choId, challenge } = await moCho(db, hoSo.uid, 'buocmat', origin);
   return { ok: true, choId, publicKey: {
     challenge,
-    allowCredentials: creds.results.map(c => ({ type: 'public-key', id: c.credentialId, transports: ['internal'] })),
+    allowCredentials: creds.results.map(c => ({ type: 'public-key', id: c.credentialId })),
     userVerification: 'required', timeout: 120000
   } };
 }

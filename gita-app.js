@@ -45,7 +45,7 @@ window.G = G;
    trong khi nội dung đổi là một cách nói dối không cố ý. */
 G.META = {
   name: 'GITA 365',
-  version: '9.99.254',
+  version: '9.99.255',
   tagline: 'Hệ Sinh Thái Gia Đình Thịnh Vượng',
   hotline: '08.5555.4688',
   site: 'truongnhatquang.com',
@@ -8127,9 +8127,28 @@ G.VIEWS = G.VIEWS || {};
       .then(function (x) { return !!x; }).catch(function () { return false; });
   };
 
+  /* Trang chạy ở chỗ trình duyệt CHO dùng WebAuthn không: https, hoặc
+     localhost khi chạy thử. Bản máy tính (.exe) mở trang bằng gita://app —
+     trình duyệt không cho tạo khoá mặt ở địa chỉ ấy, và máy chủ cũng từ
+     chối. Nói thẳng ra thay vì để nút bấm vào là hỏng. */
+  G.stDiaChiHopLe = function () {
+    var p = location.protocol, hn = location.hostname;
+    return p === 'https:' || (p === 'http:' && (hn === 'localhost' || hn === '127.0.0.1'));
+  };
+  /* Kết quả dò bộ xác thực nền tảng — null là chưa dò xong. Dò một lần mỗi
+     lượt mở trang rồi vẽ lại, vì isUVPAA trả Promise mà màn vẽ đồng bộ. */
+  G.stNenTang = null;
+  G.stDoNenTang = function () {
+    if (G.stNenTang !== null || G._stDangDo) return;
+    G._stDangDo = true;
+    G.stCoNenTang().then(function (x) { G.stNenTang = !!x; G._stDangDo = false; if (G.S && G.S.view === 'khoa-mat' && G.render) G.render(); });
+  };
+
   function loiNguoiDoc(e) {
     var n = (e && e.name) || '';
-    if (n === 'NotAllowedError') return 'Đã huỷ hoặc hết giờ — chưa quét được khuôn mặt.';
+    if (n === 'NotAllowedError') return G.stNenTang === false
+      ? 'Chưa quét được. Máy này không có Windows Hello / Face ID — dùng nút "Dùng điện thoại quét mã QR".'
+      : 'Đã huỷ hoặc hết 2 phút — chưa quét được khuôn mặt. Bấm lại và làm theo lời nhắc của máy.';
     if (n === 'InvalidStateError') return 'Thiết bị này đã đăng ký khuôn mặt cho tài khoản rồi.';
     if (n === 'SecurityError') return 'Trang phải chạy trên HTTPS thì khuôn mặt mới bật được.';
     if (n === 'NotSupportedError') return 'Thiết bị này chưa hỗ trợ đăng nhập khuôn mặt.';
@@ -8137,11 +8156,17 @@ G.VIEWS = G.VIEWS || {};
   }
 
   /* ══ ĐĂNG KÝ khoá mặt (đang đăng nhập) ══ */
-  G.stDangKyKhoaMat = function (ten) {
-    if (!G.stCoWebAuthn()) { U.toast('Thiết bị này chưa hỗ trợ khuôn mặt.', 'err'); return; }
+  /* kieu: 'nenTang' (Face ID/Windows Hello của chính máy này) hoặc
+     'dienThoai' (máy hiện mã QR, quét bằng điện thoại rồi mở bằng Face ID
+     của điện thoại). */
+  G.stDangKyKhoaMat = function (ten, kieu) {
+    kieu = kieu === 'dienThoai' ? 'dienThoai' : 'nenTang';
+    if (!G.stCoWebAuthn()) { U.toast('Trình duyệt này chưa hỗ trợ khoá khuôn mặt — mở bằng Chrome, Edge hoặc Safari bản mới.', 'err'); return; }
+    if (!G.stDiaChiHopLe()) { U.toast('Khuôn mặt chỉ bật được trên trang web https (gita365.pages.dev), không bật được trong bản cài máy tính.', 'err'); return; }
     if (!G.goiMayChu) { U.toast('Cần nối máy chủ trước.', 'err'); return; }
-    U.toast('Đang chuẩn bị — làm theo lời nhắc quét khuôn mặt…', 'ok');
-    G.goiMayChu('dangKyKhoaMatBatDau', { origin: location.origin, ten: ten || '' })
+    U.toast(kieu === 'dienThoai' ? 'Máy sẽ hiện mã QR — quét bằng camera điện thoại rồi mở bằng Face ID…'
+      : 'Đang chuẩn bị — làm theo lời nhắc quét khuôn mặt của máy…', 'ok');
+    G.goiMayChu('dangKyKhoaMatBatDau', { origin: location.origin, ten: ten || '', kieu: kieu })
       .then(function (o) {
         if (!o || !o.ok) throw new Error((o && o.error) || 'Máy chủ từ chối.');
         var pk = o.publicKey;
@@ -8249,10 +8274,13 @@ G.VIEWS = G.VIEWS || {};
     });
   };
   G.stTaiNK = function () { G.goiMayChu && G.goiMayChu('nhatKyAnToan', {}).then(function (x) { G.stNK = x; if (G.render) G.render(); }); };
-  G.stThemHoi = function () {
-    var ten = window.prompt('Đặt tên cho thiết bị này (vd: iPhone của mẹ):', 'Thiết bị của tôi');
-    if (ten === null) return;
-    G.stDangKyKhoaMat(ten || 'Thiết bị');
+  /* Tên thiết bị lấy từ ô nhập ngay trên màn, KHÔNG dùng window.prompt:
+     bản máy tính (Electron) không hỗ trợ prompt — nút bấm vào là im lặng;
+     trình duyệt trong app (Zalo, Facebook) cũng hay chặn hộp thoại. */
+  G.stThemHoi = function (kieu) {
+    var o = document.getElementById('st-ten');
+    var ten = String((o && o.value) || '').trim().slice(0, 60);
+    G.stDangKyKhoaMat(ten || (kieu === 'dienThoai' ? 'Điện thoại' : 'Máy này'), kieu);
   };
 
   /* Nhật ký an toàn — chống lừa đảo bằng cách để người dùng TỰ SOI. */
@@ -8291,12 +8319,35 @@ G.VIEWS = G.VIEWS || {};
       '</ul></div>';
 
     if (!G.stCoWebAuthn())
-      return o + U.empty('Thiết bị này chưa hỗ trợ',
-        'Trình duyệt hoặc thiết bị chưa có bộ xác thực khuôn mặt/vân tay. Dùng máy có Face ID, ' +
-        'Windows Hello, hoặc vân tay Android, và mở trang bằng HTTPS.') + veNhatKy();
+      return o + U.empty('Trình duyệt này chưa hỗ trợ khoá khuôn mặt',
+        'Mở trang bằng Chrome, Edge hoặc Safari bản mới trên máy có Face ID, Windows Hello hoặc vân tay. ' +
+        'Trình duyệt bên trong Zalo/Facebook thường không hỗ trợ — bấm "Mở bằng trình duyệt".') + veNhatKy();
+    if (!G.stDiaChiHopLe())
+      return o + U.empty('Bản cài máy tính chưa bật được khuôn mặt',
+        'Trình duyệt chỉ cho tạo khoá khuôn mặt trên trang web https. Mở gita365.pages.dev bằng Chrome hoặc Edge, ' +
+        'đăng nhập, rồi bật ở màn này. Sau đó đăng nhập bằng khuôn mặt trên trang web.') + veNhatKy();
 
-    o += '<div class="row mb"><button class="btn pri" onclick="G.stThemHoi()">' +
-      ic('lock', 'w-4 h-4') + ' Bật khuôn mặt trên thiết bị này</button></div>';
+    G.stDoNenTang();
+    var nt = G.stNenTang;
+    /* Ba bước, nói rõ trước khi bấm: người dùng biết máy sẽ hỏi gì. */
+    o += '<div class="card mb st-buoc"><b class="sm">Bật trong ba bước</b>' +
+      '<ol class="tiny" style="line-height:1.8;margin:6px 0 0;padding-left:18px">' +
+      '<li>Đặt tên cho thiết bị (để sau này nhận ra mà gỡ khi mất máy).</li>' +
+      '<li>Bấm nút bên dưới. Máy hỏi Face ID / Windows Hello / vân tay — làm theo.</li>' +
+      '<li>Thấy dòng mới trong "Thiết bị đã bật khuôn mặt" là xong. Lần sau ở màn đăng nhập: nhập email rồi bấm biểu tượng khuôn mặt.</li>' +
+      '</ol></div>';
+    o += '<label class="st-nhan" for="st-ten">Tên thiết bị</label>' +
+      '<input id="st-ten" class="inp st-ten" maxlength="60" placeholder="Ví dụ: Laptop văn phòng · iPhone của mẹ" autocomplete="off">';
+    o += '<div class="row mb st-nut">';
+    if (nt === null) o += '<span class="tiny muted">Đang kiểm tra máy này có Face ID / Windows Hello không…</span>';
+    else if (nt) o += '<button class="btn pri" onclick="G.stThemHoi(\'nenTang\')">' + ic('lock', 'w-4 h-4') +
+      ' Bật khuôn mặt trên máy này</button>';
+    o += '<button class="btn' + (nt === false ? ' pri' : '') + '" onclick="G.stThemHoi(\'dienThoai\')">' + ic('grid', 'w-4 h-4') +
+      ' Dùng điện thoại quét mã QR</button></div>';
+    if (nt === false)
+      o += '<p class="note">Máy này chưa có Windows Hello hay Face ID (hoặc chưa cài trong Cài đặt → Tài khoản → Tuỳ chọn đăng nhập). ' +
+        'Bấm "Dùng điện thoại quét mã QR": máy hiện một mã, quét bằng camera điện thoại, mở khoá bằng Face ID của điện thoại. ' +
+        'Cần bật Bluetooth trên cả hai máy.</p>';
 
     var so = G.stDs;
     if (!so) o += '<p class="note"><button class="btn" onclick="G.stTaiDs()">Tải danh sách thiết bị</button></p>';
