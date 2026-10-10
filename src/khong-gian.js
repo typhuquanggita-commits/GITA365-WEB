@@ -57,7 +57,7 @@ var G = window.G || {}; window.G = G;
      đọc ở Thư viện vận hành, kèm bảng việc áp dụng. tools/thu-ap-dung.mjs
      canh: không vai nhân sự nào còn trỏ vào màn mẫu đã gộp. */
   var AZ10 = ['trung-tam-do','dk-cua-toi','phong-tai-chinh','crm','coach-dp','do-luong-he','phan-quyen','nang-luc-ns',
-              'bang-viec','thu-vien-v50','phong-ban','credit-gita','nguoi-dung','studio','noi-may-chu'];
+              'bang-viec','thu-vien-v50','phong-ban','credit-gita','nguoi-dung','xuong-ai','noi-may-chu'];
   G.KG_VIEC = {
     /* R01 Super Admin · R02 Admin — 10 công cụ quản trị */
     R01:{cap:10, ds:AZ10},

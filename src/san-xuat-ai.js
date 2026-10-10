@@ -655,12 +655,16 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       t:'Bộ điều khiển sản xuất phim AI',
       lead:'App GITA là bộ não của xưởng nội bộ: dàn nhân vật khoá mặt, phim trường, phân cảnh, máy quay ảo, kỹ xảo — rồi xuất cấu hình cho động cơ model mở chạy trên GPU (Kaggle hoặc máy thuê theo giờ). Thuê ngoài tối đa 10% — không slideshow, không ảnh mấp máy môi.' });
 
-    o += '<div class="row mb" style="gap:8px;flex-wrap:wrap">'+
+    /* Nhúng trong khung Xưởng phim AI (src/xuong-ai.js): bỏ đầu trang, hai
+       hàng nút và hàng tab — danh mục bên trái của khung đã làm việc ấy. */
+    var nhung = !!G.S.axNhung;
+    if(nhung) o = '';
+    if(!nhung) o += '<div class="row mb" style="gap:8px;flex-wrap:wrap">'+
       '<button class="btn ghost sm" data-v="studio-he">'+ic('arrow','w-3 h-3')+'Hệ điều hành xưởng</button>'+
       '<button class="btn ghost sm" data-v="lam-phim-10">'+ic('sparkle','w-3 h-3')+'Chương trình 10 bước</button>'+
       '</div>';
 
-    o += '<div class="row mb" style="gap:6px;flex-wrap:wrap">'+
+    if(!nhung) o += '<div class="row mb" style="gap:6px;flex-wrap:wrap">'+
       tabBtn('nhanh','⚡ Làm phim nhanh')+tabBtn('duan','🎬 Dự án phim')+tabBtn('khophim','🗄 Kho phim')+tabBtn('nv','Kho nhân vật')+tabBtn('phim','Phim & phân cảnh')+tabBtn('prompt','Prompt & cấu hình')+tabBtn('bang','Bảng sản xuất')+tabBtn('phimtruong','Phim trường')+tabBtn('kyxao','Kỹ xảo & Động cơ')+tabBtn('tudong','Tự động')+'</div>';
 
     if(G.S.axTab==='nhanh') o += (G.axn && G.axn.ve ? G.axn.ve() : '');

@@ -170,6 +170,9 @@ jobs:
       - name: Máy chủ cấp khoá bản .exe — dấu máy không chép được, duyệt đúng một tài khoản
         run: node tools/thu-may-chu-may-tinh.mjs
 
+      - name: Xưởng phim AI — dò nhịp đúng tới mili-giây, danh mục trỏ vào bộ vẽ có thật, nhạc và ảnh không rời máy
+        run: node tools/thu-xuong-ai.mjs
+
       - name: Soát thiết kế tĩnh — không chuyển động nảy, không chữ chạy, không màu cấm (cả dạng %23), chữ chuyển sắc không thêm chỗ mới
         run: node tools/thu-thiet-ke-tinh.mjs
 

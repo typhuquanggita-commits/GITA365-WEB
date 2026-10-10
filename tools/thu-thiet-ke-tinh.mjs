@@ -97,7 +97,8 @@ for (const l of SO.luat.filter(x => x.noi === 'tinh')) {
     const tran = (NEN.tinh || {})[l.ma];
     kiem(l.ma + ' ' + l.ten + ' — ' + ds.length + ' chỗ (trần ' + tran + ')',
       typeof tran === 'number' && ds.length <= tran,
-      typeof tran !== 'number' ? 'chưa có trần trong soat-thiet-ke.nen.json' : 'CHỖ MỚI — ' + ds.join(' · '));
+      typeof tran !== 'number' ? 'chưa có trần trong soat-thiet-ke.nen.json'
+        : 'vượt trần ' + (ds.length - tran) + ' chỗ — tìm chỗ vừa thêm bằng git diff (' + ds.slice(-3).join(' · ') + ' …)');
     if (typeof tran === 'number' && ds.length < tran)
       console.log('    ↓ ít hơn trần — hạ "tinh.' + l.ma + '" trong soat-thiet-ke.nen.json xuống ' + ds.length);
   }

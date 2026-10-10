@@ -1109,6 +1109,7 @@ G.NAV = [
     {v:'giam-sat', t:'Trần giám sát', h:'GITA-VIP dựng CÁI TRẦN trước, chưa dựng bộ giám sát — một cái cổng dựng sau một cái cửa đã chạy thì nó chỉ là một lời nhắc · sáu điều CẤM TUYỆT ĐỐI không lệnh nào mở được, kể cả lệnh R01 có chữ ký · ba ngăn phạm vi khác nhau ở CĂN CỨ PHÁP LÝ chứ không ở mức độ · lệnh uỷ quyền phải có hạn và tự thu hồi · sổ nối băm, sửa một dòng là vỡ mọi dòng sau', ic:'shield', star:1, perm:'nghe_chung', capMo:'chung'},
     {v:'supreme', t:'GITA Supreme · bản đồ', h:'Bản đồ ba quyển nghiên cứu của chủ hệ và CÁI TRẦN của chúng — ngăn đầu là BẪY TÊN GỌI: ba thang cùng mang chữ điểm chạm (1.000 tiến độ · 9 cảm xúc · 100.000 hệ thống), và một luật bị phạm thì có người cãi còn hai thang cùng tên thì không ai cãi · bốn chỗ va MỚI, không chép lại sáu điều cấm đã có · hai chỗ phép dò của chính tôi BẮT OAN vì tài liệu đang phê phán chính thứ bị dò · ma trận 28 năng lực · mười lớp điểm chạm · 45/100 phần đã có chữ', ic:'shield', star:1, perm:'nghe_chung', capMo:'chung'},
     {v:'bien-soan-noi-dung', t:'Biên soạn nội dung', h:'Khuôn 24 khối · máy đo · thang năm cổng · hiến pháp nội dung', ic:'book', star:1, perm:'qt_trang', capMo:'chung'},
+    {v:'xuong-ai', t:'Xưởng phim AI · GITA Studio', h:'Một cửa cho cả quy trình làm phim — đã gộp Xưởng phim ngắn 9:16 và GITA Studio: tạo phim · nhân vật · giọng · phim trường · bộ nhận diện · cắt theo nhịp nhạc · bàn dựng · kho phim', ic:'orbit', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'studio', t:'GITA Studio · Xưởng dựng video', h:'Kịch bản · MC tham chiếu · chuyển động 2.5D · phối âm cục bộ', ic:'spark', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'xuong-phim', t:'Xưởng phim ngắn AI · phim dọc 9:16', h:'Sổ nhân vật · kịch bản → prompt từng cảnh cho công cụ video AI · nạp clip · phụ đề, logo, số tập, nhạc · xuất phim ngay trên máy', ic:'spark', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'tu-hoan-thien', t:'Vòng tự hoàn thiện · lấp kho có cấp phép', h:'Kho rỗng lúc tư vấn thì Bộ não SOẠN từ dữ liệu đã có, KHÔNG bịa — nhưng 入库 (đưa vào kho phục vụ khách) phải qua Bộ phận sản phẩm → Giám đốc → Super Admin · máy soạn không nhập, hai cửa tách hẳn · đủ ba chữ ký hay chưa TÍNH LÚC ĐỌC từ sổ, không cột đãDuyệt · ba cấp ba người khác nhau · sự chậm là có thật và được nói thẳng với khách', ic:'shield', star:1, perm:'nghe_chung', capMo:'chung'},
@@ -1609,6 +1610,7 @@ G.ITEM_EN = {
   'giam-sat':['Monitoring Ceiling','GITA-VIP builds the CEILING first and no monitor yet — a gate built after a door is already running is only a reminder · six ABSOLUTE PROHIBITIONS no order can lift, not even a signed R01 order · three scopes that differ by LEGAL BASIS, not by degree · every authorisation must carry an expiry and revokes itself · hash-chained ledger where editing one row breaks every row after it'],
   'bien-soan-noi-dung':['Content Editor','24-block template · machine measures · five approval gates · content constitution'],
   'studio':['GITA Studio — Video Workshop','Local script, presenter reference, 2.5D camera motion and sound mix · no third-party media processing'],
+    'xuong-ai':['AI Film Studio · GITA Studio','One door for the whole film workflow — merges the 9:16 Short-Film Studio and GITA Studio: create films · characters · voices · sets · brand kit · beat-synced cutting · editing desk · film library'],
     'xuong-phim':['AI Short-Film Studio · vertical 9:16','Character bible · script → per-shot prompts for AI video tools · import clips · subtitles, logo, episode number, music · export the film on this device'],  'quyen-nang-ai':['AI Powers — Granted by Super Admin','Super Admin turns ten AI work capabilities on/off · each OFF by default · acting capabilities route through the existing three-level approval chain · read-only ones surface, never conclude'],
   'dieu-phoi':['AI Orchestration — 100 Super-Agents','The GITA365 genius brain sits highest and orchestrates all · 100 super-agents each own one real door, one ownership key each so they never conflict · every agent passes the real gates (Article 13 · AI grant · three signatures), pointing not copying · self-improvement runs through the gated upgrade ring · ×100 is a direction, not a target'],
   'khung-van-hanh':['Harness Engineering · V20','A layer standardizing how the brain orchestrates 100 agents — five pillars: context management · correct tool gate · constitution guard · conflict prevention · per-turn quality self-check · each pillar points to a real mechanism (no copied law), and a per-turn checker measures each (fails red on a bad turn) · V20 is measured, not a self-declared number · the checker never acts on its own'],
@@ -64571,7 +64573,7 @@ var G = window.G || {}; window.G = G;
      đọc ở Thư viện vận hành, kèm bảng việc áp dụng. tools/thu-ap-dung.mjs
      canh: không vai nhân sự nào còn trỏ vào màn mẫu đã gộp. */
   var AZ10 = ['trung-tam-do','dk-cua-toi','phong-tai-chinh','crm','coach-dp','do-luong-he','phan-quyen','nang-luc-ns',
-              'bang-viec','thu-vien-v50','phong-ban','credit-gita','nguoi-dung','studio','noi-may-chu'];
+              'bang-viec','thu-vien-v50','phong-ban','credit-gita','nguoi-dung','xuong-ai','noi-may-chu'];
   G.KG_VIEC = {
     /* R01 Super Admin · R02 Admin — 10 công cụ quản trị */
     R01:{cap:10, ds:AZ10},
@@ -76449,6 +76451,12 @@ var G = window.G || {}; window.G = G;
   /* Trùng một lối vào khác: rút khỏi cột trái, không chuyển hướng
      (Bảng điều khiển của tôi đang dựng chính các màn này theo vai). */
   V.AN = {
+    /* Xưởng phim: chủ hệ chốt gộp về MỘT cửa (10/2026). Hai mã màn cũ KHÔNG
+       chuyển hướng (bảng GOP) mà rút khỏi cột trái: chúng vẫn là màn chủ của
+       ngăn mình và tự vẽ khung Xưởng phim AI (src/xuong-ai.js) — vì
+       studio.js và xuong-phim.js chỉ vẽ lại khi G.S.view đúng tên chúng. */
+    'studio':      ['xuong-ai', 'GITA Studio đã gộp vào Xưởng phim AI — ngăn "Studio dựng video".'],
+    'xuong-phim':  ['xuong-ai', 'Xưởng phim ngắn 9:16 đã gộp vào Xưởng phim AI — ngăn "Phim ngắn 9:16".'],
     'van-hanh-10': ['dk-cua-toi', 'Bảng điều khiển của tôi mở đúng bảng này cho Super Admin / Admin.'],
     'van-hanh-gd': ['dk-cua-toi', 'Bảng điều khiển của tôi mở đúng bảng này cho Giám đốc.']
   };
@@ -76680,7 +76688,7 @@ var G = window.G || {}; window.G = G;
     { id:'van-hanh-he', khu:'nhansu', ten:'Vận hành hệ thống',      ic:'pulse',   viec:'Máy chủ, tài nguyên, liên thông dữ liệu, sức chứa, AI, thanh tra, soát màn, kiểm thử.',
       phan:['noi-may-chu','theo-doi-tai-nguyen','lien-thong','suc-chua-toc-do','bo-nao-da-tri','thanh-tra-soi','phap-ly-rui-ro','soat-toan-man','kiem-theo-vai','soat-day-du'], kho:['KT','PL'] },
     { id:'noi-dung', khu:'nhansu',  ten:'Nội dung & truyền thông',  ic:'spark',    viec:'Studio, xưởng phim, thị giác, biên soạn, sửa chữ hiển thị, duyệt tài liệu và đánh giá.',
-      phan:['studio','xuong-phim','kien-truc-thi-giac','bien-soan-noi-dung','sua-hien-thi','duyet-tai-lieu','duyet-danh-gia','sap-xep'], kho:['MK'] }
+      phan:['xuong-ai','kien-truc-thi-giac','bien-soan-noi-dung','sua-hien-thi','duyet-tai-lieu','duyet-danh-gia','sap-xep'], kho:['MK'] }
   ];
 
   /* Màn chính theo vai, đúng trần chủ hệ đặt. 'khach-la' = chưa đăng nhập. */
@@ -76721,6 +76729,7 @@ var G = window.G || {}; window.G = G;
                     [/^dk-(?!cua-toi$|cac-vai$)/, 'ban-lam-viec'], [/^va-/, 'ban-lam-viec'], [/^gd-/, 'ban-lam-viec'],
                     [/^van-hanh-(10|gd)$/, 'ban-lam-viec']];
   M.KHOP = { 'studio-he':'noi-dung', 'lam-phim-10':'noi-dung', 'ban-dung':'noi-dung', 'san-xuat-ai':'noi-dung',
+             'studio':'noi-dung', 'xuong-phim':'noi-dung',
              'ban-co-tong':'ban-lam-viec', 'pham-vi':'quan-tri' };
 
   var PHAN_CUA = {};
@@ -83423,12 +83432,16 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       t:'Bộ điều khiển sản xuất phim AI',
       lead:'App GITA là bộ não của xưởng nội bộ: dàn nhân vật khoá mặt, phim trường, phân cảnh, máy quay ảo, kỹ xảo — rồi xuất cấu hình cho động cơ model mở chạy trên GPU (Kaggle hoặc máy thuê theo giờ). Thuê ngoài tối đa 10% — không slideshow, không ảnh mấp máy môi.' });
 
-    o += '<div class="row mb" style="gap:8px;flex-wrap:wrap">'+
+    /* Nhúng trong khung Xưởng phim AI (src/xuong-ai.js): bỏ đầu trang, hai
+       hàng nút và hàng tab — danh mục bên trái của khung đã làm việc ấy. */
+    var nhung = !!G.S.axNhung;
+    if(nhung) o = '';
+    if(!nhung) o += '<div class="row mb" style="gap:8px;flex-wrap:wrap">'+
       '<button class="btn ghost sm" data-v="studio-he">'+ic('arrow','w-3 h-3')+'Hệ điều hành xưởng</button>'+
       '<button class="btn ghost sm" data-v="lam-phim-10">'+ic('sparkle','w-3 h-3')+'Chương trình 10 bước</button>'+
       '</div>';
 
-    o += '<div class="row mb" style="gap:6px;flex-wrap:wrap">'+
+    if(!nhung) o += '<div class="row mb" style="gap:6px;flex-wrap:wrap">'+
       tabBtn('nhanh','⚡ Làm phim nhanh')+tabBtn('duan','🎬 Dự án phim')+tabBtn('khophim','🗄 Kho phim')+tabBtn('nv','Kho nhân vật')+tabBtn('phim','Phim & phân cảnh')+tabBtn('prompt','Prompt & cấu hình')+tabBtn('bang','Bảng sản xuất')+tabBtn('phimtruong','Phim trường')+tabBtn('kyxao','Kỹ xảo & Động cơ')+tabBtn('tudong','Tự động')+'</div>';
 
     if(G.S.axTab==='nhanh') o += (G.axn && G.axn.ve ? G.axn.ve() : '');
@@ -83445,6 +83458,765 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     o += '<p class="tiny muted" style="margin-top:14px">'+ic('shield','w-3 h-3')+' Dữ liệu nhân vật & phân cảnh lưu trên máy anh/chị, giữ qua phiên. Ảnh mẫu, kịch bản và phim nằm trong Google Drive của anh/chị (hoặc trạm/máy GPU riêng của GITA nếu có thuê) — chỉ gửi khi anh/chị bấm, không qua dịch vụ AI bên ngoài.</p>';
     return o;
   };
+})();
+
+})();
+
+/* ═════════ src/cat-nhip.js ═════════ */
+(function(){
+/* ═════════════════════════════════════════════════
+   GITA 365 · XƯỞNG PHIM AI — CẮT CẢNH THEO NHỊP NHẠC
+
+   Nạp một bài nhạc và một bộ ảnh/clip. Máy nghe nhạc, tìm nhịp, rồi đặt
+   mỗi chỗ chuyển cảnh đúng vào một nhịp. Xem thử ngay, xuất ra .webm.
+
+   Chạy HOÀN TOÀN trên thiết bị (Web Audio + Canvas + MediaRecorder):
+   nhạc, ảnh, clip không rời máy, không gọi máy chủ, không dịch vụ AI
+   ngoài. Không đụng studio.js. View con của 'xuong-ai' (G.catNhip.ve).
+
+   Vì sao dò nhịp ở đây chứ không dùng thư viện: thư viện nghe nhạc tốt
+   đều nặng vài trăm KB và phải tải từ mạng. Thuật toán dưới đây (năng
+   lượng → dòng khởi âm → tự tương quan ra BPM → căn pha lưới nhịp) đủ cho
+   nhạc nền có trống rõ — đúng loại nhạc phim ngắn hay dùng. Nhạc không
+   có nhịp rõ (piano tự do, nhạc nền không trống) thì máy NÓI THẲNG độ tin
+   thấp và cho người chỉnh tay BPM, không lặng lẽ cắt sai.
+
+   timNhip() là hàm thuần (nhận mẫu âm thanh, trả nhịp), không chạm DOM,
+   nên tools/thu-xuong-ai.mjs thử được trên Node bằng tín hiệu tự dựng.
+   ═════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+
+(function(){
+var U = G.U || {}, h = U.h || function(s){ return String(s == null ? '' : s); };
+
+/* ════════ DÒ NHỊP — hàm thuần ════════ */
+var KHUNG = 1024, BUOC = 512;
+
+/* Dòng khởi âm: năng lượng từng khung, lấy phần TĂNG so với khung trước.
+   Tiếng trống là một cú tăng năng lượng đột ngột; tiếng đàn ngân là năng
+   lượng đều — lấy phần tăng thì giữ trống, bỏ ngân. */
+function dongKhoiAm(kenh, sr){
+  var n = Math.max(0, Math.floor((kenh.length - KHUNG) / BUOC) + 1);
+  var nl = new Float32Array(n), ka = new Float32Array(n);
+  for (var i = 0; i < n; i++){
+    var s = 0, o = i * BUOC;
+    for (var j = 0; j < KHUNG; j++){ var v = kenh[o + j]; s += v * v; }
+    nl[i] = Math.sqrt(s / KHUNG);
+  }
+  for (var k = 1; k < n; k++){ var d = nl[k] - nl[k - 1]; ka[k] = d > 0 ? d : 0; }
+  return { ka: ka, fps: sr / BUOC };
+}
+
+/* Làm mượt và bỏ trung bình. Mượt: một cú trống hay rơi lệch nửa khung,
+   lúc khung này lúc khung kia — không mượt thì chu kỳ 21,5 khung chẳng
+   khớp 21 cũng chẳng khớp 22, và máy chọn nhầm chu kỳ GẤP ĐÔI (43 khung,
+   khớp gần trọn) — 120 nhịp/phút đọc ra 60. Bỏ trung bình: để tự tương
+   quan của tiếng ồn quanh 0, nhờ đó độ tin nói đúng "không có nhịp". */
+function chuanHoa(ka){
+  var n = ka.length, z = new Float32Array(n), tb = 0;
+  for (var i = 0; i < n; i++){
+    var m = (ka[i - 1] || 0) + 2 * ka[i] + (ka[i + 1] || 0);
+    z[i] = m / 4; tb += z[i];
+  }
+  tb = tb / (n || 1);
+  for (var k = 0; k < n; k++) z[k] -= tb;
+  return z;
+}
+/* Tự tương quan ở độ trễ LẺ (nội suy tuyến tính), chia cho năng lượng:
+   ra hệ số từ -1 tới 1, so được giữa hai bài khác nhau. */
+function tuongQuan(z, lag, r0){
+  var s = 0, f = Math.floor(lag), p = lag - f;
+  for (var i = f + 1; i < z.length; i++) s += z[i] * (z[i - f] * (1 - p) + z[i - f - 1] * p);
+  return r0 ? s / r0 : 0;
+}
+
+/* BPM: quét 60–180 nhịp/phút từng 0,25. Ưu tiên nhẹ vùng 90–140 (nhịp hay
+   gặp của nhạc nền); chu kỳ chậm dưới 90 mà gấp đôi tốc độ vẫn khớp gần
+   bằng thì lấy tốc độ gấp đôi — cùng một bài, cắt dày hơn dễ thưa lại
+   bằng "cắt mỗi N nhịp", cắt thưa thì không dày lên được. */
+function uocBpm(z, fps){
+  var r0 = 0;
+  for (var q = 0; q < z.length; q++) r0 += z[q] * z[q];
+  if (!r0) return { bpm: 0, tin: 0 };
+  var tot = -1, botBpm = 0, botR = 0;
+  for (var bpm = 60; bpm <= 180; bpm += 0.25){
+    var r = tuongQuan(z, fps * 60 / bpm, r0);
+    var w = r * ((bpm >= 90 && bpm <= 140) ? 1.12 : 1);
+    if (w > tot){ tot = w; botBpm = bpm; botR = r; }
+  }
+  if (botBpm < 90){
+    var r2 = tuongQuan(z, fps * 60 / (botBpm * 2), r0);
+    if (r2 >= 0.85 * botR){ botBpm = botBpm * 2; botR = r2; }
+  }
+  return { bpm: botBpm, tin: Math.max(0, botR) };
+}
+
+/* Căn pha: trong một chu kỳ nhịp, chọn điểm bắt đầu sao cho lưới nhịp
+   trùng nhiều khởi âm nhất. */
+function canPha(ka, fps, bpm){
+  var chuKy = fps * 60 / bpm, tot = -1, pha = 0;
+  for (var p = 0; p < chuKy; p += 0.25){
+    var s = 0;
+    for (var t = p; t < ka.length - 1; t += chuKy){
+      var f = Math.floor(t), d = t - f;
+      s += (ka[f] || 0) * (1 - d) + (ka[f + 1] || 0) * d;
+    }
+    if (s > tot){ tot = s; pha = p; }
+  }
+  return pha / fps;
+}
+
+/* Tinh chỉnh bằng các đỉnh khởi âm thật: lưới quét theo bước 0,25 nhịp/
+   phút và khung đo 23 mili-giây thì sai lệch tích luỹ — sau 40 nhịp lệch
+   gần một phần tư nhịp. Lấy các đỉnh rõ (nội suy parabol để vượt độ phân
+   giải khung), gán mỗi đỉnh vào nhịp gần nhất, rồi khớp đường thẳng bình
+   phương nhỏ nhất: độ dốc là chu kỳ thật, hệ số chặn là pha thật. */
+function tinhChinh(z, fps, chuKy, coDinh){
+  var mx = 0, dinh = [];
+  for (var i = 0; i < z.length; i++) if (z[i] > mx) mx = z[i];
+  for (var k = 1; k < z.length - 1; k++){
+    if (z[k] > 0.3 * mx && z[k] > z[k - 1] && z[k] >= z[k + 1]){
+      var a = z[k - 1], b = z[k], c = z[k + 1], mau = a - 2 * b + c;
+      dinh.push((k + (mau ? 0.5 * (a - c) / mau : 0)) / fps);
+    }
+  }
+  if (dinh.length < 8) return null;
+  var n = [], sn = 0, st = 0, snn = 0, snt = 0, m = dinh.length;
+  /* Đánh số nhịp theo KHOẢNG GIỮA HAI ĐỈNH LIỀN NHAU, không theo khoảng
+     cách tới đỉnh đầu: chu kỳ thô lệch 2% thì sau 40 nhịp đã lệch gần
+     một nhịp, làm tròn từ đỉnh đầu sẽ gán sai số nhịp ở cuối bài. Từng
+     khoảng một thì sai 2% không bao giờ đủ để làm tròn nhầm. */
+  n[0] = 0;
+  for (var j = 1; j < m; j++){ n[j] = n[j - 1] + Math.max(1, Math.round((dinh[j] - dinh[j - 1]) / chuKy)); }
+  for (var q = 0; q < m; q++){ sn += n[q]; st += dinh[q]; snn += n[q] * n[q]; snt += n[q] * dinh[q]; }
+  var P = coDinh ? chuKy : (m * snt - sn * st) / (m * snn - sn * sn);
+  if (!(P > 0) || Math.abs(P - chuKy) / chuKy > 0.08) return null;
+  var a0 = (st - P * sn) / m;
+  return { chuKy: P, pha: ((a0 % P) + P) % P };
+}
+
+/* timNhip(mẫu âm, tần số mẫu [, bpmTay]) → { bpm, tin, nhip:[giây…], dai } */
+function timNhip(kenh, sr, bpmTay){
+  var dai = kenh.length / sr;
+  var dk = dongKhoiAm(kenh, sr);
+  var z = chuanHoa(dk.ka);
+  var u = uocBpm(z, dk.fps);
+  var bpm = bpmTay > 0 ? bpmTay : u.bpm;
+  if (!bpm) return { bpm: 0, tin: 0, nhip: [], dai: dai };
+  var pha = canPha(z, dk.fps, bpm), buoc = 60 / bpm, nhip = [];
+  var tc = tinhChinh(z, dk.fps, buoc, bpmTay > 0);
+  if (tc){ buoc = tc.chuKy; pha = tc.pha; bpm = 60 / buoc; }
+  /* Bù độ trễ của khung đo: khung thứ i phủ mẫu [512i, 512i+1024], nên cú
+     trống làm năng lượng nhảy ở khung bắt đầu SỚM hơn nó trung bình
+     1024 − 256 mẫu. Không bù thì mọi điểm cắt rơi sớm ~35 mili-giây —
+     đủ để mắt thấy hình đổi trước tiếng trống. */
+  pha = (pha + (KHUNG - BUOC / 2) / sr) % buoc;
+  for (var t = pha; t < dai; t += buoc) nhip.push(Math.round(t * 1000) / 1000);
+  return { bpm: Math.round(bpm * 10) / 10, tin: Math.round(u.tin * 100) / 100, nhip: nhip, dai: dai };
+}
+
+/* Điểm cắt: mỗi N nhịp một lần chuyển, từ giây bắt đầu. Đoạn cuối luôn
+   kết ở hết bài để phim không cụt giữa câu nhạc. */
+function diemCat(nhip, moiN, tuGiay, dai){
+  var ds = [], n = Math.max(1, moiN | 0), tu = +tuGiay || 0;
+  var lo = nhip.filter(function(t){ return t >= tu; });
+  for (var i = 0; i < lo.length; i += n) ds.push(lo[i]);
+  if (!ds.length || ds[0] > tu + 0.05) ds.unshift(tu);
+  var doan = [];
+  for (var k = 0; k < ds.length; k++){
+    var a = ds[k], b = k + 1 < ds.length ? ds[k + 1] : dai;
+    if (b - a > 0.05) doan.push({ tu: a, den: b });
+  }
+  return doan;
+}
+
+/* ════════ TRẠNG THÁI (chỉ trong bộ nhớ tab — nhạc và ảnh không lưu) ════════
+   gan[i] = chỉ số tệp đặt vào cảnh i; vắng thì cảnh i lấy tệp i theo vòng. */
+var S = { nhac: null, ten: '', kq: null, doan: [], moiN: 2, tuGiay: 0, bpmTay: 0, vat: [], gan: {}, tua: 0,
+          dangChay: false, ghi: null };
+var AC = null, raf = 0, nguon = null;
+function ac(){ return (AC = AC || new (window.AudioContext || window.webkitAudioContext)()); }
+
+var KHUNG_XUAT = { '9:16': [720, 1280], '16:9': [1280, 720], '1:1': [1080, 1080], '4:5': [864, 1080] };
+function khung(){ return KHUNG_XUAT[G.S && G.S.xaKhung] || KHUNG_XUAT['9:16']; }
+
+/* Trộn mọi kênh thành một trước khi dò: nhạc nhiều bài để trống lệch
+   sang một bên, nghe mỗi kênh trái là nghe thiếu. */
+function kenhTron(buf){
+  if (buf.numberOfChannels < 2) return buf.getChannelData(0);
+  var n = buf.length, ra = new Float32Array(n), c = buf.numberOfChannels;
+  for (var k = 0; k < c; k++){ var d = buf.getChannelData(k); for (var i = 0; i < n; i++) ra[i] += d[i] / c; }
+  return ra;
+}
+var KENH = null;
+function tinhLai(){
+  if (!S.nhac) return;
+  S.kq = timNhip(KENH, S.nhac.sampleRate, +S.bpmTay || 0);
+  S.doan = diemCat(S.kq.nhip, S.moiN, S.tuGiay, S.kq.dai);
+  if (S.tua < S.tuGiay || S.tua > S.kq.dai) S.tua = S.tuGiay;
+}
+function vatCuaDoan(i){
+  if (!S.vat.length) return null;
+  var g = S.gan[i];
+  return S.vat[(g != null && g < S.vat.length ? g : i) % S.vat.length];
+}
+
+/* ════════ NẠP ════════ */
+G.catNhip = G.catNhip || {};
+G.catNhip.timNhip = timNhip;
+G.catNhip.diemCat = diemCat;
+
+function dangGhi(){
+  if (!S.ghi) return false;
+  U.toast && U.toast('Đang ghi phim — chờ ghi xong hoặc bấm Dừng để huỷ bản ghi.', 'err');
+  return true;
+}
+G.catNhip.napNhac = function(inp){
+  var f = inp.files && inp.files[0]; if (!f || dangGhi()) return;
+  G.catNhip.dung();
+  S.ten = f.name;
+  f.arrayBuffer().then(function(b){ return ac().decodeAudioData(b); })
+    .then(function(buf){ S.nhac = buf; KENH = kenhTron(buf); S.gan = {}; S.tua = 0; tinhLai(); G.catNhip.veLai();
+      U.toast && U.toast('Đã nghe xong bài nhạc — tìm thấy ' + S.kq.nhip.length + ' nhịp.', 'ok'); })
+    .catch(function(){ U.toast && U.toast('Không đọc được tệp nhạc này. Thử MP3 hoặc WAV.', 'err'); });
+};
+G.catNhip.napVat = function(inp){
+  var fs = [].slice.call(inp.files || []), con = fs.length, hong = [];
+  if (!con || dangGhi()) return;
+  function xong(){
+    if (--con > 0) return;
+    S.vat.sort(function(a, b){ return a.ten.localeCompare(b.ten); });
+    if (hong.length) U.toast && U.toast('Không đọc được ' + hong.length + ' tệp: ' + hong.join(', '), 'err');
+    G.catNhip.veLai();
+  }
+  fs.forEach(function(f){
+    var la = /^video\//.test(f.type) ? 'clip' : (/^image\//.test(f.type) ? 'anh' : '');
+    if (!la){ hong.push(f.name); xong(); return; }
+    var fr = new FileReader();
+    fr.onerror = function(){ hong.push(f.name); xong(); };
+    fr.onload = function(){
+      var v = { ten: f.name, loai: la, src: fr.result, el: null };
+      if (la === 'anh'){
+        var im = new Image();
+        /* Ảnh thu nhỏ 96px cho dải cảnh — nhúng ảnh gốc vào mỗi ô thì một
+           phim 40 cảnh kéo theo vài chục MB chữ trong trang. */
+        im.onload = function(){
+          try {
+            var tc = document.createElement('canvas'), tl = 96 / Math.max(im.naturalWidth, im.naturalHeight);
+            tc.width = Math.max(1, Math.round(im.naturalWidth * tl)); tc.height = Math.max(1, Math.round(im.naturalHeight * tl));
+            tc.getContext('2d').drawImage(im, 0, 0, tc.width, tc.height);
+            v.nho = tc.toDataURL('image/jpeg', 0.7);
+            if (document.getElementById('cn-goc') && !S.dangChay) G.catNhip.veLai();
+          } catch (e) {}
+        };
+        im.src = fr.result; v.el = im;
+      }
+      else { var vd = document.createElement('video'); vd.src = fr.result; vd.muted = true; vd.playsInline = true; vd.preload = 'auto'; v.el = vd; }
+      S.vat.push(v); xong();
+    };
+    fr.readAsDataURL(f);
+  });
+};
+G.catNhip.xoaVat = function(i){ if (dangGhi()) return; S.vat.splice(i, 1); S.gan = {}; G.catNhip.veLai(); };
+G.catNhip.dat = function(k, v){
+  if (dangGhi()) return;
+  G.catNhip.dung();
+  S[k] = (k === 'moiN' || k === 'bpmTay' || k === 'tuGiay') ? Math.max(0, +v || 0) : v;
+  if (k === 'moiN' && S.moiN < 1) S.moiN = 1;
+  S.gan = {};
+  tinhLai(); G.catNhip.veLai();
+};
+/* Đổi tệp của một cảnh: bấm ô cảnh trên dải để lấy tệp kế tiếp. */
+G.catNhip.doiVat = function(i){
+  if (dangGhi() || !S.vat.length) return;
+  var cu = S.gan[i] != null ? S.gan[i] : i % S.vat.length;
+  S.gan[i] = (cu + 1) % S.vat.length;
+  S.tua = S.doan[i] ? S.doan[i].tu : S.tua;
+  G.catNhip.veLai();
+};
+
+/* ════════ VẼ MỘT KHUNG HÌNH ════════ */
+function doanTai(t){
+  var i = 0;
+  while (i < S.doan.length - 1 && t >= S.doan[i].den) i++;
+  return i;
+}
+function veKhung(x, W, H, t, dangPhat){
+  x.fillStyle = '#000'; x.fillRect(0, 0, W, H);
+  if (!S.doan || !S.doan.length || !S.vat.length) return;
+  var i = doanTai(t), d = S.doan[i], v = vatCuaDoan(i), el = v && v.el;
+  if (!el) return;
+  var tien = Math.max(0, Math.min(1, (t - d.tu) / Math.max(0.05, d.den - d.tu)));
+  var w0 = el.videoWidth || el.naturalWidth || el.width, h0 = el.videoHeight || el.naturalHeight || el.height;
+  if (!w0 || !h0) return;
+  if (v.loai === 'clip' && dangPhat && el.paused){ try { el.currentTime = 0; el.play(); } catch (e) {} }
+  /* Lấp đầy khung (cắt mép, không méo) + đẩy máy chậm 4% — ảnh tĩnh đứng
+     im trông như trình chiếu; chuyển động nhỏ đủ để thấy là phim. */
+  var tl = Math.max(W / w0, H / h0) * (1 + 0.04 * tien);
+  var dw = w0 * tl, dh = h0 * tl;
+  x.drawImage(el, (W - dw) / 2, (H - dh) / 2, dw, dh);
+  /* Nháy sáng 80 mili-giây ở mỗi điểm cắt — mắt bắt được cú cắt đúng nhịp. */
+  var sau = t - d.tu;
+  if (i > 0 && sau >= 0 && sau < 0.08){ x.save(); x.globalAlpha = 0.35 * (1 - sau / 0.08); x.fillStyle = '#fff'; x.fillRect(0, 0, W, H); x.restore(); }
+}
+
+function cv(){ return document.getElementById('cn-cv'); }
+function veTinh(){
+  var c = cv(); if (!c || !S.kq) return;
+  var k = khung(); c.width = k[0]; c.height = k[1];
+  veKhung(c.getContext('2d'), c.width, c.height, S.tua, false);
+  veViTri(S.tua);
+}
+
+function choi(ghiLai){
+  if (S.ghi){ dangGhi(); return; }
+  if (!S.nhac){ U.toast && U.toast('Nạp một bài nhạc trước.', 'err'); return; }
+  if (!S.vat.length){ U.toast && U.toast('Nạp ít nhất một ảnh hoặc clip.', 'err'); return; }
+  G.catNhip.dung();
+  var c = cv(); if (!c) return;
+  var k = khung(); c.width = k[0]; c.height = k[1];
+  var x = c.getContext('2d'), ctx = ac();
+  ctx.resume();
+  nguon = ctx.createBufferSource(); nguon.buffer = S.nhac;
+  /* Phim bắt đầu ở "Bắt đầu từ giây" khi xuất; xem thử thì từ chỗ đang tua. */
+  var tu = ghiLai ? S.tuGiay : Math.max(S.tuGiay, S.tua >= S.kq.dai - 0.2 ? S.tuGiay : S.tua);
+  var mr = null, manh = [];
+  if (ghiLai){
+    if (!c.captureStream || typeof MediaRecorder === 'undefined'){
+      U.toast && U.toast('Trình duyệt này chưa xuất được video. Dùng Chrome hoặc Edge trên máy tính.', 'err'); nguon = null; return; }
+    var dest = ctx.createMediaStreamDestination();
+    nguon.connect(dest);
+    var st = new MediaStream(c.captureStream(30).getVideoTracks().concat(dest.stream.getAudioTracks()));
+    var mime = MediaRecorder.isTypeSupported('video/webm;codecs=vp9') ? 'video/webm;codecs=vp9' : 'video/webm';
+    mr = new MediaRecorder(st, { mimeType: mime }); S.ghi = mr;
+    mr.ondataavailable = function(e){ if (e.data.size) manh.push(e.data); };
+    mr.onstop = function(){
+      var du = mr._du; S.ghi = null;
+      if (!du){ U.toast && U.toast('Đã huỷ bản ghi dở.', 'ok'); return; }
+      var fr = new FileReader();
+      fr.onload = function(){ var a = document.createElement('a'); a.download = 'gita-cat-nhip-' + Date.now() + '.webm'; a.href = fr.result; a.click();
+        U.toast && U.toast('Đã xuất phim cắt theo nhịp (.webm).', 'ok'); };
+      fr.readAsDataURL(new Blob(manh, { type: mime }));
+    };
+  }
+  nguon.connect(ctx.destination);
+  var t0 = ctx.currentTime + 0.05;
+  nguon.start(t0, tu);
+  if (mr) mr.start();
+  S.dangChay = true;
+  function nhip(){
+    if (!S.dangChay) return;
+    /* Rời màn thì dừng nhạc; màn vẽ lại thì đi theo khung xem mới. */
+    var c2 = cv();
+    if (!c2){ G.catNhip.dung(); return; }
+    if (c2 !== c){
+      if (mr){ G.catNhip.dung(); return; }
+      c = c2; c.width = k[0]; c.height = k[1]; x = c.getContext('2d');
+    }
+    var t = tu + ctx.currentTime - t0;
+    if (t >= S.kq.dai){ if (mr) mr._du = true; G.catNhip.dung(); S.tua = S.tuGiay; return; }
+    S.tua = Math.max(tu, t);
+    veKhung(x, c.width, c.height, S.tua, true);
+    veViTri(S.tua);
+    raf = requestAnimationFrame(nhip);
+  }
+  raf = requestAnimationFrame(nhip);
+  if (ghiLai) U.toast && U.toast('Đang ghi phim theo thời gian thực — giữ tab này mở tới hết bài.', 'ok');
+}
+G.catNhip.xemThu = function(){ choi(false); };
+G.catNhip.xuat = function(){ choi(true); };
+G.catNhip.dung = function(){
+  S.dangChay = false; cancelAnimationFrame(raf);
+  try { if (nguon) nguon.stop(); } catch (e) {}
+  nguon = null;
+  try { if (S.ghi && S.ghi.state !== 'inactive') S.ghi.stop(); } catch (e2) {}
+  S.vat.forEach(function(v){ if (v.loai === 'clip' && v.el) try { v.el.pause(); } catch (e3) {} });
+};
+/* Bấm lên dạng sóng để tua: khung xem nhảy tới đúng giây ấy. */
+G.catNhip.tuaToi = function(ev){
+  var c = document.getElementById('cn-truc'); if (!c || !S.kq || S.ghi) return;
+  var r = c.getBoundingClientRect();
+  S.tua = Math.max(0, Math.min(S.kq.dai, (ev.clientX - r.left) / r.width * S.kq.dai));
+  if (S.dangChay){ G.catNhip.dung(); choi(false); } else veTinh();
+};
+
+/* ════════ TRỤC THỜI GIAN — dòng nhạc, nhịp, điểm cắt ════════ */
+function veTruc(){
+  var c = document.getElementById('cn-truc'); if (!c || !S.kq) return;
+  var W = c.clientWidth || 600, H = 64; c.width = W; c.height = H;
+  var x = c.getContext('2d'), cs = getComputedStyle(document.documentElement);
+  var mau = function(k, d){ return (cs.getPropertyValue(k) || '').trim() || d; };
+  x.clearRect(0, 0, W, H);
+  var kenh = KENH, buoc = Math.max(1, Math.floor(kenh.length / W));
+  x.fillStyle = mau('--line-2', '#ccc');
+  for (var i = 0; i < W; i++){
+    var mx = 0, o = i * buoc;
+    for (var j = 0; j < buoc; j += 16){ var v = Math.abs(kenh[o + j] || 0); if (v > mx) mx = v; }
+    var hh = Math.max(1, mx * (H - 10)); x.fillRect(i, (H - hh) / 2, 1, hh);
+  }
+  var dai = S.kq.dai;
+  x.fillStyle = mau('--ink-4', '#888');
+  S.kq.nhip.forEach(function(t){ x.fillRect(Math.round(t / dai * W), H - 6, 1, 6); });
+  x.fillStyle = mau('--gita', '#2A72C6');
+  S.doan.forEach(function(d){ x.fillRect(Math.round(d.tu / dai * W), 0, 2, H); });
+  veViTri(S.tua);
+  veTinh();
+}
+function veViTri(t){
+  var m = document.getElementById('cn-vitri'); if (!m || !S.kq) return;
+  m.style.left = Math.min(100, t / S.kq.dai * 100) + '%';
+}
+
+/* ════════ GIAO DIỆN ════════ */
+G.catNhip.veLai = function(){
+  var o = document.getElementById('cn-goc');
+  if (o){ o.outerHTML = G.catNhip.ve(); setTimeout(veTruc, 0); }
+};
+
+function veDai(){
+  /* Dải cảnh: mỗi ô rộng theo độ dài cảnh, mang ảnh thu nhỏ của tệp đặt vào.
+     Bấm một ô để đổi sang tệp kế tiếp — dựng phim bằng cách xếp, không bằng gõ. */
+  if (!S.kq || !S.doan.length || !S.vat.length) return '';
+  var dai = S.kq.dai;
+  return '<div class="cn-dai" role="list" aria-label="Các cảnh theo thời gian">' + S.doan.map(function(d, i){
+    var v = vatCuaDoan(i), rong = Math.max(2, (d.den - d.tu) / dai * 100);
+    var nen = v && v.nho ? ' style="flex-basis:' + rong + '%;background-image:url(' + v.nho + ')"' : ' style="flex-basis:' + rong + '%"';
+    return '<button class="cn-dai-o' + (v && v.loai === 'clip' ? ' clip' : '') + '" role="listitem"' + nen +
+      ' onclick="G.catNhip.doiVat(' + i + ')" title="Cảnh ' + (i + 1) + ' · ' + h(v ? v.ten : '') + ' — bấm để đổi tệp"' +
+      ' aria-label="Cảnh ' + (i + 1) + ', ' + (Math.round((d.den - d.tu) * 10) / 10) + ' giây, ' + h(v ? v.ten : '') + '. Bấm để đổi tệp">' +
+      '<span>' + (i + 1) + '</span></button>';
+  }).join('') + '</div>';
+}
+
+G.catNhip.ve = function(){
+  var kq = S.kq, k = khung(), ghi = !!S.ghi;
+  var o = '<div id="cn-goc" class="cn">';
+  o += '<div class="cn-buoc">' +
+    '<label class="cn-nap"><b>1 · Nhạc</b><span class="tiny muted">' + (S.ten ? h(S.ten) : 'MP3 hoặc WAV, có trống rõ là tốt nhất') + '</span>' +
+    '<span class="btn sm">Chọn bài nhạc</span><input type="file" accept="audio/*" onchange="G.catNhip.napNhac(this)"></label>' +
+    '<label class="cn-nap"><b>2 · Ảnh / clip</b><span class="tiny muted">' + (S.vat.length ? S.vat.length + ' tệp · xếp theo tên' : 'Chọn nhiều tệp một lượt') + '</span>' +
+    '<span class="btn sm">Chọn ảnh, clip</span><input type="file" accept="image/*,video/*" multiple onchange="G.catNhip.napVat(this)"></label>' +
+    '</div>';
+
+  if (kq){
+    var tinThap = kq.tin < 0.3 && !(S.bpmTay > 0);
+    o += '<div class="cn-so">' +
+      '<div><span class="tiny muted">Nhịp/phút</span><b class="mono">' + (kq.bpm || '—') + '</b></div>' +
+      '<div><span class="tiny muted">Số nhịp</span><b class="mono">' + kq.nhip.length + '</b></div>' +
+      '<div><span class="tiny muted">Số cảnh</span><b class="mono">' + S.doan.length + '</b></div>' +
+      '<div><span class="tiny muted">Độ dài</span><b class="mono">' + Math.round(kq.dai - S.tuGiay) + 's</b></div></div>';
+    if (tinThap) o += '<p class="cn-bao">Bài này nhịp không rõ (độ tin ' + Math.round(kq.tin * 100) + '%) — máy có thể bắt lệch. Nếu biết nhịp/phút của bài, gõ vào ô bên dưới để cắt đúng.</p>';
+  }
+
+  /* Bàn dựng: khung xem ở trên, trục thời gian và dải cảnh ở dưới — đúng
+     bố cục của phòng dựng: nhìn hình, thấy nhịp, xếp cảnh. */
+  o += '<div class="cn-xem"><canvas id="cn-cv" width="' + k[0] + '" height="' + k[1] + '" style="aspect-ratio:' + k[0] + '/' + k[1] + '" aria-label="Khung xem thử phim"></canvas></div>';
+  o += '<div class="row" style="gap:8px;flex-wrap:wrap">' +
+    '<button class="btn pri" onclick="G.catNhip.xemThu()"' + (kq && S.vat.length && !ghi ? '' : ' disabled') + '>Xem thử</button>' +
+    '<button class="btn" onclick="G.catNhip.dung()">Dừng' + (ghi ? ' (huỷ bản ghi)' : '') + '</button>' +
+    '<button class="btn" onclick="G.catNhip.xuat()"' + (kq && S.vat.length && !ghi ? '' : ' disabled') + '>Xuất phim .webm</button></div>';
+  if (kq){
+    o += '<div class="cn-truc-boc"><canvas id="cn-truc" height="64" onclick="G.catNhip.tuaToi(event)" aria-label="Dạng sóng bài nhạc: vạch xanh là điểm cắt cảnh, bấm để tua tới giây ấy"></canvas><span id="cn-vitri" class="cn-vitri"></span></div>';
+    o += veDai();
+    o += '<div class="cn-chinh">' +
+      '<label>Cắt mỗi <select onchange="G.catNhip.dat(\'moiN\',this.value)">' +
+      [1, 2, 4, 8].map(function(n){ return '<option value="' + n + '"' + (n === S.moiN ? ' selected' : '') + '>' + n + ' nhịp</option>'; }).join('') + '</select></label>' +
+      '<label>Bắt đầu từ giây <input type="number" min="0" step="0.5" value="' + S.tuGiay + '" onchange="G.catNhip.dat(\'tuGiay\',this.value)"></label>' +
+      '<label>Nhịp/phút gõ tay <input type="number" min="0" step="0.1" placeholder="tự dò" value="' + (S.bpmTay || '') + '" onchange="G.catNhip.dat(\'bpmTay\',this.value)"></label>' +
+      '</div>';
+  }
+  if (S.vat.length){
+    o += '<details class="cn-ds"><summary class="sm">Danh sách tệp (' + S.vat.length + ')</summary><div class="cn-vat">' + S.vat.map(function(v, i){
+      return '<div class="cn-vat-o"><span class="tiny">' + (i + 1) + ' · ' + h(v.ten) + '</span><button class="btn ghost sm" onclick="G.catNhip.xoaVat(' + i + ')" aria-label="Bỏ tệp ' + h(v.ten) + '">Bỏ</button></div>';
+    }).join('') + '</div></details>';
+  }
+  o += '<p class="tiny muted mt">Khổ ' + h(G.S && G.S.xaKhung || '9:16') + ' · ' + k[0] + '×' + k[1] + ' — đổi ở mục "Mẫu & khổ hình". Nhạc, ảnh và clip chỉ nằm trong tab này, không gửi đi đâu; tải lại trang là phải nạp lại.</p>';
+  o += '</div>';
+  setTimeout(veTruc, 0);
+  return o;
+};
+})();
+
+})();
+
+/* ═════════ src/xuong-ai.js ═════════ */
+(function(){
+/* ═════════════════════════════════════════════════
+   GITA 365 · XƯỞNG PHIM AI — KHUNG BA CỘT
+
+   Chủ hệ: "đang ở dạng liệt kê làm rất khó bao quát và thiếu chuyên
+   nghiệp". Mười một công cụ phim nằm rải ở năm màn, mỗi màn một hàng tab
+   riêng — muốn làm một phim phải nhớ công cụ nào ở màn nào.
+
+   Màn này KHÔNG viết lại công cụ nào. Nó là cái khung kiểu phòng dựng
+   chuyên nghiệp:
+     · trái  — danh mục theo nhóm (Bắt đầu · Tạo phim · Tài nguyên ·
+               Dựng & hậu kỳ · Quản lý)
+     · giữa  — bảng làm việc: gọi THẲNG bộ vẽ của công cụ đã có
+     · phải  — dự án đang mở, khổ hình, bước nên làm tiếp
+   Công cụ mới duy nhất là "Cắt theo nhịp nhạc" (src/cat-nhip.js).
+
+   Không đụng studio.js: mục "Studio dựng video" chỉ GỌI bộ vẽ của nó.
+   Bản thân khung không gọi máy chủ hay dịch vụ ngoài; các công cụ bên
+   trong thì có thể (Làm phim nhanh gửi lên trạm GPU nội bộ, Tự động A–Z
+   gọi dịch vụ ảnh/video qua máy chủ có trần ngân sách) — đúng như khi
+   chúng đứng riêng, và chỉ khi người dùng bấm.
+
+   GỘP MỘT CỬA (chủ hệ chốt 10/2026): GITA Studio và Xưởng phim ngắn 9:16
+   không còn mục cột trái riêng. Hai mã màn 'studio' · 'xuong-phim' vẫn
+   sống, nhưng tự vẽ CHÍNH KHUNG NÀY với ngăn của mình — không chuyển
+   hướng sang 'xuong-ai', vì studio.js và xuong-phim.js chỉ vẽ lại khi
+   G.S.view đúng tên chúng (đã thử: chuyển hướng thì sửa gì cũng không
+   hiện lên màn). View: xuong-ai. Mở cho qt_trang.
+   ═════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
+
+(function(){
+var U = G.U, h = U.h, ic = U.ic;
+
+/* Danh mục: mỗi mục trỏ vào một bộ vẽ CÓ THẬT. Thêm công cụ mới thì thêm
+   một dòng ở đây — không dựng thêm màn. tools/thu-xuong-ai.mjs đối chiếu
+   từng dòng với bộ vẽ thật trong src/. */
+var NHOM = [
+  { t: 'Bắt đầu', ds: [
+    { k: 'nha', t: 'Trang chủ xưởng', ic: 'home' },
+    { k: 'mau', t: 'Mẫu & khổ hình', ic: 'grid' } ] },
+  { t: 'Tạo phim', ds: [
+    { k: 'nhanh', t: 'Làm phim nhanh', ic: 'lightning', ve: function(){ return G.axn && G.axn.ve && G.axn.ve(); } },
+    { k: 'tudong', t: 'Tự động A–Z', ic: 'sparkle', ve: function(){ return sxa('tudong'); } },
+    { k: 'duan', t: 'Dự án phim', ic: 'target', ve: function(){ return G.axda && G.axda.ve && G.axda.ve(); } },
+    { k: 'phancanh', t: 'Phân cảnh', ic: 'list', ve: function(){ return sxa('phim'); } },
+    { k: 'phim916', t: 'Phim ngắn 9:16', ic: 'spark', ve: function(){ return goiMan('xuong-phim'); } },
+    { k: 'studio', t: 'Studio dựng video', ic: 'orbit', ve: function(){ return goiMan('studio'); } } ] },
+  { t: 'Tài nguyên', ds: [
+    { k: 'nv', t: 'Nhân vật', ic: 'users', ve: function(){ return sxa('nv'); } },
+    { k: 'giong', t: 'Giọng đọc', ic: 'chat' },
+    { k: 'phimtruong', t: 'Phim trường', ic: 'map', ve: function(){ return sxa('phimtruong'); } },
+    { k: 'thuonghieu', t: 'Bộ nhận diện', ic: 'crown' } ] },
+  { t: 'Dựng & hậu kỳ', ds: [
+    { k: 'catnhip', t: 'Cắt theo nhịp nhạc', ic: 'pulse', ve: function(){ return G.catNhip && G.catNhip.ve && G.catNhip.ve(); } },
+    { k: 'bandung', t: 'Bàn dựng', ic: 'tools', ve: function(){ return goiMan('ban-dung'); } },
+    { k: 'kyxao', t: 'Kỹ xảo & động cơ', ic: 'tools', ve: function(){ return sxa('kyxao'); } } ] },
+  { t: 'Quản lý', ds: [
+    { k: 'kho', t: 'Kho phim', ic: 'vault', ve: function(){ return G.khoDrive && G.khoDrive.ve && G.khoDrive.ve(); } },
+    { k: 'bang', t: 'Bảng sản xuất', ic: 'chart', ve: function(){ return sxa('bang'); } },
+    { k: 'prompt', t: 'Prompt & cấu hình', ic: 'edit', ve: function(){ return sxa('prompt'); } },
+    { k: 'hdh', t: 'Hệ điều hành xưởng', ic: 'compass', ve: function(){ return goiMan('studio-he'); } },
+    { k: 'b10', t: 'Chương trình 10 bước', ic: 'book', ve: function(){ return goiMan('lam-phim-10'); } } ] }
+];
+G.XA_NHOM = NHOM;
+
+/* Bốn màn con của xưởng không có mục cột trái nên không vào được bảng
+   gộp V50 (bảng ấy chỉ nhận mục cột trái — thu-ap-dung canh). Nút trong
+   các công cụ cũ vẫn trỏ data-v tới chúng; không bắt lại thì người đang
+   ở trong khung bị đẩy ra một màn rời. render() ở app.js đọc bảng này. */
+G.XA_CUA = { 'san-xuat-ai': 'nha', 'ban-dung': 'bandung', 'studio-he': 'hdh', 'lam-phim-10': 'b10' };
+
+/* Màn chủ của từng ngăn. Mặc định là 'xuong-ai'; hai ngăn dưới đây thuộc
+   về mã màn cũ của chúng, vì bộ vẽ lại của hai công cụ ấy kiểm tên màn. */
+var CHU = { studio: 'studio', phim916: 'xuong-phim' };
+G.XA_CHU = CHU;
+/* Bộ vẽ gốc của hai màn được giữ lại trước khi thay bằng khung. Thứ tự
+   gộp (danh-sach-src.json) đặt studio.js và xuong-phim.js TRƯỚC tệp này —
+   tools/thu-xuong-ai.mjs canh thứ tự ấy. */
+var GOC = {};
+
+function muc(k){
+  for (var i = 0; i < NHOM.length; i++) for (var j = 0; j < NHOM[i].ds.length; j++)
+    if (NHOM[i].ds[j].k === k) return NHOM[i].ds[j];
+  return null;
+}
+
+/* Gọi bộ vẽ của một màn khác và bỏ phần đầu trang của nó: khung này đã có
+   tiêu đề, hai tiêu đề lớn chồng nhau thì người đọc không biết mình đang
+   ở đâu. U.ph() luôn dựng <header class="ph"> ở đầu chuỗi. */
+function goiMan(v){
+  var f = GOC[v] || G.VIEWS[v]; if (typeof f !== 'function') return '';
+  return String(f() || '').replace(/^\s*<header class="ph">[\s\S]*?<\/header>/, '');
+}
+/* Một ngăn của bộ điều khiển sản xuất: chế độ nhúng bỏ đầu trang và hàng
+   tab của nó — hàng tab ấy chính là danh mục bên trái của khung này. */
+function sxa(tab){
+  var cu = G.S.axTab; G.S.axTab = tab; G.S.axNhung = 1;
+  try { return goiMan('san-xuat-ai'); } finally { G.S.axNhung = 0; G.S.axTab = cu; }
+}
+
+G.xaMo = function(k){
+  if (!muc(k)) return;
+  G.S.xaMuc = k;
+  var chu = CHU[k] || 'xuong-ai';
+  if (G.S.view !== chu && G.go) G.go(chu);
+  else { if (G.save) G.save(); if (G.render) G.render(); }
+};
+/* Nút trong công cụ cũ gọi G.ax.tab('khophim')… để đổi tab của bộ điều
+   khiển sản xuất. Trong khung, tab ấy là một ngăn — đổi ngăn thay vì đổi
+   một tab đang bị giấu (bản đầu: bấm "Xem trong Kho phim" không có gì xảy ra). */
+var TAB_NGAN = { nhanh: 'nhanh', duan: 'duan', khophim: 'kho', nv: 'nv', phim: 'phancanh', prompt: 'prompt',
+                 bang: 'bang', phimtruong: 'phimtruong', kyxao: 'kyxao', tudong: 'tudong' };
+G.XA_TAB_NGAN = TAB_NGAN;
+setTimeout(function(){
+  if (!G.ax || !G.ax.tab || G.ax.tab._xa) return;
+  var tabCu = G.ax.tab;
+  G.ax.tab = function(t){
+    if (G.S && (G.S.view === 'xuong-ai' || CHU_MAN[G.S.view]) && TAB_NGAN[t]) return G.xaMo(TAB_NGAN[t]);
+    return tabCu(t);
+  };
+  G.ax.tab._xa = 1;
+}, 0);
+var CHU_MAN = { studio: 1, 'xuong-phim': 1 };
+G.xaKhung = function(k){ G.S.xaKhung = k; if (G.save) G.save(); if (G.render) G.render(); };
+
+/* ════════ BA NGĂN TỰ VẼ (không có công cụ cũ tương ứng) ════════ */
+var KHO_HINH = [
+  { k: '9:16', t: 'Dọc 9:16', d: 'Reels · TikTok · Shorts — khổ chính của phim ngắn GITA' },
+  { k: '16:9', t: 'Ngang 16:9', d: 'YouTube · màn chiếu hội trường' },
+  { k: '1:1', t: 'Vuông 1:1', d: 'Bảng tin Facebook, Zalo' },
+  { k: '4:5', t: 'Dọc 4:5', d: 'Bảng tin Instagram — chiếm nhiều màn hơn 1:1' }
+];
+
+function veNha(){
+  var da = G.xpDA || {}, ax = G.S.axDA || {};
+  var the = function(k, ic1, t, d){
+    return '<button class="xa-tao" onclick="G.xaMo(\'' + k + '\')">' + ic(ic1, 'w-5 h-5') + '<b>' + h(t) + '</b><span>' + h(d) + '</span></button>';
+  };
+  var o = '<div class="xa-tao-luoi">' +
+    the('nhanh', 'lightning', 'Làm phim nhanh', 'Chọn ảnh nhân vật, dán kịch bản, bấm một nút — máy GPU nội bộ dựng 1080p.') +
+    the('duan', 'target', 'Dự án phim 4–8 phút', 'Cảnh quay thật, cảnh nền miễn phí, cảnh AI — ráp trên Google Drive.') +
+    the('phim916', 'spark', 'Phim ngắn 9:16', 'Kịch bản → prompt từng cảnh → nạp clip → phụ đề, logo, nhạc.') +
+    the('catnhip', 'pulse', 'Cắt theo nhịp nhạc', 'Một bài nhạc + một bộ ảnh — mỗi cú chuyển cảnh rơi đúng một nhịp.') +
+    '</div>';
+  o += '<h2 class="xa-h">Đang làm dở</h2><div class="xa-gan">';
+  var co = false;
+  if (da.ten){ co = true; o += '<button class="xa-gan-o" onclick="G.xaMo(\'phim916\')"><b>' + h(da.ten) + '</b><span>Phim ngắn 9:16 · tập ' + h(da.tap || 1) + ' · ' + ((da.canh || []).length) + ' cảnh</span></button>'; }
+  if (ax.ten){ co = true; o += '<button class="xa-gan-o" onclick="G.xaMo(\'duan\')"><b>' + h(ax.ten) + '</b><span>Dự án phim · ' + h(ax.cheDo === 'ai100' ? '100% AI từ ảnh' : (ax.cheDo || 'chưa chọn cách làm')) + '</span></button>'; }
+  if (!co) o += '<p class="muted sm">Chưa có dự án nào. Chọn một ô ở trên để bắt đầu.</p>';
+  o += '</div>';
+  return o;
+}
+
+function veMau(){
+  var cur = G.S.xaKhung || '9:16';
+  var o = '<p class="sm" style="color:var(--ink-2)">Khổ hình dùng chung cho công cụ "Cắt theo nhịp nhạc". Các công cụ khác giữ khổ riêng trong dự án của chúng.</p>';
+  o += '<div class="xa-kho">' + KHO_HINH.map(function(x){
+    var p = x.k.split(':'), r = (+p[0]) / (+p[1]);
+    return '<button class="xa-kho-o' + (x.k === cur ? ' on' : '') + '" aria-pressed="' + (x.k === cur) + '" onclick="G.xaKhung(\'' + x.k + '\')">' +
+      '<span class="xa-kho-hinh" style="aspect-ratio:' + p[0] + '/' + p[1] + ';' + (r >= 1 ? 'width:56px' : 'height:56px') + '"></span>' +
+      '<b>' + h(x.t) + '</b><span>' + h(x.d) + '</span></button>';
+  }).join('') + '</div>';
+  o += '<h2 class="xa-h">Mẫu có sẵn</h2><div class="xa-gan">' +
+    '<button class="xa-gan-o" onclick="G.xaMo(\'b10\')"><b>Chương trình 10 bước ra phim</b><span>Đi từ ý tưởng tới phim 9:16 hoàn chỉnh, mỗi bước có việc tick được</span></button>' +
+    '<button class="xa-gan-o" onclick="G.xaMo(\'phim916\')"><b>Dự án mẫu "Bữa Cơm Muộn"</b><span>Trong Phim ngắn 9:16 → "Nạp lại dự án mẫu"</span></button></div>';
+  return o;
+}
+
+function veGiong(){
+  /* Thứ tự này là quyết định đã chốt: giọng người thật có đồng ý trước,
+     rồi mới tới giọng máy, và giọng máy chạy trên máy nội bộ. */
+  var ds = [
+    ['Thu âm giọng người thật', 'Ưu tiên số một. Người đọc đồng ý cho dùng giọng, mỗi câu truy được về một người đã nói câu ấy.'],
+    ['VieNeu-TTS — tiếng Việt', 'Mô hình mở chạy trên máy GPU nội bộ, không gửi văn bản ra dịch vụ ngoài. Dùng khi chưa có người đọc.'],
+    ['Chatterbox — tiếng Anh', 'Cho phim tiếng Anh. Cũng chạy nội bộ.']
+  ];
+  return '<ol class="xa-giong">' + ds.map(function(x){ return '<li><b>' + h(x[0]) + '</b><span>' + h(x[1]) + '</span></li>'; }).join('') + '</ol>' +
+    '<p class="sm" style="color:var(--ink-2)">Cấu hình động cơ giọng nằm ở <button class="btn ghost sm" onclick="G.xaMo(\'kyxao\')">Kỹ xảo & động cơ</button>. Không nhái giọng một người khi chưa có sự đồng ý của chính người ấy.</p>';
+}
+
+function veThuongHieu(){
+  /* Đọc THẲNG token lúc vẽ — một bảng màu chép tay ở đây sẽ lệch với
+     style.css ngay lần đổi màu sau. */
+  var cs = getComputedStyle(document.documentElement);
+  var mau = [['--gita-sau', 'Xanh sâu · chữ GITA'], ['--gita', 'Xanh GITA · nút, viền'], ['--gita-sang', 'Xanh sáng · chuyển sắc'],
+             ['--gita-do', 'Đỏ GITA · ngôi sao đỏ'], ['--ink', 'Mực chữ'], ['--bg-1', 'Nền giấy']];
+  var o = '<div class="xa-logo"><img src="assets/brand/logo-gita.png" alt="Logo GITA 365" width="96" height="96" loading="lazy">' +
+    '<img src="assets/brand/dau-gita.png" alt="Dấu GITA" width="96" height="96" loading="lazy"></div>';
+  o += '<div class="xa-mau">' + mau.map(function(m){
+    var v = (cs.getPropertyValue(m[0]) || '').trim();
+    return '<div class="xa-mau-o"><span class="xa-mau-cham" style="background:var(' + m[0] + ')"></span><b class="mono">' + h(v) + '</b><span>' + h(m[1]) + '</span></div>';
+  }).join('') + '</div>';
+  o += '<p class="sm" style="color:var(--ink-2)">Chữ: <b>Be Vietnam Pro</b> cho thân bài và nhãn, <b>Playfair Display</b> cho tiêu đề lớn. Logo và màu lấy từ tệp logo gốc — không đổi sắc, không kéo méo, chừa khoảng trống quanh logo.</p>';
+  return o;
+}
+
+var TU_VE = { nha: veNha, mau: veMau, giong: veGiong, thuonghieu: veThuongHieu };
+
+/* ════════ CỘT PHẢI ════════ */
+var TIEP = {
+  nha: ['nhanh', 'Bắt đầu nhanh nhất: Làm phim nhanh'],
+  nhanh: ['kho', 'Phim xong nằm ở Kho phim'],
+  duan: ['kho', 'Tệp dự án nằm trên Google Drive — xem ở Kho phim'],
+  phim916: ['catnhip', 'Có nhạc nền? Thử cắt cảnh theo nhịp'],
+  catnhip: ['mau', 'Đổi khổ hình ở Mẫu & khổ'],
+  nv: ['phimtruong', 'Nhân vật xong thì chọn phim trường'],
+  phimtruong: ['prompt', 'Xuất prompt & cấu hình cho máy GPU'],
+  prompt: ['bang', 'Theo dõi từng cảnh ở Bảng sản xuất'],
+  bandung: ['catnhip', 'Muốn cắt khớp nhạc: Cắt theo nhịp']
+};
+function veCotPhai(k){
+  var da = G.xpDA || {}, ax = G.S.axDA || {}, tp = TIEP[k];
+  var o = '<div class="xa-the"><span class="tiny muted">Khổ hình</span><b>' + h(G.S.xaKhung || '9:16') + '</b>' +
+    '<button class="btn ghost sm" onclick="G.xaMo(\'mau\')">Đổi</button></div>';
+  o += '<div class="xa-the"><span class="tiny muted">Phim 9:16 đang mở</span><b>' + h(da.ten || 'Chưa có') + '</b>' +
+    (da.ten ? '<span class="tiny">Tập ' + h(da.tap || 1) + ' · ' + ((da.canh || []).length) + ' cảnh · ' + h(da.khung || '') + '</span>' : '') + '</div>';
+  o += '<div class="xa-the"><span class="tiny muted">Dự án phim</span><b>' + h(ax.ten || 'Chưa có') + '</b></div>';
+  if (tp) o += '<button class="xa-tiep" onclick="G.xaMo(\'' + tp[0] + '\')">' + ic('arrow', 'w-4 h-4') + '<span>' + h(tp[1]) + '</span></button>';
+  o += '<p class="tiny muted">' + ic('shield', 'w-3 h-3') + ' Ảnh, nhạc, kịch bản xử lý trên máy anh/chị hoặc trạm GPU riêng của GITA — chỉ gửi khi anh/chị bấm.</p>';
+  return o;
+}
+
+/* ════════ MÀN ════════ */
+function veKhung(){
+  if (!(typeof G.can === 'function' && G.can('qt_trang')))
+    return U.lockCard('Xưởng phim AI mở cho Super Admin / Admin. Đăng nhập đúng vai để xem.');
+  var k = muc(G.S.xaMuc) ? G.S.xaMuc : 'nha', m = muc(k);
+
+  var o = U.ph({ eyebrow: 'XƯỞNG PHIM AI', ic: 'orbit', t: 'Xưởng phim AI',
+    lead: 'Một chỗ cho cả quy trình: tạo phim, tài nguyên, dựng, kho. Chọn việc ở danh mục.' });
+
+  o += '<div class="xa">';
+  o += '<nav class="xa-trai" aria-label="Danh mục xưởng phim">' + NHOM.map(function(n){
+    return '<div class="xa-nhom"><span class="xa-nhom-t">' + h(n.t) + '</span>' + n.ds.map(function(x){
+      return '<button class="xa-muc' + (x.k === k ? ' on' : '') + '"' + (x.k === k ? ' aria-current="page"' : '') +
+        ' onclick="G.xaMo(\'' + x.k + '\')">' + ic(x.ic, 'w-4 h-4') + '<span>' + h(x.t) + '</span></button>';
+    }).join('') + '</div>';
+  }).join('') + '</nav>';
+
+  var than = '';
+  var loiVe = '';
+  try { than = TU_VE[k] ? TU_VE[k]() : (m.ve ? m.ve() : ''); }
+  catch (e) { than = ''; loiVe = (e && e.message) || String(e); if (window.console) console.error('xuong-ai/' + k, e); }
+  if (!than) than = U.empty(loiVe ? 'Công cụ này gặp lỗi khi mở' : 'Công cụ này chưa sẵn sàng trên máy này',
+    loiVe ? 'Lỗi: ' + loiVe + ' — chụp dòng này gửi bộ phận kỹ thuật.' : 'Có thể vai hiện tại chưa mở gói của công cụ, hoặc trình duyệt chặn một tính năng nó cần.', true);
+
+  o += '<section class="xa-giua" aria-labelledby="xa-giua-t"><h2 id="xa-giua-t" class="xa-giua-t">' + ic(m.ic, 'w-5 h-5') + h(m.t) + '</h2>' + than + '</section>';
+  o += '<aside class="xa-phai" aria-label="Dự án và bước tiếp theo">' + veCotPhai(k) + '</aside>';
+  o += '</div>';
+  /* Trên điện thoại danh mục là một dải cuộn ngang: mục đang mở có thể nằm
+     ngoài mép phải, người dùng không thấy mình đang ở đâu. Cuộn nó vào giữa. */
+  /* Chỉ cuộn NGANG dải danh mục — scrollIntoView sẽ kéo cả trang lên đầu
+     mỗi lần một công cụ bên trong vẽ lại, đúng lúc người dùng đang đọc ở dưới. */
+  setTimeout(function(){
+    var e = document.querySelector('.xa-muc.on'), d = document.querySelector('.xa-trai');
+    if (e && d && window.innerWidth <= 860) d.scrollLeft = Math.max(0, e.offsetLeft - (d.clientWidth - e.offsetWidth) / 2);
+  }, 0);
+  return o;
+}
+
+G.VIEWS['xuong-ai'] = function(){
+  /* Đang ở một ngăn có màn chủ riêng mà vào bằng 'xuong-ai' (cột trái,
+     địa chỉ cũ) — về trang chủ xưởng, đừng vẽ công cụ dưới tên màn sai. */
+  if (CHU[G.S.xaMuc]) G.S.xaMuc = 'nha';
+  return veKhung();
+};
+Object.keys(CHU_MAN).forEach(function(v){
+  GOC[v] = G.VIEWS[v];
+  G.VIEWS[v] = function(){
+    var ngan = v === 'studio' ? 'studio' : 'phim916';
+    G.S.xaMuc = ngan;
+    return veKhung();
+  };
+});
 })();
 
 })();
@@ -84666,6 +85438,12 @@ function render(){
       G.S.view = d50.v;
       if(d50.mo && G.TTD_MO) G.TTD_MO(d50.mo);
     }
+  }
+  /* Màn con của Xưởng phim AI (không có mục cột trái) → mở trong khung. */
+  if(G.XA_CUA && G.XA_CUA[G.S.view] && G.VIEWS['xuong-ai'] && (!G.allowed || G.allowed('xuong-ai'))){
+    /* Bộ điều khiển sản xuất mở ở tab nào thì vào đúng ngăn ấy. */
+    var nganTab = G.S.view === 'san-xuat-ai' && G.XA_TAB_NGAN && G.XA_TAB_NGAN[G.S.axTab];
+    G.S.xaMuc = nganTab || G.XA_CUA[G.S.view]; G.S.view = 'xuong-ai';
   }
   /* Màn của gói nghề mà mã chưa về: NÓI ĐANG MỞ, đừng nhảy về bản đồ.
 

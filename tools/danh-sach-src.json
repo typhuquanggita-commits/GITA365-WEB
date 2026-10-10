@@ -224,6 +224,8 @@
     "src/phim-nhanh.js",
     "src/du-an-phim.js",
     "src/san-xuat-ai.js",
+    "src/cat-nhip.js",
+    "src/xuong-ai.js",
     "src/app.js",
     "src/chuyen-long-ghep.js",
     "src/may-khach.js",

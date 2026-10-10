@@ -62,7 +62,7 @@ var G = window.G || {}; window.G = G;
     { id:'van-hanh-he', khu:'nhansu', ten:'Vận hành hệ thống',      ic:'pulse',   viec:'Máy chủ, tài nguyên, liên thông dữ liệu, sức chứa, AI, thanh tra, soát màn, kiểm thử.',
       phan:['noi-may-chu','theo-doi-tai-nguyen','lien-thong','suc-chua-toc-do','bo-nao-da-tri','thanh-tra-soi','phap-ly-rui-ro','soat-toan-man','kiem-theo-vai','soat-day-du'], kho:['KT','PL'] },
     { id:'noi-dung', khu:'nhansu',  ten:'Nội dung & truyền thông',  ic:'spark',    viec:'Studio, xưởng phim, thị giác, biên soạn, sửa chữ hiển thị, duyệt tài liệu và đánh giá.',
-      phan:['studio','xuong-phim','kien-truc-thi-giac','bien-soan-noi-dung','sua-hien-thi','duyet-tai-lieu','duyet-danh-gia','sap-xep'], kho:['MK'] }
+      phan:['xuong-ai','kien-truc-thi-giac','bien-soan-noi-dung','sua-hien-thi','duyet-tai-lieu','duyet-danh-gia','sap-xep'], kho:['MK'] }
   ];
 
   /* Màn chính theo vai, đúng trần chủ hệ đặt. 'khach-la' = chưa đăng nhập. */
@@ -103,6 +103,7 @@ var G = window.G || {}; window.G = G;
                     [/^dk-(?!cua-toi$|cac-vai$)/, 'ban-lam-viec'], [/^va-/, 'ban-lam-viec'], [/^gd-/, 'ban-lam-viec'],
                     [/^van-hanh-(10|gd)$/, 'ban-lam-viec']];
   M.KHOP = { 'studio-he':'noi-dung', 'lam-phim-10':'noi-dung', 'ban-dung':'noi-dung', 'san-xuat-ai':'noi-dung',
+             'studio':'noi-dung', 'xuong-phim':'noi-dung',
              'ban-co-tong':'ban-lam-viec', 'pham-vi':'quan-tri' };
 
   var PHAN_CUA = {};

@@ -1214,6 +1214,12 @@ function render(){
       if(d50.mo && G.TTD_MO) G.TTD_MO(d50.mo);
     }
   }
+  /* Màn con của Xưởng phim AI (không có mục cột trái) → mở trong khung. */
+  if(G.XA_CUA && G.XA_CUA[G.S.view] && G.VIEWS['xuong-ai'] && (!G.allowed || G.allowed('xuong-ai'))){
+    /* Bộ điều khiển sản xuất mở ở tab nào thì vào đúng ngăn ấy. */
+    var nganTab = G.S.view === 'san-xuat-ai' && G.XA_TAB_NGAN && G.XA_TAB_NGAN[G.S.axTab];
+    G.S.xaMuc = nganTab || G.XA_CUA[G.S.view]; G.S.view = 'xuong-ai';
+  }
   /* Màn của gói nghề mà mã chưa về: NÓI ĐANG MỞ, đừng nhảy về bản đồ.
 
      Trước bản 9.23 dòng này chỉ có một vế — thiếu màn thì đổi sang

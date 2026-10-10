@@ -55,3 +55,9 @@ Không xoá mã màn, cửa máy chủ, bảng dữ liệu hay tệp nào đã g
 - Sửa bậc tiêu đề bằng tên thẻ đúng và đổi luôn bộ chọn CSS (`.kh h4` → `.kh h2`) để cỡ chữ không nhảy.
 - Chữ đặt lên một màu đặc của biểu đồ dùng `--chu-tren-mau`, không gõ `#fff`.
 - Bộ đo đếm theo MÀN THẬT (`G.S.view`) — nhiều mục cột trái chuyển hướng về cùng một công cụ sống.
+
+## Xưởng phim AI — một cửa (`src/xuong-ai.js` · `src/cat-nhip.js`)
+- Khung ba cột gom mọi công cụ phim; thêm công cụ = thêm một dòng `NHOM`, không dựng màn mới. `tools/thu-xuong-ai.mjs` đối chiếu từng dòng với bộ vẽ thật.
+- GITA Studio (`studio`) và Phim ngắn 9:16 (`xuong-phim`) **không** chuyển hướng (GOP): `studio.js`/`xuong-phim.js` chỉ vẽ lại khi `G.S.view` đúng tên chúng, nên hai mã màn ấy tự vẽ khung (`CHU_MAN`), rút khỏi cột trái bằng `V50.AN`. Thứ tự gộp phải để hai tệp ấy TRƯỚC `xuong-ai.js`.
+- Màn con không có mục cột trái (`san-xuat-ai`, `ban-dung`, `studio-he`, `lam-phim-10`) vào khung qua `G.XA_CUA` ở `render()`; `G.ax.tab(...)` được chuyển thành đổi ngăn.
+- Cắt theo nhịp chạy tại máy; dò nhịp là hàm thuần `G.catNhip.timNhip` thử bằng tín hiệu tự dựng (lệch ≤ 20 ms). Không đụng `studio.js`.

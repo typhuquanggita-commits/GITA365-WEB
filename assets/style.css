@@ -32,6 +32,7 @@
      4,5 — đổi một lỗi nhìn thấy lấy một lỗi không nhìn thấy. */
   --ink:#172234;  --ink-2:#3C4C64;  --ink-3:#4A5A73;  --ink-4:#56657D;
   --chu-tren-mau:#fff;   /* chữ đặt lên một màu đặc của bảng phân loại (biểu đồ) */
+  --chu-tren-anh:#fff;   /* chữ đặt lên ẢNH (kèm bóng chữ) — ảnh không đổi theo nền nên token này không đổi */
 
   /* ══ MÀU THƯƠNG HIỆU — lấy từ logo chuẩn GITA ══
      Logo có ba nét: xanh ngoài đậm, xanh trong sáng, và một nét đỏ; kèm
@@ -4252,3 +4253,104 @@ html[data-may="yeu"] *,html[data-may="yeu"] *::before,html[data-may="yeu"] *::af
 .bn-b{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border:1px solid var(--line);border-left:4px solid var(--bt);border-radius:10px}
 .bn-b > div{min-width:0}
 .bn-nut{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+
+/* ═══════════ XƯỞNG PHIM AI — khung ba cột (src/xuong-ai.js) ═══════════
+   Trái: danh mục theo nhóm · giữa: bảng làm việc · phải: dự án và bước
+   tiếp. Dưới 1180px cột phải xuống dưới; dưới 860px danh mục thành một
+   dải cuộn ngang ở đầu — ngón cái với tới, không chiếm nửa màn. */
+.xa{display:grid;grid-template-columns:220px minmax(0,1fr) 260px;gap:18px;align-items:start}
+.xa-trai{position:sticky;top:calc(var(--top-tong,66px) + 12px);display:flex;flex-direction:column;gap:14px;
+  padding:12px;border:1px solid var(--line);border-radius:var(--r,14px);background:var(--surface)}
+.xa-nhom{display:flex;flex-direction:column;gap:2px}
+.xa-nhom-t{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-4);padding:0 8px 4px}
+.xa-muc{display:flex;align-items:center;gap:10px;min-height:36px;padding:6px 10px;border:0;border-radius:10px;
+  background:transparent;color:var(--ink-2);font:inherit;font-size:14.5px;text-align:left;cursor:pointer}
+.xa-muc:hover{background:var(--phu-2)}
+.xa-muc.on{background:var(--gita-mo-2);color:var(--gold-ink);font-weight:700}
+.xa-muc:focus-visible,.xa-tao:focus-visible,.xa-gan-o:focus-visible,.xa-kho-o:focus-visible,.xa-tiep:focus-visible{outline:2px solid var(--gita);outline-offset:2px}
+/* Bảng giữa KHÔNG có viền và nền: công cụ bên trong đã có thẻ của chúng,
+   bọc thêm một thẻ là thẻ lồng thẻ (luật TK14 bắt ở lần soát đầu). */
+.xa-giua{min-width:0;padding:2px 0 0}
+.xa-giua-t{display:flex;align-items:center;gap:10px;font-size:21px;font-weight:800;margin:0 0 14px;color:var(--ink)}
+.xa-phai{position:sticky;top:calc(var(--top-tong,66px) + 12px);display:flex;flex-direction:column;gap:10px}
+.xa-the{display:flex;flex-direction:column;gap:2px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.xa-the b{font-size:16px;color:var(--ink)}
+.xa-the .btn{align-self:flex-start;margin-top:6px}
+.xa-tiep{display:flex;align-items:center;gap:8px;min-height:44px;padding:10px 14px;border:1px solid var(--gita-vien-1);border-radius:12px;
+  background:var(--gita-mo-1);color:var(--gold-ink);font:inherit;font-size:14.5px;font-weight:600;text-align:left;cursor:pointer}
+.xa-h{font-size:16px;font-weight:800;margin:20px 0 10px;color:var(--ink)}
+.xa-tao-luoi{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.xa-tao{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:16px;border:1px solid var(--line);border-radius:12px;
+  background:var(--bg-1);color:var(--ink);font:inherit;text-align:left;cursor:pointer;min-height:132px}
+.xa-tao:hover{border-color:var(--gita-vien-2)}
+.xa-tao svg{color:var(--gita)}
+.xa-tao b{font-size:16px}
+.xa-tao span{font-size:14.5px;line-height:1.5;color:var(--ink-2)}
+.xa-gan{display:flex;flex-direction:column;gap:8px}
+.xa-gan-o{display:flex;flex-direction:column;gap:2px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;
+  background:var(--bg-1);color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.xa-gan-o span{font-size:12.5px;color:var(--ink-3)}
+.xa-kho{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:10px}
+.xa-kho-o{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:14px;border:1px solid var(--line);border-radius:12px;
+  background:var(--bg-1);color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.xa-kho-o.on{border-color:var(--gita);background:var(--gita-mo-1)}
+.xa-kho-o span:last-child{font-size:12.5px;color:var(--ink-3);line-height:1.45}
+.xa-kho-hinh{display:block;border:2px solid var(--gita);border-radius:6px;background:var(--gita-mo-2)}
+.xa-giong{display:flex;flex-direction:column;gap:10px;padding-left:20px;margin:0 0 12px}
+.xa-giong li b{display:block;font-size:16px;color:var(--ink)}
+.xa-giong li span{font-size:14.5px;color:var(--ink-2);line-height:1.55}
+.xa-logo{display:flex;gap:16px;margin-bottom:14px}
+.xa-logo img{border:1px solid var(--line);border-radius:12px;background:#fff;padding:6px}
+.xa-mau{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+.xa-mau-o{display:flex;flex-direction:column;gap:3px;font-size:12.5px;color:var(--ink-3)}
+.xa-mau-o b{font-size:14.5px;color:var(--ink)}
+.xa-mau-cham{display:block;height:44px;border-radius:10px;border:1px solid var(--line)}
+/* Cắt theo nhịp nhạc (src/cat-nhip.js) */
+.cn{display:flex;flex-direction:column;gap:14px}
+.cn-buoc{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.cn-nap{display:flex;flex-direction:column;gap:6px;padding:14px;border:1px dashed var(--line-2);border-radius:12px;background:var(--bg-1);cursor:pointer}
+.cn-nap{position:relative}
+.cn-nap b{font-size:14.5px;color:var(--ink)}
+.cn-nap .btn{align-self:flex-start;pointer-events:none}
+/* Ô chọn tệp gốc của trình duyệt in chữ tiếng Anh ("Choose File") — giấu
+   đi nhưng vẫn bấm được qua cả nhãn, và vẫn nhận phím Tab. */
+.cn-nap input[type=file]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.cn-nap:focus-within{outline:2px solid var(--gita);outline-offset:2px}
+.cn-so{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.cn-so>div{display:flex;flex-direction:column;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg-1)}
+.cn-so b{font-size:21px;color:var(--ink)}
+.cn-bao{margin:0;padding:10px 12px;border-radius:10px;background:var(--phu-2);color:var(--warn);font-size:14.5px;line-height:1.5}
+.cn-truc-boc{position:relative;border:1px solid var(--line);border-radius:10px;background:var(--bg-1);overflow:hidden}
+#cn-truc{display:block;width:100%;height:64px}
+.cn-vitri{position:absolute;top:0;bottom:0;left:0;width:2px;background:var(--gita-do-ink);pointer-events:none}
+.cn-chinh{display:flex;flex-wrap:wrap;gap:12px}
+.cn-chinh label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--ink-3)}
+.cn-vat{display:flex;flex-direction:column;gap:4px;max-height:180px;overflow:auto}
+.cn-vat-o{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 8px;border-radius:8px;background:var(--phu-1)}
+.cn-xem{display:flex;justify-content:center;background:#000;border-radius:12px;padding:10px}
+#cn-cv{max-width:100%;max-height:60vh;max-height:60dvh;height:auto;width:auto;border-radius:6px}
+@media(max-width:1180px){
+  .xa{grid-template-columns:200px minmax(0,1fr)}
+  .xa-phai{position:static;grid-column:1/-1;flex-direction:row;flex-wrap:wrap}
+  .xa-phai>*{flex:1 1 200px}
+}
+@media(max-width:860px){
+  .xa{grid-template-columns:minmax(0,1fr)}
+  .xa-trai{position:static;flex-direction:row;overflow-x:auto;gap:4px;padding:8px;-webkit-overflow-scrolling:touch}
+  .xa-nhom{flex-direction:row;gap:4px}
+  .xa-nhom-t{display:none}
+  .xa-muc{white-space:nowrap;flex:none}
+  .cn-so{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(prefers-reduced-motion:reduce){.xa-muc,.xa-tao,.xa-gan-o{transition:none}}
+/* Dải cảnh của bàn dựng cắt nhịp — mỗi ô rộng theo độ dài cảnh */
+.cn-dai{display:flex;gap:2px;height:56px;border-radius:10px;overflow:hidden;background:var(--phu-2)}
+.cn-dai-o{position:relative;flex:0 0 auto;min-width:8px;border:0;padding:0;cursor:pointer;
+  background:var(--gita-mo-2) center/cover no-repeat;color:var(--chu-tren-anh);font:inherit}
+.cn-dai-o.clip{background-color:var(--t2)}
+.cn-dai-o span{position:absolute;left:4px;bottom:3px;font-size:10.5px;font-weight:700;color:var(--chu-tren-anh);
+  text-shadow:0 1px 2px rgba(0,0,0,.8)}
+.cn-dai-o:focus-visible{outline:2px solid var(--gita);outline-offset:-2px}
+.cn-dai-o:hover{filter:brightness(1.08)}
+#cn-truc{cursor:pointer}
+.cn-ds summary{cursor:pointer;color:var(--ink-2)}
