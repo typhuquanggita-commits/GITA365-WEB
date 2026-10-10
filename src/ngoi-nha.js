@@ -73,6 +73,56 @@ G.nhaMoChang = function (el) {
     el.getAttribute('data-vpten') || '');
 };
 
+/* ══ VÒNG BÁNH ĐÀ: QUAY HAY DỪNG ══ (chủ hệ 10/10/2026: "vòng tròn bên
+   trong đang dừng không chuyển động")
+   Đo trên máy thật: vòng VẪN quay — nó chỉ dừng khi máy bật "giảm chuyển
+   động" (Windows: Settings → Accessibility → Visual effects → Animation
+   effects TẮT; nhiều laptop tắt sẵn để tiết kiệm pin). CSS tôn trọng lời
+   xin ấy, nên người xem thấy một vòng đứng yên mà không biết vì sao.
+   Nay: máy xin giảm chuyển động → vòng QUAY CHẬM (240 giây/vòng) thay vì
+   dừng hẳn; rê chuột/Tab vào bánh là đứng lại; nút "Dừng" luôn có. Người
+   dùng tự chọn trong app thì lựa chọn ấy thắng — "Cho quay" là đủ nhịp 60
+   giây dù máy xin giảm, "Dừng" là đứng yên. Không nhớ được (trình duyệt
+   chặn lưu) thì theo mặc định, không vỡ màn. */
+var KHOA_QUAY = 'gita.nhaQuay';
+G.nhaCheDoQuay = function () {
+  try { var v = localStorage.getItem(KHOA_QUAY); if (v === 'quay' || v === 'dung') return v; } catch (e) {}
+  return '';
+};
+G.nhaMayGiamDong = function () {
+  return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+};
+G.nhaDangQuay = function () { return G.nhaCheDoQuay() !== 'dung'; };
+G.nhaDoiQuay = function () {
+  var moi = G.nhaDangQuay() ? 'dung' : 'quay';
+  try { localStorage.setItem(KHOA_QUAY, moi); } catch (e) {}
+  /* Đổi lớp tại chỗ — không dựng lại cả màn (dựng lại là vòng nhảy về góc 0). */
+  var vong = document.querySelector('.nha-ring');
+  if (vong) { vong.classList.toggle('nha-quay', moi === 'quay'); vong.classList.toggle('nha-dung', moi === 'dung'); }
+  /* Thay khối nút rồi TRẢ tiêu điểm về nút mới — thay outerHTML mà không trả
+     thì người dùng bàn phím / trình đọc màn hình bị đẩy về đầu trang. */
+  var nut = document.querySelector('.nha-quay-nut');
+  if (nut) { nut.outerHTML = G.nhaNutQuay(); var moi = document.querySelector('.nha-quay-nut button'); if (moi && moi.focus) moi.focus(); }
+};
+/* Máy xin giảm chuyển động mà người dùng muốn đủ nhịp 60 giây: chọn "quay". */
+G.nhaQuayNhanh = function () {
+  try { localStorage.setItem(KHOA_QUAY, 'quay'); } catch (e) {}
+  var vong = document.querySelector('.nha-ring');
+  if (vong) { vong.classList.add('nha-quay'); vong.classList.remove('nha-dung'); }
+  var nut = document.querySelector('.nha-quay-nut');
+  if (nut) { nut.outerHTML = G.nhaNutQuay(); var moi = document.querySelector('.nha-quay-nut button'); if (moi && moi.focus) moi.focus(); }
+};
+G.nhaNutQuay = function () {
+  var ic = G.U.ic, quay = G.nhaDangQuay();
+  /* Nhãn đổi theo trạng thái, KHÔNG kèm aria-pressed: "Dừng…, đã nhấn" đọc
+     lên không rõ vòng đang quay hay đã dừng. Trạng thái nói bằng chữ. */
+  return '<div class="nha-quay-nut"><button type="button" class="btn sm" onclick="G.nhaDoiQuay()">' +
+    ic(quay ? 'x' : 'spark') + (quay ? ' Dừng vòng bánh đà' : ' Cho vòng bánh đà quay') + '</button>' +
+    (quay && G.nhaMayGiamDong() && G.nhaCheDoQuay() !== 'quay'
+      ? '<button type="button" class="btn sm" onclick="G.nhaQuayNhanh()">Quay đủ nhịp</button>' +
+        '<span class="tiny muted">Máy đang bật "giảm chuyển động" nên vòng quay chậm.</span>' : '') + '</div>';
+};
+
 (function () {
   var U = G.U, h = U.h, ic = U.ic;
 
@@ -162,8 +212,9 @@ G.nhaMoChang = function (el) {
       ' GITA 365</span>';
     /* Có bánh đà (kho nền đã mở) thì mới treo nhãn — nhãn mà không có
        bánh nào bên dưới là một lời hứa trống. */
-    if (bdHtml) o += '<p class="nha-bd-nhan">Mười bánh đà quay quanh vận hành cả nhà</p>';
-    o += '<div class="nha-ring">';
+    if (bdHtml) o += '<p class="nha-bd-nhan">Mười bánh đà quay quanh vận hành cả nhà</p>' + G.nhaNutQuay();
+    var cd = G.nhaCheDoQuay();
+    o += '<div class="nha-ring' + (cd === 'quay' ? ' nha-quay' : cd === 'dung' ? ' nha-dung' : '') + '">';
     /* VÒNG NGOÀI — khẩu hiệu chạy quanh con dấu thịnh vượng. Dùng SVG
        textPath (một vòng tròn, chữ bám theo), ĐỨNG YÊN để đọc được; chỉ
        vòng bánh đà bên trong mới quay.

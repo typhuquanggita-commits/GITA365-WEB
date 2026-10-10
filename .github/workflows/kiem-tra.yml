@@ -101,6 +101,9 @@ jobs:
       - name: Đội Agent — thẻ vai, Trưởng nhóm soát, bộ nhớ chung (5 ca)
         run: node tools/thu-doi-agent.mjs
 
+      - name: Kiến trúc Ngôi nhà thịnh vượng (10 bánh đà cách đều · quay cùng nhịp · không che nhà · lựa chọn quay/dừng)
+        run: node tools/thu-ngoi-nha.mjs
+
       - name: Chạy thử bộ não vận hành V50 (nhịp mỗi giờ · có khách là chạy · lịch · quyền)
         run: node tools/thu-bo-nao-van-hanh.mjs
 

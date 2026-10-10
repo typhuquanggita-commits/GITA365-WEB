@@ -2601,6 +2601,10 @@ button.nha-o-nen:hover .nha-ic{transform:scale(1.06)}
 .nha-bd-slot{position:static;display:inline-flex}
 .nha-ring-nodes .nha-bd-o{pointer-events:auto}
 .nha-khauhieu{display:none}
+/* Nút quay chỉ có nghĩa khi vòng tròn được dựng (khổ rộng); khổ hẹp bánh
+   đà xếp phẳng, không có gì để quay. Đặt TRƯỚC khối @container: cùng độ
+   nặng thì dòng sau thắng — đặt sau là khối container không bật được nút. */
+.nha-quay-nut{display:none;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 6px}
 
 /* vòng quay (ngoài) + bánh counter-quay (trong) — cùng 60s, ngược chiều,
    nên bánh ĐI THEO VÒNG mà CHỮ ĐỨNG YÊN thẳng đứng. */
@@ -2619,7 +2623,12 @@ button.nha-o-nen:hover .nha-ic{transform:scale(1.06)}
   /* VÒNG BÁNH ĐÀ (trong, bán kính 37%) — cách vòng khẩu hiệu ~10% (~2 cm) */
   .nha-ring::before{content:"";display:block;position:absolute;inset:13%;
     border:2px dashed var(--gita-vien-2);border-radius:50%;pointer-events:none}
-  .nha-ring-nodes{position:absolute;inset:0;display:block;margin:0;z-index:3;animation:nhaQuay 60s linear infinite}
+  /* pointer-events:none — lớp vòng là một HÌNH VUÔNG TRONG SUỐT phủ cả con
+     dấu và nằm TRÊN ngôi nhà (z-index 3). Thiếu dòng này thì mọi cú bấm vào
+     11 phần của nhà rơi vào lớp vòng: đo ở 9.99.254 ra 0/11 phần bấm trúng
+     trên máy tính, trong khi màn ghi "Kích vào từng phần để mở nội dung".
+     Chỉ các nút bánh đà nhận bấm (pointer-events:auto ở dưới). */
+  .nha-ring-nodes{position:absolute;inset:0;display:block;margin:0;z-index:3;pointer-events:none;animation:nhaQuay 60s linear infinite}
   .nha-ring-nodes .nha-bd-slot{position:absolute;display:block;width:0;height:0}
   .nha-ring-nodes .nha-bd-o{position:absolute;left:0;top:0;margin:0;max-width:13.5cqi;white-space:normal;text-align:left;
     min-height:4cqi;padding:.55cqi 1.3cqi .55cqi .55cqi;gap:.8cqi;font-size:1.2cqi;border-radius:99px;
@@ -2650,9 +2659,30 @@ button.nha-o-nen:hover .nha-ic{transform:scale(1.06)}
   .nha-ring .nha-o-nen{min-height:3.6cqi;gap:.8cqi}
   .nha-ring .nha-o-nen .nha-ic{width:2.8cqi;height:2.8cqi}
   .nha-ring .nha-o-nen .nha-ic svg{width:1.5cqi;height:1.5cqi}
-  @media(prefers-reduced-motion:reduce){.nha-ring-nodes,.nha-ring-nodes .nha-bd-o{animation:none}}
+  /* MÁY XIN GIẢM CHUYỂN ĐỘNG → vòng QUAY CHẬM (240 giây/vòng, 1,5°/giây), không
+     dừng hẳn (chủ hệ 10/10/2026: "vòng tròn đang dừng không chuyển động").
+     Chậm là đã giảm; đường dừng vẫn đủ: rê chuột/Tab vào bánh là đứng lại,
+     nút "Dừng vòng bánh đà" luôn có (WCAG 2.2.2 — chuyển động tự chạy phải
+     dừng được). !important vì luật chung *{animation-duration:.01ms!important}
+     ở đầu tệp ép mọi hoạt ảnh về 0 — thiếu nó vòng GIẬT góc thay vì quay. */
+  @media(prefers-reduced-motion:reduce){.nha-ring-nodes,.nha-ring-nodes .nha-bd-o{animation-duration:240s!important}}
+  /* LỰA CHỌN CỦA NGƯỜI DÙNG thắng mặc định của máy (ngoi-nha.js → nhaDoiQuay).
+     Độ nặng 0,3–0,4 thắng các luật "giảm chuyển động" thường (0,1–0,2) ở
+     dưới tệp, NHƯNG không thắng được luật `*{animation-duration:.01ms
+     !important}` (dòng ~750): độ nặng không bao giờ thắng !important. Thiếu
+     dòng animation-duration !important bên dưới thì "Cho quay" làm vòng GIẬT
+     góc mỗi khung hình thay vì quay êm 60 giây (tổ soát bắt 10/10/2026). */
+  .nha-quay-nut{display:flex}
+  .nha-ring.nha-quay .nha-ring-nodes{animation:nhaQuay 60s linear infinite}
+  .nha-ring.nha-quay .nha-ring-nodes .nha-bd-o{animation:nhaGiu 60s linear infinite}
+  .nha-ring.nha-quay .nha-ring-nodes,.nha-ring.nha-quay .nha-ring-nodes .nha-bd-o{animation-duration:60s!important}
+  .nha-ring.nha-dung .nha-ring-nodes,.nha-ring.nha-dung .nha-ring-nodes .nha-bd-o{animation:none}
+  /* Rê chuột / Tab vào MỘT bánh thì cả vòng đứng lại để bấm trúng. Dừng
+     CẢ vòng lẫn bánh cùng lúc — dừng một bên thì chữ nghiêng theo góc đang dở. */
+  .nha-ring-nodes:hover,.nha-ring-nodes:hover .nha-bd-o,
+  .nha-ring-nodes:focus-within,.nha-ring-nodes:focus-within .nha-bd-o{animation-play-state:paused}
 }
-@media(prefers-reduced-motion:reduce){.nha-ring-nodes{animation:none}}
+/* (Luật tắt vòng khi giảm chuyển động đã gom về MỘT chỗ — trong khối @container ở trên.) */
 
 /* ── TỔNG QUAN (tong-quan.js) — thẻ ít chữ, số to, lưới co giãn ── */
 .tq-luoi{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:10px;margin-top:10px}
@@ -2988,8 +3018,9 @@ body.hdp-khoa{overflow:hidden}
 /* ── TẮT chuyển động khi máy xin giảm ── */
 @media(prefers-reduced-motion:reduce){
   .view,.nha-luoi-8>*,.dp-mien>*,.nha-bd-o,.cd-loc-o,.hdp-khung{animation:none}
-  /* Vòng bánh đà: tắt cả quay vòng lẫn giữ-thẳng chữ khi máy xin giảm chuyển động. */
-  .nha-ring-nodes,.nha-ring-nodes .nha-bd-o{animation:none}
+  /* Vòng bánh đà KHÔNG tắt ở đây: khi máy xin giảm chuyển động nó quay chậm
+     (luật duy nhất nằm trong khối @container nhaVong). Ba bản chép của cùng
+     một luật từng nằm ở ba chỗ — gom về một để không có ngày lệch nhau. */
   [data-v],.nav-i,.chip,.tbtn,.btn,.nha-o,.dp-mien-o,.dp-tl-o,.cd-loc-o,.val,.cd-chitiet,.dp-luat-o,.tln-fab,#left,#right{transition:none}
   .tln-fab::after,.tln-fab-cham,.ch-soan .soan-cham i{animation:none}
   .nha-o:hover,.dp-mien-o:hover,.val:hover,.dp-luat-o:hover{transform:none}
