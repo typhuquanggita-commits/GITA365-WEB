@@ -106,3 +106,13 @@ Không xoá mã màn, cửa máy chủ, bảng dữ liệu hay tệp nào đã g
 - Lương kỳ YYYY-MM trả ngày 05 tháng sau; 05 là ngày nghỉ thì 08 (`ngayTraLuong`). Ngày nghỉ = Chủ nhật · lễ dương cố định (`LE_CO_DINH`) · ngày R01 khai ở bảng `ngayNghi` (Tết âm lịch, nghỉ bù; nghi=0 là gỡ, dòng mới nhất quyết). Máy không tự đoán âm lịch. `bangLuong` trả kèm `ngayTra`.
 - Phiếu tháng của gia đình (`guiDanhGiaKH` → `danhGiaKH`) bắt buộc đủ 5 tiêu chí `TIEU_CHI` (bản đối chiếu `G.XH_TIEU_CHI` ở `src/ho-so-thang.js`, bài thử so từng ô) và CHỤP `coach · tuVan` lúc gửi — phiếu thuộc người làm tháng ấy, nhà đổi người phụ trách sau đó cũng không đổi.
 - Xếp hạng lương thưởng tháng (`xepHangThang`): thi ngày 28 (40) · phản hồi các nhà phụ trách (40) · cấp chứng chỉ (20) → hạng A/B/C/D (90/80/65). Không dự thi = 0; dưới `MAU_TOI_THIEU` (3) nhà có phiếu thì phần phản hồi null, trọng số bỏ và ghi ra. Quản lý R01–R05 xem cả đội, nhân sự khác chỉ dòng mình. Trọng số/ngưỡng là MẶC ĐỊNH chờ chủ hệ chỉnh; hạng chưa tự đổi ra tiền (chưa có bảng lương máy chủ cho Coach/Tư vấn viên).
+
+## Cửa trước cho khách chưa có tài khoản (`src/cua-truoc.js` · kiem-tra mục 41)
+
+Một trang năm chặng **Nhận ra → Hiểu → Tin → Thử → Quyết** thay ba ngăn cũ (43.495 ký tự → ~7.400; điện thoại 55 → 9 lần vuốt). Chủ hệ chốt 10/10:
+- Mỗi chặng có **việc làm được ngay tối nay** (tình huống → việc tối nay; "ba tối thử tại nhà" đánh dấu bằng localStorage, bọc try/catch). Không hứa kết quả, không từ tuyệt đối, **không dùng nỗi sợ** (Hiến pháp điều 5).
+- Mỗi chặng nói **ai ở bên nhà mình** (`.ct-ben`) — khách không thấy mình đi một mình.
+- **Rút khỏi trang công khai**: câu hỏi thật + bốn mức, ngưỡng cảnh báo, quy mô kho nghề, năm bước vận hành. Dữ liệu cửa trước giữ trong biến của tệp, **không đổ vào G**.
+- Rút khỏi MÀN chưa phải bảo vệ: `kho/mau.json` (219 kho, 462 KB) vẫn ai cũng tải được. Cắt gói ấy là việc ở `tools/ma-hoa-kho.js` và cần kho-goc của chủ hệ.
+- Bộ bắt cú bấm chung (`on()` ở app.js) gọi `preventDefault` → đừng dùng ô tích ở đây, dùng nút `aria-pressed`. Phần tử có `display` riêng phải kèm `[hidden]{display:none}`, nếu không thuộc tính `hidden` mất tác dụng.
+- "100 điểm chạm trước quyết định" là **cách đếm, không phải chỉ tiêu**; trang này chỉ là phần đầu của hành trình.

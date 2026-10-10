@@ -1600,7 +1600,7 @@ on('[data-pq]', function(el){
   G.doiO(p[0], p[1]);
 });
 on('[data-lang]', function(el){ G.setLang(el.getAttribute('data-lang')); });
-on('[data-ct]', function(el){ G.doiPhanCuaTruoc(el.getAttribute('data-ct')); });
+on('[data-ctc]', function(el){ G.chonCuaTruoc(el); });
 /* ── Bảng công việc ── */
 on('[data-cvnhan]',   function(el){ G.cvNhanHoiDap(el.getAttribute('data-cvnhan')); });
 on('[data-cvbatdau]', function(el){ G.cvBatDauHoiDap(el.getAttribute('data-cvbatdau')); });

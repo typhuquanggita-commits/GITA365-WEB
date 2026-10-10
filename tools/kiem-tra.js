@@ -4595,49 +4595,59 @@ const { chromium } = require(PW);
     if (soNut) {
       await p41.locator('[data-act="xem-truoc"]').first().click();
       await p41.waitForTimeout(1200);
-      const soTab = await p41.locator('[data-ct]').count();
-      bao(soTab === 3, 'cửa trước có đủ ba phần: làm gì · đường vào · năm bài test', soTab + '/3');
+      /* ── Cửa trước là MỘT trang năm chặng (chủ hệ 10/10) ──
+         Bản ba ngăn dài 43.495 ký tự, nút đăng ký nằm ở cuối sau năm mươi
+         lăm lần vuốt. Chủ hệ chốt: giảm một nửa, dẫn theo hành trình ra
+         quyết định, mỗi chặng có một việc làm được ngay, và rút ba thứ chỉ
+         giúp người muốn chép mô hình. Các phép đo dưới đây khoá đúng mấy
+         điều ấy — kể cả chiều NGƯỢC: trang không được mỏng tới mức rỗng. */
+      const chang = await p41.locator('#gate [id^="ct-s"]').count();
+      bao(chang === 5, 'cửa trước đi đủ năm chặng Nhận ra · Hiểu · Tin · Thử · Quyết', chang + '/5');
+      const chuCT = await p41.locator('#gate').innerText();
+      bao(chuCT.length <= 21000 && chuCT.length >= 4000,
+        'cửa trước dưới một nửa bản ba ngăn (43.495 ký tự) mà vẫn có ruột — dài quá thì nút đăng ký chìm, ngắn quá thì không ai quyết được',
+        chuCT.length.toLocaleString('vi-VN') + ' ký tự');
+      const soDK = await p41.locator('#gate [data-act="mo-dang-ky"]').count();
+      bao(soDK >= 2, 'nút đăng ký có ở cả đầu lẫn cuối trang — không bắt người ta đọc hết mới được quyết', soDK + ' nút');
+      bao(['Bài A', 'Bài B', 'Bài C', 'Bài D', 'Bài E'].every(x => chuCT.indexOf(x) >= 0),
+        'người lạ thấy tên đủ NĂM bài đo nền', 'A B C D E');
+      bao(chuCT.indexOf('Làm bài test đánh giá') >= 0, 'đường vào sáu bước hiện ngay trên trang', 'có');
+      bao(/KHÔNG dùng để kết luận nguyên nhân/.test(chuCT),
+        'ranh giới của bộ đo vẫn hiện ở cửa trước — bộ đo không tự khai chỗ dừng sẽ bị dùng quá tay', 'có ranh giới');
+      const ben = await p41.locator('#gate .ct-ben').count();
+      bao(ben === 5, 'chặng nào cũng nói AI ở bên nhà mình — khách không được thấy mình đi một mình', ben + '/5 chặng');
 
-      const chuGT = (await p41.locator('#app').innerText()).length;
-      bao(chuGT > 3000,
-        'phần "GITA 365 làm gì" mở ra có ruột thật, không phải một thẻ mời đăng ký',
-        chuGT.toLocaleString('vi-VN') + ' ký tự');
+      /* Ba thứ rút khỏi trang công khai — chúng giúp người chép mô hình,
+         không giúp người lạ quyết. Đo trên CHỮ hiện ra lẫn trên bộ nhớ. */
+      const lo = [];
+      if ((chuCT.match(/Mức [1-4]/g) || []).length) lo.push('câu hỏi thật kèm bốn mức');
+      if (/Bật khi miền|dưới \d+ điểm/.test(chuCT)) lo.push('ngưỡng cảnh báo');
+      if (/1\.000 kịch bản|220 phác đồ|250 tình huống|42 mô thức/.test(chuCT)) lo.push('quy mô kho nghề');
+      if (/XẾP BĂNG|CHẠM ĐÚNG NHỊP|CỔNG NGHIỆM THU/.test(chuCT)) lo.push('năm bước vận hành');
+      bao(!lo.length, 'cửa trước KHÔNG bày câu hỏi thật, ngưỡng điểm, quy mô kho hay bí quyết vận hành',
+        lo.length ? 'còn: ' + lo.join(' · ') : 'sạch');
+      const doG = await p41.evaluate(() => ['TEST750', 'GT_MOT_CAU', 'DV_BUOC', 'DV_HOI', 'GT_HUA']
+        .filter(k => window.G[k] !== undefined));
+      bao(!doG.length, 'dữ liệu cửa trước KHÔNG đổ vào G — đăng nhập ngay sau đó không để lại gì trong bộ nhớ',
+        doG.length ? 'còn: ' + doG.join(' ') : 'G sạch');
 
-      await p41.locator('[data-ct="duong"]').click(); await p41.waitForTimeout(600);
-      const chuDV = await p41.locator('#app').innerText();
-      bao(chuDV.indexOf('Làm bài test đánh giá') >= 0 && chuDV.length > 4000,
-        'người lạ xem được cả sáu bước đường vào trước khi quyết định đăng ký',
-        chuDV.length.toLocaleString('vi-VN') + ' ký tự');
+      /* Hiến pháp chín điều, điều 5: không dùng nỗi sợ của cha mẹ. */
+      const so = ['muộn mất rồi', 'con nhà người ta', 'kẻo không kịp', 'sẽ hối hận'].filter(x => chuCT.toLowerCase().indexOf(x) >= 0);
+      bao(!so.length, 'lời mời không dùng nỗi sợ của cha mẹ (điều 5)', so.length ? 'còn: ' + so.join(' · ') : 'sạch');
 
-      await p41.locator('[data-ct="test"]').click(); await p41.waitForTimeout(600);
-      const chuTS = await p41.locator('#app').innerText();
-      bao(['A', 'B', 'C', 'D', 'E'].every(x => chuTS.indexOf('Bài ' + x) >= 0),
-        'người lạ nhìn thấy đủ NĂM bài đánh giá — đây chính là phần anh Quang mở ứng dụng và không thấy',
-        'A B C D E');
-      /* ── Cửa trước phải nói CHIỀU SÂU, không nói chung chung ──
-         Một người lạ đọc "bài đánh giá đo năng lực học tập" thì không
-         phân biệt được chỗ này với bất kỳ bảng khảo sát nào trên mạng.
-         Cái phân biệt được nằm trong chính dữ liệu: từng bài cho ra
-         cái gì, bốn mức được TẢ ra sao, cảnh báo bật ở ngưỡng nào.
-         Mấy phép đo dưới đây bắt màn hình phải bày ra bằng ấy thứ. */
-      bao(/LÀM XONG THÌ CẦM ĐƯỢC GÌ/.test(chuTS) && /baseline/i.test(chuTS),
-        'mỗi bài nói rõ LÀM XONG THÌ CẦM ĐƯỢC GÌ — không để người lạ đoán bài đánh giá này dẫn tới đâu',
-        /baseline/i.test(chuTS) ? 'có phần cho ra' : 'thiếu');
-      const mucSo = (chuTS.match(/Mức [1-4]/g) || []).length;
-      bao(mucSo >= 20,
-        'mỗi bài mở một câu THẬT với đủ bốn mức được tả bằng tình huống — đây là chỗ phân biệt bộ đo nghề với một bảng khảo sát',
-        mucSo + ' mức hiển thị (5 bài × 4 mức)');
-      bao(/Bật khi miền/.test(chuTS) && /dưới \d+ điểm/.test(chuTS),
-        'cửa trước bày ra NGƯỠNG cảnh báo thật, không chỉ nói "hệ thống có cảnh báo"',
-        (chuTS.match(/Bật khi miền/g) || []).length + ' cảnh báo có ngưỡng');
-      bao(/KHÔNG dùng để kết luận nguyên nhân/.test(chuTS),
-        'ranh giới của bộ đo hiện ngay ở cửa trước — một bộ đo không tự khai chỗ nó dừng lại là bộ đo sẽ bị dùng quá tay',
-        'có ranh giới');
-      /* Ngân hàng câu hỏi vẫn phải kín: mỗi bài đúng MỘT câu mẫu. */
-      const soHoi = (chuTS.match(/MỘT CÂU THẬT TRONG BÀI/g) || []).length;
-      bao(soHoi === 5,
-        'mỗi bài mở đúng MỘT câu mẫu — bày cách hỏi, không bày ngân hàng câu hỏi',
-        soHoi + '/5 bài, 5 câu trên 150 câu của tầng một');
+      /* Hành động, không phải lý thuyết: chọn một tình huống thì hiện ĐÚNG
+         một việc của tối nay; đánh dấu một tối thì câu dưới đổi theo. */
+      await p41.locator('[data-ctc="g3"]').click(); await p41.waitForTimeout(200);
+      const hien = await p41.evaluate(() => [...document.querySelectorAll('[data-ctg]')]
+        .filter(e => e.offsetParent !== null).map(e => e.getAttribute('data-ctg')));
+      bao(hien.length === 1 && hien[0] === '3', 'chọn một tình huống thì hiện đúng MỘT việc của tối nay cho tình huống ấy',
+        hien.join(',') || 'không thẻ nào');
+      const truoc = await p41.locator('#ct-ngot').innerText();
+      await p41.locator('[data-ctc="v0"]').click(); await p41.waitForTimeout(200);
+      const sau = await p41.locator('#ct-ngot').innerText();
+      bao(truoc !== sau && /1\/3/.test(sau), 'đánh dấu một tối thử thì trang ghi nhận ngay — nhà mình thấy mình đã bắt đầu',
+        sau.slice(0, 40));
+      await p41.locator('[data-ctc="v0"]').click(); await p41.waitForTimeout(100);
 
       const nutLam = await p41.locator('[data-test],[data-tlam],[data-txong]').count();
       bao(nutLam === 0,
@@ -4679,21 +4689,17 @@ const { chromium } = require(PW);
       await q.goto('file://' + tep41, { waitUntil: 'load' });
       await q.waitForTimeout(1600);
       const nutQ = await q.locator('[data-act="xem-truoc"]').count();
-      let baiQ = false, tabQ = 0;
+      let baiQ = false, changQ = 0;
       if (nutQ) {
         await q.locator('[data-act="xem-truoc"]').first().click();
         await q.waitForTimeout(1400);
-        tabQ = await q.locator('[data-ct]').count();
-        if (tabQ) {
-          await q.locator('[data-ct="test"]').click();
-          await q.waitForTimeout(700);
-          const tQ = await q.locator('#app').innerText();
-          baiQ = ['A', 'B', 'C', 'D', 'E'].every(x => tQ.indexOf('Bài ' + x) >= 0);
-        }
+        changQ = await q.locator('#gate [id^="ct-s"]').count();
+        const tQ = await q.locator('#app').innerText();
+        baiQ = ['A', 'B', 'C', 'D', 'E'].every(x => tQ.indexOf('Bài ' + x) >= 0);
       }
-      bao(nutQ > 0 && tabQ === 3 && baiQ,
+      bao(nutQ > 0 && changQ === 5 && baiQ,
         'cửa trước mở được cả ở BẢN MỘT TỆP — đây mới là bản thật sự gửi cho người lạ xem',
-        nutQ ? tabQ + '/3 phần · năm bài ' + (baiQ ? 'thấy đủ' : 'KHÔNG thấy') : 'không có lối vào');
+        nutQ ? changQ + '/5 chặng · năm bài ' + (baiQ ? 'thấy đủ' : 'KHÔNG thấy') : 'không có lối vào');
       bao(!loiQ.length, 'bản một tệp không lỗi trang khi mở cửa trước',
         loiQ.length ? loiQ[0].slice(0, 90) : '0 lỗi');
       await q.close();
@@ -9690,19 +9696,19 @@ const { chromium } = require(PW);
       const ngoaiTran = G.xkDuocXem('R08', 'T4');
       r.haiCauTuChoiKhacNhau = ngoaiTran.thieuTran === true &&
         ngoaiTran.thieuGiayPhep === undefined;
-      G.XK_PHEP = { tang: ['T4', 'T5'], hetHan: '2030-01-01T00:00:00.000Z' };
+      G.XK_PHEP = { tang: ['T4', 'T5'], hetHan: '2035-01-01T00:00:00.000Z' };
       r.coPhepThiXemDuoc = G.xkDuocXem('R07', 'T4').ok === true;
       /* Giấy phép hết hạn TỰ TẮT, không chờ ai nhớ đi gỡ. */
       G.XK_PHEP = { tang: ['T4', 'T5'], hetHan: '2020-01-01T00:00:00.000Z' };
       r.hetHanTuTat = G.xkDuocXem('R07', 'T4').ok === false;
       /* Giấy phép KHÔNG mở được thứ ngoài trần. */
-      G.XK_PHEP = { tang: ['T1', 'T2', 'T3', 'T4', 'T5'], hetHan: '2030-01-01T00:00:00.000Z' };
+      G.XK_PHEP = { tang: ['T1', 'T2', 'T3', 'T4', 'T5'], hetHan: '2035-01-01T00:00:00.000Z' };
       r.phepKhongVuotTran = G.xkDuocXem('R08', 'T1').ok === false &&
         G.xkDuocXem('R11', 'T4').ok === false;
       G.XK_PHEP = null;
       /* Không lưu xuống máy: giấy phép đã thu hồi mà còn nằm trong máy thì
          người bị thu vẫn mở được tới lúc tải lại trang. */
-      G.XK_PHEP = { tang: ['T4'], hetHan: '2030-01-01T00:00:00.000Z' };
+      G.XK_PHEP = { tang: ['T4'], hetHan: '2035-01-01T00:00:00.000Z' };
       G.save();
       r.phepKhongLuoiXuongMay =
         (localStorage.getItem('gita365.v7') || '').indexOf('XK_PHEP') < 0;

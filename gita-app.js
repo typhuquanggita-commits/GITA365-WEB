@@ -64987,60 +64987,52 @@ G.VIEWS = G.VIEWS || {};
 /* ═══════════════════════════════════════════════════════════════
    GITA 365 — CỬA TRƯỚC: NGƯỜI LẠ NHÌN TRƯỚC KHI ĐĂNG KÝ
 
-   Anh Quang kể một hành trình cụ thể: anh Hoàng tình cờ biết tới
-   GITA365, tò mò vào xem, rồi mới đăng ký và làm bài test để nói ra
-   chuyện nhà mình. Rồi anh hỏi: phần giao diện ấy đâu, phần năm bài
-   test đâu.
+   Bản đầu (dựng theo câu chuyện anh Hoàng) mở ba ngăn: "GITA làm gì",
+   "Đường vào sáu bước", "Năm bài test". Đo trên điện thoại 390px thì ba
+   ngăn ấy dài 43.495 ký tự — khoảng năm mươi lăm lần vuốt màn, bốn mươi
+   phút đọc — và nút đăng ký nằm ở CUỐI. Chủ hệ chốt (10/10): giảm một
+   nửa, dẫn theo hành trình ra quyết định, và bảo mật hơn.
 
-   Đo lại thì ra hai chỗ hụt, cả hai đều thật:
+   Nay là MỘT trang, đi đúng thứ tự năm chặng của hành trình 100 điểm
+   chạm trước quyết định: Nhận ra → Hiểu → Tin → Thử → Quyết. Người lạ
+   gặp phần đầu của hành trình ấy ở đây; phần còn lại diễn ra ngoài
+   trang (bài viết, nhóm cộng đồng, buổi nghe giới thiệu, bảy ngày thử).
+   100 là CÁCH ĐẾM, không phải chỉ tiêu — cùng câu trả lời của SUP-01.
 
-   1. Màn đăng nhập không có cửa nào cho người CHƯA có tài khoản nhìn
-      vào. Ba nút ở đó là "Bước vào bản đồ" (cuộn xuống ô mật khẩu),
-      "Xem 15 tài khoản trải nghiệm" (bảng tài khoản nội bộ) và "Đăng
-      ký". Không nút nào trả lời câu hỏi đầu tiên của một người lạ:
-      chỗ này làm gì, và tôi có đúng chỗ không. Màn giới thiệu và màn
-      đường vào sáu bước đều đã dựng xong — nhưng cả hai nằm SAU tường
-      đăng nhập. Mời người ta bước qua cửa rồi khoá chính cái cửa ấy.
+   Ba thứ CỐ Ý rút khỏi trang công khai, vì chúng không giúp người lạ
+   quyết mà chỉ giúp người muốn chép mô hình:
+   · quy mô kho nghề (số kịch bản, phác đồ, tình huống, mô thức);
+   · bí quyết vận hành (bốn bước ngôn từ, năm bước vận hành);
+   · câu hỏi thật của bài đo và ngưỡng điểm cảnh báo — biết trước câu
+     và ngưỡng thì phép đo nền mất giá trị với chính nhà làm bài.
+   Rút khỏi MÀN chưa phải là bảo vệ: kho/mau.json vẫn tải được. Dữ liệu
+   ở đây cũng không còn đổ vào G — giữ trong biến của tệp này, chỉ lấy
+   đúng ô cần vẽ — nên đăng nhập ngay sau đó không để lại gì trong bộ
+   nhớ. Cắt chính gói mau.json là bước sau, ở tools/ma-hoa-kho.js.
 
-   2. Bản xem thử chỉ mở MỘT bài test trong khi cả lời hứa lẫn màn
-      test đều nói năm bài. (Chỗ ấy sửa ở tools/ma-hoa-kho.js.)
+   Luật chữ của trang này: khát khao thay đổi đi từ HÌNH ẢNH TƯƠNG LAI,
+   không đi từ nỗi sợ (Hiến pháp chín điều, điều 5); không hứa kết quả,
+   không từ tuyệt đối (bộ lọc quảng cáo QC1–QC3).
 
-   Tệp này dựng cửa số 1. Nó KHÔNG mở thêm dữ liệu nào: cả ba phần
-   dưới đây đọc đúng kho/mau.json — gói công khai mà bất kỳ ai cũng
-   tải được sẵn, và packer đã cố ý để mở với lý do ghi ngay trong đó
-   ("khoá nó lại là khoá đúng cái cửa mình đang mời người ta bước
-   qua"). Kho nghề, 1.000 kịch bản, 220 phác đồ, ma trận, học phí vẫn
-   khoá nguyên trong bảy gói .enc.
-
-   Một điều cố ý KHÔNG làm: người chưa đăng ký xem được HÌNH DẠNG năm
-   bài test nhưng không làm được bài. Vì bài làm xong phải có chỗ ghi
-   — mã gia đình — và mã đó chỉ có sau khi đăng ký. Cho làm bài rồi
-   vứt kết quả đi là lấy 75 phút của một gia đình để đổi lấy không gì
-   cả.
+   Một điều KHÔNG đổi: người chưa đăng ký xem được tên năm bài nhưng
+   không làm được bài — bài xong phải có mã gia đình để ghi vào.
    ═══════════════════════════════════════════════════════════════ */
 'use strict';
 var G = window.G || {}; window.G = G;
 
 (function () {
-  var DA_NAP = false;      /* mau.json chỉ tải một lần cho mỗi phiên */
-  var PHAN = 'gita';       /* gita · duong · test */
+  var D = null;            /* dữ liệu cửa trước — KHÔNG đổ vào G */
 
-  function U() { return G.U; }
   function h(x) { return G.U.h(x); }
   function ic(a, b) { return G.U.ic(a, b); }
 
   /* ─── Tải gói công khai ───
-     Cùng đường dẫn mà napMau() dùng, kể cả khi Apps Script phục vụ. */
+     Bản một tệp không có thư mục kho/ cạnh trang — dong-goi.py nhúng
+     gói mẫu vào G.MAU_NHUNG. Đọc chỗ ấy trước, nếu không thì cửa trước
+     hỏng đúng ở bản người lạ hay mở nhất. */
   function napCongKhai() {
-    if (DA_NAP) return Promise.resolve(true);
-
-    /* Bản một tệp (GITA365-…-gioi-thieu.html, và bản xem thử gửi khách)
-       không có thư mục kho/ cạnh trang — tools/dong-goi.py nhúng thẳng
-       gói mẫu vào G.MAU_NHUNG. Không đọc chỗ ấy trước thì fetch trả 404
-       và cửa trước hỏng đúng ở bản mà người lạ hay mở nhất: cái tệp
-       được gửi cho họ xem. */
+    if (D) return Promise.resolve(true);
     if (window.G && G.MAU_NHUNG) return Promise.resolve(nhan(G.MAU_NHUNG));
-
     var duong = window.GITA_NGUON_KHO ? (window.GITA_NGUON_KHO + 'mau') : 'kho/mau.json';
     return fetch(duong)
       .then(function (r) { return r.json(); })
@@ -65048,179 +65040,96 @@ var G = window.G || {}; window.G = G;
       .catch(function () { return false; });
   }
 
-  /* Chỉ nhận những kho của CỬA TRƯỚC. Gói mẫu có 50 kho; đổ hết vào G
-     lúc chưa đăng nhập là để lại dữ liệu của phiên trước trong bộ nhớ
-     khi người dùng bấm đăng nhập ngay sau đó, và donKho() lúc đăng nhập
-     sẽ không biết chúng từ đâu ra. */
-  var LAY = ['DV_BUOC', 'DV_CHAN', 'DV_HOI', 'TEST750', 'HANHTRINH12', 'TRU_GITA'];
+  /* Chỉ giữ đúng ô cần vẽ. Bài đo giữ TÊN, người làm, số phút, số miền
+     và câu giới hạn — bỏ câu hỏi, nhóm điểm và ngưỡng cảnh báo. */
   function nhan(m) {
     if (!m) return false;
-    Object.keys(m).forEach(function (k) {
-      if (k.indexOf('GT_') === 0 || LAY.indexOf(k) >= 0) G[k] = m[k];
+    var bai = (m.TEST750 || []).filter(function (b) { return b.tang === 'T1'; }).map(function (b) {
+      return { bo: b.bo, ten: b.ten, ai: b.ai, phut: b.phut, soMien: (b.mien || []).length, gioiHan: b.gioiHan };
     });
-    DA_NAP = true;
+    D = {
+      motCau: m.GT_MOT_CAU || '', viSao: m.GT_VISAO || {}, hua: m.GT_HUA || [], tang: m.GT_TANG || [],
+      vai: m.GT_VAI || [], khong: m.GT_KHONG || [], ranh: m.GT_MUCTIEU_RANH || '',
+      buoc: m.DV_BUOC || [], hoi: m.DV_HOI || [], bai: bai
+    };
     return true;
   }
 
-  /* ─── Ba phần ─── */
-  var PHANS = [
-    { k: 'gita',  t: 'GITA 365 làm gì',
-      h: 'Một câu định nghĩa, sáu mục tiêu có mốc ngày và ngưỡng đạt, bảy giá trị mỗi giá trị kèm một việc nên làm và một việc không làm — và sáu điều Học viện KHÔNG nhận làm.' },
-    { k: 'duong', t: 'Đường vào sáu bước',
-      h: 'Sáu chặng đi theo thứ tự. Mỗi chặng ghi rõ ai làm, mất bao lâu, xong thì cầm được gì trong tay, và chưa xong thì bị chặn ở đâu — chặn để bước sau không chạy trên nền sai.' },
-    { k: 'test',  t: 'Năm bài test đánh giá',
-      h: 'Cấu trúc thật của phép đo nền: đo miền nào, bốn mức được tả ra sao, cho ra cái gì, cảnh báo nào tự bật ở ngưỡng nào — kèm một câu thật lấy nguyên từ mỗi bài.' }
+  /* ─── Năm chặng ra quyết định ─── */
+  /* Mỗi chặng nói AI sẽ ở bên nhà mình ở chặng ấy — chủ hệ (10/10): khách
+     không được thấy mình đi một mình. Tên vai khớp G.GT_VAI; câu nói điều
+     vai ấy LÀM, không hứa một mức an tâm nào (không từ tuyệt đối, QC1). */
+  var CHANG = [
+    { k: 1, t: 'Nhận ra', ben: 'Chuyên gia tư vấn — buổi đầu chỉ nghe nhà mình kể.' },
+    { k: 2, t: 'Hiểu',    ben: 'Chuyên gia tư vấn và trợ lý ảo — trả lời mọi câu hỏi về bản đồ.' },
+    { k: 3, t: 'Tin',     ben: 'Coach và mentor — người thật, đi cùng nhà mình từng chặng.' },
+    { k: 4, t: 'Thử',     ben: 'Chuyên gia đánh giá — đọc hồ sơ cùng cả nhà, bằng dữ liệu.' },
+    { k: 5, t: 'Quyết',   ben: 'Coach — cùng nhà mình chọn chặng đầu tiên, và ở lại suốt năm tầng.' }
   ];
 
-  /* Màn năm bài test cho người CHƯA đăng ký: nói đúng hình dạng bài,
-     không mở nút làm bài. Không dùng lại G.VIEWS['bo-test'] vì màn ấy
-     đọc G.S.test và mở nút làm bài — cả hai đều cần tài khoản. */
-  function manTest() {
-    var T = (G.TEST750 || []).slice();
-    if (!T.length)
-      return U().empty('Chưa tải được phần xem trước',
-        'Phần này tải từ gói công khai kho/mau.json. Mở lại trang rồi bấm lại.');
+  /* Năm tình huống để người lạ tự nhận ra nhà mình. Mỗi tình huống có
+     HAI phần: GITA bắt đầu từ đâu (dựa trên điều Học viện ĐÃ làm — đo
+     bảy ngày, chín vai, mười phút mỗi tối, xếp việc theo khoảng vụn),
+     và MỘT việc làm được ngay tối nay, không cần đăng ký. Chủ hệ (10/10):
+     "để họ bắt tay hành động thay vì gửi thông điệp lý thuyết". Việc tối
+     nay phải nhỏ, quan sát được, không trách ai, và không hứa kết quả. */
+  var GUONG = [
+    { t: 'Tối nào cũng phải nhắc con nhiều lần mới chịu ngồi vào bàn.',
+      d: 'Bảy ngày đầu, bên em chưa sửa gì cả — chỉ cùng nhà mình đếm. Có một con số chung thì cả nhà thôi ' +
+         'tranh luận bằng cảm giác, và việc đầu tiên nhắm tới thường chính là giảm số lần phải nhắc.',
+      viec: 'Tối nay chỉ đếm, chưa sửa. Mỗi lần nhắc con, gạch một vạch lên tờ giấy dán ở tủ lạnh — không nhắc ' +
+         'thêm, không trách. Sáng mai cả nhà cùng nhìn con số ấy.' },
+    { t: 'Bố mẹ đều thương con, nhưng mỗi người một cách.',
+      d: 'Không ai bị bắt đổi ngay. Bản đồ chia rõ việc nào của ai — chín vai trong nhà, mỗi vai có người giữ — ' +
+         'để người lớn đứng cùng một phía trước khi nói với con.',
+      viec: 'Tối nay, khi con đã ngủ, mỗi người nói một câu: điều mình mong nhất ở con trong năm nay. Chỉ nghe ' +
+         'nhau, chưa bàn cách làm.' },
+    { t: 'Kế hoạch nào cũng hăng hái tuần đầu rồi bỏ dở.',
+      d: 'Nhịp quan trọng hơn cường độ. Mức tối thiểu là mười phút mỗi tối, đặt sao cho hôm mệt nhất vẫn làm được. ' +
+         'Lỡ một nhịp thì có đường quay lại, không phải làm lại từ đầu.',
+      viec: 'Chọn một việc nhỏ đến mức hôm mệt nhất vẫn làm được — mười phút đọc sách cùng con chẳng hạn. Tối nay ' +
+         'làm đúng việc ấy, rồi đánh một dấu lên lịch treo tường.' },
+    { t: 'Con ít kể chuyện, hỏi gì cũng chỉ "bình thường".',
+      d: 'Bắt đầu từ cách người lớn hỏi, không bắt đầu từ việc bắt con nói. Người đồng hành gợi cho cha mẹ những ' +
+         'câu mở lời cho buổi tối, rồi cùng nhà mình nhìn lại sau mỗi tuần.',
+      viec: 'Tối nay đổi câu hỏi. Thay vì "Hôm nay học thế nào?", hỏi "Hôm nay có chuyện gì làm con bật cười?" — ' +
+         'rồi nghe hết, không góp ý.' },
+    { t: 'Cả nhà bận, buổi tối mỗi người một màn hình.',
+      d: 'Người bận không thiếu thời gian — họ có thời gian ở dạng vụn. Người đồng hành xếp việc vào đúng những ' +
+         'khoảng vụn ấy, bắt đầu từ một nếp nhỏ cả nhà giữ được.',
+      viec: 'Tối nay dành mười lăm phút không màn hình cho cả nhà, kể cả bố mẹ. Đặt điện thoại vào một chỗ chung, ' +
+         'rồi ngồi cùng nhau làm bất cứ việc gì.' }
+  ];
+  var CHON = 0;
 
-    var t1 = T.filter(function (b) { return b.tang === 'T1'; });
-    var ds = t1.length ? t1 : T;
-    var cauThat = ds.reduce(function (a, b) { return a + (b.soCauThat || b.cau.length); }, 0);
-    var mien = ds[0] && ds[0].mien ? ds[0].mien.length : 0;
-    var soCB = ds.reduce(function (a, b) { return a + (b.canhBao || []).length; }, 0);
-    var moiMien = mien ? Math.round((ds[0].soCauThat || ds[0].cau.length) / mien) : 0;
+  /* Ba tối thử tại nhà, TRƯỚC khi đăng ký. Đánh dấu chỉ lưu trên máy
+     này (localStorage, bọc try/catch) — không gửi đi đâu, và trang vẫn
+     chạy đủ khi trình duyệt chặn bộ nhớ. Dùng nút bật/tắt chứ không
+     dùng ô tích: bộ bắt sự kiện chung của app.js chặn hành vi mặc định
+     của cú bấm, nên ô tích sẽ không tự đổi trạng thái. */
+  var BA_TOI = [
+    { t: 'Tối thứ nhất · Đếm', y: 'Đếm số lần phải nhắc con bắt đầu việc học. Chỉ đếm — không nhắc thêm, không trách.' },
+    { t: 'Tối thứ hai · Trao', y: 'Trước giờ học, hỏi con: "Hôm nay con muốn bắt đầu bằng việc gì?" — rồi để con chọn.' },
+    { t: 'Tối thứ ba · Nhìn lại', y: 'Cả nhà ngồi mười phút, mỗi người kể một điều mình thấy ổn hơn trong ba tối vừa qua.' }
+  ];
+  var KHOA_TOI = 'gita365.bataithu';
+  function docToi() {
+    try { var v = JSON.parse(localStorage.getItem(KHOA_TOI) || '[]'); return Array.isArray(v) ? v : []; }
+    catch (e) { return []; }
+  }
+  function ghiToi(v) { try { localStorage.setItem(KHOA_TOI, JSON.stringify(v)); } catch (e) {} }
 
-    var o = U().sec('NĂM BÀI CỦA TẦNG MỘT — ĐO CÁI GÌ, VÀ ĐO NHƯ THẾ NÀO',
-      'Đây không phải bài trắc nghiệm tính cách và không phải bài kiểm tra kiến thức. Nó là một phép ĐO NỀN: ' +
-      'ghi lại thực trạng bảy ngày gần nhất của một nhà, bằng hành vi quan sát được, để bảy ngày sau đối chiếu ' +
-      'xem cái gì đã đổi. Học viên làm ba bài, phụ huynh làm hai bài — cùng một nhà nhìn từ hai chỗ đứng, và ' +
-      'chỗ hai phía trả lời lệch nhau là chỗ buổi đọc hồ sơ mở ra trước tiên.');
-
-    o += '<div class="grid g4 mb">' +
-      U().stat({ k: 'Bài', v: String(ds.length), d: '3 bài học viên · 2 bài phụ huynh', c: '#185AB4' }) +
-      U().stat({ k: 'Câu hỏi', v: String(cauThat), d: mien + ' miền × ' + moiMien + ' câu mỗi bài', c: '#5140B4' }) +
-      U().stat({ k: 'Lựa chọn', v: String(cauThat * 4), d: 'bốn mức cho mỗi câu', c: '#0B6675' }) +
-      U().stat({ k: 'Cảnh báo tự bật', v: String(soCB), d: 'theo ngưỡng từng miền', c: '#B45309' }) +
-      '</div>';
-
-    /* ─ Chỗ khác biệt thật, nói bằng chính dữ liệu đang hiển thị ─ */
-    o += '<div class="card mb" style="border-color:var(--gita-vien-2)">' +
-      '<div class="row mb" style="gap:8px"><span style="color:var(--gold-ink)">' + ic('target', 'w-4 h-4') + '</span>' +
-      '<b>Bốn lựa chọn là bốn MỨC HÀNH VI, không phải bốn mức "tốt – khá – trung bình – kém"</b></div>' +
-      '<p class="sm dim" style="line-height:1.8">Đây là chỗ bộ đo này khác một bảng khảo sát. Mỗi lựa chọn ' +
-      'không phải một tính từ mà là một TÌNH HUỐNG ĐƯỢC TẢ — trung bình sáu mươi hai ký tự, có mốc thời gian ' +
-      'hoặc số lần để người trả lời tự soi vào tuần vừa rồi. Hỏi "em có chăm học không" thì mười nhà trả lời ' +
-      'ra mười thang đo khác nhau; tả ra "em lùi lại nhiều lần, có hôm quá một tiếng mới bắt đầu" thì hai nhà ' +
-      'cùng cảnh sẽ chọn cùng một mức. Nhờ vậy điểm của nhà mình so được với chính nhà mình chặng sau, ' +
-      'và Coach đọc điểm là biết ngay phải hỏi tiếp câu gì.</p></div>';
-
-    /* ─ Năm thẻ bài, mỗi thẻ mở một câu thật ─ */
-    o += U().sec('TỪNG BÀI ĐO GÌ VÀ CHO RA GÌ', 'Mỗi thẻ kèm một câu thật lấy nguyên từ bài, đủ bốn mức.');
-    o += '<div class="grid g1 mb">' + ds.map(function (b) {
-      var laPH = b.ai === 'PH';
-      var mauAi = laPH ? '#B45309' : '#185AB4';
-      var q = (b.cau || [])[0];
-      var x = '<div class="card mb" style="border-color:' + mauAi + '22">' +
-        '<div class="row wrap mb" style="gap:7px">' + U().chip('Bài ' + h(b.bo), mauAi) +
-        U().chip(laPH ? 'Phụ huynh làm' : 'Học viên làm', mauAi) +
-        '<span class="tiny muted">' + (b.soCauThat || b.cau.length) + ' câu · ' +
-        h(String(b.phut)) + ' phút · tuổi ' + h(b.tuoi || '') + '</span></div>' +
-        '<b style="display:block;font-size:16px;line-height:1.35;margin-bottom:7px;color:' + mauAi + '">' +
-        h(b.ten) + '</b>' +
-        '<p class="sm dim" style="line-height:1.75;margin-bottom:12px">' + h(b.muc || '') + '</p>';
-
-      x += '<div class="grid g2 mb">' +
-        '<div class="card pad-sm"><div class="tiny up muted mb">SÁU MIỀN ĐO</div>' +
-        '<p class="tiny" style="line-height:1.7">' +
-        (b.mien || []).map(function (m) { return h(m); }).join(' · ') + '</p></div>' +
-        '<div class="card pad-sm" style="border-color:' + mauAi + '33">' +
-        '<div class="tiny up mb" style="color:' + mauAi + '">LÀM XONG THÌ CẦM ĐƯỢC GÌ</div>' +
-        '<p class="tiny" style="line-height:1.7">' + h(b.ra || '') + '</p></div></div>';
-
-      if (q) {
-        x += '<div class="card pad-sm" style="border-color:var(--gita-vien-1);background:var(--gita-mo-1)">' +
-          '<div class="tiny up muted mb">MỘT CÂU THẬT TRONG BÀI · MIỀN "' + h(q.mien) + '"</div>' +
-          '<p class="sm" style="line-height:1.7;margin-bottom:9px"><b>' + h(q.hoi) + '</b></p>' +
-          (q.chon || []).map(function (c) {
-            var mc = c.muc === 1 ? '#BE0E16' : c.muc === 2 ? '#FB923C' : c.muc === 3 ? '#B45309' : '#0B7350';
-            return '<div class="row" style="gap:9px;align-items:flex-start;margin-bottom:6px">' +
-              '<span class="chip" style="flex:none;color:' + mc + ';border-color:' + mc +
-              '40;background:' + mc + '14">Mức ' + c.muc + '</span>' +
-              '<span class="tiny" style="line-height:1.65;flex:1">' + h(c.t) + '</span></div>';
-          }).join('') +
-          '<p class="tiny muted mt" style="line-height:1.6">Mức 1 tới mức 4 quy về thang 100 theo miền, ' +
-          'không cộng dồn thành một điểm tổng duy nhất — vì một nhà mạnh miền này yếu miền kia thì điểm tổng ' +
-          'giấu mất đúng chỗ cần chạm.</p></div>';
-      }
-      return x + '</div>';
-    }).join('') + '</div>';
-
-    /* ─ Cảnh báo tự bật ─ */
-    var cbs = [];
-    ds.forEach(function (b) {
-      (b.canhBao || []).forEach(function (c) { cbs.push({ b: b, c: c }); });
-    });
-    if (cbs.length) {
-      o += U().sec(cbs.length + ' CẢNH BÁO TỰ BẬT THEO NGƯỠNG',
-        'Bài chấm xong không dừng ở bảng điểm. Miền nào tụt dưới ngưỡng thì một cảnh báo tự bật, và cảnh báo ' +
-        'nói VIỆC PHẢI LÀM chứ không kết luận nguyên nhân — kết luận nguyên nhân là việc của buổi đọc hồ sơ ' +
-        'có người ngồi cùng, không phải việc của một phép tính.');
-      o += '<div class="grid g2 mb">' + cbs.slice(0, 4).map(function (x) {
-        var nang = x.c.severity === 'high';
-        var mc = nang ? '#BE0E16' : '#B45309';
-        var ng = /domain\('([^']+)'\)\s*<\s*(\d+)/.exec(x.c['if'] || '');
-        return '<div class="card pad-sm" style="border-color:' + mc + '33">' +
-          '<div class="row wrap mb" style="gap:6px">' + U().chip('Bài ' + h(x.b.bo), mc) +
-          U().chip(nang ? 'ưu tiên cao' : 'theo dõi', mc) + '</div>' +
-          '<p class="tiny mb" style="line-height:1.65;color:var(--ink-3)">Bật khi miền <b>' +
-          h(ng ? ng[1] : '—') + '</b> dưới ' + h(ng ? ng[2] : '—') + ' điểm</p>' +
-          '<p class="tiny" style="line-height:1.7">' + h(x.c['then']) + '</p></div>';
-      }).join('') + '</div>';
-      o += '<p class="tiny muted mb">Bốn cảnh báo trên là ví dụ lấy từ bài A và bài B. Đủ ' + cbs.length +
-        ' cảnh báo chỉ bật khi có bài làm thật để chấm — mà bài làm thật thì cần mã gia đình.</p>';
-    }
-
-    /* ─ Bốn nhóm ─ */
-    if (ds[0] && ds[0].nhom) {
-      o += U().sec('ĐIỂM MIỀN RƠI VÀO MỘT TRONG BỐN BĂNG',
-        'Băng không phải xếp hạng nhà. Nó quyết định NHỊP CHẠM: băng đỏ thì Coach chạm dày, băng xanh thì ' +
-        'Học viện lùi ra để nhà mình tự chạy. Không băng nào là trượt, và băng đổi được theo tuần.');
-      o += '<div class="grid g4 mb">' + ds[0].nhom.map(function (n) {
-        return '<div class="card pad-sm" style="border-color:' + n.color + '33">' +
-          '<div class="row mb" style="gap:8px">' + U().dot(n.color) +
-          '<b class="sm" style="color:' + n.color + '">' + h(n.label) + '</b></div>' +
-          '<div class="tiny muted mb">' + n.min + '–' + n.max + ' điểm</div>' +
-          '<p class="tiny dim" style="line-height:1.65">' + h(n.meaning) + '</p>' +
-          (n.action ? '<div class="card pad-sm mt" style="border-color:' + n.color + '2e">' +
-            '<div class="tiny up mb" style="color:' + n.color + '">VIỆC LÀM NGAY</div>' +
-            '<p class="tiny" style="line-height:1.65">' + h(n.action) + '</p></div>' : '') +
-          '</div>';
-      }).join('') + '</div>';
-    }
-
-    if (ds[0] && ds[0].gioiHan)
-      o += '<div class="card mb" style="border-color:var(--gita-vien-1)">' +
-        '<div class="row mb" style="gap:8px"><span style="color:var(--gold-ink)">' + ic('shield', 'w-4 h-4') + '</span>' +
-        '<b>Ba việc bộ đo này KHÔNG làm</b></div>' +
-        '<p class="sm dim" style="line-height:1.8">' + h(ds[0].gioiHan) + '</p>' +
-        '<p class="tiny muted mt" style="line-height:1.7">Dòng trên nằm nguyên trong dữ liệu của cả năm bài, ' +
-        'không phải một câu miễn trừ dán thêm ở chân trang. Một bộ đo không tự khai chỗ nó dừng lại là một ' +
-        'bộ đo sẽ bị dùng quá tay.</p></div>';
-
-    o += '<div class="card" style="border-color:var(--alert);background:rgba(251,146,60,.06)">' +
-      '<div class="row" style="gap:10px;align-items:flex-start">' +
-      '<span style="color:var(--alert);flex:none">' + ic('lock', 'w-4 h-4') + '</span>' +
-      '<div style="flex:1"><b class="sm">Xem được cấu trúc bài, làm bài thì cần mã gia đình</b>' +
-      '<p class="tiny mt" style="line-height:1.75;color:var(--ink-2)">' +
-      'Không phải để giữ bài. Là vì phép đo này chỉ có nghĩa khi có chỗ ghi và có mốc để đối chiếu: ' +
-      'điểm hôm nay là baseline, bảy ngày sau đo lại mới ra được cái gì đã đổi. Chỗ ghi ấy là mã gia đình ' +
-      'dạng F-xxx, và mã đó sinh ra lúc đăng ký. Cho làm trước rồi vứt kết quả đi là lấy ' +
-      (ds.length * 15) + ' phút của cả nhà để đổi lấy một con số không so được với gì.</p></div></div></div>';
-    return o;
+  function dau(k, tieu, phu) {
+    var c = CHANG[k - 1];
+    return '<div id="ct-s' + k + '" class="ct-dau">' +
+      '<div class="tiny up" style="color:var(--gold-ink)">Chặng ' + k + ' · ' + h(c.t) + '</div>' +
+      '<h2 class="ct-h">' + h(tieu) + '</h2>' +
+      '<div class="ct-ben">' + ic('users', 'w-3 h-3') + '<span><b>Ai ở bên nhà mình:</b> ' + h(c.ben) + '</span></div>' +
+      (phu ? '<p class="sm dim" style="line-height:1.75;max-width:62ch">' + h(phu) + '</p>' : '') + '</div>';
   }
 
-  function than() {
-    if (PHAN === 'duong') return G.VIEWS && G.VIEWS['tham-gia'] ? G.VIEWS['tham-gia']() : '';
-    if (PHAN === 'test') return manTest();
-    return G.VIEWS && G.VIEWS['gioi-thieu'] ? G.VIEWS['gioi-thieu']() : '';
+  function nutDangKy(nhan) {
+    return '<button class="btn pri" data-act="mo-dang-ky">' + ic('plus') + h(nhan || 'Đăng ký tài khoản') + '</button>';
   }
 
   function khung() {
@@ -65230,45 +65139,123 @@ var G = window.G || {}; window.G = G;
       '<button class="btn ghost sm" data-act="ct-dong">' + ic('arrow') + 'Quay lại đăng nhập</button>' +
       '<button class="btn pri sm" data-act="mo-dang-ky">' + ic('plus') + 'Đăng ký</button></div>';
 
-    o += '<div class="view" style="max-width:1080px;margin:0 auto;padding:22px 18px 60px">';
+    o += '<div class="view ct-trang">';
 
-    o += '<div class="card mb" style="border-color:var(--gita-vien-1);background:var(--gita-mo-1)">' +
-      '<p class="tiny" style="line-height:1.75;color:var(--ink-2)">' +
-      '<b>Phần này mở cho người chưa có tài khoản, và mở đúng ba thứ.</b> Học viện làm gì và không nhận ' +
-      'làm gì · đường vào đi qua sáu chặng nào và mỗi chặng chặn ở đâu · phép đo nền đo miền nào và ' +
-      'cho ra cái gì. Ba thứ ấy vốn là những gì Học viện phải nói trước khi một gia đình quyết định — ' +
-      'giấu chúng đi thì lời mời không có nghĩa.' +
-      '<br><br><b>Cái không mở ở đây</b>: 1.000 kịch bản làm việc, 220 phác đồ xử lý, 250 tình huống, ' +
-      '42 mô thức và ma trận năm tầng — đó là tài sản nghề, nằm trong bảy gói mã hoá và chỉ mở theo ' +
-      'đúng vai, đúng tầng, đúng phiên sau khi đăng nhập. Ngân hàng câu hỏi cũng vậy: ở đây chỉ hiện ' +
-      'một câu mẫu mỗi bài để xem cách hỏi, không phải cả bài.</p></div>';
+    /* Dải năm chặng — bấm để nhảy tới chặng ấy. */
+    o += '<nav class="ct-chang" aria-label="Năm chặng ra quyết định">' + CHANG.map(function (c) {
+      return '<button class="chip" data-ctc="s' + c.k + '">' + c.k + ' · ' + h(c.t) + '</button>';
+    }).join('') + '</nav>';
 
-    o += '<div class="row wrap mb" style="gap:8px">' + PHANS.map(function (x) {
-      return '<button class="btn ghost sm' + (x.k === PHAN ? ' on' : '') + '" data-ct="' + x.k + '">' +
-        h(x.t) + '</button>';
+    /* ── Mở đầu ── */
+    o += '<div class="card ct-mo">' +
+      '<div class="tiny up" style="color:var(--gold-ink)">Dành cho cha mẹ muốn buổi tối ở nhà nhẹ hơn</div>' +
+      '<h1 class="ct-h1">Mỗi tối một bước nhỏ — để ba trăm sáu mươi lăm ngày sau, nhà mình tự đi trên đôi chân của mình.</h1>' +
+      '<p style="line-height:1.8;max-width:62ch">' + h(D.motCau) + '</p>' +
+      '<div class="row wrap" style="gap:10px">' +
+      '<button class="btn pri" data-ctc="s1">' + ic('arrow') + 'Thử một việc ngay tối nay</button>' +
+      '<button class="btn ghost" data-act="mo-dang-ky">Đăng ký · 5 phút, chưa mất phí</button></div></div>';
+
+    /* ── 1 · Nhận ra ── */
+    o += dau(1, 'Nhà mình đang ở đâu?', 'Chọn câu giống nhà mình nhất. Mỗi câu có một việc làm được ngay tối nay. Lựa chọn chỉ nằm trên máy này.');
+    o += '<div class="ct-guong">' + GUONG.map(function (g, i) {
+      return '<button class="ct-o' + (i === CHON ? ' on' : '') + '" data-ctc="g' + i + '" aria-pressed="' + (i === CHON) + '">' + h(g.t) + '</button>';
+    }).join('') + '</div>';
+    o += GUONG.map(function (g, i) {
+      return '<div class="card ct-tra" data-ctg="' + i + '"' + (i === CHON ? '' : ' hidden') + '>' +
+        '<div class="tiny up" style="color:var(--gold-ink)">GITA bắt đầu từ đâu với nhà như thế</div>' +
+        '<p style="line-height:1.8">' + h(g.d) + '</p>' +
+        '<div class="ct-viec-nay"><div class="tiny up">Việc của tối nay</div>' +
+        '<p style="line-height:1.75">' + h(g.viec) + '</p></div></div>';
+    }).join('');
+
+    /* ── 2 · Hiểu ── */
+    o += dau(2, 'Nhà mình không thiếu cố gắng — chỉ thiếu một tấm bản đồ', D.viSao.canh || '');
+    if ((D.viSao.hong || []).length)
+      o += '<div class="card pad-sm"><b class="sm" style="display:block;margin-bottom:6px">Vì sao cố gắng hay bị trôi</b>' +
+        '<ul class="tiny dim" style="line-height:1.75;margin:0;padding-left:18px;display:grid;gap:4px">' +
+        D.viSao.hong.map(function (x) { return '<li>' + h(x) + '</li>'; }).join('') + '</ul>' +
+        (D.viSao.chot ? '<p class="sm mt" style="line-height:1.7">' + h(D.viSao.chot) + '</p>' : '') + '</div>';
+    o += '<div class="ct-luoi">' + D.hua.map(function (x) {
+      return '<div class="card pad-sm"><b class="sm" style="display:block;margin-bottom:4px">' + h(x.t) + '</b>' +
+        '<p class="tiny dim" style="line-height:1.7">' + h(x.y) + '</p></div>';
+    }).join('') + '</div>';
+    o += '<b class="sm">Năm tầng — và nhà mình sẽ thấy gì khi qua mỗi tầng</b>';
+    o += '<div class="ct-tang">' + D.tang.map(function (x) {
+      return '<div class="ct-tg" style="border-top-color:' + h(x.c || 'var(--gita-vien-2)') + '">' +
+        '<div class="tiny muted">' + h(x.t) + '</div><b class="sm">' + h(x.ten) + '</b>' +
+        '<p class="tiny dim" style="line-height:1.65">' + h(x.max || x.y || '') + '</p></div>';
     }).join('') + '</div>';
 
-    o += '<p class="tiny muted mb">' + h((PHANS.filter(function (x) { return x.k === PHAN; })[0] || {}).h || '') + '</p>';
+    /* ── 3 · Tin ── */
+    o += dau(3, 'Có người thật đi cùng — và nói thật khi nhà mình đang trượt', D.ranh);
+    o += '<div class="ct-luoi">' + D.vai.map(function (x) {
+      return '<div class="card pad-sm"><b class="sm" style="display:block;margin-bottom:4px">' + h(x.t) + '</b>' +
+        '<p class="tiny dim" style="line-height:1.65">' + h(x.y) + '</p></div>';
+    }).join('') + '</div>';
+    if (D.khong.length)
+      o += '<details class="card pad-sm ct-mo-rong"><summary class="sm"><b>Sáu điều Học viện KHÔNG nhận làm</b>' +
+        ' <span class="tiny muted">— đọc trước khi quyết</span></summary>' +
+        '<ol class="tiny dim" style="line-height:1.75;margin:10px 0 0;padding-left:20px">' +
+        D.khong.map(function (x) { return '<li>' + h(x) + '</li>'; }).join('') + '</ol></details>';
 
-    o += than();
+    /* ── 4 · Thử ── */
+    var daLam = docToi();
+    o += dau(4, 'Ba tối thử ngay tại nhà — trước cả khi đăng ký',
+      'Không cần tài khoản, không mất phí. Làm xong tối nào thì bấm đánh dấu tối ấy.');
+    o += '<div class="ct-ba-toi">' + BA_TOI.map(function (x, i) {
+      var xong = daLam.indexOf(i) >= 0;
+      return '<button class="ct-toi' + (xong ? ' on' : '') + '" data-ctc="v' + i + '" aria-pressed="' + xong + '">' +
+        '<span class="ct-dau-tich" aria-hidden="true">' + (xong ? '✓' : (i + 1)) + '</span>' +
+        '<span><b class="sm" style="display:block">' + h(x.t) + '</b><span class="tiny dim">' + h(x.y) + '</span></span></button>';
+    }).join('') + '</div>';
+    o += '<p class="sm" id="ct-ngot" style="line-height:1.75">' + loiNgot(daLam.length) + '</p>';
 
-    o += '<div class="card mt2" style="border-color:var(--gita-vien-2);background:var(--gita-mo-1)">' +
-      '<div class="row wrap" style="gap:14px;align-items:center">' +
-      '<div class="grow" style="min-width:260px">' +
-      '<b class="sm" style="display:block;margin-bottom:6px">Đọc xong ba mục trên rồi mới quyết — đó là ' +
-      'thứ tự Học viện muốn</b>' +
-      '<p class="tiny" style="line-height:1.75;color:var(--ink-2)">' +
-      'Đăng ký mất năm phút, không mất phí, và không mở khoá bằng thẻ. Xong thì nhà mình có ba thứ: ' +
-      'một mã gia đình dạng F-xxx đi theo suốt năm tầng, một hồ sơ trống chờ số liệu, và năm bài đánh ' +
-      'giá của tầng một mở ra để đo nền.' +
-      '<br><br>Nếu đọc mục "sáu điều Học viện KHÔNG làm" mà thấy có dòng không hợp với nhà mình, thì ' +
-      'dừng ở đây là đúng — bên em thà mất một đăng ký còn hơn nhận một gia đình mình không giúp được.' +
-      '</p></div>' +
-      '<button class="btn pri" data-act="mo-dang-ky">' + ic('plus') + 'Đăng ký tài khoản</button>' +
+    o += '<b class="sm" style="margin-top:10px">Khi nhà mình sẵn sàng: đường vào sáu bước, chưa bước nào mất phí</b>';
+    o += '<ol class="ct-buoc">' + D.buoc.map(function (x) {
+      return '<li><b class="sm">' + h(x.ten) + '</b><span class="tiny muted">' + h(x.lau || '') + '</span></li>';
+    }).join('') + '</ol>';
+    if (D.bai.length) {
+      o += '<div class="card pad-sm ct-bai"><b class="sm" style="display:block;margin-bottom:8px">Năm bài đo nền của tầng một</b>' +
+        '<ul class="tiny" style="margin:0;padding:0;list-style:none;display:grid;gap:6px">' +
+        D.bai.map(function (b) {
+          return '<li><b>Bài ' + h(b.bo) + ' · ' + h(b.ten) + '</b> <span class="muted">— ' +
+            (b.ai === 'PH' ? 'phụ huynh' : 'học viên') + ' · ' + h(b.phut) + ' phút · ' + h(b.soMien) + ' miền</span></li>';
+        }).join('') + '</ul>' +
+        '<p class="tiny dim mt" style="line-height:1.7">' + h(D.bai[0].gioiHan || '') +
+        ' Làm bài cần mã gia đình, vì điểm hôm nay là mốc để bảy ngày sau đo lại.</p></div>';
+    }
+
+    /* ── 5 · Quyết ── */
+    o += dau(5, 'Ba câu cha mẹ hay hỏi trước khi quyết', '');
+    o += '<div class="card pad-sm">' + D.hoi.slice(0, 3).map(function (x, i) {
+      return '<div' + (i ? ' class="mt"' : '') + '><b class="sm">' + h(x.h) + '</b>' +
+        '<p class="tiny dim" style="line-height:1.7">' + h(x.d) + '</p></div>';
+    }).join('') + '</div>';
+    if (D.hoi.length > 3)
+      o += '<details class="card pad-sm ct-mo-rong"><summary class="sm"><b>' + (D.hoi.length - 3) + ' câu hỏi khác</b></summary>' +
+        D.hoi.slice(3).map(function (x) {
+          return '<div class="mt"><b class="sm">' + h(x.h) + '</b><p class="tiny dim" style="line-height:1.7">' + h(x.d) + '</p></div>';
+        }).join('') + '</details>';
+
+    o += '<div class="card ct-cuoi">' +
+      '<div style="flex:1;min-width:0"><b style="display:block;margin-bottom:6px">Mang con số của ba tối ấy theo — nhà mình đã bắt đầu rồi</b>' +
+      '<p class="tiny" style="line-height:1.75;color:var(--ink-2)">Đăng ký mất năm phút và chưa mất phí. Xong là nhà mình có ' +
+      'một mã gia đình đi theo suốt năm tầng, một hồ sơ chờ số liệu, và năm bài đo nền của tầng một — người đồng hành sẽ ' +
+      'đo tiếp từ đúng chỗ nhà mình đang đứng. Nếu đọc sáu điều Học viện không nhận làm mà thấy có dòng không hợp, dừng ở ' +
+      'đây là đúng — bên em thà mất một đăng ký còn hơn nhận một gia đình mình không giúp được.</p></div>' +
+      '<div class="row wrap" style="gap:10px">' + nutDangKy() +
       '<button class="btn ghost" data-act="ct-dong">Đã có tài khoản</button></div></div>';
 
     o += '</div>';
     return o;
+  }
+
+  /* Câu theo số tối đã làm. Không hứa kết quả: vị ngọt là thứ nhà mình
+     TỰ nhìn thấy trong con số của mình, không phải thứ bên em cam kết. */
+  function loiNgot(n) {
+    if (n >= 3) return 'Ba tối, ba việc — nhà mình vừa tự tạo ra con số đầu tiên của riêng mình. Nếu có dù chỉ một lần nhắc ít hơn, một câu chuyện dài hơn, thì đó là thay đổi do chính nhà mình làm ra. Người đồng hành sẽ đo tiếp từ đúng con số ấy.';
+    if (n > 0) return 'Đã làm ' + n + '/3 tối. Cứ giữ đúng nhịp ấy — lỡ một tối thì làm tiếp tối sau, không phải làm lại từ đầu.';
+    return 'Vị ngọt đầu tiên thường đến từ một con số rất nhỏ. Con số ấy là của nhà mình — bên em chỉ giúp nhà mình nhìn thấy nó.';
   }
 
   function ve() {
@@ -65279,8 +65266,8 @@ var G = window.G || {}; window.G = G;
   }
 
   /* ─── Cửa vào ─── */
-  G.moCuaTruoc = function (phan) {
-    if (phan) PHAN = phan;
+  G.moCuaTruoc = function () {
+    CHON = 0;
     var app = document.getElementById('app');
     if (app) app.innerHTML = '<div id="gate"><div class="gate-body center" style="padding:80px 20px">' +
       '<p class="sm muted">Đang mở phần xem trước…</p></div></div>';
@@ -65294,13 +65281,47 @@ var G = window.G || {}; window.G = G;
   };
 
   G.dongCuaTruoc = function () {
-    PHAN = 'gita';
     if (G.veCong) G.veCong();
   };
 
-  G.doiPhanCuaTruoc = function (k) {
-    if (!PHANS.filter(function (x) { return x.k === k; }).length) return;
-    PHAN = k; ve();
+  /* Một cửa cho hai việc: "sN" nhảy tới chặng N, "gN" chọn tình huống N.
+     Chọn tình huống chỉ ẩn/hiện tại chỗ — vẽ lại thì trang nhảy về đầu. */
+  G.chonCuaTruoc = function (el) {
+    var v = String(el.getAttribute('data-ctc') || '');
+    if (v.charAt(0) === 's') {
+      var dich = document.getElementById('ct-s' + v.slice(1));
+      if (!dich) return;
+      var it = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      try { dich.scrollIntoView({ behavior: it ? 'auto' : 'smooth', block: 'start' }); } catch (e) { dich.scrollIntoView(); }
+      return;
+    }
+    if (v.charAt(0) === 'v') {
+      var k = parseInt(v.slice(1), 10);
+      if (!(k >= 0 && k < BA_TOI.length)) return;
+      var ds0 = docToi(), vt = ds0.indexOf(k);
+      if (vt >= 0) ds0.splice(vt, 1); else ds0.push(k);
+      ghiToi(ds0);
+      var xong = ds0.indexOf(k) >= 0;
+      el.className = 'ct-toi' + (xong ? ' on' : '');
+      el.setAttribute('aria-pressed', xong ? 'true' : 'false');
+      var tich = el.querySelector('.ct-dau-tich');
+      if (tich) tich.textContent = xong ? '\u2713' : String(k + 1);
+      var ngot = document.getElementById('ct-ngot');
+      if (ngot) ngot.innerHTML = loiNgot(ds0.length);
+      return;
+    }
+    if (v.charAt(0) !== 'g') return;
+    var i = parseInt(v.slice(1), 10);
+    if (!(i >= 0 && i < GUONG.length)) return;
+    CHON = i;
+    var ds = document.querySelectorAll('[data-ctc^="g"]');
+    for (var a = 0; a < ds.length; a++) {
+      var la = ds[a].getAttribute('data-ctc') === v;
+      ds[a].className = 'ct-o' + (la ? ' on' : '');
+      ds[a].setAttribute('aria-pressed', la ? 'true' : 'false');
+    }
+    var tra = document.querySelectorAll('[data-ctg]');
+    for (var b = 0; b < tra.length; b++) tra[b].hidden = tra[b].getAttribute('data-ctg') !== String(i);
   };
 })();
 
@@ -86654,7 +86675,7 @@ on('[data-pq]', function(el){
   G.doiO(p[0], p[1]);
 });
 on('[data-lang]', function(el){ G.setLang(el.getAttribute('data-lang')); });
-on('[data-ct]', function(el){ G.doiPhanCuaTruoc(el.getAttribute('data-ct')); });
+on('[data-ctc]', function(el){ G.chonCuaTruoc(el); });
 /* ── Bảng công việc ── */
 on('[data-cvnhan]',   function(el){ G.cvNhanHoiDap(el.getAttribute('data-cvnhan')); });
 on('[data-cvbatdau]', function(el){ G.cvBatDauHoiDap(el.getAttribute('data-cvbatdau')); });
