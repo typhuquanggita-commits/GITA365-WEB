@@ -1284,6 +1284,7 @@ function render(){
   var kcn = G.kcnThanh ? G.kcnThanh(G.S.view) : '';
   main.innerHTML = '<div class="view">' + kcn + nhac + hdThanh + v50 + noiDung + '</div>';
   if(G.a11yNhan) G.a11yNhan(main);   /* bù tên đọc được cho mọi ô nhập (a11y) */
+  if(G.dichDom) G.dichDom(main);     /* tiếng Anh: dịch phần chữ viết thẳng của màn (src/dich-giao-dien.js) */
   /* Màn trợ lý là một CỬA SỔ chiếm trọn chiều cao, nên nó cần lề dưới
      của vùng nội dung nhỏ lại. Lớp này là chỗ duy nhất khai chuyện ấy —
      tự tính chiều cao trong CSS mà không gỡ lề thì cửa sổ luôn thừa ra

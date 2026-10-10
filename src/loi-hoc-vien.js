@@ -123,6 +123,12 @@ G.NOI_HOCVIEN = {
 /* ═══════════ CÂU CHÀO VÀ CÂU NHẮC RIÊNG ═══════════ */
 G.LOI_CHAO_HV = function(ten){
   var gio = new Date().getHours();
+  /* Câu có tên người ghép giữa nên bộ dịch không tra được bằng một khoá
+     chung — chọn ngôn ngữ ngay tại chỗ ghép. */
+  if(G.LANG === 'en'){
+    var bE = gio < 11 ? 'Good morning' : gio < 14 ? 'Good afternoon' : gio < 18 ? 'Good afternoon' : 'Good evening';
+    return bE + ', ' + ten + '. What have you done today?';
+  }
   var buoi = gio < 11 ? 'Chào buổi sáng' : gio < 14 ? 'Chào buổi trưa'
            : gio < 18 ? 'Chào buổi chiều' : 'Chào buổi tối';
   return buoi + ', ' + ten + '. Hôm nay em làm được gì rồi?';

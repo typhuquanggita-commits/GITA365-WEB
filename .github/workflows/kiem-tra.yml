@@ -181,6 +181,8 @@ jobs:
         run: node tools/thu-xep-hang.mjs
       - name: Kim chỉ nam ở đầu mọi màn khách — chỉ đọc, chỉ họ tên, nhà lấy từ phiên
         run: node tools/thu-kim-chi-nam.mjs
+      - name: Tiếng Anh — bộ dịch giữ con số đúng chỗ, từ điển sạch, độ phủ không tụt mốc
+        run: node tools/thu-dich.mjs && node tools/trich-chu-viet.js --kiem
 
       - name: Soát thiết kế tĩnh — không chuyển động nảy, không chữ chạy, không màu cấm (cả dạng %23), chữ chuyển sắc không thêm chỗ mới
         run: node tools/thu-thiet-ke-tinh.mjs
