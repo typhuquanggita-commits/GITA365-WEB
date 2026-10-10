@@ -74,3 +74,9 @@ Không xoá mã màn, cửa máy chủ, bảng dữ liệu hay tệp nào đã g
 - Nguồn trần KHÔNG vào kho mã; chỉ `kho-cao/goi.enc` (một gói chung Coach + Tư vấn). Đóng gói lại phải gồm MỌI nhóm đã có — mở gói cũ bằng `--mo`, so với nguồn, rồi mới đóng.
 - Tầng 1 không chữa (chỉ quan sát · ghi · đọc mô thức · giả thuyết); tầng 2 là vòng thử 7 ngày đổi ít biến. Chạm dấu hiệu an toàn thì `thamVan` phải có "chuyển ngay" (bộ gộp chặn).
 - R11 thao tác với nhà ghi tên mình ở `hoSoKhach.tuVan` qua `vaiKhoCao` — chỉ vấn đề hệ Tư vấn, không mở ví. KHÔNG sửa `vaiVoiNha` của credit.js. Tư vấn viên ghi hoàn thành thì thưởng credit chờ Coach/Trưởng nhóm.
+
+## Một cửa hỏng không được ngắt cả ứng dụng (sửa 10/2026 · `docDongChay` · `src/noi-may-chu.js`)
+- Lỗi chủ hệ chụp: màn Truy vấn đa chiều, bấm "365 ngày" → "Máy chủ vừa không trả lời mấy lượt liền". Hai nguyên nhân chồng nhau: cửa chạy ~35 câu nối tiếp, một bảng thiếu trên D1 cũ (vaLuocDo chỉ THÊM CỘT, không dựng bảng) là cả cửa 500; lọc `substr(cot,1,10) >= ?` không đi chỉ mục nên kỳ 365 ngày quét trọn sổ audit.
+- Cửa nhiều chỉ số: mỗi chỉ số chạy riêng (`doRieng`), hỏng thì `null` + tên vào `chuaDo` — không kèm lời lỗi CSDL. Màn hiện "chưa đo được", không hiện 0.
+- Lọc ngày trên cột ISO viết `cot >= ?` (cùng nghĩa với substr khi mốc dài 10 ký tự, nhưng dùng chỉ mục).
+- Cầu dao máy khách: 500 CÓ `x-gita-ma` là máy chủ đã trả lời — chỉ khoá đúng cửa ấy 30 giây (`CUA_HONG`). Cầu dao chung (`NGAT`) chỉ đếm lỗi mạng và 5xx không mã. `tools/thu-dong-chay.mjs` phá thử cả hai.

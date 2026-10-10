@@ -133,8 +133,14 @@ G.thuMayChu = function(){
       Cần số tươi thì gọi G.goiMayChu(fn, than, {moi:true}).
    3. Máy chủ báo RATE/BUSY → TỰ NGHỈ đúng thuLaiSau, không gọi lại vô ích.
    4. CẦU DAO: 3 lượt hỏng mạng/5xx liền nhau → ngắt 30 giây. Một vòng lặp
-      lỗi ở màn hình không biến thành hàng nghìn lượt Worker. */
-var DEM_DOC = {}, DANG_BAY = {}, NGHI_DEN = 0, HONG_LIEN = 0, NGAT_DEN = 0, NGHI_FN = {};
+      lỗi ở màn hình không biến thành hàng nghìn lượt Worker.
+      NHƯNG một lượt 500 MANG MÃ YÊU CẦU (x-gita-ma) là máy chủ ĐÃ trả lời
+      — chỉ một cửa hỏng. Bản đầu đếm nó vào cầu dao chung, nên một màn
+      hỏng (Truy vấn đa chiều, 10/2026) làm ứng dụng báo "máy chủ không
+      trả lời" và khoá MỌI màn 30 giây trong khi máy chủ vẫn chạy. Nay lỗi
+      có mã chỉ khoá ĐÚNG cửa ấy (HONG_FN → NGHI_FN), cầu dao chung chỉ
+      đếm lỗi mạng và 5xx không mã (Worker sập, quá giới hạn, 502/503). */
+var DEM_DOC = {}, DANG_BAY = {}, NGHI_DEN = 0, HONG_LIEN = 0, NGAT_DEN = 0, NGHI_FN = {}, HONG_FN = {};
 var DEM_GIAY = 15;
 /* Việc chỉ đọc: tên bắt đầu bằng các tiền tố này. Việc theo dõi tiến độ
    (phimXemViec, phimTrangThai) cố ý KHÔNG đệm — chúng phải luôn tươi. */
@@ -177,7 +183,19 @@ G.goiMayChu = function(fn, than, tuyChon){
     body: JSON.stringify(body)
   }).then(function(r){
       try { ma = r.headers.get('x-gita-ma') || ''; } catch(_e){}
-      if(r.status >= 500) HONG_LIEN++; else HONG_LIEN = 0;
+      if(r.status >= 500 && !ma) HONG_LIEN++;
+      else {
+        HONG_LIEN = 0;
+        if(r.status >= 500){
+          HONG_FN[fn] = (HONG_FN[fn] || 0) + 1;
+          if(HONG_FN[fn] >= 3){
+            HONG_FN[fn] = 0;
+            NGHI_FN[fn] = {den: Date.now() + 30000, d: {ok:false, code:'CUA_HONG', maYeuCau: ma,
+              error:'Phần này đang gặp trục trặc ở máy chủ (mã ' + ma + '). Các phần khác vẫn dùng bình thường; ' +
+                'ứng dụng sẽ tự thử lại phần này sau 30 giây.'}};
+          }
+        } else delete HONG_FN[fn];
+      }
       return r.json();
     })
     .then(function(d){
