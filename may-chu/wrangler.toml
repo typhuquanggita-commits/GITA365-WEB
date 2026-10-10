@@ -32,6 +32,33 @@ name = "gita365"
 main = "worker.js"
 compatibility_date = "2026-09-01"
 
+# ── GÓI WORKERS PAID (chủ hệ lên gói 5 USD/tháng, 10/10/2026) ──
+#
+# CPU mỗi lượt. Gói miễn phí chỉ cho 10 ms — băm mật khẩu PBKDF2 100.000
+# vòng, nạp kho 1000 vấn đề theo lô, một lượt nhịp bộ não đều có thể vượt
+# và bị cắt GIỮA CHỪNG (ghi dở, báo lỗi 1102). Gói Paid mặc định 30 giây;
+# khai thẳng ra để người đọc sau biết trần là bao nhiêu và vì sao. Không
+# đặt cao hơn: một vòng lặp hỏng chạy 5 phút là 5 phút tính tiền CPU.
+[limits]
+cpu_ms = 30000
+
+# Đặt Worker GẦN cơ sở dữ liệu. Gần như mọi cửa gọi D1 nhiều lượt liên
+# tiếp; Worker chạy ở điểm biên gần người dùng thì mỗi lượt D1 đi một
+# vòng xa. "smart" để Cloudflare tự đo và chỉ dời khi có lợi — cron không bị ảnh hưởng.
+[placement]
+mode = "smart"
+
+# Nhật ký để lần lỗi (Workers Logs — gói Paid có sẵn 20 triệu dòng/tháng).
+# Lần trước trợ lý báo AI_LOI mà bảng Cloudflare không có dòng nào để đọc.
+# Chỉ giữ dòng console do mã ghi (mã đã không ghi câu hỏi hay dữ liệu
+# gia đình); TẮT nhật ký từng lượt gọi để không giữ đầu yêu cầu (có mã phiên).
+[observability]
+enabled = true
+head_sampling_rate = 1
+
+[observability.logs]
+invocation_logs = false
+
 [vars]
 # KHÔNG phải bí mật — DANH SÁCH origin công khai của bản web, phân tách
 # bằng dấu phẩy. Hai việc:
@@ -97,6 +124,10 @@ GITA_GH_XUONG_QUAY = "typhuquanggita-commits/gita365-xuong-quay"
 GITA_PHIM_CHI_0D = "1"
 # Trần neuron Workers AI mỗi ngày cho xưởng phim (miễn phí là 10.000,
 # máy chủ không cho đặt quá 9.500 để chừa lề an toàn).
+# LƯU Ý TỪ KHI LÊN GÓI PAID: quá 10.000 neuron/ngày thì Cloudflare TÍNH TIỀN
+# (≈ 0,011 USD / 1.000 neuron) thay vì chặn như gói miễn phí. Trần 9.000 này
+# chỉ canh xưởng phim; trợ lý và bộ não đa trí đếm riêng theo token. Đặt
+# cảnh báo hoá đơn ở Dashboard → Billing → Notifications để biết sớm.
 GITA_PHIM_TRAN_NEURON = "9000"
 # Hạng "Bom tấn Cloudflare" dùng FLUX.2 klein 9B (đẹp hơn) CHỈ khi số
 # này > 0 — đó là neuron TRẢ PHÍ mỗi ngày (cần gói Workers Paid 5 USD/
@@ -173,10 +204,13 @@ bucket_name = "gita365-hoso"
 # Tầng 2 TUỲ CHỌN: Rate Limiting binding của Cloudflare — đếm ở mạng biên,
 # không tốn lượt D1. Bỏ dấu # ba khối dưới để bật (namespace_id là số
 # nguyên tự chọn, duy nhất trong tài khoản). Không khai thì mã tự bỏ qua.
-# [[ratelimits]]
-# name = "GIOI_HAN"
-# namespace_id = "3650"
-# simple = { limit = 300, period = 60 }
+# BẬT từ 10/10/2026. Tầng 1 đếm trong bộ nhớ TỪNG isolate — kẻ dội yêu cầu
+# rơi vào nhiều isolate khác nhau thì mỗi nơi đếm lại từ 0. Tầng 2 đếm
+# chung ở mạng biên nên chặn được. Binding hỏng thì mã KHÔNG chặn người thật.
+[[ratelimits]]
+name = "GIOI_HAN"
+namespace_id = "3650"
+simple = { limit = 300, period = 60 }
 #
 # Chế độ tiết kiệm: khi bảng Cloudflare báo sắp chạm hạn mức miễn phí,
 # đặt GITA_CHE_DO_TIET_KIEM = "1" ở [vars] (hoặc Dashboard → Settings →

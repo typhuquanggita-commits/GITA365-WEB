@@ -112,7 +112,7 @@ import { phimMienPhi, phimTrangThaiDu } from './phim-0d.js';
 import { hoiDaTri, hoiDongDaTri, chamDaTri, soDaTri, luuGiaiPhap, duyetGiaiPhap, dsGiaiPhap, boSungGiaiPhap,
   canhMauDaTri, canhMauTuDong, thuMauDaTri, vongKhoaHocTuDong, docVongKhoaHoc,
   taoTuyenDaTri, datTuChayTuyen, chayChangDaTri, docTuyenDaTri,
-  chotChangDaTri, docDoiAgent, ghiBoNhoAgent, batBoNhoAgent } from './bo-nao-da-tri.js';
+  chotChangDaTri, docDoiAgent, ghiBoNhoAgent, batBoNhoAgent, doiSangDoiAgent } from './bo-nao-da-tri.js';
 import { lapDeAnTaiLieu, chayBuocTaiLieu, docDeAnTaiLieu, datTuChayTaiLieu, lapKeHoachKho } from './xuong-tai-lieu.js';
 import { docViecKet } from './viec-ket.js';
 import { troLyV50, guiThongDiepBoNao, docThongDiepBoNao } from './tro-ly-v50.js';
@@ -342,7 +342,7 @@ const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau'
   'hoiChatbot', 'lichSuChat', 'soanDeBaiNgoai',
   'hoiDaTri', 'hoiDongDaTri', 'chamDaTri', 'soDaTri',
   'luuGiaiPhap', 'duyetGiaiPhap', 'dsGiaiPhap', 'boSungGiaiPhap', 'canhMauDaTri', 'thuMauDaTri', 'docVongKhoaHoc',
-  'taoTuyenDaTri', 'chayChangDaTri', 'docTuyenDaTri', 'chotChangDaTri', 'docDoiAgent', 'ghiBoNhoAgent', 'batBoNhoAgent',
+  'taoTuyenDaTri', 'chayChangDaTri', 'docTuyenDaTri', 'chotChangDaTri', 'docDoiAgent', 'ghiBoNhoAgent', 'batBoNhoAgent', 'doiSangDoiAgent',
   'troLyV50', 'guiThongDiepBoNao', 'docThongDiepBoNao',
   'ghiNhatKyGiaiPhap', 'docNhatKyGiaiPhap', 'soanMucGiaiPhap', 'napKhoVanDe', 'dsKhoVanDe', 'docKhoVanDe',
   'lapDeAnTaiLieu', 'chayBuocTaiLieu', 'docDeAnTaiLieu', 'datTuChayTaiLieu', 'lapKeHoachKho', 'docViecKet',
@@ -790,6 +790,7 @@ async function lam(fn, y, env, db, req) {
   if (fn === 'docDoiAgent')       return await docDoiAgent(y, env, db, hoSo);
   if (fn === 'ghiBoNhoAgent')     return await ghiBoNhoAgent(y, env, db, hoSo);
   if (fn === 'batBoNhoAgent')     return await batBoNhoAgent(y, env, db, hoSo);
+  if (fn === 'doiSangDoiAgent')   return await doiSangDoiAgent(y, env, db, hoSo);
   if (fn === 'troLyV50')          return await troLyV50(y, env, db, hoSo);
   if (fn === 'guiThongDiepBoNao') return await guiThongDiepBoNao(y, env, db, hoSo);
   if (fn === 'docThongDiepBoNao') return await docThongDiepBoNao(y, env, db, hoSo);

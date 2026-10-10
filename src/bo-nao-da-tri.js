@@ -567,6 +567,12 @@ function veDoi() {
       '<input id="dt-nho-nd" style="flex:1;min-width:200px" maxlength="300" placeholder="Một câu ngắn — không tên, không số điện thoại">' + nut('G.dtGhiNho()', 'Ghi', 'pri') + '</div>' : '') + '</div>';
   return o;
 }
+G.dtDoiAgent = function (ma) {
+  G.goiMayChu('doiSangDoiAgent', { ma: ma }).then(function (x) {
+    U.toast(x && x.ok ? 'Đã chuyển ' + x.doi + ' chặng sang đội Agent — chạy tiếp được bằng Workers AI.' : ((x && x.error) || 'Không chuyển được.'), x && x.ok ? 'ok' : 'err');
+    G.dtTuyen = null; G.dtTuyenTai();
+  });
+};
 G.dtXemTuyen = function (ma) {
   G.goiMayChu('docTuyenDaTri', { ma: ma }).then(function (x) { G.dtTuyenChi = x || { ok: false }; veLai(); });
 };
@@ -590,7 +596,9 @@ function veTuyen() {
       (r.tuChay ? '<span class="chip" style="color:var(--gita)">tự chạy</span>' : '') + '</div>' +
       '<div class="row mt" style="gap:8px">' + nut('G.dtXemTuyen(\'' + h(r.ma) + '\')', 'Xem') +
       (r.trangThai !== 'xong' ? nut('G.dtTuChay(\'' + h(r.ma) + '\',' + (r.tuChay ? 'false' : 'true') + ')', r.tuChay ? 'Tắt tự chạy' : 'Bật tự chạy') : '') +
-      (r.trangThai !== 'xong' ? nut('G.dtChayChang(\'' + h(r.ma) + '\')', G.dtChangDangChay ? 'Đang chạy…' : 'Chạy chặng kế', 'pri') : '') + '</div></div>';
+      (r.trangThai !== 'xong' ? nut('G.dtChayChang(\'' + h(r.ma) + '\')', G.dtChangDangChay ? 'Đang chạy…' : 'Chạy chặng kế', 'pri') : '') +
+      (r.trangThai !== 'xong' && r.conChangCu ? nut('G.dtDoiAgent(\'' + h(r.ma) + '\')', 'Chuyển sang đội Agent') : '') + '</div>' +
+      (r.trangThai !== 'xong' && r.conChangCu ? '<div class="tiny muted mt">Còn chặng kiểu cũ (phanTich/chienLuoc) — ở chế độ tiết kiệm chúng cần AI bậc cao nên có thể kẹt. Chuyển sang đội Agent để chạy bằng Workers AI, có Trưởng nhóm soát.</div>' : '') + '</div>';
   });
   if (t.ds && !t.ds.length) o += '<div class="card mt tiny muted">Chưa có tuyến nào.</div>';
   var c2 = G.dtTuyenChi;

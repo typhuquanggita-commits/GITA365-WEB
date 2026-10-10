@@ -1003,6 +1003,35 @@ export async function chotChangDaTri(y, env, db, hoSo) {
   return { ok: true, ma, chang: i, xong };
 }
 
+/* ═══════════ CỬA: CHUYỂN TUYẾN CŨ SANG ĐỘI AGENT (R01) ═══════════
+   Tuyến dựng trước khi có đội Agent dùng loại việc trần; chặng phanTich ·
+   chienLuoc chỉ chạy ở nhà cung cấp bậc 2+, nên ở chế độ tiết kiệm chúng
+   KẸT mãi. Chuyển các chặng CHƯA CHẠY sang vai tương ứng (chạy được trên
+   Workers AI, có thẻ vai + bảng kiểm). Chặng đã chạy giữ nguyên — không viết
+   lại lịch sử. Người bấm, không tự chuyển: chuyển là đổi mô hình làm việc. */
+const VAI_THEO_LOAI = { phanTich: 'PHAN_TICH', chienLuoc: 'LEAD', soan: 'SOAN', tomTat: 'NGHIEN_CUU', phanLoai: 'NGHIEN_CUU' };
+export async function doiSangDoiAgent(y, env, db, hoSo) {
+  if (!laR01(hoSo)) return { ok: false, code: 'NOPERM', error: 'Chỉ Super Admin.' };
+  await dungBang(db);
+  const ma = String((y || {}).ma || '');
+  const r = await db.prepare('SELECT * FROM tuyenDaTri WHERE ma = ?').bind(ma).first();
+  if (!r) return { ok: false, code: 'KHONG_CO', error: 'Không có tuyến này.' };
+  if (r.trangThai === 'xong') return { ok: false, code: 'DA_XONG', error: 'Tuyến đã xong.' };
+  const chang = JSON.parse(r.cacChang);
+  let doi = 0;
+  for (let i = r.dangO; i < chang.length; i++) {
+    const c = chang[i];
+    if (c.vai || !VAI_THEO_LOAI[c.loai]) continue;
+    const a = layVai(VAI_THEO_LOAI[c.loai]);
+    chang[i] = { vai: a.ma, loai: a.loai, de: c.de, tuLoai: c.loai };
+    doi++;
+  }
+  if (!doi) return { ok: false, code: 'KHONG_CAN', error: 'Các chặng còn lại đã là chặng của đội Agent.' };
+  await db.prepare('UPDATE tuyenDaTri SET cacChang = ?, lucSua = ? WHERE ma = ?').bind(JSON.stringify(chang), Date.now(), ma).run();
+  await Kho.ghiNhatKy(db, { uid: hoSo.uid, username: ten(hoSo), viec: 'DA_TRI_TUYEN_DOI_AGENT', doiTuong: ma, chiTiet: doi + ' chặng' });
+  return { ok: true, ma, doi };
+}
+
 /* ═══════════ CỬA: ĐỘI AGENT — thẻ vai · bộ nhớ · đo lường ═══════════ */
 export async function docDoiAgent(y, env, db, hoSo) {
   if (!laNguoiNha(hoSo)) return { ok: false, code: 'NOPERM', error: 'Mở cho R01–R12.' };
@@ -1069,7 +1098,8 @@ export async function docTuyenDaTri(y, env, db, hoSo) {
   }
   const ds = (await db.prepare('SELECT ma, ten, cacChang, dangO, trangThai, lucSua, tuChay FROM tuyenDaTri ORDER BY lucSua DESC LIMIT 30').all()).results || [];
   return { ok: true, ds: ds.map(r => ({ ma: r.ma, ten: r.ten, soChang: JSON.parse(r.cacChang).length,
-    dangO: r.dangO, trangThai: r.trangThai, lucSua: r.lucSua, tuChay: !!r.tuChay })) };
+    dangO: r.dangO, trangThai: r.trangThai, lucSua: r.lucSua, tuChay: !!r.tuChay,
+    conChangCu: JSON.parse(r.cacChang).slice(r.dangO).some(c => !c.vai && (c.loai === 'phanTich' || c.loai === 'chienLuoc')) })) };
 }
 
 /* Bật / tắt "tự chạy" cho một tuyến đã có — Super Admin. */
