@@ -297,7 +297,9 @@ var G = window.G || {}; window.G = G;
                    : 'Các giải pháp tối ưu Super Admin giao cho anh/chị: tick từng bước, đóng khi xong — máy tự đo lại chỉ số.' });
     /* Hộp thông báo trong hệ (src/hop-thong-bao.js) đứng ĐẦU màn cấp quản lý:
        yêu cầu tư vấn và việc chờ duyệt là việc của hôm nay, không phải số đo. */
-    if(laQL() && G.htbKhoi) o += G.htbKhoi();
+    /* Mọi nhân sự mở màn này đều có hộp riêng: máy chủ chỉ trả dòng gửi
+       tới VAI hoặc TÊN của phiên, nên không có gì phải lọc ở đây. */
+    if(G.htbKhoi) o += G.htbKhoi();
     /* Trang công khai (src/do-trang-cong-khai.js): khách làm gì trước khi đăng ký. */
     if(laQL() && G.dtcKhoi) o += G.dtcKhoi();
     /* Việc kẹt (src/viec-ket.js): việc nằm im không ai cầm ở mọi hàng đợi. */

@@ -3,7 +3,11 @@
 
    Chủ hệ chốt 10/2026:
    - Ngày 05 hằng tháng trả lương của tháng trước; ngày 05 trùng ngày nghỉ
-     thì trả ngày 08.
+     thì trả ngày 08. Thứ Bảy và Chủ nhật là ngày nghỉ (chốt 10/10); ngày
+     08 cũng nghỉ thì dời tiếp sang ngày làm việc kế đó, và nhân sự nhận
+     thông báo đích danh mỗi lần ngày trả bị dời (baoNgayTraLuong).
+   - Thưởng lương khi KPI làm việc ≥ 90 VÀ tỷ lệ khách hài lòng ≥ 90%
+     (chốt 10/10, NGUONG_THUONG).
    - Điểm thi gắn với xếp hạng lương thưởng — nỗ lực học tập được tính.
    - Phản hồi của khách được đo định kỳ TỪNG KHÁCH để có căn cứ lương thưởng.
 
@@ -29,6 +33,7 @@
 'use strict';
 
 import { Kho } from './nen.js';
+import { ghiThongBao } from './ngan-hang.js';
 import { BAC, roleOf, tenNguoiDung as ten } from './vai-tro.js';
 import { capCua, ketQuaLuot, HE_THI, thangCua } from './thi-cap.js';
 
@@ -43,19 +48,74 @@ export const LE_CO_DINH = Object.freeze(['01-01', '04-30', '05-01', '09-02']);
 const kySau = ky => { const [y, m] = ky.split('-').map(Number); return m === 12 ? (y + 1) + '-01' : y + '-' + String(m + 1).padStart(2, '0'); };
 export const hopLeKy = ky => /^\d{4}-(0[1-9]|1[0-2])$/.test(String(ky || ''));
 
-/* Ngày nghỉ = Chủ nhật · lễ cố định · ngày Super Admin khai là nghỉ. Khai
-   nghi=0 GỠ một ngày (ví dụ làm bù) — dòng mới nhất của mỗi ngày quyết. */
+/* Ngày nghỉ = thứ Bảy · Chủ nhật · lễ cố định · ngày Super Admin khai là
+   nghỉ. Khai nghi=0 GỠ một ngày (ví dụ làm bù thứ Bảy) — dòng mới nhất của
+   mỗi ngày quyết, nên một ngày làm bù thắng luật cuối tuần. */
+export const THU_NGHI = Object.freeze([0, 6]);
+const TEN_THU = ['Chủ nhật', 'thứ Hai', 'thứ Ba', 'thứ Tư', 'thứ Năm', 'thứ Sáu', 'thứ Bảy'];
 export function laNgayNghi(ngay, khai) {
   if (khai && Object.prototype.hasOwnProperty.call(khai, ngay)) return !!khai[ngay];
   const d = new Date(ngay + 'T00:00:00Z');
-  return d.getUTCDay() === 0 || LE_CO_DINH.includes(ngay.slice(5));
+  return THU_NGHI.includes(d.getUTCDay()) || LE_CO_DINH.includes(ngay.slice(5));
 }
-/* Lương kỳ YYYY-MM trả ngày 05 tháng sau; 05 là ngày nghỉ thì ngày 08. */
-export function ngayTraLuong(ky, khai) {
+const congNgay = (ngay, n) => new Date(Date.parse(ngay + 'T00:00:00Z') + n * 86400000).toISOString().slice(0, 10);
+function viSaoNghi(ngay, khai, tenNgay) {
+  if (khai && Object.prototype.hasOwnProperty.call(khai, ngay)) return (tenNgay && tenNgay[ngay]) || 'ngày nghỉ đã khai';
+  if (LE_CO_DINH.includes(ngay.slice(5))) return 'ngày lễ';
+  return TEN_THU[new Date(ngay + 'T00:00:00Z').getUTCDay()];
+}
+/* Lương kỳ YYYY-MM trả ngày 05 tháng sau; 05 là ngày nghỉ thì ngày 08; 08
+   cũng nghỉ thì ngày làm việc ĐẦU TIÊN sau 08. Dời về SAU chứ không dời về
+   trước: ngày 08 là ngày đã hứa với nhân sự, trả sớm hơn thì kế toán phải
+   chốt bảng lương trước cả ngày chốt KPI của kỳ. */
+export function ngayTraLuong(ky, khai, tenNgay) {
   const t = kySau(ky);
   const ngay05 = t + '-' + String(NGAY_TRA).padStart(2, '0');
   if (!laNgayNghi(ngay05, khai)) return { ky, ngay: ngay05, doi: false };
-  return { ky, ngay: t + '-' + String(NGAY_TRA_LUI).padStart(2, '0'), doi: true, lyDo: 'Ngày ' + ngay05 + ' là ngày nghỉ' };
+  let ngay = t + '-' + String(NGAY_TRA_LUI).padStart(2, '0');
+  const lyDo = ['Ngày ' + ngay05 + ' là ' + viSaoNghi(ngay05, khai, tenNgay)];
+  for (let i = 0; i < 20 && laNgayNghi(ngay, khai); i++) {
+    if (i === 0) lyDo.push('ngày ' + ngay + ' là ' + viSaoNghi(ngay, khai, tenNgay));
+    ngay = congNgay(ngay, 1);
+  }
+  return { ky, ngay, doi: true, lyDo: lyDo.join('; ') };
+}
+/* Báo cho từng nhân sự khi ngày trả lương của kỳ bị dời. Một dòng ĐÍCH DANH
+   cho mỗi người, không một dòng gửi theo vai: danhDauDaDoc đánh dấu cả dòng,
+   nên một Coach bấm "đã xem" sẽ làm mọi Coach khác thôi thấy. Không gửi
+   trùng: doiTuong mang cả kỳ lẫn ngày, nên ngày trả đổi thêm lần nữa (Super
+   Admin khai thêm ngày nghỉ) thì có thông báo mới — đúng điều người ta cần
+   biết — còn chạy lại cùng ngày thì không. */
+export async function baoNgayTraLuong(db, ky, nd) {
+  const d = nd || await docNgayNghi(db);
+  const t = ngayTraLuong(ky, d.khai, d.ten);
+  if (!t.doi) return { ky, doi: false, gui: 0 };
+  const doiTuong = 'traLuong:' + ky + ':' + t.ngay;
+  const [y, m] = ky.split('-');
+  const tieuDe = 'Lương tháng ' + Number(m) + '/' + y + ' trả ngày ' + t.ngay.slice(8, 10) + '/' + t.ngay.slice(5, 7) + '/' + t.ngay.slice(0, 4);
+  const than = 'Ngày trả lương kỳ này dời sang ' + TEN_THU[new Date(t.ngay + 'T00:00:00Z').getUTCDay()] + ' ' + t.ngay +
+    '. Lý do: ' + t.lyDo + '. Luật của Học viện: trả ngày 05 hằng tháng; 05 trùng ngày nghỉ thì trả ngày 08; ' +
+    '08 cũng nghỉ thì trả ngày làm việc kế tiếp. Thứ Bảy và Chủ nhật là ngày nghỉ.';
+  const ds = (await db.prepare('SELECT username FROM users WHERE active = 1 AND deletedAt IS NULL AND role IN (' +
+    VAI_NHAN_SU.map(() => '?').join(',') + ') ORDER BY username LIMIT 2000').bind(...VAI_NHAN_SU).all()).results || [];
+  let gui = 0;
+  for (const u of ds) {
+    const co = await db.prepare('SELECT 1 x FROM thongBao WHERE denAi = ? AND doiTuong = ? LIMIT 1').bind(u.username, doiTuong).first();
+    if (co) continue;
+    await ghiThongBao(db, { denAi: u.username, loai: 'traLuong', mucDo: 'canXem', tieuDe, than, doiTuong });
+    gui++;
+  }
+  return { ky, doi: true, ngay: t.ngay, gui };
+}
+const VAI_NHAN_SU = Object.freeze(['R01', 'R02', 'R03', 'R04', 'R05', 'R06', 'R07', 'R08', 'R09', 'R10', 'R11', 'R12']);
+/* Hai kỳ cần báo vào một thời điểm: kỳ trước (trả trong tháng này) và kỳ này
+   (trả đầu tháng sau) — báo trước gần một tháng thì người ta còn kịp sắp xếp. */
+export async function baoLichTraLuongSapToi(db, now) {
+  const homNay = new Date((now || Date.now()) + LECH_VN).toISOString().slice(0, 7);
+  const [y, m] = homNay.split('-').map(Number);
+  const kyTruoc = m === 1 ? (y - 1) + '-12' : y + '-' + String(m - 1).padStart(2, '0');
+  const nd = await docNgayNghi(db);
+  return [await baoNgayTraLuong(db, kyTruoc, nd), await baoNgayTraLuong(db, homNay, nd)];
 }
 export async function docNgayNghi(db) {
   const r = (await db.prepare('SELECT ngay, nghi, ten FROM ngayNghi ORDER BY luc ASC, rowid ASC').all()).results || [];
@@ -69,9 +129,9 @@ export async function lichTraLuong(y, env, db, hoSo) {
   if (nam < 2024 || nam > 2100) return { ok: false, code: 'SAI', error: 'Năm không hợp lệ.' };
   const { khai, ten: tenNgay } = await docNgayNghi(db);
   const lich = [];
-  for (let m = 1; m <= 12; m++) lich.push(ngayTraLuong(nam + '-' + String(m).padStart(2, '0'), khai));
+  for (let m = 1; m <= 12; m++) lich.push(ngayTraLuong(nam + '-' + String(m).padStart(2, '0'), khai, tenNgay));
   const nghiKhai = Object.keys(khai).filter(k => k.startsWith(String(nam))).sort().map(k => ({ ngay: k, nghi: !!khai[k], ten: tenNgay[k] || '' }));
-  return { ok: true, nam, lich, nghiKhai, luat: { ngayTra: NGAY_TRA, ngayLui: NGAY_TRA_LUI, leCoDinh: LE_CO_DINH } };
+  return { ok: true, nam, lich, nghiKhai, luat: { ngayTra: NGAY_TRA, ngayLui: NGAY_TRA_LUI, leCoDinh: LE_CO_DINH, thuNghi: THU_NGHI } };
 }
 export async function khaiNgayNghi(y, env, db, hoSo) {
   if (roleOf(hoSo) !== 'R01') return { ok: false, code: 'NOPERM', error: 'Chỉ Super Admin khai ngày nghỉ.' };
@@ -81,7 +141,13 @@ export async function khaiNgayNghi(y, env, db, hoSo) {
   await db.prepare('INSERT INTO ngayNghi (id, ngay, nghi, ten, boiAi, luc) VALUES (?,?,?,?,?,?)')
     .bind(crypto.randomUUID(), ngay, x.nghi === false ? 0 : 1, tenNgay, ten(hoSo), Date.now()).run();
   try { await Kho.ghiNhatKy(db, { uid: hoSo.uid, username: ten(hoSo), viec: 'KHAI_NGAY_NGHI', doiTuong: ngay, chiTiet: (x.nghi === false ? 'gỡ · ' : 'nghỉ · ') + tenNgay }); } catch (e) {}
-  return { ok: true, ngay, nghi: x.nghi !== false };
+  /* Ngày vừa khai có thể dời ngày trả lương của kỳ trước nó (ngày 05–14 của
+     tháng ấy) — báo ngay, không chờ lượt chạy đêm. */
+  let bao = null;
+  const [ny, nm] = ngay.split('-').map(Number);
+  if (Number(ngay.slice(8, 10)) >= NGAY_TRA && Number(ngay.slice(8, 10)) <= 14)
+    bao = await baoNgayTraLuong(db, nm === 1 ? (ny - 1) + '-12' : ny + '-' + String(nm - 1).padStart(2, '0'));
+  return { ok: true, ngay, nghi: x.nghi !== false, bao };
 }
 
 /* ═══════════════ PHẢN HỒI TỪNG KHÁCH ═══════════════ */
@@ -131,12 +197,40 @@ async function diemThiThang(db, maNguoi, he, ky) {
   }
   return { diem: tot, soBai: ls.length, choCham: cho, duThi: ls.length > 0, coKq };
 }
+/* Một nhà HÀI LÒNG khi điểm hài lòng (CSAT) trung bình của nhà ấy trong
+   tháng từ 4/5 trở lên — cách đếm "hai ô trên cùng" quen thuộc của CSAT.
+   Tỷ lệ tính trên NHÀ, không trên phiếu: một nhà gửi ba phiếu không được
+   nặng gấp ba một nhà gửi một phiếu. */
+export const CSAT_HAI_LONG = 4;
 async function phanHoiCua(db, maNguoi, ky) {
   const r = (await db.prepare('SELECT maNha, nps, csat, tieuChi FROM danhGiaKH WHERE thang = ? AND (lower(coach) = ? OR lower(tuVan) = ?)').bind(ky, maNguoi, maNguoi).all()).results || [];
-  const theoNha = {};
-  r.forEach(p => { const d = diemPhieu(p); if (d === null) return; (theoNha[p.maNha] = theoNha[p.maNha] || []).push(d); });
-  const nha = Object.keys(theoNha).map(k => theoNha[k].reduce((s, v) => s + v, 0) / theoNha[k].length);
-  return { soNha: nha.length, diem: nha.length >= MAU_TOI_THIEU ? Math.round(nha.reduce((s, v) => s + v, 0) / nha.length) : null };
+  const theoNha = {}, csatNha = {};
+  r.forEach(p => { const d = diemPhieu(p); if (d === null) return; (theoNha[p.maNha] = theoNha[p.maNha] || []).push(d); (csatNha[p.maNha] = csatNha[p.maNha] || []).push(Number(p.csat)); });
+  const ma = Object.keys(theoNha);
+  const nha = ma.map(k => theoNha[k].reduce((s, v) => s + v, 0) / theoNha[k].length);
+  const haiLong = ma.filter(k => csatNha[k].reduce((s, v) => s + v, 0) / csatNha[k].length >= CSAT_HAI_LONG).length;
+  const du = nha.length >= MAU_TOI_THIEU;
+  return { soNha: nha.length, soNhaHaiLong: haiLong, diem: du ? Math.round(nha.reduce((s, v) => s + v, 0) / nha.length) : null,
+    tyLeHaiLong: du ? Math.round(100 * haiLong / nha.length) : null };
+}
+/* Thưởng lương: cả HAI điều kiện, không bù trừ cho nhau — KPI làm việc cao
+   mà khách không hài lòng thì không thưởng, và ngược lại. KPI làm việc là
+   điểm tổng của tháng (thi ngày 28 · cấp chứng chỉ · phản hồi của các nhà).
+   Chưa đủ mẫu phiếu thì CHƯA xét được — nói thẳng, không đọc ra "không đạt"
+   và cũng không đọc ra "đạt". Máy chỉ nói đủ hay chưa đủ điều kiện; số tiền
+   thưởng là quyết định của chủ hệ. */
+export const NGUONG_THUONG = Object.freeze({ kpi: 90, haiLong: 90 });
+export function xetThuong(diem, ph) {
+  const thieu = [];
+  if (diem < NGUONG_THUONG.kpi) thieu.push('KPI ' + diem + ' dưới ' + NGUONG_THUONG.kpi);
+  if (ph.tyLeHaiLong === null) {
+    const trangThai = thieu.length ? 'khongDat' : 'chuaXet';
+    return { trangThai, du: false, tyLeHaiLong: null,
+      lyDo: thieu.concat(['mới ' + ph.soNha + ' nhà có phiếu tháng này, cần ít nhất ' + MAU_TOI_THIEU + ' nhà để tính tỷ lệ hài lòng']).join('; ') };
+  }
+  if (ph.tyLeHaiLong < NGUONG_THUONG.haiLong) thieu.push('hài lòng ' + ph.tyLeHaiLong + '% dưới ' + NGUONG_THUONG.haiLong + '%');
+  return { trangThai: thieu.length ? 'khongDat' : 'dat', du: !thieu.length, tyLeHaiLong: ph.tyLeHaiLong,
+    lyDo: thieu.length ? thieu.join('; ') : 'KPI ' + diem + ' và ' + ph.tyLeHaiLong + '% nhà hài lòng (' + ph.soNhaHaiLong + '/' + ph.soNha + ')' };
 }
 export async function chamMotNguoi(db, maNguoi, role, ky) {
   const he = role === 'R11' ? 'tuvan' : 'coach';
@@ -153,7 +247,7 @@ export async function chamMotNguoi(db, maNguoi, role, ky) {
   const dung = tp.filter(t => t.giaTri !== null), trongDung = dung.reduce((s, t) => s + t.trong, 0);
   const diem = trongDung ? Math.round(dung.reduce((s, t) => s + t.giaTri * t.trong, 0) / trongDung) : 0;
   return { maNguoi, role, he, ky, diem, hang: hangCua(diem), trongBoQua: 100 - trongDung, thanhPhan: tp,
-    soNhaPhanHoi: ph.soNha, soNhaPhuTrach: phuTrach, choChamCon: thi.choCham };
+    soNhaPhanHoi: ph.soNha, soNhaPhuTrach: phuTrach, choChamCon: thi.choCham, thuong: xetThuong(diem, ph) };
 }
 /* Quản lý (R01–R05) xem cả đội; nhân sự khác chỉ xem dòng của mình. */
 export async function xepHangThang(y, env, db, hoSo) {
@@ -170,8 +264,9 @@ export async function xepHangThang(y, env, db, hoSo) {
   const ds = [];
   for (const r of rows) ds.push(await chamMotNguoi(db, String(r.username).toLowerCase(), r.role, ky));
   ds.sort((a, b) => b.diem - a.diem || a.maNguoi.localeCompare(b.maNguoi));
-  const { khai } = await docNgayNghi(db);
-  return { ok: true, ky, chiDongCuaToi: rieng, ds, ngayTra: ngayTraLuong(ky, khai),
-    luat: { trongSo: TRONG_SO, hang: HANG_LT, mauToiThieu: MAU_TOI_THIEU, tieuChi: TIEU_CHI },
-    gioiHan: 'Hạng chưa tự đổi ra tiền: hệ số tiền theo hạng chờ chủ hệ chốt. Trọng số và ngưỡng là mặc định, điều chỉnh sau khi chạy thật.' };
+  const { khai, ten: tenNgay } = await docNgayNghi(db);
+  return { ok: true, ky, chiDongCuaToi: rieng, ds, ngayTra: ngayTraLuong(ky, khai, tenNgay),
+    luat: { trongSo: TRONG_SO, hang: HANG_LT, mauToiThieu: MAU_TOI_THIEU, tieuChi: TIEU_CHI, thuong: NGUONG_THUONG, csatHaiLong: CSAT_HAI_LONG },
+    gioiHan: 'Máy chỉ nói đủ hay chưa đủ điều kiện thưởng (KPI ≥ ' + NGUONG_THUONG.kpi + ' và ≥ ' + NGUONG_THUONG.haiLong +
+      '% nhà hài lòng); số tiền thưởng chờ chủ hệ chốt. Trọng số điểm KPI là mặc định, điều chỉnh sau khi chạy thật.' };
 }

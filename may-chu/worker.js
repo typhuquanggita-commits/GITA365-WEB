@@ -118,7 +118,7 @@ import { docViecKet } from './viec-ket.js';
 import { troLyV50, guiThongDiepBoNao, docThongDiepBoNao } from './tro-ly-v50.js';
 import { ghiNhatKyGiaiPhap, docNhatKyGiaiPhap, soanMucGiaiPhap, napKhoVanDe, dsKhoVanDe, docKhoVanDe } from './tra-cuu-giai-phap.js';
 import { datCongThi, batDauThi, docBaiThi, nopBaiThi, chamBaiThi, dsBaiCham, thiCuaToi, khungThi, xinYKienKho, duyetYKien, dsYKien, ghiViPham, giaiTrinhViPham, quyetViPham, doiThi, dsViPham } from './thi-cap.js';
-import { lichTraLuong, khaiNgayNghi, xepHangThang } from './xep-hang-luong.js';
+import { lichTraLuong, khaiNgayNghi, xepHangThang, baoLichTraLuongSapToi } from './xep-hang-luong.js';
 import { docDaoTao, ghiDanhDaoTao, ghiBuocDaoTao, capChungChiDaoTao, thuHoiChungChiDaoTao, doiDaoTao } from './dao-tao-ct.js';
 import { giaKhoCao, datGiaKhoCao, napKhoCao, dsKhoCao, docKhoCao, deXuatKhoCao, dsDeXuatNha, chonDeXuat, huyDeXuat, hoanThanhKhoCao, chuyenAnToan, soKhoCaoNha } from './kho-cao.js';
 import { lapDuAnPhim, docXuongPhimNganSach, datCanhTraPhi, moLaiDuAnPhim, DON_GIU_CHO } from './phim-ngan-sach.js';
@@ -1327,6 +1327,10 @@ export default {
       console.error('DA_TRI_KHOA_HOC_HONG', String(e && e.message || e))));
     ctx.waitUntil(canhMauTuDong(env).catch(e =>
       console.error('DA_TRI_CANH_MAU_HONG', String(e && e.message || e))));
+    /* Ngày trả lương bị dời (thứ Bảy · Chủ nhật · lễ · ngày khai) thì nhân
+       sự nhận thông báo đích danh trước gần một tháng; chạy lại không gửi trùng. */
+    ctx.waitUntil(baoLichTraLuongSapToi(env.CSDL).catch(e =>
+      console.error('BAO_NGAY_TRA_LUONG_HONG', String(e && e.message || e))));
   },
 
   async fetch(req, env, ctx) {

@@ -44,6 +44,14 @@ async function chay(XH, DL, T) {
   r.lich27 = await XH.lichTraLuong({ nam: 2027 }, env, db, c1);
   r.go = await XH.khaiNgayNghi({ ngay: '2026-07-05', ten: 'Làm bù thứ Bảy', nghi: false }, env, db, chu);
   r.lich26b = await XH.lichTraLuong({ nam: 2026 }, env, db, c1);
+  /* thứ Bảy · Chủ nhật nghỉ (10/10): khai 05/08/2026 (thứ Tư) là nghỉ thì 08/08 rơi
+     thứ Bảy → dời tiếp sang thứ Hai 10/08, và từng nhân sự nhận thông báo đích danh */
+  r.khaiT8 = await XH.khaiNgayNghi({ ngay: '2026-08-05', ten: 'Nghỉ thử giữa tuần' }, env, db, chu);
+  r.baoLai = await XH.baoNgayTraLuong(db, '2026-07');
+  r.tbCoach1 = sq.prepare("SELECT * FROM thongBao WHERE denAi = 'coach1' AND doiTuong = 'traLuong:2026-07:2026-08-10'").all();
+  r.tbKhach = sq.prepare("SELECT COUNT(*) n FROM thongBao WHERE denAi = 'ph1'").get().n;
+  r.hopC1 = await NH.hopThongBao({}, env, db, c1);
+  r.sapToi = await XH.baoLichTraLuongSapToi(db, Date.parse('2026-12-03T03:00:00Z'));
   /* phiếu phản hồi */
   r.thieuTc = await DL.guiDanhGiaKH({ nps: 9, csat: 5 }, env, db, ph(1));
   r.nhanVien = await DL.guiDanhGiaKH({ nps: 9, csat: 5, tieuChi: [5, 5, 5, 5, 5] }, env, db, c1);
@@ -75,6 +83,7 @@ async function chay(XH, DL, T) {
 const XH = await import(pathToFileURL(ROOT + '/may-chu/xep-hang-luong.js').href);
 const DL = await import(pathToFileURL(ROOT + '/may-chu/do-luong-kh.js').href);
 const T = await import(pathToFileURL(ROOT + '/may-chu/thi-cap.js').href);
+const NH = await import(pathToFileURL(ROOT + '/may-chu/ngan-hang.js').href);
 const r = await chay(XH, DL, T);
 
 /* ── lịch trả lương ── */
@@ -85,6 +94,17 @@ kiem('lịch cả năm 12 kỳ cho nhân sự; khách hàng không xem được'
 kiem('chỉ Super Admin khai ngày nghỉ', r.khaiR04.code === 'NOPERM' && r.khai.ok);
 kiem('khai Tết rơi vào ngày 05 thì lương tháng 1/2027 trả 08/02', r.lich27.lich[0].ngay === '2027-02-08', JSON.stringify(r.lich27.lich[0]));
 kiem('gỡ một Chủ nhật (làm bù) thì ngày 05 ấy trả lương bình thường', r.lich26b.lich[5].ngay === '2026-07-05', JSON.stringify(r.lich26b.lich[5]));
+kiem('05 trùng thứ Bảy thì trả 08: lương 11/2026 trả 08/12 (05/12 là thứ Bảy)', XH.ngayTraLuong('2026-11', {}).ngay === '2026-12-08', JSON.stringify(XH.ngayTraLuong('2026-11', {})));
+kiem('05 nghỉ và 08 cũng nghỉ (thứ Bảy) thì dời tiếp sang thứ Hai 10/08', XH.ngayTraLuong('2026-07', { '2026-08-05': 1 }).ngay === '2026-08-10', JSON.stringify(XH.ngayTraLuong('2026-07', { '2026-08-05': 1 })));
+kiem('lý do dời nói rõ cả hai ngày nghỉ', /2026-08-05[\s\S]*2026-08-08 là thứ Bảy/.test(XH.ngayTraLuong('2026-07', { '2026-08-05': 1 }).lyDo || ''));
+kiem('khai một thứ Bảy là ngày LÀM (làm bù) thì ngày ấy trả lương được', XH.ngayTraLuong('2026-11', { '2026-12-05': 0 }).ngay === '2026-12-05');
+kiem('khai ngày nghỉ làm dời ngày trả thì báo NGAY cho đủ 6 nhân sự (không chờ lượt đêm)', r.khaiT8.ok && r.khaiT8.bao && r.khaiT8.bao.gui === 6, JSON.stringify(r.khaiT8.bao));
+kiem('thông báo ĐÍCH DANH từng người, ghi ngày trả mới và lý do', r.tbCoach1.length === 1 && /10\/08\/2026/.test(r.tbCoach1[0].tieuDe) && /thứ Bảy/.test(r.tbCoach1[0].than), JSON.stringify(r.tbCoach1));
+kiem('chạy lại không gửi trùng', r.baoLai.gui === 0, JSON.stringify(r.baoLai));
+kiem('khách hàng không nhận thông báo lương', r.tbKhach === 0);
+kiem('Coach đọc được thông báo trong hộp của mình', r.hopC1.ok && r.hopC1.ds.some(x => x.loai === 'traLuong'), JSON.stringify(r.hopC1.ds.map(x => x.tieuDe)));
+kiem('lượt đêm báo trước kỳ sắp trả: đầu 12/2026 báo lương 11 (dời sang 08/12), kỳ 12 trả 05/01 thì không báo',
+  r.sapToi[0].ky === '2026-11' && r.sapToi[0].gui === 6 && r.sapToi[1].doi === false, JSON.stringify(r.sapToi));
 kiem('bảng lương trả kèm ngày trả lương (luong.js)', /ngayTra = ngayTraLuong\(ky/.test(fs.readFileSync(ROOT + '/may-chu/luong.js', 'utf8')));
 
 /* ── phiếu phản hồi ── */
@@ -107,6 +127,16 @@ kiem('điểm thi ngày 28 vào xếp hạng: coach1 có bài đạt 88; coach2 
   q1.thanhPhan.find(t => t.ma === 'thi').giaTri === 88 && q2.thanhPhan.find(t => t.ma === 'thi').giaTri === 0 && /không dự thi/.test(q2.thanhPhan.find(t => t.ma === 'thi').ghiChu));
 kiem('hạng tính đúng ngưỡng A/B/C/D từ điểm tổng', r.xhQL.ds.every(d => d.hang === (d.diem >= 90 ? 'A' : d.diem >= 80 ? 'B' : d.diem >= 65 ? 'C' : 'D')));
 kiem('coach1 (thi tốt + phản hồi tốt) xếp trên coach2', r.xhQL.ds.indexOf(q1) < r.xhQL.ds.indexOf(q2));
+/* thưởng: KPI ≥ 90 VÀ ≥ 90% nhà hài lòng — hai điều kiện, không bù trừ */
+const P4 = (n, hl) => ({ soNha: n, soNhaHaiLong: hl, tyLeHaiLong: n >= XH.MAU_TOI_THIEU ? Math.round(100 * hl / n) : null });
+kiem('ngưỡng thưởng là 90 KPI và 90% hài lòng', XH.NGUONG_THUONG.kpi === 90 && XH.NGUONG_THUONG.haiLong === 90);
+kiem('KPI 92 và 100% hài lòng: đủ điều kiện thưởng', XH.xetThuong(92, P4(4, 4)).trangThai === 'dat');
+kiem('KPI 95 nhưng hài lòng 75%: chưa đạt, nói rõ phần thiếu', XH.xetThuong(95, P4(4, 3)).trangThai === 'khongDat' && /hài lòng 75%/.test(XH.xetThuong(95, P4(4, 3)).lyDo));
+kiem('hài lòng 100% nhưng KPI 89: chưa đạt', XH.xetThuong(89, P4(5, 5)).trangThai === 'khongDat' && /KPI 89/.test(XH.xetThuong(89, P4(5, 5)).lyDo));
+kiem('KPI đủ mà chưa đủ 3 nhà có phiếu: CHƯA XÉT, không đọc ra đạt hay không đạt', XH.xetThuong(95, P4(2, 2)).trangThai === 'chuaXet');
+kiem('đúng ngưỡng (90 và 90%) là đạt', XH.xetThuong(90, P4(10, 9)).trangThai === 'dat');
+kiem('coach1: ba nhà đều hài lòng (CSAT ≥ 4) nên 100%; xếp hạng trả kèm xét thưởng', q1.thuong && q1.thuong.tyLeHaiLong === 100 && q1.thuong.trangThai === (q1.diem >= 90 ? 'dat' : 'khongDat'), JSON.stringify(q1.thuong) + ' KPI ' + q1.diem);
+kiem('coach2 dưới 3 nhà có phiếu thì tỷ lệ hài lòng là null', q2.thuong && q2.thuong.tyLeHaiLong === null);
 kiem('xếp hạng trả kèm ngày trả lương của kỳ', r.xhQL.ngayTra && /^\d{4}-\d{2}-0[58]$/.test(r.xhQL.ngayTra.ngay));
 
 /* ── tĩnh ── */
@@ -115,6 +145,7 @@ const canPhien = (wk.match(/const CAN_PHIEN = \[([\s\S]*?)\];/) || [])[1] || '';
 kiem('ba cửa có trong CAN_PHIEN và có đường gọi', ['lichTraLuong', 'khaiNgayNghi', 'xepHangThang'].every(f => canPhien.includes("'" + f + "'") && wk.includes("fn === '" + f + "'")));
 const sql = fs.readFileSync(ROOT + '/may-chu/csdl.sql', 'utf8');
 kiem('danhGiaKH có tieuChi · coach · tuVan; bảng ngayNghi có trong csdl.sql', /danhGiaKH \([\s\S]*?tieuChi TEXT, coach TEXT, tuVan TEXT/.test(sql) && sql.includes('CREATE TABLE IF NOT EXISTS ngayNghi ('));
+kiem('lượt đêm của Worker gọi baoLichTraLuongSapToi', /baoLichTraLuongSapToi\(env\.CSDL\)/.test(wk));
 kiem('máy không tự đổi hạng ra tiền (không có cửa tính tiền thưởng)', !/export async function (tinhThuong|tinhTien|traThuong)/.test(fs.readFileSync(ROOT + '/may-chu/xep-hang-luong.js', 'utf8')));
 
 /* ── màn hình ── */
@@ -124,10 +155,15 @@ kiem('năm tiêu chí ở phiếu gia đình khớp từng ô với máy chủ (
 kiem('phiếu gia đình gửi kèm tieuChi', /guiDanhGiaKH', \{ nps:st\.nps, csat:st\.csat, tieuChi:/.test(hst));
 const tcc = fs.readFileSync(ROOT + '/src/thi-chung-chi.js', 'utf8');
 kiem('màn Thi chứng chỉ có ngăn xếp hạng gọi xepHangThang · lichTraLuong · khaiNgayNghi', ['xepHangThang', 'lichTraLuong', 'khaiNgayNghi'].every(f => tcc.includes("'" + f + "'")));
+const v3 = fs.readFileSync(ROOT + '/src/views3.js', 'utf8'), htb = fs.readFileSync(ROOT + '/src/hop-thong-bao.js', 'utf8');
+const khoiDeck = ten => { const a = v3.indexOf("G.VIEWS['" + ten + "']"); return a < 0 ? '' : v3.slice(a, v3.indexOf('G.VIEWS[', a + 10)); };
+kiem('hộp thông báo hiện ở màn chính của Coach và Tư vấn', /G\.htbKhoi\(\)/.test(khoiDeck('coach-deck')) && /G\.htbKhoi\(\)/.test(khoiDeck('tuvan-deck')));
+kiem('hộp thông báo có nhãn "Lịch trả lương" và vẽ lại ở cả ba màn', /traLuong:'Lịch trả lương'/.test(htb) && /'coach-deck':1/.test(htb) && /'tuvan-deck':1/.test(htb));
+kiem('ngăn xếp hạng có cột Thưởng', /<th>Thưởng<\/th>/.test(tcc));
 kiem('bảng lương hiện ngày trả lương', /d\.ngayTra/.test(fs.readFileSync(ROOT + '/src/phong-tai-chinh.js', 'utf8')));
 
 /* ── phá thử ── */
-async function pha(ten, tep, tu, sang, dieu) {
+async function pha(ten, tep, tu, sang, dieu) { // dieu(rp, P)
   const goc = fs.readFileSync(ROOT + '/may-chu/' + tep, 'utf8'), ban = goc.replace(tu, sang);
   if (ban === goc) { kiem('phá thử ' + ten + ': chuỗi phá có trong mã', false); return; }
   const tam = ROOT + '/may-chu/_pha-' + tep;
@@ -135,13 +171,22 @@ async function pha(ten, tep, tu, sang, dieu) {
     fs.writeFileSync(tam, ban);
     const P = await import(pathToFileURL(tam).href + '?v=' + Date.now());
     const rp = tep === 'xep-hang-luong.js' ? await chay(P, DL, T) : await chay(XH, P, T);
-    kiem('phá thử ' + ten + ': phép đo đỏ đúng chỗ', dieu(rp));
+    kiem('phá thử ' + ten + ': phép đo đỏ đúng chỗ', dieu(rp, P));
   } finally { fs.rmSync(tam, { force: true }); }
 }
 await pha('bỏ ngưỡng mẫu tối thiểu', 'xep-hang-luong.js', 'export const MAU_TOI_THIEU = 3;', 'export const MAU_TOI_THIEU = 1;',
   rp => rp.xhQL.ds.find(d => d.maNguoi === 'coach2').thanhPhan.find(t => t.ma === 'phanHoi').giaTri !== null);
 await pha('không chụp người phụ trách lúc gửi', 'do-luong-kh.js', "String((ps && ps.coach) || '').toLowerCase() || null", 'null',
   rp => rp.xhQL.ds.find(d => d.maNguoi === 'coach1').soNhaPhanHoi !== 3);
+
+await pha('quên thứ Bảy', 'xep-hang-luong.js', 'export const THU_NGHI = Object.freeze([0, 6]);', 'export const THU_NGHI = Object.freeze([0]);',
+  (rp, P) => P.ngayTraLuong('2026-11', {}).ngay !== '2026-12-08');
+await pha('08 nghỉ mà không dời tiếp', 'xep-hang-luong.js', 'for (let i = 0; i < 20 && laNgayNghi(ngay, khai); i++)', 'for (let i = 0; i < 0; i++)',
+  (rp, P) => P.ngayTraLuong('2026-07', { '2026-08-05': 1 }).ngay !== '2026-08-10');
+await pha('gửi trùng thông báo', 'xep-hang-luong.js', '    if (co) continue;\n', '',
+  rp => rp.baoLai.gui !== 0);
+await pha('bỏ điều kiện hài lòng', 'xep-hang-luong.js', 'if (ph.tyLeHaiLong < NGUONG_THUONG.haiLong)', 'if (false)',
+  (rp, P) => P.xetThuong(95, { soNha: 4, soNhaHaiLong: 3, tyLeHaiLong: 75 }).trangThai === 'dat');
 
 console.log('\n' + dat + ' đạt · ' + truot + ' sai');
 process.exit(truot ? 1 : 0);

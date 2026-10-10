@@ -18,9 +18,12 @@ var G = window.G || {}; window.G = G;
   var U = G.U, h = U.h;
   var st = { ai:'', d:null, dang:false, loi:'', mo:{} };
   function coMayChu(){ return !!(G.API_CAP_PHEP && G.PHIEN_TOKEN); }
-  function veLai(){ if(G.S && G.S.view === 'trung-tam-do' && G.render) G.render(); }
+  /* Khối này nằm ở màn chính của nhiều vai (Điều hành · Buồng lái Coach ·
+     Khoang mở cửa) — vẽ lại đúng màn đang mở nó, không cứng một tên màn. */
+  var MAN_CO_HOP = { 'trung-tam-do':1, 'coach-deck':1, 'tuvan-deck':1 };
+  function veLai(){ if(G.S && MAN_CO_HOP[G.S.view] && G.render) G.render(); }
   function gio(s){ try { var d = new Date(s); return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2) + ' · ' + d.getDate() + '/' + (d.getMonth() + 1); } catch(e){ return ''; } }
-  var LOAI = { lienHe:'Yêu cầu tư vấn', viecKet:'Việc kẹt' };
+  var LOAI = { lienHe:'Yêu cầu tư vấn', viecKet:'Việc kẹt', traLuong:'Lịch trả lương' };
   var MUC = { gap:['gấp','var(--gita-do)'], canXem:['cần xem','var(--warn)'], tin:['tin','var(--ink-4)'] };
 
   function nap(){
@@ -63,7 +66,7 @@ var G = window.G || {}; window.G = G;
     if(st.loi) return o + '<p class="tiny" style="color:var(--gita-do);margin:8px 0 0">' + h(st.loi) + '</p></section>';
     if(!st.d) return o + '<p class="tiny muted" style="margin:8px 0 0">Đang đọc…</p></section>';
     var ds = st.d.ds || [];
-    if(!ds.length) return o + '<p class="tiny muted" style="margin:8px 0 0">Không có thông báo nào chờ xem. Yêu cầu tư vấn từ trang Liên hệ cũng hiện ở đây.</p></section>';
+    if(!ds.length) return o + '<p class="tiny muted" style="margin:8px 0 0">Không có thông báo nào chờ xem. Lịch trả lương bị dời và yêu cầu gửi tới vai của bạn sẽ hiện ở đây.</p></section>';
     o += '<p class="tiny muted" style="margin:6px 0 10px">' + ds.length + ' thông báo chờ xem — gửi tới vai của bạn.</p>';
     o += ds.map(function(x){
       var m = MUC[x.mucDo] || MUC.tin, mo = !!st.mo[x.id];

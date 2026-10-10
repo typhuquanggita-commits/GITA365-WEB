@@ -265,6 +265,13 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
 
   /* ── XẾP HẠNG LƯƠNG THƯỞNG THÁNG · LỊCH TRẢ LƯƠNG ── */
   function kyTruoc(){ var d = new Date(Date.now() + 7 * 3600000 - 20 * 86400000); return d.toISOString().slice(0, 7); }
+  /* Ba trạng thái, không gộp: đạt · không đạt · CHƯA XÉT (thiếu mẫu phiếu). */
+  function oThuong(t){
+    if(!t) return '<span class="muted">—</span>';
+    var nhan = t.trangThai === 'dat' ? '<b style="color:var(--gita)">Đủ điều kiện</b>' : t.trangThai === 'chuaXet' ? '<span class="muted">Chưa xét</span>' : '<span>Chưa đạt</span>';
+    return nhan + (t.tyLeHaiLong !== null && t.tyLeHaiLong !== undefined ? '<br><span class="tiny muted">hài lòng ' + t.tyLeHaiLong + '%</span>' : '') +
+      '<br><span class="tiny muted">' + h(t.lyDo) + '</span>';
+  }
   function nganXepHang(){
     var ky = st.xhKy || kyTruoc();
     var o = '<p class="sm muted mb">Hạng tháng ghép từ ba thứ đo được trong sổ: điểm thi ngày 28, cấp chứng chỉ, và phiếu tháng của chính các gia đình mình phụ trách. Không ô nào người được xếp hạng tự gõ.</p>';
@@ -273,22 +280,23 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     if(!st.xh || st.xh.ky !== ky){ doc('xh', 'xepHangThang', { ky:ky }, function(r){ st.xh = r; }); o += st.loi.xh ? canhBaoMau(h(st.loi.xh)) : '<p class="sm muted">Đang tính…</p>'; }
     else {
       var x = st.xh, L = x.luat;
-      if(x.ngayTra) o += canhBaoMau('Lương kỳ ' + h(x.ky) + ' trả ngày <b>' + h(x.ngayTra.ngay.split('-').reverse().join('/')) + '</b>' + (x.ngayTra.doi ? ' (' + h(x.ngayTra.lyDo) + ' nên lùi sang ngày 08)' : '') + '.', 'var(--gita)');
+      if(x.ngayTra) o += canhBaoMau('Lương kỳ ' + h(x.ky) + ' trả ngày <b>' + h(x.ngayTra.ngay.split('-').reverse().join('/')) + '</b>' + (x.ngayTra.doi ? ' (dời vì ' + h(x.ngayTra.lyDo) + ')' : '') + '.', 'var(--gita)');
       o += '<div class="co-cb mb"><div style="--m:var(--ink-4)"><span>Trọng số: thi ' + L.trongSo.thi + ' · phản hồi khách ' + L.trongSo.phanHoi + ' · cấp ' + L.trongSo.cap +
-        '. Hạng ' + L.hang.map(function(g){ return g.hang + (g.tu ? ' từ ' + g.tu : ''); }).join(' · ') + '. Dưới ' + L.mauToiThieu + ' nhà có phiếu thì phần phản hồi ghi "chưa đủ mẫu", không tính là 0. ' + h(x.gioiHan) + '</span></div></div>';
+        '. Hạng ' + L.hang.map(function(g){ return g.hang + (g.tu ? ' từ ' + g.tu : ''); }).join(' · ') + '. Dưới ' + L.mauToiThieu + ' nhà có phiếu thì phần phản hồi ghi "chưa đủ mẫu", không tính là 0. ' +
+        (L.thuong ? '<b>Thưởng lương</b> khi KPI từ ' + L.thuong.kpi + ' VÀ từ ' + L.thuong.haiLong + '% nhà hài lòng (nhà hài lòng = điểm hài lòng trung bình từ ' + L.csatHaiLong + '/5). ' : '') + h(x.gioiHan) + '</span></div></div>';
       if(!x.ds.length) o += '<p class="sm muted">' + (x.chiDongCuaToi ? 'Vai của bạn không nằm trong thang Coach / Tư vấn.' : 'Chưa có Coach hay Tư vấn viên nào.') + '</p>';
-      else o += '<div class="tcc-bang" role="region" aria-label="Xếp hạng lương thưởng" tabindex="0"><table class="tbl sm"><tr><th>Nhân sự</th><th>Hạng</th><th>Điểm</th><th>Thi ngày 28</th><th>Cấp</th><th>Phản hồi khách</th></tr>' +
+      else o += '<div class="tcc-bang" role="region" aria-label="Xếp hạng lương thưởng" tabindex="0"><table class="tbl sm"><tr><th>Nhân sự</th><th>Hạng</th><th>Điểm</th><th>Thi ngày 28</th><th>Cấp</th><th>Phản hồi khách</th><th>Thưởng</th></tr>' +
         x.ds.map(function(d){
           var tp = {}; d.thanhPhan.forEach(function(t){ tp[t.ma] = t; });
           var o2 = function(t){ return (t.giaTri === null ? '<span class="muted">chưa đủ mẫu</span>' : t.giaTri) + (t.ghiChu ? '<br><span class="tiny muted">' + h(t.ghiChu) + '</span>' : ''); };
           return '<tr><td>' + h(d.maNguoi) + '<br><span class="tiny muted">' + h(d.role) + ' · ' + d.soNhaPhuTrach + ' nhà phụ trách</span></td><td><b>' + h(d.hang) + '</b></td><td>' + d.diem +
-            (d.trongBoQua ? '<br><span class="tiny muted">bỏ ' + d.trongBoQua + '% trọng số</span>' : '') + '</td><td>' + o2(tp.thi) + '</td><td>' + o2(tp.cap) + '</td><td>' + o2(tp.phanHoi) + '</td></tr>';
+            (d.trongBoQua ? '<br><span class="tiny muted">bỏ ' + d.trongBoQua + '% trọng số</span>' : '') + '</td><td>' + o2(tp.thi) + '</td><td>' + o2(tp.cap) + '</td><td>' + o2(tp.phanHoi) + '</td><td>' + oThuong(d.thuong) + '</td></tr>';
         }).join('') + '</table></div>';
     }
     o += U.sec('Lịch trả lương');
     if(!st.lich){ doc('lich', 'lichTraLuong', {}, function(r){ st.lich = r; }); o += st.loi.lich ? canhBaoMau(h(st.loi.lich)) : '<p class="sm muted">Đang đọc…</p>'; }
     else {
-      o += '<p class="sm muted mb">Ngày ' + st.lich.luat.ngayTra + ' hằng tháng trả lương của tháng trước; ngày ấy trùng ngày nghỉ (Chủ nhật, lễ, ngày Super Admin khai) thì trả ngày ' + st.lich.luat.ngayLui + '.</p>';
+      o += '<p class="sm muted mb">Ngày ' + st.lich.luat.ngayTra + ' hằng tháng trả lương của tháng trước; ngày ấy trùng ngày nghỉ (thứ Bảy, Chủ nhật, lễ, ngày Super Admin khai) thì trả ngày ' + st.lich.luat.ngayLui + '; ngày ' + st.lich.luat.ngayLui + ' cũng nghỉ thì trả ngày làm việc kế tiếp. Ngày trả bị dời thì mỗi nhân sự nhận một thông báo trong hộp thông báo.</p>';
       o += '<div class="tcc-bang" role="region" aria-label="Lịch trả lương ' + st.lich.nam + '" tabindex="0"><table class="tbl sm"><tr><th>Lương tháng</th><th>Ngày trả</th></tr>' + st.lich.lich.map(function(l){
         return '<tr><td>' + h(l.ky) + '</td><td>' + h(l.ngay.split('-').reverse().join('/')) + (l.doi ? ' <span class="tiny muted">· ' + h(l.lyDo) + '</span>' : '') + '</td></tr>'; }).join('') + '</table></div>';
       if(st.lich.nghiKhai.length) o += '<p class="tiny muted">Ngày đã khai: ' + st.lich.nghiKhai.map(function(n){ return h(n.ngay + ' ' + (n.nghi ? 'nghỉ' : 'làm') + ' · ' + n.ten); }).join(' · ') + '</p>';
