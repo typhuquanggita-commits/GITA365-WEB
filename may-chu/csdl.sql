@@ -2387,6 +2387,9 @@ CREATE TABLE IF NOT EXISTS tuyenDaTri (ma TEXT PRIMARY KEY, ten TEXT, cacChang T
 -- Trợ lý V50 (10/10/2026): thông điệp Super Admin gửi bộ não vận hành → một tuyến Agent ba chặng.
 CREATE TABLE IF NOT EXISTS thongDiepBoNao (id TEXT PRIMARY KEY, noiDung TEXT NOT NULL, phuongAn TEXT, mucDo TEXT NOT NULL DEFAULT 'thuong', phanHe TEXT, tuyen TEXT, boiAi TEXT, luc INTEGER NOT NULL, trangThai TEXT NOT NULL DEFAULT 'daGui');
 CREATE INDEX IF NOT EXISTS ix_tdbn_luc ON thongDiepBoNao (luc);
+-- Tra cứu giải pháp 13 mục (10/10/2026): sổ nhật ký mỗi lần đem giải pháp ra dùng — không giữ dữ liệu nhận dạng gia đình.
+CREATE TABLE IF NOT EXISTS soNhatKyGiaiPhap (id TEXT PRIMARY KEY, maVanDe TEXT NOT NULL, tenVanDe TEXT, phuongAn TEXT NOT NULL, ketQua TEXT NOT NULL, danhGia TEXT, baiHoc TEXT, boiAi TEXT, vai TEXT, luc INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS ix_nkgp_van_de ON soNhatKyGiaiPhap (maVanDe, luc);
 
 -- ═════════════════════════════════════════════════════════════
 --  VÍ CREDIT (may-chu/credit.js) — 1 credit = 10 đồng, bảng chủ hệ

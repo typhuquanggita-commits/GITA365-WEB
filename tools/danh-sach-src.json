@@ -53,6 +53,7 @@
     "src/noi-may-chu.js",
     "src/kho-khach.js",
     "src/quy-trinh-xu-ly.js",
+    "src/tra-cuu-giai-phap.js",
     "src/do-kho.js",
     "src/chuan-ngon-tu.js",
     "src/tro-ly-chi-muc.js",

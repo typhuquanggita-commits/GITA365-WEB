@@ -286,6 +286,7 @@ G.ITEM_EN = {
   'nhan-dien':['GITA brand identity','Logo · three colours · type · usage rules'],
   'van-dung':['Five levels of application','Depth of craft · tier limits · reporting'],
   'xu-ly-ca':['Case handling process','7 steps · evidence required · 4 constraints'],
+  'tra-cuu-gp':['Solution lookup · 13 sections','Problem → analysis → protocol → 20/80 → … → lessons · solution log'],
   'gui-tu-lieu':['Send material to a family','Pending requests · the 80% KPI gate'],
   'chuyen-cam-hung':['Inspiring stories','100 stories for your level · 10 threads · one story per mission'],
   'chuyen-the-gioi':['Real people, real work','Entrepreneurs · scientists · artists · athletes · Vietnamese figures'],
