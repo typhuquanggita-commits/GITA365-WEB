@@ -53,7 +53,8 @@ kiem('sự kiện: trùng mã không ghi lần hai, điểm ngoài khoảng và 
 
 /* ── khảo sát ── */
 kiem('khảo sát sai khoảng bị chặn', !(await M.guiDanhGiaKH({ nps: 11, csat: 5 }, {}, db, P1)).ok);
-kiem('khảo sát hài lòng tháng', (await M.guiDanhGiaKH({ nps: 9, csat: 5, ghiChu: 'Con tiến bộ rõ' }, {}, db, P1)).ok);
+kiem('khảo sát thiếu năm tiêu chí bị chặn (THIEUTIEUCHI)', (await M.guiDanhGiaKH({ nps: 9, csat: 5 }, {}, db, P1)).code === 'THIEUTIEUCHI');
+kiem('khảo sát hài lòng tháng', (await M.guiDanhGiaKH({ nps: 9, csat: 5, tieuChi: [5, 4, 5, 4, 5], ghiChu: 'Con tiến bộ rõ' }, {}, db, P1)).ok);
 
 /* ── nguồn của module khác ── */
 dsNgay.slice(0, 10).forEach((d, i) => sq.prepare('INSERT INTO nhipXong (id,maNha,maNhip,ngay,bo,boiAi,ghiLuc) VALUES (?,?,?,?,0,?,?)').run('NX' + i, 'K1', 'N', d, 'p', d));

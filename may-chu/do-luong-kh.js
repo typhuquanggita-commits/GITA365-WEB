@@ -31,6 +31,8 @@
 
 import { Kho } from './nen.js';
 import { BAC } from './vai-tro.js';
+import { vaBang } from './va-luoc-do.js';
+import { TIEU_CHI } from './xep-hang-luong.js';
 import { PHIEN_BAN_DO, MUC, NHOM_MAN, nhomCuaMan, chamDiem, xepTang, lyDo, TANG_CS } from './do-luong-cham.js';
 
 export const LOAI_SK = {
@@ -53,7 +55,9 @@ async function taoBang(db) {
   await db.prepare('CREATE UNIQUE INDEX IF NOT EXISTS ux_skkh_khoa ON suKienKH (khoaDuy)').run();
   await db.prepare('CREATE INDEX IF NOT EXISTS ix_skkh_nha ON suKienKH (maNha, ngay)').run();
   await db.prepare('CREATE TABLE IF NOT EXISTS danhGiaKH (maNha TEXT NOT NULL, uid TEXT NOT NULL, thang TEXT NOT NULL, ' +
-    'nps INTEGER, csat INTEGER, ghiChu TEXT, luc TEXT NOT NULL, PRIMARY KEY (maNha, uid, thang))').run();
+    'nps INTEGER, csat INTEGER, ghiChu TEXT, luc TEXT NOT NULL, tieuChi TEXT, coach TEXT, tuVan TEXT, PRIMARY KEY (maNha, uid, thang))').run();
+  /* D1 dựng trước 10/2026 thiếu ba cột tieuChi · coach · tuVan — vá thêm cột. */
+  await vaBang(db, 'danhGiaKH');
   await db.prepare('CREATE TABLE IF NOT EXISTS hoSoThang (maNha TEXT NOT NULL, thang TEXT NOT NULL, duLieu TEXT NOT NULL, ' +
     'tiemNang INTEGER, tangCS TEXT, chot INTEGER NOT NULL DEFAULT 0, boiAi TEXT, luc TEXT NOT NULL, PRIMARY KEY (maNha, thang))').run();
   daTao = true;
@@ -148,9 +152,18 @@ export async function guiDanhGiaKH(y, env, db, hoSo) {
   const x = y || {}, nps = Number(x.nps), csat = Number(x.csat);
   if (!Number.isInteger(nps) || nps < 0 || nps > 10) return { ok: false, error: 'Điểm giới thiệu phải từ 0 tới 10.' };
   if (!Number.isInteger(csat) || csat < 1 || csat > 5) return { ok: false, error: 'Mức hài lòng phải từ 1 tới 5.' };
-  await db.prepare('INSERT INTO danhGiaKH (maNha, uid, thang, nps, csat, ghiChu, luc) VALUES (?,?,?,?,?,?,?) ' +
-    'ON CONFLICT(maNha, uid, thang) DO UPDATE SET nps = excluded.nps, csat = excluded.csat, ghiChu = excluded.ghiChu, luc = excluded.luc')
-    .bind(maNha, hoSo.uid, thangNay(), nps, csat, String(x.ghiChu || '').slice(0, 1000), new Date().toISOString()).run();
+  /* Năm tiêu chí (xep-hang-luong.js → TIEU_CHI): bắt buộc đủ năm điểm 1–5 — một
+     phiếu thiếu tiêu chí thì không so được với phiếu đủ. */
+  const tc = Array.isArray(x.tieuChi) ? x.tieuChi.map(Number) : null;
+  if (!tc || tc.length !== TIEU_CHI.length || !tc.every(v => Number.isInteger(v) && v >= 1 && v <= 5))
+    return { ok: false, code: 'THIEUTIEUCHI', error: 'Chấm đủ ' + TIEU_CHI.length + ' tiêu chí, mỗi tiêu chí từ 1 tới 5.' };
+  /* Người phụ trách chụp LÚC GỬI: phiếu tháng này thuộc người làm tháng này. */
+  const ps = await db.prepare('SELECT coach, tuVan FROM hoSoKhach WHERE maKhachHang = ?').bind(maNha).first();
+  await db.prepare('INSERT INTO danhGiaKH (maNha, uid, thang, nps, csat, ghiChu, luc, tieuChi, coach, tuVan) VALUES (?,?,?,?,?,?,?,?,?,?) ' +
+    'ON CONFLICT(maNha, uid, thang) DO UPDATE SET nps = excluded.nps, csat = excluded.csat, ghiChu = excluded.ghiChu, luc = excluded.luc, ' +
+    'tieuChi = excluded.tieuChi, coach = excluded.coach, tuVan = excluded.tuVan')
+    .bind(maNha, hoSo.uid, thangNay(), nps, csat, String(x.ghiChu || '').slice(0, 1000), new Date().toISOString(), JSON.stringify(tc),
+      String((ps && ps.coach) || '').toLowerCase() || null, String((ps && ps.tuVan) || '').toLowerCase() || null).run();
   return { ok: true, thang: thangNay() };
 }
 

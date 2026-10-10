@@ -17,7 +17,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
 (function(){
   var U = G.U, h = U.h, ic = U.ic;
   var CRV = G.CRV = {};
-  var st = { vi:null, dangTai:false, loi:'', chon:'', qt:null, phieu:null, traNha:'', traVi:null, traSo:null };
+  var st = { vi:null, dangTai:false, loi:'', chon:'', qt:null, phieu:null, traNha:'', traVi:null, traSo:null, dx:null, dxChon:'' };
   function so(n){ return Math.round(Number(n)||0).toLocaleString('vi-VN'); }
   /* Ví thật cần PHIÊN máy chủ (đăng nhập thật) — tài khoản mẫu thì nói thẳng, không gọi. */
   function coMayChu(){ return typeof G.goiMayChu === 'function' && !!G.API_CAP_PHEP && !!G.PHIEN_TOKEN; }
@@ -75,11 +75,37 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       return '<div class="co-dong"><span class="co-grow sm"><b>'+h(tenTieu(m))+'</b><br><span class="tiny muted">'+so(g)+' credit · ≈ '+so(g*10)+'đ</span></span>'+
         (xac ? '<button class="btn pri sm" data-crv="dung" data-m="'+h(m)+'">Xác nhận trừ '+so(g)+'</button><button class="btn ghost sm" data-crv="huy">Thôi</button>'
              : '<button class="btn sm" data-crv="chon" data-m="'+h(m)+'"'+(du?'':' disabled title="Chưa đủ credit"')+'>Dùng</button>')+'</div>'; }).join('')+'</div>';
+    o += veDeXuat();
     o += bangCachTich(V);
     o += U.sec('Lịch sử gần đây', (V.gan||[]).length ? 'Mỗi dòng là một giao dịch đã ghi ở máy chủ — không sửa, không xoá' : 'Chưa có giao dịch nào');
     o += '<div class="co-ds">'+(V.gan||[]).map(dongSo).join('')+'</div>';
     return o;
   };
+  /* ═══════════ GIẢI PHÁP COACH ĐỀ XUẤT — NHÀ TỰ CHỌN ═══════════
+     Kho cấp cao 6 hạng: Coach đề xuất 1–3 phương án, nhà xem giá + gói rồi
+     TỰ CHỌN — credit chỉ bị trừ ở bước này, không bao giờ do Coach bấm. */
+  function taiDeXuat(){
+    st.dx = 'dang';
+    G.goiMayChu('dsDeXuatNha', {}, { moi:true }).then(function(r){ st.dx = r && r.ok ? r : { loi:(r && r.error) || '' }; veLai(); });
+  }
+  function veDeXuat(){
+    if(!st.dx){ taiDeXuat(); return ''; }
+    if(st.dx === 'dang' || st.dx.loi || !st.dx.ds) return '';
+    var cho = st.dx.ds.filter(function(d){ return d.trangThai === 'cho' && d.phuongAn.length; });
+    if(!cho.length) return '';
+    var o = U.sec('Giải pháp Coach đề xuất cho nhà mình', 'Hạng cao hơn là gói sâu hơn: nhiều buổi hơn, cá nhân hoá hơn, theo dõi dài hơn. Nhà chọn mức phù hợp — credit chỉ trừ khi nhà bấm chọn.');
+    cho.forEach(function(d){
+      o += '<div class="card pad-sm mb">' + (d.ghiChu ? '<p class="sm mb">' + h(d.ghiChu) + ' <span class="tiny muted">— Coach ' + h(d.boiAi || '') + '</span></p>' : '') +
+        '<div class="co-ds">' + d.phuongAn.map(function(p){
+          var k = d.id + '|' + p.ma, du = st.dx.soDu && st.dx.soDu.tong >= p.gia;
+          return '<div class="co-dong"><span class="co-grow sm"><b>' + h(p.tenHang) + ' · ' + so(p.gia) + ' credit</b> <span class="tiny muted">≈ ' + so(p.gia * 10) + 'đ</span><br>' + h(p.ten) +
+            '<br><span class="tiny muted">' + h(p.goi.phamVi) + ' · ' + h(p.goi.theoDoi) + '</span><br><span class="tiny"><b>Nhà cần làm:</b> ' + h(p.goi.dieuKien) + '</span></span>' +
+            (st.dxChon === k ? '<button class="btn pri sm" data-crv="dx-chon" data-id="' + h(d.id) + '" data-m="' + h(p.ma) + '">Xác nhận trừ ' + so(p.gia) + '</button><button class="btn ghost sm" data-crv="dx-thoi">Thôi</button>'
+              : '<button class="btn sm" data-crv="dx-xem" data-k="' + h(k) + '"' + (du ? '' : ' disabled title="Chưa đủ credit"') + '>Chọn</button>') + '</div>';
+        }).join('') + '</div><div class="co-hang mt"><button class="btn ghost sm" data-crv="dx-huy" data-id="' + h(d.id) + '">Không chọn đề xuất này</button></div></div>';
+    });
+    return o;
+  }
   function bangCachTich(V){
     var ds = V ? Object.keys(V.giaThuong).map(function(m){ return [tenThuong(m), V.giaThuong[m].cr, V.giaThuong[m].toiDa, V.giaThuong[m].tuDong]; })
                : (function(){ var t = Number((G.S && G.S.acc && G.S.acc.tang) || 1) || 1;
@@ -139,7 +165,22 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     var el = e.target.closest && e.target.closest('[data-crv]'); if(!el) return;
     e.preventDefault();
     var a = el.getAttribute('data-crv');
-    if(a==='lam-moi'){ st.vi = null; CRV.taiVi(); return; }
+    if(a==='lam-moi'){ st.vi = null; st.dx = null; CRV.taiVi(); return; }
+    if(a==='dx-xem'){ st.dxChon = el.getAttribute('data-k'); veLai(); return; }
+    if(a==='dx-thoi'){ st.dxChon = ''; veLai(); return; }
+    if(a==='dx-chon'){
+      st.dxChon = '';
+      G.goiMayChu('chonDeXuat', { id:el.getAttribute('data-id'), ma:el.getAttribute('data-m') }).then(function(r){
+        if(r && r.ok){ U.toast('Đã chọn gói · trừ '+so(r.so)+' credit. Coach sẽ bắt đầu theo gói này.','ok'); st.vi = null; st.dx = null; CRV.taiVi(); }
+        else { U.toast((r && r.error) || 'Chưa chọn được.','err'); veLai(); }
+      });
+      return;
+    }
+    if(a==='dx-huy'){
+      G.goiMayChu('huyDeXuat', { id:el.getAttribute('data-id') }).then(function(r){
+        U.toast(r && r.ok ? 'Đã báo Coach: nhà không chọn đề xuất này.' : ((r && r.error) || 'Chưa ghi được.'), r && r.ok ? 'ok' : 'err'); st.dx = null; veLai(); });
+      return;
+    }
     if(a==='chon'){ st.chon = el.getAttribute('data-m'); veLai(); return; }
     if(a==='huy'){ st.chon = ''; veLai(); return; }
     if(a==='dung'){

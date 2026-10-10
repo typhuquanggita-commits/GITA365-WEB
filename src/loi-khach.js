@@ -156,7 +156,7 @@ G.LOI_PHAM_VI = function(mo, khoa, choTang){
 /* Câu chào sau khi đăng nhập — khách hàng không cần nghe chuyện "mở gói" */
 G.LOI_CHAO = function(ten){
   if(G.LA_HOC_VIEN && G.LA_HOC_VIEN() && G.LOI_CHAO_HV) return G.LOI_CHAO_HV(ten);
-  if(G.LA_KHACH()) return 'Chào ' + ten + ' — mọi thứ đã sẵn sàng.';
+  if(G.LA_KHACH()) return G.LANG === 'en' ? 'Hello ' + ten + ' — everything is ready.' : 'Chào ' + ten + ' — mọi thứ đã sẵn sàng.';
   var K = G.KHO || {};
   return 'Chào ' + ten + ' · ' + ((G.S.roleObj && G.S.roleObj.n) || '') +
     (K.cheDoMau ? ' · chế độ mẫu' : ' · đã mở ' + (K.daNap || []).length + ' gói');

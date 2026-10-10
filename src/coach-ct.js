@@ -109,7 +109,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       return '<div class="co-the nhan" style="--c:'+h(c.c||'#185AB4')+';border-top:4px solid '+h(c.c||'#185AB4')+'">'+
         '<div class="co-hang" style="gap:6px">'+(c.tang||[]).map(tangChip).join('')+
           '<span class="co-tag">'+h(LOAI[c.loai]||c.loai||'')+'</span>'+(laTuTK(c)?'<span class="co-tag">tự thiết kế</span>':'')+'</div>'+
-        '<h3>'+h(c.ten)+'</h3>'+
+        '<h2>'+h(c.ten)+'</h2>'+
         '<div class="co-meta"><span>'+icI('calendar')+' '+h(c.ngay)+' ngày</span><span>· '+tongBuoi(c)+' buổi</span><span>· '+(c.gd||[]).length+' giai đoạn</span><span>· Coach từ '+h(vai(c.capCoach).short)+'</span></div>'+
         '<div class="sm"><b>Đối tượng:</b> '+h(c.doiTuong||'—')+'</div>'+
         '<p class="sm muted" style="margin:0;line-height:1.5">'+h(c.muc||'')+'</p>'+
@@ -141,7 +141,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     o += '<div class="co-the nhan mb" style="--c:'+h(c)+';border-left:5px solid '+h(c)+'">'+
       '<div class="co-hang" style="gap:6px">'+(ct.tang||[]).map(tangChip).join('')+'<span class="co-tag">'+h(LOAI[ct.loai]||ct.loai||'')+'</span>'+
         (laTuTK(ct)?'<span class="co-tag">tự thiết kế</span>':'')+'<span class="tiny muted">mã '+h(ct.ma)+'</span></div>'+
-      '<h3 style="font-size:19px">'+h(ct.ten)+'</h3>'+
+      '<h2 style="font-size:19px">'+h(ct.ten)+'</h2>'+
       '<div class="co-meta"><span>'+h(ct.ngay)+' ngày</span><span>· '+tongBuoi(ct)+' buổi</span><span>· '+(ct.gd||[]).length+' giai đoạn</span><span>· '+dkDang(ct.ma).length+' nhà đang chạy</span></div>'+
       '<p style="margin:2px 0 0;line-height:1.55"><b>Mục tiêu.</b> '+h(ct.muc||'—')+'</p>'+
       '<div class="co-hang mt"><button class="btn sm" data-co="ct-ghep-mo" data-ma="'+h(ct.ma)+'">'+ic('plus','w-3 h-3')+'Ghép cho nhà</button>'+

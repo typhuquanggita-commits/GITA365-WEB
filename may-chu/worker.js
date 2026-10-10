@@ -111,11 +111,17 @@ import { phimGuiViec, phimXemViec, phimTinhHuong } from './phim-ai.js';
 import { phimMienPhi, phimTrangThaiDu } from './phim-0d.js';
 import { hoiDaTri, hoiDongDaTri, chamDaTri, soDaTri, luuGiaiPhap, duyetGiaiPhap, dsGiaiPhap, boSungGiaiPhap,
   canhMauDaTri, canhMauTuDong, thuMauDaTri, vongKhoaHocTuDong, docVongKhoaHoc,
-  taoTuyenDaTri, datTuChayTuyen, chayChangDaTri, docTuyenDaTri } from './bo-nao-da-tri.js';
+  taoTuyenDaTri, datTuChayTuyen, chayChangDaTri, docTuyenDaTri,
+  chotChangDaTri, docDoiAgent, ghiBoNhoAgent, batBoNhoAgent, doiSangDoiAgent } from './bo-nao-da-tri.js';
 import { lapDeAnTaiLieu, chayBuocTaiLieu, docDeAnTaiLieu, datTuChayTaiLieu, lapKeHoachKho } from './xuong-tai-lieu.js';
 import { docViecKet } from './viec-ket.js';
 import { troLyV50, guiThongDiepBoNao, docThongDiepBoNao } from './tro-ly-v50.js';
-import { ghiNhatKyGiaiPhap, docNhatKyGiaiPhap, soanMucGiaiPhap } from './tra-cuu-giai-phap.js';
+import { ghiNhatKyGiaiPhap, docNhatKyGiaiPhap, soanMucGiaiPhap, napKhoVanDe, dsKhoVanDe, docKhoVanDe } from './tra-cuu-giai-phap.js';
+import { datCongThi, batDauThi, docBaiThi, nopBaiThi, chamBaiThi, dsBaiCham, thiCuaToi, khungThi, xinYKienKho, duyetYKien, dsYKien, ghiViPham, giaiTrinhViPham, quyetViPham, doiThi, dsViPham } from './thi-cap.js';
+import { lichTraLuong, khaiNgayNghi, xepHangThang, baoLichTraLuongSapToi } from './xep-hang-luong.js';
+import { kimChiNam } from './kim-chi-nam.js';
+import { docDaoTao, ghiDanhDaoTao, ghiBuocDaoTao, capChungChiDaoTao, thuHoiChungChiDaoTao, doiDaoTao } from './dao-tao-ct.js';
+import { giaKhoCao, datGiaKhoCao, napKhoCao, dsKhoCao, docKhoCao, deXuatKhoCao, dsDeXuatNha, chonDeXuat, huyDeXuat, hoanThanhKhoCao, chuyenAnToan, soKhoCaoNha } from './kho-cao.js';
 import { lapDuAnPhim, docXuongPhimNganSach, datCanhTraPhi, moLaiDuAnPhim, DON_GIU_CHO } from './phim-ngan-sach.js';
 import { docKpiCayTien } from './cay-tien.js';
 import { docDongChay } from './dong-chay.js';
@@ -296,6 +302,8 @@ const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau'
   'bayConSoCEO', 'soatLuatTaiChinh', 'dangOKichBan',
   'toiUuGoi', 'docNhatKyToanHe',
   'docBaCua', 'ghiCua', 'lapBaCua', 'soatBaiTuan',
+  'datCongThi', 'batDauThi', 'docBaiThi', 'nopBaiThi', 'chamBaiThi', 'dsBaiCham', 'thiCuaToi', 'khungThi', 'xinYKienKho', 'duyetYKien', 'dsYKien', 'ghiViPham', 'giaiTrinhViPham', 'quyetViPham', 'doiThi', 'dsViPham', 'lichTraLuong', 'khaiNgayNghi', 'xepHangThang', 'kimChiNam',
+  'docDaoTao', 'ghiDanhDaoTao', 'ghiBuocDaoTao', 'capChungChiDaoTao', 'thuHoiChungChiDaoTao', 'doiDaoTao',
   'docTuanThu', 'ghiDongY', 'docDongY', 'yeuCauXoaDuLieu', 'danhDauXoa',
   'soXoaDuLieu', 'docVungLuatSu', 'xuatDuLieuNha',
   'docBangDieuKhien', 'banTinSang', 'chonBaNhaNgauNhien', 'soiQuyetDinh', 'ghiQuyetDinh',
@@ -341,9 +349,10 @@ const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau'
   'hoiChatbot', 'lichSuChat', 'soanDeBaiNgoai',
   'hoiDaTri', 'hoiDongDaTri', 'chamDaTri', 'soDaTri',
   'luuGiaiPhap', 'duyetGiaiPhap', 'dsGiaiPhap', 'boSungGiaiPhap', 'canhMauDaTri', 'thuMauDaTri', 'docVongKhoaHoc',
-  'taoTuyenDaTri', 'chayChangDaTri', 'docTuyenDaTri',
+  'taoTuyenDaTri', 'chayChangDaTri', 'docTuyenDaTri', 'chotChangDaTri', 'docDoiAgent', 'ghiBoNhoAgent', 'batBoNhoAgent', 'doiSangDoiAgent',
   'troLyV50', 'guiThongDiepBoNao', 'docThongDiepBoNao',
-  'ghiNhatKyGiaiPhap', 'docNhatKyGiaiPhap', 'soanMucGiaiPhap',
+  'ghiNhatKyGiaiPhap', 'docNhatKyGiaiPhap', 'soanMucGiaiPhap', 'napKhoVanDe', 'dsKhoVanDe', 'docKhoVanDe',
+  'giaKhoCao', 'datGiaKhoCao', 'napKhoCao', 'dsKhoCao', 'docKhoCao', 'deXuatKhoCao', 'dsDeXuatNha', 'chonDeXuat', 'huyDeXuat', 'hoanThanhKhoCao', 'chuyenAnToan', 'soKhoCaoNha',
   'lapDeAnTaiLieu', 'chayBuocTaiLieu', 'docDeAnTaiLieu', 'datTuChayTaiLieu', 'lapKeHoachKho', 'docViecKet',
   'lapDuAnPhim', 'docXuongPhimNganSach', 'datCanhTraPhi', 'moLaiDuAnPhim', 'docKpiCayTien', 'docDongChay',
   'phimTrangThai', 'phimGuiViec', 'phimXemViec', 'phimTinhHuong', 'phimMienPhi', 'quayKhopMoi', 'quayChuyenDong', 'quayVideoDong', 'taoNhanVatAI', 'quayXem', 'quayXoa', 'quayGiongNoi', 'quayPhimMoi', 'dongGoiPhanTu', 'xemPhanTu',
@@ -668,6 +677,32 @@ async function lam(fn, y, env, db, req) {
   if (fn === 'ghiCua')            return await ghiCua(y, env, db, hoSo);
   if (fn === 'lapBaCua')          return await lapBaCua(y, env, db, hoSo);
   if (fn === 'soatBaiTuan')       return await soatBaiTuan(y, env, db, hoSo);
+  if (fn === 'datCongThi') return await datCongThi(y, env, db, hoSo);
+  if (fn === 'batDauThi') return await batDauThi(y, env, db, hoSo);
+  if (fn === 'docBaiThi') return await docBaiThi(y, env, db, hoSo);
+  if (fn === 'nopBaiThi') return await nopBaiThi(y, env, db, hoSo);
+  if (fn === 'chamBaiThi') return await chamBaiThi(y, env, db, hoSo);
+  if (fn === 'dsBaiCham') return await dsBaiCham(y, env, db, hoSo);
+  if (fn === 'thiCuaToi') return await thiCuaToi(y, env, db, hoSo);
+  if (fn === 'kimChiNam') return await kimChiNam(y, env, db, hoSo);
+  if (fn === 'khungThi') return await khungThi(y, env, db, hoSo);
+  if (fn === 'xinYKienKho') return await xinYKienKho(y, env, db, hoSo);
+  if (fn === 'duyetYKien') return await duyetYKien(y, env, db, hoSo);
+  if (fn === 'dsYKien') return await dsYKien(y, env, db, hoSo);
+  if (fn === 'ghiViPham') return await ghiViPham(y, env, db, hoSo);
+  if (fn === 'giaiTrinhViPham') return await giaiTrinhViPham(y, env, db, hoSo);
+  if (fn === 'quyetViPham') return await quyetViPham(y, env, db, hoSo);
+  if (fn === 'doiThi') return await doiThi(y, env, db, hoSo);
+  if (fn === 'dsViPham') return await dsViPham(y, env, db, hoSo);
+  if (fn === 'lichTraLuong') return await lichTraLuong(y, env, db, hoSo);
+  if (fn === 'khaiNgayNghi') return await khaiNgayNghi(y, env, db, hoSo);
+  if (fn === 'xepHangThang') return await xepHangThang(y, env, db, hoSo);
+  if (fn === 'docDaoTao')         return await docDaoTao(y, env, db, hoSo);
+  if (fn === 'ghiDanhDaoTao')     return await ghiDanhDaoTao(y, env, db, hoSo);
+  if (fn === 'ghiBuocDaoTao')     return await ghiBuocDaoTao(y, env, db, hoSo);
+  if (fn === 'capChungChiDaoTao') return await capChungChiDaoTao(y, env, db, hoSo);
+  if (fn === 'thuHoiChungChiDaoTao') return await thuHoiChungChiDaoTao(y, env, db, hoSo);
+  if (fn === 'doiDaoTao')         return await doiDaoTao(y, env, db, hoSo);
   if (fn === 'docTuanThu')        return await docTuanThu(y, env, db, hoSo);
   if (fn === 'ghiDongY')          return await ghiDongY(y, env, db, hoSo);
   if (fn === 'docDongY')          return await docDongY(y, env, db, hoSo);
@@ -785,12 +820,32 @@ async function lam(fn, y, env, db, req) {
   if (fn === 'docVongKhoaHoc')    return await docVongKhoaHoc(y, env, db, hoSo);
   if (fn === 'taoTuyenDaTri')     return await taoTuyenDaTri(y, env, db, hoSo);
   if (fn === 'chayChangDaTri')    return await chayChangDaTri(y, env, db, hoSo);
+  if (fn === 'chotChangDaTri')    return await chotChangDaTri(y, env, db, hoSo);
+  if (fn === 'docDoiAgent')       return await docDoiAgent(y, env, db, hoSo);
+  if (fn === 'ghiBoNhoAgent')     return await ghiBoNhoAgent(y, env, db, hoSo);
+  if (fn === 'batBoNhoAgent')     return await batBoNhoAgent(y, env, db, hoSo);
+  if (fn === 'doiSangDoiAgent')   return await doiSangDoiAgent(y, env, db, hoSo);
   if (fn === 'troLyV50')          return await troLyV50(y, env, db, hoSo);
   if (fn === 'guiThongDiepBoNao') return await guiThongDiepBoNao(y, env, db, hoSo);
   if (fn === 'docThongDiepBoNao') return await docThongDiepBoNao(y, env, db, hoSo);
   if (fn === 'ghiNhatKyGiaiPhap') return await ghiNhatKyGiaiPhap(y, env, db, hoSo);
   if (fn === 'docNhatKyGiaiPhap') return await docNhatKyGiaiPhap(y, env, db, hoSo);
   if (fn === 'soanMucGiaiPhap')   return await soanMucGiaiPhap(y, env, db, hoSo);
+  if (fn === 'napKhoVanDe')       return await napKhoVanDe(y, env, db, hoSo);
+  if (fn === 'dsKhoVanDe')        return await dsKhoVanDe(y, env, db, hoSo);
+  if (fn === 'docKhoVanDe')       return await docKhoVanDe(y, env, db, hoSo);
+  if (fn === 'giaKhoCao')         return await giaKhoCao(y, env, db, hoSo);
+  if (fn === 'datGiaKhoCao')      return await datGiaKhoCao(y, env, db, hoSo);
+  if (fn === 'napKhoCao')         return await napKhoCao(y, env, db, hoSo);
+  if (fn === 'dsKhoCao')          return await dsKhoCao(y, env, db, hoSo);
+  if (fn === 'docKhoCao')         return await docKhoCao(y, env, db, hoSo);
+  if (fn === 'deXuatKhoCao')      return await deXuatKhoCao(y, env, db, hoSo);
+  if (fn === 'dsDeXuatNha')       return await dsDeXuatNha(y, env, db, hoSo);
+  if (fn === 'chonDeXuat')        return await chonDeXuat(y, env, db, hoSo);
+  if (fn === 'huyDeXuat')         return await huyDeXuat(y, env, db, hoSo);
+  if (fn === 'hoanThanhKhoCao')   return await hoanThanhKhoCao(y, env, db, hoSo);
+  if (fn === 'chuyenAnToan')      return await chuyenAnToan(y, env, db, hoSo);
+  if (fn === 'soKhoCaoNha')       return await soKhoCaoNha(y, env, db, hoSo);
   if (fn === 'lapDeAnTaiLieu')    return await lapDeAnTaiLieu(y, env, db, hoSo);
   if (fn === 'chayBuocTaiLieu')   return await chayBuocTaiLieu(y, env, db, hoSo);
   if (fn === 'docDeAnTaiLieu')    return await docDeAnTaiLieu(y, env, db, hoSo);
@@ -1274,6 +1329,10 @@ export default {
       console.error('DA_TRI_KHOA_HOC_HONG', String(e && e.message || e))));
     ctx.waitUntil(canhMauTuDong(env).catch(e =>
       console.error('DA_TRI_CANH_MAU_HONG', String(e && e.message || e))));
+    /* Ngày trả lương bị dời (thứ Bảy · Chủ nhật · lễ · ngày khai) thì nhân
+       sự nhận thông báo đích danh trước gần một tháng; chạy lại không gửi trùng. */
+    ctx.waitUntil(baoLichTraLuongSapToi(env.CSDL).catch(e =>
+      console.error('BAO_NGAY_TRA_LUONG_HONG', String(e && e.message || e))));
   },
 
   async fetch(req, env, ctx) {

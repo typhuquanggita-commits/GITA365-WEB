@@ -104,10 +104,56 @@ export function docCamXuc(cau) {
 const YEU_CAU = ['len phuong an', 'lap phuong an', 'lap ke hoach', 'len ke hoach', 'xay dung ke hoach', 'xay dung phuong an',
   'de xuat', 'chien luoc', 'cai tien', 'toi uu', 'trien khai', 'giai phap', 'phuong an', 'ke hoach', 'nang cap', 'lo trinh cho'];
 const MENH_LENH = /^(hay|lam|lap|len|xay dung|de xuat|thiet ke|toi uu|cai tien|trien khai|tong hop|phan tich|danh gia|soan|viet)\b/;
+/* HỎI TIẾN ĐỘ đứng TRƯỚC yêu cầu. Lần đầu lên production (10/10/2026):
+   Super Admin hỏi "làm cách nào tôi biết những gì tôi yêu cầu được triển
+   khai và tiến độ tới đâu?" — chữ "triển khai" làm câu ấy bị đọc là một
+   YÊU CẦU: trợ lý dựng ra một "bảng quản trị dự án" không tồn tại, và chính
+   câu hỏi bị gửi thành một tuyến Agent mới trùng việc. Câu hỏi tiến độ phải
+   được trả bằng SỔ THẬT, không bằng một phương án. */
+const HOI_TIEN_DO = ['tien do', 'toi dau roi', 'den dau roi', 'trien khai chua', 'trien khai den dau', 'trien khai toi dau',
+  'duoc trien khai', 'lam toi dau', 'lam den dau', 'xong chua', 'bao gio xong', 'theo doi viec', 'yeu cau cua toi',
+  'nhung gi toi yeu cau', 'viec toi giao', 'trang thai tuyen', 'tuyen agent', 'bo nao lam toi'];
 export function docYHoi(cau) {
   const s = boDau(cau);
+  if (coCum(s, HOI_TIEN_DO).length) return { loai: 'tienDo', coDauHoi: /[?？]/.test(cau) };
   const yc = coCum(s, YEU_CAU).length > 0 || MENH_LENH.test(s);
   return { loai: yc ? 'yeuCau' : 'cauHoi', coDauHoi: /[?？]/.test(cau) };
+}
+
+/* Đọc tiến độ từ sổ thật: thông điệp Super Admin đã gửi ↔ tuyến Agent của
+   nó. Không gọi AI — một con số tiến độ do mô hình viết ra là một lời khai. */
+const CAN_BAC_CAO = new Set(['phanTich', 'chienLuoc']);
+export async function tienDoBoNao(env, db) {
+  await taoBangThongDiep(db);
+  let ds = [];
+  try {
+    ds = ((await db.prepare('SELECT t.id, t.noiDung, t.tuyen, t.luc, d.dangO, d.trangThai AS tt, d.cacChang, d.ketQua, d.tuChay ' +
+      'FROM thongDiepBoNao t LEFT JOIN tuyenDaTri d ON d.ma = t.tuyen ORDER BY t.luc DESC LIMIT 10').all()).results) || [];
+  } catch (e) { ds = []; }
+  const tietKiem = String((env && env.GITA_CHE_DO_TIET_KIEM) || '') === '1';
+  const batNao = String((env && env.GITA_DA_TRI_BAT) || '') === '1';
+  return ds.map(r => {
+    let chang = [], ket = [];
+    try { chang = JSON.parse(r.cacChang || '[]'); ket = JSON.parse(r.ketQua || '[]'); } catch (e) {}
+    const i = Number(r.dangO) || 0, c = chang[i], cuoi = ket.filter(k => k.chang === i).pop();
+    let tinh, vi;
+    if (!r.tt) { tinh = 'mat'; vi = 'Không tìm thấy tuyến trong sổ.'; }
+    else if (r.tt === 'xong') { tinh = 'xong'; vi = 'Xong cả ' + chang.length + ' chặng — đọc kết quả rồi quyết việc tiếp theo.'; }
+    else if (cuoi && cuoi.nhan === false) { tinh = 'choAnh'; vi = 'Trưởng nhóm trả lại chặng ' + (i + 1) + ' — chờ anh/chị đọc: chạy lại hoặc chấp nhận kèm lý do.'; }
+    else if (!batNao) { tinh = 'dung'; vi = 'Bộ não đa trí đang tắt (GITA_DA_TRI_BAT) — tuyến chưa chạy được.'; }
+    else if (c && !c.vai && CAN_BAC_CAO.has(c.loai) && tietKiem) { tinh = 'ket'; vi = 'Kẹt ở chặng ' + (i + 1) + ': chặng kiểu cũ "' + c.loai + '" cần AI bậc cao, mà hệ đang ở chế độ tiết kiệm (chỉ Workers AI). Bấm "Chuyển sang đội Agent" ở Tuyến chốt chặn để chạy tiếp bằng Workers AI.'; }
+    else if (!r.tuChay) { tinh = 'tatTuChay'; vi = 'Tự chạy đang tắt — bấm "Chạy chặng kế" hoặc bật tự chạy.'; }
+    else { tinh = 'dangChay'; vi = 'Đang chạy: chặng ' + (i + 1) + '/' + chang.length + ' sẽ chạy ở lượt làm việc kế của bộ não.'; }
+    return { id: r.id, tom: String(r.noiDung || '').replace(/\s+/g, ' ').slice(0, 90), tuyen: r.tuyen, luc: r.luc,
+      xong: r.tt === 'xong' ? chang.length : i, soChang: chang.length, tinh, vi };
+  });
+}
+function vietTienDo(ds) {
+  if (!ds.length) return 'Anh/chị chưa gửi yêu cầu nào tới bộ não vận hành. Khi trợ lý trả một phương án, bấm "Gửi tới bộ não vận hành" — yêu cầu sẽ thành một tuyến Agent và hiện ở đây.';
+  const NHAN = { xong: 'XONG', choAnh: 'CHỜ ANH/CHỊ', ket: 'KẸT', dung: 'DỪNG', tatTuChay: 'TẠM DỪNG', dangChay: 'ĐANG CHẠY', mat: 'KHÔNG THẤY' };
+  const dong = ds.map((r, n) => (n + 1) + ') ' + r.tom + '\n   Tuyến ' + (r.tuyen || '—') + ' · ' + r.xong + '/' + r.soChang + ' chặng · ' + (NHAN[r.tinh] || r.tinh) + '\n   ' + r.vi);
+  return 'Tiến độ ' + ds.length + ' yêu cầu gần nhất anh/chị đã gửi bộ não (đọc thẳng từ sổ, không ước đoán):\n\n' + dong.join('\n\n') +
+    '\n\nXem đủ kết quả từng chặng: Bộ não đa trí → Tuyến chốt chặn. Hỏi lại "tiến độ" bất cứ lúc nào để em đọc sổ mới nhất.';
 }
 
 /* ═══════════ LỜI HỆ THỐNG ═══════════
@@ -181,6 +227,11 @@ export async function troLyV50(y, env, db, hoSo) {
     try { await Kho.ghiNhatKy(db, { uid: hoSo.uid, username: ten(hoSo), viec: 'TRO_LY_V50_KHAN', doiTuong: role, chiTiet: 'câu có dấu hiệu khẩn — không gửi AI' }); } catch (e) {}
     return Object.assign({ ok: true, khan: true, tra: LOI_KHAN }, meta);
   }
+  /* Super Admin hỏi tiến độ → đọc sổ, không gọi AI, không thành phương án. */
+  if (laSA && yh.loai === 'tienDo') {
+    const td = await tienDoBoNao(env, db);
+    return Object.assign({ ok: true, tra: vietTienDo(td), tienDo: td, ncc: 'so' }, meta);
+  }
   const dem = await Kho.demNhip(db, 'troLyV50:' + String(hoSo.uid || hoSo.u || role), 86400);
   if (dem > tranNgay(role)) return Object.assign({ ok: false, code: 'HETTRAN', error: 'Hôm nay đã dùng hết lượt trả lời bằng bộ não máy chủ.' }, meta);
   const ls = lichSuSach((y || {}).lichSu);
@@ -247,15 +298,25 @@ export async function guiThongDiepBoNao(y, env, db, hoSo) {
   const mucDo = x.mucDo === 'gap' ? 'gap' : 'thuong';
   const phanHe = chonPhanHe(noiDung);
   await taoBangThongDiep(db);
+  /* Cùng một thông điệp gửi lại trong 30 phút → trả tuyến đã có, không dựng
+     tuyến thứ hai chạy trùng việc (bấm hai lần, mạng chậm, hỏi lại). */
+  const cu = await db.prepare('SELECT id, tuyen FROM thongDiepBoNao WHERE noiDung = ? AND luc > ? ORDER BY luc DESC LIMIT 1')
+    .bind(noiDung, Date.now() - 30 * 60e3).first();
+  if (cu && cu.tuyen) return { ok: true, id: cu.id, tuyen: cu.tuyen, phanHe, trung: true,
+    vi: 'Thông điệp này đã gửi lúc nãy — đang chạy ở tuyến ' + cu.tuyen + ', không tạo tuyến thứ hai. Hỏi "tiến độ" để xem tới đâu.' };
   const cat = (s, n) => s.length > n ? s.slice(0, n - 1) + '…' : s;
   const nen = 'Thông điệp của Super Admin:\n' + cat(noiDung, 1100) + (phuongAn ? '\n\nPhương án trợ lý đã soạn:\n' + cat(phuongAn, 700) : '');
   const t = await taoTuyenDaTri({
     ten: 'Thông điệp SA · ' + cat(noiDung.replace(/\s+/g, ' '), 80),
     tuChay: true,
+    /* Ba chặng giao cho ĐỘI AGENT (thẻ vai + bảng kiểm Trưởng nhóm + bộ nhớ).
+       Bản đầu dùng loại việc phanTich · chienLuoc — cả hai chỉ chạy ở nhà cung
+       cấp AI bậc 2+, mà hệ chạy chế độ tiết kiệm (chỉ Workers AI): tuyến đứng
+       ở 0/3 mãi mãi và không ai được báo. Ba vai dưới chạy được trên bậc 1. */
     chang: [
-      { loai: 'phanTich', de: cat(nen + '\n\nViệc của chặng: phân tích vấn đề thật đằng sau thông điệp, nguyên nhân gốc, điều còn chưa biết.', 2000) },
-      { loai: 'chienLuoc', de: cat(nen + '\n\nViệc của chặng: dựa trên phân tích chặng trước, lập phương án cải tiến: mục tiêu đo được, các bước, ai làm, mốc, rủi ro, cách đo.', 2000) },
-      { loai: 'soan', de: cat(nen + '\n\nViệc của chặng: soạn danh sách việc giao cho từng vai (tối đa 10 việc), mỗi việc có người làm, hạn, và tiêu chí xong. Việc chạm tiền/quyền/nội dung tới khách ghi rõ chữ ký cần có.', 2000) }
+      { vai: 'PHAN_TICH', de: cat(nen + '\n\nViệc của chặng: phân tích vấn đề thật đằng sau thông điệp, nguyên nhân gốc, điều còn chưa biết.', 2000) },
+      { vai: 'LEAD', de: cat(nen + '\n\nViệc của chặng: dựa trên phân tích chặng trước, lập kế hoạch thực hiện: mục tiêu đo được, các chặng/bước (ai làm, mốc), điểm dừng hỏi người, rủi ro.', 2000) },
+      { vai: 'SOAN', de: cat(nen + '\n\nViệc của chặng: soạn bản nháp danh sách việc giao cho từng vai (tối đa 10 việc), mỗi việc có người làm, hạn, và tiêu chí xong. Việc chạm tiền/quyền/nội dung tới khách ghi rõ chữ ký cần có.', 2000) }
     ]
   }, env, db, hoSo);
   if (!t.ok) return t;
@@ -264,7 +325,7 @@ export async function guiThongDiepBoNao(y, env, db, hoSo) {
     .bind(id, noiDung, phuongAn || null, mucDo, phanHe, t.ma, ten(hoSo), Date.now()).run();
   try { await Kho.ghiNhatKy(db, { uid: hoSo.uid, username: ten(hoSo), viec: 'THONG_DIEP_BO_NAO', doiTuong: id, chiTiet: phanHe + ' · tuyến ' + t.ma + ' · ' + mucDo }); } catch (e) {}
   return { ok: true, id, tuyen: t.ma, phanHe, soChang: t.soChang,
-    vi: 'Bộ não vận hành đã nhận. Đội Agent chạy tuyến ' + t.ma + ' (phân tích → phương án → danh sách việc) ở các lượt làm việc tới, trong ngân sách ngày. Kết quả đọc ở Bộ não đa trí.' };
+    vi: 'Bộ não vận hành đã nhận. Đội Agent chạy tuyến ' + t.ma + ' (Người phân tích → Trưởng nhóm lập kế hoạch → Người viết soạn danh sách việc), Trưởng nhóm soát sau mỗi chặng, ở các lượt làm việc tới, trong ngân sách ngày. Hỏi "tiến độ" để xem tới đâu; kết quả đủ ở Bộ não đa trí → Tuyến chốt chặn.' };
 }
 
 export async function docThongDiepBoNao(y, env, db, hoSo) {

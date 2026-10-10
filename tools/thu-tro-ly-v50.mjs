@@ -139,8 +139,15 @@ kiem('Coach không gửi được thông điệp tới bộ não', !kq.ok && kq.
 const td = await V.guiThongDiepBoNao({ noiDung: 'Giảm thời gian phản hồi phụ huynh xuống dưới 2 giờ', phuongAn: 'Phương án sáu phần…' }, env, db, r01);
 kiem('SA gửi → một tuyến Agent ba chặng', td.ok && td.soChang === 3 && /^TY-/.test(td.tuyen), JSON.stringify(td));
 const ty = sq.prepare('SELECT cacChang, tuChay, trangThai FROM tuyenDaTri WHERE ma = ?').get(td.tuyen);
-const ch = JSON.parse(ty.cacChang).map(c => c.loai).join(',');
-kiem('tuyến: phân tích → chiến lược → soạn, tự chạy', ch === 'phanTich,chienLuoc,soan' && ty.tuChay === 1 && ty.trangThai === 'dangChay', ch);
+const ch = JSON.parse(ty.cacChang).map(c => c.vai).join(',');
+/* Ba chặng giao cho ĐỘI AGENT, cả ba chạy được trên Workers AI (bậc 1).
+   Bản trước dùng phanTich · chienLuoc → ở chế độ tiết kiệm tuyến đứng 0/3 mãi. */
+kiem('tuyến: Người phân tích → Trưởng nhóm → Người viết, tự chạy, chạy được ở bậc 1',
+  ch === 'PHAN_TICH,LEAD,SOAN' && ty.tuChay === 1 && ty.trangThai === 'dangChay' &&
+  JSON.parse(ty.cacChang).every(c => DT.LOAI[c.loai].tu === 1), ch);
+const lai = await V.guiThongDiepBoNao({ noiDung: 'Giảm thời gian phản hồi phụ huynh xuống dưới 2 giờ', phuongAn: 'x' }, env, db, r01);
+kiem('gửi lại cùng thông điệp trong 30 phút → trả tuyến cũ, không dựng tuyến thứ hai',
+  lai.ok && lai.trung === true && lai.tuyen === td.tuyen && Number(sq.prepare('SELECT COUNT(*) n FROM tuyenDaTri').get().n) === 1);
 kiem('phân hệ đọc từ nội dung (phụ huynh → NHIP)', td.phanHe === 'NHIP', td.phanHe);
 const ngan = await V.guiThongDiepBoNao({ noiDung: 'ngắn' }, env, db, r01);
 kiem('thông điệp quá ngắn bị chặn', !ngan.ok && ngan.code === 'SAI');
@@ -148,6 +155,29 @@ const khanTD = await V.guiThongDiepBoNao({ noiDung: 'Học viên có dấu hiệ
 kiem('thông điệp khẩn không giao Agent', !khanTD.ok && khanTD.code === 'KHAN');
 const ds = await V.docThongDiepBoNao({}, env, db, r01);
 kiem('SA đọc lại thông điệp kèm tiến độ tuyến', ds.ok && ds.ds.length === 1 && ds.ds[0].tienDo === '0/3', JSON.stringify(ds.ds[0]));
+
+/* ── hỏi tiến độ: đọc SỔ, không gọi AI, không thành phương án ── */
+kiem('câu hỏi tiến độ có chữ "triển khai" KHÔNG bị đọc là yêu cầu',
+  V.docYHoi('làm cách nào tôi biết những gì tôi yêu cầu được triển khai và tiến độ tới đâu?').loai === 'tienDo' &&
+  V.docYHoi('Lên phương án triển khai chương trình đào tạo').loai === 'yeuCau');
+luot = [];
+const hTD = await V.troLyV50({ cau: 'làm cách nào tôi biết những gì tôi yêu cầu được triển khai và tiến độ tới đâu?' }, env, db, r01);
+kiem('SA hỏi tiến độ → trả từ sổ: mã tuyến, số chặng, trạng thái; KHÔNG gọi AI; KHÔNG kèm nút gửi bộ não',
+  hTD.ok && luot.length === 0 && hTD.phuongAn === false && new RegExp(td.tuyen).test(hTD.tra) && /0\/3 chặng/.test(hTD.tra) && /ĐANG CHẠY/.test(hTD.tra) &&
+  hTD.tienDo.length === 1, hTD.tra);
+/* tuyến cũ kẹt: chặng phanTich ở chế độ tiết kiệm → nói KẸT và chỉ đường gỡ */
+const cuTY = await DT.taoTuyenDaTri({ ten: 'Tuyến cũ', tuChay: true, chang: [{ loai: 'phanTich', de: 'Phân tích việc cũ' }, { loai: 'soan', de: 'Soạn việc cũ' }] }, env, db, r01);
+sq.prepare("INSERT INTO thongDiepBoNao (id, noiDung, mucDo, tuyen, luc) VALUES ('TD-CU', 'Yêu cầu cũ trước đội Agent', 'thuong', ?, ?)").run(cuTY.ma, Date.now() - 1000);
+const hKet = await V.troLyV50({ cau: 'tiến độ tới đâu rồi?' }, Object.assign({}, env, { GITA_CHE_DO_TIET_KIEM: '1' }), db, r01);
+kiem('tuyến cũ chặng phanTich ở chế độ tiết kiệm → báo KẸT + chỉ "Chuyển sang đội Agent"', /KẸT/.test(hKet.tra) && /Chuyển sang đội Agent/.test(hKet.tra), hKet.tra);
+kiem('R07 không chuyển được tuyến', (await DT.doiSangDoiAgent({ ma: cuTY.ma }, env, db, r07)).code === 'NOPERM');
+const doi = await DT.doiSangDoiAgent({ ma: cuTY.ma }, env, db, r01);
+const chCu = JSON.parse(sq.prepare('SELECT cacChang FROM tuyenDaTri WHERE ma = ?').get(cuTY.ma).cacChang);
+kiem('chuyển sang đội Agent: phanTich→PHAN_TICH, soan→SOAN, giữ đề và ghi loại cũ', doi.ok && doi.doi === 2 &&
+  chCu[0].vai === 'PHAN_TICH' && chCu[1].vai === 'SOAN' && chCu[0].tuLoai === 'phanTich' && chCu[0].de === 'Phân tích việc cũ');
+kiem('chuyển lần hai → nói không cần', (await DT.doiSangDoiAgent({ ma: cuTY.ma }, env, db, r01)).code === 'KHONG_CAN');
+const hKhach = await V.troLyV50({ cau: 'tiến độ của con tới đâu rồi?' }, env, db, r13);
+kiem('phụ huynh hỏi "tiến độ" → KHÔNG thấy sổ bộ não (đi đường trả lời thường)', hKhach.ok && !hKhach.tienDo && !/Tuyến TY-/.test(hKhach.tra || ''));
 kiem('Coach không đọc được thông điệp', (await V.docThongDiepBoNao({}, env, db, r07)).code === 'NOPERM');
 
 /* ── 10. Cửa nối vào worker ── */

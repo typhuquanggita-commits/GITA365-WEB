@@ -156,7 +156,7 @@ G.VIEWS = G.VIEWS || {};
   function tabKhach() {
     var ds = khDs(), that = ds[0] && ds[0].that;
     var o = '<div class="ntv-note">' + ic('map', 'w-4 h-4') + ' Mỗi khách đi qua <b>5 giai đoạn chăm sóc</b>. Bảng theo dõi trọn hồ sơ: đang ở đâu, bước kế, tài liệu, dữ liệu buổi, đánh giá, bằng chứng và tiềm năng nâng gói.' +
-      (that ? ' <b style="color:#0B7350">Đang chạy trên khách thật.</b>' : ' <span style="color:#B4720F">(minh hoạ)</span>') + '</div>';
+      (that ? ' <b style="color:#0B7350">Đang chạy trên khách thật.</b>' : ' <span style="color:var(--warn)">(minh hoạ)</span>') + '</div>';
     o += '<div class="ntv-gdj">';
     GDJ.forEach(function (g) {
       var so = ds.filter(function (k) { return k.gdj === g.n; }).length;
@@ -182,7 +182,7 @@ G.VIEWS = G.VIEWS || {};
         '<td>' + lk('tang34', 'Tài liệu') + '</td>' +
         '<td class="tiny ntv-center">' + k.buoi + ' buổi</td>' +
         '<td class="tiny ntv-center">' + (k.danhGia != null ? ('<b>' + k.danhGia.toFixed(1) + '</b>/5') : '—') + '</td>' +
-        '<td class="tiny ntv-center">' + (k.bangChung === 'Có' ? '<span style="color:#0B7350;font-weight:700">✓ Có</span>' : '<span style="color:#B4720F">Chưa</span>') + '</td>' +
+        '<td class="tiny ntv-center">' + (k.bangChung === 'Có' ? '<span style="color:#0B7350;font-weight:700">✓ Có</span>' : '<span style="color:var(--warn)">Chưa</span>') + '</td>' +
         '<td><span class="ntv-nhom" style="--nc:' + tnc + '">' + h(tn) + '</span></td>' +
         '<td>' + lk('tt-cskh', 'Mở lộ trình') + '</td>' +
       '</tr>';

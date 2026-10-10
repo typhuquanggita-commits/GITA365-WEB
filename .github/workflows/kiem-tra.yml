@@ -98,6 +98,15 @@ jobs:
       - name: Thử Tra cứu giải pháp 13 mục (chỉ R01–R11 · sổ nhật ký không giữ dữ liệu gia đình · nháp AI không tự vào kho)
         run: node tools/thu-tra-cuu-giai-phap.mjs
 
+      - name: Kho cấp cao · 6 hạng · giá credit hạng × tầng · an toàn không khoá theo gói
+        run: node tools/thu-kho-cao.mjs
+
+      - name: Đội Agent — thẻ vai, Trưởng nhóm soát, bộ nhớ chung (5 ca)
+        run: node tools/thu-doi-agent.mjs
+
+      - name: Kiến trúc Ngôi nhà thịnh vượng (10 bánh đà cách đều · quay cùng nhịp · không che nhà · lựa chọn quay/dừng)
+        run: node tools/thu-ngoi-nha.mjs
+
       - name: Chạy thử bộ não vận hành V50 (nhịp mỗi giờ · có khách là chạy · lịch · quyền)
         run: node tools/thu-bo-nao-van-hanh.mjs
 
@@ -160,6 +169,25 @@ jobs:
 
       - name: Máy chủ cấp khoá bản .exe — dấu máy không chép được, duyệt đúng một tài khoản
         run: node tools/thu-may-chu-may-tinh.mjs
+
+      - name: Xưởng phim AI — dò nhịp đúng tới mili-giây, danh mục trỏ vào bộ vẽ có thật, nhạc và ảnh không rời máy
+        run: node tools/thu-xuong-ai.mjs
+
+      - name: Chương trình đào tạo — không tự chấm, không tự ký, máy đọc ba cửa, đủ điều kiện kiểm ở máy chủ
+        run: node tools/thu-dao-tao-ct.mjs
+      - name: Thi chứng chỉ — đề riêng từng người, không tự chấm, tụt cấp theo tháng, vấn đề khó phải xin ý kiến
+        run: node tools/thu-thi-cap.mjs
+      - name: Lịch trả lương 05/08 · phiếu phản hồi từng khách · xếp hạng lương thưởng tháng
+        run: node tools/thu-xep-hang.mjs
+      - name: Kim chỉ nam ở đầu mọi màn khách — chỉ đọc, chỉ họ tên, nhà lấy từ phiên
+        run: node tools/thu-kim-chi-nam.mjs
+      - name: Tiếng Anh — bộ dịch giữ con số đúng chỗ, từ điển sạch, độ phủ không tụt mốc
+        run: node tools/thu-dich.mjs && node tools/trich-chu-viet.js --kiem
+      - name: Gói mẫu công khai đã tuyển — giữ khung, bỏ ruột nội dung có cấp phép
+        run: node tools/tuyen-mau.js --kiem && node tools/thu-chat-lieu.mjs
+
+      - name: Soát thiết kế tĩnh — không chuyển động nảy, không chữ chạy, không màu cấm (cả dạng %23), chữ chuyển sắc không thêm chỗ mới
+        run: node tools/thu-thiet-ke-tinh.mjs
 
       - name: Móc chặn commit — quét toàn bộ tệp đang theo dõi
         run: node tools/chan-commit.mjs --tat-ca

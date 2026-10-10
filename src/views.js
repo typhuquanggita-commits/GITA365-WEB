@@ -55,7 +55,7 @@ G.VIEWS['ban-do'] = function(){
     return '<button class="kh" data-kh="'+h(k.id)+'" style="color:'+c+'">'+
       '<i class="beam"></i>'+
       '<div class="no">KHOANG '+k.no+'</div>'+
-      '<h4 style="color:'+c+'">'+h(k.ten)+'</h4>'+
+      '<h2 style="color:'+c+'">'+h(k.ten)+'</h2>'+
       '<div class="q">'+h(k.cauHoi)+'</div>'+
       '<div class="mt-tags">'+(k.noiDung||[]).slice(0,4).map(function(x){
         return '<span>'+h(x)+'</span>';}).join('')+'</div>'+
@@ -133,7 +133,7 @@ G.VIEWS['chan-dung-nha'] = function(){
       '<h2 style="font-size:26px;font-weight:800;letter-spacing:-.02em">'+h(f.nha)+'</h2>'+
       '<p class="sm dim mt">Học viên <b>'+h(f.hv)+'</b> · '+h(f.lop)+' &nbsp;·&nbsp; Người lớn <b>'+h(f.ph)+'</b></p>'+
       '<p class="sm dim">Coach đồng hành: <b>'+h(f.coach)+'</b></p>'+
-      '<div class="mt2 sm"><span class="up muted">KỲ TÍCH NĂM ĐANG CHẠY</span><p class="mt" style="color:var(--gold-2)">'+h(f.kyTich)+'</p></div>'+
+      '<div class="mt2 sm"><span class="up muted">KỲ TÍCH NĂM ĐANG CHẠY</span><p class="mt" style="color:var(--gold-ink)">'+h(f.kyTich)+'</p></div>'+
     '</div></div></div>';
 
   o += '<div class="grid g4 mt2">'+

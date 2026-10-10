@@ -21,9 +21,16 @@ var G = window.G || {}; window.G = G;
 var U = G.U, h = U.h;
 
 /* Bảng màu phân loại — họ xanh GITA + hai sắc nhấn. Semantic (ok/đỏ) tách
-   riêng, gọi thẳng khi cần, không nằm trong bảng phân loại này. */
-U.bdMau = ['var(--gita)','var(--gita-sau)','var(--gita-sang)','var(--ok)',
-           '--gita-ink','var(--gold-2)','var(--warn)','var(--gita-do)'];
+   riêng, gọi thẳng khi cần, không nằm trong bảng phân loại này.
+   Mỗi màu vừa làm chữ trên nền trang vừa làm nền cho chữ đặt lên nó.
+   Chữ đặt lên màu dùng token --chu-tren-mau: trắng ở nền Sáng, mực sẫm
+   ở nền Tối — vì ở nền Tối cả tám màu đều sáng lên, chữ trắng trên
+   chúng chỉ còn 1,7–3,3:1. Đo: nền Sáng tám màu đạt ≥4,5:1 cả hai
+   chiều; nền Tối chữ sẫm trên màu đạt ≥5,5:1.
+   Bản trước có --gita-sang và --gold-2 — hai tên của CÙNG một xanh nhạt
+   (2,91:1): hai nhóm số cùng một màu và cả hai khó đọc (luật TK01). */
+U.bdMau = ['var(--gita)','var(--t1)','var(--t2)','var(--ok)',
+           '--gita-ink','var(--t3)','var(--warn)','var(--gita-do-ink)'];
 function mau(i){ var m = U.bdMau[i % U.bdMau.length]; return m.slice(0,2)==='--' ? 'var('+m+')' : m; }
 
 /* Rút gọn tiền cho nhãn biểu đồ: 1.250.000.000 → "1,25 tỷ" · 450.000 → "450k".
@@ -169,7 +176,7 @@ U.bdPhieu = function(stages){
       ' L '+xNext+' '+(y+rowH-6)+' Z';
     svg += '<path d="'+d+'" fill="'+(s.mau||mau(i))+'" opacity="0.90"/>'+
       '<text x="'+(W/2)+'" y="'+(y+rowH/2-3)+'" text-anchor="middle" font-size="11.5" '+
-      'font-weight="600" fill="#fff">'+h(s.ten)+' · '+h(U.bdGon(s.so))+'</text>';
+      'font-weight="600" fill="var(--chu-tren-mau)">'+h(s.ten)+' · '+h(U.bdGon(s.so))+'</text>';
     if(i>0){ var tl = Math.round(U.num(s.so)/(U.num(stages[i-1].so)||1)*100);
       svg += '<text x="'+(W-6)+'" y="'+(y+4)+'" text-anchor="end" font-size="10.5" '+
         'fill="var(--ink-4)">'+tl+'%</text>'; }

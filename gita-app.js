@@ -949,7 +949,7 @@ G.NAV = [
     {v:'thuong-hieu', t:'Nhận diện thương hiệu',       h:'Màu · chữ · giọng nói · điều cấm kỵ',ic:'star', perm:'nghe_chung', capMo:'nghe'},
     {v:'van-dung',    t:'Năm cấp độ vận dụng',           h:'Chiều sâu nghề · giới hạn tầng · báo cáo', ic:'brain', perm:'nghe_chung', capMo:'nghe', star:1},
     {v:'xu-ly-ca',    t:'Xử lý ca theo quy trình',       h:'7 bước · bằng chứng bắt buộc · 4 ràng buộc', ic:'shield', perm:'ca_xu_ly', capMo:'nghe', star:1},
-    {v:'tra-cuu-gp',  t:'Tra cứu giải pháp · 13 mục',    h:'Vấn đề → phân tích → phác đồ → 20/80 → … → bài học · sổ nhật ký', ic:'compass', perm:'ca_xu_ly', capMo:'nghe', star:1},
+    {v:'tra-cuu-gp',  t:'Tra cứu giải pháp · 13 mục',    h:'Kho 1000 vấn đề: 500 khách hàng · 500 nội bộ — phân tích → phác đồ → 20/80 → … → bài học', ic:'compass', perm:'ca_xu_ly', capMo:'nghe', star:1},
     {v:'gui-tu-lieu', t:'Gửi tư liệu cho gia đình',      h:'Lời xin đang chờ · cửa KPI 80%',      ic:'share', perm:'tl_gui_khach', capMo:'nghe', star:1},
     {v:'tro-ly',      t:'Trợ lý GITA',                 h:'Hỏi bất cứ điều gì, trích dẫn nguồn',ic:'spark', capMo:'chung', star:1}
    ]},
@@ -967,6 +967,8 @@ G.NAV = [
     {v:'thi-viet',    t:'Cuộc thi viết 7 – 21 – 90 – 365', h:'Bài đạt mốc 90 và 365 nhận học bổng 10%', ic:'crown', star:1, capMo:'chung'},
     {v:'sat-hach',    t:'Sát hạch năng lực',          h:'5 tầng · 4 bài tốt nghiệp · 8 trục đánh giá', ic:'shield', star:1, capMo:'chung'},
     {v:'khoa-dao-tao',t:'Khoá đào tạo của tôi',       h:'Học · Làm · Nộp · bài kế tiếp tự mở', ic:'book', star:1, capMo:'chung'},
+    {v:'chuong-trinh-dt', t:'Chương trình đào tạo', h:'Tư vấn → Nhân sự → Coach · người chấm khác người học · chứng chỉ có người ký', ic:'book', perm:'nghe_chung', capMo:'chung'},
+    {v:'thi-chung-chi', t:'Thi chứng chỉ', h:'Tư vấn 50 cấp · Coach 100 cấp · thi lại mỗi tháng · cấp cao mở nhiều kho hơn', ic:'shield', perm:'nghe_chung', capMo:'chung'},
     {v:'do-thoi-gian',t:'Thời gian · thưởng · phạt', h:'Đồng hồ thật · ba ngưỡng · chuẩn hoàn thành · quy đổi điểm', ic:'pulse', star:1, capMo:'chung'},
     {v:'chin-vai',    t:'Chín vai giữ trong nhà',      h:'Ai giữ gì, ai đang bị bỏ ra ngoài',  ic:'users', star:1, perm:'kh_gia_dinh', capMo:'nha'},
     {v:'thoi-quen',   t:'Thói quen & nghi lễ',         h:'Bốn nghi lễ giữ nhịp cả năm',        ic:'ritual', perm:'kh_gia_dinh', capMo:'nha'},
@@ -1109,6 +1111,7 @@ G.NAV = [
     {v:'giam-sat', t:'Trần giám sát', h:'GITA-VIP dựng CÁI TRẦN trước, chưa dựng bộ giám sát — một cái cổng dựng sau một cái cửa đã chạy thì nó chỉ là một lời nhắc · sáu điều CẤM TUYỆT ĐỐI không lệnh nào mở được, kể cả lệnh R01 có chữ ký · ba ngăn phạm vi khác nhau ở CĂN CỨ PHÁP LÝ chứ không ở mức độ · lệnh uỷ quyền phải có hạn và tự thu hồi · sổ nối băm, sửa một dòng là vỡ mọi dòng sau', ic:'shield', star:1, perm:'nghe_chung', capMo:'chung'},
     {v:'supreme', t:'GITA Supreme · bản đồ', h:'Bản đồ ba quyển nghiên cứu của chủ hệ và CÁI TRẦN của chúng — ngăn đầu là BẪY TÊN GỌI: ba thang cùng mang chữ điểm chạm (1.000 tiến độ · 9 cảm xúc · 100.000 hệ thống), và một luật bị phạm thì có người cãi còn hai thang cùng tên thì không ai cãi · bốn chỗ va MỚI, không chép lại sáu điều cấm đã có · hai chỗ phép dò của chính tôi BẮT OAN vì tài liệu đang phê phán chính thứ bị dò · ma trận 28 năng lực · mười lớp điểm chạm · 45/100 phần đã có chữ', ic:'shield', star:1, perm:'nghe_chung', capMo:'chung'},
     {v:'bien-soan-noi-dung', t:'Biên soạn nội dung', h:'Khuôn 24 khối · máy đo · thang năm cổng · hiến pháp nội dung', ic:'book', star:1, perm:'qt_trang', capMo:'chung'},
+    {v:'xuong-ai', t:'Xưởng phim AI · GITA Studio', h:'Một cửa cho cả quy trình làm phim — đã gộp Xưởng phim ngắn 9:16 và GITA Studio: tạo phim · nhân vật · giọng · phim trường · bộ nhận diện · cắt theo nhịp nhạc · bàn dựng · kho phim', ic:'orbit', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'studio', t:'GITA Studio · Xưởng dựng video', h:'Kịch bản · MC tham chiếu · chuyển động 2.5D · phối âm cục bộ', ic:'spark', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'xuong-phim', t:'Xưởng phim ngắn AI · phim dọc 9:16', h:'Sổ nhân vật · kịch bản → prompt từng cảnh cho công cụ video AI · nạp clip · phụ đề, logo, số tập, nhạc · xuất phim ngay trên máy', ic:'spark', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'tu-hoan-thien', t:'Vòng tự hoàn thiện · lấp kho có cấp phép', h:'Kho rỗng lúc tư vấn thì Bộ não SOẠN từ dữ liệu đã có, KHÔNG bịa — nhưng 入库 (đưa vào kho phục vụ khách) phải qua Bộ phận sản phẩm → Giám đốc → Super Admin · máy soạn không nhập, hai cửa tách hẳn · đủ ba chữ ký hay chưa TÍNH LÚC ĐỌC từ sổ, không cột đãDuyệt · ba cấp ba người khác nhau · sự chậm là có thật và được nói thẳng với khách', ic:'shield', star:1, perm:'nghe_chung', capMo:'chung'},
@@ -1174,12 +1177,12 @@ G.CULTURE = {
     big:'Kiến tạo một hệ sinh thái gia đình phát triển bền vững, nơi mỗi người biết hiểu mình, rèn mình, làm chủ cuộc đời và cùng nhau kiến tạo hạnh phúc, thành công, thịnh vượng qua nhiều thế hệ.',
     sub:'Nhiều thế hệ, không phải một khoá học. Đích đo bằng đời người, không đo bằng học kỳ.'
   },
-  /* Mốc 2030 tách khỏi TẦM NHÌN có chủ ý: tầm nhìn nói về loại thế giới
+  /* Mốc 2035 tách khỏi TẦM NHÌN có chủ ý: tầm nhìn nói về loại thế giới
      muốn tạo ra, mốc nói con số và hạn. Gộp hai thứ vào một chỗ rồi gọi
      chung là "tầm nhìn" thì cái nào cũng đọc không rõ. */
-  moc2030:{
-    t:'MỐC 2030',
-    big:'Đến năm 2030, một triệu người Việt lớn lên trong một gia đình vận hành được — nơi đứa trẻ tự cầm lái đời mình và người lớn cũng đang lớn lên mỗi ngày.',
+  moc2035:{
+    t:'MỐC 2035',
+    big:'Đến năm 2035, một triệu người Việt lớn lên trong một gia đình vận hành được — nơi đứa trẻ tự cầm lái đời mình và người lớn cũng đang lớn lên mỗi ngày.',
     sub:'Không phải một triệu đứa trẻ ngoan hơn. Là một triệu gia đình khác đi.'
   },
   suMenh:{
@@ -1583,6 +1586,8 @@ G.ITEM_EN = {
   'thi-viet':['Writing contest · 7 – 21 – 90 – 365','Entries passing day 90 and 365 earn a 10% scholarship'],
   'sat-hach':['Competency assessment','5 tiers · 4 graduation papers · 8 assessment axes'],
   'khoa-dao-tao':['My training course','Learn · Do · Submit · the next lesson opens itself'],
+  'chuong-trinh-dt':['Training programmes','Consultant → Staff → Coach · scored by someone else · certificates are signed'],
+  'thi-chung-chi':['Certification exams','Consultant 50 levels · Coach 100 levels · monthly re-tests · higher levels unlock more of the library'],
   'do-thoi-gian':['Time · rewards · penalties','A real clock · three thresholds · completion standard · point conversion'],
   'noi-may-chu':['Connect to the server','Paste the address · test the call · six setup steps'],
   'bo-nao':['GITA 365 Brain','13-article constitution · three delegation zones · 10-point fence · anonymise before anything leaves · seven advisory seats'],
@@ -1609,6 +1614,7 @@ G.ITEM_EN = {
   'giam-sat':['Monitoring Ceiling','GITA-VIP builds the CEILING first and no monitor yet — a gate built after a door is already running is only a reminder · six ABSOLUTE PROHIBITIONS no order can lift, not even a signed R01 order · three scopes that differ by LEGAL BASIS, not by degree · every authorisation must carry an expiry and revokes itself · hash-chained ledger where editing one row breaks every row after it'],
   'bien-soan-noi-dung':['Content Editor','24-block template · machine measures · five approval gates · content constitution'],
   'studio':['GITA Studio — Video Workshop','Local script, presenter reference, 2.5D camera motion and sound mix · no third-party media processing'],
+    'xuong-ai':['AI Film Studio · GITA Studio','One door for the whole film workflow — merges the 9:16 Short-Film Studio and GITA Studio: create films · characters · voices · sets · brand kit · beat-synced cutting · editing desk · film library'],
     'xuong-phim':['AI Short-Film Studio · vertical 9:16','Character bible · script → per-shot prompts for AI video tools · import clips · subtitles, logo, episode number, music · export the film on this device'],  'quyen-nang-ai':['AI Powers — Granted by Super Admin','Super Admin turns ten AI work capabilities on/off · each OFF by default · acting capabilities route through the existing three-level approval chain · read-only ones surface, never conclude'],
   'dieu-phoi':['AI Orchestration — 100 Super-Agents','The GITA365 genius brain sits highest and orchestrates all · 100 super-agents each own one real door, one ownership key each so they never conflict · every agent passes the real gates (Article 13 · AI grant · three signatures), pointing not copying · self-improvement runs through the gated upgrade ring · ×100 is a direction, not a target'],
   'khung-van-hanh':['Harness Engineering · V20','A layer standardizing how the brain orchestrates 100 agents — five pillars: context management · correct tool gate · constitution guard · conflict prevention · per-turn quality self-check · each pillar points to a real mechanism (no copied law), and a per-turn checker measures each (fails red on a bad turn) · V20 is measured, not a self-declared number · the checker never acts on its own'],
@@ -1680,7 +1686,7 @@ G.TIER_EN = {
 G.CULTURE_EN = {
   slogan:'A household that runs — without anyone standing guard.',
   sloganSub:'GITA 365 · The Family Prosperity Ecosystem',
-  tamNhin:{big:'By 2030, one million Vietnamese grow up inside a household that runs itself — where the child steers their own life and the adults are still growing too.',
+  tamNhin:{big:'By 2035, one million Vietnamese grow up inside a household that runs itself — where the child steers their own life and the adults are still growing too.',
     sub:'Not a million better-behaved children. A million different families.'},
   suMenh:{big:'Give every family a map, a rhythm and a companion — so that after 365 days the household runs without anyone standing guard.',
     sub:'We bring the frame and hold the standard. The family assembles its own part.'},
@@ -1745,6 +1751,4435 @@ G.CULTURE_EN = {
   ]
 };
 G.cul = function(){ return G.LANG==='en' ? G.CULTURE_EN : G.CULTURE; };
+
+})();
+
+/* ═════════ src/dich-giao-dien.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — BỘ DỊCH GIAO DIỆN (một từ điển, một lượt quét)
+
+   Chủ hệ 10/10: chọn tiếng Anh thì chỉ vài chữ đổi, phần còn lại vẫn
+   tiếng Việt và không nhất quán. Nguyên nhân đo được: hơn 33.000 đoạn
+   chữ viết thẳng trong mã của từng màn, còn cơ chế dịch cũ (G.L · G.tx ·
+   NAV_EN) chỉ phủ khung ứng dụng và cột trái.
+
+   Sửa từng màn một cho gọi G.L là ba trăm tệp và sẽ sót. Nên dịch ở
+   ĐÚNG MỘT CHỖ: sau khi màn đã vẽ xong, quét các nút chữ và các thuộc
+   tính người dùng đọc được (placeholder · aria-label · title · alt), tra
+   một từ điển duy nhất G.TU_DIEN_EN (src/tu-dien-en*.js), thay tại chỗ.
+   Màn viết sau cũng tự được dịch, miễn chữ của nó có trong từ điển.
+
+   ══ BỐN LUẬT ══
+   1. Tra NGUYÊN CẢ ĐOẠN, không thay từng chữ. Thay từng chữ ra một câu
+      nửa Việt nửa Anh — tệ hơn để nguyên tiếng Việt.
+   2. Con số không nằm trong khoá: "Đã làm 2/3 tối" tra bằng
+      "Đã làm {n}/{n} tối", rồi trả số về đúng thứ tự.
+   3. Chữ người dùng gõ không bị dịch: nó đi qua U.h() nên không bao giờ
+      trùng nguyên văn một khoá — và khối nào cần chắc chắn thì gắn
+      data-khong-dich.
+   4. Đo được: tools/trich-chu-viet.js dùng ĐÚNG hàm khoá này để tính độ
+      phủ; CI không cho độ phủ tụt dưới mốc tools/i18n-moc.json.
+
+   Nội dung kho (bảy gói mã hoá) hiện chỉ có tiếng Việt — đó là việc dịch
+   kho, không phải việc của tệp này.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.TU_DIEN_EN = G.TU_DIEN_EN || {};
+(function () {
+  var CO_DAU = /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ]/;
+  var SO = /\d+(?:[.,]\d+)*/g;
+  var BO_QUA = { SCRIPT: 1, STYLE: 1, TEXTAREA: 1, CODE: 1, PRE: 1, NOSCRIPT: 1 };
+  var THUOC_TINH = ['placeholder', 'aria-label', 'title', 'alt'];
+  var chuan = null, soKhoa = -1;
+
+  function khoa(s) { return String(s).replace(/\s+/g, ' ').trim().replace(SO, '{n}'); }
+  G.khoaDich = khoa;
+
+  /* Từ điển chuẩn hoá một lần, dựng lại khi có thêm tệp từ điển nạp sau. */
+  function tuDien() {
+    var ks = Object.keys(G.TU_DIEN_EN);
+    if (chuan && ks.length === soKhoa) return chuan;
+    chuan = {}; soKhoa = ks.length;
+    ks.forEach(function (k) { chuan[khoa(k)] = G.TU_DIEN_EN[k]; });
+    return chuan;
+  }
+
+  G.dichChuoi = function (s) {
+    if (!s || !CO_DAU.test(s)) return s;
+    var en = tuDien()[khoa(s)];
+    if (en === undefined) return s;
+    var so = String(s).match(SO) || [], i = 0;
+    var ra = String(en).replace(/\{n\}/g, function () { return so[i] !== undefined ? so[i++] : ''; });
+    /* Giữ khoảng trắng hai đầu: nút chữ hay đứng sát một thẻ khác. */
+    var dau = /^\s*/.exec(s)[0], cuoi = /\s*$/.exec(s)[0];
+    return dau + ra + cuoi;
+  };
+
+  function boQua(el) {
+    for (var n = el; n && n.nodeType === 1; n = n.parentNode) {
+      if (BO_QUA[n.tagName]) return true;
+      if (n.hasAttribute && n.hasAttribute('data-khong-dich')) return true;
+      if (n.isContentEditable) return true;
+    }
+    return false;
+  }
+
+  /* Nhớ bản gốc của mọi chỗ đã thay, để quay về tiếng Việt được. Phần
+     vẽ lại mỗi màn thì tự về tiếng Việt khi vẽ lại; phần đứng yên trong
+     index.html (hộp thoại · ô tìm · nút cỡ chữ) thì không ai vẽ lại, nên
+     không nhớ thì đổi về tiếng Việt mà mấy chỗ ấy vẫn nằm tiếng Anh. */
+  var daDoi = [];
+  function nho(nut, thuocTinh, goc) {
+    if (daDoi.length > 4000) daDoi = daDoi.filter(function (x) { return x[0].isConnected; });
+    daDoi.push([nut, thuocTinh, goc]);
+  }
+  function thayChu(t) { var en = G.dichChuoi(t.nodeValue); if (en !== t.nodeValue) { nho(t, null, t.nodeValue); t.nodeValue = en; } }
+
+  G.traLaiTiengViet = function () {
+    daDoi.forEach(function (x) {
+      if (!x[0].isConnected) return;
+      if (x[1]) x[0].setAttribute(x[1], x[2]); else x[0].nodeValue = x[2];
+    });
+    daDoi = [];
+  };
+
+  G.dichDom = function (goc) {
+    if (G.LANG !== 'en' || !goc || !document.createTreeWalker) return;
+    var w = document.createTreeWalker(goc, NodeFilter.SHOW_TEXT, null), n, ds = [];
+    while ((n = w.nextNode())) if (CO_DAU.test(n.nodeValue) && !boQua(n.parentNode)) ds.push(n);
+    ds.forEach(thayChu);
+    /* Tính cả CHÍNH thẻ gốc: querySelectorAll chỉ trả con cháu, nên một
+       nút được thêm nguyên chiếc (nút lùi · thanh dưới) mang aria-label
+       tiếng Việt mà không ai dịch — đo được ở 71/71 màn trước khi vá. */
+    var els = goc.querySelectorAll ? [goc].concat([].slice.call(goc.querySelectorAll('[placeholder],[aria-label],[title],[alt]'))) : [];
+    for (var i = 0; i < els.length; i++) dichThuocTinh(els[i]);
+  };
+
+  function dichThuocTinh(el) {
+    if (!el || el.nodeType !== 1 || !el.getAttribute || boQua(el)) return;
+    THUOC_TINH.forEach(function (a) {
+      var v = el.getAttribute(a);
+      if (v && CO_DAU.test(v)) { var en = G.dichChuoi(v); if (en !== v) { nho(el, a, v); el.setAttribute(a, en); } }
+    });
+  }
+
+  /* Phần dựng SAU lượt vẽ (khối nạp từ máy chủ, hộp báo, cột trái vẽ lại)
+     cũng phải được dịch — một người quan sát nút được thêm vào thân trang.
+     Không nghe characterData: thay chữ tại chỗ là characterData, nên lượt
+     dịch không tự kích chính nó. */
+  var cho = false, hangDoi = [];
+  function xuLy() {
+    cho = false;
+    var ds = hangDoi; hangDoi = [];
+    ds.forEach(function (n) {
+      if (n.nodeType === 1) G.dichDom(n);
+      else if (n.nodeType === 3 && n.parentNode && !boQua(n.parentNode)) thayChu(n);
+    });
+  }
+  if (window.MutationObserver) {
+    new MutationObserver(function (ms) {
+      if (G.LANG !== 'en') return;
+      ms.forEach(function (m) {
+        if (m.type === 'attributes') { hangDoi.push(m.target); return; }
+        for (var i = 0; i < m.addedNodes.length; i++) hangDoi.push(m.addedNodes[i]);
+      });
+      if (!cho) { cho = true; (window.requestAnimationFrame || setTimeout)(xuLy); }
+      /* Nghe cả bốn thuộc tính: nút lùi/tới đổi title·aria-label bằng
+         setAttribute sau mỗi lượt vẽ, không thêm nút nào. Lượt dịch tự ghi
+         lại thuộc tính cũng kích một lượt nữa, nhưng bản tiếng Anh không có
+         dấu nên dichChuoi trả nguyên — không thành vòng lặp. */
+    }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: THUOC_TINH });
+  }
+})();
+
+})();
+
+/* ═════════ src/tu-dien-en-01.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — TỪ ĐIỂN TIẾNG ANH · ĐỢT 1: PHẦN DÙNG CHUNG
+   Chữ hiện trên NHIỀU màn (khung ứng dụng, cột trái, kim chỉ nam, hộp
+   trợ lý, nhãn chung). Danh sách lấy từ màn thật bằng tools/thu-chu-man.mjs,
+   xếp theo số màn chữ ấy xuất hiện — dịch đợt này là thấy ngay trên mọi màn.
+   Khoá viết đúng như nút chữ trên màn; con số trong khoá là {n}
+   (G.khoaDich trong src/dich-giao-dien.js). Tên riêng không dịch.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.TU_DIEN_EN = G.TU_DIEN_EN || {};
+(function (d) { for (var k in d) G.TU_DIEN_EN[k] = d[k]; })({
+  /* ── khung ứng dụng · thanh trên · trợ lý ── */
+  'Trợ lý GITA': 'GITA assistant',
+  'Đăng xuất': 'Sign out',
+  'Dịch vụ & tài khoản': 'Services & account',
+  'Ví credit, học phí, quà theo tầng, trợ lý, sự kiện, đánh giá.': 'Credit wallet, tuition, tier gifts, assistant, events, reviews.',
+  'Phóng full màn hình': 'Full screen',
+  'Hiện trợ lý GITA': 'Show the GITA assistant',
+  'Hôm nay': 'Today',
+  'Nhà mình đang mắc chuyện gì?': 'What is your family stuck on?',
+  'Gửi': 'Send',
+  'Mở theo tầng và gói dịch vụ của tài khoản.': 'Unlocks with your account’s tier and service plan.',
+  'Đổi mật khẩu': 'Change password',
+  'Danh mục': 'Menu',
+  'Về màn trước': 'Back to previous screen',
+  'Chưa có màn trước': 'No previous screen yet',
+  'Quay lại màn đang làm': 'Return to the screen you were on',
+  'Không có màn để quay lại': 'No screen to return to',
+  'Video hướng dẫn màn này': 'Guide video for this screen',
+  'Video hướng dẫn màn này — theo vai của bạn': 'Guide video for this screen — for your role',
+  'Thu phóng và khổ hiển thị': 'Zoom and layout',
+  'Thu phóng · khổ hiển thị (Ctrl + / Ctrl −)': 'Zoom · layout (Ctrl + / Ctrl −)',
+  'Đổi nền sáng tối': 'Switch light / dark',
+  'Đổi nền sáng / tối': 'Switch light / dark',
+  'Thu gọn hai cột, mở rộng màn chính': 'Collapse both side columns to widen the main screen',
+  'Thu gọn hai cột để mở rộng màn chính. Bấm lần nữa để hiện lại.': 'Collapse both side columns to widen the main screen. Tap again to show them.',
+  'Điều nhà mình tin': 'What our family believes',
+  'Các phần chính': 'Main sections',
+  'Điều hướng nhanh': 'Quick navigation',
+  'Mở danh sách đầy đủ': 'Open the full list',
+  'Hộp thoại': 'Dialog',
+  'Tìm màn hình, kịch bản, mô thức…': 'Search screens, scripts, patterns…',
+  'Nhỏ lại': 'Smaller',
+  'To lên': 'Larger',
+  'Mở trợ lý GITA': 'Open the GITA assistant',
+  'Hỏi trợ lý GITA': 'Ask the GITA assistant',
+  'Thu gọn': 'Collapse',
+  'Thu gọn về ô thanh tiêu đề nhỏ': 'Collapse to a small title bar',
+  'Ẩn trợ lý': 'Hide assistant',
+  'Ẩn hẳn — hiện lại ở mép phải màn': 'Hide completely — bring it back from the right edge',
+  'Cập nhật với GITA ({n})': 'Updates from GITA ({n})',
+  '+{n} việc nữa': '+{n} more tasks',
+  'Mở vòng nhắc': 'Open reminders',
+  'Xem video hướng dẫn màn này': 'Watch the guide video for this screen',
+  'Xem cách làm từng bước': 'See how, step by step',
+  'Hỏi trợ lý': 'Ask the assistant',
+  '↗ rời ứng dụng': '↗ leaves the app',
+  'Hệ thống ghi nhận nhịp mở kho bất thường. Quản trị đã được báo.': 'The system noticed an unusual pace of opening content. The administrators have been notified.',
+
+  /* ── kim chỉ nam ── */
+  'Kim chỉ nam': 'Compass',
+  'Màn này thuộc phần': 'This screen belongs to',
+  'Bước tiếp theo': 'Next step',
+  'Làm từng việc nhỏ, đúng nhịp — Làm Đúng, Làm Đủ, rồi Làm Đều.': 'One small task at a time, on rhythm — Do it Right, Do it Fully, then Do it Steadily.',
+  'Khi việc khó vượt quá phần của người đi cùng, họ xin ý kiến Trưởng nhóm chuyên môn trước khi trả lời nhà mình.': 'When something is beyond your companion’s remit, they consult the Head of Expertise before answering your family.',
+  'Hỏi trợ lý GITA ngay': 'Ask the GITA assistant now',
+  'Bước tiếp: Hôm nay': 'Next: Today',
+  'Người đi cùng nhà mình': 'Your family’s companions',
+  'Hành trình {n} tầng': '{n}-tier journey',
+  'Đi cùng: người đồng hành của nhà mình': 'With you: your family’s companion',
+  'Nhà mình đang ở đây': 'Your family is here',
+  'Coach và chuyên gia tư vấn của nhà mình đi cùng suốt năm tầng.': 'Your Coach and consultant walk with your family through all five tiers.',
+  'Chưa xếp tầng': 'Tier not set yet',
+  'Bạn đang ở đây': 'You are here',
+  'Cộng tác viên': 'Collaborator',
+  'Đi cùng: Ban vận hành Học viện': 'With you: the Academy operations team',
+  'Ai hỗ trợ bạn': 'Who supports you',
+  'Ban vận hành của Học viện hỗ trợ cộng tác viên trong từng việc.': 'The Academy operations team supports collaborators in every task.',
+
+  /* ── vai · tài khoản ── */
+  'Phụ huynh': 'Parent',
+  'Học viên': 'Learner',
+  'Giáo viên': 'Teacher',
+  'phuhuynh@gita{n}.vn · Phụ huynh · {n}/{n}/{n} {n}:{n} · GITA {n}': 'phuhuynh@gita{n}.vn · Parent · {n}/{n}/{n} {n}:{n} · GITA {n}',
+  'hocvien@gita{n}.vn · Học viên · {n}/{n}/{n} {n}:{n} · GITA {n}': 'hocvien@gita{n}.vn · Learner · {n}/{n}/{n} {n}:{n} · GITA {n}',
+  'daisu@gita{n}.vn · Đại sứ · {n}/{n}/{n} {n}:{n} · GITA {n}': 'daisu@gita{n}.vn · Ambassador · {n}/{n}/{n} {n}:{n} · GITA {n}',
+  'Phụ huynh · LV{n}': 'Parent · LV{n}',
+  'Học viên · LV{n}': 'Learner · LV{n}',
+  'Đại sứ · LV{n}': 'Ambassador · LV{n}',
+  'Nhà Minh An · Lớp {n}': 'Minh An family · Grade {n}',
+  'Nhà Minh An': 'Minh An family',
+  'Vệ tinh miền Trung': 'Central region satellite',
+  'Hội đồng chuyên môn': 'Expert council',
+
+  /* ── nhóm và mục ở cột trái ── */
+  'Nhà mình hôm nay': 'Our family today',
+  'Hành trình & tiến bộ': 'Journey & progress',
+  'Việc của nhà hôm nay: một việc, nhiệm vụ, nhịp {n}/{n} ngày, minh chứng.': 'The family’s task today: one task, missions, the {n}/{n}-day rhythm, evidence.',
+  'Nhà đang ở đâu trên năm tầng, đổi được gì, báo cáo tháng, ghi nhận.': 'Where the family stands on the five tiers, what has changed, monthly report, recognition.',
+  'Nhà mình đã đổi gì': 'What has changed at home',
+  'Ngôi nhà thịnh vượng': 'Prosperity Home',
+  'mục đang mở': 'items open',
+  'mục đang mở ·': 'items open ·',
+  '{n} mục mở ở tầng sau': '{n} items open at later tiers',
+  'Viết bảng tầm nhìn của nhà mình': 'Write your family’s vision board',
+  'Chưa bắt đầu · Một lần, ngay chặng đầu': 'Not started · Once, at the very first stage',
+  'Chưa bắt đầu · Việc mỗi ngày': 'Not started · Daily task',
+  'Nhiệm vụ & Nhật ký {n}': 'Missions & Journal {n}',
+  'Vệ tinh lan toả': 'Outreach satellite',
+  'Cổng vào': 'Entrance',
+  'CTV / Đại sứ: nhà mình giới thiệu, liên kết, hoa hồng, kết nối.': 'Collaborators / Ambassadors: referrals, links, commission, connections.',
+  'Người chưa có tài khoản: hiểu GITA {n}, đi sáu bước vào, đọc đánh giá thật.': 'No account yet: understand GITA {n}, take the six steps in, read real reviews.',
+  'Vệ tinh của tôi': 'My satellite',
+  'CTV giới thiệu': 'Referral collaborators',
+  'Đại sứ GITA {n}': 'GITA {n} Ambassador',
+  'Ghi sổ nhật ký vị trí': 'Position journal',
+  'Cơ chế tài chính đại sứ': 'Ambassador financial scheme',
+  'Bài đọc · Hành trình nhà mình': 'Reading · Our family’s journey',
+  'Bảng điều khiển của tôi': 'My dashboard',
+  'Các phần của màn Nhà mình hôm nay': 'Sections of Our family today',
+  'Bắt đầu từ đâu': 'Where to start',
+  'Gửi ảnh việc đã làm': 'Send a photo of the task you did',
+  'Việc hôm nay': 'Today’s task',
+  'Nhịp hai mươi mốt ngày': 'The twenty-one-day rhythm',
+  'Bài đọc · Cam kết với gia đình': 'Reading · Our commitment to families',
+  'Sự kiện và lửa trại': 'Events and campfires',
+  'Việc của em hôm nay': 'Your task today',
+  'Bao lâu thì đổi được một thói quen': 'How long it takes to change a habit',
+  'Chứng minh em đã làm': 'Show that you did it',
+  'Bắt đầu từ đây': 'Start here',
+  'HÀNH TRÌNH {n} TẦNG': '{n}-TIER JOURNEY',
+  'Báo cáo tháng của nhà mình': 'Our family’s monthly report',
+  'Các phần của màn Hành trình & tiến bộ': 'Sections of Journey & progress',
+  'Bản đồ nhà mình': 'Our family map',
+  'Nhà mình có những ai': 'Who is in our family',
+  'Nhà mình muốn thành nhà thế nào': 'The family we want to become',
+  'Mười cột mốc về đích': 'Ten milestones to the finish',
+  'Ghi công và phần thưởng': 'Credit and rewards',
+  'BẢN ĐỒ THỊNH VƯỢNG': 'PROSPERITY MAP',
+  'Bản đồ của em': 'Your map',
+  'Em đã đổi gì': 'What you have changed',
+  'Mười điểm về đích': 'Ten points to the finish',
+  'Ghi nhận và phần thưởng': 'Recognition and rewards',
+  'Mở khi tài khoản được kích hoạt dịch vụ': 'Opens once the account’s service is activated',
+  'Ví credit của nhà mình': 'Our family’s credit wallet',
+  'CÚ HÍCH & NHỊP SỐNG': 'NUDGES & LIFE RHYTHM',
+  'Các phần của màn Dịch vụ & tài khoản': 'Sections of Services & account',
+  'Trại và sự kiện': 'Camps and events',
+  'Các phần của màn Vệ tinh lan toả': 'Sections of Outreach satellite',
+  'Người quanh nhà mình': 'People around our family',
+  'Kết nối với GITA': 'Connect with GITA',
+  'Kể chuyện nhà mình': 'Tell our family’s story',
+  'Giới thiệu và phần thưởng': 'Referrals and rewards',
+  'Nghề Đại sứ giới thiệu': 'The referral Ambassador role',
+  'Bài đọc · Trải nghiệm & lan toả': 'Reading · Experience & outreach',
+  'NHÓM {n} · KHỞI NGUỒN': 'GROUP {n} · ORIGINS',
+  'NHÓM {n} · CÚ HÍCH & NHỊP SỐNG': 'GROUP {n} · NUDGES & LIFE RHYTHM',
+  'NHÓM {n} · HỆ SINH THÁI': 'GROUP {n} · ECOSYSTEM',
+  'NHÓM {n} · HÀNH TRÌNH': 'GROUP {n} · JOURNEY',
+  'Tài liệu tặng nhà mình': 'Materials gifted to our family',
+  'Kho quà của em': 'Your gift box',
+  'KHO BÁU VẬT': 'TREASURE VAULT',
+  'Bạn em đã giới thiệu': 'Friends you referred',
+  'Kết nối với Học viện': 'Connect with the Academy',
+  'HỆ SINH THÁI & VẬN HÀNH': 'ECOSYSTEM & OPERATIONS',
+  'Các phần của màn Cổng vào': 'Sections of Entrance',
+  'Hành trình của con': 'Your child’s journey',
+  'GITA {n} là gì': 'What GITA {n} is',
+
+  /* ── nhãn chung ── */
+  '{n} ngày': '{n} days',
+  '{n} phút': '{n} min',
+  'Tầng {n}': 'Tier {n}',
+  'ĐANG Ở ĐÂY': 'YOU ARE HERE',
+  'Mục tiêu': 'Goal',
+  'Khi nào:': 'When:',
+  'Tất cả': 'All',
+  'Việc mỗi ngày': 'Daily tasks',
+  'Việc mỗi tuần': 'Weekly tasks',
+  'Việc mỗi tháng': 'Monthly tasks',
+  'Mỗi tối': 'Every evening',
+  'Mở': 'Open',
+  'Mã': 'Code',
+  'Chưa có': 'None yet',
+  'Điều kiện': 'Condition',
+  'ĐIỀU KIỆN': 'CONDITION',
+  'Ngày thứ {n}': 'Day {n}',
+  'Ngày {n} – {n}': 'Day {n} – {n}',
+  'HÔM NAY': 'TODAY',
+  'ĐÃ ĐỌC': 'READ',
+  'TOÀN BỘ KHO': 'WHOLE LIBRARY',
+  'NGÀY ĐÃ ĐI': 'DAYS WALKED',
+  'ĐANG Ở': 'NOW AT',
+  'Bài đã mở': 'Readings opened',
+  'Chưa mở hồ sơ': 'Profile not opened yet',
+  'Chưa có dòng nào — dữ liệu của bảng này chưa có, hoặc kho chưa mở với tài khoản đang đăng nhập.': 'No rows yet — this table has no data, or the library is not open for the signed-in account.',
+  'Nhóm Gia Đình Thịnh Vượng': 'Prosperous Family group',
+  'Nhóm phụ huynh': 'Parent group',
+  'Cửa trước của hệ sinh thái. Chỗ một gia đình nghe cách nghĩ của Học viện trước khi quyết bước vào.': 'The front door of the ecosystem — where a family hears how the Academy thinks before deciding to step in.',
+  'Phụ huynh quan tâm tới Gia Đình Thịnh Vượng — chưa cần là khách hàng.': 'Parents interested in the Prosperous Family — no need to be a client yet.',
+  'Gia đình muốn đi tiếp thì vào Đường vào sáu bước trong ứng dụng — không chốt trong nhóm.': 'Families who want to continue use the six-step entry path in the app — nothing is closed inside the group.',
+
+  /* ── năm tầng · mười bánh đà · chỉ số ── */
+  'T{n} · NHẬN DIỆN': 'T{n} · RECOGNISE',
+  'BỨT PHÁ': 'BREAK THROUGH',
+  'Dựng hệ thống': 'Build the system',
+  'Nhìn thật': 'See truly',
+  'Nhìn thẳng vào nhà mình trong bảy tối liền, và ghi ra đúng thứ mình thấy.': 'Look straight at your home for seven evenings in a row, and write down exactly what you see.',
+  'Chuyện truyền cảm hứng': 'Inspiring stories',
+  'Nhịp nhà': 'Home rhythm',
+  'Lời nói trong nhà': 'Words at home',
+  'Tự học': 'Self-study',
+  'Nền sức khoẻ': 'Health foundation',
+  'Tiền và lựa chọn': 'Money and choices',
+  'Quan hệ trong nhà': 'Family relationships',
+  'Mục tiêu và kỷ luật': 'Goals and discipline',
+  'Đóng góp': 'Contribution',
+  'Truyền lại': 'Passing it on',
+  'Mười bánh đà': 'Ten flywheels',
+  'Năng lực': 'Capability',
+  'Nội lực': 'Inner strength',
+  'Tài năng': 'Talent',
+  'Điểm mạnh': 'Strengths',
+  'TỰ CHỦ': 'AUTONOMY',
+  'ĐÒN BẨY': 'LEVER',
+  'SỰ THẬT': 'TRUTH',
+  'BÀI ĐỌC CỦA NHÀ MÌNH': 'OUR FAMILY’S READINGS',
+  'Ít nhất một sản phẩm, thành tựu hoặc tác động có bằng chứng': 'At least one product, achievement or impact with evidence',
+  'Mức tự chủ của học viên': 'Learner autonomy level',
+  'Số lần nhắc mỗi tuần': 'Reminders per week',
+  'Thời gian phục hồi sau xung đột': 'Recovery time after conflict',
+  'Phần thay đổi của người lớn': 'The adults’ share of change',
+  'Mức hỗ trợ cần thiết': 'Support level needed',
+  'Kỳ tích năm': 'Year’s feat',
+  'Mức rõ vai trong nhà': 'Role clarity at home',
+  'Ghi ba dòng nhật ký tối nay': 'Write three journal lines tonight',
+  'Mở sổ ghi tối nay': 'Open tonight’s journal',
+  'Ba dòng tối nay': 'Three lines tonight',
+  'Giờ ngồi vào bàn · giờ rời bàn · số lần phải nhắc.': 'Time sat down · time got up · number of reminders.',
+  'Chỗ khó nhất: Không phải ghi. Là ghi đúng cái có thật, kể cả tối nhà mình cãi nhau.': 'The hardest part: not writing it down — writing down what really happened, even on the evenings the family argued.',
+  'Không phải ghi. Là ghi đúng cái có thật, kể cả tối nhà mình cãi nhau.': 'Not writing it down — writing down what really happened, even on the evenings the family argued.',
+  'Mở bánh đà {n} và màn Nhà mình đã đổi gì.': 'Open flywheel {n} and the What has changed at home screen.',
+  '· Người đi cùng nhà mình.': '· Your family’s companions.',
+  'Tầng {n} KHÔNG chữa vấn đề. Chỉ quan sát, ghi dữ liệu, tìm mô thức.': 'Tier {n} does NOT fix problems. It only observes, records data and finds patterns.',
+  'Bảy ngày không can thiệp cho một đường nền thật, không phải đường nền đã bị bóp.': 'Seven days without intervening give a true baseline, not a squeezed one.',
+  'Lần đầu cả nhà nhìn thấy sự thật mà không cãi nhau.': 'The first time the whole family sees the truth without arguing.',
+  'Người lớn trình bày phần thay đổi của mình': 'The adults present their own changes',
+  'NGƯỜI GIỮ NHỊP': 'RHYTHM KEEPER',
+  'Đích của mô hình không phải thành tích của một đứa trẻ. Đích là một hệ gia đình vận hành được mà không cần ai canh, và mỗi người trong đó đều đang lớn lên.': 'The goal of the model is not one child’s achievement. It is a family system that runs without anyone standing guard, in which everyone is growing.',
+  'ĐẦU VÀO — ba thứ phải có trước khi khởi động năm': 'INPUTS — three things needed before the year starts',
+  'Bảng tầm nhìn gia đình {n}–{n} năm': 'Family vision board, {n}–{n} years',
+  'Một trang tầm nhìn có chữ của tất cả thành viên, dán chỗ ai cũng thấy': 'One vision page with words from every member, posted where everyone can see it',
+  'Test các yếu tố liên quan tới từng thành viên': 'Tests on the factors relevant to each member',
+  'Bộ kết quả của từng thành viên, đặt cạnh nhau trên một bảng': 'Each member’s results, side by side on one board',
+  'Hoạt động xã hội của gia đình': 'The family’s social activities',
+  'Bản đồ các môi trường đang tác động vào nhà, kèm đánh giá tác động tốt hay chưa tốt': 'A map of the environments affecting the home, with an assessment of whether each effect is good or not yet',
+  'Quyền điều hành việc học thuộc về học viên vào cuối chặng {n}': 'The learner steers their own learning by the end of stage {n}',
+  'Giảm đều qua bốn chặng, KHÔNG ép về {n}': 'Falls steadily across four stages, NOT forced to {n}',
+  'Giảm rõ so với mốc đầu năm': 'Clearly lower than the start-of-year mark',
+  'Rút ngắn qua từng chặng': 'Shorter at every stage',
+  'Trình bày được ở hội nghị cuối năm': 'Presentable at the year-end conference',
+  'Đủ chín vai có người giữ, không ai giữ quá bốn vai': 'All nine roles held, nobody holding more than four',
+  'KỲ TÍCH NĂM ĐANG CHẠY': 'YEAR’S FEAT IN PROGRESS',
+  'KỲ TÍCH NĂM': 'YEAR’S FEAT',
+  'NGƯỜI LỚN ĐỔI TRƯỚC': 'ADULTS CHANGE FIRST',
+  'BẢY CHỈ SỐ ĐẦU RA': 'SEVEN OUTCOME INDICATORS',
+  'HỘI NGHỊ GIA ĐÌNH CUỐI NĂM': 'YEAR-END FAMILY CONFERENCE',
+  'Học viên có hệ thống mục tiêu rõ, hướng tới kết quả xuất sắc, và đó có phải đích đến của chính quá trình học tập rèn luyện của em không?': 'Does the learner have a clear system of goals aimed at excellent results — and is that truly the destination of their own learning and practice?',
+  'Động lực, khát khao và niềm tin bên trong có đủ để em theo đuổi mục tiêu tới cùng, kể cả khi khó?': 'Is the inner drive, desire and belief strong enough to pursue the goal to the end, even when it gets hard?',
+  'Em có tài năng, điểm mạnh và tư duy xuất sắc để làm được không — và em có nhanh, có tập trung, có hướng đi rõ không?': 'Do you have the talent, strengths and sharp thinking to do it — and are you quick, focused and clear about where you are going?',
+  'Hành động & Môi trường': 'Action & Environment',
+  'Em có hành động quyết đoán, kiên trì và tối ưu không — và môi trường quanh em có nâng đỡ hành động ấy không?': 'Do you act decisively, persistently and efficiently — and does the environment around you support that action?',
+  'Nhìn lại ba tuần: việc nào thật sự tạo ra thay đổi': 'Look back on three weeks: which tasks truly made a difference',
+  'Chọn đúng MỘT đòn bẩy cho {n} ngày tới': 'Choose exactly ONE lever for the next {n} days',
+  'Bỏ bớt việc không nối được về tầm nhìn': 'Drop the tasks that do not connect back to the vision',
+  'Ghi biên bản ngắn, dán vào sổ gia đình': 'Write short minutes and stick them in the family notebook',
+  'Giữ cho gia đình không rơi vào bẫy làm nhiều mà không dịch chuyển.': 'Keeps the family out of the trap of doing a lot without moving forward.',
+  'Chuẩn bị một câu cho buổi ngồi lại': 'Prepare one sentence for the sit-down',
+
+  /* ── quy tắc an toàn khi chia sẻ ── */
+  'QUY TẮC AN TOÀN KHI CHIA SẺ — đọc trước khi đăng bất cứ gì': 'SAFE SHARING RULES — read before posting anything',
+  'Không đăng ảnh, video có mặt trẻ em khi chưa có đồng ý của cha mẹ hoặc người giám hộ, và với trẻ từ đủ {n} tuổi trở lên phải có thêm sự đồng ý của chính trẻ.': 'Do not post photos or videos showing children without the consent of a parent or guardian — and for children aged {n} and over, the child’s own consent too.',
+  'Không đăng điểm số, bảng điểm, học bạ, kết quả test, phiếu đánh giá hay bất kỳ phần nào trong hồ sơ của con người khác. Với con mình cũng không đăng kết quả cụ thể.': 'Do not post grades, transcripts, school records, test results, assessment forms or any part of another child’s profile. Do not post specific results for your own child either.',
+  'Không nêu tên trường, tên lớp, tên giáo viên, địa chỉ nhà, tuyến đường và giờ đi học, giờ tan học của trẻ.': 'Do not name a child’s school, class, teacher, home address, route, or school start and finish times.',
+  'Không hứa kết quả thay GITA. Không dùng các từ chắc chắn, cam kết, đảm bảo con sẽ, và không viết bất kỳ câu nào có nghĩa là người đọc làm theo sẽ ra kết quả giống nhà mình.': 'Do not promise results on GITA’s behalf. Do not use words like certain, committed or guaranteed your child will, and do not write anything implying that readers who follow along will get the same results as your family.',
+  'Không so sánh con mình với con nhà khác trong bài đăng, không xếp hạng, không viết câu kiểu con nhà tôi hơn hay kém con nhà ai.': 'Do not compare your child with other children in posts, do not rank, and do not write lines like my child is better or worse than someone else’s.',
+  'Không dùng bài viết, ảnh, video, câu chuyện hay tin nhắn của người khác trong group khi chưa xin phép và chưa được họ đồng ý bằng chữ.': 'Do not use other people’s posts, photos, videos, stories or messages from the group without asking and getting their written consent.',
+  'Đại sứ GITA không phải người quảng cáo. Đại sứ là người đã đi qua một chặng thật của nhà mình và kể lại chặng đó bằng lời của chính mình, gồm cả những chỗ chưa xong. Mỗi bài chia sẻ tồn tại vì ngoài kia có một gia đình đang mắc kẹt đúng ở chỗ mình từng mắc kẹt, và điều họ cần không phải một lời mời mua, mà là bằng chứng rằng có người thật đã xoay xở qua được. Người đại sứ kể hành trình của mình và không hứa kết quả thay GITA, vì kết quả của một đứa trẻ phụ thuộc vào cả đứa trẻ đó, gia đình và nhà trường. Thứ được mang ra chia sẻ là dữ liệu của nhà mình, cách làm của nhà mình, và cả những tuần lệch nhịp. Một bài viết làm xong việc của nó khi người đọc gấp máy lại, thấy mình được tôn trọng, và biết có một việc nhỏ có thể thử ngay tối nay.':
+    'A GITA Ambassador is not an advertiser. An Ambassador is someone who has walked a real stage with their own family and tells it in their own words, unfinished parts included. Every post exists because somewhere a family is stuck exactly where you were once stuck — and what they need is not an invitation to buy, but proof that a real person found a way through. An Ambassador shares their journey and never promises results on GITA’s behalf, because a child’s results depend on the child, the family and the school. What gets shared is your family’s data, your family’s methods, and the weeks you fell off rhythm too. A post has done its job when the reader closes the phone, feels respected, and knows one small thing they can try tonight.',
+  /* ── Khung chung: ô hỏi trợ lý · hộp thoại · tìm kiếm · cỡ chữ ── */
+  'Nhà mình đang mắc chuyện gì?': 'What is your family stuck on?',
+  'Tra phác đồ, kịch bản, mô thức, tình huống…': 'Look up protocols, scripts, patterns, situations…',
+  'Hộp thoại': 'Dialog',
+  'Tìm màn hình, kịch bản, mô thức…': 'Find screens, scripts, patterns…',
+  'Nhỏ lại': 'Smaller',
+  'To lên': 'Larger'
+});
+
+})();
+
+/* ═════════ src/tu-dien-en-02.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — TỪ ĐIỂN TIẾNG ANH · ĐỢT 2: MÀN ĐẦU CỦA KHÁCH
+   Ngôi nhà thịnh vượng (màn chính của gia đình) và Bắt đầu từ đâu (năm
+   bước đầu). Lấy từ màn thật bằng tools/thu-chu-man.mjs.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.TU_DIEN_EN = G.TU_DIEN_EN || {};
+(function (d) { for (var k in d) G.TU_DIEN_EN[k] = d[k]; })({
+  /* ── Ngôi nhà thịnh vượng ── */
+  'V{n} · chương học thuyết của cụm, mở theo vai · tầng · gói · bảng việc áp dụng đo được': 'V{n} · theory chapter of this cluster, opens by role · tier · plan · measurable application tasks',
+  '· Ngôi nhà thịnh vượng.': '· Prosperity Home.',
+  'Kích vào từng phần để mở nội dung.': 'Tap each part to open its content.',
+  'Mười bánh đà quay quanh vận hành cả nhà': 'Ten flywheels turning around the whole household',
+  'Dừng vòng bánh đà': 'Stop the flywheel ring',
+  'KIẾN TẠO GIA ĐÌNH THỊNH VƯỢNG ★ LÀM CHỦ KỶ NGUYÊN VƯƠN MÌNH ★ NÂNG TẦM TRÍ TUỆ VÀNG VIỆT NAM ★ HỆ SINH THÁI GITA ★': 'BUILDING PROSPEROUS FAMILIES ★ MASTERING THE ERA OF RISING ★ ELEVATING VIETNAM’S GOLDEN MINDS ★ THE GITA ECOSYSTEM ★',
+  'Tầm nhìn': 'Vision',
+  'Hành Trình Hạnh Phúc': 'Journey of Happiness',
+  'Phát triển Bản Thân': 'Personal Growth',
+  'Tài năng Thành viên': 'Members’ Talents',
+  'Giá trị Sống': 'Life Values',
+  'Phẩm Chất Thành Viên': 'Members’ Character',
+  'Vinh Danh Ghi Nhận': 'Honours & Recognition',
+  'Tiêu Chuẩn Sống': 'Living Standards',
+  'Hành động': 'Action',
+  'Nền móng': 'Foundation',
+  'Phần mờ là phòng của vai khác — đăng nhập đúng vai thì mở.': 'Faded rooms belong to other roles — they open when you sign in with that role.',
+  'Bàn cờ {n} ngày — hành trình của nhà mình': 'The {n}-day board — your family’s journey',
+  'Năm chặng theo {n} ngày — bấm một ô để mở đúng màn.': 'Five stages across {n} days — tap a square to open its screen.',
+  'Bậc {n} · gia đình': 'Level {n} · family',
+  'MÀN CỦA BẠN': 'YOUR SCREENS',
+  'Bạn thấy đúng hành trình của nhà mình, theo từng chặng. Các màn nghề và quản trị được giữ kín.': 'You see exactly your family’s journey, stage by stage. Professional and admin screens stay private.',
+  'Khởi động': 'Warm-up',
+  'Vào hành trình': 'Into the journey',
+  'Tăng tốc': 'Speed up',
+  'Làm chủ': 'Mastery',
+  'Chặng {n} · Khởi động': 'Stage {n} · Warm-up',
+  'Ngày {n}–{n} — Nhìn cho đúng. Làm quen nhà mình, định vị điểm xuất phát — nhẹ, cơ bản.': 'Days {n}–{n} — See clearly. Get to know your home and locate the starting point — light and basic.',
+  'Kích vào từng phần của ngôi nhà để xây gia đình thịnh vượng': 'Tap each part of the house to build a prosperous family',
+  '{n} màn chi tiết × {n} nghiệp vụ đúng vai của tôi · đèn tiến độ · mở thẳng màn làm việc': '{n} detail screens × {n} duties for my role · progress lights · open the work screen directly',
+  'Tuần này so với tuần trước, và phần chênh lệch nói bằng lời': 'This week against last week, with the difference put into words',
+  'Sứ mệnh · tầm nhìn · mục tiêu · giá trị · năm tầng · văn hoá · cách đồng hành': 'Mission · vision · goals · values · five tiers · culture · how we accompany you',
+  'Một việc duy nhất cho tối nay, tick xong thì cất máy đi — hai việc ngang nhau lúc chín giờ tối, trong bếp, tay bận, là không việc nào được làm · Chế độ Bão bật một chạm, KHÔNG hỏi vì sao · bỏ một việc thì không ai hỏi vặn · việc nặng có nút Để hôm khác ngay cạnh nút tiếp tục, CÙNG KÍCH CỠ':
+    'One single task for tonight — tick it and put the phone away; two equal tasks at nine in the evening, in the kitchen, hands busy, means neither gets done · Storm Mode is one tap and NEVER asks why · skipping a task is never questioned · heavy tasks have a Some other day button right beside continue, at the SAME SIZE',
+  'Năm bước đầu tiên, đúng thứ tự': 'The first five steps, in order',
+  'Giới thiệu → đăng ký → test → hồ sơ → định hướng → {n} ngày': 'Introduction → sign-up → test → profile → direction → {n} days',
+  'Ba câu · phần chưa tốt cần hơn phần khen': 'Three sentences · what is not yet good matters more than praise',
+  '{n} khoang · {n} vai · băng nền {n} việc': '{n} chambers · {n} roles · {n} baseline duties',
+  'Tại sao → tài năng · rồi vòng lại sửa lộ trình': 'Why → talent · then loop back to adjust the roadmap',
+  'Bảy chuyển dịch làm nên một gia đình khác': 'Seven shifts that make a different family',
+  'Cố vấn luôn lắng nghe, có mặt mọi lúc': 'An adviser who always listens, there at any time',
+  'Bảy khoảnh khắc đáng nhớ của hành trình': 'Seven memorable moments of the journey',
+  'Năm chặng, mỗi chặng một câu hỏi': 'Five stages, one question each',
+  'Bước trên mười bánh đà · trợ lý dẫn · nhiệm vụ hiện ra từng mốc': 'Walk the ten flywheels · the assistant guides · missions appear at each milestone',
+  'Tự chọn nhân vật đại diện — ảnh không rời máy · đưa ra Con đường': 'Choose your avatar — photos never leave your device · shown on The Path',
+  'Gia đình lớn lên qua năm tầng — Hạt · Rễ · Thân · Tán · Rừng': 'A family grows through five tiers — Seed · Root · Trunk · Canopy · Forest',
+  'Bốn miền để đọc đúng nguyên nhân': 'Four domains to read the true cause',
+  '{n} vòng × {n} việc · {n} cấp · mốc mở bằng bằng chứng': '{n} rounds × {n} tasks · {n} levels · milestones unlocked by evidence',
+  'Mùa khó thì hạ chuẩn, không phạt · chuỗi được giữ': 'In hard seasons the bar drops, with no penalty · the streak is kept',
+  '{n} vùng đất · {n} câu mỗi tối · nhánh nào đang cần tưới': '{n} lands · {n} questions each evening · which branch needs watering',
+  '{n} lời hứa · trần {n}–{n}–{n} · {n} tình huống nói đúng': '{n} promises · caps {n}–{n}–{n} · {n} situations said right',
+  '{n} điều kiện xong · chuông {n} tầng · {n} kịch bản sự cố': '{n} completion conditions · {n}-level alarm · {n} incident scripts',
+  'Lời hứa về dữ liệu và túi tiền · {n} nguồn · thứ tự cắt chi': 'Our promise on data and money · {n} sources · the order of spending cuts',
+  'Hiến pháp {n} trang · {n} thập kỷ · {n} cách chết của một đề án {n} năm': 'A {n}-page constitution · {n} decades · {n} ways a {n}-year project dies',
+  'Im lặng · xoá · đi · phủ quyết · đọc · sửa · khiếu nại': 'Silence · delete · leave · veto · read · correct · complain',
+  '{n} trang · {n} câu · {n} quyền · trang cuối để trống cho bạn': '{n} pages · {n} questions · {n} rights · the last page left blank for you',
+  '{n} câu chưa trả lời được · {n} loại quyết định · {n} mâu thuẫn tự tìm ra': '{n} unanswered questions · {n} kinds of decision · {n} contradictions found by itself',
+  'Gia Đình Thịnh Vượng · {n} thử thách · và ngày thang này hết bậc': 'Prosperous Family · {n} challenges · and the day this ladder runs out',
+  'Tin cộng đồng · {n} tiêu chí chọn chuyện · mỗi con số khai nó đếm từ đâu': 'Community news · {n} criteria for choosing stories · every number states where it was counted',
+  '{n} tầng {n} bàn · {n} ngày {n} ô · {n} gợi ý chọn {n} · điểm theo tầm quan trọng': '{n} tiers {n} boards · {n} days {n} squares · {n} suggestions pick {n} · points by importance',
+  'Xem không phải là làm · ba nấc mỗi việc': 'Watching is not doing · three steps per task',
+  '{n} trụ · ai chịu trách nhiệm · điểm chạm WOW': '{n} pillars · who is responsible · WOW touchpoints',
+  'Nộp ảnh, báo cáo xác nhận đã làm': 'Submit photos and reports confirming the task was done',
+  'Hỏi bất cứ điều gì, trích dẫn nguồn': 'Ask anything — answers cite their source',
+  '{n} chuyện cho cấp của mình · {n} mạch · mỗi nhiệm vụ một chuyện': '{n} stories for your level · {n} threads · one story per mission',
+  'Doanh nhân · khoa học · nghệ thuật · thể thao · người Việt': 'Business · science · art · sport · Vietnamese figures',
+  'Bản quyền giọng · chuẩn phòng thu · kịch bản dẫn': 'Voice rights · studio standard · narration scripts',
+  'Ngày · tuần · tháng · ô ghi riêng cho từng vị trí': 'Day · week · month · a separate entry box for each position',
+  'Bài đạt mốc {n} và {n} nhận học bổng {n}%': 'Submissions reaching marks {n} and {n} receive a {n}% scholarship',
+  '{n} tầng · {n} bài tốt nghiệp · {n} trục đánh giá': '{n} tiers · {n} graduation pieces · {n} assessment axes',
+  'Học · Làm · Nộp · bài kế tiếp tự mở': 'Learn · Do · Submit · the next lesson opens by itself',
+  'Đồng hồ thật · ba ngưỡng · chuẩn hoàn thành · quy đổi điểm': 'A real clock · three thresholds · completion standard · points conversion',
+  'Chuyện tốt trong nhà phải được kể': 'Good things at home deserve to be told',
+  'Những điều không bao giờ được làm': 'Things that must never be done',
+  'Những người tuyệt vời quanh mình': 'The wonderful people around us',
+  'Nơi cả hệ sinh thái gặp nhau': 'Where the whole ecosystem meets',
+  'Đồng bộ · Facebook · Telegram': 'Sync · Facebook · Telegram',
+  'Cập nhật với GITA': 'Updates from GITA',
+  'Thời gian học · việc thực hành · báo cáo · tiến bộ so với mục tiêu tháng · xu hướng sáu tháng · phiếu hài lòng tháng': 'Study time · practice tasks · reports · progress against the monthly goal · six-month trend · monthly satisfaction survey',
+  'Số dư credit tặng · thưởng · trả phí · cách tích · dùng cho nhà mình · lịch sử': 'Credit balance — gifted · rewarded · paid · how to earn · using it for your family · history',
+  'Từ nhiều vấn đề đến niềm tự hào': 'From many problems to pride',
+  'QR nhận chuyển khoản · thông tin do hệ thống xác thực': 'Transfer QR code · details verified by the system',
+  'PDCA và cổng nghiệm thu từng chặng': 'PDCA and the acceptance gate of each stage',
+  'Việc của hôm nay, ghi lại được': 'Today’s tasks, recorded',
+  '{n} bộ · {n} câu · phân bốn nhóm': '{n} sets · {n} questions · in four groups',
+  '{n} điểm mốc · {n} tiêu chí đo được': '{n} milestones · {n} measurable criteria',
+  '{n} cấp · huy hiệu · đổi điểm lấy quà': '{n} levels · badges · exchange points for gifts',
+  'Mắc ở đâu, mở đúng tài liệu ở đó': 'Wherever you are stuck, open the right material there',
+  'Từng thành viên thật sự là ai': 'Who each member really is',
+  'Bảng số trung thực, không cảm giác': 'An honest scoreboard, not feelings',
+  'Cả nhà viết, không ai viết hộ ai': 'The whole family writes — nobody writes for anybody else',
+  'Ai giữ gì, ai đang bị bỏ ra ngoài': 'Who holds what, and who is being left out',
+  'Bốn nghi lễ giữ nhịp cả năm': 'Four rituals that keep the year’s rhythm',
+  'Chiến dịch tạo bước nhảy, không bước đi': 'Campaigns that make leaps, not steps',
+  'Bảy chỉ số đầu ra của mô hình': 'The model’s seven outcome indicators',
+  'Khung nghề · {n} đầu việc/hoa hồng · lộ trình giới thiệu · đào tạo': 'Role framework · {n} commissionable tasks · referral roadmap · training',
+  '{n} cấp · {n} nhiệm vụ · {n} quy tắc': '{n} levels · {n} missions · {n} rules',
+  '{n} cấp · trần hoa hồng {n}%': '{n} levels · commission cap {n}%',
+
+  /* ── Bắt đầu từ đâu ── */
+  'tự xác nhận': 'self-confirmed',
+  '{n}/{n} tối đã ghi': '{n}/{n} evenings recorded',
+  '· Bắt đầu từ đâu.': '· Where to start.',
+  'BẮT ĐẦU Ở ĐÂY': 'START HERE',
+  'Năm bước đầu tiên': 'The first five steps',
+  'Không phải năm mươi màn hình. Chỉ năm bước, đúng thứ tự, cho đúng vai của anh chị. Làm xong bước một rồi hãy nhìn bước hai.': 'Not fifty screens. Just five steps, in order, for your role. Finish step one before looking at step two.',
+  'ĐÃ XONG': 'DONE',
+  'ĐANG ĐI VỚI VAI': 'WALKING AS',
+  '{n} trong {n} bước dưới đây tự đánh dấu bằng DẤU VẾT THẬT': '{n} of the {n} steps below tick themselves from REAL TRACES',
+  '— bài đã chấm, dòng đã ghi, ô đã tích trong máy này. Không tích tay được, và cũng không cần tích: đủ là tự bật. {n} bước còn lại không có gì để đo — chúng xảy ra ngoài màn hình — nên vẫn là ô anh chị tự xác nhận, và ô ấy là lời tự khai chứ không phải phép đo.':
+    '— graded tests, written lines, boxes ticked on this device. You cannot tick them by hand, and you do not need to: once enough is there, they switch on. The other {n} steps have nothing to measure — they happen off screen — so they remain boxes you confirm yourself, and that box is a self-declaration, not a measurement.',
+  'BƯỚC TIẾP THEO': 'NEXT STEP',
+  '{n}/{n} việc hôm nay': '{n}/{n} tasks today',
+  'Đây là bản đồ của chính gia đình anh chị. Không ai viết hộ. Hệ thống chỉ giữ chuẩn và soi đường.': 'This is your own family’s map. Nobody writes it for you. The system only holds the standard and lights the way.',
+  'Nhìn tấm bản đồ một lần': 'Look at the map once',
+  'Năm khoang, chín vai. Chưa cần làm gì cả — chỉ xem nhà mình đang đứng ở khoang nào.': 'Five chambers, nine roles. Nothing to do yet — just see which chamber your family stands in.',
+  'Viết bảng tầm nhìn': 'Write the vision board',
+  'chưa có ô nào': 'no boxes yet',
+  'Cả nhà ngồi đủ mặt. Mỗi người viết bằng lời của mình. Không ai viết hộ ai.': 'The whole family sits together. Everyone writes in their own words. Nobody writes for anybody else.',
+  '{n} phút mỗi tối': '{n} minutes each evening',
+  'Giờ ngồi vào bàn · giờ rời bàn · số lần phải nhắc. Ăn cơm xong là mở sổ.': 'Time sat down · time got up · number of reminders. Open the notebook right after dinner.',
+  'Đủ bảy tối rồi đọc lại': 'After seven evenings, read it back',
+  'Bảy dòng, không cần đẹp. Tìm một tối khác hẳn sáu tối còn lại — đó là đòn bẩy.': 'Seven lines, no need to be neat. Find the one evening unlike the other six — that is the lever.',
+  'Chốt bảng chín vai': 'Settle the nine-role board',
+  'Một buổi tối, cả nhà tự nhận vai mình giữ. Có biên bản, dán lên tường.': 'One evening, everyone claims the role they hold. Write it down and put it on the wall.',
+  'Đây là hành trình của em. Mỗi ngày em đi thêm một bước, bản đồ này sáng thêm một chỗ.': 'This is your journey. Each day you take one more step, one more spot on this map lights up.',
+  'Xem hành trình của mình': 'See your journey',
+  'Năm chặng. Em đang ở chặng nào và chặng sau là gì.': 'Five stages. Which one you are at, and what comes next.',
+  'Ghi nhật ký ba dòng': 'Write a three-line journal',
+  'Hôm nay chỗ nào mình tuột, chỗ nào mình giữ được.': 'Where you slipped today, and where you held on.',
+  'Chọn một việc khó làm trước': 'Do one hard task first',
+  '{n} phút không điện thoại, làm việc khó nhất trước.': '{n} minutes without your phone, hardest task first.',
+  'Điều mình muốn bố mẹ hiểu mà chưa nói được.': 'Something you want your parents to understand but have not said yet.',
+  'Nhận huy hiệu đầu tiên': 'Earn your first badge',
+  'Bảy tối liên tục có dữ liệu — kể cả tối ghi "quên".': 'Seven evenings in a row with data — even evenings you write "forgot".',
+  'Câu chuyện thật của anh chị là thứ mở được cánh cửa mà không quảng cáo nào mở nổi.': 'Your real story opens doors no advertisement ever could.',
+  'Đọc sáu điều GITA {n} KHÔNG làm': 'Read the six things GITA {n} does NOT do',
+  'Phần phải thuộc trước phần "làm". Nói sai một câu ở buổi đầu thì ba tháng sau Học viện mất một gia đình — và người giới thiệu mất uy tín trước chính người quen của mình.': 'Know this before the "do" part. Say one wrong sentence in the first session and three months later the Academy loses a family — and the referrer loses face with people they know.',
+  'Mở mã liên kết của mình': 'Open your referral code',
+  'Mã dạng CTV-xxxxxx là chỗ DUY NHẤT hệ thống ghi nhận công. Giới thiệu miệng mà người ta tự đăng ký thì không có gì để đối soát.': 'A code like CTV-xxxxxx is the ONLY place the system records credit. A word-of-mouth referral where people sign up on their own leaves nothing to reconcile.',
+  'Làm việc của hôm nay': 'Do today’s task',
+  'dưới {n} phút': 'under {n} minutes',
+  'Việc của cộng tác viên là việc theo ngày, không phải theo đợt. Một tuần im lặng là một tuần không nhà nào được giới thiệu.': 'A collaborator’s work is daily, not in bursts. A silent week is a week no family gets referred.',
+  '{n} phút mỗi ngày': '{n} minutes a day',
+  'Hoa hồng tính trên việc có ghi chép. Làm mà không ghi thì tới kỳ đối soát không có gì đối chiếu.': 'Commission is counted on recorded work. Work that is not recorded leaves nothing to check at reconciliation time.',
+  'Đọc trần hoa hồng và ranh giới chia sẻ': 'Read the commission cap and sharing boundaries',
+  'Trần {n}%, không ngoại lệ, và sáu điều không được làm khi kể chuyện nhà người khác. Đọc trước khi kể, không đọc sau khi bị nhắc.': 'A {n}% cap, no exceptions, and six things never to do when telling another family’s story. Read before you tell — not after you are reminded.'
+});
+
+})();
+
+/* ═════════ src/tu-dien-en-03.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — TỪ ĐIỂN TIẾNG ANH · ĐỢT 3: BẢNG ĐIỀU KHIỂN CỦA KHÁCH
+   Ba bảng điều khiển theo vai khách (phụ huynh · học viên · đại sứ) —
+   màn có nhiều chữ nhất trong lượt thu màn thật (tools/thu-chu-man.mjs).
+
+   Tên người trong dữ liệu mẫu (Trần Quốc Bảo…) cố ý KHÔNG có ở đây: tên
+   người không dịch, và một khoá trùng tên người sẽ đổi tên ai đó trên màn.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.TU_DIEN_EN = G.TU_DIEN_EN || {};
+(function (d) { for (var k in d) G.TU_DIEN_EN[k] = d[k]; })({
+  /* ── Khung chung của bảng điều khiển ── */
+  'Mở chi tiết': 'Open details',
+  '{n} việc': '{n} tasks',
+  '{n} nghiệp vụ': '{n} duties',
+  '· Bảng điều khiển của tôi.': '· My dashboard.',
+  'Màn chi tiết': 'Detail screen',
+  'đánh dấu trên máy này': 'marked on this device',
+  'Điểm việc đạt': 'Task score achieved',
+  '{n}/{n} trọng số': '{n}/{n} weight',
+  'Cùng vai': 'Same role',
+  'tài khoản đang hoạt động': 'active accounts',
+  'Mỗi màn chi tiết và mỗi "Mở" vẫn qua cổng quyền của hệ. Đây là bàn làm việc theo vai, không phải cửa tắt quyền.': 'Every detail screen and every “Open” still passes the system’s permission gate. This is a role-based workbench, not a shortcut around permissions.',
+  'mỗi màn {n} việc': '{n} tasks per screen',
+  'mỗi màn {n} nghiệp vụ': '{n} duties per screen',
+  'Việc đã xong': 'Tasks done',
+  'Nghiệp vụ đã xong': 'Duties done',
+
+  /* ── Phụ huynh ── */
+  'PHỤ HUYNH · BẢNG ĐIỀU KHIỂN': 'PARENT · DASHBOARD',
+  'Bảng điều khiển Phụ huynh — {n} màn × {n} việc': 'Parent dashboard — {n} screens × {n} tasks',
+  'Góc của cả nhà: mỗi tối một việc nhỏ, xem con đã đi tới đâu, giữ lại điều tốt và biết nhà mình có những quyền gì. Không cần giỏi công nghệ — chỉ cần đều tay.': 'The whole family’s corner: one small task each evening, see how far your child has come, keep the good moments and know your family’s rights. No tech skills needed — just a steady hand.',
+  'Việc tối nay': 'Tonight’s task',
+  'Gửi minh chứng': 'Send evidence',
+  'Hỏi người đồng hành': 'Ask your companion',
+  'MỖI NGÀY CỦA NHÀ MÌNH': 'OUR FAMILY’S EVERY DAY',
+  'Hôm nay · nhiệm vụ · thói quen nhỏ': 'Today · missions · small habits',
+  'Ngôi nhà & hôm nay': 'The home & today',
+  'Mở việc tối nay của nhà mình': 'Open tonight’s family task',
+  'Làm xong và tick việc tối nay': 'Finish and tick tonight’s task',
+  'Ghé thăm Ngôi nhà thịnh vượng': 'Visit the Prosperity Home',
+  'Đi năm bước đầu tiên theo thứ tự': 'Take the first five steps in order',
+  'Đọc GITA {n} là gì cùng người thân': 'Read “What is GITA {n}” with your family',
+  'Xem bảng công việc của nhà': 'See the family task board',
+  'Nhận một việc nhỏ trong danh mục': 'Pick a small task from the list',
+  'Xem nhà mình đã mở tới đâu': 'See how far your family has unlocked',
+  'Bấm một ô trên bàn cờ tổng': 'Tap a square on the master board',
+  'Báo mùa khó để được hạ chuẩn': 'Report a hard season to lower the bar',
+  'Lộ trình & nhiệm vụ': 'Pathway & missions',
+  'Xem lộ trình T{n} → T{n} của nhà': 'See the family’s T{n} → T{n} pathway',
+  'Chia việc trong nhiệm vụ cho từng người': 'Share mission tasks among family members',
+  'Ghi nhật ký {n} sau mỗi nhiệm vụ': 'Write journal {n} after each mission',
+  'Tự chấm theo vòng Đúng – Đủ – Sâu': 'Self-check by the Right – Full – Deep loop',
+  'Đi một bước trên mười bánh đà': 'Take one step on the ten flywheels',
+  'Xem đồng hồ thời gian & điểm thưởng': 'See the time clock & reward points',
+  'Ghi việc làm dở để làm tiếp': 'Note unfinished work to resume later',
+  'Hỏi trợ lý GITA khi chưa hiểu việc': 'Ask the GITA assistant when a task is unclear',
+  'Cả nhà chạy một cú hích nhỏ': 'Run a small kick-start as a family',
+  'Thói quen & chu kỳ': 'Habits & cycles',
+  'Chọn bốn nghi lễ cho cả năm': 'Choose four rituals for the year',
+  'Giữ một nghi lễ nhỏ mỗi tuần': 'Keep one small ritual each week',
+  'Ăn tối không điện thoại một bữa mỗi tuần': 'One phone-free dinner each week',
+  'Nhìn lại khi hết chu kỳ': 'Look back at the end of a cycle',
+  'Bước sang chu kỳ {n} ngày': 'Move on to the {n}-day cycle',
+  'Giữ chuỗi ngày liền tay': 'Keep the daily streak going',
+  'Mùa bận thì giữ việc nhỏ nhất': 'In a busy season, keep the smallest task',
+  'Trả lời lời nhắc của người đi cùng': 'Reply to your companion’s reminder',
+  'Ghi một câu biết ơn cuối tuần': 'Write one line of gratitude at the weekend',
+  'CÙNG CON ĐI ĐƯỜNG DÀI': 'WALKING THE LONG ROAD WITH YOUR CHILD',
+  'Bản đồ · tầm nhìn · hành trình của con · học cùng con': 'Map · vision · your child’s journey · learning together',
+  'Bản đồ gia đình & chân dung': 'Family map & portrait',
+  'Cả nhà cùng xem Bản đồ Gia đình': 'Look at the Family Map together',
+  'Viết chân dung nhà mình': 'Write your family portrait',
+  'Định vị hôm nay bằng bảng số': 'Locate today with the numbers board',
+  'Điền bản đồ cá nhân {n} ô': 'Fill in the {n}-cell personal map',
+  'Xem chín vai đang giữ trong nhà': 'See the nine roles held at home',
+  'Đọc bốn miền G – I – T – A': 'Read the four domains G – I – T – A',
+  'Gọi tên vòng luẩn quẩn của nhà': 'Name the family’s vicious circle',
+  'Xem bảng số gia đình': 'See the family numbers board',
+  'Chọn nhân vật đại diện cho mình': 'Choose a character to represent you',
+  'Viết vào sổ tay của gia đình': 'Write in the family notebook',
+  'Tầm nhìn của nhà mình': 'Our family’s vision',
+  'Cùng viết tầm nhìn {n} năm': 'Write the {n}-year vision together',
+  'Phác tầm nhìn {n} năm cho con': 'Sketch a {n}-year vision for your child',
+  'Treo tầm nhìn ở chỗ cả nhà thấy': 'Hang the vision where everyone can see it',
+  'Chuyển nỗi lo thành điều mong muốn': 'Turn a worry into a wish',
+  'Xem cây giá trị của nhà': 'See the family values tree',
+  'Trả lời ba câu của bức tranh hành trình': 'Answer the three journey-picture questions',
+  'Xem mười điểm về đích': 'See the ten finish points',
+  'Đọc chuyện truyền cảm hứng cùng con': 'Read an inspiring story with your child',
+  'Nghe chuyện người thật trước giờ ngủ': 'Listen to a real-life story before bed',
+  'Xem hành trình của con tuần này': 'See your child’s journey this week',
+  'Hỏi con một điều con thích tuần này': 'Ask your child one thing they enjoyed this week',
+  'Cùng con đi một ô bàn cờ hành trình': 'Move one square on the journey board with your child',
+  'Ghi khoảnh khắc WOW của con': 'Record your child’s WOW moment',
+  'Đi bên con trên con đường nhiệm vụ': 'Walk beside your child on the mission path',
+  'Viết vài dòng nhật ký về con': 'Write a few journal lines about your child',
+  'Khen con đúng việc con đã làm': 'Praise your child for the specific thing they did',
+  'Mời con thử cuộc thi viết {n} ngày': 'Invite your child to try the {n}-day writing challenge',
+  'Mở tài liệu quà tặng khi con vướng': 'Open a gift resource when your child gets stuck',
+  'Học & sát hạch của cha mẹ': 'Parents’ learning & assessment',
+  'Làm bộ test nhận diện {n} tầng': 'Take the {n}-tier profile test',
+  'Nhờ người đồng hành giải thích kết quả test': 'Ask your companion to explain the test results',
+  'Làm bài sát hạch khi đã sẵn sàng': 'Take the assessment when you are ready',
+  'Tìm tài liệu đúng chỗ trong thư viện': 'Find the right resource in the library',
+  'Nghe bài bằng giọng đọc khi bận tay': 'Listen to lessons read aloud when your hands are busy',
+  'Xem người đi cùng phải làm được gì': 'See what your companion must be able to do',
+  'Nhận ra logo và màu GITA thật': 'Recognise the genuine GITA logo and colours',
+  'NHÌN LẠI, KẾT NỐI & QUYỀN CỦA NHÀ': 'LOOKING BACK, CONNECTING & YOUR FAMILY’S RIGHTS',
+  'Tiến bộ · cộng đồng · thanh toán · bảy quyền': 'Progress · community · payments · seven rights',
+  'Gửi minh chứng sau khi làm nhiệm vụ': 'Send evidence after a mission',
+  'Hỏi lại khi minh chứng chưa được xác nhận': 'Follow up when evidence is not yet confirmed',
+  'Xem nhà mình đã đổi gì tuần này': 'See what changed at home this week',
+  'Cả nhà cùng đọc phần tiến bộ': 'Read the progress section together',
+  'Xem KPI của nhà mình': 'See your family’s KPIs',
+  'Nhận ghi nhận và huy hiệu': 'Receive recognition and badges',
+  'Đổi điểm lấy quà cho cả nhà': 'Redeem points for a family gift',
+  'Kể chuyện tốt trong nhà để được vinh danh': 'Share a good family story to be honoured',
+  'Xem hệ này đang nợ nhà mình gì': 'See what this system still owes your family',
+  'Kết nối & sự kiện': 'Connections & events',
+  'Đăng ký một sự kiện của cộng đồng': 'Sign up for a community event',
+  'Cả nhà cùng dự lửa trại': 'Attend a campfire as a family',
+  'Gửi góp ý sau mỗi sự kiện': 'Send feedback after each event',
+  'Nhắn người đồng hành khi cần': 'Message your companion when needed',
+  'Ghi tên người tuyệt vời quanh mình': 'Name the wonderful people around you',
+  'Nối Facebook hoặc Telegram để nhận tin': 'Link Facebook or Telegram to get updates',
+  'Đọc tin cộng đồng cùng nhau': 'Read community news together',
+  'Chọn một chuyện nhà khác để học theo': 'Pick another family’s story to learn from',
+  'Chỉ đường vào cho người quen hỏi': 'Show the way in to friends who ask',
+  'Thanh toán & quyền của nhà': 'Payments & your family’s rights',
+  'Thanh toán học phí đúng hạn': 'Pay tuition on time',
+  'Đối chiếu thông tin nhận tiền trước khi chuyển': 'Check the payee details before transferring',
+  'Hỏi về học phí khi chưa rõ': 'Ask about tuition when unsure',
+  'Dùng quyền khiếu nại khi thấy chưa đúng': 'Use your right to complain when something is wrong',
+  'Đọc sáu ranh giới': 'Read the six boundaries',
+  'Bật khoá khuôn mặt cho tài khoản': 'Turn on face lock for the account',
+  'Biết khi nào hệ này xong việc với nhà': 'Know when this system’s work with your family is done',
+  'Đọc năm lời hứa của người đi cùng': 'Read the companion’s five promises',
+  'Đọc bảy quyền của nhà mình': 'Read your family’s seven rights',
+  'Đọc sáu điều không bao giờ bán': 'Read the six things never sold',
+  'Đọc năm điều không ai được sửa': 'Read the five things no one may change',
+  'Đọc năm điều tư vấn không được làm': 'Read the five things a consultant must not do',
+  'Xem bảng công việc của tôi': 'See my task board',
+  'Thi viết {n} ngày': '{n}-day writing challenge',
+  'Minh chứng & tiến bộ': 'Evidence & progress',
+  'Viết ba câu đánh giá GITA {n}': 'Write three sentences reviewing GITA {n}',
+  'Nhận nhiệm vụ tuần này': 'Take this week’s mission',
+  'Bắt đầu chu kỳ {n} ngày': 'Start the {n}-day cycle',
+  'Đọc con đường năm tầng': 'Read the five-tier path',
+  'Đọc hành trình {n} chặng của học viên': 'Read the student’s {n}-stage journey',
+  'Học một bài trong khoá của tôi': 'Study a lesson in my course',
+  'Đọc một chương Nôi nuôi dưỡng nhân tài': 'Read a chapter of The Cradle of Talent',
+
+  /* ── Học viên ── */
+  'HỌC VIÊN · BẢNG ĐIỀU KHIỂN': 'STUDENT · DASHBOARD',
+  'Bảng điều khiển Học viên — {n} màn × {n} việc': 'Student dashboard — {n} screens × {n} tasks',
+  'Bảng của học viên: đi lộ trình học của mình, làm nhiệm vụ và bài test, học trọn khoá đào tạo, nộp minh chứng và nhận ghi nhận — từng bước nhỏ, có bằng chứng.': 'The student board: follow your learning pathway, do missions and tests, complete your course, submit evidence and earn recognition — small steps, each with proof.',
+  'Nhiệm vụ & nhật ký': 'Missions & journal',
+  'Khoá học của tôi': 'My course',
+  'Ghi nhận của tôi': 'My recognition',
+  'NHỊP HỌC MỖI NGÀY': 'DAILY LEARNING RHYTHM',
+  'Hôm nay · nhiệm vụ · thói quen & chu kỳ': 'Today · missions · habits & cycles',
+  'Hôm nay của tôi': 'My today',
+  'Mở việc học hôm nay': 'Open today’s study task',
+  'Làm xong và tick việc hôm nay': 'Finish and tick today’s task',
+  'Đặt giờ học cố định trong ngày': 'Set a fixed study time each day',
+  'Đi năm bước bắt đầu': 'Take the five starting steps',
+  'Chọn một đầu việc vừa sức': 'Pick a task that fits your level',
+  'Ghé Ngôi nhà thịnh vượng': 'Drop by the Prosperity Home',
+  'Xem mình đã mở tới đâu': 'See how far you have unlocked',
+  'Mở một ô trên bàn cờ tổng': 'Open a square on the master board',
+  'Đọc GITA {n} là gì': 'Read “What is GITA {n}”',
+  'Nhiệm vụ & nhật ký {n}': 'Missions & journal {n}',
+  'Làm nhiệm vụ đủ ba nấc Đúng – Đủ – Sâu': 'Complete missions on all three steps: Right – Full – Deep',
+  'Chia nhiệm vụ lớn thành bước nhỏ': 'Break a big mission into small steps',
+  'Ghi nhật ký {n} sau khi làm': 'Write journal {n} after doing it',
+  'Đi một việc trên mười bánh đà': 'Do one task on the ten flywheels',
+  'Xem đồng hồ thời gian của nhiệm vụ': 'See the mission time clock',
+  'Ghi việc dở và hẹn ngày làm tiếp': 'Note unfinished work and set a day to resume',
+  'Đọc chuyện truyền cảm hứng của nhiệm vụ': 'Read the mission’s inspiring story',
+  'Viết sổ nhật ký tuần': 'Write the weekly journal',
+  'Mở tài liệu quà tặng khi bị mắc': 'Open a gift resource when stuck',
+  'Thói quen & chu kỳ học': 'Study habits & cycles',
+  'Tick đều mỗi ngày trong chu kỳ': 'Tick steadily every day of the cycle',
+  'Qua cổng nghiệm thu cuối chu kỳ': 'Pass the end-of-cycle review gate',
+  'Lập kế hoạch chu kỳ {n} ngày': 'Plan the {n}-day cycle',
+  'Nhìn lại theo PDCA sau mỗi chặng': 'Review with PDCA after each stage',
+  'Giữ giờ học và giờ nghỉ cân bằng': 'Keep study and rest time balanced',
+  'Hạ chuẩn khi mùa thi bận': 'Lower the bar during busy exam seasons',
+  'Ghi một điều biết ơn mỗi tối': 'Write one thing you are grateful for each evening',
+  'Đọc chuyện người thật về sự kiên trì': 'Read real-life stories about perseverance',
+  'Tự chấm thói quen cuối tuần': 'Self-check your habits at the weekend',
+  'HỌC SÂU & THỬ SỨC': 'DEEP LEARNING & CHALLENGES',
+  'Hiểu mình · lộ trình · bài test · khoá học · sát hạch': 'Know yourself · pathway · tests · course · assessment',
+  'Bản đồ cá nhân & điểm mạnh': 'Personal map & strengths',
+  'Điền đủ bản đồ cá nhân {n} ô': 'Complete all {n} cells of the personal map',
+  'Viết lý do vì sao mình học': 'Write down why you study',
+  'Gọi tên tài năng mình đang có': 'Name the talents you already have',
+  'Sửa lộ trình sau khi hiểu mình hơn': 'Adjust your pathway once you know yourself better',
+  'Chuyển một nỗi sợ thành mong muốn': 'Turn a fear into a wish',
+  'Xem Bản Đồ Gia Đình Thịnh Vượng': 'See the Prosperous Family Map',
+  'Đọc bốn miền G – I – T – A về bản thân': 'Read the four domains G – I – T – A about yourself',
+  'Gọi tên vòng luẩn quẩn của mình': 'Name your own vicious circle',
+  'Chọn nhân vật đại diện': 'Choose a representative character',
+  'Xem cây giá trị của mình': 'See your values tree',
+  'Lộ trình học T{n} → T{n}': 'Learning pathway T{n} → T{n}',
+  'Xem lộ trình T{n} → T{n} của tôi': 'See my T{n} → T{n} pathway',
+  'Xem mốc gần nhất trong mười điểm về đích': 'See the nearest of the ten finish points',
+  'Đi một ô bàn cờ hành trình mỗi ngày': 'Move one square on the journey board each day',
+  'Bước tiếp trên con đường nhiệm vụ': 'Take the next step on the mission path',
+  'Trả lời ba câu bức tranh hành trình': 'Answer the three journey-picture questions',
+  'Xem hành trình của mình cùng cha mẹ': 'Look at your journey with your parents',
+  'Cập nhật mùa học hiện tại': 'Update the current study season',
+  'Hỏi trợ lý khi chưa hiểu lộ trình': 'Ask the assistant when the pathway is unclear',
+  'Bài test & cuộc thi viết': 'Tests & writing challenge',
+  'Làm bộ test nhận diện đầu vào': 'Take the entry profile test',
+  'Đọc kết quả bốn nhóm của mình': 'Read your four-group results',
+  'Chọn một điểm yếu để tập sau test': 'Pick one weak point to practise after the test',
+  'Làm lại test sau chu kỳ {n} ngày': 'Retake the test after the {n}-day cycle',
+  'So kết quả với lần trước bằng lời': 'Compare results with last time in words',
+  'Hỏi người đồng hành về kết quả test': 'Ask your companion about the test results',
+  'Hướng tới bài viết mốc {n} – {n}': 'Aim for milestone essays {n} – {n}',
+  'Soát bài theo ba nấc trước khi nộp': 'Check your work on three steps before submitting',
+  'Khoá đào tạo & sát hạch': 'Training course & assessment',
+  'Hoàn thành trọn một khoá học': 'Complete a full course',
+  'Ôn bài trước sát hạch': 'Revise before the assessment',
+  'Vào sát hạch năng lực': 'Take the competency assessment',
+  'Xem lại câu sai sau sát hạch': 'Review wrong answers after the assessment',
+  'Nghe bài giảng bằng giọng đọc': 'Listen to lessons read aloud',
+  'Tìm tài liệu trong thư viện': 'Find resources in the library',
+  'Hỏi trợ lý GITA về bài học': 'Ask the GITA assistant about a lesson',
+  'Đọc người đi cùng phải làm được gì': 'Read what your companion must be able to do',
+  'TIẾN BỘ, GHI NHẬN & KẾT NỐI': 'PROGRESS, RECOGNITION & CONNECTION',
+  'Minh chứng · phần thưởng · vinh danh · bạn đồng hành': 'Evidence · rewards · honours · learning buddies',
+  'Nộp minh chứng nhiệm vụ': 'Submit mission evidence',
+  'Bổ sung minh chứng khi được hỏi lại': 'Add evidence when asked again',
+  'Chụp lại sản phẩm mình làm ra': 'Photograph what you made',
+  'Xem mình đã đổi gì tuần này': 'See what you changed this week',
+  'Kể với cha mẹ một điều đã tiến bộ': 'Tell your parents one thing you improved',
+  'Xem KPI của tôi': 'See my KPIs',
+  'Ghi khoảnh khắc WOW của mình': 'Record your WOW moment',
+  'Lưu bài viết mình tự hào': 'Save a piece of writing you are proud of',
+  'Xem hệ này đang nợ gì mình': 'See what this system still owes you',
+  'Phần thưởng & vinh danh': 'Rewards & honours',
+  'Xem cấp độ hiện tại của tôi': 'See my current level',
+  'Lên cấp tiếp theo bằng bằng chứng': 'Reach the next level with evidence',
+  'Đặt mục tiêu cấp cho quý tới': 'Set a level goal for next quarter',
+  'Nhận huy hiệu từ việc thật': 'Earn badges from real work',
+  'Đổi điểm lấy quà': 'Redeem points for gifts',
+  'Xem điểm thưởng và điểm trừ của tuần': 'See this week’s bonus and minus points',
+  'Chọn quà tài liệu cho chặng đang học': 'Choose a resource gift for your current stage',
+  'Gửi chuyện để được vinh danh': 'Send a story to be honoured',
+  'Xem kỳ tích năm của bạn bè': 'See your friends’ achievements of the year',
+  'Cảm ơn người giúp mình lên cấp': 'Thank those who helped you level up',
+  'Kết nối, an toàn & quyền của tôi': 'Connections, safety & my rights',
+  'Dự một sự kiện hoặc lửa trại': 'Attend an event or campfire',
+  'Nhắn người đồng hành khi bị vướng': 'Message your companion when stuck',
+  'Ghi tên bạn học tuyệt vời quanh mình': 'Name the wonderful classmates around you',
+  'Nối kênh nhận tin học tập': 'Link a channel for study updates',
+  'Đọc tin cộng đồng học viên': 'Read student community news',
+  'Bật khoá khuôn mặt': 'Turn on face lock',
+  'Đọc bảy quyền của mình': 'Read your seven rights',
+  'Xem biên nhận học phí đã đóng': 'See receipts for tuition paid',
+
+  /* ── Đại sứ / Cộng tác viên ── */
+  'ĐẠI SỨ / CỘNG TÁC VIÊN · BẢNG ĐIỀU KHIỂN': 'AMBASSADOR / COLLABORATOR · DASHBOARD',
+  'Bảng điều khiển Đại sứ / Cộng tác viên — {n} màn × {n} nghiệp vụ': 'Ambassador / Collaborator dashboard — {n} screens × {n} duties',
+  'Kể câu chuyện GITA bằng trải nghiệm thật, giới thiệu đúng người cho Tư vấn và giữ quan hệ sau đó. Đại sứ không tư vấn, không hứa kết quả; hoa hồng chỉ để xem và soát, không thương lượng.': 'Tell the GITA story from real experience, refer the right people to a Consultant and keep the relationship afterwards. Ambassadors do not consult and do not promise results; commission is for viewing and checking only, never for negotiation.',
+  'Chuẩn nghề Đại sứ / Cộng tác viên': 'Ambassador / Collaborator standards',
+  'Hoa hồng của tôi': 'My commission',
+  'Nghề Đại sứ': 'The Ambassador role',
+  'NHỊP GIỚI THIỆU HẰNG NGÀY': 'DAILY REFERRAL RHYTHM',
+  'Học nghề · danh sách người quen · kể chuyện thật': 'Learn the role · contacts list · tell real stories',
+  'Học nghề & câu chuyện GITA': 'Learning the role & the GITA story',
+  'Nắm câu chuyện & giá trị GITA': 'Know the GITA story & values',
+  'Ôn lại gói & ưu đãi hiện hành': 'Review current plans & offers',
+  'Xem bảng tin nội bộ cộng đồng': 'See the community’s internal news board',
+  'Đọc GITA {n} là gì tới khi kể lại được': 'Read “What is GITA {n}” until you can retell it',
+  'Học {n} nhiệm vụ và {n} quy tắc đại sứ': 'Learn the {n} ambassador duties and {n} rules',
+  'Ôn sáu ranh giới trước khi đi giới thiệu': 'Review the six boundaries before referring anyone',
+  'Dùng đúng logo, màu, chữ GITA': 'Use the GITA logo, colours and lettering correctly',
+  'Học trọn khoá đào tạo đại sứ': 'Complete the ambassador training course',
+  'Nghe cách người thật kể chuyện': 'Listen to how real people tell their stories',
+  'Danh sách người quen & mã liên kết': 'Contacts list & referral code',
+  'Cập nhật mã liên kết & ưu đãi': 'Update referral code & offers',
+  'Lập danh sách người quen tiềm năng': 'Build a list of potential contacts',
+  'Kiểm mã liên kết còn hiệu lực': 'Check the referral code is still valid',
+  'Ghi người quen vào vệ tinh của tôi': 'Add contacts to my satellite circle',
+  'Xếp người quen theo mức gần gũi': 'Sort contacts by closeness',
+  'Ghi điều người quen đang bận tâm': 'Note what each contact is concerned about',
+  'Gỡ tên người không muốn được nhắc': 'Remove anyone who does not want to be contacted',
+  'Đọc hành trình {n} chặng để kể đúng': 'Read the {n}-stage journey to tell it accurately',
+  'Nắm đường vào sáu bước của nhà mới': 'Know the six-step way in for a new family',
+  'Giữ danh sách người quen riêng tư': 'Keep the contacts list private',
+  'Tiếp cận & kể chuyện thật': 'Reaching out & telling real stories',
+  'Tiếp cận đúng người, đúng lúc': 'Reach the right person at the right time',
+  'Kể câu chuyện thật, không hứa quá': 'Tell a true story, never over-promise',
+  'Lắng nghe nhu cầu người nghe': 'Listen to what the listener needs',
+  'Gửi tư liệu giới thiệu phù hợp': 'Send suitable introduction materials',
+  'Giới thiệu qua mạng xã hội đúng chuẩn': 'Refer through social media the proper way',
+  'Viết sẵn câu chuyện {n} phút của mình': 'Prepare your own {n}-minute story',
+  'Dừng khi người nghe chưa sẵn sàng': 'Stop when the listener is not ready',
+  'Chọn chuyện hợp với người nghe': 'Pick a story that suits the listener',
+  'Gửi bản nghe cho người bận': 'Send an audio version to busy people',
+  'Mời xem đánh giá thật của các nhà': 'Invite them to see real family reviews',
+  'KẾT NỐI & CHĂM SAU': 'CONNECTING & AFTERCARE',
+  'Chuyển Tư vấn · theo nhà vào · lan toả': 'Hand over to a Consultant · follow families in · spread the word',
+  'Kết nối với Tư vấn': 'Connecting with a Consultant',
+  'Kết nối người quan tâm với Tư vấn': 'Connect interested people with a Consultant',
+  'Giới thiệu đúng kỳ vọng': 'Set the right expectations',
+  'Theo sát buổi tư vấn đầu': 'Follow the first consultation closely',
+  'Phân loại người quan tâm theo mức': 'Group interested people by level',
+  'Xin phép trước khi chuyển số liên lạc': 'Ask permission before passing on contact details',
+  'Chuyển câu hỏi chuyên môn sang Tư vấn': 'Pass professional questions to the Consultant',
+  'Ghi tóm tắt nhu cầu khi chuyển': 'Write a needs summary when handing over',
+  'Giới thiệu năm tầng như con đường, không hứa tầng': 'Present the five tiers as a path, never promise a tier',
+  'Để Tư vấn nói chuyện học phí': 'Leave tuition talk to the Consultant',
+  'Kể lời hứa dữ liệu của GITA': 'Explain GITA’s data promise',
+  'Theo dõi nhà vào': 'Following families in',
+  'Theo dõi tiến trình nhà vào': 'Track the progress of families joining',
+  'Hỗ trợ gỡ vướng cho người giới thiệu': 'Help referred people past obstacles',
+  'Xác nhận nhà vào thật': 'Confirm a family has truly joined',
+  'Nhắc nhẹ người đang cân nhắc': 'Gently remind those still considering',
+  'Cập nhật bước của nhà trong đường vào': 'Update the family’s step on the way in',
+  'Hỏi thăm sau buổi tư vấn đầu': 'Check in after the first consultation',
+  'Chuyển phàn nàn về đúng bộ phận': 'Pass complaints to the right team',
+  'Để nhà tự quyết, không thúc': 'Let the family decide, never push',
+  'Ghi nhà dừng lại và lý do': 'Record families who stop and why',
+  'Ghi mốc nhà vào trong nhật ký': 'Log the join milestone in the journal',
+  'Chăm sau & lan toả': 'Aftercare & spreading the word',
+  'Chăm người đã giới thiệu': 'Care for the people you referred',
+  'Xin giới thiệu tiếp khi hài lòng': 'Ask for further referrals when they are happy',
+  'Mời tham gia sự kiện / lửa trại': 'Invite them to events / campfires',
+  'Giữ kết nối hệ sinh thái': 'Stay connected to the ecosystem',
+  'Chúc mừng cột mốc của nhà đã vào': 'Congratulate joined families on their milestones',
+  'Xem chuỗi WOW để biết lúc nên hỏi thăm': 'Watch the WOW chain to know when to check in',
+  'Mời nhà đã vào kể chuyện của họ': 'Invite joined families to tell their story',
+  'Kể chuyện vinh danh của nhà đã vào': 'Share the honour stories of joined families',
+  'Đi cùng nhà mới đến buổi lửa trại đầu': 'Accompany a new family to their first campfire',
+  'Không xin giới thiệu khi nhà đang khó': 'Never ask for referrals while a family is struggling',
+  'GHI NHẬN, UY TÍN & THĂNG CẤP': 'RECOGNITION, REPUTATION & PROMOTION',
+  'Hoa hồng minh bạch · KPI · ranh giới · năm cấp': 'Transparent commission · KPIs · boundaries · five levels',
+  'Hoa hồng & sổ ghi minh bạch': 'Commission & transparent ledger',
+  'Soát hoa hồng ghi sổ': 'Check the recorded commission',
+  'Ghi nhật ký giới thiệu': 'Keep a referral journal',
+  'Đọc cơ chế tài chính bốn cấp': 'Read the four-level financial scheme',
+  'Xem hoa hồng tháng này': 'See this month’s commission',
+  'Đối chiếu nhà vào với dòng hoa hồng': 'Match joined families against commission lines',
+  'Báo lệch hoa hồng qua kênh chính thức': 'Report commission discrepancies through the official channel',
+  'Từ chối nhận tiền ngoài sổ': 'Refuse any off-ledger money',
+  'Không giảm giá bằng hoa hồng của mình': 'Never discount using your own commission',
+  'Lưu chứng từ nhận hoa hồng': 'Keep commission receipts',
+  'Xem thời gian · thưởng · phạt của đại sứ': 'See ambassador time · rewards · penalties',
+  'KPI, nhật ký & tự soi': 'KPIs, journal & self-review',
+  'Chốt ngày vào KPI': 'Close the day into KPIs',
+  'Ghi sáng kiến lan toả': 'Record an outreach idea',
+  'Học {n} câu chuyện truyền cảm hứng mới': 'Learn {n} new inspiring stories',
+  'Xem vệ tinh & mạng lưới của tôi': 'See my satellites & network',
+  'Tự soi cách giới thiệu chưa hiệu quả': 'Review which referral approaches are not working',
+  'Xem KPI tuần: người được chuyển và nhà vào': 'See weekly KPIs: people handed over and families joined',
+  'Đặt mục tiêu theo chất, không theo số': 'Set goals by quality, not numbers',
+  'Nhận đầu việc đại sứ trong danh mục': 'Take an ambassador task from the list',
+  'Đọc góp ý về cách mình giới thiệu': 'Read feedback on how you refer',
+  'Uy tín, ranh giới & quyền của nhà': 'Reputation, boundaries & family rights',
+  'Nói rõ mình là đại sứ có hoa hồng': 'Say clearly that you are a commissioned ambassador',
+  'Không hứa kết quả cho con hay cho nhà': 'Never promise results for a child or a family',
+  'Không chẩn đoán hay khuyên chuyện nhà người khác': 'Never diagnose or advise on other families’ affairs',
+  'Giữ kín điều người quen đã kể': 'Keep what contacts tell you confidential',
+  'Đăng bài không dùng ảnh nhà khác': 'Never post other families’ photos',
+  'Kể đúng năm lời hứa của người đi cùng': 'State the companion’s five promises accurately',
+  'Kể cả điều hệ còn đang nợ': 'Mention what the system still owes too',
+  'Kể đúng khi nào hệ xong việc với một nhà': 'State accurately when the system is done with a family',
+  'Thăng cấp Đại sứ': 'Ambassador promotion',
+  'Cấp {n} · Đại sứ Tập sự: nhận mã và hiểu GITA': 'Level {n} · Trainee Ambassador: get a code and understand GITA',
+  'Cấp {n} · Đại sứ: ≥{n} nhà vào thật': 'Level {n} · Ambassador: ≥{n} families truly joined',
+  'Cấp {n} · Đại sứ Vàng: ≥{n} nhà vào, giữ uy tín': 'Level {n} · Gold Ambassador: ≥{n} families joined, reputation intact',
+  'Cấp {n} · Đại sứ Kim Cương: nhà giới thiệu nhà': 'Level {n} · Diamond Ambassador: families referring families',
+  'Cấp {n} · Đại sứ Danh dự: hình mẫu cộng đồng': 'Level {n} · Honorary Ambassador: a community role model',
+  'Xem điều kiện cấp kế tiếp trong trang Đại sứ': 'See the next level’s requirements on the Ambassador page',
+  'Gom bằng chứng nhà vào cho hồ sơ cấp': 'Gather join evidence for the level file',
+  'Thi sát hạch năng lực đại sứ': 'Take the ambassador competency assessment',
+  'Viết bài thi về điều mình đã thấy': 'Write an exam essay on what you have seen',
+  'Xem vinh danh đại sứ của năm': 'See the ambassador honours of the year'
+});
+
+})();
+
+/* ═════════ src/tu-dien-en-04.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — TỪ ĐIỂN TIẾNG ANH · ĐỢT 4: MÀN "GITA 365 LÀ GÌ"
+   Màn giới thiệu (src/gioi-thieu.js) — màn có nhiều chữ thứ hai trong
+   lượt thu màn thật. Giữ nguyên giọng của bản Việt: câu ngắn, nói thẳng
+   cả điều Học viện KHÔNG làm, không hứa kết quả.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.TU_DIEN_EN = G.TU_DIEN_EN || {};
+(function (d) { for (var k in d) G.TU_DIEN_EN[k] = d[k]; })({
+  /* ── Nhãn bảng ── */
+  'ĐO BẰNG': 'MEASURED BY',
+  'ĐẠT KHI': 'MET WHEN',
+  'GIÁ TRỊ MAX': 'MAX VALUE',
+  'Cổng sang tầng sau:': 'Gate to the next tier:',
+  'Nhảy cóc thì mất:': 'Skip it and you lose:',
+  'Làm gì:': 'What to do:',
+  '{n} NGÀY': '{n} DAYS',
+  'Tuần {n}–{n}': 'Weeks {n}–{n}',
+  'Tháng {n}–{n}': 'Months {n}–{n}',
+  'Trước cổng {n} ngày': '{n} days before the gate',
+  'Khi Coach đổi người': 'When the Coach changes',
+  '· GITA {n} là gì.': '· What is GITA {n}.',
+
+  /* ── Mở đầu · sứ mệnh · tầm nhìn ── */
+  'HỆ SINH THÁI GIA ĐÌNH THỊNH VƯỢNG': 'THE PROSPEROUS FAMILY ECOSYSTEM',
+  'NẾU CHỈ ĐƯỢC NÓI MỘT CÂU': 'IF WE COULD SAY ONLY ONE SENTENCE',
+  'GITA {n} là một hệ thống giúp một gia đình tự vận hành được sau ba trăm sáu mươi lăm ngày — không phải một khoá học, và không phải một người thầy đi cùng mãi mãi.': 'GITA {n} is a system that helps a family run on its own after three hundred and sixty-five days — not a course, and not a teacher who stays with you forever.',
+  'SỨ MỆNH VÀ TẦM NHÌN': 'MISSION AND VISION',
+  'Hai câu này quyết định mọi thứ còn lại trong màn hình': 'These two sentences decide everything else on this screen',
+  'SỨ MỆNH': 'MISSION',
+  'Trao cho mỗi gia đình một bản đồ, một nhịp và một người đồng hành — để sau {n} ngày, nhà ấy tự chạy được mà không cần ai canh.': 'Give every family a map, a rhythm and a companion — so that after {n} days the household runs on its own, with no one watching over it.',
+  'Chúng tôi đưa khung và giữ chuẩn. Gia đình lắp phần của mình.': 'We provide the frame and hold the standard. The family builds its own part.',
+  'TẦM NHÌN': 'VISION',
+  'Kiến tạo một hệ sinh thái gia đình phát triển bền vững, nơi mỗi người biết hiểu mình, rèn mình, làm chủ cuộc đời và cùng nhau kiến tạo hạnh phúc, thành công, thịnh vượng qua nhiều thế hệ.': 'Build a sustainably growing family ecosystem, where each person knows themselves, trains themselves, takes charge of their life and, together, creates happiness, success and prosperity across generations.',
+  'Nhiều thế hệ, không phải một khoá học. Đích đo bằng đời người, không đo bằng học kỳ.': 'Generations, not a course. The goal is measured in lifetimes, not semesters.',
+  'MỐC {n}': 'MILESTONE {n}',
+  'Đến năm {n}, một triệu người Việt lớn lên trong một gia đình vận hành được — nơi đứa trẻ tự cầm lái đời mình và người lớn cũng đang lớn lên mỗi ngày.': 'By {n}, one million Vietnamese people growing up in a family that works — where children steer their own lives and adults keep growing every day.',
+  'Không phải một triệu đứa trẻ ngoan hơn. Là một triệu gia đình khác đi.': 'Not a million better-behaved children. A million families that have changed.',
+
+  /* ── Mục tiêu của một nhà ── */
+  'MỤC TIÊU CỦA MỘT NHÀ': 'A FAMILY’S GOALS',
+  'Sáu mốc, mỗi mốc một con số hệ thống tự đếm được': 'Six milestones, each a number the system counts by itself',
+  'Sáu mục tiêu dưới đây là chuẩn của quy trình, không phải cam kết kết quả. Học viện cam kết đo đúng, nhắc đúng nhịp và nói thật khi nhà mình đang trượt — chứ không cam kết nhà nào cũng chạm đủ sáu mốc.': 'The six goals below are process standards, not promised results. The Academy commits to measuring correctly, reminding on rhythm and telling you honestly when your family is slipping — not to every family reaching all six milestones.',
+  'Nhà mình có một bảng số chung': 'The family shares one numbers board',
+  'Cả nhà nhìn vào cùng một bảng thay vì mỗi người nhớ một phiên bản của tuần vừa rồi.': 'Everyone looks at the same board instead of each remembering their own version of last week.',
+  'Số tối có ghi nhật ký trong {n} ngày': 'Evenings with a journal entry in {n} days',
+  'từ {n} tối trở lên — cho phép lỡ tám tối, vì tháng nào cũng có tuần hỏng': '{n} evenings or more — eight missed evenings allowed, because every month has a bad week',
+  'Giảm số lần phải nhắc': 'Fewer reminders needed',
+  'Việc học chuyển dần từ chỗ người lớn đẩy sang chỗ đứa trẻ tự bước.': 'Learning gradually moves from adults pushing to the child stepping forward alone.',
+  'Số lần phải nhắc mỗi tuần, so với tuần đầu tiên': 'Reminders needed per week, compared with the first week',
+  'giảm ít nhất một phần ba; mốc đầu năm thường là {n} lần/tuần': 'down by at least a third; the start-of-year baseline is usually {n} times/week',
+  'Nếp giữ được trong tuần có biến cố': 'Routines that hold in a disrupted week',
+  'Nếp chỉ đứng khi mọi thứ thuận thì chưa phải nếp. Đây là chỗ phân biệt thật và giả.': 'A routine that only stands when all is smooth is not yet a routine. This is where real and fake part ways.',
+  'Số nếp còn giữ được trong tuần có việc đột xuất — ốm, đi công tác, thi cử': 'Routines still kept in a week with something unexpected — illness, a work trip, exams',
+  'giữ được ít nhất ba trên bốn nếp đã đặt, ở mức tối thiểu của ngày mệt': 'at least three of the four routines kept, at the tired-day minimum',
+  'Chín vai có người giữ': 'All nine roles held',
+  'Không ai trong nhà phải gánh quá bốn vai. Gánh quá bốn là chỗ vỡ sớm nhất.': 'No one at home carries more than four roles. Carrying more than four is where things break first.',
+  'Số vai có người nhận trong bảng chín vai của nhà': 'Roles taken in the family’s nine-role table',
+  'từ {n}/{n} trở lên, và không ai giữ quá {n} vai': '{n}/{n} or more, and no one holds more than {n} roles',
+  'Người lớn có phần thay đổi của mình': 'Adults have their own share of change',
+  'Chặng của đứa trẻ không giữ nổi nếu người lớn không đổi gì. Đây là mục tiêu của cha mẹ, không phải của con.': 'A child’s stage cannot hold if the adults change nothing. This is the parents’ goal, not the child’s.',
+  'Một thói quen của người lớn được ghi lại đủ {n} ngày, theo đúng cách con vẫn ghi': 'One adult habit logged for a full {n} days, the same way the child logs',
+  'ít nhất một thói quen, có sổ, trình bày được ở buổi nhìn lại': 'at least one habit, with a log, presentable at the review session',
+  'Nhà tự chạy khi Học viện thôi nhắc': 'The family runs itself once the Academy stops reminding',
+  'Đích của cả năm. Ngày Học viện lùi hẳn mà nhịp vẫn còn — không phải ngày nhà mình gắn bó nhất với Học viện.': 'The goal of the whole year. The day the Academy steps right back and the rhythm remains — not the day your family depends on the Academy most.',
+  'Bốn tuần liền không có nhắc nào từ Coach mà nhật ký và nhịp tuần vẫn đủ': 'Four straight weeks with no Coach reminders while the journal and weekly rhythm stay complete',
+  'đủ bốn tuần, kèm một kỳ tích năm có bằng chứng của mỗi thành viên': 'four full weeks, plus a year’s achievement with evidence from each member',
+
+  /* ── Bảy giá trị cốt lõi ── */
+  'BẢY GIÁ TRỊ CỐT LÕI': 'SEVEN CORE VALUES',
+  'Mỗi giá trị kèm một việc nên làm và một việc không làm — nếu không thì chỉ là chữ treo tường': 'Each value comes with one thing to do and one thing not to do — otherwise it is just words on a wall',
+  'THẬT': 'TRUE',
+  'Trung thực với dữ liệu': 'Honest with the data',
+  'Nói bằng số có ngày, có giờ, có số lần. Một ngày lệch nhịp là một dữ kiện, không phải một bản án.': 'Speak in numbers with dates, times and counts. An off-rhythm day is a fact, not a verdict.',
+  '✓ Ghi đúng cả hôm tệ nhất.': '✓ Log the worst day accurately too.',
+  '✕ Làm đẹp báo cáo để dễ nhìn.': '✕ Polish the report to make it look nicer.',
+  'THƯƠNG': 'CARE',
+  'Tôn trọng vô điều kiện': 'Unconditional respect',
+  'Không dán nhãn, không xếp hạng, không so đứa này với đứa kia. Mỗi người chỉ so với chính mình chặng trước.': 'No labels, no rankings, no comparing one child with another. Each person is compared only with themselves at the previous stage.',
+  '✓ Nghe bảy, khuyên ba.': '✓ Listen seven, advise three.',
+  '✕ Dùng dữ liệu để chứng minh ai đó sai.': '✕ Use data to prove someone wrong.',
+  'CHUẨN': 'STANDARD',
+  'Giữ chuẩn nghề': 'Keep professional standards',
+  'Mọi buổi làm việc đều có kịch bản, có phác đồ, có cổng nghiệm thu. Ngẫu hứng là rủi ro của gia đình khác.': 'Every session has a script, a protocol and a review gate. Improvisation is a risk borne by another family.',
+  '✓ Mở đúng kịch bản cho đúng tầng.': '✓ Open the right script for the right tier.',
+  '✕ Ứng biến ngoài chuẩn vì thấy quen tay.': '✕ Improvise outside the standard because it feels familiar.',
+  'BỀN': 'STEADY',
+  'Nhịp hơn cường độ': 'Rhythm over intensity',
+  '{n} ngày một cấp độ, {n} ngày một chặng. Bùng lên một tuần rồi tắt không tạo ra năng lực nào.': '{n} days per level, {n} days per stage. A one-week burst that fizzles out builds no capability.',
+  '✓ Giữ đúng hẹn dù hôm đó ngắn.': '✓ Keep the appointment even if it is short that day.',
+  '✕ Dồn việc cả tháng vào một buổi.': '✕ Cram a month’s work into one session.',
+  'TỎ': 'CLEAR',
+  'Minh bạch tới tận cùng': 'Transparent all the way',
+  'Ai giữ vai gì, ai xem được dữ liệu nào, tiền đi đường nào — nói rõ ngay từ đầu và ghi lại.': 'Who holds which role, who can see which data, where the money goes — stated clearly from the start and written down.',
+  '✓ Nói trước cả điều bất lợi.': '✓ Say the unfavourable things up front too.',
+  '✕ Để gia đình tự đoán về quyền và chi phí.': '✕ Leave families to guess about rights and costs.',
+  'Trao quyền kèm trách nhiệm': 'Authority comes with responsibility',
+  'Mỗi lần trao một quyền là kèm một trách nhiệm tương ứng. Hỗ trợ giảm dần, nhưng không bao giờ ép về không.': 'Every right handed over comes with a matching responsibility. Support tapers off, but is never forced to zero.',
+  '✓ Để con quyết việc con làm được.': '✓ Let children decide what they can handle.',
+  '✕ Buông hết rồi gọi đó là tự lập.': '✕ Let go of everything and call it independence.',
+  'THỊNH': 'THRIVE',
+  'Thịnh vượng là cả nhà cùng lớn': 'Prosperity means the whole family grows',
+  'Đích không phải thành tích của một đứa trẻ. Đích là một hệ gia đình mà mỗi người trong đó đều đang lớn lên.': 'The goal is not one child’s achievements. The goal is a family system in which everyone is growing.',
+  '✓ Đo cả phần thay đổi của người lớn.': '✓ Measure the adults’ change too.',
+  '✕ Lấy điểm số của con làm thước đo gia đình.': '✕ Use the child’s grades as the family’s yardstick.',
+
+  /* ── Vì sao có GITA ── */
+  'VÌ SAO CÓ GITA{n}': 'WHY GITA{n} EXISTS',
+  'Ba chỗ hỏng có thật, và đây là chỗ chữa': 'Three real breakdowns, and how we fix them',
+  'Phần lớn cha mẹ Việt Nam không thiếu tình thương và cũng không thiếu cố gắng. Cái thiếu là một bản đồ: làm gì trước, làm gì sau, và làm sao biết mình đang đi đúng.': 'Most Vietnamese parents lack neither love nor effort. What is missing is a map: what to do first, what next, and how to know you are on the right track.',
+  'Nhà thì có một việc, còn lời khuyên thì có một trăm — và một trăm lời khuyên tốt đặt cạnh nhau thì thành ra không lời nào làm được.': 'A family has one task and a hundred pieces of advice — and a hundred good pieces of advice side by side means none of them gets done.',
+  'Mọi chương trình đều đo bằng cảm giác: thấy con ngoan hơn, thấy nhà vui hơn. Cảm giác lên xuống theo tuần, nên ba tháng sau không ai biết mình đã đi được bao xa.': 'Every programme measures by feel: the child seems better behaved, the home seems happier. Feelings rise and fall week to week, so three months later no one knows how far they have come.',
+  'Người dẫn giỏi thì nhà đổi; người dẫn nghỉ việc thì nhà trôi về chỗ cũ. Cái đổi được nằm trong đầu một người, không nằm trong hệ thống.': 'With a good guide the family changes; when the guide leaves, the family drifts back. The change lives in one person’s head, not in a system.',
+  'GITA{n} dựng để chữa đúng ba chỗ đó: một bản đồ có thứ tự, mọi thứ đo được bằng số, và cách làm nằm trong hệ thống chứ không nằm trong trí nhớ của một người.': 'GITA{n} is built to fix exactly those three: an ordered map, everything measurable in numbers, and methods held in the system rather than in one person’s memory.',
+  'BỐN ĐIỀU HỌC VIỆN LÀM ĐƯỢC': 'FOUR THINGS THE ACADEMY DOES',
+  'Và ngay dưới là sáu điều không làm — đọc cả hai rồi hãy quyết': 'And just below, six things it does not do — read both before you decide',
+  'Có một bản đồ, không có một đống lời khuyên': 'A map, not a pile of advice',
+  'Năm khoang, chín vai, mười hai chặng. Mỗi chặng nói rõ: làm gì, ai làm, bao lâu, và xong thì trông như thế nào.': 'Five chambers, nine roles, twelve stages. Each stage says clearly: what to do, who does it, how long, and what done looks like.',
+  'Mọi thứ đo được, không đo bằng cảm giác': 'Everything measured, nothing by feel',
+  'Số lần phải nhắc con, giờ ngồi vào bàn, số bữa cả nhà cùng bàn. Con số thì không nói dối, và ba tháng sau mở ra là biết mình đã đi được bao xa.': 'How often the child needs reminding, the time they sit down to study, how many meals the family shares. Numbers do not lie, and three months later you can see exactly how far you have come.',
+  'Người đồng hành thật, không phải một ứng dụng để đó': 'A real companion, not an app left on a shelf',
+  'Tư vấn mở cửa, Coach đi cùng từng chặng, Giáo viên dạy đúng thứ đang cần. Mọi việc để lại dấu trên hệ thống, nên người này nghỉ thì người sau tiếp được ngay.': 'A Consultant opens the door, a Coach walks every stage with you, a Teacher teaches exactly what is needed. Everything leaves a trace in the system, so if one person leaves, the next can pick up straight away.',
+  'Đích là nhà mình tự chạy, không phải nhà mình phụ thuộc': 'The goal is a self-running family, not a dependent one',
+  'Ngày Học viện thôi nhắc mà nhà vẫn giữ được nếp — đó mới là ngày xong. Một hệ thống giữ khách mãi mãi là một hệ thống đã thất bại ở phần quan trọng nhất.': 'The day the Academy stops reminding and the family keeps its routines — that is the finish line. A system that keeps its clients forever has failed at the most important part.',
+  'SÁU ĐIỀU HỌC VIỆN KHÔNG LÀM': 'SIX THINGS THE ACADEMY DOES NOT DO',
+  'Nói trước thì phần còn lại được tin': 'Say it up front and the rest can be trusted',
+  'Không chữa bệnh. Có dấu hiệu về sức khoẻ tâm thần hoặc thể chất thì Học viện chuyển tuyến sang chuyên khoa y tế, và chuyển ngay chứ không giữ lại thử thêm.': 'No medical treatment. Any sign of a mental or physical health issue is referred to medical specialists — immediately, not kept on for another try.',
+  'Không hứa điểm số. Học viện cam kết quy trình, người đồng hành và bảng đo hằng tuần — không cam kết con lên mấy điểm.': 'No promised grades. The Academy commits to a process, a companion and a weekly measurement board — not to how many points your child will gain.',
+  'Không làm hộ. Việc của nhà thì nhà làm; Học viện giữ chuẩn và soi đường. Chữ do người khác viết thì không ai giữ được.': 'No doing it for you. The family does the family’s work; the Academy holds the standard and lights the way. Words written by someone else are words no one keeps.',
+  'Không nhanh. Bảy ngày để nhìn cho đúng, hai mươi mốt ngày để hiểu cơ chế, chín mươi ngày để dựng hệ thống. Ai cần kết quả trong hai tuần thì đây không phải chỗ.': 'Not fast. Seven days to see clearly, twenty-one to understand the mechanism, ninety to build the system. If you need results in two weeks, this is not the place.',
+  'Không hợp với mọi nhà. Nhà đang trong biến cố lớn, hoặc chưa có một người lớn đủ ổn định để giữ nhịp, thì Tư vấn sẽ nói thẳng là chưa hợp và hẹn lại.': 'Not for every family. If a family is in a major crisis, or has no adult stable enough to keep the rhythm, the Consultant will say plainly that it is not the right time and set a later date.',
+  'Không bán dữ liệu. Hồ sơ của một nhà là của nhà đó. Không chia sẻ, không bán, không dùng để huấn luyện trí tuệ nhân tạo bên ngoài — điều khoản này nằm trong mọi hợp đồng.': 'No selling of data. A family’s records belong to that family. Never shared, never sold, never used to train outside AI — this clause is in every contract.',
+
+  /* ── Một nhà đi qua những gì · năm tầng ── */
+  'MỘT NHÀ ĐI QUA NHỮNG GÌ': 'WHAT A FAMILY GOES THROUGH',
+  'Bốn chặng, đi theo thứ tự, không nhảy cóc': 'Four stages, in order, no skipping',
+  'Nhìn cho đúng': 'See clearly',
+  'Đo thật trạng của nhà mình bằng số, không bằng cảm giác. Ghi ba dòng mỗi tối.': 'Measure your family’s real state with numbers, not feelings. Write three lines every evening.',
+  'Có bảng số đầu tiên, và cả nhà cùng nhìn vào một bảng.': 'The first numbers board exists, and the whole family looks at the same one.',
+  'Hiểu cơ chế': 'Understand the mechanism',
+  'Gọi tên được mô thức lặp của nhà mình. Vì sao tối thứ Tư luôn căng, vì sao con luôn tuột ở chỗ ấy.': 'Name your family’s repeating pattern. Why Wednesday evenings are always tense, why your child always slips at that point.',
+  'Nói được một câu có số về chỗ nhà mình hay hỏng, bằng lời của chính mình.': 'Say one sentence, with a number, about where your family tends to break — in your own words.',
+  'Đặt nếp: giờ ngủ, bữa tối, khung học, cách nói khi nóng. Mỗi nếp có mức tối thiểu cho ngày mệt.': 'Set routines: bedtime, dinner, study blocks, how to speak when tempers rise. Each routine has a tired-day minimum.',
+  'Nếp còn giữ được trong tuần có biến cố — đó mới là nếp thật.': 'Routines that survive a disrupted week — those are real routines.',
+  'Trao lại': 'Hand back',
+  'Chuyển dần việc giữ nhịp từ Coach sang chính người trong nhà. Học viện lùi lại từng bước.': 'Gradually move rhythm-keeping from the Coach to the family itself. The Academy steps back one step at a time.',
+  'Học viện thôi nhắc mà nhà vẫn chạy. Và nhà đủ sức chỉ đường cho một nhà khác.': 'The Academy stops reminding and the family keeps running. And the family can show another family the way.',
+  'HỆ THỐNG NĂM TẦNG — GIÁ TRỊ MAX CỦA TỪNG TẦNG': 'THE FIVE-TIER SYSTEM — MAX VALUE OF EACH TIER',
+  'Tầng sau chỉ mở khi tầng trước đã chắc. Nhảy cóc thì tầng sau đứng trên nền cát': 'A tier opens only when the one before is solid. Skip ahead and the next tier stands on sand',
+  'Nền': 'Foundation',
+  'Dựng lại nếp cơ bản: giờ ngủ, bữa ăn, cách nói với nhau.': 'Rebuild basic routines: bedtime, meals, how you talk to each other.',
+  'Nhà mình thôi cãi nhau về chuyện đã xảy ra. Có bảng số thì không cần đoán ý nhau nữa.': 'The family stops arguing about what happened. With a numbers board, no one has to guess anymore.',
+  'Bảy tối liền có nhật ký đủ ba dòng, và cả nhà cùng đọc lại một lần.': 'Seven evenings in a row with a full three-line journal, read back once by the whole family.',
+  'Bỏ qua tầng này thì mọi giải pháp về sau đều dựng trên phỏng đoán có thiện chí.': 'Skip this tier and every later solution is built on well-meant guesswork.',
+  'Nhịp': 'Rhythm',
+  'Giữ được nhịp qua tuần bận và tuần có biến cố.': 'Keep the rhythm through busy and disrupted weeks.',
+  'Nhà mình gọi được tên mô thức lặp của chính mình — biết vì sao tối thứ Tư luôn căng.': 'The family can name its own repeating pattern — and knows why Wednesday evenings are always tense.',
+  'Nói được một câu có số về chỗ nhà mình hay hỏng, bằng lời của chính người trong nhà.': 'Say one sentence, with a number, about where the family tends to break — in the family’s own words.',
+  'Bỏ qua thì nhà chữa triệu chứng suốt: nhắc nhiều hơn, phạt nặng hơn, và không đổi được gì.': 'Skip it and the family keeps treating symptoms: more reminders, harsher punishments, and nothing changes.',
+  'Hệ thống': 'System',
+  'Nhà tự vận hành phần lớn, Coach chỉ can thiệp ở điểm nghẽn.': 'The family runs mostly on its own; the Coach steps in only at bottlenecks.',
+  'Nhà tự vận hành phần lớn. Coach chỉ còn vào ở điểm nghẽn, không còn giữ nhịp hộ.': 'The family runs mostly on its own. The Coach only steps in at bottlenecks and no longer keeps the rhythm for you.',
+  'Nếp còn giữ được trong một tuần có biến cố, ở mức tối thiểu của ngày mệt.': 'Routines hold through a disrupted week, at the tired-day minimum.',
+  'Bỏ qua thì nhà chạy tốt khi có người kèm và trôi về chỗ cũ khi người ấy nghỉ.': 'Skip it and the family runs well with someone alongside, then drifts back when that person leaves.',
+  'Chiều sâu': 'Depth',
+  'Đi vào phần khó: động lực bên trong, quan hệ, định hướng.': 'Go into the hard part: inner motivation, relationships, direction.',
+  'Đứa trẻ chuyển từ làm-vì-được-yêu-cầu sang làm-vì-muốn. Đây là phần không mua được bằng kỷ luật.': 'The child moves from doing-because-asked to doing-because-they-want-to. This is the part discipline cannot buy.',
+  'Học viên tự chọn và tự bảo vệ được một mục tiêu của mình trước cả nhà.': 'The student chooses a goal of their own and can defend it in front of the family.',
+  'Bỏ qua thì nhà có nếp tốt nhưng đứa trẻ vẫn đang chạy bằng động lực của người lớn.': 'Skip it and the family has good routines, but the child is still running on adult motivation.',
+  'Trao quyền': 'Empowerment',
+  'Nhà trở thành nơi người khác học được. Trao lại cho nhà sau.': 'The family becomes a place others can learn from. Passing it on to the next family.',
+  'Nhà mình trở thành nơi nhà khác học được. Dạy lại là chỗ thứ đã học đứng vững nhất.': 'Your family becomes a place other families learn from. Teaching back is where learning stands firmest.',
+  'Trình bày được hành trình của nhà mình cho một nhà mới, có bằng chứng, không tô hồng.': 'Present your family’s journey to a new family, with evidence, without sugar-coating.',
+  'Bỏ qua thì nhà giữ được kết quả nhưng không truyền lại được cho ai, kể cả con thứ hai.': 'Skip it and the family keeps its results but cannot pass them on to anyone, not even a second child.',
+
+  /* ── Văn hoá ── */
+  'VĂN HOÁ GITA{n}': 'GITA{n} CULTURE',
+  'Không phải khẩu hiệu — là nhịp sống, cách nói chuyện và ranh giới của cả hệ sinh thái': 'Not slogans — the rhythm of life, the way we talk and the boundaries of the whole ecosystem',
+  'NHỊP SỐNG CỦA HỆ SINH THÁI': 'THE ECOSYSTEM’S RHYTHM OF LIFE',
+  'MỖI NGÀY': 'EVERY DAY',
+  'Một lần check-in, ba dòng nhật ký': 'One check-in, three journal lines',
+  'MỖI TUẦN': 'EVERY WEEK',
+  'Một buổi ngồi lại đủ mặt, bốn nhịp NGHE – CÔNG NHẬN – LÀM RÕ – DẪN ĐƯỜNG': 'One sit-down with everyone present, four beats: LISTEN – ACKNOWLEDGE – CLARIFY – GUIDE',
+  'Một cấp độ học tập · rà lại đòn bẩy đang dùng': 'One learning level · review the levers in use',
+  'Một chặng · một cổng nghiệm thu có bằng chứng': 'One stage · one evidence-based review gate',
+  'Hội nghị gia đình · kỳ tích năm · bảng tầm nhìn bản mới': 'Family conference · year’s achievements · a new vision board',
+  'BỐN NHỊP TRONG MỌI CUỘC NÓI CHUYỆN KHÓ': 'FOUR BEATS IN EVERY DIFFICULT CONVERSATION',
+  'Nghe hết câu, không cắt ngang, không chuẩn bị câu trả lời trong lúc người kia đang nói.': 'Hear the whole sentence, never interrupt, never prepare your reply while the other person is speaking.',
+  'CÔNG NHẬN': 'ACKNOWLEDGE',
+  'Gọi tên đúng một điều người kia đã làm được hoặc đã cố gắng, trước khi nói bất cứ điều gì khác.': 'Name one specific thing the other person did or tried, before saying anything else.',
+  'LÀM RÕ': 'CLARIFY',
+  'Hỏi để hiểu, không hỏi để bẫy. Một câu hỏi mở, chờ đủ ba giây im lặng.': 'Ask to understand, not to trap. One open question, then three full seconds of silence.',
+  'DẪN ĐƯỜNG': 'GUIDE',
+  'Đưa một bước nhỏ làm được ngay hôm nay, kèm cách biết mình đã làm được.': 'Offer one small step that can be done today, plus a way to know it was done.',
+  'NỘI QUY — RANH GIỚI CHUNG CỦA MỌI NGƯỜI TRONG HỆ': 'HOUSE RULES — SHARED BOUNDARIES FOR EVERYONE IN THE SYSTEM',
+  'Đúng hẹn là tôn trọng.': 'Being on time is respect.',
+  'Có mặt đúng nhịp đã cam kết. Bận thì báo trước, không im lặng.': 'Show up on the rhythm you committed to. If you are busy, say so in advance — never go silent.',
+  'Nghe trước khi khuyên.': 'Listen before advising.',
+  'Giữ tỉ lệ nghe bảy khuyên ba trong mọi buổi làm việc và mọi bình luận trong nhóm.': 'Keep the listen-seven, advise-three ratio in every session and every group comment.',
+  'Nói bằng bằng chứng.': 'Speak with evidence.',
+  'Chia sẻ kết quả thì kèm dữ liệu. Không suy diễn nhân quả khi chưa đủ dữ liệu.': 'Share results with data. No drawing cause and effect without enough data.',
+  'Không dán nhãn ai.': 'Label no one.',
+  'Mô tả hành vi và hoàn cảnh. Không mô tả con người bằng một tính từ.': 'Describe behaviour and circumstances. Never describe a person with an adjective.',
+  'Không xếp hạng gia đình.': 'Never rank families.',
+  'Bảng số của một nhà chỉ so với chính nhà đó ở chặng trước.': 'A family’s numbers board is compared only with that family at the previous stage.',
+  'Giữ kín chuyện của nhà khác.': 'Keep other families’ stories confidential.',
+  'Mọi thứ nghe được trong buổi chung ở lại trong buổi chung.': 'Whatever is heard in a group session stays in that session.',
+  'Kể cả chỗ mình vấp.': 'Share where you stumbled too.',
+  'Chia sẻ chỉ toàn thành công làm người mới thấy mình bất thường.': 'Sharing only successes makes newcomers feel something is wrong with them.',
+  'Không bán trong nhóm học.': 'No selling in learning groups.',
+  'Không chào mời sản phẩm, dịch vụ, cơ hội đầu tư trong không gian đồng hành.': 'No pitching products, services or investment opportunities in the companionship space.',
+  'Không dùng kỹ thuật để ép.': 'No using techniques to pressure.',
+  'Đọc trạng thái người đối diện là để hiểu và hỗ trợ, không để đẩy ai vào quyết định mua.': 'Reading the other person’s state is for understanding and support, never for pushing anyone into a purchase.',
+  'Sai thì sửa công khai.': 'Correct mistakes publicly.',
+  'Đăng nhầm, nói nhầm thì đính chính ở đúng chỗ đã nói, không lặng lẽ xoá.': 'If you post or say something wrong, correct it where you said it — never quietly delete it.',
+
+  /* ── Chiến lược đồng hành ── */
+  'CHIẾN LƯỢC ĐỒNG HÀNH TỚI KHI CÓ KẾT QUẢ': 'THE STRATEGY FOR ACCOMPANYING YOU UNTIL RESULTS',
+  'Một nhà bỏ cuộc ở tháng thứ tư thì hệ thống làm gì — trả lời bằng cơ chế, không bằng lời hứa cố gắng': 'What the system does when a family gives up in month four — answered with mechanisms, not promises to try harder',
+  'Không nhà nào bỏ cuộc vì hết muốn. Nhà bỏ cuộc vì quá tải, vì không thấy mình đi được tới đâu, hoặc vì lỡ một nhịp rồi ngại quay lại. Cả ba đều nhìn thấy trước được bằng số — nên hệ thống được dựng để bắt tín hiệu sớm và giảm tải, chứ không phải để thúc.': 'No family quits because they stopped wanting it. They quit because they are overloaded, because they cannot see how far they have come, or because they missed a beat and feel awkward coming back. All three can be seen coming in the numbers — so the system is built to catch early signals and lighten the load, not to push.',
+  'VÒNG CHẠY — LẶP MỖI TUẦN': 'THE LOOP — REPEATED EVERY WEEK',
+  'ĐO': 'MEASURE',
+  'Nhật ký mỗi tối và bảng tuần cho ra hai con số: mức tự chủ và số ngày liền mạch. Không ai phải tự đánh giá mình.': 'The nightly journal and the weekly board produce two numbers: autonomy level and streak length. No one has to grade themselves.',
+  'XẾP BĂNG': 'SORT INTO BANDS',
+  'Hai con số ấy tự xếp nhà vào một trong bốn băng. Băng đổi là hệ thống đổi cách chạm ngay tuần đó, không đợi ai báo.': 'Those two numbers sort the family into one of four bands. When the band changes, the system changes how it reaches out that same week, without waiting to be told.',
+  'CHẠM ĐÚNG NHỊP': 'REACH OUT ON RHYTHM',
+  'Mỗi băng có nhịp chạm và trần việc riêng. Nhà đang trượt được giao ÍT việc hơn, không nhiều hơn.': 'Each band has its own contact rhythm and task ceiling. A slipping family is given FEWER tasks, not more.',
+  'CỔNG NGHIỆM THU': 'REVIEW GATE',
+  'Chín mươi ngày một cổng, có bằng chứng. Không qua cổng thì không mở chặng sau — và không ai bị tính là hỏng, chỉ là chưa tới.': 'One gate every ninety days, with evidence. No pass means the next stage stays closed — and no one counts as failed, only not there yet.',
+  'TRAO LẠI': 'HAND BACK',
+  'Qua cổng thì Học viện lùi một bước và nhà cầm thêm một phần. Hỗ trợ giảm dần theo kế hoạch, không cắt đột ngột.': 'Pass the gate and the Academy steps back while the family takes on another part. Support tapers by plan, never cut off suddenly.',
+  'Bốn băng — hệ thống đổi cách chạm theo tình trạng, không đợi ai báo': 'Four bands — the system adjusts how it reaches out by status, without waiting to be told',
+  'Băng': 'Band',
+  'Dấu hiệu': 'Signs',
+  'Hệ thống làm gì': 'What the system does',
+  'Không làm gì': 'What it does not do',
+  'Đang chạy tốt': 'Running well',
+  'Nhịp đều, cổng qua đúng hẹn.': 'Steady rhythm, gates passed on time.',
+  'Chạm nhẹ mỗi tuần một lần, mở thêm phần nâng cao và mời làm nhà dẫn cho nhà mới.': 'A light touch once a week, unlock advanced content and invite them to guide a new family.',
+  'Không chất thêm việc chỉ vì nhà đang khoẻ.': 'Never pile on tasks just because the family is doing well.',
+  'VÀNG': 'YELLOW',
+  'Chớm lệch nhịp': 'Starting to drift',
+  'Lỡ vài tối, một chỉ số đi ngang hai tuần liền.': 'A few missed evenings, one indicator flat for two weeks.',
+  'Chạm hai lần một tuần, rà lại xem việc nào đang thừa và bỏ bớt.': 'Reach out twice a week, review which tasks are surplus and drop some.',
+  'Không gọi đây là vấn đề. Lệch nhịp là chuyện thường của mọi nhà.': 'Do not call it a problem. Drifting off rhythm is normal for every family.',
+  'Đang trượt': 'Slipping',
+  'Nhịp gãy, hoặc phụ huynh bắt đầu hỏi lại về kết quả và chi phí.': 'The rhythm breaks, or parents start questioning results and costs.',
+  'Cắt lộ trình xuống tối đa hai việc một tuần, mỗi việc dưới mười lăm phút. Coach và Tư vấn vào cùng một buổi để nghe lại kỳ vọng.': 'Cut the pathway to at most two tasks a week, each under fifteen minutes. Coach and Consultant join one session together to hear expectations again.',
+  'Không giao thêm việc để bù phần đã lỡ. Nhà trượt vì quá tải, chất thêm là đẩy xuống sâu hơn.': 'Never add tasks to make up for what was missed. Families slip from overload; piling on pushes them deeper.',
+  'ĐỎ': 'RED',
+  'Sắp dừng': 'About to stop',
+  'Bảy ngày không liên lạc được, hoặc nhà đã nói tới chuyện dừng.': 'Seven days unreachable, or the family has mentioned stopping.',
+  'Một cuộc gọi của người có thẩm quyền, hỏi thẳng nhà muốn gì. Dừng thì giữ nguyên hồ sơ để quay lại không phải bắt đầu lại.': 'One call from someone with authority, asking directly what the family wants. If they stop, the records are kept intact so returning does not mean starting over.',
+  'Không giữ chân bằng ưu đãi, không gọi nhiều lần, không nhờ người quen tác động.': 'No retention offers, no repeated calls, no asking acquaintances to persuade them.',
+  'NĂM CHỖ NHÀ HAY RỜI — VÀ VIỆC LÀM TRƯỚC KHI TỚI ĐÓ': 'FIVE POINTS WHERE FAMILIES OFTEN LEAVE — AND WHAT WE DO BEFORE THEY GET THERE',
+  'Hào hứng ban đầu hết, chưa thấy gì đổi.': 'The initial excitement fades and nothing seems to have changed.',
+  '→ Bảng số tuần đầu được đưa ra đối chiếu — thứ đổi trước tiên là số lần nhắc, và nó đổi trước khi cảm giác kịp đổi.': '→ The first week’s numbers board is brought out for comparison — the first thing to change is the reminder count, and it changes before the feeling does.',
+  'Lỡ mấy tối liền rồi ngại mở lại sổ.': 'Several evenings missed, and now opening the log feels awkward.',
+  '→ Mức tối thiểu của ngày mệt được bật lên thay cho mức đủ. Ghi một dòng cũng tính là còn nhịp.': '→ The tired-day minimum replaces the full standard. Even one line counts as keeping the rhythm.',
+  'Việc chồng lên nhau, thấy chương trình nặng.': 'Tasks pile up and the programme feels heavy.',
+  '→ Băng CAM tự bật, lộ trình bị cắt xuống hai việc một tuần. Đây là lúc hệ thống giảm tải, không phải lúc nhắc nhiều hơn.': '→ The ORANGE band switches on automatically and the pathway is cut to two tasks a week. This is when the system lightens the load, not when it reminds more.',
+  'Sợ không qua, nên tránh buổi nghiệm thu.': 'Afraid of not passing, so the review session gets avoided.',
+  '→ Cổng được nói rõ từ ngày đầu chặng, và không qua thì lặp lại chặng chứ không mất gì. Không có điểm liệt.': '→ The gate is explained from the first day of the stage, and not passing just means repeating the stage — nothing is lost. There is no failing grade.',
+  'Ngại phải kể lại từ đầu.': 'Reluctant to explain everything again from the start.',
+  '→ Mọi buổi đều để lại hồ sơ trên hệ thống. Người tiếp nhận đọc trước rồi mới gặp — nhà không phải kể lại.': '→ Every session leaves a record in the system. The new person reads it before meeting you — the family does not have to repeat itself.',
+  'GIỮ NHÀ Ở LẠI — NĂM CÁCH HỌC VIỆN KHÔNG DÙNG': 'KEEPING FAMILIES — FIVE METHODS THE ACADEMY NEVER USES',
+  'Không ràng buộc bằng phí phạt khi dừng giữa chừng.': 'No penalty fees for stopping midway.',
+  'Không dùng cảm giác có lỗi để giữ nhà lại — không nói "cố thêm chút nữa vì con".': 'No guilt to keep a family — never saying “try a little longer for your child”.',
+  'Không gọi liên tiếp khi nhà đã nói muốn dừng. Một cuộc gọi, hỏi thẳng, rồi để nhà quyết.': 'No repeated calls once a family says it wants to stop. One call, a direct question, then the family decides.',
+  'Không giữ chân bằng khuyến mãi. Nhà ở lại vì thấy đường đi, không vì thấy rẻ.': 'No retention discounts. Families stay because they see the way forward, not because it is cheap.',
+  'Không đổi mục tiêu giữa chặng cho dễ đạt, rồi gọi đó là kết quả.': 'No moving goals mid-stage to make them easier, then calling it a result.',
+  'Đồng hành {n}% nghĩa là hệ thống không buông tay trước — không phải là nhà nào cũng đi hết. Nhà nào dừng thì hồ sơ giữ nguyên, và quay lại lúc nào cũng tiếp được từ chỗ đã dừng.': '{n}% companionship means the system never lets go first — not that every family goes all the way. If a family stops, its records stay intact, and it can resume from where it left off at any time.',
+
+  /* ── Ai làm việc với nhà mình · số liệu ── */
+  'AI LÀM VIỆC VỚI NHÀ MÌNH': 'WHO WORKS WITH YOUR FAMILY',
+  'Sáu vai, và mỗi vai có ranh giới rõ': 'Six roles, each with clear boundaries',
+  'Làm gì cho nhà mình': 'What they do for your family',
+  'Chuyên gia tư vấn': 'Consulting specialist',
+  'Người mở cửa. Buổi đầu chỉ nghe, và nói thẳng nếu thấy chưa hợp.': 'The one who opens the door. The first session is for listening only, and they will say plainly if it is not the right fit.',
+  'Người đi cùng từng chặng. Không làm hộ, nhưng không để nhà đi một mình.': 'The one who walks every stage with you. Never does it for you, but never lets the family walk alone.',
+  'Dạy đúng thứ học viên đang cần để đi tiếp, không dạy hết những gì mình biết.': 'Teaches exactly what the student needs to move on, not everything they know.',
+  'Chuyên gia đánh giá': 'Assessment specialist',
+  'Trả lại sự thật bằng dữ liệu. Không chiều lòng ai, kể cả Học viện.': 'Reports the truth with data. Flatters no one, not even the Academy.',
+  'Chạy phần nền dưới cả năm khoang — phần không ai thấy nhưng thiếu thì mọi thứ đứng.': 'Runs the groundwork beneath all five chambers — the part no one sees, without which everything stops.',
+  'Trợ lý ảo': 'Virtual assistant',
+  'Trả lời trong đúng phạm vi tầng, và chuyển đúng câu hỏi khó tới đúng người.': 'Answers within the scope of your tier, and routes hard questions to the right person.',
+  'HỆ THỐNG CÓ GÌ': 'WHAT THE SYSTEM CONTAINS',
+  'Chỉ ghi những con số hệ thống tự đếm được': 'Only numbers the system counts by itself',
+  'khoang trong bản đồ gia đình': 'chambers in the family map',
+  'chặng của một hành trình đầy đủ': 'stages in a complete journey',
+  'vai trong một gia đình vận hành tốt': 'roles in a well-run family',
+  'tầng, đi theo thứ tự, không nhảy cóc': 'tiers, in order, no skipping',
+  'kịch bản chuyên môn cho từng tình huống': 'professional scripts for each situation',
+  'ca thật đã được biên soạn thành bài học': 'real cases compiled into lessons',
+  'chuyện truyền cảm hứng, chia theo từng vai': 'inspiring stories, organised by role',
+  'ngày, và đích là nhà mình tự chạy được': 'days, with a self-running family as the goal',
+
+  /* ── Câu hỏi hay gặp ── */
+  'CÂU HỎI HAY GẶP': 'FREQUENTLY ASKED QUESTIONS',
+  'Tám câu người ta hỏi nhiều nhất, trả lời thẳng': 'The eight most-asked questions, answered plainly',
+  'Nhà tôi bận lắm, có theo nổi không?': 'We are very busy — can we keep up?',
+  'Mức tối thiểu của GITA{n} là mười phút mỗi tối, và mức đó đặt sao cho hôm mệt nhất vẫn làm được. Người bận không thiếu thời gian; họ có thời gian ở dạng vụn. Coach sẽ xếp lại việc theo dạng vụn ấy.': 'The GITA{n} minimum is ten minutes an evening, set so that even the most tiring day can manage it. Busy people do not lack time; they have it in fragments. Your Coach arranges tasks to fit those fragments.',
+  'Con tôi không hợp tác thì sao?': 'What if my child will not cooperate?',
+  'Chặng đầu không nhắm vào con. Nhắm vào người lớn trước — vì trong một nhà, người lớn đổi trước, con đổi sau, và luôn chậm hơn một nhịp. Rất nhiều nhà thấy con đổi ở tuần thứ năm mà chưa từng ép con điều gì.': 'The first stage does not target the child. It targets the adults first — because in a family, adults change first and children follow, always a beat behind. Many families see their child change by week five without ever forcing anything.',
+  'Bao lâu thì thấy kết quả?': 'How long before we see results?',
+  'Số lần phải nhắc thường giảm rõ ở tuần ba tới tuần năm. Điểm số thì muộn hơn, thường ở tuần chín tới mười hai. Ai hứa với anh chị kết quả trong hai tuần thì người đó đang bán hàng.': 'The number of reminders usually drops noticeably between weeks three and five. Grades come later, usually weeks nine to twelve. Anyone promising you results in two weeks is selling something.',
+  'Vợ chồng tôi không cùng quan điểm, có làm được không?': 'My spouse and I disagree — can this still work?',
+  'Được, và rất nhiều nhà bắt đầu như vậy. Cách làm là một người làm và ghi bảng để trên bàn ăn, không thuyết phục bằng lời. Phần lớn người còn lại nhập cuộc trong khoảng tuần thứ năm.': 'Yes, and many families start that way. One person does it and leaves the board on the dinner table — no persuading with words. Most partners join in around week five.',
+  'Dữ liệu nhà tôi có an toàn không?': 'Is our family’s data safe?',
+  'Hồ sơ mỗi nhà khoá theo tài khoản. Coach của nhà nào chỉ đọc được nhà đó. Nội dung chuyên môn được mã hoá và chỉ mở theo tầng được cấp phép. Không bán, không chia sẻ, không dùng để huấn luyện trí tuệ nhân tạo bên ngoài.': 'Each family’s records are locked to its account. A family’s Coach can read only that family. Professional content is encrypted and opens only by licensed tier. Never sold, never shared, never used to train outside AI.',
+  'Nếu giữa chừng nhà tôi dừng thì sao?': 'What if we stop partway?',
+  'Dừng thì báo, và Học viện giữ nguyên hồ sơ. Rất nhiều nhà quay lại sau vài tháng, và quay lại thì không phải bắt đầu từ số không. Không ai bị trách vì đã dừng.': 'Just let us know, and the Academy keeps your records intact. Many families return after a few months, and returning does not mean starting from zero. No one is blamed for stopping.',
+  'Coach có thể làm việc riêng với nhà tôi ngoài hệ thống không?': 'Can a Coach work with us privately outside the system?',
+  'Không, và đây là điều Học viện xử nặng nhất: đưa số riêng hoặc làm việc ngoài hệ thống thì Coach bị hạ {n}% KPI trong ba tháng. Lý do không phải là kiểm soát — mà là nếu người đó nghỉ, nhà mình phải có người tiếp được ngay.': 'No, and this is what the Academy treats most seriously: a Coach who gives out a private number or works outside the system loses {n}% of their KPI for three months. The reason is not control — it is that if that person leaves, someone must be able to take over your family straight away.',
+  'Tôi không rành công nghệ thì dùng được không?': 'I am not good with technology — can I still use it?',
+  'Toàn bộ hệ thống được dựng theo một yêu cầu: người không rành công nghệ nhất cũng phải dùng được. Mọi màn hình tự nói cần làm gì, mọi việc chỉ cần bấm, và chỗ nào chưa mở thì có nút mở ngay tại đó.': 'The whole system is built to one requirement: the least tech-savvy person must be able to use it. Every screen tells you what to do, everything is just a tap, and anything not yet unlocked has an unlock button right there.',
+
+  /* ── Bắt đầu từ đâu · cộng đồng ── */
+  'BẮT ĐẦU TỪ ĐÂU': 'WHERE TO START',
+  'Bốn việc, làm được ngay hôm nay, mỗi việc dưới mười lăm phút': 'Four tasks you can do today, each under fifteen minutes',
+  'Đọc bản đồ trước': 'Read the map first',
+  'Xem nhà mình nằm ở đâu trên năm khoang. Mười phút, và không cần chuẩn bị gì.': 'See where your family sits across the five chambers. Ten minutes, no preparation needed.',
+  'Viết ô đầu tiên của bản đồ cá nhân': 'Write the first cell of the personal map',
+  'Ô số một: vì sao nhà mình bắt đầu. Chỉ một câu, và câu đó giữ mình lại ở tuần thứ ba.': 'Cell one: why your family is starting. Just one sentence — and that sentence keeps you going in week three.',
+  'Ghi ba dòng đầu tiên vào sổ': 'Write the first three lines in the log',
+  'Giờ vào bàn, giờ rời bàn, số lần phải nhắc. Ba mươi ngày sau đọc lại là thấy mô thức.': 'Time sat down to study, time got up, number of reminders. Read it back after thirty days and the pattern appears.',
+  'Hỏi trợ lý một câu': 'Ask the assistant a question',
+  'Bất cứ câu gì. Không ai chấm điểm câu hỏi, và câu khó sẽ được chuyển tới đúng người.': 'Anything at all. No one grades questions, and hard ones are passed to the right person.',
+  'CỘNG ĐỒNG GIA ĐÌNH THỊNH VƯỢNG': 'THE PROSPEROUS FAMILY COMMUNITY',
+  'Chưa cần là khách hàng vẫn vào được — nghe cách nghĩ của Học viện trước khi quyết': 'Open even before you are a client — hear how the Academy thinks before you decide',
+  'Đây là chỗ nói cho anh chị biết nhà mình đang bước vào cái gì, mất bao lâu, và Học viện làm được gì — cũng như không làm được gì. Mười phút đọc.': 'This is where we tell you what your family is stepping into, how long it takes, and what the Academy can do — as well as what it cannot. A ten-minute read.',
+  'Đây là chỗ nói cho em biết em đang bước vào cái gì, mất bao lâu, và cuối đường thì trông như thế nào. Đọc mười phút, không cần chuẩn bị gì.': 'This is where we tell you what you are stepping into, how long it takes, and what the end of the road looks like. A ten-minute read, no preparation needed.'
+});
+
+})();
+
+/* ═════════ src/tu-dien-en-05.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — TỪ ĐIỂN TIẾNG ANH · ĐỢT 5: HAI MÀN HÀNH TRÌNH
+   Con đường năm tầng (hanh-trinh-5-tang) và Hành trình 12 chặng của học
+   viên (hanh-trinh-12). Mã kho (HP_TANG · BD_CAP · GL_XONG…) giữ nguyên
+   trong bản dịch: đó là tên kho thật, đọc để tra, không phải chữ để dịch.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.TU_DIEN_EN = G.TU_DIEN_EN || {};
+(function (d) { for (var k in d) G.TU_DIEN_EN[k] = d[k]; })({
+  /* ── Con đường năm tầng ── */
+  'Thử thách:': 'Challenge:',
+  'Khó nhất ở:': 'Hardest part:',
+  'Xong thì nhà mình khác gì:': 'What is different at home once done:',
+  'CHƯA MỞ': 'NOT YET OPEN',
+  'năm {n}–{n}': 'years {n}–{n}',
+  'AN TOÀN': 'SAFETY',
+  'BẢN LĨNH': 'RESILIENCE',
+  'Sau tầng năm, hành trình không lên bậc — nó ĐỔI VAI.': 'After tier five, the journey does not climb another step — it CHANGES ROLE.',
+  '· Con đường năm tầng.': '· The five-tier path.',
+  'MỘT HÀNH TRÌNH · NĂM TẦNG THỬ THÁCH': 'ONE JOURNEY · FIVE TIERS OF CHALLENGE',
+  'Gia Đình Thịnh Vượng': 'Prosperous Family',
+  'Nhà mình tự đứng được, tự nói được với nhau, và còn dư sức đỡ một nhà khác.': 'A family that stands on its own, talks things through itself, and still has strength to support another family.',
+  'Nhà mình đang ở bậc nào': 'Which step your family is on',
+  'Năm bậc, mỗi bậc một biểu tượng thành công. Bậc đang đứng hiện đúng một việc — bậc chưa tới thì chưa hiện, để hôm nay chỉ có một việc phải làm.': 'Five steps, each with its own symbol of success. The current step shows exactly one task — steps not yet reached stay hidden, so today there is only one thing to do.',
+  'NHỊP': 'RHYTHM',
+  'ĐÍCH KHÔNG PHẢI TẦNG CAO NHẤT': 'THE GOAL IS NOT THE TOP TIER',
+  'Đích không nằm ở cuối thang. Đích là thứ nhà mình mang theo khi xuống thang — và có nhà mang đủ nó từ tầng ba.': 'The goal is not at the top of the ladder. The goal is what your family carries with it when stepping off — and some families carry all of it from tier three.',
+  'D{n} · Tự đứng': 'D{n} · Standing on your own',
+  'Nhà mình quyết được việc của nhà mình mà không chờ ai gật đầu.': 'Your family decides its own matters without waiting for anyone’s nod.',
+  'Đo bằng: Số quyết định nhà mình tự chốt trong quý, không hỏi người kèm.': 'Measured by: decisions the family settled itself this quarter, without asking its companion.',
+  'D{n} · Nói được với nhau': 'D{n} · Able to talk to each other',
+  'Chuyện khó trong nhà nói ra được, không cần đợi ai làm trung gian.': 'Hard things at home can be said out loud, without waiting for a go-between.',
+  'Đo bằng: Câu hỏi ẩn danh hai lần mỗi năm: trong nhà mình, chuyện khó có nói ra được không.': 'Measured by: an anonymous question twice a year — in our home, can hard things be said?',
+  'D{n} · Có nền chịu được một mùa xấu': 'D{n} · A foundation that survives a bad season',
+  'Một cú mất thu nhập không làm cả nhà đổ.': 'A loss of income does not bring the whole family down.',
+  'Đo bằng: Số tháng nhà mình sống được nếu thu nhập dừng lại.': 'Measured by: how many months the family could live if income stopped.',
+  'D{n} · Còn dư sức đỡ nhà khác': 'D{n} · Strength to spare for another family',
+  'Nhà mình kèm được một nhà mới, và kèm mà không kiệt.': 'Your family can mentor a new family — without burning out.',
+  'Đo bằng: Có đang kèm một nhà không, và nhịp của chính nhà mình có tụt trong lúc kèm không.': 'Measured by: whether you are mentoring a family, and whether your own rhythm drops while you do.',
+  'Đủ bốn dấu là tới đích, bất kể đang ở tầng nào.': 'All four signs means you have arrived, whatever tier you are on.',
+  'Đo đích bằng tầng thì có ngày một nhà mua tầng cao và tưởng mình đã tới. Đo bằng dấu của chính nhà mình thì không mua được.': 'Measure the goal by tier and one day a family buys a high tier and thinks it has arrived. Measure it by the family’s own signs and it cannot be bought.',
+  'Năm tầng, năm thử thách': 'Five tiers, five challenges',
+  'Một thang, năm bậc. Không bậc thứ sáu.': 'One ladder, five steps. No sixth step.',
+  'TẦNG {n} · T{n} · KẾT TINH: SỰ THẬT': 'TIER {n} · T{n} · CRYSTALLISES: TRUTH',
+  'Nhà mình bỏ được câu "tôi không phải người kỷ luật" — vì bảy tối vừa rồi đã cãi lại câu ấy.': 'Your family drops the line “I’m just not a disciplined person” — because the last seven evenings proved it wrong.',
+  'TẦNG {n} · T{n} · KẾT TINH: NHỊP': 'TIER {n} · T{n} · CRYSTALLISES: RHYTHM',
+  'Đổi một câu quen trong nhà, và giữ được câu mới suốt ba tuần.': 'Change one habitual phrase at home, and keep the new one for three weeks.',
+  'Tuần thứ hai — lúc hào hứng đã hết mà nếp thì chưa thành.': 'Week two — when the excitement is gone but the routine has not yet formed.',
+  'Nhà mình có một nếp không cần ai nhắc, và có một tờ giấy cả nhà cùng ký.': 'Your family has one routine nobody needs to remind, and a sheet of paper everyone has signed.',
+  'TẦNG {n} · T{n} · KẾT TINH: AN TOÀN': 'TIER {n} · T{n} · CRYSTALLISES: SAFETY',
+  'Đi bốn chuỗi hai mươi mốt ngày nối nhau, và qua được cơn chán ở giữa.': 'Complete four back-to-back twenty-one-day runs, and get through the boredom in the middle.',
+  'Chuỗi thứ hai và thứ ba. Không biến cố nào, không kết quả nào — chỉ là dài.': 'The second and third runs. No crises, no results — just length.',
+  'Nhà mình có một nền chịu được một mùa xấu, và có một thứ nhìn thấy được do chính con làm ra.': 'Your family has a foundation that survives a bad season, and something visible your child made themselves.',
+  'TẦNG {n} · T{n} · KẾT TINH: TỰ CHỦ': 'TIER {n} · T{n} · CRYSTALLISES: AUTONOMY',
+  'Cầm lái tài chính của nhà mình trọn một năm, và tự chịu bốn cổng quý.': 'Steer the family’s finances for a full year, and own all four quarterly gates.',
+  'Không phải lúc thiếu tiền. Là lúc bắt đầu có tiền — và một cơ hội đẹp tới mức nhà mình nghi ngờ chính luật của mình.': 'Not when money is short. When money starts coming in — and an opportunity so attractive the family doubts its own rules.',
+  'Nhà mình quyết được việc lớn mà không hỏi ai, và nói được vì sao mình quyết thế.': 'Your family makes big decisions without asking anyone, and can say why it decided that way.',
+  'TẦNG {n} · T{n} · KẾT TINH: BẢN LĨNH': 'TIER {n} · T{n} · CRYSTALLISES: RESILIENCE',
+  'Kèm một nhà mới đi hết mùa đầu của họ, mà nhịp nhà mình không tụt.': 'Mentor a new family through their whole first season without your own rhythm slipping.',
+  'Nhịn không làm thay. Nhà kia vấp đúng chỗ mình từng vấp, và mình biết đường gỡ.': 'Holding back from doing it for them. The other family stumbles exactly where you once did, and you know the way out.',
+  'Nhà mình thành bằng chứng sống cho một nhà khác — và đó là lúc thang này hết bậc.': 'Your family becomes living proof for another family — and that is where this ladder runs out of steps.',
+  'Hết thang ở đây:': 'The ladder ends here:',
+  'Không mua được tầng sau khi chưa qua cổng tầng trước. Kim cương kết tinh ở đúng độ sâu — nhảy cóc một bậc là cả phía sau nứt.': 'You cannot buy the next tier without passing the previous tier’s gate. A diamond forms at exactly the right depth — skip a step and everything behind it cracks.',
+  'Bảng này gom bốn cái thang của kho về một mối. Trước bản này, một nhà hỏi "mình đang ở đâu" thì có bốn câu trả lời khác nhau, và không ai bảo được cái nào là cái chính.': 'This table brings the library’s four ladders together. Before this version, a family asking “where are we?” got four different answers, and no one could say which was the main one.',
+  'Sau tầng năm': 'After tier five',
+  'Không có tầng thứ sáu.': 'There is no sixth tier.',
+  'Cây cầu:': 'The bridge:',
+  'HP_TANG tầng {n} đã có sẵn dòng ấy trong cột gồm: vai dẫn dắt, nhà mình kèm một nhà mới, có ghi nhận.': 'HP_TANG tier {n} already has that line in its “includes” column: a leading role, your family mentoring a new family, with recognition.',
+  'Sang thang nào:': 'Which ladder next:',
+  'Đồng Hành → Cố Vấn → Cây Mẹ. Thang của người ĐI KÈM, khác thang của người ĐƯỢC KÈM.': 'Companion → Advisor → Mother Tree. The ladder of those who ACCOMPANY, distinct from the ladder of those who ARE ACCOMPANIED.',
+  'GL_XONG đã khai năm điều kiện tới ngày hệ này xong việc. Một cái thang cứ mọc thêm bậc là một cái thang không có ngày xuống — và hệ nào không có ngày xong thì nó giữ người mãi.': 'GL_XONG already declares the five conditions for the day this system’s work is done. A ladder that keeps growing steps is a ladder with no way down — and a system with no finish date holds on to people forever.',
+  'Bốn cái thang, và chỗ nối': 'Four ladders, and where they join',
+  'Một nhà hỏi "mình đang ở đâu" thì chỉ có MỘT câu trả lời.': 'A family asking “where are we?” gets exactly ONE answer.',
+  'Là gì': 'What it is',
+  'Nối bằng khoá': 'Joined by key',
+  'Sửa ở bản này': 'Fixed in this version',
+  'Năm tầng': 'Five tiers',
+  'Thang chính. Bốn thang kia quy về đây.': 'The main ladder. The other four map onto it.',
+  'Mười việc của nhà mình, mỗi việc thuộc một tầng.': 'Your family’s ten tasks, each belonging to one tier.',
+  'Bảy vùng đất': 'Seven lands',
+  'Bức tranh nhà mình nhìn mỗi ngày.': 'The picture your family looks at every day.',
+  'capTu/capDen → BD_CAP → BD_LON.tang (gián tiếp)': 'capTu/capDen → BD_CAP → BD_LON.tang (indirect)',
+  'Mười hai chặng': 'Twelve stages',
+  'Bốn trụ, mười hai việc của đội ngũ với một nhà.': 'Four pillars, twelve things the team does with a family.',
+  'Trước bản {n} thang này KHÔNG có khoá nào. Tầng của nó nằm lẫn trong cột ngày dưới dạng văn xuôi — chặng {n} ghi "Tầng {n} trở lên", chặng {n} ghi "Tầng {n}". Mắt đọc ra, máy thì không.': 'Before version {n} this ladder had NO key. Its tier was buried in the date column as prose — stage {n} said “Tier {n} and above”, stage {n} said “Tier {n}”. Eyes could read it; machines could not.',
+  'Bốn hạng khách': 'Four client grades',
+  'Nhịp chăm theo hạng.': 'Care rhythm by grade.',
+  'Trước bản này tầng nằm ở cột `gita` dạng chữ — "Tầng {n} – {n}" có dấu gạch, máy không tách được thành hai mã.': 'Before this version the tier sat in the `gita` column as text — “Tier {n} – {n}” with a dash, which machines could not split into two codes.',
+  'Bốn cái thang cùng đo một người là bốn câu trả lời, và tới lúc chúng lệch nhau thì nhà mình tin cái nào. Nối bằng mắt người thì coi như chưa nối: mắt người không chạy trong bộ kiểm.': 'Four ladders measuring the same person give four answers — and when they disagree, which one does the family trust? Joining by eye is not joining: human eyes do not run in the test suite.',
+  'Tài liệu sau đề nghị một thang mới thì nó vào dạng LỚP SÂU của năm tầng, không vào dạng thang.': 'When a later document proposes a new ladder, it goes in as a DEEP LAYER of the five tiers, not as a ladder.',
+  'Bảy chặng kim cương — lớp sâu, không phải thang thứ năm': 'Seven diamond stages — a deep layer, not a fifth ladder',
+  'Chặng': 'Stage',
+  'Kết tinh': 'Crystallises',
+  'Thuộc tầng': 'Belongs to tier',
+  'Bản gốc ghi': 'Original says',
+  'Chỗ gãy tự nhiên': 'Natural breaking point',
+  'Than Chì': 'Graphite',
+  'Hẻm Gió Lạnh — ngày {n} tới {n}. Hào hứng đầu đã tàn, kết quả chưa thấy.': 'Cold Wind Gorge — days {n} to {n}. The initial excitement has faded, results not yet visible.',
+  'Áp Lực': 'Pressure',
+  'tháng {n}–{n}': 'months {n}–{n}',
+  'Chặng ai cũng xong trừ mình — quãng giữa, thấy nhà khác bứt lên.': 'The everyone-but-me stage — the middle stretch, watching other families pull ahead.',
+  'Kết Tinh': 'Crystallisation',
+  'Cửa Vàng Giả — một cơ hội đẹp tới mức nhà mình nghi ngờ chính luật của mình.': 'The False Golden Door — an opportunity so attractive the family doubts its own rules.',
+  'Thân Cứng': 'Hard Trunk',
+  'Mỏi Vàng — đủ an toàn, đủ thu nhập, đủ tiện nghi. Người ta bỏ không phải lúc đói, mà lúc vừa đủ no.': 'Golden Fatigue — safe enough, earning enough, comfortable enough. People quit not when hungry, but when just full enough.',
+  'Ra Hạt': 'Bearing Seed',
+  'Ý NGHĨA': 'MEANING',
+  'NGOÀI TẦNG → vai DH': 'BEYOND THE TIERS → DH role',
+  'Sóng Đời Giữa — bố mẹ già đi, con lớn bỏ xa, cơ thể đổi.': 'Mid-life Wave — parents age, children grow far ahead, the body changes.',
+  'Rừng': 'Forest',
+  'DI SẢN': 'LEGACY',
+  'NGOÀI TẦNG → vai CV': 'BEYOND THE TIERS → CV role',
+  'Không có chỗ gãy riêng. Chặng này nhìn lại và trao đi.': 'No breaking point of its own. This stage looks back and gives forward.',
+  'Cây Tổ': 'Ancestor Tree',
+  'BỀN VỮNG': 'ENDURANCE',
+  'NGOÀI TẦNG → vai CM': 'BEYOND THE TIERS → CM role',
+  'năm {n} trở đi': 'year {n} onwards',
+  'Bị quên — đúng kiểu bị quên của người làm trọn việc.': 'Being forgotten — the very way those who finished their work are forgotten.',
+  'Than Chì:': 'Graphite:',
+  'Chín mươi ngày của tài liệu là số TỐI ĐÃ GHI, không phải độ dài một tầng. Ngày {n} của sổ — đêm viết hiến pháp nhà mình — rơi đúng quãng tầng {n} khép lại.': 'The document’s ninety days are EVENINGS LOGGED, not the length of a tier. Day {n} of the log — the night you write your family constitution — falls right where tier {n} closes.',
+  'Ra Hạt:': 'Bearing Seed:',
+  'Đây không phải tầng {n}. Đây là lúc nhà mình bước sang thang của người đi kèm.': 'This is not tier {n}. This is when your family steps onto the companions’ ladder.',
+  'Cây Tổ:': 'Ancestor Tree:',
+  'Cây mẹ trong rừng thật không có ai cảm ơn. Đó là chỗ thang này thật sự kết thúc.': 'In a real forest, no one thanks the mother tree. That is where this ladder truly ends.',
+  'Sáu chỗ chưa khớp, và đã làm gì': 'Six mismatches, and what was done',
+  'Mỗi chỗ sửa phải rơi xuống một kho có thật.': 'Every fix must land in a real library store.',
+  'Chỗ chưa khớp': 'Mismatch',
+  'Thấy gì': 'What was seen',
+  'Đã làm gì': 'What was done',
+  'Rơi xuống đâu': 'Where it landed',
+  'Mười hai chặng không có khoá tầng': 'The twelve stages had no tier key',
+  'Chặng {n} và {n} tự nói tầng của mình, nhưng nói trong cột NGÀY dưới dạng văn xuôi. Không phép kiểm nào canh được, không màn nào lọc được theo tầng nhà mình đang đứng.': 'Stages {n} and {n} state their own tier, but in the DATE column as prose. No check could guard it, and no screen could filter by the family’s current tier.',
+  'Thêm khoá `tang` cho cả mười hai chặng. KHÔNG đặt tầng mới — chỉ đưa câu đã có ra khỏi cột ngày.': 'Added a `tang` key to all twelve stages. NO new tiers — just moved the existing wording out of the date column.',
+  'Bốn hạng khách ghi tầng bằng chuỗi có dấu gạch': 'The four client grades recorded tiers as dashed strings',
+  'Cột `gita` ghi "Tầng {n} – {n}". Người đọc ra hai tầng; máy đọc ra một chuỗi.': 'The `gita` column said “Tier {n} – {n}”. People read two tiers; machines read one string.',
+  'Thêm `tangMa` dạng danh sách mã.': 'Added `tangMa` as a list of codes.',
+  'Bảy chặng kim cương định thành thang thứ năm': 'Seven diamond stages were about to become a fifth ladder',
+  'Tài liệu D đặt bảy chặng mười năm. Dựng thành thang riêng thì kho có năm thang cùng đo một người.': 'Document D sets seven stages over ten years. As a separate ladder, the library would have five ladders measuring one person.',
+  'Vào dạng LỚP SÂU: mỗi chặng khai tầng của nó, chặng ra ngoài thì khai ngoaiTang và trỏ sang thang người đi kèm.': 'Added as a DEEP LAYER: each stage declares its tier; stages beyond declare ngoaiTang and point to the companions’ ladder.',
+  'Năm tầng cộng lại {n} ngày, tài liệu hứa mười năm': 'Five tiers add up to {n} days, the document promises ten years',
+  'Năm {n} tới năm {n} của tài liệu D không nằm ở tầng nào. Cách dễ là đặt thêm tầng {n}, tầng {n}.': 'Years {n} to {n} of document D fall in no tier. The easy way out would be adding tier {n} and tier {n}.',
+  'KHÔNG đặt thêm tầng. Sau tầng {n} là ĐỔI VAI sang DD_CAP — và cây cầu ấy đã nằm sẵn trong cột gồm của tầng {n} từ trước, tôi chỉ chưa đọc ra.': 'NO extra tiers. After tier {n} comes a ROLE CHANGE to DD_CAP — and that bridge was already in tier {n}’s “includes” column; it just had not been read.',
+  'Sổ chín mươi ngày bị hiểu thành một tầng': 'The ninety-day log was mistaken for a tier',
+  'Tài liệu A đặt sổ {n} ngày, tài liệu D gọi đó là chặng đầu. T{n} cộng T{n} chỉ có {n} ngày.': 'Document A sets a {n}-day log; document D calls it the first stage. T{n} plus T{n} is only {n} days.',
+  'Không lệch — hai thứ đo khác nhau. Sổ đếm SỐ TỐI ĐÃ GHI, đúng thước của cấp bánh đà, đi xuyên nhiều tầng. Ghi rõ để lần sau không ai xếp nó thành tầng.': 'Not a mismatch — two different measures. The log counts EVENINGS LOGGED, the same yardstick as flywheel levels, running across several tiers. Written down so no one turns it into a tier next time.',
+  'Bức tranh sáu vùng định thành thang thứ sáu': 'The six-zone picture was about to become a sixth ladder',
+  'Ngay bản kế tiếp, một tài liệu nữa đề nghị một thang nữa: sáu vòng đồng tâm từ Thoải Mái tới Tự Do.': 'In the very next version, another document proposed another ladder: six concentric rings from Comfort to Freedom.',
+  'Không bàn lại — luật số {n} của chính lớp này đã trả lời sẵn. Sáu vùng vào dạng LỚP SÂU, và vzSoiNoi() ép chúng khớp một-một với năm tầng.': 'Not debated again — rule {n} of this very layer already answers it. The six zones go in as a DEEP LAYER, and vzSoiNoi() forces them to match the five tiers one-to-one.',
+  'Gia Đình Thịnh Vượng dễ bị hiểu thành tầng cao nhất': '“Prosperous Family” was easily mistaken for the top tier',
+  'Đích đặt ở cuối thang thì một nhà mua tầng cao sẽ tưởng mình đã tới.': 'Put the goal at the top of the ladder and a family that buys a high tier will think it has arrived.',
+  'Đích đo bằng bốn dấu hiệu của chính nhà mình, không đo bằng tầng. Đủ bốn dấu là tới, bất kể đang ở tầng nào.': 'The goal is measured by the family’s own four signs, not by tier. All four signs means arrived, whatever the tier.',
+  'Sáu luật của hành trình': 'Six rules of the journey',
+  '{n}. Một thang chính, bốn thang phụ quy về nó': '{n}. One main ladder, four secondary ladders mapped onto it',
+  'Và quy bằng khoá máy đọc được. Nối bằng mắt người thì coi như chưa nối — mắt người không chạy trong bộ kiểm.': 'And mapped by machine-readable keys. Joining by eye is not joining — human eyes do not run in the test suite.',
+  '{n}. Không có tầng thứ sáu': '{n}. There is no sixth tier',
+  'Sau tầng năm là đổi vai, không phải lên bậc. Thang cứ mọc thêm bậc là thang không có ngày xuống.': 'After tier five comes a role change, not another step. A ladder that keeps growing steps has no way down.',
+  '{n}. Điều kiện xong của mỗi tầng ĐỌC từ bảng học phí': '{n}. Each tier’s completion conditions are READ from the tuition table',
+  'Ghi lại ở chỗ thứ hai là dựng bản thứ hai của cùng một luật, và hai bản thì sẽ có ngày lệch nhau.': 'Writing them in a second place creates a second copy of the same rule, and two copies will one day disagree.',
+  '{n}. Đích không phải bậc cuối': '{n}. The goal is not the last step',
+  'Có nhà đủ bốn dấu từ tầng ba. Đo đích bằng tầng thì đích mua được bằng tiền.': 'Some families have all four signs by tier three. Measure the goal by tier and the goal can be bought.',
+  '{n}. Tài liệu sau đề nghị thang mới thì nó vào dạng lớp sâu': '{n}. A later document proposing a new ladder goes in as a deep layer',
+  'Bộ tài liệu này đã đề nghị một thang mới. Sẽ còn tài liệu nữa. Luật này viết ra để lần sau không cần bàn lại.': 'This set of documents has already proposed a new ladder. More documents will come. This rule is written so it never needs debating again.',
+  '{n}. Không nhảy cóc một bậc': '{n}. No skipping a step',
+  'Kim cương kết tinh ở đúng độ sâu đúng áp lực. Nhảy cóc một bậc là cả phía sau nứt — và chỗ nứt hiện ra ở bậc trên, nơi không ai nghĩ tới nữa.': 'A diamond forms at the right depth under the right pressure. Skip a step and everything behind it cracks — and the crack shows up higher up, where no one is looking anymore.',
+
+  /* ── Hành trình 12 chặng của học viên ── */
+  'CHƯA XONG THÌ': 'IF NOT DONE',
+  'ĐIỂM CHẠM WOW': 'WOW TOUCHPOINT',
+  'Chặng {n} · {n} · {n}': 'Stage {n} · {n} · {n}',
+  'HIỂU MÌNH': 'KNOW YOURSELF',
+  'Để biết điểm mạnh và tiềm năng': 'To discover strengths and potential',
+  'RÈN MÌNH': 'TRAIN YOURSELF',
+  'Để xây dựng thói quen và bản lĩnh': 'To build habits and resilience',
+  'Để vượt qua giới hạn và chinh phục mục tiêu': 'To push past limits and reach goals',
+  'TRƯỞNG THÀNH': 'GROW UP',
+  'Để sống hạnh phúc và tạo giá trị cho cuộc đời': 'To live happily and create value in life',
+  '· Hành trình {n} chặng của học viên.': '· The student’s {n}-stage journey.',
+  'HỌC VIỆN GITA': 'GITA ACADEMY',
+  'Hành trình trải nghiệm của học viên': 'The student experience journey',
+  'Mười hai chặng, bốn trụ. Sơ đồ treo tường chỉ nói mỗi chặng LÀM GÌ. Ở đây mỗi chặng còn có: ai chịu trách nhiệm, dấu hiệu đã xong, việc phải làm khi chưa xong, và điểm chạm WOW đặt đúng lúc.': 'Twelve stages, four pillars. The wall chart only says WHAT each stage does. Here each stage also has: who is responsible, the sign it is done, what to do if it is not, and a WOW touchpoint placed at the right moment.',
+  'Lắng nghe, kết nối, thấu hiểu': 'Listen, connect, understand',
+  'Lắng nghe câu chuyện của học viên': 'Listen to the student’s story',
+  'Kết nối và xây dựng niềm tin': 'Connect and build trust',
+  'Thấu hiểu mong muốn của học viên và phụ huynh': 'Understand what the student and parents want',
+  'Gia đình kể được câu chuyện của mình mà không cần ai gợi, và nói ra được điều họ mong nhất.': 'The family tells its story without prompting, and can say what it wants most.',
+  'Còn trả lời cụt, còn hỏi ngược "anh chị muốn em nói gì". Chưa đủ tin để kể thật.': 'Still giving short answers, still asking back “what do you want me to say?”. Not yet enough trust to tell the truth.',
+  '→ Quay lại nhịp N{n} NGHE. Không chuyển chặng bằng cách hỏi thêm câu hỏi.': '→ Go back to beat N{n} LISTEN. Do not move stages by asking more questions.',
+  'Gọi lại sau buổi đầu đúng một câu: nhắc lại chi tiết họ kể mà không ai hỏi tới.': 'Call back after the first session with exactly one line: repeat a detail they shared that no one asked about.',
+  'Đo bằng: Ghi được nguyên văn ba điều gia đình nói, không diễn giải.': 'Measured by: three things the family said, recorded word for word, without interpretation.',
+  'Test định hướng năng lực, thấu hiểu vấn đề': 'Aptitude test, understanding the problem',
+  'Chuyên viên đánh giá': 'Assessment officer',
+  'Đánh giá năng lực hiện tại': 'Assess current ability',
+  'Phân tích điểm mạnh, điểm cần cải thiện': 'Analyse strengths and areas to improve',
+  'Thấu hiểu nguyên nhân gốc rễ vấn đề': 'Understand the root cause of the problem',
+  'Có kết quả bài test và một câu kết luận về điểm nghẽn thật, không phải triệu chứng.': 'Test results plus one concluding sentence about the real bottleneck, not a symptom.',
+  'Kết luận nghe giống mọi nhà khác. Đó là chưa đọc ra ca này.': 'The conclusion sounds like every other family. That means this case has not been read yet.',
+  '→ Đối chiếu với kho {n} tình huống, tìm ca gần nhất rồi soi chỗ khác biệt.': '→ Compare against the {n}-situation library, find the closest case, then examine the differences.',
+  'Gửi bản đọc kết quả một trang, viết bằng lời thường, không thuật ngữ.': 'Send a one-page results reading in plain words, no jargon.',
+  'Đo bằng: Bài test hoàn tất · điểm nghẽn được gọi tên bằng một câu.': 'Measured by: test completed · bottleneck named in one sentence.',
+  'Định hướng lộ trình cá nhân hoá {n} ngày, {n} ngày': 'Personalised {n}-day and {n}-day pathway planning',
+  'Lộ trình {n} ngày đột phá': '{n}-day breakthrough pathway',
+  'Lộ trình {n} ngày toàn diện': '{n}-day comprehensive pathway',
+  'Mục tiêu rõ ràng — đo lường được': 'Clear goals — measurable',
+  'Gia đình cầm được một lộ trình có mốc ngày và cách đo, không phải một lời hứa.': 'The family holds a pathway with dated milestones and ways to measure — not a promise.',
+  'Mục tiêu ghi kiểu "con tự giác hơn". Không đo được thì không phải mục tiêu.': 'Goals written like “my child will be more self-disciplined”. If it cannot be measured, it is not a goal.',
+  '→ Đổi mỗi mục tiêu thành một con số đếm được trong bảy ngày.': '→ Turn each goal into a number that can be counted within seven days.',
+  'In lộ trình ra giấy, ký tên cả nhà, dán chỗ con đi qua mỗi ngày.': 'Print the pathway, have the whole family sign it, and post it where your child passes every day.',
+  'Đo bằng: Lộ trình có ≥ {n} mốc đo · mỗi mốc có ngày cụ thể.': 'Measured by: pathway has ≥ {n} measured milestones · each with a specific date.',
+  'Coaching giải pháp {n}-{n}': '{n}-on-{n} solution coaching',
+  'Tuần {n} → hết chặng': 'Week {n} → end of stage',
+  'Coach chuyên gia đồng hành {n}-{n}': '{n}-on-{n} expert Coach companionship',
+  'Đưa ra giải pháp phù hợp': 'Offer suitable solutions',
+  'Theo dõi – điều chỉnh – đồng hành liên tục': 'Monitor – adjust – accompany continuously',
+  'Truyền cảm hứng và tạo động lực': 'Inspire and motivate',
+  'Nhà mình làm được việc đã hẹn ba tuần liên tiếp mà không cần nhắc.': 'The family does what it agreed to for three weeks in a row without reminders.',
+  'Tuần nào cũng phải nhắc. Đó là dấu hiệu việc giao quá lớn hoặc chưa đúng người giữ.': 'Reminders needed every week. A sign the task is too big or held by the wrong person.',
+  '→ Cắt việc nhỏ lại một nửa, và đổi người giữ việc trong nhà.': '→ Cut the task in half, and change who holds it at home.',
+  'Nhắn một dòng vào đúng tối con làm được lần đầu — không đợi tới buổi hẹn.': 'Send one line on the very evening your child manages it for the first time — do not wait for the next session.',
+  'Đo bằng: Số buổi {n}-{n} đã diễn ra · số tuần tự làm được, không nhắc.': 'Measured by: {n}-on-{n} sessions held · weeks done independently, without reminders.',
+  'Lộ trình giỏi Toán – Tiếng Anh – Tư duy, kỹ năng học giỏi': 'Excellence pathway in Maths – English – Thinking, and study skills',
+  'Song song từ tuần {n}': 'In parallel from week {n}',
+  'Toán: tư duy – logic – ứng dụng': 'Maths: thinking – logic – application',
+  'Tiếng Anh: giao tiếp – học thuật – thi chứng chỉ': 'English: communication – academic – certification exams',
+  'Tư duy: phân tích – sáng tạo – giải quyết vấn đề': 'Thinking: analysis – creativity – problem solving',
+  'Kỹ năng học giỏi: phương pháp – kỷ luật – tối ưu hiệu quả': 'Study skills: method – discipline – efficiency',
+  'Điểm số hoặc bằng chứng học tập đi lên, và con nói được mình học bằng cách nào.': 'Grades or learning evidence go up, and your child can explain how they learn.',
+  'Điểm lên nhưng hỏi cách học thì không nói được. Đó là học thuộc, không phải học giỏi.': 'Grades rise but your child cannot explain how they study. That is memorising, not learning well.',
+  '→ Dừng luyện đề, quay lại dạy phương pháp trong hai tuần.': '→ Stop drilling past papers and go back to teaching method for two weeks.',
+  'Gửi phụ huynh một đoạn ghi âm con tự giải thích cách mình làm một bài.': 'Send parents a recording of their child explaining how they solved a problem.',
+  'Đo bằng: Kết quả học tập · con trình bày được phương pháp của mình.': 'Measured by: academic results · your child can present their own method.',
+  'Tư vấn tâm lý học đường': 'School counselling',
+  'Mentor · chuyển tuyến khi cần': 'Mentor · referral when needed',
+  'Bất cứ lúc nào ca cần': 'Whenever the case needs it',
+  'Thấu hiểu tâm lý': 'Understand feelings',
+  'Hỗ trợ cảm xúc': 'Emotional support',
+  'Giải toả áp lực': 'Relieve pressure',
+  'Xây dựng sự tự tin và cân bằng': 'Build confidence and balance',
+  'Con nói được điều đang làm mình nặng, với ít nhất một người lớn trong nhà.': 'Your child can say what is weighing on them to at least one adult at home.',
+  'Có dấu hiệu nguy hiểm mà chưa chuyển tuyến. Đây là chỗ hệ thống dừng lại, không đi tiếp.': 'Danger signs present but not yet referred. This is where the system stops, not continues.',
+  '→ Chuyển chuyên khoa ngay. Gọi hotline {n}. GITA không chẩn đoán, không thay bác sĩ.': '→ Refer to a specialist immediately. Call hotline {n}. GITA does not diagnose and does not replace doctors.',
+  'Người thật gọi lại trong {n} giờ, không phải tin nhắn tự động.': 'A real person calls back within {n} hours, not an automated message.',
+  'Đo bằng: Đã có buổi ngồi riêng · đã đọc và trả lời câu hỏi dấu hiệu nguy hiểm ở bước B{n}.': 'Measured by: a one-to-one session held · the danger-signs question at step B{n} read and answered.',
+  'Nâng cấp năng lực qua các khoá trại huấn luyện': 'Building capability through training camps',
+  'Trưởng nhóm Coach': 'Lead Coach',
+  'Theo lịch trại': 'Per camp schedule',
+  'Trại Gen Alpha': 'Gen Alpha Camp',
+  'Trại Leader Boom': 'Leader Boom Camp',
+  'Trại kỹ năng sống': 'Life Skills Camp',
+  'Trại năng lực lãnh đạo': 'Leadership Camp',
+  'Trải nghiệm thực tế – bứt phá giới hạn': 'Real-world experience – breaking limits',
+  'Con làm được một việc mà trước trại con tin là mình không làm được.': 'Your child does something they believed before camp they could not do.',
+  'Đi trại về vui nhưng nhà không thấy gì khác. Trại thành một chuyến chơi.': 'Back from camp happy, but nothing seems different at home. Camp became a trip.',
+  '→ Chốt với con MỘT việc mang từ trại về làm trong bảy ngày đầu, có người nhà cùng giữ.': '→ Agree with your child on ONE thing brought back from camp to do in the first seven days, with a family member keeping it with them.',
+  'Ảnh và một câu kể của Coach về đúng khoảnh khắc con vượt qua, gửi ngay tối hôm đó.': 'A photo and a line from the Coach about the exact moment your child broke through, sent that same evening.',
+  'Đo bằng: Số trại đã tham gia · việc mang về được duy trì sau {n} ngày.': 'Measured by: camps attended · the brought-back task still kept after {n} days.',
+  'Đồng hành tạo kỳ tích học tập': 'Accompanying toward learning achievements',
+  'Coach + Giáo viên': 'Coach + Teacher',
+  'Chặng giữa': 'Middle stage',
+  'Theo sát tiến độ': 'Track progress closely',
+  'Hỗ trợ kịp thời': 'Timely support',
+  'Vượt qua thử thách': 'Overcome challenges',
+  'Đạt kết quả vượt trội và bền vững': 'Achieve outstanding and lasting results',
+  'Có một kết quả nhà mình tự thấy là kỳ tích, và giải thích được vì sao có nó.': 'A result the family itself sees as an achievement, and can explain why it happened.',
+  'Kết quả lên rồi tụt lại. Bền vững mới là kỳ tích, một lần thì chưa.': 'Results rise then fall back. Lasting is the achievement — once is not enough.',
+  '→ Soi lại thói quen nền: giấc ngủ, giờ bắt đầu, môi trường học. Kỳ tích luôn đứng trên nền.': '→ Re-examine the foundation habits: sleep, start time, study environment. Achievements always stand on a foundation.',
+  'Làm một tấm ghi nhận có tên con, gửi về nhà đúng ngày kết quả được xác nhận.': 'Make a recognition card with your child’s name, sent home on the day the result is confirmed.',
+  'Đo bằng: Kết quả giữ được qua hai chu kỳ đo liên tiếp.': 'Measured by: results held across two consecutive measurement cycles.',
+  'Nuôi dưỡng đam mê': 'Nurture passions',
+  'Chặng giữa → cuối': 'Middle → final stage',
+  'Khám phá sở thích': 'Discover interests',
+  'Phát triển thế mạnh': 'Develop strengths',
+  'Truyền cảm hứng': 'Inspire',
+  'Biến đam mê thành động lực học tập': 'Turn passion into motivation to learn',
+  'Con tự dành thời gian cho một việc không ai bắt, và việc ấy kéo được việc học lên.': 'Your child makes time for something no one requires, and it lifts their learning.',
+  'Đam mê tách rời việc học, thậm chí kéo ngược. Chưa nối được hai đường.': 'The passion is separate from learning, even pulling against it. The two paths are not yet connected.',
+  '→ Tìm một dự án nhỏ nơi đam mê cần tới kiến thức đang học. Nối bằng việc, không bằng lời khuyên.': '→ Find a small project where the passion needs what is being studied. Connect them through doing, not advice.',
+  'Cho con một sân thật để trình bày thứ mình làm — buổi họp nhà, nhóm cộng đồng, sự kiện GITA.': 'Give your child a real stage to present their work — a family meeting, a community group, a GITA event.',
+  'Đo bằng: Số giờ tự nguyện mỗi tuần · có ít nhất một sản phẩm hoàn thành.': 'Measured by: voluntary hours per week · at least one finished piece of work.',
+  'Học viên tạo giá trị': 'Students create value',
+  'Tầng {n} trở lên': 'Tier {n} and above',
+  'Sống có trách nhiệm': 'Live responsibly',
+  'Chia sẻ và giúp đỡ cộng đồng': 'Share and help the community',
+  'Tạo giá trị tích cực cho xã hội': 'Create positive value for society',
+  'Có ít nhất một người ngoài nhà được con giúp thật, và người đó kể lại được.': 'At least one person outside the family has been genuinely helped by your child, and can say so.',
+  'Làm việc thiện theo phong trào, xong thì thôi. Chưa thành nếp.': 'Charity done as a campaign, then dropped. Not yet a habit.',
+  '→ Chuyển từ một lần sang một nhịp: mỗi tháng một việc, có nhật ký.': '→ Move from one-off to a rhythm: one deed a month, with a journal.',
+  'Kể câu chuyện của con trong cộng đồng GITA — có xin phép, đúng tên, đúng việc.': 'Share your child’s story in the GITA community — with permission, correct names, accurate facts.',
+  'Đo bằng: Số buổi đóng góp · có nhật ký · có người thụ hưởng xác nhận.': 'Measured by: contribution sessions · a journal · confirmation from the people helped.',
+  'Học viên phát triển toàn diện': 'Well-rounded student development',
+  'Trí tuệ – thể chất': 'Mind – body',
+  'Cảm xúc – xã hội': 'Emotions – social life',
+  'Nhân cách – kỹ năng': 'Character – skills',
+  'Tự tin – bản lĩnh – hạnh phúc': 'Confidence – resilience – happiness',
+  'Bốn mặt đều có bằng chứng, không mặt nào bị bỏ lại phía sau.': 'All four areas have evidence; none is left behind.',
+  'Giỏi một mặt, hụt ba mặt. Đó là lệch, không phải toàn diện.': 'Strong in one area, weak in three. That is lopsided, not well-rounded.',
+  '→ Chọn mặt yếu nhất và dồn một chu kỳ {n} ngày cho riêng nó.': '→ Pick the weakest area and give it a whole {n}-day cycle.',
+  'Buổi nhìn lại có cả nhà, đọc lại chính bảng tầm nhìn viết ở chặng {n}.': 'A review session with the whole family, rereading the vision board written at stage {n}.',
+  'Đo bằng: Bốn mặt đều đạt ngưỡng trong bộ đo · không mặt nào dưới {n}%.': 'Measured by: all four areas reach the threshold · none below {n}%.',
+  'Sẵn sàng cho tương lai': 'Ready for the future',
+  'Super Admin nghiệm thu': 'Super Admin sign-off',
+  'Cổng ra': 'Exit gate',
+  'Tự tin bước vào tương lai': 'Step confidently into the future',
+  'Sẵn sàng chinh phục mọi mục tiêu': 'Ready to pursue every goal',
+  'Trở thành phiên bản tốt nhất của chính mình': 'Become the best version of yourself',
+  'Con nói được mình sẽ đi đâu tiếp và vì sao, bằng lời của chính mình.': 'Your child can say where they are going next and why, in their own words.',
+  'Trả lời theo lời người lớn. Chưa phải của con thì chưa xong.': 'Answering in the adults’ words. If it is not their own, it is not done.',
+  '→ Lùi lại. Để con tự viết, người lớn không sửa chữ nào trong bảy ngày.': '→ Step back. Let your child write it themselves; adults change not a word for seven days.',
+  'Lễ trưởng thành: trao lại chính tấm bản đồ nhà mình vẽ ở chặng {n}, đối chiếu với hôm nay.': 'Coming-of-age ceremony: hand back the very map the family drew at stage {n}, and compare it with today.',
+  'Đo bằng: Hoàn tất cổng nghiệm thu tầng {n} · có bản kế hoạch tự viết.': 'Measured by: tier {n} review gate completed · a self-written plan.',
+  '› Mười hai chặng em sẽ đi qua': '› The twelve stages you will go through'
+});
+
+})();
+
+/* ═════════ src/tu-dien-en-06.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — TỪ ĐIỂN TIẾNG ANH · ĐỢT 6: SỔ TAY GIA ĐÌNH · ĐỒNG HỒ THỜI GIAN
+   Sổ tay viết cho người đang trong mùa khó: giữ đúng giọng ấm, không
+   thuyết giảng, câu ngắn đọc thành tiếng được. Đồng hồ thời gian: giữ
+   nguyên luật "thà đếm thiếu còn hơn tính công cho một tab bỏ quên".
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.TU_DIEN_EN = G.TU_DIEN_EN || {};
+(function (d) { for (var k in d) G.TU_DIEN_EN[k] = d[k]; })({
+  /* ── Sổ tay của gia đình ── */
+  'Trong {n} phút:': 'Within {n} minutes:',
+  '· Sổ tay của gia đình.': '· The family handbook.',
+  'SỔ TAY CỦA GIA ĐÌNH · {n} TRANG · {n} CÂU': 'THE FAMILY HANDBOOK · {n} PAGES · {n} QUESTIONS',
+  'Bạn không phải hồ sơ. Bạn không phải ca khó. Bạn là một mùa đang đi qua — và mùa nào cũng qua.': 'You are not a file. You are not a difficult case. You are a season passing through — and every season passes.',
+  'Cuốn này chỉ để nhắc điều đó khi bạn quên.': 'This book is only here to remind you of that when you forget.',
+  'Trang {n} — cần gấp thì làm gì': 'Page {n} — what to do in an emergency',
+  'Trang này in ngay sau bìa, vì lúc cần nó thì không ai còn sức lật tìm.': 'This page is printed right after the cover, because when you need it, no one has the strength to search.',
+  'Chuông đỏ — cần người đến ngay': 'Red bell — someone needs to come now',
+  'Đứa nhỏ bệnh nặng. Không có gạo cho bữa tới. Người nhà bị đánh. Muốn làm điều gì đó không nói ra được. Thấy không chịu nổi nữa.': 'A child is seriously ill. No rice for the next meal. Someone at home is being hit. Wanting to do something you cannot say out loud. Feeling you cannot bear it any longer.',
+  'Mở app, bấm nút đỏ. Không có app thì gọi số ghi ở bìa sau. Không có điện thoại thì nói với bất kỳ ai trong hệ: "Tôi cần chuông đỏ."': 'Open the app and press the red button. No app? Call the number on the back cover. No phone? Tell anyone in the system: “I need the red bell.”',
+  'Không cần kể trước. Không cần sắp lời. Bấm là được.': 'No need to explain first. No need to find the words. Just press.',
+  'Có người thật đến, hoặc gọi lại, hoặc nhờ một hàng xóm tin cậy ghé xem trước.': 'A real person comes, or calls back, or asks a trusted neighbour to check in first.',
+  'Bạn không bị bỏ một mình sau khi bấm.': 'You are not left alone after you press.',
+  'Chuông vàng — cần nói chuyện': 'Yellow bell — need to talk',
+  'Chưa gấp tới mức ấy, nhưng nặng quá.': 'Not that urgent, but it is too heavy.',
+  'Bấm nút vàng. Hoặc gặp người đi cùng của mình bất cứ lúc nào — họ có số của bạn, bạn có số của họ.': 'Press the yellow button. Or reach your companion at any time — they have your number, you have theirs.',
+  'Không cần lý do.': 'No reason needed.',
+  'Có người nhấc máy.': 'Someone picks up.',
+  'Sổ Mưa — chuyện nhỏ cũng muốn nói': 'Rain Book — small things you still want to say',
+  'Chuyện nhỏ, nhưng cũng muốn nói.': 'Small things you still want to say.',
+  'Nhắn vào Sổ Mưa một hạt mưa bất kỳ.': 'Send any raindrop to the Rain Book.',
+  'Không cần đủ nặng mới được nhắn.': 'It does not need to be heavy enough to send.',
+  'Hạt nhỏ cũng là mưa thật.': 'A small drop is still real rain.',
+  'Bạn thấy cần thì là đủ cấp. Không có mức nào để đạt trước khi được bấm.': 'If you feel you need it, that is enough. There is no bar to reach before you can press.',
+  'Bấm nhầm không bị trách. Đã có người bấm ba lần trong một tuần chỉ vì cần nghe tiếng người, và không ai nhắc gì cả.': 'Pressing by mistake is never blamed. Someone once pressed three times in a week just to hear a human voice, and no one said a word about it.',
+  'Trang {n}–{n} — bảy quyền của bạn': 'Pages {n}–{n} — your seven rights',
+  'Bảy quyền này không phải ân huệ của hệ. Là giới hạn bạn đặt cho hệ.': 'These seven rights are not favours from the system. They are limits you set on the system.',
+  '{n} · Quyền im lặng': '{n} · The right to silence',
+  'Không trả lời, không gặp, không giải thích. Không bao giờ vì thế mà được giúp ít đi, hay bị nhắc nhở.': 'Not answering, not meeting, not explaining. You will never get less help or be reprimanded for it.',
+  '{n} · Quyền xoá': '{n} · The right to erasure',
+  'Bảo "xoá chuyện của tôi" là xoá thật, cả trong máy, cả bản sao dự phòng. Xong rồi họ báo lại cho bạn biết.': 'Say “delete my story” and it is truly deleted, from the system and the backups. Then they tell you it is done.',
+  '{n} · Quyền đi': '{n} · The right to leave',
+  'Rời bất cứ lúc nào. Không nợ gì. Cây của bạn vẫn là của bạn.': 'Leave at any time. Owe nothing. Your tree is still yours.',
+  '{n} · Quyền nói không': '{n} · The right to say no',
+  'Hệ muốn dùng chuyện của bạn để viết, để nghiên cứu, để quay phim thì bạn nói không được. Không cần lý do, và không bị coi là khó tính.': 'If the system wants to use your story for writing, research or filming, you can say no. No reason needed, and you will not be seen as difficult.',
+  '{n} · Quyền xem': '{n} · The right to see',
+  'Mọi thứ hệ ghi về bạn, bạn được xem, được in ra, được cầm về.': 'Everything the system records about you, you can see, print and take home.',
+  '{n} · Quyền sửa': '{n} · The right to correct',
+  'Họ ghi sai thì bạn sửa. Lời bạn sửa đứng cạnh lời cũ, và không ai xoá lời ai.': 'If they record something wrong, you correct it. Your correction stands next to the original, and no one erases anyone’s words.',
+  '{n} · Quyền khiếu nại': '{n} · The right to complain',
+  'Ai trong hệ làm bạn khó chịu, kể cả người đi cùng, kể cả người đứng đầu, thì bạn có số gọi riêng. Người nghe không phải người bị kiện. Không tốn tiền, và bạn không bị trả đũa.': 'If anyone in the system upsets you — even your companion, even the person at the top — you have a separate number to call. The person listening is not the person complained about. It costs nothing, and there is no retaliation.',
+  'Một ngày có người của hệ nói ngược lại bảy quyền này, hãy giơ trang này lên.': 'If one day someone from the system says otherwise about these seven rights, hold this page up.',
+  'Một trăm cuốn đầu có số riêng từng cuốn, và lời hứa in ở bìa có chữ ký của người chịu trách nhiệm cao nhất. Chữ ký ấy tồn tại để bạn có người để giơ sách lên. Một lời hứa không có tên ai dưới đó là một lời hứa không ai đòi được.': 'The first hundred copies are each numbered, and the promise on the cover carries the signature of the person with the highest responsibility. That signature exists so you have someone to hold the book up to. A promise with no name beneath it is a promise no one can claim.',
+  'Năm điều người đi cùng không được làm': 'Five things a companion must not do',
+  'Họ sai được, và họ được yêu cầu tự nhận sai mỗi tuần trước một người giám sát.': 'They can make mistakes, and they are required to own up to them every week in front of a supervisor.',
+  'Không được làm': 'Must not',
+  'Vì sao': 'Why',
+  'Không cho bạn tiền riêng': 'Never give you personal money',
+  'Nhận hay cho một lần là lần sau quan hệ đổi chất. Bạn mời thì họ được phép từ chối mà không mất lòng.': 'Give or receive once and the relationship changes. If you offer, they may decline without any offence.',
+  'Không làm thay bạn': 'Never do it for you',
+  'Gọi thay, trả nợ giúp, quyết thay — đều cấm. Người làm thay bạn hôm nay là người làm thay bạn mãi.': 'Calling on your behalf, paying debts for you, deciding for you — all forbidden. Whoever does it for you today will be doing it for you forever.',
+  'Không kể chuyện của bạn cho ai': 'Never tell your story to anyone',
+  'Chuyện kể cho người này là của người này. Đổi người đi cùng thì chuyện không đi theo, trừ khi chính bạn muốn kể lại.': 'A story told to one person belongs with that person. If you change companions, the story does not follow — unless you choose to tell it again.',
+  'Không thuyết giảng': 'Never lecture',
+  'Chín phần mười câu họ nói là câu hỏi. Câu dạy dỗ nghe dễ hơn, và chính vì dễ mà nó lấy mất phần của bạn.': 'Nine in ten things they say are questions. Lecturing sounds easier — and precisely because it is easy, it takes away your part.',
+  'Không im lặng bỏ mặc bạn': 'Never go silent and abandon you',
+  'Người đi cùng biến mất không một lời là chỗ đau nhất, và là chỗ ít bị bắt nhất — vì nó không để lại dấu vết nào.': 'A companion vanishing without a word hurts the most, and is the least likely to be caught — because it leaves no trace.',
+  'Ba mươi câu — những câu người khác đã hỏi trước bạn': 'Thirty questions — the ones others asked before you',
+  'Hệ này là gì': 'What this system is',
+  '{n}. Đây là gì vậy?': '{n}. What is this?',
+  'Đây là một nhóm người giúp gia đình khó về tiền tìm lại sức đứng lên bằng chân mình. Chúng tôi không cho tiền đều đặn. Chúng tôi không làm thay bạn. Chúng tôi đứng cạnh — như cái gậy lúc qua suối, không phải người bế bạn qua suối.': 'We are a group of people who help families struggling with money find the strength to stand on their own feet again. We do not hand out regular money. We do not do things for you. We stand beside you — like a walking stick when crossing a stream, not someone carrying you across.',
+  '{n}. Sao lại giúp tôi? Tôi có gì đâu.': '{n}. Why help me? I have nothing.',
+  'Đây là nghề của chúng tôi. Có lương, được đào tạo, được nghỉ phép, như mọi nghề khác. Ai nói "tôi giúp vì thương bạn thôi" thì bạn cẩn thận: người giúp thật sống được thì mới giúp lâu được. Người khó đã cho đi quá nhiều thứ miễn phí rồi.': 'This is our profession. We are paid, trained and given leave, like any other job. Be careful of anyone who says “I help only because I care about you”: real helpers must be able to make a living to keep helping for long. People in hardship have already given away too much for free.',
+  '{n}. Có phải lừa đảo không? Bây giờ gì cũng lừa.': '{n}. Is this a scam? Everything is a scam these days.',
+  'Câu hỏi này đúng, và chúng tôi trọng người hỏi nó. Ba điều để bạn tự kiểm. Một, chúng tôi không bao giờ xin tiền bạn, xin mã thẻ, hay xin phí thủ tục. Ai xin, dù mặc áo của hệ, là lừa. Hai, mọi con số của chúng tôi công khai. Ba, bạn rời đi lúc nào cũng được, không bị giữ, không mắc nợ. Kẻ lừa không cho mình đi.': 'That is the right question, and we respect anyone who asks it. Three things you can check yourself. One: we never ask you for money, card codes or processing fees. Anyone who does, even wearing our shirt, is a scammer. Two: all our numbers are public. Three: you can leave at any time, without being held back or owing anything. Scammers do not let you go.',
+  'Và điều thứ tư, quan trọng nhất: bạn chưa tin thì đừng tham gia. Chờ. Xem người xung quanh sống ra sao sau một năm. Tin không cho nhanh được — chỉ chờ nó mọc được thôi.': 'And the fourth, most important: if you do not trust us yet, do not join. Wait. See how people around you are doing after a year. Trust cannot be handed over quickly — it can only be waited for until it grows.',
+  '{n}. Có phải giáo phái không? Có ký hộ giấy tờ không? Có nợ ngầm không?': '{n}. Is this a cult? Will you sign papers for me? Are there hidden debts?',
+  'Không. Ba điều này ghi bằng mực to. Chúng tôi không giảng tôn giáo nào, không đòi bạn tin ai. Chúng tôi không ký hộ giấy tờ nhà đất của bạn. Không có khoản nợ ngầm nào — mọi con số bạn nợ, nếu có, viết trên một tờ giấy duy nhất, và bạn cầm bản gốc.': 'No. These three are written in big letters. We preach no religion and ask you to believe in no one. We never sign your property papers for you. There are no hidden debts — any amount you owe, if any, is written on a single sheet, and you hold the original.',
+  'Được gì, mất gì': 'What you gain, what you give',
+  '{n}. Giúp kiểu này thì được gì cụ thể?': '{n}. What exactly do I get from this kind of help?',
+  'Một người thật gọi là Đồng Hành, mỗi tuần gặp bạn, nghe bạn, không phán xét. Một cuốn Sổ Mưa trên điện thoại. Một cái chuông, bấm một lần là có người đến. Một cái cây của nhà bạn, lớn dần theo chính bạn lớn dần. Và khi bạn đứng vững rồi, một khoản Hạt Cho Đi nhỏ, không trả lại cho chúng tôi.': 'A real person called a Companion, who meets you every week, listens and never judges. A Rain Book on your phone. A bell — press once and someone comes. A tree for your family that grows as you grow. And when you are standing firm, a small Seed to Give, which you never pay back to us.',
+  '{n}. Mình trả lại gì? Không có cháo trắng đâu.': '{n}. What do I give back? Nothing comes free.',
+  'Bạn trả đúng ba thứ, và không thứ nào là tiền. Một, sự thật đủ dùng — không cần kể hết, chỉ đừng nói dối phần đã kể. Hai, mười lăm phút mỗi tuần. Đó là tất cả thời gian hệ xin. Ba, khi bạn đi qua rồi, kể lại chuyện của bạn cho người sau, nếu bạn muốn. Chỉ phần bạn muốn, và rút lại lúc nào cũng được.': 'You give exactly three things, and none of them is money. One: enough truth — you need not tell everything, just do not lie about what you do tell. Two: fifteen minutes a week. That is all the time the system asks. Three: once you are through, tell your story to those who come after, if you want to. Only the part you choose, and you can withdraw it at any time.',
+  '{n}. Có ai biết không? Hàng xóm, chính quyền, họ hàng?': '{n}. Will anyone know? Neighbours, authorities, relatives?',
+  'Chuyện của bạn được giữ như hồ sơ bệnh án. Người đọc được chỉ có Đồng Hành của bạn. Lúc tính mạng nguy cấp thì thêm một tới hai người, và mỗi lần mở đều ghi lại để bạn xem được ai đã xem. Hàng xóm không biết. Họ hàng không biết. Trong hệ, người ta biết bạn đang vào mùa khó — không biết nội dung mùa khó ấy.': 'Your story is kept like a medical record. Only your Companion can read it. If a life is in danger, one or two more people may, and every opening is logged so you can see who looked. Neighbours do not know. Relatives do not know. Within the system, people know you are in a hard season — not what that season holds.',
+  '{n}. Nếu tôi nói dối thì sao? Người ta chê không?': '{n}. What if I lie? Will people look down on me?',
+  'Không chê. Người ta hiểu — người khó hay nói dối vì xấu hổ, vì sợ mất phần giúp, vì mệt. Chỉ có một điều: nói dối làm cây của bạn mọc lệch. Không phải bị phạt, mà là bạn khó nhận ra mình đang đứng ở đâu. Sự thật ở đây không phải món nợ với chúng tôi. Là quà bạn tự dành cho mình.': 'No one looks down. People understand — those in hardship often lie out of shame, fear of losing help, or exhaustion. Just one thing: lying makes your tree grow crooked. Not as punishment, but because it becomes hard to see where you really stand. Truth here is not a debt to us. It is a gift you give yourself.',
+  'Người đi cùng': 'Your companion',
+  '{n}. Đồng Hành là người ra sao? Có phải cán bộ không?': '{n}. What kind of person is a Companion? An official?',
+  'Không phải cán bộ. Không kiểm tra, không chấm điểm, không quyết thay bạn. Họ được đào tạo và thực tập xong mới gặp nhà thật, và được trả lương để nghề này bền. Có năm điều họ không được làm, ghi ở trang bên. Họ sai được — và mỗi tuần họ tự nhận sai trước một người giám sát.': 'Not an official. They do not inspect, score or decide for you. They are trained and complete a practicum before meeting real families, and they are paid so this work can last. There are five things they must not do, listed on the next page. They can make mistakes — and every week they own up to them in front of a supervisor.',
+  '{n}. Nếu không hợp với Đồng Hành của mình thì sao?': '{n}. What if I do not get on with my Companion?',
+  'Nói một câu: "Tôi muốn đổi người." Không cần lý do. Không ai buộc bạn giải thích, và không ai buồn. Đổi người ở đây bình thường như đổi một loại thuốc không hợp. Người cũ không được mang chuyện của bạn sang người mới. Muốn kể lại thì chính bạn kể, và kể phần bạn chọn.': 'Say one sentence: “I would like a different person.” No reason needed. No one makes you explain, and no one is upset. Changing people here is as normal as changing a medicine that does not suit you. The previous person may not carry your story to the new one. If you want to retell it, you tell it — and only the part you choose.',
+  '{n}. Mình kể được những điều chưa kể ai không?': '{n}. Can I share things I have never told anyone?',
+  'Được. Nhiều người kể điều đó lần đầu trong đời ở đây. Và nếu chuyện quá nặng, nặng tới mức họ cần nhờ thêm người, thì họ hỏi bạn trước: "Chuyện này em cần nhờ thêm người, anh chị muốn em nói thế nào?" Không có trường hợp nào chuyện của bạn đi tiếp mà bạn không biết trước — trừ lúc mạng sống nguy cấp và bạn không quyết được.': 'Yes. Many people share such things here for the first time in their lives. And if it is so heavy they need to involve someone else, they ask you first: “I need to bring someone else in on this — how would you like me to put it?” Your story never goes further without you knowing first — except when a life is in danger and you cannot decide.',
+  'Chuông, Sổ Mưa, Cây': 'Bell, Rain Book, Tree',
+  '{n}. Chuông đỏ là gì? Bấm rồi thì sao?': '{n}. What is the red bell? What happens after I press it?',
+  'Chuông đỏ là nút dành cho lúc bạn không chịu nổi nữa. Bấm xong có người thật tiếp máy, rồi có người tới. Bạn không cần sắp lời trước. Bạn không cần đủ nặng mới được bấm — bạn thấy cần thì là đủ. Bấm nhầm không bị trách.': 'The red bell is the button for when you cannot bear it any longer. Press it and a real person answers, then someone comes. You do not need to find the words first. It does not need to be heavy enough — if you feel you need it, that is enough. Pressing by mistake is never blamed.',
+  '{n}. Sổ Mưa để làm gì? Có phải để theo dõi mình không?': '{n}. What is the Rain Book for? Is it to monitor me?',
+  'Ngược lại. Sổ Mưa là chỗ duy nhất để bạn nói với cả hệ mà không nói với một ai cụ thể. Tuần nào mệt quá, không muốn gặp ai, thì bấm một hạt. Hạt của bạn gộp với hạt của nhiều nhà khác. Người xem báo cáo chỉ thấy "vùng này tuần này mưa nhiều", không thấy nhà nào. Trả lời "không muốn trả lời" cũng tính là một hạt.': 'The opposite. The Rain Book is the only place you can speak to the whole system without speaking to any one person. In a week when you are too tired and do not want to see anyone, send a drop. Your drop is pooled with drops from many families. Anyone reading reports sees only “a lot of rain in this area this week”, never which family. Answering “I would rather not say” also counts as a drop.',
+  '{n}. Cây của nhà mình là cây gì? Ai chấm cây to hay nhỏ?': '{n}. What is my family’s tree? Who judges whether it is big or small?',
+  'Không ai chấm cây. Cây to lên khi nhà bạn tự đứng được nhiều hơn, không phải khi bạn đạt con số nào của hệ. Cây chỉ là cách cho bạn nhìn thấy đoạn đường đã đi là thật. Khi cây cho hạt, nghĩa là bạn đứng vững đủ để giữ tay người khác.': 'No one judges the tree. It grows as your family stands more on its own, not when you hit any number of the system’s. The tree is just a way to see that the road you have travelled is real. When it bears seed, it means you stand firm enough to hold someone else’s hand.',
+  'Hạt không bắt bạn dùng. Nhưng rất nhiều người dùng — vì lần đầu được làm người cho chứ không phải người nhận là lần đầu lấy lại được thứ mà nghèo đã lấy mất.': 'You never have to use the seed. But many people do — because being the giver instead of the receiver for the first time is the first time they win back something poverty took from them.',
+  'Tiền': 'Money',
+  '{n}. Hệ có cho tiền không? Cho rồi lấy lại không?': '{n}. Does the system give money? Will it take it back?',
+  'Có một khoản gọi là Hạt Cho Đi. Nó không cho lúc đầu — nó cho lúc bạn đã đứng vững. Và bạn không trả lại hệ. Nó là của bạn, để bạn cho người khác nếu bạn muốn, hoặc giữ nếu bạn chưa muốn. Không ai hỏi. Trong lúc đi cùng nhau, tiền chỉ xuất hiện khi bạn và người đi cùng ngồi vẽ lại một việc cụ thể. Mua con gà đẻ, mua cái xe chở hàng, đi khám bệnh. Không phải tiền tiêu dần.': 'There is an amount called the Seed to Give. It is not given at the start — it comes once you are standing firm. And you never pay it back to the system. It is yours, to give to someone else if you wish, or to keep if you are not ready. No one asks. While you walk together, money only appears when you and your companion sit down and plan one specific thing: buying a laying hen, a delivery cart, a doctor’s visit. Never money to spend down over time.',
+  'Ai hứa cho tiền mỗi tháng mà không qua buổi ngồi vẽ đó thì đó không phải hệ này. Đó là kẻ mượn tên.': 'Anyone promising monthly money without that planning session is not this system. They are borrowing our name.',
+  '{n}. Mình vay được không? Nhà mình đang nợ ngoài kia.': '{n}. Can I borrow? My family has debts out there.',
+  'Hệ không cho vay, và không bao giờ cho vay. Nợ giữa người giúp và người được giúp là dây siết thầm lặng nhất. Nhưng hệ có người biết chuyện nợ. Đồng Hành ngồi với bạn vẽ lại bài toán nợ, và nối bạn với người tư vấn nợ thật sự khi cần. Miễn phí, và không bán cho bạn thứ gì. Nợ xấu nhất không phải nợ tiền — là nợ phải giấu.': 'The system does not lend, and never will. Debt between helper and helped is the quietest noose there is. But the system has people who understand debt. Your Companion sits with you to map out the debt problem, and connects you with a real debt counsellor when needed. Free, and nothing is sold to you. The worst debt is not money owed — it is debt you have to hide.',
+  'Cuộc gặp mỗi tuần': 'The weekly meeting',
+  '{n}. Gặp thế nào, ở đâu, bao lâu?': '{n}. How, where and how long do we meet?',
+  'Mười lăm phút là mức chuẩn. Ở đâu thì bạn chọn — trước nhà, quán nước, bờ đê, chỗ nào bạn thấy dễ. Không phải văn phòng. Không phải bàn làm việc. Tuần nào không muốn gặp thì nhắn một hạt mưa là đủ, và không ai trách. Gặp lâu hơn mười lăm phút cũng được, nếu chính bạn muốn.': 'Fifteen minutes is standard. You choose where — in front of your home, a tea stall, the riverbank, wherever feels easy. Not an office. Not a desk. If you do not want to meet one week, a raindrop is enough, and no one blames you. Longer than fifteen minutes is fine too, if you want it.',
+  '{n}. Họ có dạy mình làm ăn không?': '{n}. Will they teach me how to make a living?',
+  'Họ hỏi nhiều hơn nói. Bạn đừng ngạc nhiên khi gặp một người mà người đó toàn ngồi nghe. Cách này có chủ ý: người làm thay bạn hôm nay là người làm thay bạn mãi. Chậm hơn, vấp hơn, nhưng là chân của bạn. Bạn muốn học một việc cụ thể thì cứ nói — hệ có lớp và có người dạy riêng.': 'They ask more than they tell. Do not be surprised to meet someone who mostly just listens. It is deliberate: whoever does it for you today will be doing it for you forever. Slower, with more stumbles, but on your own feet. If you want to learn something specific, just say so — the system has classes and private tutors.',
+  '{n}. Mình khóc được không? Mình bực được không?': '{n}. Can I cry? Can I be angry?',
+  'Được khóc. Được bực. Được im. Được mắng cả hệ nếu bạn muốn. Người đi cùng được đào tạo để chịu được, và có người chăm sóc chính họ sau khi nghe chuyện nặng. Bạn không cần giữ vẻ đáng thương để được giúp. Ở đây mệt là mệt, giận là giận.': 'You can cry. You can be angry. You can be silent. You can scold the whole system if you want. Companions are trained to handle it, and someone looks after them after they hear heavy things. You do not need to look pitiful to be helped. Here, tired is tired and angry is angry.',
+  'Nhà khác': 'Other families',
+  '{n}. Có nhà khác cùng hệ — mình sẽ gặp họ không?': '{n}. There are other families in the system — will I meet them?',
+  'Chỉ khi bạn muốn. Có buổi gộp gọi là chiều vườn. Không bắt buộc đi. Không ai bị gọi tên theo chuyện của mình. Không ai phải kể gì. Nhiều người năm đầu không đi, năm thứ hai tự đi — vì được ngồi cạnh người hiểu mình mà không cần giải thích là thứ tiền không mua nổi.': 'Only if you want to. There are gatherings called garden afternoons. Attendance is never required. No one is called by their story. No one has to share anything. Many people skip them the first year and come on their own the second — because sitting beside people who understand you without explanation is something money cannot buy.',
+  '{n}. Mình có phải giúp lại nhà khác không?': '{n}. Do I have to help other families in return?',
+  'Không bao giờ bị đòi. Bạn đang gánh đủ rồi. Người giúp người là thứ tự mọc — ép nó mọc là làm hỏng nó. Khi cây bạn cho hạt, hạt là quyền của bạn, không phải việc của bạn. Ai trong hệ nói "các gia đình cần làm việc này" thì bạn giơ trang này lên.': 'Never demanded. You are carrying enough already. People helping people grows on its own — forcing it ruins it. When your tree bears seed, the seed is your right, not your duty. If anyone in the system says “families need to do this”, hold this page up.',
+  '{n}. Nếu mình thấy nhà khác đang nguy hiểm thì nói với ai?': '{n}. If I see another family in danger, who do I tell?',
+  'Kể cho Đồng Hành của mình, một câu thôi. Phần còn lại là việc của hệ, không phải việc của bạn. Bạn không phải người canh gác cho hệ. Nhưng khi bạn đã nói, hệ có nghĩa vụ đi xem trong hai ngày và báo lại cho bạn biết đã đi. Không kể chi tiết nhà kia — chỉ báo là đã có người tới.': 'Tell your Companion — one sentence is enough. The rest is the system’s job, not yours. You are not the system’s watchman. But once you have said it, the system must go and check within two days and let you know it went. No details about the other family — just that someone went.',
+  'Nghỉ, đi, xoá': 'Pause, leave, delete',
+  '{n}. Mình muốn nghỉ một thời gian. Được không?': '{n}. I want a break for a while. Is that OK?',
+  'Được. Nói một câu: "Nhà tôi nghỉ một tháng." Ba tháng, sáu tháng cũng được. Không cần lý do. Trong lúc nghỉ, không ai gọi, không ai ghé. Chuông vẫn bấm được khi gấp. Hết hạn thì hỏi lại đúng một lần: "Còn nghỉ nữa không?" Trả lời "còn" cũng được. Nghỉ mãi cũng được.': 'Yes. Say one sentence: “My family is taking a month off.” Three months or six is fine too. No reason needed. During the break no one calls and no one visits. The bell still works in an emergency. When the time is up, you are asked exactly once: “Still taking a break?” Answering “yes” is fine. A permanent break is fine too.',
+  '{n}. Mình muốn rời hẳn. Có bị coi là thất bại không?': '{n}. I want to leave for good. Is that seen as failure?',
+  'Không phải thất bại. Có những mùa rời đi là đúng, và hệ được dạy để trọng điều đó thay vì níu. Rời đi thì không mất gì, không nợ gì. Cây của bạn được đánh dấu là cây đã về — một ngày bạn quay lại, cây vẫn còn đó. Đồng Hành hỏi đúng một câu, và bạn có quyền không trả lời: "Anh chị làm gì khiến bạn muốn đi, để hệ sửa."': 'It is not failure. In some seasons leaving is right, and the system is taught to respect that rather than cling. Leaving costs nothing and you owe nothing. Your tree is marked as gone home — if you return one day, it will still be there. Your Companion asks exactly one question, which you may decline to answer: “What did we do that made you want to leave, so the system can fix it?”',
+  '{n}. Xoá hết. Làm sao?': '{n}. Delete everything. How?',
+  'Một nút trong app: "Xoá dữ liệu của tôi". Hoặc nói miệng với bất kỳ ai trong hệ, và họ làm hộ bạn trong bảy ngày. Xoá thật, cả bản sao dự phòng, rồi họ báo lại cho bạn. Chỉ còn một thứ không xoá nổi: trong các báo cáo tổng đã giấu tên, dấu vết nhà bạn nằm lẫn trong con số chung. Giống một giọt mưa đã rơi vào sông — không tách ra được, và cũng không ai nhận ra giọt nào là của bạn.': 'One button in the app: “Delete my data”. Or tell anyone in the system, and they do it for you within seven days. Truly deleted, backups included, and then they confirm with you. Only one thing cannot be erased: in anonymised summary reports, your family’s trace is mixed into the overall numbers. Like a raindrop that has fallen into a river — it cannot be separated, and no one can tell which drop was yours.',
+  '{n}. Nếu mình đã rời rồi mà đổi ý?': '{n}. What if I have left and change my mind?',
+  'Quay lại. Cửa không khoá. Không có câu "hồi đó sao bỏ". Bạn quay lại như lần đầu — chỉ khác là cây mọc tiếp, không trồng mới.': 'Come back. The door is not locked. No one asks “why did you quit back then?”. You return as if for the first time — except your tree keeps growing instead of being replanted.',
+  'Câu khó hơn': 'Harder questions',
+  '{n}. Mình xấu hổ quá. Nhà mình nợ, con mình bỏ học. Mình không muốn ai nhìn mặt.': '{n}. I am so ashamed. We are in debt, my child dropped out. I do not want to face anyone.',
+  'Người tới đây ai cũng mang theo một thứ nặng như thế. Xấu hổ không phải điều làm bạn bị loại — nó gần như là điều ai cũng có lúc bước vào. Người đi trước hay nói lại một điều: nỗi xấu hổ nhẹ dần không phải lúc hoàn cảnh khá lên, mà lúc được kể ra cho một người không run tay. Hệ không hứa khá nhanh. Hệ hứa bạn không một mình.': 'Everyone who comes here carries something that heavy. Shame does not disqualify you — almost everyone has it when they walk in. Those who came before often say the same thing: shame eases not when circumstances improve, but when it is told to someone whose hands do not shake. The system does not promise quick improvement. It promises you will not be alone.',
+  '{n}. Con mình hỏi: mẹ đi làm gì mà về cứ khóc? Mình nói sao?': '{n}. My child asks: what do you go to that makes you come home crying? What do I say?',
+  'Bạn nói thật được: "Mẹ có một người mỗi tuần ngồi nghe mẹ nói chuyện. Có hôm nghe xong mẹ khóc, vì chuyện giữ lâu quá thì khóc ra là nhẹ." Trẻ con sợ không phải mẹ khóc. Trẻ sợ mẹ gánh một mình mà không ai biết. Được biết thì trẻ ngủ yên hơn.': 'You can tell the truth: “I have someone who sits and listens to me every week. Some days I cry afterwards, because when you hold something in for too long, crying makes it lighter.” Children are not afraid of their mother crying. They are afraid of her carrying it alone with no one knowing. Once they know, they sleep more peacefully.',
+  '{n}. Tôi là chồng. Tôi thấy phụ nữ đi nhiều hơn. Chồng như tôi thì làm gì?': '{n}. I am a husband. I see more women taking part. What does a husband like me do?',
+  'Đi cùng cũng được. Ngồi nghe cũng được. Không đi cũng được, và không ai đòi bạn có mặt. Còn nếu bạn ngại hệ này rủ vợ bỏ chồng thì câu trả lời nằm ở chỗ khác. Trong một trăm gia đình đầu tiên, số đôi vợ chồng còn ở bên nhau sau ba năm sẽ được công khai. Một hệ muốn bẻ gãy gia đình thì không công khai con số để bị soi.': 'Come along, or just sit and listen, or do not come at all — no one requires you to be there. And if you worry this system encourages wives to leave their husbands, the answer is elsewhere: among the first hundred families, the number of couples still together after three years will be made public. A system that wanted to break families apart would not publish a number for everyone to scrutinise.',
+  '{n}. Năm mươi năm nữa thì sao? Cái hệ này còn không?': '{n}. What about fifty years from now? Will this system still exist?',
+  'Chúng tôi trả lời câu này bằng văn bản dài nhất của đề án. Bản ngắn cho cuốn này thế này: hệ được dựng để sống lâu hơn chính những người lập ra nó. Nhưng lời hứa thật không phải "chúng tôi còn mãi". Lời hứa là: khi hệ dừng, hệ dừng đàng hoàng — trả lại mọi thứ, không bỏ dở ai giữa suối.': 'We answer this in the longest document of the whole project. The short version for this book: the system is built to outlive the people who founded it. But the real promise is not “we will last forever”. The promise is: if the system stops, it stops properly — returning everything, leaving no one stranded mid-stream.',
+  'Và nếu năm mươi năm nữa con bạn đọc dòng này: hệ còn hay không thì hỏi mẹ bạn, người từng giữ cuốn sách này. Bà sẽ kể đúng hơn mọi văn bản.': 'And if your child reads this line fifty years from now: whether the system still exists, ask your mother, who once kept this book. She will tell it more truly than any document.',
+  'Hệ không cho vay, và không bao giờ cho vay.': 'The system does not lend, and never will.',
+  'Nợ giữa người giúp và người được giúp là dây siết thầm lặng nhất. Nó biến một lời mời thành một cái móc.': 'Debt between helper and helped is the quietest noose there is. It turns an invitation into a hook.',
+  'Hệ có người ngồi với bạn vẽ lại bài toán nợ, và nối bạn với người tư vấn nợ thật sự khi cần. Miễn phí, và không bán cho bạn thứ gì.': 'The system has people who sit with you to map out the debt problem, and connect you with a real debt counsellor when needed. Free, and nothing is sold to you.',
+  'Nợ xấu nhất không phải nợ tiền — là nợ phải giấu. Ở đây không ai bắt giấu.': 'The worst debt is not money owed — it is debt you have to hide. Here no one makes you hide it.',
+  'Trang {n} — trang của bạn': 'Page {n} — your page',
+  'Để trống. Dành cho bạn viết, vẽ, hoặc không làm gì cả.': 'Left blank. For you to write, draw, or do nothing at all.',
+  'Đây là trang duy nhất của cuốn sách mà nội dung thuộc về bạn.': 'This is the only page in the book whose content belongs to you.',
+  'Dưới cùng có chỗ trống cho chữ ký của người đi cùng đầu tiên. Không phải chữ ký hợp đồng — không có hợp đồng nào ký ở trang này. Là chữ ký kỷ niệm, do chính bạn mời nếu bạn muốn.': 'At the bottom there is space for your first companion’s signature. Not a contract signature — no contract is signed on this page. It is a keepsake signature, invited by you if you wish.',
+  'Năm luật của cuốn sách': 'The book’s five rules',
+  '{n}. Không trang nào bắt bạn làm gì': '{n}. No page makes you do anything',
+  'Cuốn này chỉ trả lời. Quyền quyết ở nơi nó vốn ở — ở bạn.': 'This book only answers. The power to decide stays where it belongs — with you.',
+  '{n}. Mỗi câu đọc thành tiếng được cho một người năm mươi mốt tuổi nghe': '{n}. Every sentence can be read aloud to a fifty-one-year-old',
+  'Người nghe gật, hoặc người nghe hỏi tiếp. Người nghe im vì chán thì trang ấy viết lại.': 'The listener nods, or asks more. If the listener goes quiet from boredom, that page gets rewritten.',
+  '{n}. Sách in giấy, bản trong máy chỉ là bản phụ': '{n}. The book is printed; the digital copy is only secondary',
+  'Giấy không cần pin, không cần mạng, không cần ai cho phép. Thứ quan trọng nhất thì cầm được trên tay — nhất là lúc điện thoại hết pin.': 'Paper needs no battery, no network and no one’s permission. The most important things should be holdable in your hand — especially when your phone is dead.',
+  '{n}. Sách không được sửa lặng lẽ': '{n}. The book is never changed quietly',
+  'Mỗi lần in lại ghi rõ lần thứ mấy, sửa trang nào, vì sao. Bản cũ không thu hồi — bạn giữ bản cũ làm bằng chứng lời hứa ngày bạn vào.': 'Every reprint states which edition it is, which pages changed and why. Old copies are never recalled — you keep yours as proof of the promise made the day you joined.',
+  '{n}. Bảy quyền trong sách là bảy quyền trong máy, không phải bộ thứ hai': '{n}. The seven rights in the book are the seven rights in the system, not a second set',
+  'Hai bộ quyền viết hai giọng thì có ngày lệch nhau, và người thiệt là người cầm giấy.': 'Two sets of rights written in two voices will one day disagree, and the one who loses is the person holding the paper.',
+
+  /* ── Thời gian · thưởng · phạt ── */
+  '{n} giây': '{n} seconds',
+  '+{n} điểm': '+{n} points',
+  'Được gì:': 'What you get:',
+  'Mức:': 'Level:',
+  'Gỡ lại:': 'Recovery:',
+  '· Thời gian · thưởng · phạt.': '· Time · rewards · penalties.',
+  'ĐỒNG HỒ THẬT · BA NGƯỠNG · THƯỞNG VÀ PHẠT': 'A REAL CLOCK · THREE THRESHOLDS · REWARDS AND PENALTIES',
+  'Thời gian nhà mình thật sự dùng': 'Time your family actually spends',
+  'Đồng hồ chỉ chạy khi cửa sổ đang mở và có thao tác trong {n} giây gần nhất. Ngoài hai điều đó thì dừng — nên con số ở đây thấp hơn thời gian ngồi trước máy, và như vậy là đúng: thà đếm thiếu còn hơn tính công cho một tab bỏ quên.': 'The clock only runs while the window is open and there has been activity in the last {n} seconds. Otherwise it stops — so this number is lower than the time spent in front of the screen, and that is correct: better to undercount than to credit a forgotten tab.',
+  'MÀN ĐƯỢC XEM ĐỦ': 'SCREENS FULLY VIEWED',
+  'NGÀY CÓ ĐO': 'DAYS MEASURED',
+  'ĐIỂM ĐANG CÓ': 'CURRENT POINTS',
+  'HÔM NAY ĐI ĐƯỢC BAO NHIÊU · MỤC {n}–{n} PHÚT': 'HOW FAR TODAY · TARGET {n}–{n} MINUTES',
+  'Ba mươi phút là ĐỦ CHỖ cho năm việc trên, không phải một chỉ tiêu nhà mình phải chạy cho hết.': 'Thirty minutes is ENOUGH ROOM for the five tasks above, not a quota your family must use up.',
+  '· còn {n} phút nữa tới mốc {n}': '· {n} more minutes to the {n} mark',
+  'Học kiến thức theo tầng': 'Learn knowledge by tier',
+  'Thực hiện nhiệm vụ': 'Carry out missions',
+  'Cập nhật tin và tham khảo gợi ý': 'Catch up on news and suggestions',
+  'Đọc chuyện của những nhà khác': 'Read other families’ stories',
+  'Nội dung vai này mở được đỡ nổi': 'Content this role can open supports',
+  'nếu xem đủ chuẩn một lượt — {n} màn, đủ khoảng {n} ngày ở mục {n} phút': 'if viewed to standard once — {n} screens, enough for about {n} days at the {n}-minute target',
+  'Sau lượt đầu, thời lượng phải đến từ việc LÀM LẠI — đặt quân mỗi tối, đọc tin mới, kể một chuyện — chứ không từ màn mới. Đó là chỗ mục này sống hay chết.': 'After the first pass, time must come from DOING AGAIN — placing a piece each evening, reading new posts, telling a story — not from new screens. That is where this target lives or dies.',
+  'xem: {n} màn · {n} phút': 'viewed: {n} screens · {n} minutes',
+  'Ba mươi phút một ngày chỉ có nghĩa nếu nội dung đỡ nổi. Máy cộng chuẩn của mọi màn một vai mở được — không gõ tay, nên thêm màn thì con số lên theo.': 'Thirty minutes a day only means something if the content can support it. The machine adds up the standard time of every screen a role can open — nothing typed by hand, so adding screens raises the number automatically.',
+  'BẢY NGÀY GẦN NHẤT': 'LAST SEVEN DAYS',
+  'Cột trống là ngày không mở ứng dụng — đó cũng là dữ liệu thật': 'An empty column is a day the app was not opened — that is real data too',
+  'BA NGƯỠNG CHO MỖI LOẠI MÀN': 'THREE THRESHOLDS FOR EACH SCREEN TYPE',
+  'Ngưỡng MẮC quan trọng ngang ngưỡng LƯỚT': 'The STUCK threshold matters as much as the SKIM threshold',
+  'Dưới ngưỡng tối thiểu là': 'Below the minimum threshold is',
+  'LƯỚT': 'SKIMMED',
+  '— mở rồi đóng, không tính là đã xem. Trong khoảng chuẩn là': '— opened then closed, not counted as viewed. Within the standard range is',
+  'ĐỦ': 'FULL',
+  '. Vượt xa ngưỡng trên là': '. Far above the upper threshold is',
+  'CÓ THỂ ĐANG MẮC': 'POSSIBLY STUCK',
+  '— một nhà ngồi bốn mươi phút ở màn lẽ ra mất sáu phút là một nhà đang cần người gọi điện, không phải một nhà chăm chỉ.': '— a family spending forty minutes on a six-minute screen is a family that needs a phone call, not a hard-working family.',
+  'Loại màn': 'Screen type',
+  'Tối thiểu': 'Minimum',
+  'Chuẩn': 'Standard',
+  'Trần': 'Ceiling',
+  'Vì sao đặt như vậy': 'Why it is set this way',
+  'MÀN ĐÃ MỞ HÔM NAY': 'SCREENS OPENED TODAY',
+  '{n} màn': '{n} screens',
+  'Màn': 'Screen',
+  'Thời gian': 'Time',
+  'Xếp': 'Rating',
+  'Ghi chú': 'Notes',
+  'Lướt': 'Skimmed',
+  'Chưa đủ {n} giây — chưa tính là đã xem': 'Under {n} seconds — not yet counted as viewed',
+  'CHUẨN HOÀN THÀNH NHIỆM VỤ': 'MISSION COMPLETION STANDARDS',
+  'Đo từ lúc việc được giao tới lúc có bằng chứng': 'Measured from when the task is assigned to when evidence arrives',
+  'Loại việc': 'Task type',
+  'Xong sớm': 'Done early',
+  'Hạn': 'Deadline',
+  'Trễ thì sao': 'If late',
+  'Ghi nhật ký tối, đánh dấu vòng nhắc, làm bài của ngày': 'Write the evening journal, mark the reminder loop, do the day’s exercise',
+  'Quá {n} giờ: việc của ngày đó không được tính. Không cộng dồn sang hôm sau.': 'After {n} hours: that day’s task does not count. It does not carry over to the next day.',
+  'Nhìn lại tuần, nộp minh chứng tuần, buổi ngồi lại': 'Weekly review, weekly evidence, the sit-down session',
+  'Quá {n} ngày: trừ {n} điểm KPI của tuần đó.': 'After {n} days: minus {n} KPI points for that week.',
+  'Tổng kết tháng, đối chiếu bảng số, đọc lại bản đồ cá nhân': 'Monthly summary, check the numbers board, reread the personal map',
+  'Quá {n} ngày: trừ {n} điểm KPI của tháng đó.': 'After {n} days: minus {n} KPI points for that month.',
+  'Chạm của đội ngũ': 'Team contact',
+  'Coach chạm nhà băng đỏ, Tư vấn gọi lại nhà đã hẹn': 'Coach contacts red-band families, Consultant calls back families as promised',
+  'Quá {n} giờ với nhà băng đỏ: ghi vào hồ sơ, trừ {n} điểm KPI tháng.': 'After {n} hours with a red-band family: noted on file, minus {n} monthly KPI points.',
+  'Hồ sơ ca trong ngày': 'Same-day case notes',
+  'Ghi hồ sơ ca ngay trong ngày làm việc': 'Write case notes on the same working day',
+  'Quá {n} giờ: ca đó không được tính vào KPI tháng.': 'After {n} hours: that case does not count toward the monthly KPI.',
+  'Duyệt và phản hồi': 'Review and respond',
+  'Duyệt tài liệu, trả lời yêu cầu mở thêm tư liệu, xét minh chứng': 'Review documents, answer requests to unlock more materials, assess evidence',
+  'Quá {n} giờ: yêu cầu tự động chuyển lên cấp trên và ghi vào hồ sơ người trễ.': 'After {n} hours: the request escalates automatically and is noted on the late person’s file.',
+  'THƯỞNG': 'REWARDS',
+  'Thứ đắt nhất Học viện trao đi là tri thức và người, không phải tiền': 'The most valuable things the Academy gives are knowledge and people, not money',
+  'Giữ chuỗi {n} ngày liên tiếp có ghi sổ': 'Keep a {n}-day logging streak',
+  'Mở thêm {n} tư liệu tầng đang học, do Coach chọn đúng chỗ nhà mình đang mắc': 'Unlock {n} more resources for your current tier, chosen by the Coach for exactly where your family is stuck',
+  'Vì sao đặt như vậy: Người đã giữ được bảy ngày là người sẽ dùng tư liệu, không phải người cất đi.': 'Why: someone who has kept going for seven days will use the resources, not shelve them.',
+  'Giữ chuỗi {n} ngày liên tiếp': 'Keep a {n}-day streak',
+  'Một phiên hỏi đáp {n} phút với Coach, ngoài lịch thường': 'A {n}-minute Q&A session with the Coach, outside the regular schedule',
+  'Vì sao đặt như vậy: Đúng lúc thói quen vừa thành hình là lúc một buổi hỏi đáp có giá trị nhất.': 'Why: right when a habit has just formed is when a Q&A session is most valuable.',
+  'KPI đạt từ {n}% trong một tháng': 'KPI of {n}% or more in a month',
+  'Được xin thêm tư liệu ngoài trần {n}% · ưu tiên xét mở tầng trên': 'May request resources beyond the {n}% cap · priority review to unlock the next tier',
+  'Vì sao đặt như vậy: Đây là cửa mà anh Quang đã đặt: chỉ mở thêm cho người đạt KPI {n}%.': 'Why: this is the gate Mr. Quang set — extra access only for those reaching {n}% KPI.',
+  'KPI đạt từ {n}% ba tháng liên tiếp': 'KPI of {n}% or more for three consecutive months',
+  'Mở sớm một tầng · một buổi với Senior Coach · vào bảng vinh danh': 'Unlock a tier early · a session with a Senior Coach · a place on the honour board',
+  'Vì sao đặt như vậy: Ba tháng liên tiếp là bằng chứng của nếp, không phải của một tháng may mắn.': 'Why: three months in a row is evidence of a habit, not one lucky month.',
+  'Hoàn thành {n}% việc đúng hạn trong tháng': 'Complete {n}% of tasks on time in a month',
+  'Quyền chọn trước lịch với Coach trong tháng sau': 'First pick of Coach time slots next month',
+  'Vì sao đặt như vậy: Thưởng bằng quyền chọn thì không tốn gì mà lại rất có giá với người bận.': 'Why: rewarding with choice costs nothing and is highly valued by busy people.',
+  'Bài dự thi đạt ở mốc {n} hoặc {n} ngày': 'A competition entry passes at the {n}- or {n}-day milestone',
+  'HỌC BỔNG {n}% cho lộ trình tiếp theo · bài vào tuyển tập của Học viện': '{n}% SCHOLARSHIP for the next pathway · the entry joins the Academy’s anthology',
+  'Vì sao đặt như vậy: Học bổng trả bằng chỗ học tiếp, nên người nhận ở lại lâu hơn.': 'Why: the scholarship pays in further study, so recipients stay longer.',
+  'Giới thiệu một nhà và nhà đó đi qua mốc {n} ngày': 'Refer a family who passes the {n}-day milestone',
+  'Hoa hồng theo bảng, trần {n}% · cộng điểm rèn luyện': 'Commission per schedule, capped at {n}% · plus training points',
+  'Vì sao đặt như vậy: Tính theo nhà Ở LẠI, không tính theo nhà đã ký. Đó là chỗ khác biệt.': 'Why: counted by families who STAY, not families who sign. That is the difference.',
+  'PHẠT': 'PENALTIES',
+  'Không để trừng phạt ai — để con số KPI nói đúng sự thật': 'Not to punish anyone — so the KPI number tells the truth',
+  'Mọi mức phạt đều có ba thứ: báo trước, ngưỡng rõ, và đường gỡ lại. Trừ đúng một điều — Luật LV-{n} — mức đó anh Quang đặt và không có ngoại lệ, kể cả với người giỏi nhất.': 'Every penalty has three things: advance notice, a clear threshold, and a way to recover. Except exactly one — Rule LV-{n} — set by Mr. Quang with no exceptions, even for the very best.',
+  'Xem lướt: mở màn dưới ngưỡng tối thiểu rồi đóng': 'Skimming: opening a screen below the minimum threshold then closing it',
+  'Không tính là đã xem': 'Not counted as viewed',
+  'Mở lại và ở đủ ngưỡng. Không trừ điểm.': 'Reopen and stay long enough. No points deducted.',
+  'Vì sao: Đây không phải phạt, chỉ là không tính. Xem không phải là làm.': 'Why: this is not a penalty, it just does not count. Viewing is not doing.',
+  'Trễ việc tuần': 'Late weekly task',
+  'Trừ {n} điểm KPI của tuần đó': 'Minus {n} KPI points for that week',
+  'Làm bù trong tuần kế tiếp thì được hoàn lại {n} điểm.': 'Make it up the following week and {n} points are restored.',
+  'Vì sao: Có đường gỡ, vì trễ một tuần không phải là hỏng cả tháng.': 'Why: there is a way back, because one late week does not ruin the whole month.',
+  'Trễ việc tháng': 'Late monthly task',
+  'Trừ {n} điểm KPI của tháng đó': 'Minus {n} KPI points for that month',
+  'Không hoàn lại. Tháng sau làm đủ thì KPI tháng sau bình thường.': 'Not restored. Do it fully next month and next month’s KPI is normal.',
+  'Vì sao: Việc tháng mà trễ thì không bù được — tháng đã trôi qua rồi.': 'Why: a late monthly task cannot be made up — the month is already gone.',
+  'Đội ngũ: không chạm nhà băng đỏ trong {n} giờ': 'Team: no contact with a red-band family within {n} hours',
+  'Trừ {n} điểm KPI tháng · ghi vào hồ sơ': 'Minus {n} monthly KPI points · noted on file',
+  'Chạm trong {n} giờ thì chỉ ghi nhận, không trừ.': 'Contact within {n} hours is just noted, no deduction.',
+  'Vì sao: Nhà băng đỏ là nhà sắp rơi. Bốn mươi tám giờ là ngưỡng cứu được.': 'Why: a red-band family is about to fall. Forty-eight hours is the window in which they can be saved.',
+  'Đội ngũ: hồ sơ ca không ghi trong ngày': 'Team: case notes not written the same day',
+  'Ca đó không tính vào KPI tháng': 'That case does not count toward the monthly KPI',
+  'Không có đường gỡ. Ghi muộn vẫn phải ghi, nhưng không được tính.': 'No way back. Late notes must still be written, but they do not count.',
+  'Vì sao: Hồ sơ ghi sau ba ngày thì đã rơi mất một nửa chi tiết. Tính công cho nó là tự dối mình.': 'Why: notes written three days later have already lost half the detail. Giving credit for them is self-deception.',
+  'Đội ngũ: đưa thông tin cá nhân, làm việc ngoài hệ thống': 'Team: sharing personal contact details, working outside the system',
+  'HẠ {n}% KPI TRONG BA THÁNG · ghi vào hồ sơ · xét lại hợp đồng': '{n}% KPI CUT FOR THREE MONTHS · noted on file · contract review',
+  'Không có đường gỡ trong ba tháng đó.': 'No way back during those three months.',
+  'Vì sao: Luật LV-{n}. Mức này anh Quang đặt và không có ngoại lệ, kể cả với người giỏi nhất.': 'Why: Rule LV-{n}. Set by Mr. Quang with no exceptions, even for the very best.',
+  'Đội ngũ: lưu trữ quá {n}% tài nguyên trong {n} ngày': 'Team: storing more than {n}% of resources within {n} days',
+  'Gửi cảnh báo tới Admin hệ thống để theo dõi hành vi': 'An alert is sent to the system Admin to monitor the behaviour',
+  'Không chặn việc. Chỉ theo dõi, và hỏi khi cần.': 'Work is not blocked. Only monitored, with questions asked when needed.',
+  'Vì sao: Không kết tội ai. Nhưng một người tải nhiều bất thường thì Admin phải biết.': 'Why: no one is accused. But if someone downloads unusually much, the Admin needs to know.',
+  'ĐIỂM CỦA TÔI': 'MY POINTS',
+  'Cộng từ thứ đo được, không cộng cho việc mở nhiều màn': 'Added from measurable things, not from opening many screens',
+  'Chưa có điểm nào — và điều đó bình thường ở tuần đầu. Điểm đầu tiên tới ở ngày thứ bảy có ghi sổ liên tiếp: cộng {n}. Đó là mốc gần nhất, và cũng là mốc khó nhất, vì nó đòi bảy tối liền không bỏ.': 'No points yet — and that is normal in the first week. The first points come on the seventh consecutive day of logging: +{n}. It is the nearest milestone, and also the hardest, because it takes seven evenings in a row without a miss.',
+  'QUY ĐỔI ĐIỂM': 'REDEEMING POINTS',
+  'Phần mở thêm cửa đứng trước phần quà vật chất': 'Unlocking more access comes before material gifts',
+  'Điểm': 'Points',
+  'Đổi được gì': 'What you can get',
+  'Loại': 'Type',
+  'Đủ chưa': 'Enough yet',
+  'Dữ liệu này của ai': 'Whose data this is',
+  'Số liệu thời gian nằm trong hồ sơ của chính tài khoản này và chỉ đi lên máy chủ theo đường đồng bộ khoá theo tài khoản. Coach và Tư vấn thấy được mức tổng hợp của nhà mình phụ trách — để biết lúc nào cần gọi điện — chứ không thấy từng thao tác. Không nhà nào đọc được số của nhà khác.': 'Time data sits in this account’s own records and only reaches the server through account-locked sync. Coaches and Consultants see the summary for the families they look after — to know when to call — not individual actions. No family can read another family’s numbers.'
+});
+
+})();
+
+/* ═════════ src/tu-dien-en-07.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — TỪ ĐIỂN TIẾNG ANH · ĐỢT 7: BẢNG TIN CỘNG ĐỒNG · BÀN CỜ HÀNH TRÌNH
+   Hai màn khách mở nhiều nhất sau màn đầu. Mã kho (HT_TANG · BD_CAP ·
+   FAMILIES · CUHICH…) giữ nguyên trong bản dịch vì là tên kho thật.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.TU_DIEN_EN = G.TU_DIEN_EN || {};
+(function (d) { for (var k in d) G.TU_DIEN_EN[k] = d[k]; })({
+  /* ── Bảng tin cộng đồng ── */
+  'Đạt:': 'Pass:',
+  'Trượt:': 'Fail:',
+  'Tầng {n} · nhận được bí kíp tới': 'Tier {n} · can receive guides up to',
+  'Bí kíp {n} sao của tầng {n}: trao được.': '{n}-star guide for tier {n}: can be given.',
+  'Đếm từ:': 'Counted from:',
+  'Chưa hỏi được máy chủ. Sổ đếm có rồi, nhưng chưa nối được thì không in con số cũ ra thay.': 'Could not reach the server. The counter exists, but until it connects we will not show an old number in its place.',
+  'Bàn cờ hành trình': 'Journey board',
+  'Một nhà vừa lên tầng mới': 'A family just reached a new tier',
+  'Một câu chuyện được chọn': 'A story was selected',
+  'Một nhà kèm được một nhà khác lên tầng': 'A family helped another family move up a tier',
+  'Chờ chủ hệ chốt:': 'Awaiting the owner’s decision:',
+  '· Không phải nhà mình đi một mình.': '· Your family is not walking alone.',
+  'BẢNG TIN CỘNG ĐỒNG': 'COMMUNITY NEWS',
+  'Không phải nhà mình đi một mình': 'Your family is not walking alone',
+  'Biết có những nhà khác cũng đang đi, tối nay, là thứ giữ người ta lại — mạnh hơn mọi lời động viên. Với điều kiện mỗi con số ở đây nói được nó đếm từ đâu.': 'Knowing other families are on the road too, tonight, is what keeps people going — stronger than any encouragement. Provided every number here can say where it was counted from.',
+  'Nhà mình chưa đặt quân nào. Đặt một quân ở': 'Your family has not placed a piece yet. Place one on',
+  'là ô đầu tiên có màu, và bảng tin này bắt đầu có số của chính nhà mình.': 'and it becomes the first coloured square — and this board starts showing your family’s own numbers.',
+  'TIN CỦA NHÀ MÌNH': 'OUR FAMILY’S NEWS',
+  'Ghi ngay lúc việc xảy ra, đếm từ sổ bàn cờ trong máy nhà mình.': 'Recorded the moment it happens, counted from the board log on your own device.',
+  'Chưa có dòng nào. Tối nay cả nhà đặt đủ một quân ở': 'No entries yet. Tonight, place one full piece as a family on',
+  'thì dòng đầu tiên hiện ở đây ngay — không phải đợi máy chủ, vì việc ấy xảy ra ngay trong máy này.': 'and the first entry appears here straight away — no waiting for the server, because it happens right on this device.',
+  'BẢNG TIN CỦA TẦNG {n}': 'TIER {n} NEWS',
+  'Tầng nào có bảng tin của tầng ấy.': 'Each tier has its own news board.',
+  'Nhà có mã số F-{n} vừa vượt lên tầng {n}.': 'Family F-{n} just moved up to tier {n}.',
+  'Đăng ở: Bảng tin của tầng nhà ấy VỪA RỜI': 'Posted on: the board of the tier that family JUST LEFT',
+  'Nhà đang đọc muốn vượt tầng, và muốn mã số nhà mình được thông báo như thế.': 'The reading family wants to move up, and wants its own code announced the same way.',
+  'Nhà có mã số F-{n} chia sẻ một chuyện hay — được thưởng {n} điểm và tặng một bí kíp {n} sao của tầng {n}.': 'Family F-{n} shared a great story — awarded {n} points and a {n}-star guide for tier {n}.',
+  'Đăng ở: Bảng tin của tầng nhà ấy đang ở': 'Posted on: the board of that family’s current tier',
+  'Thấy một nhà cùng tầng được thưởng thì chuyện của mình cũng đáng kể ra.': 'Seeing a same-tier family rewarded shows your own story is worth telling too.',
+  'Mã số nhà F-{n} tích cực kèm, và nhà F-{n} đã vượt lên tầng {n} — nhà kèm được thưởng {n} điểm và tặng bí kíp {n} sao.': 'Family F-{n} mentored actively, and family F-{n} moved up to tier {n} — the mentoring family is awarded {n} points and a {n}-star guide.',
+  'Đăng ở: Bảng tin của CẢ HAI tầng: tầng nhà kèm, và tầng nhà được kèm vừa rời': 'Posted on: the boards of BOTH tiers — the mentor’s tier, and the tier the mentored family just left',
+  'Nhà tầng năm muốn kèm; nhà tầng dưới muốn được kèm. Một dòng chạy cả hai phía.': 'Tier-five families want to mentor; lower-tier families want to be mentored. One line works both ways.',
+  'Bảng này đang trống vì chưa có tin thật.': 'This board is empty because there is no real news yet.',
+  'Trên kia là ĐÚNG những dòng sẽ hiện khi có nhà đầu tiên vượt tầng. Ba sổ đếm còn thiếu:': 'Above are EXACTLY the lines that will appear when the first family moves up. Three counters are still missing:',
+  'Bao nhiêu nhà đã xong một chặng —': 'How many families have finished a stage —',
+  'Bao nhiêu chuyện đã được chọn —': 'How many stories have been selected —',
+  'Bao nhiêu nhà kèm được một nhà lên tầng —': 'How many families have mentored another family up a tier —',
+  'Chỉ nêu mã số, không nêu tên.': 'Codes only, never names.',
+  'FAMILIES mang cả tên nhà, tên học viên, tên phụ huynh và tên Coach. Bảng tin chỉ được chạm vào cột id. Lọc trên màn hình không phải bảo vệ dữ liệu — nên phép kiểm soi thẳng chuỗi HTML xem bốn cột kia có lọt ra không.': 'FAMILIES holds family names, student names, parent names and Coach names. The news board may only touch the id column. Filtering on screen is not data protection — so the check inspects the HTML string directly to see whether those four columns leak.',
+  'BÍ KÍP — QUÀ CỦA CẢ HỆ': 'GUIDES — GIFTS FROM THE WHOLE SYSTEM',
+  'Quà là một bí kíp, chọn theo tầng. Không trao bí kíp vượt tầng.': 'The gift is a guide, chosen by tier. No guides beyond your tier.',
+  'Không trao bí kíp vượt tầng.': 'No guides beyond your tier.',
+  'Bí kíp năm sao trao cho nhà tầng một thì nhà ấy đọc mà không dùng được — nền chưa có. Tệ hơn: nó dạy rằng phần thưởng là thứ NHẬN được chứ không phải thứ MỞ được, mà cả hệ này dựng trên nghĩa thứ hai.': 'A five-star guide given to a tier-one family gets read but cannot be used — the foundation is not there yet. Worse, it teaches that a reward is something you RECEIVE rather than something you UNLOCK, and this whole system is built on the second meaning.',
+  '(số sao đọc từ HT_TANG.so)': '(star count read from HT_TANG.so)',
+  'SỐ CỦA CẢ CỘNG ĐỒNG — {n} CON SỐ CHƯA HIỆN ĐƯỢC': 'COMMUNITY NUMBERS — {n} NUMBERS NOT YET SHOWABLE',
+  'Mỗi con số khai nó đếm từ đâu. Không khai được thì không hiện.': 'Every number states where it is counted from. If it cannot, it is not shown.',
+  '○ Bao nhiêu nhà đã xong một chặng': '○ How many families have finished a stage',
+  'Đếm từ: Sổ đếm cộng đồng ở máy chủ (GITA_SoCongDong.gs), cộng khi nhà đã BẬT chia sẻ và tự báo xong một chặng. Nhà chưa bật thì không nằm trong con số này.': 'Counted from: the community counter on the server (GITA_SoCongDong.gs), incremented when a family has TURNED ON sharing and reports finishing a stage. Families who have not turned it on are not in this number.',
+  '○ Bao nhiêu nhà đang ở mỗi tầng': '○ How many families are on each tier',
+  'Đếm từ: Cùng sổ ấy. Nói "đang ở", nên khi một nhà báo tầng mới thì máy chủ TRỪ ở tầng cũ rồi mới cộng ở tầng mới — cộng dồn mà không trừ là nói sai.': 'Counted from: the same counter. It says “currently on”, so when a family reports a new tier, the server SUBTRACTS from the old tier before adding to the new one — adding without subtracting would be false.',
+  '○ Bao nhiêu chuyện đã được chọn': '○ How many stories have been selected',
+  'Đếm từ: Hộp thư chuyện ở máy chủ, đếm những chuyện đã ở trạng thái da-chon. Máy nhận chuyện và soi đủ sáu tiêu chí; NGƯỜI của Học viện đọc và đổi sang da-chon.': 'Counted from: the story inbox on the server, counting stories in the da-chon (selected) state. The machine receives stories and checks all six criteria; a PERSON from the Academy reads them and marks them da-chon.',
+  'NHÀ MÌNH CHƯA GÓP SỐ': 'YOUR FAMILY IS NOT CONTRIBUTING NUMBERS YET',
+  'Một con số gom lén thì tới ngày có người hỏi "lấy ở đâu ra" là hết đường trả lời — và lúc ấy mất luôn cả những con số đã xin phép tử tế. Bật là một hành động, tắt không phải.': 'A number gathered secretly has no answer the day someone asks “where did this come from?” — and then even the numbers collected with proper permission are lost. Turning it on is an action; leaving it off is not.',
+  'Máy chủ cộng vào một ô đếm, không ghi một dòng cho mỗi nhà. Chặn đếm hai lần bằng một DẤU MỘT CHIỀU băm từ tài khoản cộng khoá máy chủ — đủ để biết người này đã báo rồi, và không lần ngược ra được ai. Giữ hàng thì sáu tháng sau ai đọc được bảng tính cũng đọc được nhà nào xong tầng nào ngày nào, và cái bảng ấy sẽ có người xin.': 'The server adds to a single counter, never writing a row per family. Double counting is blocked by a ONE-WAY MARK hashed from the account plus a server key — enough to know this person already reported, impossible to trace back to anyone. Keep rows, and six months later anyone who can read the spreadsheet can see which family finished which tier on which day — and someone will ask for that spreadsheet.',
+  'Một con số đẹp không nguồn, tới ngày có người hỏi mà không trả lời được, thì mất không phải một con số — mất cả những con số THẬT đứng cạnh nó.': 'A pretty number with no source, the day someone asks and it cannot be answered, costs not one number — it costs all the REAL numbers standing next to it.',
+  'BỐN LOẠI TIN SẼ ĐĂNG': 'FOUR KINDS OF NEWS WE WILL POST',
+  'Mỗi loại khai nó đếm từ đâu, và vì sao nó đáng đăng.': 'Each kind states where it is counted from, and why it is worth posting.',
+  'Một nhà vừa xong một chặng': 'A family just finished a stage',
+  'Nhà nào kín đủ số ô của bàn cờ tầng ấy.': 'Any family that fills every square of that tier’s board.',
+  'Sổ bàn cờ của chính nhà ấy, gửi về khi họ bật chia sẻ.': 'That family’s own board log, sent in when they turn on sharing.',
+  'Đây là bằng chứng mạnh nhất mà không cần lời: có nhà đã đi hết một chặng thật.': 'This is the strongest proof without words: a family really did complete a stage.',
+  'Một nhà vừa mở được phần thưởng': 'A family just unlocked a reward',
+  'Nhà nào chạm một mốc trong BD_CAP và mở được thứ mốc ấy hứa.': 'Any family that reaches a milestone in BD_CAP and unlocks what it promises.',
+  'Cùng sổ ấy — mốc và phần mở đã khai sẵn ở BD_CAP.': 'The same log — milestones and unlocks are already declared in BD_CAP.',
+  'Phần thưởng ở đây không phải quà, là MỞ THÊM. Tin này nói cho nhà đang đi biết cửa sau còn gì.': 'The reward here is not a gift, it is MORE ACCESS. This news tells families on the road what lies behind the next door.',
+  'Nhà nào xong thử thách của tầng và mở tầng kế.': 'Any family that completes the tier challenge and opens the next tier.',
+  'HT_TANG cho điều kiện, bàn cờ cho bằng chứng.': 'HT_TANG gives the conditions; the board gives the evidence.',
+  'Lên tầng là việc hiếm và chậm. Thấy nó xảy ra với người khác là thấy nó xảy ra được.': 'Moving up a tier is rare and slow. Seeing it happen to others shows it can happen.',
+  'Nhà nào gửi chuyện, và chuyện ấy qua đủ sáu tiêu chí.': 'Any family that submits a story that passes all six criteria.',
+  'Người của Học viện đọc và chọn. Không máy nào chọn hộ.': 'People from the Academy read and choose. No machine chooses for them.',
+  'Số nói rằng có người đi. Chuyện nói rằng đi được. Hai thứ khác nhau, và thứ hai mới giữ người.': 'Numbers say people are walking. Stories say it can be done. Two different things — and the second is what keeps people.',
+  'Nhà đang ở tầng năm kèm một nhà, và nhà được kèm lên tầng.': 'A tier-five family mentors another, and the mentored family moves up.',
+  'Cặp nhà kèm đã khai, và sổ bàn cờ của nhà được kèm gửi về khi họ bật chia sẻ.': 'The declared mentoring pair, plus the mentored family’s board log sent in when they turn on sharing.',
+  'Đây là tin khoá cả thang: nó cho nhà đang đi thấy rằng đi hết đường thì việc tiếp theo không phải là dừng, mà là dắt một nhà nữa. Và nó là tin DUY NHẤT trên bảng có hai mã số — người kèm và người được kèm cùng đứng trong một dòng.': 'This is the news that completes the ladder: it shows families on the road that at the end, the next step is not to stop but to lead another family. And it is the ONLY news item with two codes — mentor and mentored standing in the same line.',
+  'SÁU TIÊU CHÍ ĐỂ MỘT CÂU CHUYỆN ĐƯỢC CHỌN': 'SIX CRITERIA FOR A STORY TO BE SELECTED',
+  'Qua năm trên sáu vẫn là trượt. Tiêu chí thứ sáu — đồng ý bằng chữ — không bao giờ được bỏ qua vì chuyện hay, và tiêu chí thứ tư bảo vệ người không có mặt lúc gửi chuyện.': 'Five out of six is still a fail. The sixth criterion — written consent — is never waived for a good story, and the fourth protects people who were not present when the story was sent.',
+  '{n}. Có việc làm thật, không chỉ có cảm xúc': '{n}. Real actions, not just feelings',
+  'Kể được ít nhất một việc cụ thể nhà mình đã làm, và làm bao lâu.': 'Describes at least one specific thing the family did, and for how long.',
+  '"Nhà em thay đổi nhiều lắm, cảm ơn GITA." — không ai học được gì từ câu này.': '“Our family has changed so much, thank you GITA.” — no one learns anything from that.',
+  '{n}. Có chỗ khó, không chỉ có kết quả': '{n}. The hard parts, not just results',
+  'Nói được chỗ nhà mình suýt bỏ, và cái gì giữ lại.': 'Says where the family nearly gave up, and what kept them going.',
+  'Chuyện toàn thuận là chuyện làm nhà đang khó thấy mình kém, không thấy được cổ vũ.': 'A story where everything went smoothly makes struggling families feel inadequate rather than encouraged.',
+  '{n}. Có số, dù nhỏ': '{n}. Numbers, however small',
+  'Một con số của chính nhà ấy: bao nhiêu tối, bao nhiêu tuần, lệch bao nhiêu phút.': 'A number from that family itself: how many evenings, how many weeks, how many minutes off.',
+  'Không số thì không kiểm được, và không kiểm được thì không đăng được.': 'No numbers means it cannot be checked, and if it cannot be checked it cannot be posted.',
+  '{n}. Không nêu tên người thứ ba khi chưa hỏi': '{n}. No third-party names without asking',
+  'Con, vợ chồng, ông bà trong chuyện đều được hỏi trước, hoặc đã ẩn danh.': 'Children, spouses and grandparents in the story have all been asked first, or are anonymised.',
+  'Chuyện hay về một đứa trẻ, đăng lên, mười năm sau nó đọc lại. Đó là người không được hỏi.': 'A lovely story about a child gets posted, and ten years later the child reads it. That is the person who was never asked.',
+  '{n}. Không quảng cáo, không xin xỏ': '{n}. No advertising, no begging',
+  'Kể việc nhà mình, không kêu gọi ai mua gì.': 'Tells the family’s own story, without urging anyone to buy anything.',
+  'Một chuyện có mùi bán hàng làm hỏng lòng tin của cả bảng tin, không riêng chuyện ấy.': 'A story that smells of selling damages trust in the whole board, not just that story.',
+  '{n}. Nhà ấy đồng ý bằng chữ cho đăng': '{n}. The family gives written consent to post',
+  'Có dòng đồng ý, ghi ngày, và nói rõ đăng ở đâu.': 'A consent line, dated, stating clearly where it will be posted.',
+  'Đồng ý miệng lúc đang vui không phải đồng ý. Sáu tháng sau người ta đổi ý là chuyện thường.': 'Verbal agreement in a happy moment is not consent. People changing their minds six months later is normal.',
+  'Người của Học viện đọc và chọn. Máy chỉ soi được sáu tiêu chí có đủ cột hay chưa, không đọc được chuyện hay hay dở.': 'People from the Academy read and choose. The machine can only check whether the six criteria fields are filled — it cannot tell a good story from a bad one.',
+  'CHUYỆN ĐƯỢC CHỌN THÌ NHÀ ẤY ĐƯỢC GÌ': 'WHAT A FAMILY GETS WHEN ITS STORY IS SELECTED',
+  'Luôn có:': 'Always:',
+  'Ngoài điểm và bí kíp, nhà được chọn còn được một thứ không tốn gì: chuyện của họ đứng trên màn của những nhà đang đi. Với phần lớn người, đó mới là phần thưởng.': 'Beyond points and a guide, the selected family gets something that costs nothing: their story appears on the screens of families still on the road. For most people, that is the real reward.',
+  'NĂM ĐIỀU BẢNG TIN KHÔNG BAO GIỜ LÀM': 'FIVE THINGS THE NEWS BOARD NEVER DOES',
+  'Không nêu tên một nhà khi chưa có đồng ý bằng chữ': 'Never names a family without written consent',
+  'Kể cả khi chuyện hay, kể cả khi họ đã kể công khai ở chỗ khác.': 'Even if the story is good, even if they have told it publicly elsewhere.',
+  'Không xếp hạng nhà nọ với nhà kia': 'Never ranks one family against another',
+  'Cổ vũ là "có người cũng đang đi", không phải "có người đi nhanh hơn bạn". Câu thứ hai làm nhà đang đuối bỏ cuộc nhanh hơn im lặng.': 'Encouragement is “others are walking too”, not “others are walking faster than you”. The second makes a flagging family quit faster than silence would.',
+  'Không hiện con số không có nguồn': 'Never shows a number without a source',
+  'Kể cả khi con số ấy đẹp. Nhất là khi nó đẹp.': 'Even if the number looks good. Especially if it looks good.',
+  'Không đăng chuyện của nhà đang trong mùa khó': 'Never posts the story of a family in a hard season',
+  'Nhà đang khó mà thấy chuyện mình thành bài học cho người khác thì lần sau họ không kể nữa. Đợi qua mùa rồi hỏi lại.': 'A struggling family who sees its story turned into a lesson for others will not share again. Wait until the season passes, then ask again.',
+  'Không in tên nhà — chỉ in MÃ SỐ': 'Never prints family names — only CODES',
+  'FAMILIES mang cả tên nhà, tên học viên, tên phụ huynh và tên Coach. Mã số đủ để nhà ấy nhận ra mình; tên thì thừa, và thừa ở đây là một người thật bị đăng lên.': 'FAMILIES holds family, student, parent and Coach names. A code is enough for the family to recognise itself; a name is surplus — and surplus here means a real person being published.',
+  'Không trao bí kíp vượt tầng, kể cả cho người vừa kèm được một nhà': 'Never gives guides beyond the tier, even to someone who just mentored a family',
+  'Bí kíp năm sao trao cho nhà tầng một là thứ đọc mà không dùng được — và nó dạy rằng phần thưởng là thứ NHẬN được chứ không phải thứ MỞ được. Nó cũng là một đường vòng qua trần {n}% nội dung của khách.': 'A five-star guide given to a tier-one family can be read but not used — and it teaches that a reward is something RECEIVED rather than UNLOCKED. It is also a way around the {n}% client content cap.',
+  'Không để bảng tin chạy tự động không ai đọc lại': 'Never lets the board run automatically with no one checking',
+  'Một dòng tin sai đăng lúc hai giờ sáng vẫn là một dòng tin sai. Mọi tin có tên người đều qua mắt người trước khi lên.': 'A wrong post at two in the morning is still a wrong post. Every item with a person’s name passes human eyes before it goes up.',
+  'Sáu luật của bảng tin': 'Six rules of the news board',
+  '{n}. Mỗi con số khai nó đếm từ đâu, không khai được thì không hiện': '{n}. Every number states its source; if it cannot, it is not shown',
+  'Ô trống kèm câu "chưa có sổ đếm" giữ được lòng tin. Một con số đẹp không nguồn thì tiêu nó.': 'An empty box saying “no counter yet” keeps trust. A pretty number with no source spends it.',
+  '{n}. Số nói có người đi, chuyện nói đi được': '{n}. Numbers say people are walking; stories say it can be done',
+  'Hai thứ khác nhau. Số làm người ta yên tâm, chuyện làm người ta bước. Thiếu chuyện thì bảng tin chỉ là bảng điểm.': 'Two different things. Numbers reassure; stories make people move. Without stories, the news board is just a scoreboard.',
+  '{n}. Chuyện phải qua đủ sáu tiêu chí, không phải phần lớn': '{n}. Stories must pass all six criteria, not most of them',
+  'Qua năm trên sáu vẫn là trượt. Cái bị bỏ qua thường đúng là cái bảo vệ người không có mặt.': 'Five out of six is still a fail. The one skipped is usually the one that protects someone who is not present.',
+  '{n}. Người chọn chuyện, không phải máy': '{n}. People choose stories, not machines',
+  'Máy soi được sáu tiêu chí có đủ cột hay chưa. Máy không đọc được một chuyện hay hay dở.': 'The machine can check whether the six criteria fields are filled. It cannot tell whether a story is good or bad.',
+  '{n}. Quà phải dùng được trong hành trình, không đổi ra tiền': '{n}. Gifts must be usable on the journey, never convertible to money',
+  'Đổi ra tiền được thì sáu tháng sau sẽ có chuyện viết cho hay chứ không phải cho thật.': 'If gifts could be cashed in, six months later stories would be written to impress rather than to be true.',
+  '{n}. Nhà được chọn luôn được một thứ dù chưa chốt quà': '{n}. A selected family always gets something, even before gifts are settled',
+  'Chuyện của họ đứng trên màn của những nhà đang đi. Với phần lớn người, đó mới là phần thưởng.': 'Their story appears on the screens of families still on the road. For most people, that is the real reward.',
+
+  /* ── Bàn cờ hành trình ── */
+  'việc của Mẹ': 'Mum’s task',
+  'việc của Bố': 'Dad’s task',
+  'việc của Con': 'Child’s task',
+  '· {n} ngày': '· {n} days',
+  'chưa chọn': 'not chosen',
+  'Chọn một việc trong mười gợi ý bên dưới.': 'Choose one task from the ten suggestions below.',
+  'Nói trước thì người ta biết cái mệt tuần sau là chuyện đã được báo, không phải dấu hiệu mình kém. Nói sau thì chỉ là an ủi.': 'Said beforehand, people know next week’s tiredness was expected, not a sign they are failing. Said afterwards, it is only consolation.',
+  'Mẹ': 'Mum',
+  'Bố': 'Dad',
+  '· Bàn cờ hành trình.': '· Journey board.',
+  'BÀN CỜ HÀNH TRÌNH': 'JOURNEY BOARD',
+  'Mỗi tầng một bàn cờ, mỗi ngày một ô — và một quân là ba việc: mẹ một, bố một, con một.': 'One board per tier, one square per day — and each piece is three tasks: one for Mum, one for Dad, one for the child.',
+  'Thanh tiến độ nói một con số. Bàn cờ nói một câu chuyện: chỗ nào dày, chỗ nào thưa, tuần nào nhà mình đuối, tuần nào bật lên.': 'A progress bar tells a number. The board tells a story: where it is dense, where it is sparse, which weeks your family flagged and which weeks it bounced back.',
+  '/ {n} ô đã có màu': '/ {n} squares coloured',
+  'điểm KPI': 'KPI points',
+  'ngày liên tiếp': 'days in a row',
+  '/ {n} bánh đà đã chạm': '/ {n} flywheels touched',
+  'Việc của tầng này:': 'This tier’s task:',
+  'KHÔNG SỬA GÌ CẢ': 'CHANGE NOTHING',
+  'Chặng này chỉ có một việc: NHÌN và GHI. Mười gợi ý bên dưới đều là việc nhìn và ghi — không phải việc sửa.': 'This stage has only one job: LOOK and RECORD. The ten suggestions below are all about looking and recording — not fixing.',
+  '(đọc từ CUHICH.CH-{n}.hua · BD{n}-{n})': '(read from CUHICH.CH-{n}.hua · BD{n}-{n})',
+  'Kho không khai vòng nào cho tầng này.': 'The library declares no rounds for this tier.',
+  'Chỗ khó nhất của tầng này — nói trước': 'The hardest part of this tier — said up front',
+  'Cuối chặng mới khoanh một nếp': 'Circle a routine only at the end of the stage',
+  'Còn {n} tối nữa. Khoanh nếp ở giữa chặng là rút kết luận từ mấy tối — mà cả chặng này dựng lên để tránh đúng chuyện ấy.': '{n} evenings to go. Circling a routine mid-stage means drawing conclusions from a few evenings — exactly what this whole stage is built to avoid.',
+  '(đọc từ CUHICH.CH-{n}.hua)': '(read from CUHICH.CH-{n}.hua)',
+  'Người ta kiên trì với cờ không phải vì có điểm, mà vì mỗi nước đi để lại một vết nhìn thấy được — và cái bàn đầy dần là thứ mình không muốn bỏ dở.': 'People stick with a board game not for points, but because every move leaves a visible mark — and a board filling up is something you do not want to leave unfinished.',
+  'TỐI NAY — MỘT QUÂN LÀ {n} VIỆC': 'TONIGHT — ONE PIECE IS {n} TASKS',
+  'Một quân cờ là ba việc: một của mẹ, một của bố, một của con.': 'One piece is three tasks: one for Mum, one for Dad, one for the child.',
+  'Ô hôm nay còn chờ: Mẹ · Bố · Con. Công của người đã làm đã cộng rồi và không mất đi.': 'Today’s square is still waiting on: Mum · Dad · Child. Work already done has been counted and will not be lost.',
+  'AI TRONG NHÀ ĐANG CÙNG ĐI': 'WHO AT HOME IS WALKING TOGETHER',
+  'Có nhà một mẹ nuôi con, có nhà ông bà nuôi cháu. Ép đủ ba mới được tính là đuổi đúng những nhà cần hệ này nhất ra ngoài. Nhà hai người thì hai việc là đủ, và ô ấy đầy y như ô của nhà ba người.': 'Some homes are a single mother raising a child; some are grandparents raising a grandchild. Requiring all three before counting would push out exactly the families who need this most. A two-person home needs two tasks, and its square fills just like a three-person home’s.',
+  'MƯỜI VIỆC GỢI Ý': 'TEN SUGGESTED TASKS',
+  'Bấm một việc rồi chọn việc ấy cho ai. Mỗi người tự chọn việc của mình trong cùng mười gợi ý. Chọn hộ nhau thì tối ấy lại thành một người làm ba việc, và cái buổi tối chung biến mất.': 'Tap a task, then choose who it is for. Each person picks their own task from the same ten suggestions. Choosing for each other turns the evening back into one person doing three tasks — and the shared evening disappears.',
+  'Nhìn thật · Việc của bây giờ': 'Seeing clearly · A task for now',
+  'Rồi sẽ thấy: Sau ba tối đã thấy giờ ngồi vào bàn lệch nhau bao nhiêu.': 'You will see: after three evenings, how far apart study start times really are.',
+  'Nhịp nhà · Việc của bây giờ': 'Family rhythm · A task for now',
+  'Chọn một khung giờ, không chọn ba': 'Choose one time slot, not three',
+  'Một khung duy nhất, cả nhà biết.': 'A single slot the whole family knows.',
+  'Rồi sẽ thấy: Ba khung linh hoạt nghe hay mà thực tế là không có khung nào.': 'You will see: three flexible slots sound good but in practice mean no slot at all.',
+  'Lời nói trong nhà · Làm sớm': 'Words at home · Early task',
+  'Bỏ câu "sao con lúc nào cũng…"': 'Drop the phrase “why do you always…”',
+  'Thay bằng: "hôm nay có chuyện gì không".': 'Replace it with: “did anything happen today?”.',
+  'Rồi sẽ thấy: Câu cũ đóng cửa; câu mới để cửa hé.': 'You will see: the old phrase closes the door; the new one leaves it ajar.',
+  'Tự học · Làm sớm': 'Self-study · Early task',
+  'Con chọn môn học trước mỗi tối': 'The child chooses the subject each evening',
+  'Người lớn không chọn hộ, kể cả khi thấy chọn sai.': 'Adults do not choose for them, even if they see a wrong choice.',
+  'Rồi sẽ thấy: Chọn sai một tối rẻ hơn nhiều so với mất quyền chọn.': 'You will see: a wrong choice one evening costs far less than losing the right to choose.',
+  'Nền sức khoẻ · Làm sớm': 'Health foundation · Early task',
+  'Giờ đi ngủ cố định': 'A fixed bedtime',
+  'Cố định trước, giờ dậy tự theo sau.': 'Fix it first; wake-up time follows on its own.',
+  'Rồi sẽ thấy: Giữ giờ ngủ dễ hơn giữ giờ dậy.': 'You will see: keeping bedtime is easier than keeping wake-up time.',
+  'Tiền và lựa chọn · Làm sớm': 'Money and choices · Early task',
+  'Một khoản nhỏ, con toàn quyền': 'A small amount, fully the child’s to decide',
+  'Nhỏ thôi, nhưng thật sự toàn quyền.': 'Small, but truly theirs to decide.',
+  'Rồi sẽ thấy: Toàn quyền mới sinh ra bài học; nửa quyền thì không.': 'You will see: full control creates lessons; half control does not.',
+  'Quan hệ trong nhà · Làm sớm': 'Family relationships · Early task',
+  'Mười lăm phút mỗi tuần chỉ để nghe': 'Fifteen minutes a week just to listen',
+  'Không dặn, không sửa, không kết luận.': 'No instructions, no corrections, no conclusions.',
+  'Rồi sẽ thấy: Buổi đầu thường im lặng. Buổi thứ ba thì khác.': 'You will see: the first session is usually quiet. The third is different.',
+  'Mục tiêu và kỷ luật · Làm sớm': 'Goals and discipline · Early task',
+  'Một mục tiêu, có ngày, con tự đặt': 'One goal, with a date, set by the child',
+  'Viết ra, dán chỗ nhìn thấy.': 'Write it down and post it where it can be seen.',
+  'Rồi sẽ thấy: Viết ra là bước đầu tiên tách mục tiêu khỏi mong muốn.': 'You will see: writing it down is the first step that separates a goal from a wish.',
+  'Đóng góp · Làm sớm': 'Contribution · Early task',
+  'Một việc nhà thuộc về con, cố định': 'One household chore that belongs to the child, permanently',
+  'Của con, không ai làm hộ.': 'Theirs, and no one does it for them.',
+  'Rồi sẽ thấy: Sở hữu một việc khác hẳn với được sai làm việc.': 'You will see: owning a task is completely different from being told to do one.',
+  'Truyền lại · Làm sớm': 'Passing it on · Early task',
+  'Viết lại hành trình nhà mình một trang': 'Write your family’s journey on one page',
+  'Có cả chỗ vấp.': 'Stumbles included.',
+  'Rồi sẽ thấy: Viết ra là lần đầu nhìn được toàn cảnh.': 'You will see: writing it down is the first time you see the whole picture.',
+  'VÌ SAO VIỆC NÀY BA ĐIỂM, VIỆC KIA MỘT': 'WHY THIS TASK IS THREE POINTS AND THAT ONE IS ONE',
+  'Ba mức. Bảng năm bảy mức thì người dùng bắt đầu tính điểm thay vì chọn việc.': 'Three levels. With five or seven levels, people start calculating points instead of choosing tasks.',
+  '+{n} · Việc của bây giờ': '+{n} · A task for now',
+  'Bánh đà thuộc đúng tầng nhà mình đang đứng.': 'A flywheel belonging to exactly the tier your family is on.',
+  'Đây là việc mà cả tầng này được thiết kế để làm. Làm nó là đi đúng đường.': 'This is the task the whole tier is designed for. Doing it means you are on the right path.',
+  '+{n} · Giữ cái đã có': '+{n} · Keeping what you have',
+  'Bánh đà thuộc một tầng nhà mình đã qua.': 'A flywheel from a tier your family has already passed.',
+  'Không phải việc mới, nhưng bỏ thì mất. Giữ được cái cũ đáng hai phần ba việc mới.': 'Not a new task, but drop it and it is lost. Keeping the old is worth two-thirds of a new task.',
+  '+{n} · Làm sớm': '+{n} · Early task',
+  'Bánh đà thuộc một tầng nhà mình chưa tới.': 'A flywheel from a tier your family has not reached yet.',
+  'Không cấm — có nhà sẵn sàng sớm thật. Nhưng làm sớm một việc mà nền chưa có thì nó không đứng được, nên nó không thể đáng bằng việc của bây giờ.': 'Not forbidden — some families really are ready early. But an early task without the foundation cannot stand, so it cannot be worth as much as a task for now.',
+  'Điểm để nhà mình thấy mình đang đi, không để so nhà này với nhà kia. Một nhà đang mùa khó đặt cạnh một nhà đang thuận thì con số ấy nói dối về cả hai.': 'Points let your family see it is moving, not compare one family with another. Put a family in a hard season next to one having an easy time and the number lies about both.',
+  'Ô trống là ô trống — không đỏ lên, không trừ điểm. Bỏ một tối rồi thấy màn hình trách mình là lý do người ta không quay lại tối thứ hai.': 'An empty square is just an empty square — it does not turn red and costs no points. Missing one evening and then feeling scolded by the screen is why people do not come back the next evening.',
+  '{n} luật của bàn cờ': '{n} rules of the board',
+  '{n}. Một quân cờ là ba việc — mẹ một, bố một, con một': '{n}. One piece is three tasks — Mum one, Dad one, child one',
+  'Một việc mỗi ngày thì nhà mình có một người chăm chỉ. Ba việc mỗi ngày thì nhà mình có một buổi tối chung, và buổi tối chung mới là thứ đang cần dựng.': 'One task a day gives your family one hard-working person. Three tasks a day gives your family a shared evening — and the shared evening is what we are building.',
+  '{n}. Ô đầy khi đủ số người ĐÃ KHAI, không phải khi đủ ba': '{n}. A square fills when everyone DECLARED has done theirs, not when three have',
+  'Có nhà một mẹ nuôi con. Ép đủ ba mới được tính là đuổi đúng những nhà cần hệ này nhất ra ngoài.': 'Some homes are a single mother raising a child. Requiring three before counting would push out exactly the families who need this most.',
+  '{n}. Công của mỗi người luôn được tính, dù ô chưa đầy': '{n}. Each person’s work always counts, even if the square is not full',
+  'Người làm xong mà thấy màn hình như chưa có gì xảy ra sẽ thôi làm trước cả nhà.': 'Someone who finishes and sees the screen act as if nothing happened will stop before anyone else in the family.',
+  '{n}. Mỗi người tự chọn việc của mình, không chọn hộ nhau': '{n}. Each person chooses their own task, never for each other',
+  'Chọn hộ thì tối ấy lại thành một người làm ba việc, và cái buổi tối chung biến mất.': 'Choosing for others turns the evening back into one person doing three tasks, and the shared evening disappears.',
+  '{n}. Mười gợi ý, không nhiều hơn': '{n}. Ten suggestions, no more',
+  'Đúng mười vì có mười bánh đà, mỗi bánh đà đưa ra việc kế tiếp của nó. Hai mươi gợi ý thì việc chọn thành một việc nữa phải làm.': 'Exactly ten because there are ten flywheels, each offering its next task. With twenty suggestions, choosing becomes yet another chore.',
+  '{n}. Số ngày của tầng đọc từ bảng học phí': '{n}. A tier’s number of days is read from the tuition table',
+  'Bảy · hai mươi mốt · chín mươi · ba trăm sáu lăm · ba trăm sáu lăm nâng cao. Ghi lại ở chỗ thứ hai là dựng bản thứ hai của cùng một con số.': 'Seven · twenty-one · ninety · three hundred sixty-five · three hundred sixty-five advanced. Writing them down a second time creates a second copy of the same number.',
+  '{n}. Ô đã đặt thì không xoá': '{n}. A placed square is never deleted',
+  'Việc đã làm rồi thì đã làm rồi. Cho xoá là cho sửa lại lịch sử, và một cái bàn cờ sửa được thì nhìn nó không còn nghĩa gì.': 'What has been done has been done. Allowing deletion means allowing history to be rewritten, and a board that can be rewritten means nothing to look at.',
+  '{n}. Ngày bỏ lỡ không bị phạt': '{n}. Missed days are not penalised',
+  'Ô trống là ô trống. Trừ điểm ngày nghỉ là dạy người ta rằng nghỉ một tối là thất bại — mà nghỉ một tối chỉ là nghỉ một tối.': 'An empty square is just an empty square. Deducting points for a day off teaches people that missing one evening is failure — when missing one evening is just missing one evening.',
+  '{n}. Bàn dài thì chia vòng, mỗi vòng đúng một biến': '{n}. Long boards are split into rounds, each with exactly one variable',
+  'Đổi mười việc cùng lúc thì không biết việc nào tạo ra thay đổi, và không biết thì lần sau không lặp lại được.': 'Change ten things at once and you cannot tell which one made the difference — and if you do not know, you cannot repeat it next time.',
+  '{n}. Chỗ khó của tầng được báo TRƯỚC khi tới': '{n}. The hard part of a tier is announced BEFORE you reach it',
+  '{n}. Điểm không dùng để xếp hạng nhà nọ với nhà kia': '{n}. Points are never used to rank families',
+  'Không bảng vàng, không so sánh. Một nhà đang mùa khó đặt cạnh một nhà đang thuận thì con số ấy nói dối về cả hai.': 'No leaderboards, no comparisons. Put a family in a hard season next to one having an easy time and the number lies about both.',
+  '{n}. Chặng dài thì so vòng này với VÒNG TRƯỚC của chính nhà mình': '{n}. In a long stage, compare this round with your OWN previous round',
+  'Tầng ba khai thẳng chỗ khó của nó là "không kết quả nào — chỉ là dài". Thứ duy nhất có thật để nhìn trong quãng ấy là chính chuỗi trước, và nó nằm sẵn trên bàn cờ của nhà mình chứ không phải đi vay ở đâu.': 'Tier three states its hard part plainly: “no results — just length”. The only real thing to look at in that stretch is your own previous run, and it is already on your family’s board, not borrowed from anywhere.',
+  '{n}. Chuỗi phải nối nhau, và mối nối hở thì nói chứ không phạt': '{n}. Runs must connect, and a gap is pointed out, not punished',
+  'Xong một chuỗi thì thấy đã xong, và tối hôm sau không ai mở màn này nữa. Bốn chuỗi rời nhau là bốn lần bắt đầu lại, mà bốn lần bắt đầu lại không phải là chín mươi ngày. Nhưng ô trống vẫn là ô trống — hiện ra, không trừ điểm.': 'Finish a run and it feels done, and the next evening no one opens this screen. Four separate runs are four fresh starts, and four fresh starts are not ninety days. But an empty square is still just an empty square — shown, never penalised.',
+  '{n}. Ô CHƯA TỚI không được trông giống ô đã bỏ lỡ': '{n}. A NOT-YET square must not look like a missed square',
+  'Bàn tầng năm có ba trăm sáu lăm ô. Tối đầu tiên nhà mình mở ra mà thấy ba trăm sáu tư ô xám thì nó trông y như ba trăm sáu tư lần bỏ lỡ. Không luật nào bị vi phạm ở đây — ô trống vẫn không trừ điểm — nhưng cái NHÌN nói dối, và người ta bỏ vì cái nhìn chứ không vì luật.': 'The tier-five board has three hundred sixty-five squares. If on the first evening your family sees three hundred sixty-four grey squares, it looks exactly like three hundred sixty-four misses. No rule is broken — empty squares still cost nothing — but the LOOK lies, and people quit because of how it looks, not because of the rules.',
+  '{n}. Tầng nào kho không khai vòng thì nói KHÔNG CÓ, không tự đặt ra một số': '{n}. If the library declares no rounds for a tier, say NONE — never invent a number',
+  'Tầng một và tầng năm thật sự không khai vòng nào. Bàn dài thì chia theo THÁNG LỊCH cho nhìn được — tháng là thứ có sẵn ngoài đời, không phải một cái vòng nghĩ ra cho đều bảng. Đặt ra một số vòng ở đây đúng bằng việc khai một con số kho chưa khai.': 'Tiers one and five truly declare no rounds. Long boards are split by CALENDAR MONTH so they can be read — months exist in real life, not as a round invented to tidy the board. Inventing rounds here would be declaring a number the library has not declared.',
+  '{n}. Tầng nào cấm sửa thì bàn cờ phải nói câu cấm ấy TRƯỚC mười gợi ý': '{n}. If a tier forbids fixing, the board must say so BEFORE the ten suggestions',
+  'Cú hích tầng một hứa "không sửa gì cả", còn bàn cờ thì bày ra mười việc kèm điểm và mời làm ngay tối nay. Nhà mình làm theo bàn thì bảy ngày ghi được là đường nền ĐÃ BỊ BÓP — mà cả chặng ấy chỉ đi lấy đúng một thứ là đường nền thật.': 'The tier-one kick-start promises “change nothing”, yet the board lays out ten tasks with points and invites you to start tonight. Follow the board and the seven days recorded become a DISTORTED baseline — when the whole stage exists to capture exactly one thing: the real baseline.',
+  '{n}. Khoanh nếp chỉ mở ở CUỐI chặng — chỗ duy nhất trong bàn cờ có cổng': '{n}. Circling a routine opens only at the END of a stage — the board’s only gate',
+  'Khoanh một nếp ở tối thứ hai là rút kết luận từ hai tối, đúng cái sai mà cả chặng dựng lên để tránh. Cổng này có vì kho khai chữ "cuối tuần", không phải vì thấy nên có.': 'Circling a routine on the second evening means drawing conclusions from two evenings — exactly the mistake the whole stage is built to avoid. This gate exists because the library says “end of week”, not because someone felt it should.',
+  '{n}. Hết ngày KHÔNG phải là xong tầng — nhà được kèm không vượt khi chưa đủ KPI': '{n}. Running out of days is NOT finishing a tier — a mentored family does not move up without enough KPI',
+  'Một nhà được đẩy lên tầng sau khi chưa đủ nền sẽ hỏng ở TẦNG SAU chứ không hỏng ở đây, và lúc ấy chữa đắt hơn nhiều. Ngưỡng và câu cổng đã khai sẵn ở DOLUONG_KH.M{n} và HP_KICHBAN — bàn cờ trỏ vào đó chứ không chép lại.': 'A family pushed up to the next tier without the foundation breaks on the NEXT tier, not here — and fixing it then costs far more. The threshold and gate wording are already declared in DOLUONG_KH.M{n} and HP_KICHBAN — the board points there rather than copying them.',
+  '{n}. Máy nhà mình biết LỊCH, không biết KPI của nhà kia — và không suy cái nọ ra cái kia': '{n}. Your device knows the CALENDAR, not another family’s KPI — and never infers one from the other',
+  'Ngày và chu kỳ tính được hết ngay trên máy này; KPI của nhà kia nằm ở máy chủ và ở gói nghề. Suy một con số KPI ra từ cái lịch nguy hơn để trống: ô trống thì người ta đi tìm, còn con số bịa thì người ta tin.': 'Days and cycles can all be calculated on this device; the other family’s KPI lives on the server and in the professional package. Inferring a KPI from the calendar is more dangerous than leaving it blank: people go looking for a blank, but they believe a made-up number.'
+});
+
+})();
+
+/* ═════════ src/tu-dien-en-08.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — TỪ ĐIỂN TIẾNG ANH · ĐỢT 8: ĐƯỜNG VÀO SÁU BƯỚC · KẾT NỐI
+   Màn tham-gia (đường vào sáu bước) và ket-noi (đồng bộ · nhóm ·
+   Telegram · kênh chính thức). G.KENH_DS giữ nguyên — tên kho thật.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.TU_DIEN_EN = G.TU_DIEN_EN || {};
+(function (d) { for (var k in d) G.TU_DIEN_EN[k] = d[k]; })({
+  /* ── Đường vào sáu bước ── */
+  'AI LÀM': 'WHO DOES IT',
+  'LÀM GÌ': 'WHAT TO DO',
+  'XONG BƯỚC NÀY KHI': 'THIS STEP IS DONE WHEN',
+  'CHẶN Ở ĐÂU': 'WHERE IT IS BLOCKED',
+  'CÂU NGƯỜI TƯ VẤN NÓI ĐỂ DẪN SANG BƯỚC SAU': 'WHAT THE CONSULTANT SAYS TO LEAD INTO THE NEXT STEP',
+  'Mở khi tới bước này': 'Opens when you reach this step',
+  'Nghe GITA làm gì — và không làm gì': 'Hear what GITA does — and does not do',
+  '{n} phút đọc · hoặc một buổi cà phê': '{n}-minute read · or one coffee chat',
+  'Đăng ký thành viên': 'Register as a member',
+  'Làm bài test đánh giá': 'Take the assessment test',
+  'Năm bài × {n} phút = {n} phút. Chia được thành nhiều lần, bài đang làm dở vẫn giữ nguyên câu đã trả lời.': 'Five tests × {n} minutes = {n} minutes. Can be split across sessions; a test in progress keeps the answers already given.',
+  'Đọc hồ sơ đánh giá': 'Read the assessment profile',
+  '{n} phút, có mặt cả phụ huynh và học viên': '{n} minutes, with both parents and student present',
+  'Nhận định hướng giải pháp': 'Receive the solution direction',
+  '{n} phút, thường nối luôn sau buổi đọc hồ sơ': '{n} minutes, usually right after the profile reading',
+  'Vào thử thách bảy ngày': 'Start the seven-day challenge',
+  '{n} ngày · mỗi ngày dưới {n} phút': '{n} days · under {n} minutes a day',
+  '· Đường vào — sáu bước.': '· The way in — six steps.',
+  'BƯỚC SỐ KHÔNG — TRƯỚC KHI ĐĂNG KÝ': 'STEP ZERO — BEFORE REGISTERING',
+  'Nhiều nhà cần một thời gian nghe trước khi quyết. Nhóm là chỗ ấy, và không ai bán gì ở đó': 'Many families need time to listen before deciding. The group is that place, and no one sells anything there',
+  'Đường vào — từ nghe giới thiệu tới bảy ngày đầu tiên': 'The way in — from the first introduction to the first seven days',
+  'Sáu bước, đi theo thứ tự, không nhảy cóc. Mỗi bước có điều kiện đi tiếp riêng — không phải để làm khó, mà vì bỏ qua một bước thì bước sau chạy trên nền sai.': 'Six steps, in order, no skipping. Each step has its own condition for moving on — not to make it hard, but because skipping a step means the next one runs on the wrong foundation.',
+  'Anh chị biết mình sắp bước vào cái gì, và biết cái gì bên em không nhận làm.': 'You know what you are about to step into, and what we will not take on.',
+  'Mở phần giới thiệu': 'Open the introduction',
+  'Nhà mình có một chỗ riêng trong hệ thống. Mọi thứ ghi từ đây trở đi đều thuộc về nhà mình.': 'Your family has its own place in the system. Everything recorded from here on belongs to your family.',
+  'Mở form đăng ký': 'Open the registration form',
+  'Lần đầu tiên nhà mình có con số thay cho cảm giác. Con số này là của cháu, không phải điểm trung bình của ai khác.': 'For the first time your family has numbers instead of feelings. These numbers are your child’s, not someone else’s average.',
+  'Anh chị hiểu con số nói gì, và hiểu vì sao nó lại như vậy — chứ không chỉ nhìn thấy một bảng điểm.': 'You understand what the numbers say and why they are what they are — not just looking at a score sheet.',
+  'Nhà mình biết việc nào làm trước và vì sao. Không phải làm tất cả cùng lúc rồi hụt hơi.': 'Your family knows what to do first and why. Not everything at once until you run out of breath.',
+  'Bảy ngày sau nhà mình có bằng chứng của chính mình về việc cái gì chạy được và cái gì không.': 'Seven days later your family has its own evidence of what works and what does not.',
+  'TỪNG BƯỚC LÀM GÌ': 'WHAT EACH STEP INVOLVES',
+  'Ai làm, mất bao lâu, xong thì có gì trong tay, và chưa xong thì bị chặn ở đâu.': 'Who does it, how long it takes, what you have in hand when done, and where you are blocked if not.',
+  'Gia đình tự đọc, hoặc nghe người giới thiệu kể trong ba mươi giây.': 'The family reads it themselves, or hears the referrer explain it in thirty seconds.',
+  'Đọc bốn lời hứa và sáu điều GITA KHÔNG làm. Phần "không làm" quan trọng hơn phần "làm".': 'Read the four promises and the six things GITA does NOT do. The “does not” part matters more than the “does” part.',
+  'Gia đình trả lời được: chỗ này có đúng chỗ mình cần không.': 'The family can answer: is this the right place for what we need?',
+  'Chưa đọc phần "sáu điều GITA không làm" thì chưa được sang bước {n}. Bỏ qua chỗ này là nguồn gốc của mọi khiếu nại về sau.': 'No moving to step {n} until “the six things GITA does not do” has been read. Skipping it is the root of every later complaint.',
+  '“Anh chị đọc giúp em phần "GITA không làm gì" trước. Nếu có dòng nào làm anh chị thấy không hợp thì mình dừng ở đây, không mất gì của ai cả.”': '“Please read the “what GITA does not do” section first. If any line feels wrong for you, we stop here — nobody loses anything.”',
+  'Phụ huynh đăng ký. Học viên được cấp tài khoản riêng, không dùng chung tài khoản bố mẹ.': 'Parents register. The student gets their own account, not a shared parent account.',
+  'Điền tên nhà, tên con, lớp, và một câu về điều lo nhất. Nhận mã gia đình dạng F-xxx.': 'Enter the family name, child’s name, grade, and one sentence about your biggest worry. Receive a family code like F-xxx.',
+  'Nhà mình có mã gia đình, có tài khoản đăng nhập, và có một hồ sơ trống chờ số liệu.': 'Your family has a family code, a login, and an empty profile waiting for data.',
+  'Chưa có mã gia đình thì bài test không lưu được kết quả về đâu — nên bước {n} khoá cho tới khi bước {n} xong.': 'Without a family code the test has nowhere to save results — so step {n} stays locked until step {n} is done.',
+  '“Em lập cho nhà mình một mã riêng. Từ giờ mọi số liệu của cháu đều nằm dưới mã đó, không lẫn với nhà nào khác, và anh chị đăng nhập là xem được.”': '“I am setting up a code just for your family. From now on all your child’s data sits under that code, never mixed with another family, and you can see it whenever you log in.”',
+  'Năm bài, chia hai người. Học viên làm bài A, B, C. Phụ huynh làm bài D, E. Không ai làm hộ ai — hai phía nhìn cùng một nhà từ hai chỗ đứng khác nhau, và chỗ hai phía trả lời lệch nhau chính là chỗ cần nói chuyện đầu tiên.': 'Five tests, split between two people. The student does tests A, B, C. The parent does D and E. No one does another’s test — the two sides see the same family from different standpoints, and where their answers diverge is exactly where the first conversation needs to happen.',
+  'Tầng một có đúng năm bài, mỗi bài ba mươi câu trên sáu miền đo: A Hành vi học tập · B Thói quen và kỷ luật · C Động lực và tâm thế học tập — ba bài này của học viên; D Môi trường gia đình · E Đồng hành và kỳ vọng — hai bài này của phụ huynh. Mỗi câu bốn lựa chọn, mỗi lựa chọn là một mức từ {n} đến {n}.': 'Tier one has exactly five tests, each with thirty questions across six domains: A Study behaviour · B Habits and discipline · C Motivation and mindset — these three are the student’s; D Family environment · E Support and expectations — these two are the parent’s. Each question has four options, each a level from {n} to {n}.',
+  'Năm bảng điểm miền, mỗi bài một nhóm trong bốn nhóm khách hàng, kèm cảnh báo tự bật khi một miền tụt dưới ngưỡng. Từ đó ra được danh sách miền yếu, và từ miền yếu ra được tài liệu và phác đồ nên đọc trước.': 'Five domain score sheets, each test placing you in one of four client groups, with alerts that switch on when a domain falls below threshold. That produces a list of weak domains, and from those, the materials and protocols to read first.',
+  'Phải trả lời ĐỦ ba mươi câu thì hệ thống mới chấm. Thiếu một câu là nút chấm không mở — chấm trên dữ liệu thiếu là ra kết luận sai, và kết luận sai ở bước ba thì bốn bước sau đều lệch theo.': 'All thirty questions must be answered before the system scores. Missing one keeps the score button locked — scoring incomplete data gives wrong conclusions, and a wrong conclusion at step three throws off the four steps after it.',
+  '“Bài này không có điểm cao điểm thấp và không ai trượt. Cháu trả lời thật thì bọn em đọc đúng; cháu trả lời đẹp thì bọn em đọc sai và thiệt là cháu chịu.”': '“There are no high or low scores here and nobody fails. If your child answers honestly, we read it right; if they answer to look good, we read it wrong — and they are the one who loses out.”',
+  'Tư vấn ngồi cùng gia đình. Không gửi file rồi thôi — phải có buổi đọc.': 'The Consultant sits down with the family. No just sending a file — there must be a reading session.',
+  'Đọc bốn nguồn: bài test, nhật ký bảy ngày nếu đã có, quan sát của phụ huynh, lời của chính học viên. Nói cả phần không đẹp.': 'Read four sources: the tests, the seven-day journal if available, the parents’ observations, and the student’s own words. Say the unflattering parts too.',
+  'Gia đình nói lại được bằng lời của mình: nền đang ở đâu, khoảng cách nằm ở chỗ nào.': 'The family can say in their own words where the foundation stands and where the gaps are.',
+  'Không có buổi đọc thì không sang bước {n}. Gửi hồ sơ qua tin nhắn rồi để gia đình tự hiểu là cách chắc chắn hỏng.': 'No reading session, no step {n}. Sending the profile by message and leaving the family to interpret it is a guaranteed failure.',
+  '“Em đọc cho anh chị nghe cả phần không đẹp. Nếu em chỉ đọc phần đẹp thì anh chị vui hôm nay và thất vọng ba tháng nữa.”': '“I will read you the unflattering parts too. If I only read the nice parts, you will be happy today and disappointed in three months.”',
+  'Tư vấn gọi tên vấn đề theo mã trong ma trận, rồi đề xuất MỘT hướng đi.': 'The Consultant names the issue by its matrix code, then proposes ONE direction.',
+  'Từ hồ sơ, chọn ra một tới ba mã vấn đề. Chọn một mã làm trước. Nói rõ vì sao là mã đó chứ không phải mã khác.': 'From the profile, pick one to three issue codes. Choose one to tackle first. Explain why that one and not another.',
+  'Gia đình cầm được một tờ: vấn đề nào làm trước, làm bằng cách nào, đo bằng chỉ số gì.': 'The family holds one sheet: which issue first, how, and measured by which indicator.',
+  'Đưa ba gói để gia đình tự chọn là vi phạm chuẩn tư vấn — người chọn phải là người có đủ dữ kiện, và đó là bên em.': 'Offering three packages for the family to pick from violates consulting standards — the one who chooses must be the one with the full facts, and that is us.',
+  '“Nhà mình đang có bốn chuyện. Em chọn chuyện giấc ngủ làm trước, vì ba chuyện còn lại đều nặng thêm khi cháu thiếu ngủ. Anh chị nghe có hợp lý không?”': '“Your family has four issues. I am choosing sleep first, because the other three all get worse when your child is short of sleep. Does that sound reasonable?”',
+  'Học viên làm. Phụ huynh giữ điều kiện. Coach chạm theo nhịp của băng.': 'The student does it. Parents hold the conditions. The Coach checks in at the band’s rhythm.',
+  'Ghi dữ liệu mỗi ngày, tự chấm {n}–{n}, làm đúng số việc trong trần của băng. Ngày {n} thử một thay đổi. Ngày {n} nghiệm thu.': 'Log data every day, self-score {n}–{n}, do exactly the number of tasks within the band’s ceiling. Day {n}: try one change. Day {n}: review.',
+  'Qua cổng ngày {n}: dữ liệu đủ, mô tả được pattern, có giả thuyết có bằng chứng, và một quyết định rõ cho {n} ngày.': 'Passing the day-{n} gate: complete data, a describable pattern, an evidenced hypothesis, and a clear decision for the {n} days.',
+  'Ngày {n} chưa đạt thì không lên chặng {n} ngày. Kéo dài quan sát chứ không nâng gói — đây là luật, không phải khuyến nghị.': 'Not passing on day {n} means no {n}-day stage. Extend the observation rather than upgrading the package — this is a rule, not a recommendation.',
+  '“Bảy ngày này bên em không chữa gì cả. Bảy ngày này là để nhìn cho rõ. Nếu tuần sau anh chị bảo "vẫn thế thôi" thì đó là kết quả đúng, vì mình chưa can thiệp.”': '“For these seven days we fix nothing. These seven days are for seeing clearly. If next week you say “nothing has changed”, that is the correct result, because we have not intervened yet.”',
+  'ĐIỀU KIỆN ĐI TIẾP': 'CONDITIONS TO MOVE ON',
+  'Không có chặn thì đường đi chỉ là một danh sách gợi ý.': 'Without blocks, a pathway is just a list of suggestions.',
+  'Từ → đến': 'From → to',
+  'Phải có gì': 'What is required',
+  'Vì sao chặn': 'Why it is blocked',
+  'Đã đọc phần "sáu điều GITA không làm".': 'Has read “the six things GITA does not do”.',
+  'Nhà nào vào mà không biết GITA không cam kết điểm số thì ba tháng sau thành một cuộc khiếu nại.': 'A family that joins without knowing GITA does not promise grades becomes a complaint three months later.',
+  'Có mã gia đình và tài khoản của học viên.': 'Has a family code and a student account.',
+  'Bài test không có chỗ lưu thì làm xong cũng mất, và làm lại lần hai thì số liệu không còn sạch.': 'A test with nowhere to save is lost when done, and a second attempt no longer gives clean data.',
+  'Làm đủ từ {n}% số câu của bài đã giao.': 'Has answered at least {n}% of the assigned questions.',
+  'Chấm trên dữ liệu thiếu là ra kết luận sai, và kết luận sai thì cả lộ trình sau đó sai theo.': 'Scoring incomplete data gives wrong conclusions, and a wrong conclusion makes the whole later pathway wrong.',
+  'Đã có buổi đọc hồ sơ có mặt gia đình, có biên bản.': 'A profile reading has been held with the family present, with minutes.',
+  'Gia đình chưa hiểu số liệu thì không đồng ý thật với hướng đi — họ chỉ gật cho xong.': 'A family that does not understand the data does not truly agree with the direction — they just nod to get it over with.',
+  'Đã chốt đúng một mã vấn đề làm trước và một chỉ số để đo.': 'Exactly one issue code to tackle first and one indicator to measure have been agreed.',
+  'Vào bảy ngày mà chưa biết đo gì thì ngày {n} không nghiệm thu được, và cả chặng thành công cốc.': 'Starting the seven days without knowing what to measure means day {n} cannot be reviewed, and the whole stage is wasted.',
+  'NGƯỜI MỚI HAY HỎI GÌ': 'WHAT NEWCOMERS OFTEN ASK',
+  'Tám câu gặp nhiều nhất trên đường này.': 'The eight most common questions on this path.',
+  '“Đăng ký rồi có phải trả tiền ngay không?”': '“Do I have to pay as soon as I register?”',
+  '→ Không. Bước {n} chỉ là lập tài khoản và mã gia đình. Bài test ở bước {n} cũng chưa thu. Tiền chỉ được bàn sau bước {n}, khi đã biết nhà mình cần chặng nào.': '→ No. Step {n} is only creating an account and family code. The step-{n} test is free too. Money is only discussed after step {n}, once we know which stage your family needs.',
+  '“Con tôi không chịu làm bài test thì sao?”': '“What if my child refuses to take the test?”',
+  '→ Thì dừng ở bước {n} và bên em làm việc với bố mẹ trước. Bên em không ép cháu làm bài, vì bài làm trong trạng thái bị ép cho ra số liệu sai.': '→ Then we pause at step {n} and work with the parents first. We do not force your child to take it, because a test taken under pressure gives false data.',
+  '“Làm test xong có được xem kết quả luôn không?”': '“Can I see the results right after the test?”',
+  '→ Có, nhưng bên em không gửi file rồi thôi. Phải có một buổi đọc cùng nhau, vì một bảng điểm đọc một mình rất dễ hiểu sai.': '→ Yes, but we do not just send a file. There must be a reading session together, because a score sheet read alone is easily misunderstood.',
+  '“Bảy ngày xong thì bắt buộc phải đi tiếp không?”': '“After seven days, do I have to continue?”',
+  '→ Không. Hết bảy ngày anh chị dừng lúc nào cũng được, và bản đồ nền của cháu vẫn là của nhà mình, mang đi đâu cũng dùng được.': '→ No. After seven days you can stop at any time, and your child’s baseline map is still yours to use anywhere.',
+  '“Bố mẹ có phải làm bài test không?”': '“Do parents have to take a test?”',
+  '→ Có. Phụ huynh có bài riêng, và trong nhiều nhà thì bài của bố mẹ nói được nhiều hơn bài của con.': '→ Yes. Parents have their own tests, and in many families the parents’ tests say more than the child’s.',
+  '“Bao lâu thì đi hết sáu bước?”': '“How long do the six steps take?”',
+  '→ Nhanh nhất là mười ngày: một buổi giới thiệu, một buổi test, một buổi đọc hồ sơ và định hướng, rồi bảy ngày làm. Nhà nào bận thì ba tuần.': '→ Ten days at the fastest: one introduction, one test session, one profile reading and direction session, then seven days of doing. Busy families take three weeks.',
+  '“Nếu bên em kết luận con tôi cần chuyên môn khác thì sao?”': '“What if you conclude my child needs a different kind of specialist?”',
+  '→ Thì em nói ngay ở bước {n} hoặc bước {n}, và em giới thiệu sang chỗ đúng. Bên em không giữ nhà mình lại cho một việc bên em không làm được.': '→ Then we tell you right away at step {n} or step {n}, and refer you to the right place. We will not keep your family for something we cannot do.',
+  '“Dữ liệu của nhà tôi ai xem được?”': '“Who can see my family’s data?”',
+  '→ Anh chị, cháu, và người đồng hành được phân công cho nhà mình. Không ai khác. Và nhà mình không xuất được ra ngoài — đó là để bảo vệ chính nhà mình.': '→ You, your child, and the companion assigned to your family. No one else. And it cannot be exported outside — that is to protect your family itself.',
+  'Mở bộ test năm tầng': 'Open the five-tier test set',
+  'Mở nhiệm vụ bảy ngày': 'Open the seven-day mission',
+  'Mở bảng số nhà mình': 'Open your family’s numbers board',
+
+  /* ── Kết nối ── */
+  'ĐƯỢC ĐĂNG': 'MAY BE POSTED',
+  'KHÔNG ĐĂNG': 'NOT POSTED',
+  'Đi tiếp:': 'Next:',
+  'Nhóm Đại sứ GITA {n}': 'GITA {n} Ambassador group',
+  'Trang Học viện GITA': 'GITA Academy page',
+  '· Kết nối với GITA.': '· Connect with GITA.',
+  'Kết nối hệ sinh thái': 'Connecting the ecosystem',
+  'Ba đường kết nối, mỗi đường một việc riêng. App giữ dữ liệu và chạy ngoại tuyến; web giữ bản mới nhất; Facebook và Telegram giữ con người.': 'Three connections, each with its own job. The app holds data and works offline; the web holds the latest version; Facebook and Telegram hold the people.',
+  'ĐỒNG BỘ APP ↔ WEB APP': 'APP ↔ WEB APP SYNC',
+  'Nhịp:': 'Rhythm:',
+  'Kiểm tra bản mới': 'Check for updates',
+  'Ứng dụng tự kiểm bản mới mỗi lần mở và mỗi sáu giờ, chỉ tải phần đã đổi, và giữ được việc anh chị làm khi mất mạng — có mạng lại thì tự gửi đi. Anh chị không phải làm gì cả; nút trên chỉ để kiểm ngay khi cần.': 'The app checks for updates every time it opens and every six hours, downloads only what changed, and keeps your work when offline — sending it automatically once you are back online. You do not need to do anything; the button above is just for checking right away.',
+  'NHÓM FACEBOOK': 'FACEBOOK GROUP',
+  'Chỗ các nhà kể lại việc mình vừa làm được, và đọc chuyện của nhà khác. Không phải nơi hỏi chuyên môn — chuyện riêng của nhà mình thì nhắn Coach.': 'A place for families to share what they have just managed and read other families’ stories. Not for professional questions — for your family’s private matters, message your Coach.',
+  'BỐN BƯỚC THAM GIA': 'FOUR STEPS TO JOIN',
+  'Bấm nút bên dưới để mở nhóm.': 'Tap the button below to open the group.',
+  'Trả lời ba câu hỏi vào nhóm: tên nhà, con đang học lớp mấy, đang mắc chuyện gì.': 'Answer the three joining questions: family name, your child’s grade, what you are stuck on.',
+  'Ban quản trị duyệt trong vòng một ngày làm việc.': 'Admins approve within one working day.',
+  'Vào rồi thì tự giới thiệu một câu, và đọc phần ghim trước khi đăng bài đầu tiên.': 'Once in, introduce yourself in one sentence and read the pinned post before your first post.',
+  'Không chụp màn hình tài liệu trong ứng dụng đăng lên nhóm. Đó là tài sản của Học viện, và trong ảnh có dấu nhận diện tài khoản của chính anh chị.': 'Do not post screenshots of in-app materials to the group. They are Academy property, and the image carries an identifying mark of your own account.',
+  'Đăng ký tham gia group': 'Request to join the group',
+  'Dùng cho việc gấp và việc hành chính: đổi lịch, báo vắng, hỏi tình trạng hồ sơ. Không dùng cho tư vấn chuyên môn — chuyện của con cần một buổi ngồi tử tế.': 'For urgent and administrative matters: rescheduling, reporting absence, checking file status. Not for professional advice — your child’s situation deserves a proper sit-down session.',
+  'GHÉP NỐI': 'PAIRING',
+  'Lưu số {n} vào danh bạ.': 'Save the number {n} to your contacts.',
+  'Mở Telegram, tìm số vừa lưu.': 'Open Telegram and find the number you saved.',
+  'Nhắn đúng một câu: mã số khách hàng và tên nhà mình.': 'Send exactly one message: your client code and family name.',
+  'Hệ thống ghép nối trong giờ làm việc và xác nhận lại bằng tin nhắn.': 'The system pairs you during working hours and confirms by message.',
+  'HỆ THỐNG GỬI GÌ': 'WHAT THE SYSTEM SENDS',
+  'Nhắc lịch buổi hẹn trước một ngày.': 'Appointment reminders one day ahead.',
+  'Xác nhận khi Tư vấn hoặc Coach gửi thêm tư liệu cho nhà mình.': 'Confirmation when a Consultant or Coach sends your family more materials.',
+  'Thông báo khi nhà mình đi qua một cổng nghiệm thu.': 'Notice when your family passes a review gate.',
+  'Hệ thống không bao giờ nhắn tin hỏi mật khẩu hay mã OTP. Ai nhắn hỏi hai thứ đó, dù xưng danh GITA, đều không phải người của Học viện.': 'The system never messages to ask for your password or OTP code. Anyone asking for either, even claiming to be GITA, is not from the Academy.',
+  'Mở Telegram GITA {n}': 'Open GITA {n} Telegram',
+  'KÊNH CỘNG ĐỒNG CHÍNH THỨC': 'OFFICIAL COMMUNITY CHANNELS',
+  'Ba kênh này là của Học viện. Kênh riêng của một người vẫn là vi phạm như cũ.': 'These three channels belong to the Academy. A personal channel run by an individual is still a violation, as before.',
+  'Bài viết về nếp nhà, cách nói chuyện với con, mô thức đọc được ở mức phổ thông': 'Posts about family routines, talking with children, and patterns explained at a general level',
+  'Câu hỏi của phụ huynh và câu trả lời công khai': 'Parents’ questions and public answers',
+  'Lịch buổi chia sẻ, sự kiện, lửa trại': 'Schedules for sharing sessions, events, campfires',
+  'Chuyện của gia đình đã đi — CHỈ khi chính gia đình ấy đồng ý và tự kể': 'Stories of families who have been through it — ONLY when that family consents and tells it themselves',
+  'Hồ sơ của bất kỳ gia đình nào, kể cả ẩn danh': 'Any family’s records, even anonymised',
+  'Bảng số, kết quả test, kết quả cổng nghiệm thu': 'Numbers boards, test results, review-gate results',
+  'Tài liệu trong kho đã cấp phép — kịch bản, phác đồ, ma trận, mô thức bản đầy đủ': 'Licensed library materials — full scripts, protocols, matrices, patterns',
+  'Tư vấn riêng cho một ca cụ thể trong bình luận công khai': 'Advice for a specific case in public comments',
+  'Báo giá học phí của một nhà cụ thể': 'Tuition quotes for a specific family',
+  'Nhóm cộng tác viên': 'Collaborator group',
+  'Chỗ đội ngũ giới thiệu học nghề giới thiệu, không phải chỗ bán.': 'Where the referral team learns how to refer — not a place to sell.',
+  'Đại sứ và cộng tác viên đã ký cam kết.': 'Ambassadors and collaborators who have signed the commitment.',
+  'Cách kể chuyện Học viện cho đúng': 'How to tell the Academy’s story correctly',
+  'Bản chỉ dẫn referral': 'Referral guide',
+  'Ghi nhận theo mốc, không theo doanh số': 'Recognition by milestone, not by sales',
+  'Thông tin của gia đình được giới thiệu': 'Information about referred families',
+  'So sánh hoa hồng giữa các đại sứ': 'Commission comparisons between ambassadors',
+  'Chào mời vượt trần mười phần trăm': 'Offers beyond the ten percent cap',
+  'Mọi việc tính hoa hồng và theo dõi mốc đều ở trong ứng dụng.': 'All commission calculations and milestone tracking happen inside the app.',
+  'Trang chính thức': 'Official page',
+  'Bộ mặt công khai. Nói Học viện là gì và KHÔNG là gì.': 'The public face. Says what the Academy is and is NOT.',
+  'Công chúng.': 'The public.',
+  'Giới thiệu, tuyển dụng, thông báo': 'Introductions, recruitment, announcements',
+  'Nội dung đã duyệt của kho công khai': 'Approved content from the public library',
+  'Bất kỳ nội dung nào thuộc kho nghề': 'Any content from the professional library',
+  'Cam kết kết quả cho một trường hợp cụ thể': 'Promising results for a specific case',
+  'Người quan tâm được dẫn về nhóm Gia Đình Thịnh Vượng hoặc vào thẳng ứng dụng.': 'Interested people are directed to the Prosperous Family group or straight into the app.',
+  'NHÓM NẰM Ở ĐÂU TRONG ĐƯỜNG VÀO': 'WHERE THE GROUP SITS ON THE WAY IN',
+  'Nghe thấy Học viện': 'Hearing about the Academy',
+  '· Nhóm Gia Đình Thịnh Vượng': '· Prosperous Family group',
+  'Đọc, hỏi, xem cách Học viện trả lời người khác. Không ai bán gì ở bước này.': 'Read, ask, and see how the Academy answers others. No one sells anything at this step.',
+  'Xong khi: Phụ huynh tự thấy cách nghĩ này hợp với nhà mình.': 'Done when: the parents themselves feel this way of thinking suits their family.',
+  'Muốn biết cụ thể': 'Wanting specifics',
+  '· Màn GITA {n} là gì trong ứng dụng': '· The “What is GITA {n}” screen in the app',
+  'Đọc sứ mệnh, mục tiêu có mốc, và sáu điều Học viện KHÔNG làm.': 'Read the mission, the dated goals, and the six things the Academy does NOT do.',
+  'Xong khi: Đọc hết phần không làm được rồi vẫn muốn đi tiếp.': 'Done when: having read all the “cannot do” parts, you still want to continue.',
+  'Bước vào': 'Stepping in',
+  '· Đường vào sáu bước': '· The six-step way in',
+  'Đăng ký, làm test, đọc hồ sơ, định vị tầng.': 'Register, take the tests, read the profile, place your tier.',
+  'Xong khi: Có hồ sơ và có tầng.': 'Done when: you have a profile and a tier.',
+  'SÁU LUẬT KÊNH CỘNG ĐỒNG': 'SIX COMMUNITY CHANNEL RULES',
+  'Kênh chính thức khác kênh riêng của một người': 'An official channel is different from an individual’s personal channel',
+  'Ba kênh trong G.KENH_DS là của Học viện. Tư vấn hoặc Coach đưa nhóm riêng, trang riêng, số riêng vẫn là vi phạm như cũ — chế tài giữ nguyên: hạ {n}% KPI ba tháng.': 'The three channels in G.KENH_DS belong to the Academy. A Consultant or Coach sharing a personal group, page or number is still a violation, as before — the sanction stands: a {n}% KPI cut for three months.',
+  'Không dữ liệu gia đình nào rời khỏi ứng dụng': 'No family data leaves the app',
+  'Nhóm nằm trên nền tảng của người khác. Hồ sơ, bảng số, kết quả test và tài liệu đã cấp phép ở lại trong ứng dụng, sau đăng nhập. Không ngoại lệ, kể cả khi ẩn danh.': 'The group lives on someone else’s platform. Records, numbers boards, test results and licensed materials stay inside the app, behind login. No exceptions, even when anonymised.',
+  'Không tư vấn ca cụ thể trong bình luận công khai': 'No advice on specific cases in public comments',
+  'Câu hỏi chung thì trả lời chung. Ca cụ thể thì mời vào ứng dụng — vừa để giữ riêng tư, vừa vì trả lời một ca mà không có hồ sơ là đoán.': 'General questions get general answers. Specific cases are invited into the app — both for privacy, and because answering a case without its records is guessing.',
+  'Không chốt học phí trong nhóm': 'No settling tuition in the group',
+  'Báo giá đi kèm phạm vi và hợp đồng. Ném một con số vào bình luận là bỏ mất phần quan trọng nhất của nó.': 'A quote comes with a scope and a contract. Tossing a number into a comment drops the most important part of it.',
+  'Chuyện của một gia đình chỉ đăng khi chính họ kể': 'A family’s story is posted only when they tell it themselves',
+  'Không kể hộ, không ẩn danh rồi kể. Gia đình tự kể thì đó là tiếng nói của họ; Học viện kể hộ thì đó là tư liệu quảng cáo.': 'No telling it for them, no anonymising and retelling. When the family tells it, it is their voice; when the Academy tells it for them, it is advertising material.',
+  'Nhóm không thay ứng dụng': 'The group does not replace the app',
+  'Nhóm là cửa trước và chỗ sinh hoạt chung. Mọi việc có hồ sơ, có mốc, có bằng chứng đều ở trong ứng dụng.': 'The group is the front door and the common room. Everything with records, milestones and evidence lives inside the app.'
+});
+
+})();
+
+/* ═════════ src/tu-dien-en-09.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — TỪ ĐIỂN TIẾNG ANH · ĐỢT 9: BẢN ĐỒ NHÀ MÌNH · GHI CÔNG
+   Màn ban-do (năm khoang, tám việc nền) và phan-thuong (cấp độ ·
+   huy hiệu · quà). Giữ đúng luật: không bảng xếp hạng giữa các nhà.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.TU_DIEN_EN = G.TU_DIEN_EN || {};
+(function (d) { for (var k in d) G.TU_DIEN_EN[k] = d[k]; })({
+  /* ── Bản đồ nhà mình ── */
+  '{n} ngày chặng {n}': '{n} days of stage {n}',
+  'VÀO {n}': 'INPUT {n}',
+  'RA ĐƯỢC GÌ': 'WHAT COMES OUT',
+  'ĐỊNH HƯỚNG': 'DIRECTION',
+  'Đầu năm, rà lại mỗi {n} ngày': 'Start of year, reviewed every {n} days',
+  '· Bản đồ nhà mình.': '· Your family map.',
+  'Bản Đồ Gia Đình Thịnh Vượng': 'The Prosperous Family Map',
+  'Một dòng chảy năm khoang, chạy trên băng nền tám việc của Mentor GITA {n}. Đầu vào là tầm nhìn gia đình {n}–{n} năm cùng bộ test toàn thành viên và bản đồ hoạt động xã hội. Đầu ra là một hệ gia đình vận hành được mà không cần ai canh.': 'A five-chamber flow running on the eight-task foundation of the GITA {n} Mentor. The input is the family’s {n}–{n}-year vision plus tests for every member and a map of social activities. The output is a family system that runs without anyone watching over it.',
+  'VIỆC CỦA NHÀ MÌNH HÔM NAY': 'YOUR FAMILY’S TASK TODAY',
+  'Một việc. Xong việc này mới tới việc sau.': 'One task. Finish this one before the next.',
+  'BƯỚC KẾ TIẾP': 'NEXT STEP',
+  'Người mới nhìn': 'The newcomer sees',
+  'Ghi tối đầu tiên. Chỉ một tối, và chưa cần sửa gì cả.': 'Log the first evening. Just one evening, and nothing needs fixing yet.',
+  'Nhà mình đã có:': 'Your family already has:',
+  '{n} tối có ghi': '{n} evenings logged',
+  'Qua mốc này thì mở:': 'Passing this milestone unlocks:',
+  'Lần đầu nhìn thấy giờ ngồi vào bàn của ba tối đặt cạnh nhau — và nhận ra chúng lệch nhau tới cả tiếng.': 'Seeing three evenings’ study start times side by side for the first time — and realising they differ by a whole hour.',
+  'Cả nhà ngồi đủ mặt, viết gia đình mình muốn trở thành gia đình thế nào trong {n} năm, {n} năm và {n} năm tới. Viết bằng lời của từng người, không ai viết hộ ai.': 'With everyone present, write what kind of family you want to become in {n}, {n} and {n} years. In each person’s own words; no one writes for anyone else.',
+  'Không chỉ test học viên. Đo cả cách người lớn đang đồng hành: tần suất nhắc, cách phản hồi khi con vấp, mức làm thay, khả năng giữ ranh giới.': 'Not just testing the student. Measure how the adults are supporting too: how often they remind, how they respond when the child stumbles, how much they do for them, how well they hold boundaries.',
+  'Đọc xem nhà mình đang chạm vào những môi trường nào bên ngoài: họ hàng, hàng xóm, nhóm bạn của con, cộng đồng, nơi bố mẹ làm việc.': 'Look at which outside environments your family touches: relatives, neighbours, your child’s friends, the community, the parents’ workplaces.',
+  'DÒNG CHẢY NĂM KHOANG': 'THE FIVE-CHAMBER FLOW',
+  'Bấm vào một khoang để mở toàn bộ nội dung, việc cụ thể, KPI và cảnh báo': 'Tap a chamber to open its full content, specific tasks, KPIs and warnings',
+  'THẤU HIỂU THÀNH VIÊN': 'UNDERSTANDING EACH MEMBER',
+  'Trong nhà này, mỗi người thật sự là ai?': 'In this family, who is each person really?',
+  'Bộ test': 'Test set',
+  'Đầu năm, lặp lại rút gọn mỗi {n} ngày': 'Start of year, repeated in short form every {n} days',
+  'Nhà mình đi đâu, đi theo luật nào?': 'Where is your family heading, and by which rules?',
+  'Văn hóa': 'Culture',
+  'Quy tắc': 'Rules',
+  'Thói quen': 'Habits',
+  'HỌC TẬP KIẾN THỨC': 'LEARNING KNOWLEDGE',
+  'Cả nhà đang học cái gì để đi được quãng đường đó?': 'What is the whole family learning to travel that road?',
+  'Trí tuệ': 'Intellect',
+  'Kỹ năng': 'Skills',
+  'Phương pháp': 'Method',
+  'Thấu hiểu': 'Understanding',
+  'Tuần': 'Week',
+  'LỘ TRÌNH NÂNG CẤP CÁ NHÂN': 'PERSONAL GROWTH PATHWAY',
+  'Từng người đang lên chặng nào?': 'Which stage is each person moving to?',
+  '{n} ngày · cổng ở cuối mỗi chặng': '{n} days · a gate at the end of each stage',
+  'VAI TRÒ VÀ TRÁCH NHIỆM THÀNH VIÊN': 'MEMBERS’ ROLES AND RESPONSIBILITIES',
+  'Trong nhà này ai giữ gì, và ai đang bị bỏ ra ngoài?': 'In this family, who holds what, and who is being left out?',
+  'Bố · Mẹ · Con': 'Dad · Mum · Child',
+  'Tài chính gia đình': 'Family finances',
+  'Quản trị gia đình': 'Family management',
+  'Thói quen chăm sóc gia đình': 'Family care habits',
+  'BĂNG NỀN — tám việc chạy dưới cả năm khoang': 'THE FOUNDATION — eight tasks running beneath all five chambers',
+  'Tám việc này không thuộc riêng khoang nào. Chúng chạy dưới cả năm khoang, từ ngày đầu tới ngày cuối. Thiếu một việc thì khoang phía trên hụt chân.': 'These eight tasks belong to no single chamber. They run beneath all five, from the first day to the last. Miss one and the chamber above loses its footing.',
+  'ĐỊNH VỊ': 'LOCATE',
+  'Biết gia đình đang thật sự ở đâu trước khi bàn đi đâu. Đo bằng dữ liệu, không bằng cảm giác.': 'Know where the family really is before discussing where to go. Measured with data, not feelings.',
+  'Nhịp: Đầu năm và đầu mỗi chặng {n} ngày': 'Rhythm: start of year and start of each {n}-day stage',
+  '⚠ Thiếu khi: Cả nhà bàn giải pháp mà chưa ai đọc số liệu hiện trạng': '⚠ Missing when: the family discusses solutions without anyone reading the current data',
+  'Giữ cho mọi việc trong tuần đều nối được về tầm nhìn {n}–{n} năm. Việc không nối được thì bỏ.': 'Keep every task in the week connected to the {n}–{n}-year vision. Tasks that do not connect are dropped.',
+  'Nhịp: Mỗi {n} ngày': 'Rhythm: every {n} days',
+  '⚠ Thiếu khi: Gia đình bận rộn nhưng không nói được việc đang làm phục vụ đích nào': '⚠ Missing when: the family is busy but cannot say which goal the work serves',
+  'ĐỒNG HÀNH': 'ACCOMPANY',
+  'Có mặt đúng nhịp, nghe trước khi khuyên, giữ tỉ lệ nghe bảy khuyên ba.': 'Be present on rhythm, listen before advising, keep the listen-seven, advise-three ratio.',
+  'Nhịp: Tuần': 'Rhythm: weekly',
+  '⚠ Thiếu khi: Buổi làm việc nào Mentor cũng nói nhiều hơn gia đình': '⚠ Missing when: the Mentor talks more than the family in every session',
+  'Tìm điểm chạm nhỏ nhất tạo thay đổi lớn nhất, thay vì bắt cả nhà sửa mười việc cùng lúc.': 'Find the smallest touchpoint that creates the biggest change, instead of making the family fix ten things at once.',
+  'Nhịp: Mỗi chặng chọn lại một đòn bẩy': 'Rhythm: choose one lever again each stage',
+  '⚠ Thiếu khi: Danh sách việc cần làm dài ra sau mỗi buổi': '⚠ Missing when: the to-do list grows longer after every session',
+  'Gọi tên đúng việc gia đình làm được, có bằng chứng, đúng lúc. Ghi nhận cả phần người lớn.': 'Name exactly what the family has achieved, with evidence, at the right moment. Recognise the adults’ part too.',
+  'Nhịp: Tuần và cuối mỗi chặng': 'Rhythm: weekly and at the end of each stage',
+  '⚠ Thiếu khi: Gia đình chỉ nhớ những lần bị nhắc, không nhớ lần nào được ghi nhận': '⚠ Missing when: the family remembers only being reminded, never being recognised',
+  'GỠ NÚT': 'UNTANGLE',
+  'Khi lộ trình tắc, tìm đúng nút thắt và gỡ, thay vì tăng khối lượng việc.': 'When the pathway jams, find the exact knot and untie it, rather than adding more work.',
+  'Nhịp: Ngay khi dữ liệu hai tuần liền đi ngang hoặc đi xuống': 'Rhythm: as soon as data has been flat or falling for two weeks',
+  '⚠ Thiếu khi: Giải pháp cho mọi vấn đề đều là cố gắng nhiều hơn': '⚠ Missing when: the answer to every problem is “try harder”',
+  'CỐ VẤN': 'ADVISE',
+  'Đưa chuẩn chuyên môn và kinh nghiệm, nhưng để quyền quyết định ở gia đình.': 'Bring professional standards and experience, but leave the decisions with the family.',
+  'Nhịp: Mọi buổi, mạnh nhất ở các cổng nghiệm thu': 'Rhythm: every session, strongest at review gates',
+  '⚠ Thiếu khi: Gia đình chờ Mentor quyết thay thì mới dám làm': '⚠ Missing when: the family waits for the Mentor to decide before daring to act',
+  'NÂNG CẤP': 'LEVEL UP',
+  'Chốt nâng chặng theo bằng chứng năng lực, kèm trao quyền mới và trách nhiệm mới.': 'Confirm moving up a stage based on evidence of capability, with new rights and new responsibilities.',
+  'Nhịp: Cuối mỗi chặng {n} ngày': 'Rhythm: end of each {n}-day stage',
+  '⚠ Thiếu khi: Chặng mới bắt đầu chỉ vì đã hết ngày của chặng cũ': '⚠ Missing when: a new stage starts only because the old one ran out of days',
+  'ĐẦU RA — gia đình thành công, hạnh phúc': 'OUTPUT — a successful, happy family',
+  'Hồ sơ đầu ra:': 'Output records:',
+  'Hồ sơ Năng lực GITA Master + Bảng tầm nhìn gia đình bản cập nhật cho {n} ngày tiếp theo': 'GITA Master Capability Profile + an updated family vision board for the next {n} days',
+  '— Mô hình Gia đình vận hành {n}': '— The Operating Family Model {n}',
+
+  /* ── Ghi công và phần thưởng ── */
+  '{n} điểm': '{n} points',
+  'điểm': 'points',
+  'bất kỳ': 'any',
+  'Đổi quà này': 'Redeem this gift',
+  'Còn {n} điểm': '{n} points to go',
+  'Nhà mình có một hệ thống chạy được do chính mình dựng.': 'Your family has a working system it built itself.',
+  'ngày': 'days',
+  'tuần': 'weeks',
+  '· Ghi công và phần thưởng.': '· Recognition and rewards.',
+  'Ghi nhận · Cấp độ · Quà tặng': 'Recognition · Levels · Gifts',
+  'Điểm ở đây ghi nhận VIỆC ĐÃ LÀM, không xếp hạng ai. Không có bảng xếp hạng giữa các nhà — nhà mình chỉ so với nhà mình chặng trước.': 'Points here recognise WORK DONE; they rank no one. There is no leaderboard between families — your family is compared only with itself at the previous stage.',
+  'LÊN CẤP': 'LEVEL UP',
+  'CẤP ĐỘ HIỆN TẠI': 'CURRENT LEVEL',
+  'LV{n} · NGƯỜI DỰNG HỆ': 'LV{n} · SYSTEM BUILDER',
+  'điểm · còn': 'points · ',
+  'điểm để lên': 'points to reach',
+  'MƯỜI CẤP ĐỘ HÀNH TRÌNH': 'TEN JOURNEY LEVELS',
+  'Lên cấp bằng việc đã làm có bằng chứng, không bằng thời gian ngồi lâu': 'Level up through evidenced work, not time spent sitting',
+  'NGƯỜI BẮT ĐẦU': 'STARTER',
+  'Đã bước vào và đã ghi dòng nhật ký đầu tiên.': 'Has stepped in and written the first journal line.',
+  'NGƯỜI GHI CHÉP': 'RECORDER',
+  'Bảy tối liên tục có dữ liệu thật, kể cả tối "quên".': 'Seven consecutive evenings with real data, including “forgot” evenings.',
+  'NGƯỜI NHÌN RA': 'OBSERVER',
+  'Gọi được tên một mô thức lặp của nhà mình bằng câu có số.': 'Can name one of the family’s repeating patterns in a sentence with a number.',
+  'NGƯỜI GIẢI MÃ': 'DECODER',
+  'Chạy đủ ba vòng kiểm chứng và chốt được cơ chế ưu tiên.': 'Has run three full verification rounds and settled the priority mechanism.',
+  'NGƯỜI DỰNG HỆ': 'SYSTEM BUILDER',
+  'Chín mươi ngày liên tục không bỏ buổi ngồi lại hàng tuần.': 'Ninety consecutive days without missing the weekly sit-down.',
+  'NGƯỜI TRAO QUYỀN': 'EMPOWERER',
+  'Đã trao ít nhất ba quyền cho con, mỗi quyền kèm một trách nhiệm.': 'Has handed the child at least three rights, each with a responsibility.',
+  'NGƯỜI CÓ KỲ TÍCH': 'ACHIEVER',
+  'Nhà mình có một kỳ tích năm với bằng chứng thật.': 'Your family has a year’s achievement with real evidence.',
+  'NGƯỜI DẪN ĐƯỜNG': 'GUIDE',
+  'Đã đi cùng trọn vẹn một nhà mới qua {n} ngày đầu.': 'Has fully accompanied a new family through its first {n} days.',
+  'NGƯỜI KIẾN TẠO': 'CREATOR',
+  'Nhà mình vận hành được mà không cần ai canh — và đang giúp nhà khác làm được điều đó.': 'Your family runs without anyone watching — and is helping another family do the same.',
+  'CÁCH TÍCH ĐIỂM': 'HOW POINTS ARE EARNED',
+  'Minh bạch tuyệt đối — không có điểm ẩn': 'Fully transparent — no hidden points',
+  'Check-in mỗi ngày': 'Daily check-in',
+  'Ghi đủ ba dòng nhật ký tối': 'Write all three evening journal lines',
+  'Đủ bảy tối liên tục': 'Seven evenings in a row',
+  'Dự trọn buổi ngồi lại hàng tuần': 'Attend the full weekly sit-down',
+  'Hoàn thành đêm rà đòn bẩy': 'Complete the lever-review night',
+  'Qua một cổng nghiệm thu có bằng chứng': 'Pass a review gate with evidence',
+  'Gửi một tài liệu nhà mình tự làm lên hệ thống': 'Submit a resource your family made to the system',
+  'Hoàn thành một nhiệm vụ đại sứ': 'Complete an ambassador mission',
+  'Đi cùng một nhà mới qua {n} ngày đầu': 'Accompany a new family through its first {n} days',
+  'HUY HIỆU': 'BADGES',
+  'Mỗi huy hiệu là một việc thật, có bằng chứng': 'Each badge is a real deed, with evidence',
+  'BẢY TỐI THẬT': 'SEVEN REAL EVENINGS',
+  'Bảy tối liên tục có dữ liệu, gồm cả tối ghi "quên".': 'Seven consecutive evenings with data, including evenings logged as “forgot”.',
+  'KHÔNG BỎ BUỔI': 'NEVER MISSED A SESSION',
+  'Mười hai tuần liền không bỏ buổi ngồi lại.': 'Twelve weeks in a row without missing the sit-down.',
+  'NGOẠI LỆ TỐT': 'A GOOD EXCEPTION',
+  'Tự tìm ra một ngoại lệ tốt và nói được nó khác vì đâu.': 'Found a good exception yourselves and can say what made it different.',
+  'ĐỦ CHÍN VAI': 'ALL NINE ROLES',
+  'Chín vai đều có người giữ, không ai giữ quá bốn vai.': 'All nine roles held, no one holding more than four.',
+  'Cha mẹ hoàn thành ba mươi ngày đổi một thói quen của chính mình.': 'Parents completed thirty days changing one of their own habits.',
+  'Một sản phẩm, thành tựu hoặc tác động có bằng chứng.': 'A product, achievement or impact with evidence.',
+  'KỂ CẢ CHỖ VẤP': 'STUMBLES INCLUDED',
+  'Một bài chia sẻ thật có cả phần chưa xong.': 'A genuine sharing post that includes the unfinished parts.',
+  'MỞ CỬA CHO MỘT NHÀ': 'OPENED THE DOOR FOR A FAMILY',
+  'Đi cùng trọn vẹn một gia đình mới qua {n} ngày đầu.': 'Fully accompanied a new family through its first {n} days.',
+  'ĐỔI ĐIỂM LẤY QUÀ': 'REDEEM POINTS FOR GIFTS',
+  'Quà tặng là công cụ đi tiếp, không phải phần thưởng cho việc ngoan': 'Gifts are tools for the road ahead, not rewards for good behaviour',
+  'Bộ bảy bản đồ A{n} in khổ lớn': 'Set of seven A{n} maps, printed large',
+  'In sẵn, gửi tận nhà — dán tường phòng khách.': 'Printed and delivered to your door — for the living-room wall.',
+  'Một quyển sách gốc Học viện': 'An original Academy book',
+  'Bản in, có chữ ký của người sáng lập.': 'Printed, signed by the founder.',
+  'Một phiên coach {n}-{n} tặng thêm': 'A bonus {n}-on-{n} coaching session',
+  'Sáu mươi phút với Senior Coach, ngoài lộ trình.': 'Sixty minutes with a Senior Coach, outside the pathway.',
+  'Vé Lửa Trại Gia Đình Thịnh Vượng': 'Prosperous Family Campfire ticket',
+  'Ba ngày cho cả nhà, đã gồm chỗ ở.': 'Three days for the whole family, accommodation included.',
+  'Khắc tên nhà mình trên bảng vinh danh': 'Your family’s name engraved on the honour board',
+  'Tại Học viện — kèm câu chuyện nhà mình do chính mình viết.': 'At the Academy — with your family’s story, written by you.',
+  'Suất đồng hành tặng cho một nhà khác': 'A companionship place gifted to another family',
+  'Nhà mình chọn người nhận. Đây là phần thưởng được đổi nhiều nhất.': 'Your family chooses the recipient. This is the most-redeemed reward.',
+  'Vì sao ở đây không có bảng xếp hạng': 'Why there is no leaderboard here',
+  'Cơ chế thi đua tạo động lực trong tổ chức và tạo tổn thương trong nhà. Mỗi đứa trẻ chỉ so với chính nó; mỗi gia đình chỉ so với chính mình chặng trước. Đây là ranh giới số bốn của mô hình và nó không thương lượng.': 'Competition motivates in organisations and wounds at home. Each child is compared only with themselves; each family only with itself at the previous stage. This is the model’s boundary number four, and it is not negotiable.'
+});
+
+})();
+
+/* ═════════ src/tu-dien-en-10.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — TỪ ĐIỂN TIẾNG ANH · ĐỢT 10: ĐẠI SỨ · BÁO CÁO THÁNG ·
+   VÒNG NHẮC · MƯỜI ĐIỂM VỀ ĐÍCH
+   Một số câu ở màn Đại sứ bị màn cắt ngắn kèm dấu "…" — khoá giữ đúng
+   dạng đã cắt, vì bộ dịch tra đúng chữ đang hiện trên màn.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.TU_DIEN_EN = G.TU_DIEN_EN || {};
+(function (d) { for (var k in d) G.TU_DIEN_EN[k] = d[k]; })({
+  /* ── Đại sứ: kể chuyện nhà mình ── */
+  'Cấp {n}': 'Level {n}',
+  'Xem quyền lợi': 'See benefits',
+  '· Kể chuyện nhà mình.': '· Tell your family’s story.',
+  'BỐN CẤP ĐẠI SỨ': 'FOUR AMBASSADOR LEVELS',
+  'Lên cấp bằng việc đã làm, không bằng số người đã mời': 'Level up through work done, not the number of people invited',
+  'ĐẠI SỨ TẬP SỰ — người mới kể chuyện mình': 'TRAINEE AMBASSADOR — new to telling their own story',
+  'Đang tham gia Tầng {n}, đã hoàn thành tối thiểu {n} trên {n} ngày nhật ký, đã đọc trọn Quy tắc an toàn khi chia sẻ và ký xác nhận đã đọc. Với học viên dưới {n} tuổi, cha mẹ hoặc người giám hộ ký cù…': 'Currently in Tier {n}, has completed at least {n} of {n} journal days, has read the full Safe Sharing Rules and signed to confirm. For students under {n}, a parent or guardian co-signs…',
+  'ĐẠI SỨ ĐỒNG HÀNH — người kể được cả chỗ vấp': 'COMPANION AMBASSADOR — can tell the stumbles too',
+  'Đã sang Tầng {n}, tích lũy tối thiểu {n} điểm ở cấp {n}, và chưa có bài nào bị gỡ vì vi phạm Quy tắc an toàn trong {n} ngày gần nhất.': 'Has reached Tier {n}, earned at least {n} points at level {n}, and had no post removed for breaking the Safety Rules in the last {n} days.',
+  'ĐẠI SỨ DẪN ĐƯỜNG — người trả lời được câu hỏi của người khác': 'GUIDE AMBASSADOR — can answer other people’s questions',
+  'Đã sang Tầng {n}, tích lũy tối thiểu {n} điểm, có ít nhất ba bài được thành viên khác hỏi lại và mình đã trả lời trọn vẹn từng câu; đã dự một buổi tập huấn về ranh giới chuyên môn và cách chuy…': 'Has reached Tier {n}, earned at least {n} points, had at least three posts that other members asked about and answered every question fully; has attended a training session on professional boundaries and how to refer…',
+  'ĐẠI SỨ KIẾN TẠO — người kèm được một nhà mới': 'BUILDER AMBASSADOR — can mentor a new family',
+  'Đã sang Tầng {n} hoặc Tầng {n}, tích lũy tối thiểu {n} điểm, đã đi cùng trọn vẹn một gia đình mới qua {n} ngày đầu và được chính gia đình đó xác nhận bằng văn bản ngắn.': 'Has reached Tier {n} or Tier {n}, earned at least {n} points, fully accompanied a new family through its first {n} days, confirmed by that family in a short written note.',
+  'HAI MƯƠI NHIỆM VỤ': 'TWENTY MISSIONS',
+  'Mỗi nhiệm vụ là một câu chuyện thật, không phải một bài quảng cáo': 'Each mission is a true story, not an advertisement',
+  'Bảy ngày đầu của mình, kể bằng ba con số': 'My first seven days, told in three numbers',
+  'Cho bạn nào sắp bước vào bảy ngày đầu thấy một cuốn nhật ký thật trông ra sao, để bớt tưởng tượng và bớt sợ phần ghi ché…': 'To show anyone about to start their first seven days what a real journal looks like, so there is less guessing and less fear of the record-keep…',
+  'Bảng đếm số lần nhắc: từ bốn xuống một': 'Reminder tally: from four down to one',
+  'Cho phụ huynh khác thấy cách đo một thay đổi nhỏ bằng con số, thay vì kể lại cảm giác chung chung rồi không biết mình đa…': 'To show other parents how to measure a small change in numbers, instead of describing vague feelings and not knowing where they a…',
+  'Góc học tập của mình, ảnh trước và ảnh sau': 'My study corner, before and after photos',
+  'Cho người đọc thấy môi trường học đổi được bằng những việc nhỏ và gần như không tốn tiền, để họ không nghĩ phải đầu tư m…': 'To show readers that a study environment can change through small, almost free steps, so they do not think they must invest…',
+  'Một buổi khó và việc mình làm ngay sau đó': 'A hard session and what I did right afterwards',
+  'Bình thường hóa việc vấp, để bạn nào vừa có một tuần lệch nhịp không nghĩ chỉ mình mình như vậy rồi bỏ luôn cả chặng.': 'To normalise stumbling, so anyone who just had an off-rhythm week does not think they are the only one and give up the whole stage.',
+  'Bốn cái cửa G–I–T–A, kể lại bằng chuyện nhà mình': 'The four G–I–T–A doors, retold through your family’s story',
+  'Đưa một khung nghĩ dùng được ngay cho phụ huynh đang loay hoay tìm nguyên nhân, để họ tách được chuyện con chưa muốn với…': 'To give parents struggling to find the cause a thinking frame they can use right away, so they can separate a child not wanting to from…',
+  'Một phút: cách mình chia nhỏ một bài dài': 'One minute: how I break down a long assignment',
+  'Đưa một kỹ thuật học cụ thể tới đúng nơi các bạn cùng tuổi đang ở, gói trong thời lượng đủ ngắn để xem hết mà không lướt…': 'To bring a specific study technique to where peers already are, short enough to watch to the end without skimming…',
+  'Thư gửi gia đình đang phân vân': 'A letter to a family who is unsure',
+  'Trả lời đúng nỗi phân vân mà người mới thường không dám hỏi thành lời, bằng trải nghiệm của một nhà đã đi trước chứ khôn…': 'To answer the exact doubt newcomers rarely dare say out loud, through the experience of a family that went before rather than…',
+  'Trả lời trọn một câu hỏi có thật trong group': 'Fully answer a real question in the group',
+  'Làm cho người vừa đặt câu hỏi thấy có người thật đọc kỹ câu của họ, và nhận về một việc nhỏ làm được ngay tối nay thay v…': 'To show the person who asked that a real person read their question carefully, and give them one small thing to do tonight instead of…',
+  'Buổi chia sẻ ba mươi phút trong nhóm Zalo phụ huynh lớp': 'A thirty-minute sharing session in the class parents’ Zalo group',
+  'Mang một cách làm cụ thể tới nhóm phụ huynh gần mình nhất, nơi mọi người đủ tin nhau để nói thật về buổi tối ở nhà.': 'Bring one concrete method to the parent group closest to you, where people trust each other enough to be honest about evenings at home.',
+  'Đi cùng một gia đình mới hết hai mươi mốt ngày đầu': 'Accompany a new family through its first twenty-one days',
+  'Giữ một gia đình mới ở lại qua đoạn dễ bỏ cuộc nhất, bằng sự có mặt đều đặn của một người đã đi qua đúng đoạn đó.': 'Keep a new family going through the stretch where people most often quit, through the steady presence of someone who walked exactly that stretch.',
+  'Bài tổng kết chặng hai mươi mốt ngày của cả nhà': 'The whole family’s twenty-one-day stage summary',
+  'Cho người đọc thấy hai mươi mốt ngày thật sự đổi được gì và chưa đổi được gì, để họ có mốc so sánh trung thực thay vì kỳ…': 'To show readers what twenty-one days really changed and what it did not, so they have an honest benchmark rather than expect…',
+  'Bài tổng kết chín mươi ngày, viết cho người ngoài đọc': 'A ninety-day summary written for outsiders to read',
+  'Để lại một bản ghi trung thực về một chặng dài, đủ chi tiết cho người đang cân nhắc hình dung được ba tháng thật sự trôi…': 'To leave an honest record of a long stage, detailed enough for someone considering it to picture how three months really go…',
+  'Ba con số gửi nhóm Zalo gia đình mỗi tối Chủ nhật': 'Three numbers sent to the family Zalo group every Sunday evening',
+  'Tạo một nhịp báo cáo do chính học viên giữ, để người lớn trong nhà biết chuyện gì đang diễn ra mà không phải đi kiểm tra…': 'To create a reporting rhythm kept by the student themselves, so the adults at home know what is going on without having to check…',
+  'Bữa tối không nói chuyện điểm số': 'A dinner with no talk of grades',
+  'Cho các nhà khác thấy một thỏa thuận nhỏ trong bữa cơm có thể hạ nhiệt cả buổi tối, và cho thấy nó khó ở chỗ nào chứ khô…': 'To show other families that one small dinner-table agreement can cool down a whole evening — and where it gets hard, not…',
+  'Video năm phút: một ngày học của mình từ đầu đến cuối': 'Five-minute video: a day of my studying from start to finish',
+  'Cho bạn cùng tuổi thấy một ngày học có thật diễn ra thế nào, gồm cả đoạn trống và đoạn hỏng, thay vì một ngày được dựng …': 'To show peers how a real study day goes, empty and broken stretches included, rather than a staged day…',
+  'Điều tôi từng làm khác đi khi đi cùng con': 'What I changed in how I support my child',
+  'Mở một cánh cửa cho phụ huynh đang tự trách mình, bằng cách một người lớn nói thẳng phần mình làm chưa đúng mà không tự …': 'To open a door for parents who blame themselves, through one adult speaking plainly about what they got wrong without self-…',
+  'Phiên hỏi đáp có hẹn giờ trong group cộng đồng': 'A scheduled Q&A session in the community group',
+  'Dồn những câu hỏi lẻ tẻ trong group vào một khung giờ có người trả lời thật, để người mới không phải chờ may rủi xem ai …': 'To gather scattered group questions into a time slot with real people answering, so newcomers need not wait to see who happens to…',
+  'Ba việc giữ giờ học, gói trong bốn mươi lăm giây': 'Three ways to keep study time, in forty-five seconds',
+  'Đưa ba việc rất nhỏ về giữ giờ tới các bạn hay lướt nhanh, ở dạng ngắn tới mức xem hết được mà vẫn nhớ được cả ba.': 'To bring three tiny time-keeping habits to fast scrollers, short enough to watch to the end and still remember all three.',
+  'Mô thức nhà mình đã đổi, kể trong tám phút': 'How our family pattern changed, told in eight minutes',
+  'Để lại một bản ghi dài đủ để người xem hiểu vì sao một thói quen của cả nhà đổi được, chứ không chỉ biết là nó đã đổi.': 'To leave a record long enough for viewers to understand why a whole-family habit changed, not just that it did.',
+  'Bàn giao: đi cùng một đại sứ mới tới bài đầu tiên của họ': 'Handover: accompany a new ambassador to their first post',
+  'Làm cho hệ thống đại sứ tự nuôi được người mới, và cho bạn mới có một người đọc trước bài đầu tiên để không đăng nhầm th…': 'To let the ambassador system nurture newcomers itself, and give new ambassadors someone to read their first post so they do not post the wrong…',
+  'MƯỜI BA QUY TẮC AN TOÀN': 'THIRTEEN SAFETY RULES',
+  'Hình ảnh cá nhân của trẻ em là thông tin bí mật đời sống riêng tư. Đứa trẻ hôm nay gật đầu vì nể người lớn, năm năm sau vẫn phải sống với bức ảnh đó và không lấy lại được. Sự đồng ý phải hỏi riêng, hỏ…': 'A child’s personal image is private-life information. A child who nods today to please an adult must still live with that photo five years later, with no way to take it back. Consent must be asked separately, ask…',
+  'Kết quả học tập của trẻ em nằm trong nhóm thông tin bí mật đời sống riêng tư, ngang với thông tin sức khỏe. Đăng điểm của con nhà khác là xâm phạm quyền của một đứa trẻ không hề được hỏi. Đăng điểm củ…': 'A child’s academic results are private-life information, on a par with health information. Posting another family’s child’s grades violates the rights of a child who was never asked. Posting the grades of…',
+  'Ghép ba mảnh tên trường, khung giờ và một tấm ảnh là đủ để một người lạ đứng đúng chỗ, đúng giờ. Đây là rủi ro an toàn thân thể, không chỉ là rủi ro quyền riêng tư. Với ảnh chụp màn hình và ảnh nhật k…': 'Combining three pieces — school name, a time slot and a photo — is enough for a stranger to stand in the right place at the right time. This is a physical safety risk, not just a privacy risk. With screenshots and journal photos…',
+  'Kết quả của một đứa trẻ phụ thuộc vào chính đứa trẻ, gia đình và nhà trường, không ai kiểm soát được cả ba. Một lời hứa đăng lên mạng vừa là lời quảng cáo sai sự thật, vừa đẩy gia đình đọc được vào th…': 'A child’s results depend on the child, the family and the school, and no one controls all three. A promise posted online is both false advertising and pushes the family who reads it into…',
+  'So sánh biến một cộng đồng hỗ trợ thành một cuộc đua, và đứa trẻ bị đem ra so là người chịu hậu quả mà không được hỏi ý kiến. Mốc so sánh đúng duy nhất là chính nhà mình của tuần trước. Nếu ai đó mở m…': 'Comparison turns a support community into a race, and the child being compared bears the consequences without being asked. The only valid benchmark is your own family last week. If someone opens…',
+  'Người ta kể chuyện nhà mình trong một nhóm kín vì tin rằng nó dừng lại ở đó. Chép lại ra ngoài, kể cả có khen, kể cả đã đổi tên, là phá vỡ đúng thứ giữ cho group còn đáng tin. Nội dung do người khác v…': 'People share their family’s story in a closed group trusting it stays there. Copying it outside — even with praise, even with names changed — breaks exactly what keeps the group trustworthy. Content written by others…',
+  'Không biến việc chia sẻ thành bán hàng. Không mời chào trực tiếp, không nhắn riêng chào mời người vừa bình luận, không gắn mã giới thiệu, không xây tuyến dưới và không nhận hoa hồng theo số người giới thiệu.': 'Do not turn sharing into selling. No direct pitching, no private messages pitching to someone who just commented, no referral codes, no building a downline, and no commission based on the number of people referred.',
+  'Ngay khi một bài chia sẻ có gắn quyền lợi tiền bạc, người đọc mất khả năng phân biệt đâu là trải nghiệm thật đâu là lời rao, và toàn bộ giá trị của hệ thống đại sứ sụp xuống. Đây cũng là ranh giới đạo…': 'The moment a post carries a financial interest, readers can no longer tell real experience from a sales pitch, and the whole value of the ambassador system collapses. This is also an ethical line…',
+  'Nếu người viết có nhận tiền, quà, ưu đãi học phí hay bất kỳ lợi ích nào từ GITA cho bài đăng, phải ghi rõ ngay đầu bài rằng đây là nội dung được tài trợ, và phải tự kiểm chứng mọi thông tin về dịch vụ trước khi nói ra.': 'If the writer receives money, gifts, tuition discounts or any benefit from GITA for a post, they must state clearly at the top that it is sponsored content, and must verify all service information themselves before stating it.',
+  'Người đọc có quyền biết ai đang trả tiền cho câu chữ họ đang đọc, để tự cân lại mức tin. Giấu chuyện tài trợ là làm hỏng lòng tin đã xây, và giờ còn là vi phạm nghĩa vụ của người chuyển tải sản phẩm q…': 'Readers have a right to know who is paying for the words they read, so they can weigh how much to trust them. Hiding sponsorship damages trust that was built, and is now also a breach of the obligations of those carrying advertis…',
+  'Quản trị viên group có nghĩa vụ tạm khóa hoặc gỡ nội dung vi phạm trong vòng {n} giờ kể từ khi thành viên báo cáo, và trong vòng {n} giờ kể từ khi cơ quan quản lý nhà nước có thẩm quyền yêu cầu. Mỗi lần xử lý phải ghi nhật ký gồm ai xử lý, lúc nào, nội dung gì.': 'Group admins must suspend or remove violating content within {n} hours of a member report, and within {n} hours of a request from the competent state authority. Every action must be logged: who handled it, when, and what content.',
+  'Đây là nghĩa vụ pháp lý của người quản trị, không phải quyền tùy nghi. Group cần tối thiểu hai quản trị viên trực luân phiên để giữ được mốc {n} giờ kể cả cuối tuần và ngày lễ. Mọi thành viên đều có qu…': 'This is the admin’s legal obligation, not a discretionary right. The group needs at least two admins on rotation to meet the {n}-hour mark, weekends and holidays included. Every member has the right…',
+  'Mọi nội dung nói về dịch vụ giáo dục của GITA phải trung thực, chính xác và có căn cứ lưu lại được. Không dùng các tuyên bố kiểu phương pháp số một, tăng bao nhiêu điểm sau bao nhiêu buổi, hay được cơ quan nào công nhận khi không có văn bản chứng minh.': 'All content about GITA’s education services must be truthful, accurate and backed by retainable evidence. No claims like “number-one method”, “so many points after so many sessions”, or “recognised by some authority” without documentary proof.',
+  'Cơ chế quản lý đã chuyển sang hậu kiểm, nghĩa là bài đăng ra rồi vẫn bị soi lại và người đăng phải xuất trình được căn cứ. Với một học viện, một câu quảng cáo không kiểm chứng được vừa là rủi ro bị xử…': 'Regulation has moved to post-publication review, meaning a post is still scrutinised after it goes out and the poster must be able to show evidence. For an academy, an unverifiable advertising line is both a risk of penalties…',
+  'Học viên dưới {n} tuổi không tự lập tài khoản mạng xã hội để làm nhiệm vụ đại sứ. Bài đăng qua tài khoản của cha mẹ hoặc người giám hộ, do người lớn xem lại và bấm đăng.': 'Students under {n} do not create their own social media accounts for ambassador missions. Posts go through a parent’s or guardian’s account, reviewed and published by the adult.',
+  'Đây vừa là yêu cầu pháp lý vừa là lớp bảo vệ thật: một người lớn đọc lại trước khi đăng thường là thứ duy nhất chặn được tấm ảnh lộ tên lớp hay câu viết lúc đang bực. Người lớn xem lại để giữ an toàn,…': 'This is both a legal requirement and a real layer of protection: an adult rereading before posting is often the only thing that stops a photo revealing a class name or a line written in anger. The adult reviews for safety,…',
+  'Không đặt tên bệnh, không nói về tình trạng y khoa hay tâm lý của bất kỳ ai, không phân tích một đứa trẻ mình chưa từng gặp. Gặp dấu hiệu vượt phạm vi giáo dục thì dừng lại và chuyển đúng nguồn.': 'Never name a condition, discuss anyone’s medical or psychological state, or analyse a child you have never met. On signs beyond the scope of education, stop and refer to the right source.',
+  'Đại sứ là phụ huynh và học viên, không phải người có chuyên môn chẩn đoán. Một cái tên bệnh nói ra trên mạng có thể theo một đứa trẻ nhiều năm, và một lời phân tích sai làm gia đình đi lạc mất thời gi…': 'Ambassadors are parents and students, not qualified diagnosticians. A condition named online can follow a child for years, and a wrong analysis sends a family down the wrong path, losing time…',
+  'Người đăng chịu trách nhiệm về nội dung mình đăng, kể cả khi đăng lại của người khác. Trước khi bấm đăng, đọc lại một lượt bằng mắt của đứa trẻ trong bài, năm năm sau.': 'Posters are responsible for what they post, including reposts. Before posting, reread it once through the eyes of the child in the post, five years from now.',
+  'Trách nhiệm không chia sẻ được với nền tảng và không đổ được cho người viết gốc. Bài kiểm tra cuối cùng của mọi nhiệm vụ đại sứ chỉ có một câu: nếu đứa trẻ trong bài đọc lại bài này năm năm nữa, em có…': 'Responsibility cannot be shared with the platform or passed to the original writer. The final test of every ambassador mission is one question: if the child in this post reads it five years from now, will they…',
+
+  /* ── Báo cáo tháng ── */
+  'ở máy chủ': 'on the server',
+  'Người đồng hành lắng nghe và hiểu đúng nhà mình': 'The companion listens and truly understands our family',
+  'Đúng hẹn, giữ lời đã hứa': 'On time, keeps promises',
+  'Hướng dẫn rõ ràng, nhà mình làm theo được': 'Clear guidance we can follow',
+  'Nhà mình thấy thay đổi thật ở con hoặc ở nếp nhà': 'We see real change in our child or our family routines',
+  'Tôn trọng, không phán xét, không so sánh nhà mình với nhà khác': 'Respectful, non-judgemental, never compares us with other families',
+  '· Báo cáo tháng của nhà mình.': '· Your family’s monthly report.',
+  'NHÀ MÌNH · BÁO CÁO THÁNG': 'OUR FAMILY · MONTHLY REPORT',
+  'Thời gian học, việc thực hành, báo cáo và tiến bộ của nhà mình trong tháng — để Coach dựng lộ trình đúng chỗ nhà mình cần. Chỉ so nhà mình với chính nhà mình tháng trước, không so với nhà khác.': 'Your family’s study time, practice, reports and progress this month — so the Coach can build the pathway exactly where you need it. Compared only with your own family last month, never with others.',
+  'Đang tính từ số đo': 'Calculated from measurements',
+  'trên máy này': 'on this device',
+  '(đồng hồ thật và bài đã làm). Tick việc hôm nay, báo cáo ngày và việc được Coach duyệt nằm ở máy chủ — đăng nhập bằng tài khoản thật của nhà mình để xem đủ.': '(the real clock and completed exercises). Today’s ticks, daily reports and Coach-approved tasks are on the server — log in with your family’s real account to see everything.',
+  'Gắn kết': 'Engagement',
+  'Có mặt, học, tick việc, báo cáo': 'Showing up, studying, ticking tasks, reporting',
+  'Tiến bộ': 'Progress',
+  'Bài hoàn thành, điểm, việc đạt, đều đặn': 'Completed exercises, scores, tasks met, consistency',
+  'So với mục tiêu tới hôm nay': 'Against the target to date',
+  'Ngày có hoạt động': 'Active days',
+  '{n} / {n} ngày': '{n} / {n} days',
+  'Phút học': 'Study minutes',
+  '{n} / {n} phút': '{n} / {n} minutes',
+  'Ngày tick việc hôm nay': 'Days with today’s task ticked',
+  'Báo cáo ngày': 'Daily reports',
+  'Việc được Coach duyệt': 'Coach-approved tasks',
+  'Bài hoàn thành': 'Completed exercises',
+  '{n} / {n} bài': '{n} / {n} exercises',
+  'Mục tiêu cả tháng: {n} ngày · {n} phút học · {n} ngày tick · {n} báo cáo · {n} việc duyệt · {n} bài. Tháng đang chạy thì mục tiêu co theo số ngày đã qua.': 'Monthly target: {n} days · {n} study minutes · {n} tick days · {n} reports · {n} approved tasks · {n} exercises. During the month, the target scales with the days elapsed.',
+  'Thời gian theo nhóm trải nghiệm': 'Time by experience group',
+  'Học': 'Study',
+  'Thực hành': 'Practice',
+  'Theo dõi & báo cáo': 'Tracking & reporting',
+  'Kết nối': 'Connection',
+  'Khác': 'Other',
+  'Điểm trung bình test · sát hạch': 'Average test · assessment score',
+  'Tối có ghi nhật ký': 'Evenings with a journal entry',
+  'Sáu tháng gần nhất': 'Last six months',
+  'Có từ hai tháng số đo trở lên thì đường xu hướng hiện ở đây.': 'Once there are two or more months of measurements, the trend line appears here.',
+  'Nhà mình thấy tháng này thế nào?': 'How did this month feel for your family?',
+  'Mỗi tháng một lần. Học viện đọc từng phiếu để sửa chương trình và làm sản phẩm mới.': 'Once a month. The Academy reads every form to improve the programme and build new offerings.',
+  'Khả năng nhà mình giới thiệu GITA{n} cho một gia đình khác': 'How likely your family is to recommend GITA{n} to another family',
+  '({n} = không bao giờ · {n} = chắc chắn)': '({n} = never · {n} = definitely)',
+  'Mức hài lòng với tháng này': 'Satisfaction with this month',
+  '{n} · Rất không hài lòng': '{n} · Very dissatisfied',
+  '{n} · Chưa hài lòng': '{n} · Dissatisfied',
+  '{n} · Tạm được': '{n} · Acceptable',
+  '{n} · Hài lòng': '{n} · Satisfied',
+  '{n} · Rất hài lòng': '{n} · Very satisfied',
+  'Năm điều về người đồng hành tháng này': 'Five things about your companion this month',
+  '({n} = chưa có · {n} = rất rõ)': '({n} = not yet · {n} = very clearly)',
+  'Một điều nhà mình muốn Học viện biết': 'One thing your family wants the Academy to know',
+  '(không bắt buộc)': '(optional)',
+  'Phiếu ghi kèm người đồng hành của nhà mình tháng này và là một căn cứ đánh giá công việc của họ.': 'The form records your family’s companion this month and is one basis for evaluating their work.',
+  'Gửi phiếu tháng {n}': 'Send the month {n} form',
+  'Điểm giới thiệu': 'Recommendation score',
+  'Mức hài lòng': 'Satisfaction',
+
+  /* ── Vòng nhắc Đúng – Đủ – Sâu ── */
+  '{n}. ĐÚNG': '{n}. RIGHT',
+  '{n}. ĐỦ': '{n}. FULL',
+  '{n}. SÂU': '{n}. DEEP',
+  'Trễ nhịp': 'Off rhythm',
+  'Mở màn việc này': 'Open this task’s screen',
+  '· Vòng nhắc Đúng – Đủ – Sâu.': '· The Right – Full – Deep reminder loop.',
+  'ĐÚNG · ĐỦ · SÂU': 'RIGHT · FULL · DEEP',
+  'Vòng nhắc của nhà mình': 'Your family’s reminder loop',
+  'Xem không phải là làm. Mỗi việc đi qua ba nấc: mở đúng thứ cần mở, làm và có bằng chứng, rồi nhìn lại xem nó đổi cái gì. Xong nấc ba là mở việc kế tiếp.': 'Viewing is not doing. Every task goes through three steps: open exactly what needs opening, do it with evidence, then look back at what it changed. Finish step three to open the next task.',
+  'ĐÃ ĐI HẾT VÒNG': 'LOOP COMPLETED',
+  'ĐANG GIỮA VÒNG': 'MID-LOOP',
+  'CHƯA BẮT ĐẦU': 'NOT STARTED',
+  'ĐANG TRỄ NHỊP': 'OFF RHYTHM',
+  'BA NẤC': 'THREE STEPS',
+  'Không nhảy nấc — chưa xong nấc trước thì nút nấc sau không bấm được': 'No skipping steps — until the previous step is done, the next step’s button cannot be pressed',
+  'Đã mở đúng thứ cần mở, đúng thứ tự.': 'Opened exactly what needed opening, in the right order.',
+  '✓ Mở đúng mục được giao, không nhảy cóc sang mục sau.': '✓ Open the assigned item, without jumping ahead.',
+  '✕ Mở lướt nhiều mục, không mục nào ở lại. Hoặc mở việc hai khi việc một chưa xong.': '✕ Skim many items without staying on any. Or open task two before task one is done.',
+  'Đã làm, và có bằng chứng.': 'Done, with evidence.',
+  '✓ Nộp được một minh chứng cho việc đã hẹn.': '✓ Submit evidence for the agreed task.',
+  '✕ Nói là đã làm nhưng không có gì để xem. Không có bằng chứng thì vẫn là nói.': '✕ Say it is done with nothing to show. Without evidence it is still just talk.',
+  'Đã nhìn lại sau một nhịp, và nói được nó đổi cái gì.': 'Looked back after one beat, and can say what changed.',
+  '✓ Viết được một câu về thứ đã khác đi, bằng lời của chính mình.': '✓ Write one sentence about what is different, in your own words.',
+  '✕ Làm một lần rồi thôi. Hoặc nhắc lại đúng lời người khác vừa nói.': '✕ Do it once and stop. Or repeat exactly what someone else just said.',
+  'VIỆC CỦA NHÀ MÌNH': 'YOUR FAMILY’S TASKS',
+  '{n} việc trong vòng': '{n} tasks in the loop',
+  'Vì sao là vòng tròn, không phải danh sách': 'Why a loop, not a list',
+  'Danh sách thì tích xong là xong. Nhưng một thói quen không xong sau một lần — nó cần quay lại. Đi hết nấc SÂU là mở vòng mới ở nhịp kế tiếp, và lần này nấc SÂU khó hơn: phải nói được nó đổi cái gì SO VỚI VÒNG TRƯỚC.': 'A list is done once ticked. But a habit is not done after one go — it needs to come back around. Finishing the DEEP step opens a new loop on the next beat, and this time DEEP is harder: you must say what changed COMPARED WITH THE LAST LOOP.',
+  'Bằng chứng: [Cách đóng việc mở khi được cấp phép]': 'Evidence: [How to close the task opens when licensed]',
+  'Một lần, ngay chặng đầu': 'Once, at the very first stage',
+  'Bằng chứng: Bảng có đủ chữ ở cả bốn ô, do chính người trong nhà viết': 'Evidence: a board with all four boxes filled, written by the family themselves',
+  'Nấc sâu: Đọc lại sau {n} ngày và nói được chỗ nào đã khác': 'Deep step: reread after {n} days and say what has changed',
+  'Bắt đầu — mở Viết bảng tầm': 'Start — open Write the vision board',
+  'Ghi nhật ký tối': 'Write the evening journal',
+  'Bằng chứng: Bảy tối liên tiếp có ghi': 'Evidence: seven consecutive evenings logged',
+  'Nấc sâu: Nhìn lại bảy tối và chỉ ra một nếp đang hình thành': 'Deep step: look back over seven evenings and point out one routine forming',
+  'Bắt đầu — mở Ghi nhật ký': 'Start — open Write journal',
+  'Nộp minh chứng nhiệm vụ tuần': 'Submit weekly mission evidence',
+  'Mỗi tuần': 'Every week',
+  'Bằng chứng: Ảnh hoặc ghi chép việc đã làm, Coach xác nhận': 'Evidence: a photo or note of the work done, confirmed by the Coach',
+  'Nấc sâu: So với tuần trước, con tự làm được thêm việc gì': 'Deep step: compared with last week, what more can your child do alone?',
+  'Bắt đầu — mở Nộp minh chứng': 'Start — open Submit evidence',
+  'Làm bài đo đầu chặng': 'Take the start-of-stage assessment',
+  'Đầu mỗi chặng': 'Start of each stage',
+  'Bằng chứng: Bài hoàn tất, có kết quả': 'Evidence: test completed, with results',
+  'Nấc sâu: Đối chiếu với bài cuối chặng trước': 'Deep step: compare with the end-of-stage test from last time',
+  'Bắt đầu — mở Làm bài đo': 'Start — open Take assessment',
+  'Nhìn lại cuối chặng cùng cả nhà': 'End-of-stage review with the whole family',
+  'Cuối mỗi chặng': 'End of each stage',
+  'Bằng chứng: Đã qua cổng nghiệm thu, có biên bản': 'Evidence: review gate passed, with minutes',
+  'Nấc sâu: Cả nhà nói được một điều đã đổi, không phải một điều đã học': 'Deep step: the family can name one thing that changed, not one thing learned',
+  'Bắt đầu — mở Nhìn lại cuối': 'Start — open End-of-stage review',
+  'Viết bản đồ cá nhân — bắt đầu từ ô {n} Tại sao': 'Write the personal map — start from cell {n}, Why',
+  'Một lần, trong {n} ngày đầu': 'Once, within the first {n} days',
+  'Bằng chứng: Ít nhất năm ô đầu đã có chữ, do chính người trong nhà viết': 'Evidence: at least the first five cells filled, written by the family themselves',
+  'Nấc sâu: Mở lại sau {n} ngày và nói được ô nào đã khác': 'Deep step: reopen after {n} days and say which cell has changed',
+  'Bắt đầu — mở Viết bản đồ': 'Start — open Write map',
+  'Nấc sâu: Đóng kèm bằng chứng trên bảng công việc là vào KPI của ngày ấy.': 'Deep step: closing with evidence on the task board counts toward that day’s KPI.',
+  'Bắt đầu — mở Ghi sổ nhật': 'Start — open Daily log',
+  'Giới thiệu qua mã liên kết, không giới thiệu miệng': 'Refer through the referral link, not by word of mouth',
+  'Nấc sâu: Xong rồi thì việc đi tiếp sang vị trí khác — xem đường đi trên bảng công việc.': 'Deep step: once done, the task moves on to another role — see its route on the task board.',
+  'Bắt đầu — mở Giới thiệu qua': 'Start — open Refer via link',
+  'Đọc lại ranh giới chia sẻ và trần hoa hồng': 'Reread the sharing boundaries and the commission cap',
+  'Bắt đầu — mở Đọc lại ranh': 'Start — open Reread boundaries',
+
+  /* ── Mười điểm về đích ── */
+  'ĐIỂM {n}': 'POINT {n}',
+  '· Mười cột mốc về đích.': '· Ten finish milestones.',
+  'NHÓM {n} · VỀ ĐÍCH': 'GROUP {n} · REACHING THE FINISH',
+  'Mười điểm về đích · một trăm tiêu chí': 'Ten finish points · one hundred criteria',
+  'Một trăm tiêu chí, chia đều cho mười điểm mốc. Mỗi tiêu chí đều đo được bằng dữ liệu có sẵn trong hệ thống — không có tiêu chí nào phải chấm bằng cảm nhận. Qua một điểm mốc là mở tài liệu và quyền tương ứng.': 'One hundred criteria, split evenly across ten milestones. Every criterion is measurable with data already in the system — none is scored by impression. Passing a milestone unlocks the matching materials and rights.',
+  'Điểm mốc đã mở': 'Milestones opened',
+  '{n} mốc mở dần theo tầng': '{n} milestones open progressively by tier',
+  'Tiêu chí đã đạt': 'Criteria met',
+  'trên tổng {n} của cả năm tầng': 'out of {n} across all five tiers',
+  'Còn lại': 'Remaining',
+  'tiêu chí đang mở mà chưa tích': 'open criteria not yet ticked',
+  'Tình trạng': 'Status',
+  'ĐANG ĐI': 'ON THE WAY',
+  'còn {n} điểm mốc': '{n} milestones to go',
+  '{n} điểm mốc chưa mở trên bản này.': '{n} milestones not yet open in this version.',
+  'Mười điểm mốc trải suốt năm tầng — mốc của tầng sau mở khi nhà mình qua tầng trước, nên bảng dưới chỉ bày việc anh chị làm được HÔM NAY. Đây không phải chỗ hỏng: bày sẵn chín mươi việc của ba năm tới là cách chắc chắn để một nhà bỏ cuộc trong tuần đầu.': 'The ten milestones span all five tiers — later tiers’ milestones open as your family passes earlier ones, so the table below shows only what you can do TODAY. This is not a fault: laying out ninety tasks for the next three years is a sure way to make a family quit in the first week.',
+  'Đường về đích': 'The road to the finish',
+  '{n}/{n} tiêu chí': '{n}/{n} criteria',
+  'Mỗi tiêu chí đạt tính {n} điểm. Điểm mốc qua khi đạt từ {n}/{n} tiêu chí. Về đích khi qua đủ {n} điểm mốc, tức tối thiểu {n}/{n} tiêu chí.': 'Each criterion met is worth {n} points. A milestone is passed at {n}/{n} criteria or more. You reach the finish once all {n} milestones are passed, i.e. at least {n}/{n} criteria.',
+  'MƯỜI ĐIỂM MỐC': 'TEN MILESTONES',
+  'Bấm vào từng tiêu chí để tích. Trạng thái lưu trong máy này.': 'Tap each criterion to tick it. Status is saved on this device.',
+  'NHÌN ĐÚNG': 'SEEING CLEARLY',
+  'Nhà mình nhìn thấy sự thật mà không cãi nhau.': 'Your family sees the truth without arguing.',
+  'Đủ {n}/{n} tối có ba dòng nhật ký thật': 'A full {n}/{n} evenings with three real journal lines',
+  'Ghi cả tối "quên" thay vì bỏ trống': 'Log even “forgot” evenings instead of leaving them blank',
+  'Học viên tự ghi ít nhất {n}/{n} tối': 'The student logs at least {n}/{n} evenings themselves',
+  'Nói được một mô thức lặp bằng câu có giờ và số lần': 'Describe a repeating pattern in a sentence with times and counts',
+  'Chỉ ra được một ngoại lệ tốt trong tuần': 'Point out one good exception during the week',
+  'Nêu được ngoại lệ đó khác sáu tối còn lại ở điểm nào': 'Say how that exception differed from the other six evenings',
+  'Người lớn ghi số lần nhắc mà không kèm nhận xét': 'Adults log the number of reminders without comments',
+  'Hoàn thành bộ test nhận diện của tầng': 'Complete the tier’s profile test set',
+  'Đọc kết quả test mà không dán nhãn cho con': 'Read the test results without labelling your child',
+  'Chốt được một chỉ số nền để theo suốt chặng': 'Settle one baseline indicator to track throughout the stage',
+  'HIỂU CƠ CHẾ': 'UNDERSTANDING THE MECHANISM',
+  'Hết đổ lỗi, bắt đầu hiểu vì sao chuyện đó lặp lại. — mười tiêu chí của mốc này mở khi nhà mình vào tầng T{n}.': 'No more blaming; starting to understand why it keeps happening. — this milestone’s ten criteria open when your family enters tier T{n}.',
+  'CÓ HỆ THỐNG': 'HAVING A SYSTEM',
+  'Nhà mình có một hệ thống chạy được, do chính mình dựng. — mười tiêu chí của mốc này mở khi nhà mình vào tầng T{n}.': 'Your family has a working system it built itself. — this milestone’s ten criteria open when your family enters tier T{n}.',
+  'GIỮ NHỊP': 'KEEPING THE RHYTHM',
+  'Nhịp không phụ thuộc vào hứng. — mười tiêu chí của mốc này mở khi nhà mình vào tầng T{n}.': 'The rhythm does not depend on mood. — this milestone’s ten criteria open when your family enters tier T{n}.',
+  'ĐỦ VAI': 'ALL ROLES FILLED',
+  'Chín vai có người giữ, không ai gánh quá bốn. — mười tiêu chí của mốc này mở khi nhà mình vào tầng T{n}.': 'All nine roles held, no one carrying more than four. — this milestone’s ten criteria open when your family enters tier T{n}.',
+  'TRAO QUYỀN': 'HANDING OVER',
+  'Quyền chuyển sang tay con, kèm trách nhiệm. — mười tiêu chí của mốc này mở khi nhà mình vào tầng T{n}.': 'Rights pass into the child’s hands, with responsibility. — this milestone’s ten criteria open when your family enters tier T{n}.',
+  'NGƯỜI LỚN ĐỔI': 'ADULTS CHANGE',
+  'Phần thay đổi của cha mẹ, trình bày được. — mười tiêu chí của mốc này mở khi nhà mình vào tầng T{n}.': 'The parents’ own change, presentable. — this milestone’s ten criteria open when your family enters tier T{n}.',
+  'CÓ KỲ TÍCH': 'AN ACHIEVEMENT',
+  'Một thứ có thật mà trước đó nhà mình chưa từng làm được. — mười tiêu chí của mốc này mở khi nhà mình vào tầng T{n}.': 'Something real your family had never managed before. — this milestone’s ten criteria open when your family enters tier T{n}.',
+  'HỆ TỰ CHẠY': 'A SELF-RUNNING SYSTEM',
+  'Nhà mình vận hành được mà không cần ai canh. — mười tiêu chí của mốc này mở khi nhà mình vào tầng T{n}.': 'Your family runs without anyone watching over it. — this milestone’s ten criteria open when your family enters tier T{n}.',
+  'LAN TOẢ': 'SPREADING IT',
+  'Nhà mình mở cửa cho một nhà khác. — mười tiêu chí của mốc này mở khi nhà mình vào tầng T{n}.': 'Your family opens the door for another family. — this milestone’s ten criteria open when your family enters tier T{n}.',
+  'LUẬT CHẤM': 'SCORING RULES',
+  'Năm luật này không thương lượng.': 'These five rules are not negotiable.',
+  'Không tiêu chí nào chấm bằng cảm nhận — tất cả lấy từ dữ liệu đã có trong hệ thống.': 'No criterion is scored by impression — all come from data already in the system.',
+  'Không so điểm giữa các gia đình. Chỉ so với chính nhà đó ở chặng trước.': 'No comparing scores between families. Only with that same family at the previous stage.',
+  'Qua điểm mốc là mở tài liệu và quyền tương ứng theo luật L{n}.': 'Passing a milestone unlocks the matching materials and rights under rule L{n}.',
+  'Tụt dưới {n}/{n} ở một điểm mốc thì khoá lại tài liệu của mốc đó ở kỳ rà soát gần nhất.': 'Dropping below {n}/{n} at a milestone locks that milestone’s materials again at the next review.',
+  'Điểm {n} — Người lớn đổi — không được bỏ qua với bất kỳ lý do nào.': 'Point {n} — Adults change — may not be skipped for any reason.',
+  'Làm bộ test nhận diện': 'Take the profile test set',
+  'In bảng KPI': 'Print the KPI table'
+});
+
+})();
+
+/* ═════════ src/tu-dien-en-11.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — TỪ ĐIỂN TIẾNG ANH · ĐỢT 11: NGHỀ ĐẠI SỨ · MÙA CỦA NHÀ ·
+   MƯỜI BÁNH ĐÀ · CHẶNG ĐƯỜNG CỦA CON
+   Vài khoá là MẢNH câu đứng quanh một mã quyền in đậm (ctv_lien_ket…):
+   dịch đúng mảnh, để câu ráp lại vẫn đọc trôi.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.TU_DIEN_EN = G.TU_DIEN_EN || {};
+(function (d) { for (var k in d) G.TU_DIEN_EN[k] = d[k]; })({
+  /* ── Nghề Đại sứ ── */
+  'Video minh hoạ (gắn sau)': 'Illustrative video (to be added)',
+  'Quyền lợi': 'Benefits',
+  'Đại sứ GITA {n} →': 'GITA {n} Ambassador →',
+  'Cơ chế hoa hồng →': 'Commission scheme →',
+  '· Nghề Đại sứ giới thiệu.': '· The referral Ambassador role.',
+  'NGHỀ ĐẠI SỨ · CHUYÊN MÔN HOÁ SÂU': 'THE AMBASSADOR ROLE · IN DEPTH',
+  'Chuẩn nghề Đại sứ — mang ánh sáng này tới nhà tiếp theo': 'Ambassador standards — carrying this light to the next family',
+  'Bốn module: khung nghề · {n} đầu việc tính hoa hồng · lộ trình giới thiệu · lộ trình đào tạo. Người mang GITA tới nhà tiếp theo — giới thiệu đúng, kết nối tư vấn, theo tới khi nhà vào.': 'Four modules: role framework · {n} commission-earning duties · referral pathway · training pathway. The person who brings GITA to the next family — refers honestly, connects to a Consultant, follows through until the family joins.',
+  'A · Khung nghề': 'A · Role framework',
+  'B · {n} đầu việc / KPI': 'B · {n} duties / KPIs',
+  'C · Lộ trình giới thiệu': 'C · Referral pathway',
+  'D · Lộ trình đào tạo': 'D · Training pathway',
+  'Vai trò & Sứ mệnh': 'Role & Mission',
+  'Đại sứ GITA (R{n})': 'GITA Ambassador (R{n})',
+  '— người mang ánh sáng này tới nhà tiếp theo. Giới thiệu bằng câu chuyện thật, không bán ép.': '— the person who carries this light to the next family. Refers through true stories, never pressure-selling.',
+  'Quyền hạn': 'Permissions',
+  'Mã liên kết cộng tác viên (': 'Collaborator referral code (',
+  ') · hoa hồng & tài khoản nhận tiền (': ') · commission & payout account (',
+  ') · giới thiệu người quen (': ') · referring acquaintances (',
+  '). KHÔNG xem hồ sơ khách của hệ.': '). May NOT view the system’s client records.',
+  'Phạm vi của tôi →': 'My scope →',
+  'Nghiệp vụ cốt lõi': 'Core duties',
+  'Tiếp cận người quen → kể câu chuyện GITA → kết nối với Tư vấn → theo dõi tới khi nhà vào → chăm sau & xin giới thiệu tiếp.': 'Reach acquaintances → tell the GITA story → connect with a Consultant → follow until the family joins → aftercare & ask for further referrals.',
+  'Đại sứ GITA →': 'GITA Ambassador →',
+  'Hiến pháp nghề': 'Professional constitution',
+  'Năm điều không ai được sửa · Bảy quyền của gia đình · giới thiệu trung thực, không hứa thay hệ · tôn trọng quyền từ chối.': 'Five things no one may change · The family’s seven rights · honest referrals, no promises on the system’s behalf · respect the right to say no.',
+  'Năm điều không ai được sửa →': 'Five things no one may change →',
+  'Bảy quyền của nhà →': 'The family’s seven rights →',
+  'Công cụ': 'Tools',
+  'Đại sứ GITA · Cơ chế hoa hồng · Vệ tinh của tôi · Sự kiện & Lửa trại · Chuyện truyền cảm hứng.': 'GITA Ambassador · Commission scheme · My satellites · Events & Campfires · Inspiring stories.',
+  'Đại sứ →': 'Ambassador →',
+  'KPI nghề': 'Role KPIs',
+  'Số người được giới thiệu · tỷ lệ kết nối tư vấn · số nhà vào thật · hoa hồng ghi sổ · nhà giới thiệu tiếp.': 'People referred · consultant connection rate · families truly joined · recorded commission · families who refer onward.',
+  'KPI của tôi →': 'My KPIs →',
+  'Hoa hồng →': 'Commission →',
+  'Tiêu chuẩn nhân sự': 'Personnel standards',
+  'Giới thiệu bằng trải nghiệm thật · không hứa quá · tôn trọng người nghe · giữ uy tín GITA · trung thực số liệu hoa hồng.': 'Refer from real experience · never over-promise · respect the listener · protect GITA’s reputation · honest commission figures.',
+  'Chuyện truyền cảm hứng →': 'Inspiring stories →',
+  'Thưởng / Phạt': 'Rewards / Penalties',
+  'THƯỞNG: nhiều nhà vào thật, nhà giới thiệu tiếp, giữ uy tín. PHẠT: hứa quá gây hiểu lầm, làm phiền người từ chối, khai số liệu sai để nhận hoa hồng.': 'REWARDS: many families truly joining, families referring onward, reputation kept. PENALTIES: over-promising that misleads, pestering people who declined, false figures to claim commission.',
+  'Chứng nhận {n} cấp': '{n}-level certification',
+  'Đại sứ Tập sự → Đại sứ → Đại sứ Vàng → Đại sứ Kim Cương → Đại sứ Danh dự. Lên cấp bằng số nhà vào thật, không bằng lời hứa.': 'Trainee Ambassador → Ambassador → Gold Ambassador → Diamond Ambassador → Honorary Ambassador. Level up by families truly joined, not by promises.',
+  'NĂM CẤP CHỨNG NHẬN ĐẠI SỨ': 'FIVE AMBASSADOR CERTIFICATION LEVELS',
+  'Lên cấp bằng bằng chứng đo được — mỗi cấp một điều kiện và quyền lợi': 'Level up with measurable evidence — each level has its condition and benefits',
+  'Đại sứ Tập sự': 'Trainee Ambassador',
+  'Nhận mã liên kết + hiểu GITA': 'Get a referral code + understand GITA',
+  'Giới thiệu người quen · hoa hồng cơ bản': 'Refer acquaintances · base commission',
+  'Đại sứ': 'Ambassador',
+  '≥{n} nhà vào thật có bằng chứng': '≥{n} families truly joined, with evidence',
+  'Hoa hồng tăng · ưu đãi sự kiện': 'Higher commission · event perks',
+  'Đại sứ Vàng': 'Gold Ambassador',
+  '≥{n} nhà vào · giữ uy tín': '≥{n} families joined · reputation intact',
+  'Hoa hồng bậc cao · quà vinh danh': 'Senior commission · recognition gift',
+  'Đại sứ Kim Cương': 'Diamond Ambassador',
+  'Mạng lưới rộng · nhà giới thiệu nhà': 'A wide network · families referring families',
+  'Hoa hồng tầng · dẫn đội đại sứ': 'Tiered commission · leading an ambassador team',
+  'Đại sứ Danh dự': 'Honorary Ambassador',
+  'Lan toả bền · hình mẫu cộng đồng': 'Lasting reach · a community role model',
+  'Đặc quyền danh dự · thu nhập bậc cao': 'Honorary privileges · senior income',
+
+  /* ── Mùa của nhà mình ── */
+  '{n} tuổi trở lên': 'age {n} and up',
+  'Mùa thường': 'Normal season',
+  'Giữ {n}/{n} nhịp · tối đa {n} ngày': 'Keep {n}/{n} beats · up to {n} days',
+  'Giữ {n}/{n} nhịp · chuỗi được bảo vệ · tối đa {n} ngày': 'Keep {n}/{n} beats · streak protected · up to {n} days',
+  '· Mùa của nhà mình.': '· Your family’s season.',
+  'MÙA CỦA NHÀ MÌNH': 'YOUR FAMILY’S SEASON',
+  'Cây vẫn lớn trong mùa gió — rễ đang làm việc': 'Trees still grow in the windy season — the roots are working',
+  'Nhà nào cũng có mùa khó. Ở đây mùa khó không bị chấm bằng thước của người đang khoẻ: chuẩn hạ xuống thật, và ngày trống trong mùa đông không xoá mất đà nhà mình đã có.': 'Every family has hard seasons. Here a hard season is not judged by the yardstick of those who are doing well: the bar really is lowered, and empty days in winter do not erase the momentum your family has built.',
+  'Giữ đủ năm nhịp. Đây là mức nhà mình đã hẹn với chính mình.': 'Keep all five beats. This is the level your family promised itself.',
+  'Hôm nay cần giữ {n} trên {n} nhịp:': 'Today keep {n} of {n} beats:',
+  'Ghi ba dòng nhật ký tối nay · Làm xong việc của hôm nay · Đánh dấu vòng nhắc trong ngày · Mở một tư liệu của tầng đang học · Người lớn ghi phần của mình': 'Write three journal lines tonight · Finish today’s task · Mark today’s reminder loop · Open one resource for your current tier · Adults log their own part',
+  'Nhà mình đang mùa nào': 'Which season your family is in',
+  'Khai mùa là việc của chính nhà mình. Hệ thống không tự đoán — đoán sai thì hạ chuẩn nhầm người.': 'Declaring the season is your family’s own job. The system does not guess — a wrong guess lowers the bar for the wrong people.',
+  'Không có gì bất thường. Đây là mùa mặc định, không phải khai gì cả.': 'Nothing unusual. This is the default season; nothing to declare.',
+  'Giữ {n}/{n} nhịp': 'Keep {n}/{n} beats',
+  'Mùa gió': 'Windy season',
+  'Việc đột xuất kéo dài vài ngày: con ốm, nhà có việc, người lớn tăng ca.': 'Something unexpected lasting a few days: a sick child, a family event, adults working overtime.',
+  'Mùa đông': 'Winter',
+  'Mất thu nhập, tang gia, bệnh nặng. Chuyện lớn và không tự hết trong một tuần.': 'Loss of income, bereavement, serious illness. Big things that do not pass within a week.',
+  'Mùa mưa': 'Rainy season',
+  'Chuyện trong nhà: cha mẹ căng thẳng, con khủng hoảng tuổi, hai bên đang không nói chuyện được.': 'Things at home: stressed parents, a child in an age crisis, the two sides not able to talk.',
+  'Mùa hè': 'Summer',
+  'Nghỉ hè, nghỉ Tết, đi xa. Nhịp đổi chứ không phải nhịp mất.': 'Summer holidays, Tet break, travel. The rhythm changes; it is not lost.',
+  'CHẶNG CẢM XÚC {n}/{n} · Tò mò': 'EMOTIONAL STAGE {n}/{n} · Curiosity',
+  'Người mới không cần hiểu hệ thống. Em bé tập đi không cần biết giải phẫu chân — em chỉ cần thấy bố mẹ vỗ tay.': 'Newcomers do not need to understand the system. A toddler learning to walk does not need to know leg anatomy — they just need to see their parents clapping.',
+  'Chìa khoá nhỏ — vai chính thức đầu tiên của con': 'The little key — your child’s first official role',
+  'Không phải việc vặt được giao. Là một vai CÓ TÊN, và người lớn không được làm thay — làm thay một lần thì con hiểu ngay vai ấy giả.': 'Not a chore handed out. A role WITH A NAME, and adults may not do it for them — do it for them once and your child immediately understands the role is fake.',
+  'Tuổi': 'Age',
+  'Con làm gì': 'What the child does',
+  'Người lớn KHÔNG được': 'Adults must NOT',
+  'Người giữ giờ ngủ': 'Bedtime keeper',
+  'Nhắc cả nhà — kể cả người lớn — tới giờ tắt đèn.': 'Remind the whole family — adults included — when it is lights-out time.',
+  'Không được gạt đi bằng "để bố làm nốt việc này".': 'Brush it off with “let Dad just finish this”.',
+  'Người giữ bữa cơm chung': 'Shared-dinner keeper',
+  'Gọi cả nhà ngồi vào bàn, và giữ luật không hỏi bài trong bữa.': 'Call everyone to the table, and keep the no-homework-questions-at-dinner rule.',
+  'Không được coi luật ấy chỉ áp cho trẻ con.': 'Treat that rule as if it only applies to children.',
+  'Người giữ sổ': 'Log keeper',
+  'Mở sổ mỗi tối và ghi ba dòng của nhà.': 'Open the log each evening and write the family’s three lines.',
+  'Không được ghi hộ. Ghi hộ là lấy mất vai.': 'Write it for them. Writing it for them takes the role away.',
+  'Người giữ nghi lễ': 'Ritual keeper',
+  'Mở nghi lễ ba mươi giây đầu buổi học, cùng thứ tự mỗi tối.': 'Open the thirty-second ritual at the start of study time, in the same order every evening.',
+  'Không được bỏ qua nghi lễ cho nhanh.': 'Skip the ritual to save time.',
+  'Người kể chuyện nhà': 'Family storyteller',
+  'Kể lại hành trình nhà mình khi có nhà mới hỏi.': 'Retell your family’s journey when a new family asks.',
+  'Không được kể thay hoặc chỉnh cho đẹp.': 'Tell it for them or polish it to look better.',
+  'Sáu luật của mùa': 'Six rules of the seasons',
+  '{n}. Mùa khó thì HẠ CHUẨN, không PHẠT và không BÁO ĐỎ': '{n}. A hard season LOWERS THE BAR — no PENALTIES, no RED ALERTS',
+  'Một cái nhãn đỏ đúng lúc người ta đang yếu đủ để họ đóng app và không mở lại. Hạ chuẩn là nói: việc này vẫn đi được, chỉ là đi chậm hơn.': 'A red label at the moment someone is weakest is enough for them to close the app and never reopen it. Lowering the bar says: this can still be done, just more slowly.',
+  '{n}. Mùa khó phải KHAI, và khai kèm lý do thật': '{n}. A hard season must be DECLARED, with the real reason',
+  'Không tự đoán mùa từ dữ liệu. Đoán sai thì hệ thống hạ chuẩn cho một nhà đang lười, và nhà đang khó thật thì không được hạ. Khai thì đúng người, và khai là một hành động của chính họ.': 'The season is never guessed from data. A wrong guess lowers the bar for a family that is slacking and not for one truly struggling. Declaring gets the right people, and declaring is their own action.',
+  '{n}. Mùa khó CÓ HẠN': '{n}. A hard season HAS AN END DATE',
+  'Hết hạn thì hệ thống hỏi lại, không tự gia hạn. Mùa khó kéo dài vô hạn thì thành cái cớ, và cái cớ ăn mất chính thứ nó định bảo vệ.': 'When it expires the system asks again; it never extends automatically. An endless hard season becomes an excuse, and the excuse eats away the very thing it was meant to protect.',
+  '{n}. Ngày trống trong mùa đông KHÔNG xoá chuỗi': '{n}. Empty days in winter do NOT break the streak',
+  'Đà đã có không bị xoá vì một chuyện nhà mình không chọn. Nhưng ngày ấy cũng không được TÍNH là ngày có ghi — bảo vệ thì bảo vệ, không phát không.': 'Momentum is not wiped out by something your family did not choose. But those days are not COUNTED as logged days either — protection is protection, not a free gift.',
+  '{n}. Ra khỏi mùa khó thì ghi lại thành một VẾT': '{n}. Leaving a hard season leaves a recorded MARK',
+  'Vết là bằng chứng "nhà mình từng vượt qua chuyện kia rồi". Đó là nhiên liệu của mùa khó lần sau, và không có gì thay được nó.': 'The mark is proof that “our family has got through that before”. It is fuel for the next hard season, and nothing can replace it.',
+  '{n}. Người đồng hành thấy mùa trước khi thấy số': '{n}. The companion sees the season before the numbers',
+  'Bàn tay trước bảng biểu. Nhà đang mùa đông mà Coach mở đầu bằng KPI thì buổi ấy hỏng ngay câu đầu.': 'A hand before a chart. If a Coach opens with KPIs for a family in winter, the session is ruined from the first sentence.',
+
+  /* ── Mười bánh đà ── */
+  'BÁNH ĐÀ {n} · T{n}': 'FLYWHEEL {n} · T{n}',
+  'mở ở cấp {n}': 'opens at level {n}',
+  'Vòng:': 'Loop:',
+  'Mười việc nhỏ của bánh đà này mở ra khi nhà mình tới cấp {n}.': 'This flywheel’s ten small tasks open when your family reaches level {n}.',
+  '· Mười bánh đà.': '· Ten flywheels.',
+  'MƯỜI BÁNH ĐÀ': 'TEN FLYWHEELS',
+  'Việc trước đẻ ra sức cho việc sau': 'Each task generates the energy for the next',
+  'Một danh sách việc thì làm xong là hết. Một bánh đà thì tới một điểm nó tự quay. Mọi mốc dưới đây mở bằng chính thứ nhà mình đã ghi — không có mốc nào mở bằng cách bấm nút.': 'A to-do list is over once done. A flywheel reaches a point where it spins by itself. Every milestone below opens from what your family has actually logged — none opens at the press of a button.',
+  'Chưa có gì để đo': 'Nothing to measure yet',
+  'Nhà mình chưa ghi tối nào, nên chưa có con số nào để nói. Bên em không mở sẵn mười bánh đà cho đẹp — mở sẵn thì nhìn thì vui mà không có nghĩa gì.': 'Your family has not logged any evenings yet, so there are no numbers to speak of. We do not open all ten flywheels in advance for show — it would look nice and mean nothing.',
+  'Việc duy nhất của tối nay:': 'Tonight’s only task:',
+  'ghi ba dòng — giờ ngồi vào bàn, giờ rời bàn, số lần phải nhắc.': 'write three lines — time sat down to study, time got up, number of reminders.',
+  'Cấp {n} · Người mới nhìn': 'Level {n} · Newcomer',
+  'Mở khi:': 'Opens when:',
+  '{n} tối có ghi sổ': '{n} evenings logged',
+  'Còn thiếu:': 'Still missing:',
+  'còn {n} tối có ghi': '{n} more logged evenings',
+  'Mở ra thì có gì:': 'What it unlocks:',
+  'Ngã ba sắp tới': 'The coming crossroads',
+  'Mỗi lựa chọn có một cái giá, và cái giá ấy nói bằng số ngày.': 'Every choice has a price, and the price is stated in days.',
+  'Khi nào gặp:': 'When you meet it:',
+  'Tối thứ ba, ghi sổ thấy chán vì chưa thấy gì đổi': 'The third evening, logging feels boring because nothing seems to change',
+  'NHÁNH DỄ': 'THE EASY PATH',
+  'Bỏ ghi vài hôm, khi nào có gì đáng ghi thì ghi lại.': 'Skip logging for a few days and pick it up when there is something worth noting.',
+  'Giá: chậm hơn {n} ngày': 'Price: {n} days slower',
+  'Tư vấn GỢI Ý': 'The Consultant SUGGESTS',
+  'Ghi tiếp đủ bảy tối, kể cả tối chỉ ghi được một dòng.': 'Keep logging for all seven evenings, even if some evenings get only one line.',
+  'Vì sao nhánh dễ đắt:': 'Why the easy path costs more:',
+  'Bảy tối là số tối thiểu để một nếp lộ ra. Dừng ở tối thứ ba là vứt đi ba tối đã ghi, và lần sau lại phải bắt đầu từ số không.': 'Seven evenings is the minimum for a pattern to show. Stopping at evening three throws away three logged evenings, and next time you start from zero again.',
+  'Mỗi bánh đà lớn có mười việc nhỏ. Bánh đà chưa mở thì chưa hiện ruột — mở sẵn là hứa suông.': 'Each large flywheel has ten small tasks. A flywheel not yet opened does not show its contents — showing them in advance would be an empty promise.',
+  'Ghi ba dòng mỗi tối → cuối tuần thấy một nếp mình chưa từng thấy → tin vào số thay vì tin vào cảm giác → ghi tiếp dễ hơn vì biết ghi để làm gì.': 'Write three lines each evening → at the weekend you see a pattern you never noticed → you trust numbers over feelings → logging gets easier because you know why you do it.',
+  'Giờ học cố định → bớt phải nhắc → bớt căng thẳng giữa hai bên → giờ ấy giữ được dễ hơn tuần sau.': 'A fixed study time → fewer reminders → less tension on both sides → the time is easier to keep the next week.',
+  'Đổi một câu quen miệng → con đáp lại khác đi → người lớn bớt phải lên giọng → đổi được câu tiếp theo dễ hơn.': 'Change one habitual phrase → your child responds differently → adults raise their voices less → the next phrase is easier to change.',
+  'Con tự chọn một việc → làm được → thấy mình làm được → chọn việc khó hơn một chút.': 'Your child picks a task → manages it → sees they can → picks something a little harder.',
+  'Ngủ đủ → đầu vào bài nhanh hơn → xong sớm hơn → lại ngủ đủ.': 'Enough sleep → quicker start on homework → finish earlier → enough sleep again.',
+  'Con tự quản một khoản nhỏ → chọn sai và mất thật → hiểu cái giá của lựa chọn → chọn tốt hơn ở khoản sau.': 'Your child manages a small amount → chooses wrongly and really loses it → understands the price of choices → chooses better next time.',
+  'Một buổi không phán xét → con kể thật một chuyện → cha mẹ hiểu thêm một phần → buổi sau con kể dễ hơn.': 'A judgement-free session → your child tells one true story → parents understand a little more → next time it is easier to share.',
+  'Mục tiêu nhỏ có ngày → đạt được → tin rằng mục tiêu là thứ đạt được → dám đặt mục tiêu lớn hơn.': 'A small dated goal → achieved → believing goals can be reached → daring to set a bigger one.',
+  'Con giúp được một người → thấy mình có ích → muốn giỏi hơn để giúp được nhiều hơn → giúp được người khó hơn.': 'Your child helps someone → feels useful → wants to get better to help more → helps someone with greater needs.',
+  'Nhà mình kể lại cho nhà khác → phải làm cho đúng vì có người nhìn → nếp bền hơn → kể được cho nhà tiếp theo.': 'Your family tells another family → must do it right because someone is watching → routines last longer → you can tell the next family.',
+  'Sáu luật của lớp này': 'Six rules of this layer',
+  '{n}. Mốc mở bằng BẰNG CHỨNG, không mở bằng nút bấm': '{n}. Milestones open with EVIDENCE, not with a button',
+  'Mọi cấp độ đọc từ dữ liệu chính nhà mình đã ghi. Cho bấm để mở là biến cả hệ thành một trò chơi mà ai cũng thắng, và thứ ai cũng thắng thì không ai quý.': 'Every level reads from data your family has logged. Letting people tap to unlock turns the whole system into a game everyone wins — and what everyone wins, no one values.',
+  '{n}. Điểm chạm WOW phải là thứ NHÀ TỰ LÀM ĐƯỢC': '{n}. A WOW touchpoint must be something THE FAMILY ACHIEVED ITSELF',
+  'Không phải pháo giấy trên màn hình. Một tiếng chúc mừng khi người ta chưa làm gì là dạy họ rằng lời khen ở đây rẻ.': 'Not confetti on the screen. Congratulating people who have not done anything teaches them that praise here is cheap.',
+  '{n}. Vòng nào không khép lại được thì không phải bánh đà': '{n}. A loop that does not close is not a flywheel',
+  'Phải chỉ ra được A → B → C → quay lại A mạnh hơn. Không khép được thì đó là danh sách việc, và danh sách việc thì làm xong là hết.': 'You must be able to show A → B → C → back to a stronger A. If it does not close, it is a to-do list, and a to-do list is over once done.',
+  '{n}. Lựa chọn phải có giá, và giá phải nói bằng số': '{n}. Choices must have a price, and the price must be stated in numbers',
+  '"Nên làm thế này" thì ai cũng gật rồi làm khác. "Đi đường kia chậm hơn hai mươi mốt ngày" thì người ta dừng lại nghĩ.': 'Say “you should do this” and everyone nods then does otherwise. Say “that path is twenty-one days slower” and people stop to think.',
+  '{n}. Nhánh dễ phải được viết cho HỢP LÝ': '{n}. The easy path must be written to sound REASONABLE',
+  'Nếu nhánh dễ nghe đã thấy ngu thì bài học không vào. Trong đời thật nhánh dễ luôn nghe rất có lý ở đúng thời điểm ấy — phải viết đúng như thế.': 'If the easy path obviously sounds foolish, the lesson does not land. In real life the easy path always sounds perfectly sensible at that moment — it must be written exactly that way.',
+  '{n}. Không nhà nào bị so với nhà khác': '{n}. No family is compared with another',
+  'Chỉ so với chính nhà mình tuần trước. So với nhà khác thì nhà đi chậm bỏ cuộc, mà nhà đi chậm mới là nhà cần ở lại nhất.': 'Only with your own family last week. Compare with others and slower families give up — and slower families are the ones who most need to stay.',
+
+  /* ── Chặng đường của con ── */
+  'NGƯỜI LỚN': 'ADULTS',
+  'QUYỀN ĐIỀU HÀNH': 'WHO IS IN CHARGE',
+  'MỨC HỖ TRỢ': 'SUPPORT LEVEL',
+  '· Chặng đường của con.': '· Your child’s journey.',
+  'Hành trình GITA bắt đầu bằng bảy ngày chỉ để nhìn cho đúng, chưa sửa gì cả. Hai mươi mốt ngày sau đó dùng để hiểu vì sao chuyện ấy lặp lại, đọc theo bốn miền G-I-T-A và dựa trên bằng chứng chứ không dựa trên phỏng đoán. Chín mươi ngày tiếp theo dựng một hệ thống làm việc thật, do chính học viên dựng nên chính học viên giữ được. Năm của tầng bốn chuyển quyền điều hành từ người lớn sang học viên, chuyển chậm, và mỗi lần trao một quyền thì kèm một trách nhiệm tương ứng. Năm cuối mở rộng ra cả nhà: học viên tạo giá trị cho người khác, còn người lớn có phần thay đổi của riêng mình và phải trình bày phần đó. Đi hết năm tầng, thứ còn lại không phải một đứa trẻ ngoan hơn, mà một gia đình vận hành được mà không cần ai canh.': 'The GITA journey starts with seven days just to see clearly, fixing nothing yet. The next twenty-one days are for understanding why things keep happening, read through the four G-I-T-A domains and based on evidence rather than guesswork. The following ninety days build a real working system, built by the student so the student can keep it. The tier-four year hands charge from adults to the student — slowly, and every right handed over comes with a matching responsibility. The final year widens to the whole family: the student creates value for others, while adults have their own share of change and must present it. After all five tiers, what remains is not a better-behaved child but a family that runs without anyone watching over it.',
+  'NĂM NAY': 'THIS YEAR',
+  'Ngày thứ {n} · — · —': 'Day {n} · — · —',
+  'NĂM CHẶNG THAY ĐỔI': 'FIVE STAGES OF CHANGE',
+  'LỘ TRÌNH THAY ĐỔI CÙNG GITA {n}': 'THE PATHWAY OF CHANGE WITH GITA {n}',
+  'NHẬN DIỆN — bảy ngày để nhìn cho đúng': 'RECOGNISE — seven days to see clearly',
+  'Nói về việc học bằng cảm giác chung chung': 'Talking about studying in vague feelings',
+  'Nói về việc học bằng giờ giấc, số lần và ngày cụ thể': 'Talking about studying in times, counts and specific dates',
+  'Phán đoán về con dựa trên ấn tượng tích tụ nhiều năm': 'Judging the child based on impressions built up over years',
+  'Ghi lại đúng chuyện đã xảy ra trong bảy tối, tách khỏi phần suy diễn': 'Recording exactly what happened over seven evenings, separate from interpretation',
+  'Thuộc người lớn; học viên mới giữ phần ghi chép của chính mình': 'With the adults; the student only keeps their own records',
+  'Giữ nguyên như trước, chưa giảm — tầng này chỉ đo xem mức hỗ trợ đang cần là bao nhiêu': 'Unchanged, not reduced yet — this tier only measures how much support is needed',
+  'Dấu hiệu nhận biết: Trong nhà bắt đầu xuất hiện những câu có con số: mấy giờ, mấy lần, mấy ngày': 'Sign: sentences with numbers start appearing at home — what time, how many times, how many days',
+  'GIẢI MÃ — hai mươi mốt ngày tìm nguyên nhân': 'DECODE — twenty-one days to find the causes',
+  'Tin rằng vấn đề nằm ở một nguyên nhân duy nhất thuộc về bản thân': 'Believing the problem has a single cause within oneself',
+  'Đặt được giả thuyết theo bốn miền và tự kiểm bằng thử nghiệm ngắn': 'Forming hypotheses across the four domains and testing them with short experiments',
+  'Tìm cách làm cho con thay đổi': 'Looking for ways to make the child change',
+  'Nhận ra mắt xích mình đang giữ trong vòng lặp, và đổi mắt xích đó trước': 'Recognising the link you hold in the loop, and changing that link first',
+  'Vẫn thuộc người lớn; học viên giữ phần chọn giả thuyết và chọn thử nghiệm': 'Still with the adults; the student chooses hypotheses and experiments',
+  'Chưa giảm, nhưng đổi dạng: bớt nhắc việc, thêm câu hỏi mở': 'Not reduced, but changing form: fewer reminders, more open questions',
+  'Dấu hiệu nhận biết: Cùng một tình huống lặp lại, phản ứng của người lớn không còn khác nhau mỗi lần': 'Sign: when the same situation repeats, the adults no longer react differently each time',
+  'KIẾN TẠO — chín mươi ngày dựng hệ thống': 'BUILD — ninety days to build the system',
+  'Học theo cảm hứng từng buổi, buổi nào cũng phải quyết định lại từ đầu': 'Studying on inspiration, re-deciding everything from scratch each session',
+  'Chạy một quy trình của riêng mình và tự đọc số liệu tuần để chỉnh': 'Running your own process and reading your weekly data to adjust',
+  'Giữ nhịp buổi tối bằng giọng nhắc của mình': 'Keeping the evening rhythm with your own reminding voice',
+  'Giữ nhịp bằng cấu trúc cả nhà cùng viết, giữ chuẩn thay vì giữ tay lái': 'Keeping the rhythm with a structure the family wrote together — holding the standard rather than the steering wheel',
+  'Chia đôi: học viên điều hành trong tuần, người lớn giữ chuẩn ở mốc {n} ngày': 'Shared: the student runs the week, adults hold the standard at the {n}-day mark',
+  'Giảm một bậc, giảm theo bằng chứng ở mốc {n} ngày, không giảm theo lịch': 'Reduced one step, based on evidence at the {n}-day mark, not by the calendar',
+  'Dấu hiệu nhận biết: Buổi tối vẫn chạy đúng nhịp vào những hôm bố mẹ về muộn': 'Sign: the evening still runs on rhythm on days the parents come home late',
+  'CHUYỂN HÓA — ba trăm sáu mươi lăm ngày chuyển quyền': 'TRANSFORM — three hundred sixty-five days of handing over',
+  'Chạy tốt một hệ thống người khác giúp dựng': 'Running well a system others helped build',
+  'Tự đặt mục tiêu, tự quyết, tự nhận hệ quả và tự tìm hỗ trợ đúng lúc': 'Setting your own goals, deciding, owning the consequences and seeking support at the right time',
+  'Người quyết những việc lớn của con': 'The one who decides the child’s big matters',
+  'Người giữ ranh giới an toàn và giữ nguồn lực, đứng ở hậu phương': 'The one who holds the safety boundaries and resources, standing in the background',
+  'Chuyển hẳn sang học viên trong phạm vi đã ghi rõ, mỗi quyền kèm một trách nhiệm': 'Fully with the student within a clearly written scope, each right with a responsibility',
+  'Giảm dần qua bốn chu kỳ về mức phù hợp, không ép về không': 'Gradually reduced over four cycles to a suitable level, never forced to zero',
+  'Dấu hiệu nhận biết: Học viên chủ trì buổi họp và là người trình số liệu, người lớn ngồi nghe': 'Sign: the student chairs the meeting and presents the data while the adults listen',
+  'BỨT PHÁ — ba trăm sáu mươi lăm ngày cả nhà cùng đổi': 'BREAKTHROUGH — three hundred sixty-five days of the whole family changing',
+  'Tự điều hành việc của mình': 'Running your own affairs',
+  'Tạo được sản phẩm, thành tựu hoặc tác động mà người khác dùng được': 'Creating products, achievements or impact that others can use',
+  'Người đồng hành cùng hành trình của con': 'A companion on the child’s journey',
+  'Người học có phần của riêng mình, có chỉ số riêng và có phần phải trình bày': 'A learner with their own part, their own indicators and their own presentation',
+  'Thuộc học viên; nhà chuyển sang cơ chế bảng vai, mỗi người giữ vai của mình': 'With the student; the family moves to a roles board, each person holding their own role',
+  'Ở mức cố vấn: cần thì có, không thường trực, và vẫn không đưa về không': 'At advisory level: available when needed, not constant, and still never reduced to zero',
+  'Dấu hiệu nhận biết: Ở hội nghị cuối năm, người lớn cũng có bài trình bày của chính mình': 'Sign: at the year-end family conference, the adults have their own presentation too',
+  'Sau năm tầng, thứ gia đình có không phải là một đứa trẻ điểm cao hơn, mà là một hệ vận hành được: quyền điều hành việc học nằm đúng chỗ, mức hỗ trợ ở mức phù hợp chứ không bị ép về không, và trong nhà có đủ vai được giữ. Học viên có hồ sơ năng lực và ít nhất một thành quả có bằng chứng thật, dùng được cho chặng đường sau. Người lớn có phần thay đổi của chính mình, nói ra được, và cầm trong tay một bảng tầm nhìn cho {n} ngày tiếp theo.': 'After five tiers, what the family has is not a child with higher grades but a working system: charge of studying sits in the right place, support is at a suitable level rather than forced to zero, and every role at home is held. The student has a capability profile and at least one achievement with real evidence, usable for the road ahead. The adults have their own change, can talk about it, and hold a vision board for the next {n} days.',
+  '— Lộ trình thay đổi cùng GITA {n}': '— The pathway of change with GITA {n}',
+  '› Chặng đường của con': '› Your child’s journey',
+  '› Chặng đường của em': '› Your journey'
+});
+
+})();
+
+/* ═════════ src/tu-dien-en-12.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — TỪ ĐIỂN TIẾNG ANH · ĐỢT 12: BẢY QUYỀN · CON ĐƯỜNG NHIỆM VỤ ·
+   BỘ TEST · CHÍN VAI
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.TU_DIEN_EN = G.TU_DIEN_EN || {};
+(function (d) { for (var k in d) G.TU_DIEN_EN[k] = d[k]; })({
+  /* ── Bảy quyền của nhà mình ── */
+  'Làm thế nào:': 'How:',
+  'Ai trả lời:': 'Who answers:',
+  'Đọc dữ liệu nhà mình': 'Read your family’s data',
+  '· Bảy quyền của nhà mình.': '· Your family’s seven rights.',
+  'BẢY QUYỀN CỦA NHÀ MÌNH': 'YOUR FAMILY’S SEVEN RIGHTS',
+  'Quyền không có cơ chế là quyền trang trí': 'A right with no mechanism is a decorative right',
+  'Bảy điều dưới đây không nằm trong điều khoản nào cả — chúng ở đây, chỗ nhà mình nhìn thấy. Mỗi quyền kèm tên cơ chế đang giữ nó, để nhà mình đòi được khi nó bị phá.': 'The seven items below are not buried in any clause — they are here, where your family can see them. Each right names the mechanism that upholds it, so your family can claim it if it is broken.',
+  '✓ Quyền IM LẶNG': '✓ The right to SILENCE',
+  'Không trả lời, không tham gia, không giải thích — và không có hậu quả xấu nào.': 'No answering, no taking part, no explaining — and no bad consequences.',
+  'Không làm gì cả. Không trả lời, không mở ứng dụng, không giải thích.': 'Do nothing at all. Do not answer, do not open the app, do not explain.',
+  'Không ai hỏi lại. ·': 'No one asks again. ·',
+  'Vô thời hạn.': 'Indefinitely.',
+  'Nhà bị nhắc quá một lần mỗi ngày thì đó là hệ sai, báo cho người đi cùng.': 'If your family is reminded more than once a day, the system is wrong — tell your companion.',
+  '✓ Quyền XOÁ': '✓ The right to ERASURE',
+  'Toàn bộ hoặc từng phần, có kiểm chứng, kể cả bản sao lưu.': 'All or in part, verified, backups included.',
+  'Nói với người đi cùng, hoặc gửi thẳng yêu cầu xoá trong ứng dụng. Không phải nêu lý do.': 'Tell your companion, or send a deletion request directly in the app. No reason needed.',
+  'Người phụ trách dữ liệu của Học viện. ·': 'The Academy’s data officer. ·',
+  'Ba mươi ngày, kèm báo cáo kiểm chứng đã xoá cả bản sao lưu.': 'Thirty days, with a report verifying the backups were deleted too.',
+  'Quá hạn thì khiếu nại theo quyền thứ bảy, và Học viện chịu phí luật sư của nhà mình.': 'If overdue, complain under the seventh right, and the Academy covers your family’s legal fees.',
+  '✓ Quyền ĐI': '✓ The right to LEAVE',
+  'Rời hệ bất cứ lúc nào. Cây chuyển thành "cây đã về", không vướng nợ nào ngoài nợ thật.': 'Leave the system at any time. Your tree becomes a “tree gone home”, with no debts except genuine ones.',
+  'Nói một câu với người đi cùng là đủ. Không phải làm đơn.': 'One sentence to your companion is enough. No forms.',
+  'Người đi cùng, và họ KHÔNG được giữ nhà mình lại. ·': 'Your companion — who may NOT hold your family back. ·',
+  'Ngay lập tức.': 'Immediately.',
+  'Cây của nhà mình chuyển thành cây đã về, được in tặng nếu nhà mình muốn, và không bị xoá.': 'Your family’s tree becomes a tree gone home, printed as a gift if you wish, and never deleted.',
+  '✓ Quyền PHỦ QUYẾT': '✓ The right to VETO',
+  'Từng nghiên cứu, từng câu chuyện, từng tấm ảnh có mình. Phủ quyết KHÔNG cần lý do và không ảnh hưởng dịch vụ.': 'Each study, each story, each photo you appear in. A veto needs NO reason and does not affect your service.',
+  'Nói không với từng nghiên cứu, từng câu chuyện, từng tấm ảnh. Không phải nêu lý do.': 'Say no to any study, story or photo. No reason needed.',
+  'Học viện dừng dùng, không hỏi lại. ·': 'The Academy stops using it, without asking again. ·',
+  'Bảy ngày để gỡ khỏi mọi nơi đã đăng.': 'Seven days to remove it from everywhere it was posted.',
+  'Phủ quyết KHÔNG ảnh hưởng gì tới dịch vụ nhà mình đang nhận.': 'A veto does NOT affect the service your family receives in any way.',
+  '✓ Quyền ĐỌC': '✓ The right to READ',
+  'Đọc mọi dữ liệu hệ đang giữ về mình, ở dạng mình hiểu — không phải một bản kết xuất kỹ thuật.': 'Read all data the system holds about you, in a form you understand — not a technical export.',
+  'Xin xem toàn bộ dữ liệu Học viện đang giữ về nhà mình.': 'Ask to see all the data the Academy holds about your family.',
+  'Người phụ trách dữ liệu. ·': 'The data officer. ·',
+  'Mười lăm ngày.': 'Fifteen days.',
+  'Phải đưa ở dạng NHÀ MÌNH ĐỌC HIỂU, không phải một bản kết xuất kỹ thuật.': 'Must be provided in a form YOUR FAMILY CAN UNDERSTAND, not a technical export.',
+  '✓ Quyền SỬA': '✓ The right to CORRECT',
+  'Đính chính, và viết lại câu chuyện của mình bằng lời của mình.': 'Make corrections, and rewrite your story in your own words.',
+  'Viết lại phần nói về nhà mình bằng lời của nhà mình.': 'Rewrite the part about your family in your family’s own words.',
+  'Người biên tập sử. ·': 'The history editor. ·',
+  'Mười bốn ngày.': 'Fourteen days.',
+  'Bản sửa in CẠNH bản gốc, không thay bản gốc — sử mà sửa được thì không còn là sử.': 'The correction is printed NEXT TO the original, not replacing it — history that can be rewritten is no longer history.',
+  '✓ Quyền KHIẾU NẠI': '✓ The right to COMPLAIN',
+  'Tới người thật, trả lời trong bảy ngày, leo cấp độc lập với người bị khiếu nại, và không tốn phí.': 'To a real person, answered within seven days, escalated independently of the person complained about, and free of charge.',
+  'Khiếu nại tới NGƯỜI THẬT, không phải một hộp thư.': 'Complain to a REAL PERSON, not a mailbox.',
+  'Người không liên quan tới việc bị khiếu nại. ·': 'Someone not involved in the matter complained about. ·',
+  'Bảy ngày phải có trả lời.': 'An answer within seven days.',
+  'Không tốn phí. Không hài lòng thì leo lên cấp cao hơn, và cấp ấy độc lập với người bị khiếu nại.': 'Free of charge. If unsatisfied, escalate to a higher level, independent of the person complained about.',
+  'KHÔNG điều khoản nào ở bất kỳ hợp đồng nào được thu hẹp bảy quyền này. Điều khoản chung ở hợp đồng khác không đè lên được.': 'NO clause in any contract may narrow these seven rights. General terms in other contracts cannot override them.',
+  'Năm nào một quyền có KHÔNG lần dùng thì đó là năm BÁO ĐỘNG, không phải năm yên ổn. Quyền không ai dùng thì hoặc không ai biết nó tồn tại — lỗi truyền thông của hệ — hoặc nó chỉ có trên giấy — lỗi thực thi của hệ. Cả hai đều phải tự vấn riêng.': 'A year in which a right is used ZERO times is an ALARM year, not a quiet one. A right no one uses is either unknown — the system’s communication failure — or exists only on paper — the system’s enforcement failure. Each must be examined on its own.',
+  'Luật {n} cho nhà mình quyền đọc toàn bộ dữ liệu GITA đang giữ về gia đình. Bấm để xem tại chỗ — mật khẩu và bí mật hệ thống không nằm trong đây, và mỗi lượt đọc vào nhật ký.': 'Law {n} gives your family the right to read all the data GITA holds about it. Tap to view it here — passwords and system secrets are not included, and every read is logged.',
+
+  /* ── Con đường nhiệm vụ ── */
+  'Hoàn thành bước trước để mở chi tiết bước này.': 'Complete the previous step to open this step’s details.',
+  'Cô trợ lý AI của GITA': 'GITA’s AI assistant',
+  '· Con đường nhiệm vụ.': '· The mission path.',
+  'Con đường nhiệm vụ': 'The mission path',
+  'Một trục thẳng, đi từng bước. Xong bước này, bước sau mới mở.': 'One straight line, one step at a time. Finish this step and the next one opens.',
+  'Cả hành trình': 'The whole journey',
+  '{n}/{n} bước': '{n}/{n} steps',
+  'Chào nhà mình! Bước này của mình là': 'Hello, family! This step of ours is',
+  '(T{n}). Ghi ba dòng mỗi tối → cuối tuần thấy một nếp mình chưa từng thấy → tin vào số thay vì tin vào cảm giác → ghi tiếp dễ hơn vì biết ghi để làm gì. Mình làm lần lượt từng việc nhỏ bên dưới; xong hết thì bấm': '(T{n}). Write three lines each evening → at the weekend you see a pattern you never noticed → you trust numbers over feelings → logging gets easier because you know why you do it. We do the small tasks below one by one; when they are all done, tap',
+  '“Đã làm xong bước này”': '“I have finished this step”',
+  'để mở bước tiếp nhé.': 'to open the next step.',
+  'Bánh đà đầu tiên và là bánh đà đẻ ra chín cái còn lại. Không có số thì mọi tranh luận trong nhà đều là hai cảm giác cãi nhau, và cảm giác thì không ai thắng được.': 'The first flywheel, and the one that gives rise to the other nine. Without numbers every argument at home is two feelings fighting, and no one wins against a feeling.',
+  'Sau ba tối đã thấy giờ ngồi vào bàn lệch nhau bao nhiêu.': 'After three evenings you can see how far apart study start times are.',
+  'Ghi cả tối hỏng': 'Log the bad evenings too',
+  'Tối nào không học cũng ghi, ghi là "không".': 'On evenings with no study, log it anyway — write “none”.',
+  'Tối hỏng mới là dữ liệu quý nhất — nó chỉ ra cái gì phá nhịp.': 'The bad evenings are the most valuable data — they show what breaks the rhythm.',
+  'Không sửa gì trong bảy ngày': 'Change nothing for seven days',
+  'Chỉ nhìn. Chưa đổi giờ, chưa đặt luật mới.': 'Just watch. No time changes, no new rules yet.',
+  'Một câu mỗi tối, do con viết': 'One sentence each evening, written by your child',
+  'Hôm nay việc gì làm được, việc gì chưa.': 'What got done today, and what did not.',
+  'Con bắt đầu tự nhìn mình thay vì chờ người lớn nhận xét.': 'Your child starts looking at themselves instead of waiting for adults to comment.',
+  'Đếm lần bị ngắt': 'Count interruptions',
+  'Mỗi lần rời bàn vì chuyện bên ngoài thì gạch một vạch.': 'Each time they leave the desk for something outside, make a tally mark.',
+  'Con số này gần như luôn cao hơn cả nhà đoán.': 'This number is almost always higher than the family guesses.',
+  'Chụp lại bàn học lúc bắt đầu': 'Photograph the desk at the start',
+  'Một ảnh mỗi tối, không bình luận.': 'One photo each evening, no comments.',
+  'Bảy ảnh cạnh nhau nói nhiều hơn bảy lần nhắc dọn bàn.': 'Seven photos side by side say more than seven reminders to tidy the desk.',
+  'Hỏi con một câu, không hỏi hai': 'Ask your child one question, not two',
+  'Chọn đúng một câu, hỏi cùng giờ mỗi tối.': 'Choose exactly one question and ask it at the same time each evening.',
+  'Hỏi ít thì con trả lời thật; hỏi dồn thì con trả lời cho xong.': 'Ask little and they answer honestly; pile on questions and they answer just to get it over with.',
+  'Đọc lại sổ cuối tuần, cả nhà cùng ngồi': 'Reread the log at the weekend, sitting together as a family',
+  'Mười lăm phút, đọc số, không kết luận về người.': 'Fifteen minutes, read the numbers, no conclusions about people.',
+  'Đây là buổi đầu tiên cả nhà bàn về một con số thay vì về một người.': 'This is the first time the family discusses a number instead of a person.',
+  'Khoanh một nếp': 'Circle one routine',
+  'Chọn đúng MỘT thứ lặp lại đủ để gọi là nếp.': 'Pick exactly ONE thing that repeats enough to call a routine.',
+  'Khoanh được một nếp là bánh đà bắt đầu có lực.': 'Circling one routine is when the flywheel starts to gain momentum.',
+  'Nói lại nếp ấy bằng lời của mình': 'Describe that routine in your own words',
+  'Không dùng chữ của Học viện, dùng chữ của nhà mình.': 'Not in the Academy’s words — in your family’s words.',
+  'Nói lại được bằng lời mình là đã hiểu; nhắc đúng thuật ngữ thì chưa.': 'Saying it in your own words means you understand; repeating the right term does not.',
+  'Đã làm xong bước này': 'I have finished this step',
+  'Mở màn Mười bánh đà để làm': 'Open the Ten Flywheels screen to do it',
+  'Bước {n} · Nhìn thật · đang làm': 'Step {n} · Seeing clearly · in progress',
+  'Bước {n} · Nhịp nhà · chưa mở': 'Step {n} · Family rhythm · not yet open',
+  'Bước {n} · Lời nói trong nhà · chưa mở': 'Step {n} · Words at home · not yet open',
+  'Bước {n} · Tự học · chưa mở': 'Step {n} · Self-study · not yet open',
+  'Bước {n} · Nền sức khoẻ · chưa mở': 'Step {n} · Health foundation · not yet open',
+  'Bước {n} · Tiền và lựa chọn · chưa mở': 'Step {n} · Money and choices · not yet open',
+  'Bước {n} · Quan hệ trong nhà · chưa mở': 'Step {n} · Family relationships · not yet open',
+  'Bước {n} · Mục tiêu và kỷ luật · chưa mở': 'Step {n} · Goals and discipline · not yet open',
+  'Bước {n} · Đóng góp · chưa mở': 'Step {n} · Contribution · not yet open',
+  'Bước {n} · Truyền lại · chưa mở': 'Step {n} · Passing it on · not yet open',
+
+  /* ── Bộ test nhận diện ── */
+  'bản rút': 'short version',
+  '{n} miền · {n}-{n}': '{n} domains · {n}-{n}',
+  '{n}–{n} điểm · mức {n}': '{n}–{n} points · level {n}',
+  '{n}/{n} câu · {n} phút · HS': '{n}/{n} questions · {n} min · Student',
+  '{n}/{n} câu · {n} phút · PH': '{n}/{n} questions · {n} min · Parent',
+  '· Bài để hiểu mình.': '· Tests to understand yourself.',
+  'NHÓM {n} · NHẬN DIỆN': 'GROUP {n} · PROFILING',
+  'Bộ test nhận diện năm tầng': 'The five-tier profile test set',
+  'Năm nhóm bài cho mỗi tầng. Mỗi câu có bốn lựa chọn, mỗi lựa chọn ứng với một mức và một nhóm khách hàng. Bài này không xếp loại ai — nó chỉ nói cho cả nhà biết mình đang đứng ở đâu, để gửi đúng lộ trình và đúng tài liệu.': 'Five test groups per tier. Each question has four options, each matching a level and a client group. These tests grade no one — they just tell the family where it stands, so the right pathway and materials can be sent.',
+  'Bản xem thử — {n} bài, mỗi bài rút còn {n} trong {n} câu': 'Preview — {n} tests, each shortened to {n} of {n} questions',
+  'Sáu câu này trải đủ {n} miền đo nên chấm thử vẫn ra nhóm và ra cảnh báo, nhưng điểm đo trên sáu câu KHÔNG dùng để kết luận về một gia đình thật. Đăng nhập bằng tài khoản đã được cấp phép tầng là mở đủ {n} câu của {n} bài, và kết quả mới được ghi vào hồ sơ nhà mình.': 'These six questions cover all {n} domains, so a trial score still gives a group and alerts — but a six-question score is NOT used to draw conclusions about a real family. Log in with a tier-licensed account to open all {n} questions of the {n} tests, and only then are results saved to your family’s records.',
+  'Bộ bài': 'Test set',
+  'năm nhóm mỗi tầng': 'five groups per tier',
+  'Câu hỏi': 'Questions',
+  'bản rút · đủ là {n} câu': 'short version · full is {n} questions',
+  'Lựa chọn': 'Options',
+  'đã quy ước mức điểm': 'scoring levels defined',
+  'Đã làm': 'Completed',
+  'bài trong máy này': 'tests on this device',
+  'BỐN NHÓM KHÁCH HÀNG': 'FOUR CLIENT GROUPS',
+  'Mỗi lựa chọn là một mức từ {n} đến {n}. Điểm bài quy về thang {n} rồi rơi vào một trong bốn nhóm.': 'Each option is a level from {n} to {n}. The test score is converted to a {n}-point scale and falls into one of four groups.',
+  'ĐỎ — cần can thiệp': 'RED — needs intervention',
+  'Hành vi học tập hiện phụ thuộc gần như hoàn toàn vào nhắc nhở và giám sát bên ngoài. Đây là mô tả mức nền, không phải nhận định về con người học viên.': 'Study behaviour currently depends almost entirely on outside reminders and supervision. This describes a baseline, not a judgement about the student as a person.',
+  'CAM — theo dõi sát': 'ORANGE — monitor closely',
+  'Học viên làm được ở một số buổi nhưng chưa ổn định, còn cần nhắc trong tuần.': 'The student manages some sessions but not consistently, and still needs reminders during the week.',
+  'VÀNG — đang hình thành': 'YELLOW — taking shape',
+  'Phần lớn buổi học tự vận hành được, còn lệch ở tình huống khó hoặc hôm mệt.': 'Most study sessions run on their own, still slipping in hard situations or on tired days.',
+  'XANH — ổn định': 'GREEN — stable',
+  'Hành vi học tập tự vận hành đều đặn và tự phục hồi khi lệch nhịp.': 'Study behaviour runs steadily on its own and recovers by itself when off rhythm.',
+  'Ranh giới của bộ test': 'The test set’s boundaries',
+  'Bài này KHÔNG dùng để kết luận nguyên nhân, KHÔNG dùng để xếp loại học viên và KHÔNG thay thế đánh giá chuyên môn y tế hay tâm lý.': 'These tests are NOT for concluding causes, NOT for grading students, and do NOT replace professional medical or psychological assessment.',
+  'CHỌN BÀI': 'CHOOSE A TEST',
+  'Bấm vào một bài để làm. Kết quả lưu trong máy này và gửi được cho người đồng hành.': 'Tap a test to take it. Results are saved on this device and can be sent to your companion.',
+  'Bài A': 'Test A',
+  'Hành vi học tập': 'Study behaviour',
+  'Nhận diện hành vi thật của học viên trong một phiên học: bắt đầu thế nào, giữ việc ra sao khi gặp khó, kết thúc và kiểm tra lại thế nào. Chỉ mô tả thực trạng bảy ngày gần nhất, không kết luận nguyên nhân.': 'Profiles the student’s actual behaviour in a study session: how they start, how they keep going when it gets hard, how they finish and check. Describes only the last seven days; draws no conclusions about causes.',
+  'Bài B': 'Test B',
+  'Thói quen và kỷ luật': 'Habits and discipline',
+  'Nhận diện hệ thống thói quen đang vận hành quanh việc học: nhịp ngày, giấc ngủ, kế hoạch, rà soát và khả năng quay lại nhịp sau khi lỡ. Chỉ mô tả thực trạng, chưa bàn tới cách sửa.': 'Profiles the habit system around studying: daily rhythm, sleep, planning, reviewing and the ability to get back on track after a slip. Describes the current state only, not yet how to fix it.',
+  'Bài C': 'Test C',
+  'Động lực và tâm thế học tập': 'Motivation and mindset',
+  'Nhận diện nguồn động lực đang vận hành: mục tiêu có rõ và có thuộc về học viên không, niềm tin vào khả năng thay đổi, cách đứng dậy sau thất bại và mức chịu áp lực so sánh. Đây là mô tả tâm thế, không phải đánh giá tâm lý.': 'Profiles the motivation at work: whether goals are clear and truly the student’s own, belief in the ability to change, how they bounce back from failure and how much comparison pressure they feel. This describes mindset; it is not a psychological assessment.',
+  'Bài D': 'Test D',
+  'Môi trường gia đình': 'Family environment',
+  'Nhận diện môi trường mà việc học của con đang diễn ra: không gian, nhịp sinh hoạt, ngôn từ, mức thống nhất giữa người lớn và cách nhà mình xử lý xung đột. Bài này mô tả hệ thống gia đình, không chấm điểm cha mẹ.': 'Profiles the environment your child studies in: space, daily rhythm, language, how aligned the adults are and how your family handles conflict. This describes the family system; it does not score the parents.',
+  'Bài E': 'Test E',
+  'Đồng hành và kỳ vọng': 'Support and expectations',
+  'Nhận diện cách người lớn đang đồng hành cùng con: mức nhắc nhở, ranh giới giữa hỗ trợ và làm thay, mức kỳ vọng so với nền thật, cách ghi nhận và cách trao quyền. Bài này mô tả hành vi đồng hành, không đánh giá tình yêu thương.': 'Profiles how the adults support the child: how much they remind, the line between helping and doing it for them, expectations versus the real baseline, how they recognise and how they hand over. This describes supporting behaviour; it does not assess love.',
+  'Mỗi bản in ra đều mang mật mã kín theo người nhận · GITA {n}': 'Every printed copy carries a hidden code tied to its recipient · GITA {n}',
+  '› Bài để hiểu mình': '› Tests to understand yourself',
+  '› Bài kiểm tra để hiểu mình': '› Assessments to understand yourself',
+
+  /* ── Chín việc trong nhà ── */
+  'còn trống': 'vacant',
+  'Xem việc cụ thể & KPI': 'See specific tasks & KPIs',
+  '· Chín việc trong nhà.': '· Nine roles at home.',
+  '› Chín việc trong nhà': '› Nine roles at home',
+  'Chín vai giữ trong nhà': 'Nine roles held at home',
+  'Trong nhà này ai giữ gì, và ai đang bị bỏ ra ngoài? — Đủ chín vai có người giữ, và không ai giữ quá bốn vai. Vai luân phiên và chồng lấn được; một đứa trẻ lớn hoàn toàn có thể giữ vai giữ dữ liệu.': 'In this family, who holds what, and who is being left out? — All nine roles held, and no one holding more than four. Roles can rotate and overlap; an older child can perfectly well hold the data-keeper role.',
+  'VAI ĐÃ CÓ NGƯỜI GIỮ': 'ROLES HELD',
+  'chuẩn: đủ chín vai': 'standard: all nine roles',
+  'VAI CÒN TRỐNG': 'VACANT ROLES',
+  'chỗ trống là dữ liệu, không phải lỗi': 'a vacancy is data, not a fault',
+  'GIỮ NHIỀU NHẤT': 'MOST HELD BY ONE',
+  'trần cho phép: {n} vai/người': 'allowed maximum: {n} roles/person',
+  'ĐÃ CHUYỂN CHO CON': 'HANDED TO THE CHILD',
+  'trao quyền kèm trách nhiệm': 'rights handed over with responsibility',
+  'NGƯỜI GIỮ CỬA': 'GATEKEEPER',
+  'Cái gì và ai đang được vào nhà mình?': 'What and who is coming into our home?',
+  'Trông chừng đầu vào: bạn con chơi cùng, nội dung trên điện thoại, môi trường học thêm, người lớn có ảnh hưởng. Đầu vào quyết định đầu ra.': 'Watch the inputs: your child’s friends, phone content, tutoring environments, influential adults. Inputs determine outputs.',
+  'Người ở nhà nhiều nhất; có thể luân phiên': 'Whoever is home the most; can rotate',
+  'NGƯỜI GIỮ CHUẨN': 'STANDARD KEEPER',
+  'Thế nào là đạt trong nhà mình?': 'What counts as “done” in our home?',
+  'Giữ định nghĩa đạt không bị trôi. Khi cả nhà mệt, chuẩn là thứ đầu tiên bị hạ vì thương.': 'Keeps the definition of “done” from drifting. When the family is tired, the standard is the first thing lowered out of kindness.',
+  'Người ít bị cuốn theo cảm xúc nhất trong nhà': 'The least emotionally swayed person at home',
+  'NGƯỜI GIỮ HƯỚNG': 'DIRECTION KEEPER',
+  'Con đang đi đâu, và vì sao là hướng đó?': 'Where is the child heading, and why that direction?',
+  'Giữ cho ba câu Why — Who — How của học viên luôn rõ và luôn là của em.': 'Keeps the student’s three questions — Why, Who, How — always clear and always their own.',
+  'Người con dễ mở lòng nhất': 'The person the child opens up to most easily',
+  'NGƯỜI GIỮ VIỆC HỌC': 'LEARNING KEEPER',
+  'Con đang học cái gì, và học tới đâu rồi?': 'What is the child learning, and how far have they got?',
+  'Giữ nhịp học và kèm cặp. Không phải người dạy — người giữ nhịp và người hỏi lại.': 'Keeps the study rhythm and gives support. Not the teacher — the rhythm-keeper and the one who asks again.',
+  'Người có chuyên môn gần nhất, hoặc anh chị lớn': 'The person with the closest expertise, or an older sibling',
+  'NGƯỜI GIỮ DỮ LIỆU': 'DATA KEEPER',
+  'Mình đang nói bằng cảm giác hay bằng số?': 'Are we talking in feelings or in numbers?',
+  'Giữ cho cả nhà có dữ liệu để nói chuyện. Không có vai này thì mọi trao đổi quay về cảm tính.': 'Makes sure the family has data to talk with. Without this role, every conversation falls back on feelings.',
+  'Người gọn gàng nhất nhà; học viên tự giữ được từ chặng {n}': 'The tidiest person at home; the student can hold it from stage {n}',
+  'NGƯỜI GIỮ VAI': 'ROLE KEEPER',
+  'Trong nhà này ai làm gì, và ai đang bị bỏ ra ngoài?': 'In this home, who does what, and who is being left out?',
+  'Giữ cho mỗi người có một phần việc thật và một chỗ đóng góp bằng thế mạnh của mình, kể cả ông bà và anh chị em.': 'Makes sure everyone has a real job and a place to contribute through their strengths — grandparents and siblings included.',
+  'Người có tiếng nói được cả nhà nghe': 'The person whose voice the whole family listens to',
+  'Mình có đang ngồi lại với nhau đúng hẹn không?': 'Are we sitting down together as agreed?',
+  'Giữ ba nhịp chạy đều: tuần, {n} ngày, {n} ngày. Nhịp đứt là lộ trình đứt.': 'Keeps the three rhythms steady: weekly, {n} days, {n} days. A broken rhythm is a broken pathway.',
+  'Người giữ lịch của cả nhà': 'The person who keeps the family calendar',
+  'NGƯỜI GIỮ GHI NHẬN': 'RECOGNITION KEEPER',
+  'Chuyện tốt trong nhà có được kể lại không?': 'Are the good things at home being talked about?',
+  'Giữ cho việc tốt được nhìn thấy và nói ra. Trong phần lớn gia đình, việc sai được nhắc mười lần còn việc đúng thì im lặng.': 'Makes sure good deeds are seen and spoken about. In most families, mistakes are mentioned ten times while right things go unsaid.',
+  'Người nói lời khen nghe thật nhất': 'The person whose praise sounds most genuine',
+  'NGƯỜI GIỮ ĐÒN BẨY': 'LEVER KEEPER',
+  'Ngoài nhà mình, ai đang giúp con lớn?': 'Outside our home, who is helping the child grow?',
+  'Xây mạng lưới hỗ trợ bên ngoài gia đình. Một gia đình đóng kín thì lộ trình dừng ở giới hạn của bố mẹ.': 'Builds a support network outside the family. In a closed family, the pathway stops at the parents’ limits.',
+  'Người quan hệ rộng nhất nhà': 'The best-connected person in the family',
+  'Cảnh báo của khoang năm': 'Chamber five warning',
+  'Vai luân phiên và chồng lấn được. Vai là cách phân công, không phải chức danh.': 'Roles can rotate and overlap. A role is a way of sharing work, not a title.'
+});
+
+})();
+
+/* ═════════ src/tu-dien-en-13.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — TỪ ĐIỂN TIẾNG ANH · ĐỢT 13: BẢN ĐỒ G–I–T–A · CHUYỂN DỊCH ·
+   HOA HỒNG · NHÀ MÌNH ĐÃ ĐỔI GÌ · MINH CHỨNG · NGƯỜI ĐỒNG HÀNH
+   Bốn miền giữ nguyên tên gốc (Goal · Inspirits · Talent · Action &
+   Academy) — đó là tên riêng của mô thức GITA, không phải chữ để dịch.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.TU_DIEN_EN = G.TU_DIEN_EN || {};
+(function (d) { for (var k in d) G.TU_DIEN_EN[k] = d[k]; })({
+  /* ── Bản đồ G – I – T – A ── */
+  'CÂU HỎI THĂM DÒ': 'PROBING QUESTIONS',
+  'MIỀN NÀY GỒM': 'THIS DOMAIN INCLUDES',
+  'Sự khác biệt': 'Distinctiveness',
+  '· Bốn điều cần nhìn.': '· Four things to look at.',
+  'Bản đồ G – I – T – A': 'The G – I – T – A map',
+  'Bốn miền để đọc đúng nguyên nhân và thiết kế đúng giải pháp. Can thiệp sai miền thì làm bao nhiêu cũng không dịch chuyển.': 'Four domains for reading causes correctly and designing the right solution. Intervene in the wrong domain and no amount of effort moves anything.',
+  'Goal — Hệ thống mục tiêu': 'Goal — The goal system',
+  'Con muốn điều gì? Điều đó là của con hay của người lớn? Đạt được thì khác đi thế nào?': 'What does the child want? Is it the child’s goal or the adults’? What changes once it is reached?',
+  'Hệ thống mục tiêu': 'Goal system',
+  'Kết quả xuất sắc': 'Outstanding results',
+  'Đích đến của quá trình học tập rèn luyện': 'The destination of learning and training',
+  'Kỳ tích': 'Achievements',
+  'Nguyện vọng': 'Aspirations',
+  'Thành quả': 'Accomplishments',
+  'Inspirits — Nội lực': 'Inspirits — Inner strength',
+  'Điều gì khiến con muốn làm? Con tin mình làm được tới đâu? Khi thất bại con nghĩ gì?': 'What makes the child want to do it? How far do they believe they can go? What do they think when they fail?',
+  'Động lực': 'Motivation',
+  'Khát khao': 'Desire',
+  'Đam mê': 'Passion',
+  'Mong muốn': 'Wishes',
+  'Niềm tin': 'Belief',
+  'Bản lĩnh theo đuổi mục tiêu': 'Resilience in pursuing goals',
+  'Talent — Hệ thống tài năng': 'Talent — The talent system',
+  'Con biết cách làm chưa? Con mạnh nhất ở đâu? Cách làm nào đã hiệu quả với con?': 'Does the child know how to do it? Where are they strongest? Which methods have worked for them?',
+  'Sở trường': 'Strengths',
+  'Tư duy xuất sắc': 'Excellent thinking',
+  'Tốc độ': 'Speed',
+  'Tập trung': 'Focus',
+  'Khả năng vượt trội': 'Exceptional ability',
+  'Định hướng xuất sắc': 'Clear direction',
+  'Action & Academy — Hành động và hệ sinh thái': 'Action & Academy — Action and ecosystem',
+  'Ai quanh con? Không gian và nhịp sống thế nào? Con đang dùng hệ thống nào để vận hành?': 'Who is around the child? What are the space and daily rhythm like? What system is the child using to run things?',
+  'Hành động quyết đoán': 'Decisive action',
+  'Kiên trì': 'Perseverance',
+  'Sáng tạo': 'Creativity',
+  'Chăm chỉ': 'Diligence',
+  'Cẩn thận': 'Carefulness',
+  'Tối ưu': 'Optimisation',
+  'Lộ trình rèn luyện theo thói quen thành công': 'A training pathway built on successful habits',
+  'Cấp độ hành động theo quy tắc {n}/{n}': 'Action levels by the {n}/{n} rule',
+  'Môi trường thi đua rèn luyện': 'A motivating training environment',
+  'Thiết kế khác biệt': 'Distinctive design',
+  'Nhóm bạn xuất sắc theo team work': 'An excellent peer group working as a team',
+  'Học tập gắn phát triển bản thân': 'Learning tied to personal growth',
+  'CAN THIỆP ĐÚNG TẦNG': 'INTERVENE AT THE RIGHT LEVEL',
+  'Kim chỉ nam số {n} — rút từ mô thức MT-{n}': 'Guiding principle {n} — drawn from pattern MT-{n}',
+  'Nhắc con dậy sớm là can thiệp tầng Hành vi. Nếu điểm nghẽn nằm ở tầng Niềm tin thì nhắc bao nhiêu cũng vô ích. Trước khi giao việc, phải biết mình đang đứng ở tầng nào.': 'Reminding a child to get up early is a Behaviour-level intervention. If the blockage is at the Belief level, no amount of reminding helps. Before assigning a task, know which level you are working at.',
+  '— Mô thức MT-{n} · Sáu cấp độ tư duy': '— Pattern MT-{n} · Six levels of thinking',
+  '› Bốn điều cần nhìn': '› Four things to look at',
+  '› Bốn điều em cần nhìn': '› Four things for you to look at',
+
+  /* ── Từ nỗi đau đến khát khao ── */
+  'CHUYỂN DỊCH {n}': 'SHIFT {n}',
+  'TỪ — NỖI ĐAU': 'FROM — THE PAIN',
+  'ĐẾN — KHÁT KHAO': 'TO — THE DESIRE',
+  'BẰNG CHỨNG ĐÃ QUA': 'EVIDENCE IT HAS HAPPENED',
+  'Miền I · Nội lực': 'Domain I · Inner strength',
+  'Miền G · Mục tiêu': 'Domain G · Goals',
+  'Miền A · Hành động & Môi trường': 'Domain A · Action & Environment',
+  '· Từ chỗ đang khổ đến chỗ mong muốn.': '· From where it hurts to where you want to be.',
+  'Từ nỗi đau đến khát khao': 'From pain to desire',
+  'Bảy chuyển dịch làm nên một gia đình khác. Mỗi chuyển dịch có một đòn bẩy cụ thể và một bằng chứng để biết mình đã qua.': 'Seven shifts make a different family. Each shift has a specific lever and evidence to know you have made it.',
+  'BẢN NGÃ NGƯỜI LỚN': 'THE ADULT SELF',
+  'Tôi đã thử mọi cách rồi. Nói nhẹ không nghe, nói nặng thì cãi. Tôi thấy mình bất lực trong chính nhà mình.': 'I have tried everything. Gentle words are ignored, harsh words start arguments. I feel powerless in my own home.',
+  'Tôi là chuyên gia dẫn dắt con tôi. Tôi có bản đồ, có bí kíp, có bằng chứng — và tôi biết bước tiếp theo là gì.': 'I am the expert at guiding my child. I have a map, a playbook, evidence — and I know what the next step is.',
+  'Trao cho cha mẹ một mô thức đọc được nguyên nhân (G–I–T–A) thay vì một danh sách lời khuyên.': 'Give parents a pattern for reading causes (G–I–T–A) instead of a list of advice.',
+  'Số lần nhắc mỗi tuần giảm từ {n} xuống {n} · phụ huynh tự nêu được nút thắt bằng câu có số liệu.': 'Weekly reminders fall from {n} to {n} · parents can name the bottleneck in a sentence with data.',
+  'ĐỨA CON': 'THE CHILD',
+  'Con tôi có quá nhiều vấn đề: lười, không tập trung, nói dối, ôm điện thoại, không có mục tiêu gì cả.': 'My child has so many problems: lazy, unfocused, lying, glued to the phone, no goals at all.',
+  'Con tôi là niềm tự hào của gia đình — có kỳ tích năm của riêng nó, và tự cầm lái việc học của mình.': 'My child is the family’s pride — with their own achievement of the year, steering their own learning.',
+  'Đổi từ danh sách lỗi sang bản đồ tài năng và một kỳ tích năm do chính con chọn.': 'Shift from a list of faults to a talent map and an achievement of the year chosen by the child.',
+  'Ít nhất một sản phẩm, thành tựu hoặc tác động có bằng chứng trong {n} ngày.': 'At least one product, achievement or impact with evidence within {n} days.',
+  'KHÔNG KHÍ TRONG NHÀ': 'THE ATMOSPHERE AT HOME',
+  'Bữa cơm nào cũng thành phiên toà. Nói chuyện học là cãi nhau. Ai cũng mệt và không ai muốn ngồi lại.': 'Every meal becomes a courtroom. Talking about school means arguing. Everyone is tired and no one wants to sit down together.',
+  'Nhà mình có nhịp: mỗi tuần ngồi lại đủ mặt, bốn nhịp NGHE – CÔNG NHẬN – LÀM RÕ – DẪN ĐƯỜNG.': 'Our family has a rhythm: every week we sit down together, with the four beats LISTEN – ACKNOWLEDGE – CLARIFY – GUIDE.',
+  'Thay tranh cãi bằng bảng số, thay cảm giác bằng dữ liệu, thay ngẫu hứng bằng nghi lễ.': 'Replace arguments with a numbers board, feelings with data, improvisation with ritual.',
+  'Thời gian phục hồi sau xung đột rút ngắn dần qua từng chặng.': 'Recovery time after conflict gets shorter stage by stage.',
+  'CÁCH LÀM': 'METHOD',
+  'Miền T · Năng lực': 'Domain T · Capability',
+  'Mỗi người trong nhà dạy một kiểu. Ông bà một hướng, bố một hướng, mẹ một hướng — con không biết nghe ai.': 'Everyone at home teaches differently. Grandparents one way, Dad another, Mum another — the child does not know whom to listen to.',
+  'Cả nhà nói cùng một ngôn ngữ: khoang, vai, chặng, cổng, bằng chứng. Ai cũng biết mình giữ gì.': 'The whole family speaks one language: chambers, roles, stages, gates, evidence. Everyone knows what they hold.',
+  'Chốt bảng chín vai và bộ quy tắc nhà mình, có biên bản, rà lại mỗi {n} ngày.': 'Settle the nine-role board and the family rules, with minutes, reviewed every {n} days.',
+  'Đủ chín vai có người giữ · không ai giữ quá bốn vai.': 'All nine roles held · no one holding more than four.',
+  'MÔI TRƯỜNG QUANH CON': 'THE CHILD’S SURROUNDINGS',
+  'Tôi không biết con đang chơi với ai, xem gì trên điện thoại, chịu ảnh hưởng của ai ngoài kia.': 'I do not know who my child spends time with, what they watch on their phone, or who influences them out there.',
+  'Nhà mình có Người giữ cửa và Người giữ đòn bẩy — biết ai đang giúp con lớn và ai đang kéo con lùi.': 'Our family has a Gatekeeper and a Lever Keeper — we know who is helping our child grow and who is holding them back.',
+  'Vẽ bản đồ hoạt động xã hội của gia đình ngay ở đầu vào của mô hình.': 'Draw the family’s social activity map right at the model’s input.',
+  'Số đầu vào chất lượng chủ động tạo ra trong chặng · thời lượng tiếp xúc nội dung độc hại.': 'Quality inputs deliberately created during the stage · time exposed to harmful content.',
+  'TẦM NHÌN GIA ĐÌNH': 'FAMILY VISION',
+  'Nhà tôi sống theo ngày. Hết việc hôm nay thì lo việc mai. Chưa từng ngồi xuống hỏi mười năm nữa mình muốn thành nhà thế nào.': 'We live day to day. Once today is done, we worry about tomorrow. We have never sat down to ask what kind of family we want to be in ten years.',
+  'Nhà mình có bảng tầm nhìn {n} – {n} – {n} năm, do từng người viết bằng lời của mình, treo ở chỗ ai cũng thấy.': 'Our family has a {n} – {n} – {n}-year vision board, written by each person in their own words, hung where everyone can see it.',
+  'Nghi thức viết tầm nhìn đủ mặt — không ai viết hộ ai — làm đầu vào bắt buộc trước khi khởi động năm.': 'A vision-writing ritual with everyone present — no one writing for anyone else — as a required input before starting the year.',
+  'Mọi việc trong tuần đều nối được về tầm nhìn. Việc không nối được thì bỏ.': 'Every task in the week connects back to the vision. Tasks that do not connect are dropped.',
+  'CHỖ ĐỨNG TRONG CỘNG ĐỒNG': 'A PLACE IN THE COMMUNITY',
+  'Tôi thấy cô đơn. Quanh tôi ai cũng nói con họ ổn, nên tôi không dám kể chuyện nhà mình.': 'I feel alone. Everyone around me says their children are fine, so I do not dare talk about my family.',
+  'Quanh tôi là một vệ tinh những gia đình tuyệt vời — nơi kể chỗ mình vấp không bị đánh giá.': 'Around me is a circle of wonderful families — a place where telling where we stumbled is not judged.',
+  'Đưa gia đình vào nhóm đồng hành có quy tắc an toàn, và mở đường thành Đại sứ khi họ sẵn sàng.': 'Bring the family into a companion group with safety rules, and open the way to becoming an Ambassador when they are ready.',
+  'Số buổi ngồi cùng cộng đồng · số câu chuyện thật được kể lại và giúp được nhà khác.': 'Community sessions attended · true stories retold that helped another family.',
+  '› Từ chỗ đang khổ đến chỗ mong muốn': '› From where it hurts to where you want to be',
+  '› Từ chỗ đang khó đến chỗ em muốn tới': '› From where it is hard to where you want to go',
+
+  /* ── Giới thiệu và phần thưởng (hoa hồng) ── */
+  'Ngày {n}': 'Day {n}',
+  'CẤP {n}': 'LEVEL {n}',
+  'NGOÀI TIỀN CÒN CÓ': 'BEYOND MONEY',
+  '· Giới thiệu và phần thưởng.': '· Referrals and rewards.',
+  'Bốn cấp, trần {n}%, công bố trước khi ký và không đàm phán riêng với ai. Hoa hồng gắn với việc gia đình được giới thiệu đi được bao xa — không gắn với chữ ký hợp đồng.': 'Four levels, a {n}% cap, published before signing and never negotiated privately with anyone. Commission is tied to how far the referred family goes — not to a contract signature.',
+  'TRẦN HOA HỒNG': 'COMMISSION CAP',
+  'toàn hệ thống · không ngoại lệ': 'system-wide · no exceptions',
+  'CẤP ĐẠI SỨ': 'AMBASSADOR LEVEL',
+  'MỐC CHI ĐẦU': 'FIRST PAYOUT MILESTONE',
+  'khi nhà được giới thiệu còn giữ nhịp': 'while the referred family keeps its rhythm',
+  'THƯỞNG THEO LƯỢT CHỐT': 'REWARD PER CLOSED DEAL',
+  'thưởng theo chất lượng, không theo số': 'rewarded by quality, not quantity',
+  'BỐN CẤP VÀ TỈ LỆ': 'FOUR LEVELS AND RATES',
+  'Lên cấp bằng việc đã làm — không bằng doanh số': 'Level up through work done — not sales',
+  'ĐẠI SỨ TẬP SỰ': 'TRAINEE AMBASSADOR',
+  'Đang ở Tầng {n}, đủ {n}/{n} ngày nhật ký, đã ký xác nhận đọc quy tắc an toàn.': 'In Tier {n}, with {n}/{n} journal days, having signed to confirm reading the safety rules.',
+  'Được đọc hộ bài đầu tiên trước khi đăng · bộ khung bài viết và ảnh nền dùng lại': 'First post reviewed before publishing · reusable post templates and background images',
+  'ĐẠI SỨ ĐỒNG HÀNH': 'COMPANION AMBASSADOR',
+  'Đã sang Tầng {n}, tối thiểu {n} điểm ở cấp {n}, không có bài bị gỡ trong {n} ngày.': 'Has reached Tier {n}, at least {n} points at level {n}, no posts removed in {n} days.',
+  'Được mở nhóm nhỏ · được mời làm khách trong phiên mở cửa': 'May open a small group · invited as a guest at open sessions',
+  'ĐẠI SỨ DẪN ĐƯỜNG': 'GUIDE AMBASSADOR',
+  'Đã sang Tầng {n}, tối thiểu {n} điểm, có ít nhất ba bài được hỏi lại và đã trả lời đủ.': 'Has reached Tier {n}, at least {n} points, at least three posts asked about and fully answered.',
+  'Được đồng dẫn phiên mở cửa · được ghi nhận trong bảng vinh danh quý': 'May co-host open sessions · recognised on the quarterly honour board',
+  'ĐẠI SỨ KIẾN TẠO': 'BUILDER AMBASSADOR',
+  'Đã sang Tầng {n} hoặc {n}, tối thiểu {n} điểm, đã đi cùng trọn vẹn một nhà mới qua {n} ngày đầu.': 'Has reached Tier {n} or {n}, at least {n} points, fully accompanied a new family through its first {n} days.',
+  'Được đề cử vào hội đồng nội dung · được chia sẻ doanh thu sự kiện vùng': 'May be nominated to the content council · shares in regional event revenue',
+  'MỐC CHI TRẢ': 'PAYOUT MILESTONES',
+  'Chi theo chặng đường nhà được giới thiệu đi được, không theo hợp đồng ký xong': 'Paid according to how far the referred family goes, not on contract signature',
+  'Mốc': 'Milestone',
+  'Phần chi': 'Payout',
+  'Gia đình được giới thiệu bước vào Tầng {n}': 'The referred family enters Tier {n}',
+  'Còn giữ nhịp, có dữ liệu nhật ký thật': 'Still keeping the rhythm, with real journal data',
+  '{n}% phần hoa hồng': '{n}% of the commission',
+  'Qua cổng nghiệm thu chặng đầu': 'Passes the first stage’s review gate',
+  '{n}% còn lại': 'the remaining {n}%',
+  'Bất kỳ': 'Any',
+  'Gia đình dừng trước ngày {n}': 'The family stops before day {n}',
+  'không chi · không thu hồi phần đã chi': 'no payout · nothing already paid is clawed back',
+  'NĂM NGUYÊN TẮC KHÔNG THƯƠNG LƯỢNG': 'FIVE NON-NEGOTIABLE PRINCIPLES',
+  'Trần hoa hồng toàn hệ thống là {n}%. Không có ngoại lệ, không có mức riêng cho ai.': 'The system-wide commission cap is {n}%. No exceptions, no special rate for anyone.',
+  'Hoa hồng chỉ được chi khi gia đình được giới thiệu đã đi qua ngày thứ {n} và còn giữ nhịp — không chi theo chữ ký hợp đồng.': 'Commission is paid only once the referred family has passed day {n} and is still keeping its rhythm — never on contract signature.',
+  'Không thưởng theo số lượng chốt. Thưởng theo chất lượng câu chuyện và mức giữ nhịp của nhà được giới thiệu.': 'No rewards for the number of deals closed. Rewards are for story quality and how well the referred family keeps its rhythm.',
+  'Vi phạm một trong {n} quy tắc an toàn khi chia sẻ: dừng chi trả kỳ đó và rà lại cấp đại sứ.': 'Breaking one of the {n} safe-sharing rules: that period’s payout is stopped and the ambassador level reviewed.',
+  'Toàn bộ tỉ lệ, mốc chi và điều kiện được công bố trước khi ký — không đàm phán riêng.': 'All rates, payout milestones and conditions are published before signing — no private negotiation.',
+  'Vì sao trần {n}% và vì sao không thưởng theo lượt chốt': 'Why a {n}% cap, and why no reward per closed deal',
+  'Tỉ lệ càng cao thì áp lực chốt càng lớn, và áp lực chốt kéo ngôn từ của cả hệ sinh thái về phía bán hàng. Khi đó thứ quý nhất của mô hình — một nơi gia đình dám kể thật — sẽ mất trước tiên. Mười phần trăm là mức đủ để ghi nhận công sức thật mà chưa đủ để biến một người đồng hành thành một người bán hàng.': 'The higher the rate, the greater the pressure to close — and that pressure drags the whole ecosystem’s language toward selling. Then the model’s most precious thing — a place where families dare to tell the truth — is lost first. Ten percent is enough to recognise real effort but not enough to turn a companion into a salesperson.',
+
+  /* ── Nhà mình đã đổi gì ── */
+  'TUẦN NÀY': 'THIS WEEK',
+  'tối': 'evenings',
+  'TUẦN TRƯỚC': 'LAST WEEK',
+  '· Nhà mình đã đổi gì.': '· What has changed at home.',
+  'NHÀ MÌNH ĐÃ ĐỔI GÌ': 'WHAT HAS CHANGED AT HOME',
+  'Tuần này so với tuần trước': 'This week compared with last week',
+  'Trang này chỉ làm một việc: đặt con số tuần này cạnh con số tuần trước. Không so nhà mình với nhà nào khác — chỉ so với chính nhà mình bảy ngày trước.': 'This page does one thing: put this week’s numbers next to last week’s. It never compares your family with any other — only with your own family seven days ago.',
+  'Đây là tuần đầu — chưa có gì để so': 'This is the first week — nothing to compare yet',
+  'Tuần sau mở lại trang này là thấy được chênh lệch. Bên em không vẽ mũi tên đi lên từ số không: một mũi tên như thế trông đẹp mà không nói được gì.': 'Open this page again next week to see the difference. We do not draw an upward arrow from zero: an arrow like that looks nice and says nothing.',
+  'Việc của tuần này:': 'This week’s task:',
+  'ghi nhật ký tối nay. Ba dòng thôi — giờ ngồi vào bàn, giờ rời bàn, số lần phải nhắc.': 'write tonight’s journal. Just three lines — time sat down to study, time got up, number of reminders.',
+  'Số tối có ghi nhật ký': 'Evenings with a journal entry',
+  'CHÊNH LỆCH': 'DIFFERENCE',
+  'Đây là việc duy nhất trong cả hệ thống không ai làm hộ được. Ghi cả tối "quên" cũng tính.': 'This is the one thing in the whole system no one can do for you. Even logging a “forgot” evening counts.',
+  'Giữ nguyên. Giữ được đã là một việc — nếp là thứ đứng yên được, không phải thứ lúc nào cũng lên.': 'Unchanged. Holding steady is an achievement — a routine is something that can stay put, not something that always goes up.',
+  'Nhịp giữ được mỗi ngày': 'Beats kept each day',
+  'Trung bình năm nhịp của những ngày nhà mình đã chốt trong tuần.': 'The average of the five beats on the days your family closed this week.',
+  'HÔM NAY CÒN THIẾU GÌ': 'WHAT IS STILL MISSING TODAY',
+  'Làm xong một dòng ở đây là con số tuần này nhích lên.': 'Finish one line here and this week’s number goes up.',
+  'Có ít nhất một dòng ghi trong ngày. Ghi cả tối "quên" cũng tính — tối quên là một dữ kiện.': 'At least one line logged during the day. Logging a “forgot” evening counts too — a forgotten evening is a fact.',
+  'Làm xong việc của hôm nay': 'Finish today’s task',
+  'Mọi ô việc của hôm nay đã tích.': 'Every one of today’s task boxes is ticked.',
+  'Đánh dấu vòng nhắc trong ngày': 'Mark today’s reminder loop',
+  'Có ít nhất một nhịp được đánh dấu.': 'At least one beat is marked.',
+  'Người lớn ghi phần của mình': 'Adults log their own part',
+  'Có một dòng ghi của người lớn trong ngày — thói quen của chính mình, không phải nhận xét về con.': 'One adult entry during the day — about their own habit, not comments about the child.',
+  'Vì sao trang này không so nhà mình với nhà khác.': 'Why this page does not compare your family with others.',
+  'Mỗi nhà bắt đầu từ một chỗ khác nhau. Một nhà đi từ hai tối lên năm tối đã đổi rất nhiều, dù vẫn kém một nhà khác đang ở bảy tối. Đặt hai nhà cạnh nhau chỉ làm nhà đi sau thấy mình kém — mà người thấy mình kém thì bỏ giữa chừng.': 'Every family starts from a different place. A family going from two evenings to five has changed a lot, even if it is still behind another family at seven. Putting them side by side only makes the one behind feel inadequate — and people who feel inadequate quit halfway.',
+  'Và vì sao tuần xấu vẫn hiện.': 'And why bad weeks still show.',
+  'Giấu tuần xấu đi thì trang này thành trang khen. Trang khen thì tới lần thứ ba không ai tin nữa, kể cả lúc nó khen đúng.': 'Hide the bad weeks and this page becomes a praise page. By the third time, no one believes a praise page — even when the praise is deserved.',
+  'Sổ ghi mỗi tối': 'The nightly log',
+  'Nhịp của nhà mình': 'Your family’s rhythm',
+  'Năm bước đầu': 'The first five steps',
+
+  /* ── Minh chứng nhiệm vụ ── */
+  'MINH CHỨNG CHO NHIỆM VỤ NÀO': 'EVIDENCE FOR WHICH MISSION',
+  'ẢNH HOẶC TỆP': 'PHOTO OR FILE',
+  'Viết ngắn gọn: làm việc gì, ngày nào, ai tham gia, kết quả thấy được.': 'Write briefly: what was done, on which day, who took part, the visible result.',
+  '· Gửi ảnh việc đã làm.': '· Send photos of work done.',
+  'MINH CHỨNG NHIỆM VỤ': 'MISSION EVIDENCE',
+  'Nộp minh chứng đã làm': 'Submit evidence of work done',
+  'Chụp ảnh hoặc gửi báo cáo để xác nhận nhà mình đã làm nhiệm vụ. Coach xem và xác nhận, việc đó vào KPI của nhà.': 'Take a photo or send a report to confirm your family completed the mission. The Coach reviews and confirms it, and it counts toward your family’s KPIs.',
+  'ĐÃ NỘP': 'SUBMITTED',
+  'ĐÃ XÁC NHẬN': 'CONFIRMED',
+  'ĐANG CHỜ': 'PENDING',
+  'CẦN NỘP LẠI': 'RESUBMIT NEEDED',
+  'NỘP MINH CHỨNG': 'SUBMIT EVIDENCE',
+  'Ảnh chụp, báo cáo hoặc tệp — cái nào tiện thì gửi cái đó': 'A photo, report or file — whichever is easiest',
+  'NHÀ MÌNH ĐÃ LÀM GÌ': 'WHAT YOUR FAMILY HAS DONE',
+  'Nộp minh chứng': 'Submit evidence',
+  'Chỉ Coach phụ trách nhà mình và cấp quản lý xem được. Không ai khác trong hệ thống nhìn thấy ảnh của gia đình anh chị.': 'Only your family’s Coach and management can see it. No one else in the system sees your family’s photos.',
+  'Chỗ này đã sẵn sàng, chỉ chưa có dữ liệu': 'This space is ready — it just has no data yet',
+  'Không phải phần chưa làm xong — là phần đang đợi đúng một việc': 'Not an unfinished part — a part waiting for exactly one thing',
+  'RỒI SẼ CÓ GÌ Ở ĐÂY': 'WHAT WILL APPEAR HERE',
+  'Những việc nhà mình đã làm xong, có ảnh hoặc ghi chép kèm theo. Coach xem và xác nhận, rồi việc đó mới được tính vào chặng của nhà mình.': 'Tasks your family has completed, with photos or notes attached. The Coach reviews and confirms them, and only then do they count toward your family’s stage.',
+  'XUẤT HIỆN KHI NÀO': 'WHEN IT APPEARS',
+  'Ngay sau khi anh chị nộp bản đầu tiên ở ô bên trên.': 'Right after you submit your first entry in the box above.',
+  'AI LÀM RA NÓ': 'WHO CREATES IT',
+  'Nhà mình nộp. Coach của nhà mình xác nhận — không ai khác trong hệ thống nhìn thấy ảnh này.': 'Your family submits. Your family’s Coach confirms — no one else in the system sees these photos.',
+  'BỎ QUA THÌ HỎNG Ở ĐÂU': 'WHAT BREAKS IF YOU SKIP IT',
+  'Làm rồi mà không ghi lại thì ba tuần sau chính nhà mình cũng quên. Và khi nhìn lại cuối chặng, không có gì để thấy mình đã đi được bao xa.': 'Do it without recording it and in three weeks even your own family will forget. And at the end-of-stage review, there will be nothing to show how far you have come.',
+  'VÍ DỤ MINH HOẠ': 'ILLUSTRATIVE EXAMPLE',
+  'Một bản nhà mình nộp trông như thế này — đây KHÔNG phải dữ liệu thật của Học viện': 'A family submission looks like this — this is NOT real Academy data',
+  'Trường': 'Field',
+  'Nội dung': 'Content',
+  'Việc đã làm': 'Task done',
+  'Con tự vào bàn học {n} trên {n} tối trong tuần': 'The child sat down to study on their own {n} of {n} evenings this week',
+  'Kể lại': 'Account',
+  'Hai tối còn lại con đi học thêm về muộn, mẹ không nhắc': 'On the other two evenings the child came home late from tutoring; Mum did not remind them',
+  'Ảnh kèm': 'Attached photo',
+  'Bảng theo dõi treo ở góc học tập': 'The tracking chart hanging in the study corner',
+  'Sau đó': 'Afterwards',
+  'Coach xem trong vòng một ngày làm việc và xác nhận': 'The Coach reviews within one working day and confirms',
+  'LÀM NGAY BÂY GIỜ': 'DO IT NOW',
+  'Xem nhiệm vụ của nhà mình': 'See your family’s missions',
+  'Bản đồ nhà mình đang ở đâu': 'Where your family is on the map',
+  'Chụp bằng điện thoại là đủ. Không cần đẹp, cần thật.': 'A phone photo is enough. It does not need to be pretty, it needs to be real.',
+
+  /* ── Người đồng hành ── */
+  'Người đồng hành': 'Your companion',
+  'Không phải một trợ lý trả lời cho nhanh. Là chỗ để nói thật khi trong nhà chưa nói được với ai — nghe trước, công nhận, rồi mới dẫn đúng một bước.': 'Not an assistant that answers quickly. A place to speak honestly when there is no one to talk to at home yet — listening first, acknowledging, and only then guiding exactly one step.',
+  'Hôm nay nhà mình thế nào?': 'How is your family today?',
+  'Không có đáp án đúng. Chọn cái gần nhất với thật.': 'There is no right answer. Choose the one closest to the truth.',
+  'Mệt': 'Tired',
+  'Hôm nay nhà mình đuối': 'Our family is worn out today',
+  'Rối': 'Confused',
+  'Không biết bắt đầu từ đâu': 'Not sure where to start',
+  'Bình thường': 'Okay',
+  'Vẫn đang đi': 'Still going',
+  'Sáng': 'Bright',
+  'Có chuyện tốt muốn kể': 'Have good news to share',
+  'NGƯỜI ĐỒNG HÀNH NÀY LÀM GÌ VÀ KHÔNG LÀM GÌ': 'WHAT THIS COMPANION DOES AND DOES NOT DO',
+  'Nói rõ từ đầu để anh chị biết mình đang dựa vào cái gì': 'Said clearly up front so you know what you are relying on',
+  'Nghe hết trước khi nói': 'Listens fully before speaking',
+  'Mười phút đầu không đưa giải pháp nào, dù nhìn thấy rõ.': 'No solutions in the first ten minutes, even when one is obvious.',
+  'Công nhận có bằng chứng': 'Acknowledges with evidence',
+  'Gọi tên đúng một việc anh chị đã tự làm được, không kèm chữ "nhưng".': 'Names one specific thing you managed yourself, with no “but”.',
+  'Chỉ giao một bước': 'Gives only one step',
+  'Một việc nhỏ làm được trong {n} giờ, kèm cách tự biết mình đã làm được.': 'One small task doable within {n} hours, with a way to know you have done it.',
+  'Ở lại đúng phạm vi tầng': 'Stays within your tier’s scope',
+  'Không hứa điều thuộc về tầng anh chị chưa bước vào.': 'Never promises things belonging to a tier you have not entered.',
+  'Không chẩn đoán tâm lý': 'Does not make psychological diagnoses',
+  'Đây là đồng hành giáo dục, không phải can thiệp lâm sàng. Có mốc thì chuyển tuyến.': 'This is educational companionship, not clinical intervention. When a threshold is reached, it refers onward.',
+  'Không phán xét ai trong nhà': 'Judges no one in the family',
+  'Không mô tả con người bằng tính từ. Chỉ mô tả hành vi và hoàn cảnh.': 'Never describes people with adjectives. Only behaviour and circumstances.',
+  'Không dùng chuyện của nhà mình để bán gì': 'Never uses your family’s story to sell anything',
+  'Mọi thứ nói ở đây ở lại đây.': 'Everything said here stays here.',
+  'Không thay anh chị quyết định': 'Does not decide for you',
+  'Coach đưa khung và giữ chuẩn. Nhà mình lắp phần của mình.': 'The Coach provides the frame and holds the standard. Your family builds its own part.',
+  'KHI NÀO CŨNG CÓ MẶT': 'ALWAYS THERE',
+  'Ba đường vào, không đường nào phải chờ': 'Three ways in, none requiring a wait',
+  'Ngay trong ứng dụng': 'Right in the app',
+  'Ô này, bất cứ lúc nào — kể cả {n} giờ sáng.': 'This box, at any time — even at {n} a.m.',
+  'Coach của nhà mình': 'Your family’s Coach',
+  'Nhắn trong giờ đã hẹn. Ngoài giờ vẫn đọc, trả lời buổi sáng.': 'Message during agreed hours. Outside those hours messages are still read and answered in the morning.',
+  'Nhóm đồng hành': 'Companion group',
+  'Nơi kể chỗ mình vấp không bị đánh giá — có {n} quy tắc an toàn giữ chỗ đó.': 'A place to tell where you stumbled without being judged — protected by {n} safety rules.',
+  'Anh chị cứ kể hết đi ạ, em chưa góp ý gì đâu. Em muốn nghe cho đủ trước đã.': 'Please tell me everything — I will not give any advice yet. I want to hear it all first.',
+  '— Nhịp ngôn từ {n} · Nghe': '— Language beat {n} · Listen',
+  '› Người đi cùng nhà mình': '› Your family’s companion',
+  '› Người đi cùng em': '› Your companion'
+});
+
+})();
+
+/* ═════════ src/tu-dien-en-14.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — TỪ ĐIỂN TIẾNG ANH · ĐỢT 14: SÁU RANH GIỚI · LỘ TRÌNH NĂM TẦNG ·
+   CHUỖI WOW · NHIỆM VỤ HÔM NAY · CÚ HÍCH · THANH TOÁN
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.TU_DIEN_EN = G.TU_DIEN_EN || {};
+(function (d) { for (var k in d) G.TU_DIEN_EN[k] = d[k]; })({
+  /* ── Sáu ranh giới ── */
+  '· Sáu điều không bao giờ làm.': '· Six things never done.',
+  'Sáu ranh giới không thương lượng': 'Six non-negotiable boundaries',
+  'Đọc bắt buộc trước khi Mentor dùng mô hình này với bất kỳ gia đình nào.': 'Required reading before a Mentor uses this model with any family.',
+  'SÁU ĐIỀU KHÔNG ĐƯỢC CHUYỂN TỪ MÔ HÌNH TỔ CHỨC SANG GIA ĐÌNH': 'SIX THINGS THAT MUST NOT BE CARRIED FROM ORGANISATIONS INTO FAMILIES',
+  'Không xếp hạng gia đình': 'No ranking families',
+  'Bảng số của một nhà chỉ so với chính nhà đó ở chặng trước, không so với nhà khác.': 'A family’s numbers are compared only with that family at the previous stage, never with other families.',
+  'Không đặt chỉ tiêu tiền hay thành tích lên con': 'No money or achievement targets placed on children',
+  'Chỉ số của gia đình là năng lực và quan hệ. Gắn doanh số hay điểm số vào đây là biến nhà thành nơi làm việc và biến con thành nhân sự.': 'A family’s indicators are capability and relationships. Attaching sales or grades turns the home into a workplace and the child into an employee.',
+  'Không loại thành viên': 'No removing members',
+  'Gia đình không loại ai. Người chưa làm được vai của mình cần hỗ trợ, không cần thay thế.': 'A family removes no one. Someone not yet managing their role needs support, not replacement.',
+  'Không thi đua giữa anh chị em': 'No competition between siblings',
+  'Cơ chế thi đua tạo động lực trong tổ chức và tạo tổn thương trong nhà. Mỗi đứa trẻ chỉ so với chính nó.': 'Competition motivates in organisations and wounds at home. Each child is compared only with themselves.',
+  'Không cứng hóa vai': 'No rigid roles',
+  'Vai luân phiên và chồng lấn. Một đứa trẻ lớn có thể giữ vai giữ dữ liệu.': 'Roles rotate and overlap. An older child can hold the data-keeper role.',
+  'Không họp gia đình theo phong cách họp công ty': 'No running family meetings like company meetings',
+  'Giữ nhịp và có bảng số, nhưng ngôn ngữ trong buổi vẫn là ngôn ngữ người nhà. Bốn nhịp NGHE — CÔNG NHẬN — LÀM RÕ — DẪN ĐƯỜNG áp dụng nguyên vẹn.': 'Keep the rhythm and the numbers board, but the language in the session is still the language of family. The four beats LISTEN — ACKNOWLEDGE — CLARIFY — GUIDE apply in full.',
+  'RANH GIỚI NGÔN TỪ': 'LANGUAGE BOUNDARIES',
+  'Sáu điều không được làm khi trao đổi với gia đình': 'Six things never to do when talking with families',
+  'Không dùng kỹ thuật đọc trạng thái để đẩy khách vào quyết định mua.': 'Never use state-reading techniques to push clients into buying.',
+  'Bộ kỹ thuật MT-{n} mạnh, và vì mạnh nên chỉ được dùng để hiểu và hỗ trợ.': 'The MT-{n} technique set is powerful, and because it is powerful it may only be used to understand and support.',
+  'Không dùng khan hiếm giả, hạn chót giả, số liệu không kiểm chứng được.': 'No fake scarcity, fake deadlines or unverifiable figures.',
+  'Một gia đình đang tổn thương mà phát hiện bị thúc ép sẽ không quay lại, và họ nói lại với mười nhà khác.': 'A hurting family that discovers it was pressured will not come back — and will tell ten other families.',
+  'Không hứa kết quả vượt phạm vi tầng.': 'Never promise results beyond the tier’s scope.',
+  'Hứa vượt tầng là cách chắc chắn nhất để mất họ ở tuần thứ ba, khi thực tế không khớp lời hứa.': 'Promising beyond the tier is the surest way to lose them in week three, when reality does not match the promise.',
+  'Không dùng dữ liệu đọc được về phụ huynh để chứng minh họ sai.': 'Never use data about parents to prove them wrong.',
+  'Dữ liệu là để soi đường, không phải để thắng một cuộc tranh luận trong nhà người ta.': 'Data is for lighting the way, not for winning an argument in someone else’s home.',
+  'Không dán nhãn, không kết luận nguyên nhân khi chưa đủ dữ liệu.': 'No labels, and no conclusions about causes without enough data.',
+  'Kết quả test mô tả hiện trạng, không mô tả con người.': 'Test results describe a current state, not a person.',
+  'Không nói xấu lựa chọn khác của gia đình.': 'Never disparage a family’s other options.',
+  'Người đang cân nhắc nghe mình chê nơi khác sẽ tự hỏi mình sẽ nói gì về họ khi họ rời đi.': 'Someone weighing their options who hears us criticise elsewhere will wonder what we will say about them when they leave.',
+  'QUY TẮC AN TOÀN KHI CHIA SẺ': 'SAFE SHARING RULES',
+  'Hình ảnh cá nhân của trẻ em là thông tin bí mật đời sống riêng tư. Đứa trẻ hôm nay gật đầu vì nể người lớn, năm năm sau vẫn phải sống với bức ảnh đó và không lấy lại được. Sự đồng ý phải hỏi riêng, hỏi khi trẻ không bị nhìn, và câu trả lời …': 'A child’s personal image is private-life information. A child who nods today to please an adult must still live with that photo five years later, with no way to take it back. Consent must be asked separately, when the child is not being watched, and the answer…',
+  'Kết quả học tập của trẻ em nằm trong nhóm thông tin bí mật đời sống riêng tư, ngang với thông tin sức khỏe. Đăng điểm của con nhà khác là xâm phạm quyền của một đứa trẻ không hề được hỏi. Đăng điểm của con mình cũng gắn một con số vào tên c…': 'A child’s academic results are private-life information, on a par with health information. Posting another family’s child’s grades violates the rights of a child who was never asked. Posting your own child’s grades also attaches a number to their name…',
+  'Ghép ba mảnh tên trường, khung giờ và một tấm ảnh là đủ để một người lạ đứng đúng chỗ, đúng giờ. Đây là rủi ro an toàn thân thể, không chỉ là rủi ro quyền riêng tư. Với ảnh chụp màn hình và ảnh nhật ký, phải soi từng góc ảnh trước khi đăng,…': 'Combining three pieces — school name, a time slot and a photo — is enough for a stranger to stand in the right place at the right time. This is a physical safety risk, not just a privacy risk. With screenshots and journal photos, check every corner before posting,…',
+  'Kết quả của một đứa trẻ phụ thuộc vào chính đứa trẻ, gia đình và nhà trường, không ai kiểm soát được cả ba. Một lời hứa đăng lên mạng vừa là lời quảng cáo sai sự thật, vừa đẩy gia đình đọc được vào thất vọng khi nhà họ đi khác. Đại sứ chỉ k…': 'A child’s results depend on the child, the family and the school, and no one controls all three. A promise posted online is both false advertising and sets up disappointment for the family who reads it when their path differs. Ambassadors only tell…',
+  'So sánh biến một cộng đồng hỗ trợ thành một cuộc đua, và đứa trẻ bị đem ra so là người chịu hậu quả mà không được hỏi ý kiến. Mốc so sánh đúng duy nhất là chính nhà mình của tuần trước. Nếu ai đó mở màn so sánh trong phần bình luận, đại sứ …': 'Comparison turns a support community into a race, and the child being compared bears the consequences without being asked. The only valid benchmark is your own family last week. If someone starts comparing in the comments, the ambassador…',
+  'Người ta kể chuyện nhà mình trong một nhóm kín vì tin rằng nó dừng lại ở đó. Chép lại ra ngoài, kể cả có khen, kể cả đã đổi tên, là phá vỡ đúng thứ giữ cho group còn đáng tin. Nội dung do người khác viết cũng thuộc về họ, không phải tài ngu…': 'People share their family’s story in a closed group trusting it stays there. Copying it outside — even with praise, even with names changed — breaks exactly what keeps the group trustworthy. Content written by others also belongs to them, not as a resource…',
+  '› Sáu điều không bao giờ làm': '› Six things never done',
+  '› Sáu điều Học viện không làm': '› Six things the Academy does not do',
+
+  /* ── Lộ trình năm tầng ── */
+  'MỤC TIÊU CỦA TẦNG': 'TIER GOAL',
+  'RANH GIỚI CỦA TẦNG': 'TIER BOUNDARY',
+  'CẢM GIÁC KHI QUA ĐƯỢC': 'HOW IT FEELS ONCE THROUGH',
+  'Đang có vấn đề gì?': 'What is the problem?',
+  'Vì sao vấn đề xảy ra?': 'Why does it happen?',
+  'Cần làm gì và làm thế nào?': 'What needs doing, and how?',
+  'Làm sao duy trì thay đổi thành năng lực?': 'How do we turn change into lasting capability?',
+  'Gia đình có thể phát triển tới đâu?': 'How far can the family grow?',
+  '· Năm chặng đường.': '· Five stages.',
+  'Lộ trình năm tầng': 'The five-tier pathway',
+  'Mỗi tầng trả lời đúng một câu hỏi. Đi sai thứ tự là vỡ trận — không phải vì thiếu cố gắng, mà vì hỏi sai câu ở sai lúc.': 'Each tier answers exactly one question. Going out of order collapses everything — not for lack of effort, but because the wrong question is asked at the wrong time.',
+  'NHẬN DIỆN': 'RECOGNISE',
+  'GIẢI MÃ': 'DECODE',
+  'KIẾN TẠO': 'BUILD',
+  'CHUYỂN HÓA': 'TRANSFORM',
+  'Lập baseline trung thực, phát hiện mô thức, hình thành {n}–{n} giả thuyết G–I–T–A.': 'Set an honest baseline, spot patterns, form {n}–{n} G–I–T–A hypotheses.',
+  'T{n} · GIẢI MÃ': 'T{n} · DECODE',
+  'Kiểm chứng giả thuyết qua {n} vòng {n} ngày, chốt cơ chế ưu tiên.': 'Test hypotheses over {n} rounds of {n} days and settle the priority mechanism.',
+  'Mỗi vòng chỉ thay ít biến, ghi bằng chứng ủng hộ và phản bác.': 'Each round changes few variables and records evidence for and against.',
+  'Hết đổ lỗi. Bắt đầu hiểu cơ chế.': 'No more blame. Starting to understand the mechanism.',
+  'T{n} · KIẾN TẠO': 'T{n} · BUILD',
+  '{n} chuỗi {n} ngày: có cấu trúc → tự điều hành → thích ứng → chuyển giao.': '{n} runs of {n} days: structured → self-run → adaptive → handed over.',
+  'Mỗi cấp có PDCA và cổng nghiệm thu.': 'Each level has PDCA and a review gate.',
+  'Nhà mình có một hệ thống chạy được, do chính mình dựng.': 'Your family has a working system it built itself.',
+  'T{n} · CHUYỂN HÓA': 'T{n} · TRANSFORM',
+  '{n} chu kỳ {n} ngày: năng lực nền → ổn định → thích ứng → chuyển giao.': '{n} cycles of {n} days: foundation capability → stable → adaptive → handed over.',
+  'Tăng dần độ khó, giảm dần hỗ trợ Coach.': 'Gradually harder, with gradually less Coach support.',
+  'Quyền điều hành việc học đã nằm trong tay con.': 'Charge of studying is now in the child’s hands.',
+  'T{n} · BỨT PHÁ': 'T{n} · BREAKTHROUGH',
+  'Đồng bộ học viên – phụ huynh – gia đình. Từ tự quản sang tạo giá trị.': 'Aligning student – parents – family. From self-management to creating value.',
+  'Coach đồng hành cả gia đình. Đích: hệ thống tự vận hành sau {n} ngày.': 'The Coach accompanies the whole family. Goal: a self-running system after {n} days.',
+  'Một gia đình vận hành được mà không cần ai canh.': 'A family that runs without anyone watching over it.',
+  'Đường đi này không thẳng — ba chỗ tụt đã biết trước': 'This path is not straight — three known dips',
+  'Đường đi này không thẳng. Chỗ tụt đầu tiên thường rơi vào tuần thứ ba của tầng hai, khi đã nhìn ra nguyên nhân mà chưa có cách gỡ, và cả nhà thấy hụt. Chỗ tụt thứ hai nằm giữa chín mươi ngày, lúc hệ thống mới hết cảm giác mới mẻ còn kết quả thì chưa kịp lên. Chỗ tụt nặng nhất nằm ở chu kỳ ba của tầng bốn: học viên phải tự quyết trong biến động thật, người lớn đã lùi, và một quyết định chưa đúng sẽ xảy ra — đó là bài học đắt nhất và cũng có giá trị nhất của cả năm. Ba chỗ này nằm trong thiết kế, không phải dấu hiệu hỏng; việc cần làm ở đó là đọc xu hướng nhiều tuần thay vì phản ứng với một điểm dữ liệu, và không nâng chặng chỉ vì đã đủ ngày.': 'This path is not straight. The first dip usually comes in week three of tier two, when the cause is visible but there is no fix yet, and the family feels deflated. The second dip is midway through the ninety days, when the new system has lost its novelty and results have not yet risen. The deepest dip is in cycle three of tier four: the student must decide amid real turbulence, the adults have stepped back, and a wrong decision will happen — the most expensive and most valuable lesson of the year. These three dips are part of the design, not signs of failure; what to do there is read the trend over several weeks rather than react to one data point, and never move up a stage just because the days are up.',
+  '› Năm chặng đường': '› Five stages',
+  '› Năm chặng của em': '› Your five stages',
+
+  /* ── Chuỗi WOW ── */
+  'Trong lộ trình': 'Within the pathway',
+  '· Những lần cả nhà nhớ mãi.': '· Moments the family will always remember.',
+  'Chuỗi WOW': 'The WOW chain',
+  'Bảy khoảnh khắc khiến một gia đình thốt lên "thật tuyệt vời" — và mỗi khoảnh khắc đều là một thứ họ nhận được, không phải một thứ được hứa.': 'Seven moments that make a family exclaim “how wonderful” — and each one is something they receive, not something promised.',
+  'Giá trị nhận được lớn hơn nhiều lần số tiền bỏ ra': 'The value received far exceeds the money spent',
+  'Ba trong bảy khoảnh khắc WOW xảy ra trước khi gia đình trả bất cứ khoản nào. Bốn khoảnh khắc còn lại nằm trong lộ trình và không tính thêm phí. Một nhà đi hết năm tầng nhận về nhiều hơn hẳn phần họ đầu tư — đó là lý do {n}% khách mới đến từ giới thiệu chứ không từ quảng cáo.': 'Three of the seven WOW moments happen before the family pays anything. The other four are part of the pathway at no extra charge. A family that completes all five tiers gets back far more than it invested — which is why {n}% of new clients come from referrals rather than advertising.',
+  'Câu đầu tiên nói đúng chuyện nhà mình': 'The first sentence describes your family exactly',
+  'Phút thứ nhất': 'The first minute',
+  'Miễn phí': 'Free',
+  '"Sao chỗ này biết nhà mình?" — họ chưa khai gì mà đã thấy mình trong đó.': '“How does this place know our family?” — they have not shared anything yet, and they already see themselves in it.',
+  'Không ai bán gì trong tám giây đầu.': 'No one sells anything in the first eight seconds.',
+  'Bảng số của chính nhà mình hiện ra': 'Your family’s own numbers board appears',
+  'Gói Nhận diện': 'Recognition package',
+  '"Hoá ra hai tối con ngồi sớm đều là hôm nhà mình ăn cơm trước {n}h."': '“So both evenings our child started early were days we ate dinner before {n}.”',
+  'Thứ họ nhận không phải lời khuyên — là sự thật về chính họ.': 'What they receive is not advice — it is the truth about themselves.',
+  'Số lần nhắc giảm lần đầu tiên': 'Reminders drop for the first time',
+  '"Tuần này mình chỉ nhắc hai lần. Trước là sáu."': '“This week we only reminded twice. It used to be six.”',
+  'Bằng chứng nhỏ đầu tiên rằng nhà mình đổi được.': 'The first small proof that your family can change.',
+  'Cả nhà thấy chỗ trống thật nằm ở đâu': 'The family sees where the real gaps are',
+  'Đêm phân vai': 'The role-sharing night',
+  '"Hoá ra chín vai mà nhà mình chỉ có bốn người giữ, và bố không giữ vai nào."': '“So of the nine roles, only four people hold any — and Dad holds none.”',
+  'Một buổi tối đổi cách cả nhà nhìn nhau.': 'One evening that changes how the family sees each other.',
+  'Con tự trình bày chặng của mình': 'The child presents their own stage',
+  'Cổng chặng {n}': 'Stage {n} gate',
+  '"Con nói mười lăm phút, có số liệu, không ai nhắc."': '“Our child spoke for fifteen minutes, with data, without any prompting.”',
+  'Đây là lúc cha mẹ khóc — và họ kể lại cho mười người.': 'This is when parents cry — and they tell ten people about it.',
+  'Hội nghị cuối năm': 'Year-end conference',
+  '"Năm nay người đổi nhiều nhất trong nhà là tôi."': '“This year, the person who changed most in our family was me.”',
+  'Không hệ thống nào khác bắt người lớn đứng lên nói phần của họ.': 'No other system asks adults to stand up and present their own part.',
+  'Nhà mình mở cửa cho một nhà khác': 'Your family opens the door for another family',
+  'Năm thứ hai': 'Year two',
+  'Nhận lại': 'Giving back',
+  '"Giờ tôi ngồi kể lại chặng của nhà tôi cho một nhà đang mắc đúng chỗ tôi từng mắc."': '“Now I sit and tell our family’s stage to a family stuck exactly where I once was.”',
+  'Khách thành đại sứ vì họ muốn, không vì hoa hồng.': 'Clients become ambassadors because they want to, not for commission.',
+  '› Những lần cả nhà nhớ mãi': '› Moments the family will always remember',
+  '› Những lần em sẽ nhớ mãi': '› Moments you will always remember',
+
+  /* ── Nhiệm vụ hôm nay ── */
+  'ví dụ: {n}h{n}': 'e.g. {n}:{n}',
+  'ví dụ: {n}': 'e.g. {n}',
+  '· Việc hôm nay.': '· Today’s task.',
+  'Nhiệm vụ hôm nay': 'Today’s mission',
+  'Đúng một nhóm việc cho vai của anh chị hôm nay. Không dài hơn. Hào hứng hôm nay không trả nổi hoá đơn của ngày thứ tư.': 'Exactly one set of tasks for your role today. No more. Today’s enthusiasm cannot pay day four’s bill.',
+  'VAI ĐANG DÙNG': 'CURRENT ROLE',
+  '{n} / {n} việc đã xong': '{n} / {n} tasks done',
+  'VIỆC CỦA HÔM NAY': 'TODAY’S TASKS',
+  'Bấm để đánh dấu đã xong': 'Tap to mark as done',
+  'NHẬT KÝ BA DÒNG': 'THREE-LINE JOURNAL',
+  'Ba dòng, không cần đẹp. Dòng "quên" cũng là dữ liệu thật.': 'Three lines, no need to be pretty. A “forgot” line is real data too.',
+  'Giờ ngồi vào bàn': 'Time sat down to study',
+  'Giờ rời bàn': 'Time got up',
+  'Số lần phải nhắc': 'Number of reminders',
+  'Ghi nhật ký tối nay': 'Write tonight’s journal',
+  'Ăn cơm xong là mở sổ — bữa cơm chính là tín hiệu.': 'Dinner done, open the log — dinner is the cue.',
+  'MỖI NHIỆM VỤ MỘT CHUYỆN': 'ONE STORY PER MISSION',
+  'Việc hôm nay đi kèm chuyện của nó — đọc trước khi làm thì làm khác hẳn': 'Today’s task comes with its story — read it before doing and you will do it differently',
+  'Chuyện gắn với nhiệm vụ theo mã, nên nó không đổi từ hôm nay sang hôm khác — cùng một việc thì cùng một chuyện, để nhớ được. Muốn đọc chuyện mới mỗi ngày thì mở': 'Stories are tied to missions by code, so they do not change from day to day — the same task has the same story, so it sticks. For a new story every day, open',
+  'Mở kho một trăm chuyện': 'Open the hundred-story library',
+  'Chủ nhân thật sự của bản đồ gia đình thịnh vượng.': 'The true owner of the prosperous family map.',
+  'Giờ ngồi vào bàn · giờ rời bàn · số lần phải nhắc': 'Time sat down · time got up · number of reminders',
+  'Một câu công nhận cụ thể cho con': 'One specific acknowledgement for your child',
+  'Có tên việc, có thời điểm, không kèm chữ "nhưng"': 'Names the task and the moment, with no “but”',
+  'Đọc mô thức MT-{n} · phần neo ngôn từ': 'Read pattern MT-{n} · the language anchors section',
+  '{n} phút · chuẩn bị cho buổi ngồi lại cuối tuần': '{n} min · preparing for the weekend sit-down',
+  'Rà bảng chín vai': 'Review the nine-role board',
+  'Tuần này ai đang giữ quá bốn vai?': 'Who is holding more than four roles this week?',
+  'Người đang viết chương hay nhất của đời mình.': 'The person writing the best chapter of their life.',
+  'Ghi nhật ký học {n} dòng': 'Write a {n}-line study journal',
+  'Hôm nay chỗ nào mình tuột, chỗ nào mình giữ được': 'Where you slipped today, and where you held on',
+  'Một việc khó làm trước': 'Do one hard thing first',
+  '{n} phút không điện thoại, làm việc khó nhất trước': '{n} minutes without your phone, hardest task first',
+  'Điều mình muốn bố mẹ hiểu mà chưa nói được': 'Something you want your parents to understand but have not managed to say',
+
+  /* ── Cú hích ── */
+  'VÌ SAO CÚ HÍCH NÀY MẠNH': 'WHY THIS KICK-START IS POWERFUL',
+  'Đã tham gia': 'Joined',
+  'chưa có sổ đếm': 'no counter yet',
+  'Đưa nhà mình vào cú hích này': 'Enter your family in this kick-start',
+  'Cú hích lớn': 'Big kick-start',
+  'Cú hích chấn động': 'Seismic kick-start',
+  '· Việc lớn tạo bước nhảy.': '· Big moves that create a leap.',
+  '› Việc lớn tạo bước nhảy': '› Big moves that create a leap',
+  'Có những thứ không đi tới bằng bước đi, chỉ tới bằng bước nhảy. Sáu chiến dịch tạo cú hích, mỗi cú hích có lời hứa rõ và một phần thưởng thật.': 'Some things are not reached by walking, only by leaping. Six kick-start campaigns, each with a clear promise and a real reward.',
+  'Cú hích nhẹ': 'Light kick-start',
+  'BẢY NGÀY NHÌN THẬT': 'SEVEN DAYS OF SEEING CLEARLY',
+  'Cả nhà cùng ghi nhật ký bảy tối. Không sửa gì cả. Cuối tuần đọc lại và chỉ ra một mô thức lặp.': 'The whole family keeps a journal for seven evenings. Change nothing. At the weekend, reread it and point out one repeating pattern.',
+  'Đây là cú hích rẻ nhất và mạnh nhất: lần đầu cả nhà nhìn cùng một sự thật mà không cãi nhau.': 'This is the cheapest and most powerful kick-start: the first time the whole family looks at the same truth without arguing.',
+  'Mở khoá Hồ sơ Nhận diện GITA': 'Unlock the GITA Recognition Profile',
+  'HAI MƯƠI MỐT NGÀY ĐỔI KHÚC GIỮA': 'TWENTY-ONE DAYS CHANGING THE MIDDLE',
+  'Giữ nguyên tín hiệu, giữ nguyên phần thưởng, chỉ thay một hành vi ở giữa. Mỗi vòng bảy ngày thay đúng một biến.': 'Keep the cue, keep the reward, change only the behaviour in the middle. Each seven-day round changes exactly one variable.',
+  'Đổi mười việc cùng lúc thì không biết việc nào tạo ra thay đổi.': 'Change ten things at once and you cannot tell which one made the difference.',
+  'Chốt được cơ chế ưu tiên của nhà mình': 'Settle your family’s priority mechanism',
+  'CHÍN VAI — ĐÊM PHÂN VAI': 'NINE ROLES — THE ROLE-SHARING NIGHT',
+  'Một buổi tối, cả nhà ngồi đủ mặt, tự nhận vai mình giữ. Có biên bản, có chữ ký, treo lên tường.': 'One evening, everyone sits together and claims the roles they hold. With minutes and signatures, hung on the wall.',
+  'Ai cũng nghĩ mình đang làm nhiều nhất, tới khi bảng vai hiện ra thì mọi người mới thấy chỗ trống thật nằm đâu.': 'Everyone thinks they do the most — until the roles board appears and everyone sees where the real gaps are.',
+  'Bảng chín vai của nhà mình': 'Your family’s nine-role board',
+  'CHÍN MƯƠI NGÀY TỰ ĐIỀU HÀNH': 'NINETY DAYS OF SELF-MANAGEMENT',
+  'Người lớn lùi một bước có kế hoạch. Con cầm lịch, cầm bảng số, cầm quyền quyết định trong phạm vi đã thoả thuận.': 'Adults step back according to plan. The child holds the schedule, the numbers board and decision-making within the agreed scope.',
+  'Đây là chỗ nhiều nhà bỏ cuộc vì sợ. Qua được thì không quay lại như cũ nữa.': 'This is where many families give up out of fear. Get through it and there is no going back to how it was.',
+  'Cổng nghiệm thu chặng {n} + trao quyền mới': 'Stage {n} review gate + new rights handed over',
+  'Mỗi thành viên chốt một kỳ tích của năm — sản phẩm, thành tựu hoặc tác động có bằng chứng.': 'Each member settles one achievement of the year — a product, accomplishment or impact with evidence.',
+  'Đích của một năm không phải là điểm số. Là một thứ có thật mà trước đó nhà mình chưa từng làm được.': 'The goal of a year is not a grade. It is something real your family had never managed before.',
+  'Trình bày ở hội nghị gia đình cuối năm': 'Presented at the year-end family conference',
+  'Ba mươi ngày, cha mẹ chọn đúng một thói quen của chính mình để đổi, và ghi lại như con vẫn ghi.': 'For thirty days, parents choose exactly one of their own habits to change, and log it just as the child does.',
+  'Không có phần này thì mọi chặng của con đều đứng trên nền cát.': 'Without this part, every stage of the child’s journey stands on sand.',
+  'Phần trình bày của người lớn tại hội nghị': 'The adults’ presentation at the conference',
+
+  /* ── Thanh toán học phí ── */
+  '· Thanh toán học phí.': '· Pay tuition.',
+  'HỒ SƠ GIA ĐÌNH · THANH TOÁN': 'FAMILY RECORDS · PAYMENT',
+  'Thanh toán học phí': 'Pay tuition',
+  'Quét QR bằng ứng dụng ngân hàng, kiểm tra tên người nhận và nội dung trước khi xác nhận.': 'Scan the QR code with your banking app, and check the payee name and reference before confirming.',
+  'LƯU Ý AN TOÀN': 'SAFETY NOTE',
+  'Chỉ chuyển tiền tới thông tin đang hiển thị trong màn này. Không gửi mật khẩu, mã OTP hoặc thông tin đăng nhập. Thanh toán chỉ được ghi nhận sau khi kế toán đối chiếu giao dịch trên sao kê; màn này không tự xác nhận đã thu tiền.': 'Only transfer money to the details shown on this screen. Never send passwords, OTP codes or login details. A payment is recorded only after accounting matches the transaction on the bank statement; this screen does not confirm receipt by itself.',
+  'Đang tải thông tin nhận thanh toán…': 'Loading payment details…',
+  'Chưa mở được thông tin thanh toán': 'Could not open payment details'
+});
+
+})();
+
+/* ═════════ src/tu-dien-en-15.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — TỪ ĐIỂN TIẾNG ANH · ĐỢT 15: NẾP NHÀ · NĂM ĐIỀU KHÔNG AI ĐƯỢC
+   SỬA · CHÂN DUNG NHÀ · SỔ NHẬT KÝ · ĐỊNH VỊ HÔM NAY · SỰ KIỆN
+   Tên người chủ trì sự kiện (dữ liệu mẫu) không dịch.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.TU_DIEN_EN = G.TU_DIEN_EN || {};
+(function (d) { for (var k in d) G.TU_DIEN_EN[k] = d[k]; })({
+  /* ── Nếp nhà ── */
+  'VÌ SAO NGHI LỄ NÀY QUAN TRỌNG': 'WHY THIS RITUAL MATTERS',
+  'Mỗi {n} ngày': 'Every {n} days',
+  '· Nếp nhà.': '· Family routines.',
+  '› Nếp nhà': '› Family routines',
+  'Thói quen & nghi lễ gia đình': 'Family habits & rituals',
+  'Bốn nghi lễ giữ nhịp cả năm. Nhịp quan trọng hơn cường độ — bùng lên một tuần rồi tắt không tạo ra năng lực nào.': 'Four rituals that keep the year’s rhythm. Rhythm matters more than intensity — a one-week burst that fizzles out builds no capability.',
+  'BỮA CƠM KHÔNG PHÁN XÉT': 'THE JUDGEMENT-FREE DINNER',
+  'Điện thoại để ngoài phòng ăn — cả người lớn': 'Phones stay outside the dining room — adults’ too',
+  'Mỗi người kể một điều tốt đã thấy hôm nay ở người khác trong nhà': 'Each person shares one good thing they saw in someone else at home today',
+  'Không ai được nhắc tới điểm số, bài tập, hay chuyện chưa làm': 'No one mentions grades, homework or unfinished tasks',
+  'Kết bằng một câu cảm ơn cụ thể, có tên người': 'End with one specific thank-you, naming the person',
+  'Đứa trẻ thôi coi bàn ăn là nơi bị hỏi cung. Đây là nghi lễ dễ nhất và bị bỏ nhiều nhất.': 'The child stops seeing the dinner table as an interrogation room. This is the easiest ritual — and the one most often dropped.',
+  'Cố định {n} buổi/tuần': 'Fixed at {n} times/week',
+  '{n}–{n} phút': '{n}–{n} minutes',
+  'BUỔI NGỒI LẠI HÀNG TUẦN': 'THE WEEKLY SIT-DOWN',
+  'Mở bảng số tuần — đọc số trước, bình luận sau': 'Open the weekly numbers board — read the numbers first, comment after',
+  'NGHE: mỗi người nói, không ai cắt ngang': 'LISTEN: everyone speaks, no one interrupts',
+  'CÔNG NHẬN: gọi tên đúng một việc từng người đã làm được': 'ACKNOWLEDGE: name one specific thing each person managed',
+  'LÀM RÕ: một câu hỏi mở cho mỗi người, chờ đủ ba giây': 'CLARIFY: one open question for each person, then wait a full three seconds',
+  'DẪN ĐƯỜNG: chốt đúng một việc nhỏ cho tuần tới, và cách biết mình đã làm được': 'GUIDE: settle exactly one small task for next week, and how to know it is done',
+  'Đây là trái tim của mô hình. Bỏ buổi này thì mọi thứ khác trôi về cũ trong ba tuần.': 'This is the heart of the model. Drop this session and everything else drifts back within three weeks.',
+  'ĐÊM RÀ ĐÒN BẨY': 'THE LEVER-REVIEW NIGHT',
+  'Nửa ngày': 'Half a day',
+  'Từng người trình bày chặng của mình — con trước, người lớn sau': 'Each person presents their stage — children first, adults after',
+  'Người lớn trình bày phần thay đổi của chính mình': 'Adults present their own share of change',
+  'Công bố kỳ tích năm kèm bằng chứng': 'Announce the year’s achievements with evidence',
+  'Viết lại bảng tầm nhìn cho {n} ngày tiếp theo': 'Rewrite the vision board for the next {n} days',
+  'Chốt bảng chín vai bản mới': 'Settle a new version of the nine-role board',
+  'Ngày mà một gia đình nhận ra mình đã thành một gia đình khác.': 'The day a family realises it has become a different family.',
+  'BỐN NHỊP TRONG MỌI CUỘC TRÒ CHUYỆN KHÓ': 'FOUR BEATS IN EVERY DIFFICULT CONVERSATION',
+  'Áp dụng cho cả buổi ngồi lại lẫn tin nhắn lúc nửa đêm': 'Applies to sit-downs and midnight messages alike',
+
+  /* ── Năm điều không ai được sửa ── */
+  '· Năm điều không ai được sửa.': '· Five things no one may change.',
+  'NĂM ĐIỀU KHÔNG AI ĐƯỢC SỬA': 'FIVE THINGS NO ONE MAY CHANGE',
+  'Mỗi thế hệ viết lại mọi thứ — trừ năm điều': 'Every generation rewrites everything — except five things',
+  'Nhiệm vụ của thế hệ trước là chuyển giao QUYỀN VIẾT, không phải chuyển giao bản viết. Con người chỉ bảo vệ điều mình tham gia làm, không bảo vệ điều mình được trao.': 'The previous generation’s task is to hand over THE RIGHT TO WRITE, not the written text. People only defend what they helped create, not what they were handed.',
+  'NĂM PHÉP KIỂM CHẠY THẬT MỖI LẦN PHÁT HÀNH · {n}/{n} CÒN NGUYÊN': 'FIVE CHECKS RUN FOR REAL AT EVERY RELEASE · {n}/{n} STILL INTACT',
+  '✓ {n}. Không bán dữ liệu riêng của gia đình': '✓ {n}. Never sell a family’s private data',
+  'canh bằng bản ghi TR_DEN.D-KHOR': 'guarded by record TR_DEN.D-KHOR',
+  '✗ {n}. Không biến chuông thành con số hiệu suất': '✗ {n}. Never turn the bell into a performance metric',
+  'canh bằng cờ GL_ANDON_LUAT.khongThanhChiSo': 'guarded by flag GL_ANDON_LUAT.khongThanhChiSo',
+  '✗ {n}. Không bắt người khó phải chứng minh khó': '✗ {n}. Never make people in hardship prove their hardship',
+  'canh bằng cờ ND_SUCO.SC{n}.camHoiChungMinh': 'guarded by flag ND_SUCO.SC{n}.camHoiChungMinh',
+  '✓ {n}. Không để một nguồn tiền vượt một nửa': '✓ {n}. Never let one funding source exceed half',
+  'canh bằng hàm trSoiNguon()': 'guarded by function trSoiNguon()',
+  '✗ {n}. Mỗi năm phải tự vấn công khai': '✗ {n}. A public self-review every year',
+  'canh bằng cờ GL_KPI.G-XINLOI.keCaNamTot': 'guarded by flag GL_KPI.G-XINLOI.keCaNamTot',
+  '{n}. Không bán dữ liệu riêng của gia đình': '{n}. Never sell a family’s private data',
+  'Bất kỳ tầng nào, bất kỳ hình thức nào, kể cả bản đã ẩn danh hoá kỹ.': 'At any tier, in any form, even thoroughly anonymised.',
+  'Ẩn danh tuyệt đối không tồn tại — ghép đủ nguồn thì nhận ra được. Đây là sự thật kỹ thuật, không phải sĩ diện.': 'Perfect anonymity does not exist — combine enough sources and people can be identified. This is a technical fact, not pride.',
+  '{n}. Không biến chuông thành con số hiệu suất': '{n}. Never turn the bell into a performance metric',
+  'Không phạt, và cũng không đem đếm để chấm điểm ai.': 'No penalties, and no counting it to score anyone either.',
+  'Không phạt mà vẫn đem đếm thì người ta tự giảm số lần bấm — và chuông tắt dần mà không ai ra lệnh tắt.': 'Count it without penalising and people still press it less — and the bell fades out without anyone ordering it off.',
+  '{n}. Không bắt người khó phải chứng minh khó': '{n}. Never make people in hardship prove their hardship',
+  'Khai là được. Nghi ngờ thì xử bằng đối thoại của người kèm, không xử bằng máy.': 'Declaring is enough. Doubts are handled through the companion’s conversation, not by machine.',
+  'Có người lạm dụng thì đó là giá của việc không bắt người đau phải chứng minh. Giá đó rẻ hơn.': 'If some people abuse it, that is the price of not making people in pain prove it. That price is cheaper.',
+  '{n}. Không để một nguồn tiền vượt một nửa': '{n}. Never let one funding source exceed half',
+  'Kể cả khi nguồn đó rất tốt và rất tử tế.': 'Even if that source is very good and very kind.',
+  'Nguồn nào chiếm quá nửa thì nguồn đó bắt đầu quyết định hệ mà không cần nói ra.': 'A source that provides more than half starts deciding for the system without having to say so.',
+  '{n}. Mỗi năm phải tự vấn công khai': '{n}. A public self-review every year',
+  'Kể cả năm thắng tuyệt đối.': 'Even in a year of total success.',
+  'Hai quý tốt khiến người ta bắt đầu tin mình không thể sai, và đó là lúc nguy hiểm nhất để không tự vấn.': 'Two good quarters make people start believing they cannot be wrong — and that is the most dangerous time to skip self-review.',
+  'Cả năm điều đều trỏ vào một cờ hoặc một hàm soi có thật, và bộ kiểm phát hành chạy lại cả năm mỗi lần. Giá trị không sống nổi một trăm năm trong văn bản nếu không được máy kiểm mỗi ngày.': 'All five point to a real flag or checking function, and the release test suite re-runs all five every time. Values cannot survive a hundred years in documents unless a machine checks them every day.',
+
+  /* ── Chân dung nhà mình ── */
+  '· Nhà mình có những ai.': '· Who is in your family.',
+  'Chân dung nhà mình': 'Your family portrait',
+  'Khoang một hỏi: trong nhà này, mỗi người thật sự là ai? Chưa hiểu đúng từng người thì mọi khoang sau đều thiết kế trên giả định.': 'Chamber one asks: in this family, who is each person really? Without understanding each person, every later chamber is designed on assumptions.',
+  'Băng VANG': 'YELLOW band',
+  '· — · Người lớn': '· — · Adults',
+  'Coach đồng hành:': 'Accompanying Coach:',
+  'Cần cấp phép để mở hồ sơ gia đình': 'A licence is needed to open family records',
+  'SỐ LẦN NHẮC / TUẦN': 'REMINDERS / WEEK',
+  'mốc đầu năm: {n} lần': 'start-of-year baseline: {n} times',
+  'MỨC TỰ CHỦ': 'AUTONOMY LEVEL',
+  'chuẩn cuối chặng {n}: trên {n}%': 'end-of-stage-{n} standard: above {n}%',
+  'VAI CÓ NGƯỜI GIỮ': 'ROLES HELD',
+  'không ai giữ quá {n} vai': 'no one holds more than {n} roles',
+  'NGÀY ĐỒNG HÀNH': 'DAYS TOGETHER',
+  'tầng {n} · {n} ngày': 'tier {n} · {n} days',
+  'BỐN MIỀN G – I – T – A CỦA NHÀ MÌNH': 'YOUR FAMILY’S FOUR G – I – T – A DOMAINS',
+  'Đọc nguyên nhân theo bốn miền thay vì đoán bằng cảm giác': 'Read causes through four domains instead of guessing by feel',
+  '"Con muốn điều gì? Điều đó là của con hay của người lớn? Đạt được thì khác đi thế nào?"': '“What does the child want? Is it the child’s goal or the adults’? What changes once it is reached?”',
+  '"Điều gì khiến con muốn làm? Con tin mình làm được tới đâu? Khi thất bại con nghĩ gì?"': '“What makes the child want to do it? How far do they believe they can go? What do they think when they fail?”',
+  '"Con biết cách làm chưa? Con mạnh nhất ở đâu? Cách làm nào đã hiệu quả với con?"': '“Does the child know how to do it? Where are they strongest? Which methods have worked for them?”',
+  '"Ai quanh con? Không gian và nhịp sống thế nào? Con đang dùng hệ thống nào để vận hành?"': '“Who is around the child? What are the space and daily rhythm like? What system is the child using to run things?”',
+  'KHOANG {n} — THẤU HIỂU THÀNH VIÊN': 'CHAMBER {n} — UNDERSTANDING EACH MEMBER',
+  'Học viên tự nói lại được ba điều mạnh của mình · phụ huynh nêu được một điều về con mà trước đó họ nghĩ khác': 'The student can name three of their own strengths · parents can name one thing about their child they used to see differently',
+  'Chạy bộ năm bài test cho học viên, đọc kết quả cùng gia đình chứ không gửi bản báo cáo rồi thôi': 'Run the five-test set for the student and read the results with the family, rather than just sending a report',
+  'Đọc tài năng và điểm mạnh trước, đọc điểm nghẽn sau — thứ tự này không được đảo': 'Read talents and strengths first, bottlenecks after — this order must not be reversed',
+  'Hỏi riêng nguyện vọng thật của học viên, ghi nguyên văn, không sửa chữ': 'Ask the student privately about their real aspirations, and record them word for word, unedited',
+  'Gọi tên sự khác biệt của em một cách trung tính, không so với anh chị em hay bạn cùng lớp': 'Name the student’s distinctiveness neutrally, without comparing them to siblings or classmates',
+  'Đo cả người lớn: cách đồng hành hiện tại đang ở mức nào': 'Measure the adults too: what level is their current support at?',
+  'CẢNH BÁO': 'WARNING',
+  'Không dán nhãn. Kết quả test mô tả hiện trạng, không mô tả con người.': 'No labels. Test results describe a current state, not a person.',
+
+  /* ── Sổ nhật ký của tôi ── */
+  '· Sổ nhật ký của tôi.': '· My journal.',
+  'MỌI VỊ TRÍ ĐỀU CÓ SỔ · NGÀY · TUẦN · THÁNG': 'EVERY ROLE HAS A LOG · DAY · WEEK · MONTH',
+  'NGÀY ĐÃ GHI': 'DAYS LOGGED',
+  'CHUỖI LIÊN TIẾP': 'CURRENT STREAK',
+  'TUẦN · THÁNG ĐÃ TỔNG KẾT': 'WEEKS · MONTHS SUMMARISED',
+  'BA NHỊP GHI': 'THREE LOGGING RHYTHMS',
+  'NGAY · HÔM NAY': 'DAY · TODAY',
+  'Ghi xong bấm Lưu': 'Tap Save when done',
+  'Lưu hôm nay': 'Save today',
+  '← Kỳ trước': '← Previous period',
+  'ĐỌC LẠI': 'READ BACK',
+  'Chưa có kỳ nào đã ghi': 'No periods logged yet',
+  'Sổ chưa có gì để đọc lại. Điều đó bình thường ở ngày đầu. Ghi được bảy kỳ thì phần này bắt đầu nói cho mình biết những thứ mà ngồi nhớ không bao giờ thấy: hay tuột vào hôm nào, hay căng vào giờ nào, và điều gì thật sự làm mọi thứ khác đi.': 'Nothing to read back yet. That is normal on day one. After seven entries this section starts showing what memory never reveals: which days you tend to slip, which hours get tense, and what truly makes a difference.',
+  'Vì sao phải ghi': 'Why log at all',
+  'Không ai nhớ nổi ba mươi ngày. Người ta chỉ nhớ tuần vừa rồi, và tuần vừa rồi thì luôn có vẻ giống mọi tuần. Sổ ghi là cách duy nhất để một tháng sau nhìn ra mô thức của chính mình — và mô thức là thứ sửa được, còn cảm giác thì không.': 'No one can remember thirty days. People only remember last week, and last week always seems like every other week. A log is the only way to see your own pattern a month later — and patterns can be fixed, while feelings cannot.',
+  'Sổ này cũng là nguyên liệu cho bài dự thi ở các mốc {n} · {n} · {n} · {n} ngày. Người có sổ thì mở ra là có bài.': 'This log is also the raw material for competition entries at the {n} · {n} · {n} · {n}-day milestones. Anyone with a log already has an entry.',
+  'Xem cuộc thi viết': 'See the writing challenge',
+  'Sổ tay của nhà mình': 'Your family’s notebook',
+  'Ghi ba dòng mỗi tối. Một tháng sau đọc lại, anh chị sẽ thấy nhà mình hay căng vào hôm nào, giờ nào — thứ mà ngồi nhớ thì không bao giờ thấy.': 'Write three lines each evening. Read it back after a month and you will see which days and hours tend to get tense at home — something memory never shows.',
+  'Sổ này viết riêng cho vai PH — ô ghi khác nhau theo từng vị trí': 'This log is written for the Parent role — the fields differ by role',
+  'Sổ tay của em': 'Your notebook',
+  'Ghi ba dòng mỗi tối. Không cần hay, không ai chấm điểm. Dòng "hôm nay em quên" cũng là dữ liệu thật — và một tháng sau đọc lại, chính dòng đó cho em biết mình hay tuột vào hôm nào.': 'Write three lines each evening. They need not be good; no one grades them. A line saying “I forgot today” is real data too — and when you read back after a month, that very line shows which days you tend to slip.',
+  'Sổ này viết riêng cho vai HS — ô ghi khác nhau theo từng vị trí': 'This log is written for the Student role — the fields differ by role',
+  'Sổ tay nghề của tôi': 'My professional log',
+  'Sổ nghề: ghi trong ngày, nhìn lại mỗi tuần, tổng kết mỗi tháng. Đây cũng là nguyên liệu cho bài dự thi ở các mốc {n} · {n} · {n} · {n} ngày.': 'Professional log: record during the day, review each week, summarise each month. This is also raw material for competition entries at the {n} · {n} · {n} · {n}-day milestones.',
+  'Sổ này viết riêng cho vai CTV — ô ghi khác nhau theo từng vị trí': 'This log is written for the Collaborator role — the fields differ by role',
+
+  /* ── Định vị hôm nay ── */
+  '· Hôm nay nhà mình ra sao.': '· How your family is doing today.',
+  '› Hôm nay nhà mình ra sao': '› How your family is doing today',
+  'Định vị hôm nay': 'Locating today',
+  'Biết gia đình đang thật sự ở đâu trước khi bàn đi đâu. Đo bằng dữ liệu, không bằng cảm giác — đây là việc băng nền số một.': 'Know where the family really is before discussing where to go. Measured with data, not feelings — foundation task number one.',
+  'Bảng số này chỉ so với chính nhà mình ở chặng trước': 'This numbers board compares only with your own family at the previous stage',
+  'Không so với nhà khác, không xếp hạng, không dùng để chứng minh ai sai. Đây là ranh giới số một của mô hình.': 'No comparing with other families, no ranking, no using it to prove anyone wrong. This is the model’s boundary number one.',
+  'ĐẦU RA — GIA ĐÌNH THÀNH CÔNG, HẠNH PHÚC': 'OUTPUT — A SUCCESSFUL, HAPPY FAMILY',
+  'Chuẩn: Quyền điều hành việc học thuộc về học viên vào cuối chặng {n}': 'Standard: charge of studying belongs to the student by the end of stage {n}',
+  'Chuẩn: Giảm đều qua bốn chặng, KHÔNG ép về {n}': 'Standard: steadily reduced over four stages, NOT forced to {n}',
+  'Chuẩn: Giảm rõ so với mốc đầu năm': 'Standard: clearly reduced from the start-of-year baseline',
+  'Chuẩn: Rút ngắn qua từng chặng': 'Standard: shorter with each stage',
+  'Chuẩn: Ít nhất một sản phẩm, thành tựu hoặc tác động có bằng chứng': 'Standard: at least one product, achievement or impact with evidence',
+  'Chuẩn: Trình bày được ở hội nghị cuối năm': 'Standard: presentable at the year-end conference',
+  'Chuẩn: Đủ chín vai có người giữ, không ai giữ quá bốn vai': 'Standard: all nine roles held, no one holding more than four',
+  'SO VỚI CHÍNH NHÀ MÌNH': 'COMPARED WITH YOUR OWN FAMILY',
+  'Mốc đầu năm → hôm nay': 'Start-of-year baseline → today',
+  'Chỉ số': 'Indicator',
+  'Đầu năm': 'Start of year',
+  'Dịch chuyển': 'Change',
+  '▼ {n} lần': '▼ {n} times',
+  '▲ -{n} điểm': '▲ -{n} points',
+  'Vai có người giữ': 'Roles held',
+  'rút ngắn rõ': 'clearly shorter',
+  'chưa có': 'none yet',
+  'đang xây': 'in progress',
+  'đang đi': 'on the way',
+
+  /* ── Sự kiện & Lửa trại ── */
+  'Chủ trì': 'Host',
+  '{n}/{n} ghế': '{n}/{n} seats',
+  'Giữ chỗ cho nhà mình': 'Reserve a place for your family',
+  '· Sự kiện và lửa trại.': '· Events and campfires.',
+  'Sự kiện & Lửa trại': 'Events & Campfires',
+  'Nơi cả hệ sinh thái gặp nhau. Một gia đình đi một mình thì đi nhanh; đi giữa những gia đình cùng đường thì đi được hết năm.': 'Where the whole ecosystem meets. A family alone goes fast; among families on the same road, it goes the whole year.',
+  'Offline toàn hệ sinh thái': 'In person, whole ecosystem',
+  'LỬA TRẠI GIA ĐÌNH THỊNH VƯỢNG': 'THE PROSPEROUS FAMILY CAMPFIRE',
+  'Ba ngày để một gia đình viết lại bảng tầm nhìn của mình, giữa những gia đình đang đi cùng đường.': 'Three days for a family to rewrite its vision board, among families on the same road.',
+  'Online · cả nhà cùng vào': 'Online · the whole family joins',
+  'ĐÊM PHÂN VAI TOÀN QUỐC': 'THE NATIONWIDE ROLE-SHARING NIGHT',
+  'Một buổi tối, hàng trăm gia đình cùng chốt bảng chín vai của nhà mình.': 'One evening, hundreds of families settle their nine-role boards together.',
+  'Nội bộ đội ngũ': 'Team internal',
+  'HUẤN LUYỆN COACH — MÔ THỨC MT-{n}': 'COACH TRAINING — PATTERN MT-{n}',
+  'Vòng tròn quan hệ gia đình và hiệu ứng cánh bướm — công cụ lõi của Tầng {n}.': 'The family relationship circle and the butterfly effect — core tools of Tier {n}.',
+  'Thứ Năm hàng tuần': 'Every Thursday',
+  'Online · miễn phí': 'Online · free',
+  'PHIÊN MỞ CỬA CHO NHÀ MỚI': 'OPEN SESSION FOR NEW FAMILIES',
+  '{n} phút để một gia đình nhìn thấy nhà mình trong tấm bản đồ, trước khi quyết định bất cứ điều gì.': '{n} minutes for a family to see itself on the map, before deciding anything.',
+  'Offline · theo vùng': 'In person · by region',
+  'Nơi cả nhà cùng đứng lên trình bày chặng của mình — con trước, người lớn sau.': 'Where the whole family stands up to present its stages — children first, adults after.'
+});
+
+})();
+
+/* ═════════ src/tu-dien-en-16.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — TỪ ĐIỂN TIẾNG ANH · ĐỢT 16: NHÂN VẬT · GIỌNG ĐỌC · CHUYỆN
+   NGƯỜI THẬT · CÂY GIÁ TRỊ · KHO NGHỀ NHÀ MÌNH · CHU KỲ · SÁT HẠCH · VINH DANH
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.TU_DIEN_EN = G.TU_DIEN_EN || {};
+(function (d) { for (var k in d) G.TU_DIEN_EN[k] = d[k]; })({
+  /* ── Nhân vật của tôi ── */
+  'Nhân vật của tôi': 'My character',
+  '· Nhân vật của tôi.': '· My character.',
+  'Tự chọn nhân vật —': 'Choose your own character —',
+  'ảnh của bạn không rời máy': 'your photo never leaves your device',
+  'Tông da': 'Skin tone',
+  'Kiểu tóc': 'Hairstyle',
+  'Ngắn': 'Short',
+  'Màu tóc': 'Hair colour',
+  'Trang phục': 'Outfit',
+  'Kính': 'Glasses',
+  'Không kính': 'No glasses',
+  'Đưa nhân vật ra Con đường': 'Take your character to the Path',
+  'Đồng bộ theo tài khoản · chỉ lưu lựa chọn,': 'Synced to your account · only your choices are stored,',
+  'không ảnh, không tên': 'no photos, no names',
+  'Tông da — lựa chọn trước': 'Skin tone — previous option',
+  'Tông da — lựa chọn kế tiếp': 'Skin tone — next option',
+  'Kiểu tóc — lựa chọn trước': 'Hairstyle — previous option',
+  'Kiểu tóc — lựa chọn kế tiếp': 'Hairstyle — next option',
+  'Màu tóc — lựa chọn trước': 'Hair colour — previous option',
+  'Màu tóc — lựa chọn kế tiếp': 'Hair colour — next option',
+  'Trang phục — lựa chọn trước': 'Outfit — previous option',
+  'Trang phục — lựa chọn kế tiếp': 'Outfit — next option',
+  'Kính — lựa chọn trước': 'Glasses — previous option',
+  'Kính — lựa chọn kế tiếp': 'Glasses — next option',
+
+  /* ── Giọng đọc ── */
+  '· Đọc hoặc nghe · giọng đọc.': '· Read or listen · narration.',
+  'ĐỌC HOẶC NGHE · BẢN QUYỀN GIỌNG': 'READ OR LISTEN · VOICE RIGHTS',
+  'Giọng đọc cho kho chuyện': 'Narration for the story library',
+  'Sáu trăm chuyện đều có thể nghe thay vì đọc. Phần kỹ thuật đã dựng xong: chỗ để tệp, trình phát, nút chuyển Đọc ↔ Nghe, chống tải xuống. Còn đúng một thứ không nằm trong tay hệ thống — hợp đồng giọng đọc do chính người dẫn ký.': 'All six hundred stories can be listened to instead of read. The technical side is built: file storage, the player, the Read ↔ Listen toggle, download protection. Exactly one thing is outside the system’s hands — a narration contract signed by the narrator themselves.',
+  'Vì sao chưa có bản thu nào': 'Why there are no recordings yet',
+  'Giọng của một người có thật là tài sản của chính họ. Muốn dùng giọng một MC dẫn chương trình — của VTV hay bất kỳ đài nào — thì phải có hợp đồng ghi âm hoặc hợp đồng cấp quyền sử dụng giọng, do chính người đó ký. Không có văn bản ấy thì mọi bản ghi mang danh họ, dù thu thật hay dựng bằng máy, đều là mạo danh: sai luật, và hỏng đúng thứ Học viện đang bán là lòng tin.': 'A real person’s voice is their own property. To use a presenter’s voice — from VTV or any broadcaster — you need a recording contract or a voice-licensing agreement signed by that person. Without it, any recording in their name, whether genuinely recorded or machine-generated, is impersonation: unlawful, and damaging to exactly what the Academy offers — trust.',
+  'Nên hệ thống làm sẵn tất cả phần còn lại. Ngày ký được hợp đồng với người dẫn nào, thả tệp vào đúng thư mục và điền ba ô trong hồ sơ dưới đây — audio lên ngay, không phải sửa một dòng mã nào.': 'So the system has everything else ready. The day a contract is signed with a narrator, drop the files into the right folder and fill the three fields in the record below — the audio goes live immediately, without changing a single line of code.',
+  'BỐN GIỌNG CẦN CÓ': 'FOUR VOICES NEEDED',
+  'Mỗi cấp tài khoản một chất giọng riêng — người nghe khác nhau thì giọng phải khác nhau': 'Each account level has its own voice — different listeners need different voices',
+  'SÁU ĐIỀU KHOẢN BẮT BUỘC TRONG HỢP ĐỒNG': 'SIX REQUIRED CONTRACT CLAUSES',
+  'Bộ này để đưa bộ phận pháp lý, không phải để trang trí': 'This set is for the legal team, not for decoration',
+  'CHUẨN KỸ THUẬT GỬI PHÒNG THU': 'TECHNICAL SPECS FOR THE STUDIO',
+  'Gửi nguyên bảng này thì không phải thu lại lần hai': 'Send this table as is and there will be no need to re-record',
+  'Mục': 'Item',
+  'Yêu cầu': 'Requirement',
+  'KHUNG KỊCH BẢN DẪN': 'NARRATION SCRIPT TEMPLATE',
+  'Hệ thống tự ghép kịch bản từ nội dung chuyện — phòng thu không phải viết lại gì': 'The system assembles the script from the story content — the studio does not need to rewrite anything',
+  'Phần': 'Section',
+  'Khoảng': 'Approx.',
+  'Chỉ dẫn đọc': 'Reading notes',
+  'Tổng khối lượng nếu thu đủ sáu trăm chuyện: khoảng': 'Total volume to record all six hundred stories: about',
+  'hai mươi bốn tới ba mươi giờ thành phẩm': 'twenty-four to thirty hours of finished audio',
+  '. Nên thu theo đợt — một trăm chuyện của kho Học viên trước, vì đó là nhóm cần nghe nhất và ít đọc nhất.': '. Record in batches — the hundred stories in the Student library first, since that group most needs audio and reads least.',
+  'Về kho chuyện': 'Back to the story library',
+
+  /* ── Chuyện người thật ── */
+  '· Chuyện người thật.': '· Real people’s stories.',
+  'NGƯỜI CÓ THẬT · VIỆC CÓ THẬT · GHI CHÉP CÔNG KHAI': 'REAL PEOPLE · REAL EVENTS · PUBLIC RECORDS',
+  'Chuyện người thật': 'Real people’s stories',
+  'Doanh nhân, nhà khoa học, nghệ sĩ, vận động viên và người Việt Nam — những người đã đi qua chỗ khó mà ai trong chúng ta cũng đang đứng ở một dạng nào đó. Mỗi chuyện kết bằng một việc làm được ngay hôm nay.': 'Entrepreneurs, scientists, artists, athletes and Vietnamese people — those who have been through hard places that each of us stands in, in some form. Every story ends with something you can do today.',
+  'Kho này khác sáu trăm chuyện kia thế nào': 'How this library differs from the six hundred stories',
+  'Sáu trăm chuyện trong kho': 'The six hundred stories in the library',
+  'là chuyện dựng ra để dạy — nhân vật không có thật, tình tiết đặt cho đúng bài học. Kho này ngược lại: người có thật, việc có thật, đều là ghi chép công khai.': 'are stories built to teach — fictional characters, events shaped to fit the lesson. This library is the opposite: real people, real events, all from public records.',
+  'Vì thế Học viện chỉ ghi phần được ghi chép rộng rãi, không dựng lời thoại và không kể đời tư. Con số nào do chính nhân vật kể thì nói rõ là họ kể. Và chỗ nào bản kể phổ biến đã bị thổi lên thì có một dòng': 'So the Academy records only what is widely documented, invents no dialogue and tells no private lives. Any figure the person reported themselves is clearly marked as theirs. And wherever the popular version has been exaggerated, there is a line',
+  'NÓI CHO ĐÚNG': 'SETTING IT STRAIGHT',
+  '— vì truyện truyền cảm hứng mà sai sự thật thì lần sau người đọc không tin cả những phần đúng.': '— because an inspiring story that gets facts wrong means readers will not believe even the true parts next time.',
+  'NGƯỜI TRONG KHO': 'PEOPLE IN THE LIBRARY',
+  'LĨNH VỰC': 'FIELDS',
+  'CHUYỆN CÓ GHI CHÚ THẬN TRỌNG': 'STORIES WITH A CAUTION NOTE',
+  'SÁU LĨNH VỰC': 'SIX FIELDS',
+  'Bài học không chỉ nằm trong kinh doanh': 'Lessons are not only found in business',
+  'Tất cả · {n}': 'All · {n}',
+  'Mọi mạch': 'All threads',
+  '{n} người — thử bỏ bớt một bộ lọc': '{n} people — try removing a filter',
+  'Không có ai khớp cả hai bộ lọc': 'No one matches both filters',
+  'Bỏ bớt một trong hai bộ lọc ở trên là thấy ngay. Không phải lỗi — chỉ là kho chưa có người vừa thuộc lĩnh vực ấy vừa thuộc mạch ấy.': 'Remove one of the two filters above and you will see results. Not an error — the library just has no one yet who belongs to both that field and that thread.',
+  'Kho này bổ sung cho kho': 'This library complements the library of',
+  ', không thay thế. Chuyện dựng ra dạy được điều mình muốn dạy, đúng từng vai. Chuyện người thật thì dạy được một điều khác: việc này đã có người làm được rồi.': ', rather than replacing it. Constructed stories teach exactly what we want to teach, role by role. Real stories teach something else: someone has already done this.',
+  'Sang kho {n} chuyện theo vai': 'Go to the {n} stories by role',
+
+  /* ── Cây giá trị ── */
+  '· Cây giá trị.': '· The values tree.',
+  'Cây giá trị của gia đình': 'The family values tree',
+  'Đây là cái mà một gia đình LỚN LÊN qua năm tầng đồng hành cùng GITA{n} — một hạt nứt vỏ, bén rễ, thành thân, xoè tán, rồi gieo được cả rừng.': 'This is how a family GROWS through the five tiers with GITA{n} — a seed cracks open, takes root, forms a trunk, spreads its canopy, and then seeds a whole forest.',
+  'RỪNG': 'FOREST',
+  'Chặng gia đình — {n} ngày nâng cao, Coach đồng hành cả nhà': 'Family stage — {n} advanced days, the Coach accompanies the whole family',
+  'từ Cây Mẹ → gieo được cả rừng · {n} ngày': 'from Mother Tree → seeding a whole forest · {n} days',
+  'TÁN': 'CANOPY',
+  'Chặng nâng cấp — {n} ngày, {n} chu kỳ {n} ngày': 'Upgrade stage — {n} days, {n} cycles of {n} days',
+  'từ người theo → người đồng hành · {n} ngày': 'from follower → companion · {n} days',
+  'THÂN': 'TRUNK',
+  'Chặng bứt phá — {n} ngày, {n} chuỗi {n} ngày': 'Breakthrough stage — {n} days, {n} runs of {n} days',
+  'từ làm theo → tự làm chủ · {n} ngày': 'from following → self-directed · {n} days',
+  'RỄ': 'ROOTS',
+  'Chặng giải mã — {n} ngày': 'Decoding stage — {n} days',
+  'từ nghi ngờ → điểm tựa · {n} ngày': 'from doubt → a foothold · {n} days',
+  'HẠT': 'SEED',
+  'Chặng nền — {n} ngày nhận diện': 'Foundation stage — {n} days of recognition',
+  'từ tò mò → nứt vỏ · {n} ngày': 'from curiosity → cracking open · {n} days',
+  'Đi hết năm tầng, một gia đình không chỉ học xong một khoá. Họ trở thành': 'After all five tiers, a family has not just finished a course. It becomes a',
+  'Cây Mẹ': 'Mother Tree',
+  '— vững đến mức gieo được hạt cho những gia đình khác. Giá trị lớn nhất GITA{n} tạo ra không nằm ở một tầng nào, mà ở chỗ một nhà đi trọn cả năm.': '— strong enough to sow seeds for other families. The greatest value GITA{n} creates lies not in any single tier, but in a family going all five.',
+
+  /* ── Kho nghề · Hành trình nhà mình ── */
+  '· Kho nghề · Hành trình nhà mình.': '· Library · Your family’s journey.',
+  '› Kho nghề · Hành trình nhà mình': '› Library · Your family’s journey',
+  'Hành trình nhà mình': 'Your family’s journey',
+  'Định vị hôm nay, bản đồ cá nhân, thói quen, bộ test, tiến bộ của con — những bài cả nhà cùng đọc trên hành trình.': 'Locating today, the personal map, habits, the test set, your child’s progress — readings the whole family shares on the journey.',
+  'Hôm nay nhà mình ra sao': 'How your family is doing today',
+  'Từ chỗ đang khổ đến chỗ mong muốn': 'From where it hurts to where you want to be',
+  'Chặng đường của con': 'Your child’s journey',
+  'Bài để hiểu mình': 'Tests to understand yourself',
+  'Chín việc trong nhà': 'Nine roles at home',
+  'Nếp nhà': 'Family routines',
+  'Việc lớn tạo bước nhảy': 'Big moves that create a leap',
+  'Bảng số nhà mình': 'Your family’s numbers board',
+  'Năm chặng đường': 'Five stages',
+  'Bốn điều cần nhìn': 'Four things to look at',
+  'Từ chỗ đang khó đến chỗ em muốn tới': 'From where it is hard to where you want to go',
+  'Chặng đường của em': 'Your journey',
+  'Người đi cùng em': 'Your companion',
+  'Bài kiểm tra để hiểu mình': 'Assessments to understand yourself',
+  'Năm chặng của em': 'Your five stages',
+  'Mười hai chặng em sẽ đi qua': 'The twelve stages you will go through',
+  'Bốn điều em cần nhìn': 'Four things for you to look at',
+
+  /* ── Chu kỳ 21 ngày ── */
+  'CHẶNG {n}': 'STAGE {n}',
+  '· Nhịp hai mươi mốt ngày.': '· The twenty-one-day rhythm.',
+  'Chu kỳ {n} / {n} ngày': 'Cycle {n} / {n} days',
+  'Hai mươi mốt ngày làm nên một cấp độ học tập. Chín mươi ngày làm nên một chặng. Mỗi chặng kết bằng một cổng nghiệm thu có bằng chứng.': 'Twenty-one days make a learning level. Ninety days make a stage. Each stage ends with an evidence-based review gate.',
+  'PLAN — Chốt một đòn bẩy': 'PLAN — Settle one lever',
+  'Chọn đúng MỘT điểm chạm nhỏ nhất tạo thay đổi lớn nhất cho {n} ngày tới. Không chọn hai.': 'Choose exactly ONE smallest touchpoint that creates the biggest change for the next {n} days. Not two.',
+  'DO — Chạy đủ {n} ngày': 'DO — Run the full {n} days',
+  'Mỗi vòng bảy ngày chỉ thay một biến. Ghi lại cả ngày làm được và ngày không.': 'Each seven-day round changes only one variable. Record the days it worked and the days it did not.',
+  'CHECK — Đọc bằng số': 'CHECK — Read the numbers',
+  'So với chính nhà mình ba tuần trước. Tìm ngoại lệ tốt: hôm nào khác, và khác vì đâu.': 'Compare with your own family three weeks ago. Look for good exceptions: which day was different, and why.',
+  'ACT — Giữ, bỏ hoặc nâng': 'ACT — Keep, drop or raise',
+  'Việc nối được về tầm nhìn thì giữ. Việc không nối được thì bỏ, dù nó tốt.': 'Keep what connects to the vision. Drop what does not, even if it is good.',
+  'BỐN CHẶNG CHÍN MƯƠI NGÀY': 'FOUR NINETY-DAY STAGES',
+  'Số chặng qua cổng có bằng chứng · mức tự chủ tăng qua từng chặng · kỳ tích năm có bằng chứng': 'Stages passed with evidence · autonomy rising each stage · an evidenced achievement of the year',
+  'Có cấu trúc': 'Structured',
+  'Tự điều hành': 'Self-run',
+  'Thích ứng': 'Adaptive',
+  'Chuyển giao': 'Handed over',
+  'ĐÊM RÀ ĐÒN BẨY — mỗi {n} ngày': 'LEVER-REVIEW NIGHT — every {n} days',
+  'Giữ cho gia đình không rơi vào bẫy làm nhiều mà không dịch chuyển': 'Keeps the family out of the trap of doing a lot without moving',
+
+  /* ── Sát hạch năng lực ── */
+  '· Sát hạch năng lực.': '· Competency assessment.',
+  'NĂM TẦNG NĂNG LỰC · BỐN BÀI TỐT NGHIỆP · TÁM TRỤC': 'FIVE CAPABILITY TIERS · FOUR GRADUATION TESTS · EIGHT AXES',
+  'Sát hạch năng lực — PH': 'Competency assessment — Parent',
+  'Bài kiểm tra ở đây không dùng để loại người. Nó trả lời đúng một câu: mình đang ở cấp độ nào, và cần học gì tiếp.': 'The tests here are not used to weed people out. They answer exactly one question: what level am I at, and what should I learn next?',
+  'CẤP ĐỘ HÀNH NGHỀ': 'PRACTICE LEVEL',
+  'NGƯỠNG ĐẠT CỦA VAI': 'ROLE PASS THRESHOLD',
+  'CÂU TRONG KHO CỦA VAI': 'QUESTIONS IN THE ROLE’S BANK',
+  'TRỤC ĐÁNH GIÁ': 'ASSESSMENT AXES',
+  'Nhịp thi của vai này:': 'This role’s exam rhythm:',
+  'TÁM TRỤC ĐÁNH GIÁ': 'EIGHT ASSESSMENT AXES',
+  'Trọng số khác nhau theo vai — của vai này ghi ở cột cuối': 'Weights differ by role — this role’s are in the last column',
+  'Trục': 'Axis',
+  'Đo cái gì': 'What it measures',
+  'Trọng số': 'Weight',
+  'NĂM TẦNG NĂNG LỰC': 'FIVE CAPABILITY TIERS',
+  'Không nhảy tầng — chưa qua tầng trước thì tầng sau không mở': 'No skipping tiers — the next tier stays closed until the previous one is passed',
+  'BỐN BÀI TỐT NGHIỆP CUỐI CHU KỲ': 'FOUR END-OF-CYCLE GRADUATION TESTS',
+  'Mở khi đã đi đủ số ngày — tính từ sổ nhật ký': 'Open once enough days have passed — counted from the journal',
+  'LUẬT THI': 'EXAM RULES',
+  'Đọc trước — không ai bị loại vì một điều mình không biết': 'Read first — no one is disqualified for something they did not know',
+
+  /* ── Vinh danh & kỳ tích năm ── */
+  '· Chuyện vui trong năm.': '· The year’s good news.',
+  'Vinh danh & kỳ tích năm': 'Honours & achievements of the year',
+  'Chuyện tốt trong nhà phải được kể lại. Ghi nhận đúng việc, có bằng chứng, đúng lúc — và ghi nhận cả phần của người lớn.': 'Good things at home must be told. Recognise the right deed, with evidence, at the right moment — and recognise the adults’ part too.',
+  'Công thức ghi nhận ba bước': 'The three-step recognition formula',
+  'BƯỚC {n} · THẤY GÌ': 'STEP {n} · WHAT WAS SEEN',
+  'Nêu đúng sự việc quan sát được, có mốc thời gian.': 'State exactly what was observed, with a time reference.',
+  'BƯỚC {n} · HỌ ĐÃ TỰ LÀM GÌ': 'STEP {n} · WHAT THEY DID THEMSELVES',
+  'Phần do chính người đó làm, không phải phần hệ thống làm hộ.': 'The part that person did themselves, not what the system did for them.',
+  'BƯỚC {n} · ĐIỀU ĐÓ GIÚP AI': 'STEP {n} · WHO IT HELPED',
+  'Tác động thật lên một người cụ thể trong hoặc ngoài nhà.': 'Real impact on a specific person inside or outside the family.',
+  'Ghi nhận không có bằng chứng chỉ là lời khen cho vui — nó gãy ở lần vấp đầu tiên.': 'Recognition without evidence is just praise for fun — it breaks at the first stumble.',
+  'Chưa có kỳ tích nào được ghi trên máy này': 'No achievements recorded on this device yet',
+  'Kỳ tích năm chỉ hiện khi nhà mình đã qua tầng ba — đó là mốc mà một sản phẩm, một thành tựu hay một tác động đã có bằng chứng để kể lại. Chưa tới mốc thì việc của hôm nay không phải là chờ: mở công thức ba bước ở trên, ghi lại MỘT việc con đã tự làm trong tuần này, kèm ngày giờ. Bản ghi đó là hạt đầu tiên của kỳ tích năm.': 'Achievements of the year appear only once your family has passed tier three — the point where a product, accomplishment or impact has evidence worth telling. Until then, today’s task is not to wait: open the three-step formula above and record ONE thing your child did themselves this week, with the date and time. That record is the first seed of the year’s achievement.',
+  'Việc của hôm nay': 'Today’s task',
+  'Ghi vào sổ nhật ký': 'Write it in the journal',
+  'GHI NHẬN KHÔNG XẾP HẠNG': 'RECOGNITION WITHOUT RANKING',
+  'Ghi nhận việc đã làm, sắp theo thứ tự chữ cái — không theo thứ hạng': 'Recognition of work done, listed alphabetically — not by rank',
+  'Mỗi quý một lần, quản trị viên tổng hợp điểm nhiệm vụ và đăng một bài ghi nhận trong group, nêu tên những đại sứ đã hoàn thành nhiệm vụ trong quý, sắp theo thứ tự chữ cái chứ không theo thứ hạng.': 'Once a quarter, admins total mission points and post a recognition in the group, naming the ambassadors who completed missions that quarter, listed alphabetically rather than by rank.',
+  '› Chuyện vui trong năm': '› The year’s good news',
+  '› Bảng vinh danh': '› Honour board'
+});
+
+})();
+
+/* ═════════ src/tu-dien-en-17.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — TỪ ĐIỂN TIẾNG ANH · ĐỢT 17: HỆ NÀY ĐANG NỢ GÌ · VÍ CREDIT ·
+   TRỢ LÝ · NGÀY HỆ XONG VIỆC · SÁU ĐIỀU KHÔNG BÁN · KHO QUÀ · BẢN ĐỒ CÁ
+   NHÂN · TẦM NHÌN · NGƯỜI ĐI CÙNG
+   Câu chào của trợ lý có tên người ghép giữa — không đưa vào từ điển.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.TU_DIEN_EN = G.TU_DIEN_EN || {};
+(function (d) { for (var k in d) G.TU_DIEN_EN[k] = d[k]; })({
+  /* ── Hệ này đang nợ gì ── */
+  'Hẹp hơn:': 'Narrower:',
+  'Chưa trả lời được:': 'Not yet answerable:',
+  '· Hệ này đang nợ gì.': '· What this system still owes.',
+  'HỆ NÀY ĐANG NỢ GÌ': 'WHAT THIS SYSTEM STILL OWES',
+  'Năm câu hệ chưa trả lời được': 'Five questions the system cannot yet answer',
+  'In ở đầu, không giấu ở cuối. Câu để ngỏ xếp xuống cuối là câu chìm, và câu chìm thì năm sau không ai nhắc lại.': 'Printed at the front, not hidden at the back. An open question pushed to the end sinks, and a sunken question is never raised again the next year.',
+  '{n}. Làm sao giữ đúng nhịp khi người dựng là người duy nhất thuộc hết bộ sách, mà bộ sách chưa từng được đọc trọn bởi chính người chạy nó hằng ngày?': '{n}. How do we keep the rhythm when the builder is the only person who knows the whole book set, and the book set has never been read in full by the people running it every day?',
+  '{n}. Chuông vàng của CHÍNH NGƯỜI LÀM HỆ — người đi cùng mệt, cố vấn khủng hoảng — có ai mở cho họ không?': '{n}. The yellow bell for THE PEOPLE WHO RUN THE SYSTEM — a tired companion, an advisor in crisis — is anyone there to answer it?',
+  'Ba tầng chuông hiện có đều là chuông của gia đình. Không tầng nào cho người trực chuông.': 'All three existing bell levels are for families. None is for the people on bell duty.',
+  'Chưa biết ai nghe chuông của người nghe chuông.': 'We do not yet know who answers the bell of the bell-answerers.',
+  'Dựng một cái chuông chưa có ai đứng sau thì nó là một lời hứa trang trí — đúng thứ hệ này vừa chặn ở cổng in. Nên khai ra chỗ trống, không lấp bằng một cái nút.': 'A bell with no one behind it is a decorative promise — exactly what this system just blocked at the print gate. So the gap is declared rather than covered with a button.',
+  '{n}. Nếu một gia đình muốn trả tiền — thật lòng, kiên quyết — thì hệ nói không thế nào mà không tổn thương phẩm giá của NGƯỜI MUỐN CHO?': '{n}. If a family wants to pay — sincerely, insistently — how does the system say no without hurting the dignity of THE ONE WHO WANTS TO GIVE?',
+  'Lệnh cấm cho và nhận tiền riêng giải cho hệ, chưa giải cho người muốn cho.': 'The ban on giving and receiving private money solves it for the system, not for the person who wants to give.',
+  '{n}. Bộ sách viết cho một rừng. Rừng thứ hai, thứ mười — văn hoá khác, tín ngưỡng khác, kinh tế khác — cái gì của bộ sách này chắc chắn KHÔNG cầm nổi?': '{n}. The book set was written for one forest. In a second or tenth forest — different culture, beliefs, economy — what in this book set certainly CANNOT hold?',
+  '{n}. Cái gì giữ cho hệ còn BIẾT VUI?': '{n}. What keeps the system able to FEEL JOY?',
+  'Mọi thứ đã dựng đều giỏi bảo vệ. Không thứ nào giữ tiếng cười.': 'Everything built so far is good at protecting. Nothing keeps the laughter.',
+  'Chưa ai viết được quy trình cho niềm vui — có lẽ vì nó không được viết, chỉ được giữ.': 'No one has managed to write a process for joy — perhaps because it is not written, only kept.',
+  'Năm câu này in ở ĐẦU sách, không phải phụ lục.': 'These five questions are printed at the FRONT of the book, not in an appendix.',
+  'Để người đọc từ trang đầu biết bộ sách đang gánh nợ gì. Câu để ngỏ xếp xuống cuối là câu chìm, và câu chìm thì năm sau không ai nhắc lại.': 'So readers know from page one what debts the book carries. An open question pushed to the end sinks, and a sunken question is never raised again the next year.',
+
+  /* ── Ví credit ── */
+  '{n} lần': '{n} times',
+  'Máy tự cộng': 'Added automatically',
+  '· Ví credit của nhà mình.': '· Your family’s credit wallet.',
+  'NHÀ MÌNH · VÍ CREDIT': 'OUR FAMILY · CREDIT WALLET',
+  'Gói của nhà mình đổi thành credit ({n} đồng = {n} credit). Làm đủ việc của hành trình thì được thưởng thêm credit; dùng dịch vụ thì trừ credit — luôn trừ credit tặng trước, rồi tới credit thưởng, sau cùng mới tới credit trả phí.': 'Your family’s plan converts to credits ({n} VND = {n} credit). Completing journey tasks earns bonus credits; using services deducts credits — always gift credits first, then bonus credits, and paid credits last.',
+  'Ví credit nằm ở máy chủ của Học viện. Đăng nhập bằng tài khoản thật của nhà mình để xem số dư; tài khoản mẫu chỉ xem được cách tích và cách dùng.': 'The credit wallet lives on the Academy’s server. Log in with your family’s real account to see the balance; the sample account can only show how credits are earned and used.',
+  'Cách tích credit thưởng': 'How to earn bonus credits',
+  'Tick việc hôm nay và giữ chuỗi {n} ngày được máy tự cộng; các việc còn lại Coach ghi sau khi xem bằng chứng · số theo bảng đã duyệt, tầng T{n}': 'Ticking today’s task and keeping a {n}-day streak are added automatically; other tasks are recorded by the Coach after reviewing evidence · amounts per the approved table, tier T{n}',
+  'Việc': 'Task',
+  'Credit mỗi lần': 'Credits each time',
+  'Tối đa trong tầng': 'Maximum in tier',
+  'Tick việc hôm nay': 'Tick today’s task',
+  'Ghi nhật ký': 'Write journal',
+  'Hoàn thành nhiệm vụ đúng hạn': 'Complete a mission on time',
+  'Minh chứng được Coach duyệt': 'Evidence approved by the Coach',
+  'Giữ chuỗi đủ {n} ngày': 'Keep a full {n}-day streak',
+  'Đạt cổng nghiệm thu': 'Pass a review gate',
+  'Chấm buổi coach ({n}–{n})': 'Rate a coaching session ({n}–{n})',
+
+  /* ── Trợ lý ── */
+  'đang nghe · T{n} · RECOGNISE': 'listening · T{n} · RECOGNISE',
+  'Enter để gửi · Shift+Enter xuống dòng · tài khoản trải nghiệm — đang trả lời ngay trong máy. Đăng nhập bằng tài khoản thật để dùng bộ não AI.': 'Enter to send · Shift+Enter for a new line · trial account — answering on this device. Log in with a real account to use the AI brain.',
+  'ĐANG TRẢ LỜI TRONG PHẠM VI': 'ANSWERING WITHIN SCOPE',
+  'ĐANG MỞ': 'OPEN',
+  '{n} / {n} tư liệu': '{n} / {n} resources',
+  'Phần nền của mỗi nhà là {n}% của kho dành cho gia đình — đủ đi hết chặng đang ở. Phần nghề không mất đi: Tư vấn và Coach đọc lại rồi gửi tới theo đúng lúc nhà mình cần, khi KPI đi qua {n}%.': 'Each family’s base share is {n}% of the family library — enough for the current stage. The professional part is not lost: Consultants and Coaches review it and send it when your family needs it, once KPIs pass {n}%.',
+  'LÀM ĐƯỢC': 'CAN DO',
+  'Nghe chuyện bằng lời thường ngày, không bắt ai nói đúng thuật ngữ.': 'Listen to everyday language, without requiring anyone to use the right terms.',
+  'Tra trong kho của Học viện và chỉ ra đúng tư liệu, có mã để mở lại.': 'Search the Academy library and point to the right resource, with a code to reopen it.',
+  'Trả lời trong đúng phần vai và chặng của tài khoản đang dùng.': 'Answer within the role and stage of the account in use.',
+  'Biết người hỏi thuộc vai nào, đọc được điều người hỏi đang lo, trả lời đúng câu vừa hỏi.': 'Know the asker’s role, read what they are worried about, and answer the question actually asked.',
+  'Câu hỏi đi qua máy chủ Học viện: tên, số điện thoại, địa chỉ bị chặn lại trước khi tới bộ não AI; máy chủ không lưu nội dung câu hỏi. Chưa nối máy chủ thì trả lời ngay trong máy.': 'Questions pass through the Academy server: names, phone numbers and addresses are stripped before reaching the AI brain; the server does not store question content. Without a server connection, answers come from this device.',
+  'TUYỆT ĐỐI KHÔNG': 'NEVER',
+  'Nói vào micro': 'Speak into the microphone',
+  'Nói thay vì gõ': 'Speak instead of typing',
+
+  /* ── Ngày hệ này xong việc ── */
+  '· Ngày hệ này xong việc.': '· The day this system’s work is done.',
+  'NGÀY HỆ NÀY XONG VIỆC': 'THE DAY THIS SYSTEM’S WORK IS DONE',
+  'Thành công cao nhất là ngày nhà mình không cần hệ này nữa': 'The highest success is the day your family no longer needs this system',
+  'Giống cha mẹ thành công nhất là khi con tự lập. Giống người thầy giỏi nhất là khi học trò không còn cần thầy — nhưng giữ được cách thầy dạy mình yêu.': 'Just as parents succeed most when their children become independent. Just as the best teacher is one whose students no longer need them — yet keep the love of learning the teacher gave them.',
+  'Năm điều kiện xong': 'Five completion conditions',
+  'Chỉ số thành công cao nhất là mức mà người dùng không còn cần hệ nữa.': 'The highest success indicator is how far users no longer need the system.',
+  '{n}. Điều thức dậy': '{n}. The waking condition',
+  'Tám phần mười nhà thế hệ mới giữ được nhịp mỗi sáng mà KHÔNG cần ứng dụng, không cần nhắc, không cần thưởng.': 'Eight in ten new-generation families keep their morning rhythm WITHOUT the app, reminders or rewards.',
+  '{n}. Điều bàn tay': '{n}. The helping-hand condition',
+  'Một nửa số nhà có ít nhất một người đang kèm người khác. Rừng tự nuôi được đội chăm sóc từ chính người từng được chăm.': 'Half of all families have at least one person mentoring someone else. The forest grows its own care team from those it once cared for.',
+  '{n}. Điều kể chuyện': '{n}. The storytelling condition',
+  'Trẻ mười tới mười hai tuổi trong nhà kể đúng được hai chuyện nguồn gốc mà không ai yêu cầu. Ký ức đã sống trong đứa trẻ, không nằm trong tài liệu.': 'Children aged ten to twelve can accurately tell two origin stories without being asked. The memory lives in the child, not in documents.',
+  '{n}. Điều ngoài kia': '{n}. The out-there condition',
+  'Ít nhất ba nơi khác đã dựng được và tự vượt mùa khó đầu tiên mà không cần nơi này can thiệp.': 'At least three other places have built their own and got through their first hard season without this place stepping in.',
+  '{n}. Điều khó nhất': '{n}. The hardest condition',
+  'Hỏi ẩn danh cả rừng "nhà mình còn cần hệ này không", đa số trả lời: cần ít hơn trước, vì mình tự đi được rồi.': 'Asked anonymously across the forest “does your family still need this system?”, most answer: less than before, because we can walk on our own now.',
+  'Không ai được ép mở buổi này, và cũng không ai được ngăn. Rừng tự nguyện thì mới xong; bị ép thì chỉ là bị đóng cửa.': 'No one may force this session to open, and no one may prevent it. The forest finishes only when it chooses to; if forced, it has merely been shut down.',
+
+  /* ── Sáu điều không bao giờ bán ── */
+  '· Sáu điều không bao giờ bán.': '· Six things never sold.',
+  'TIỀN CỦA RỪNG': 'THE FOREST’S MONEY',
+  'Sáu điều không bao giờ bán': 'Six things never sold',
+  'Tiền sai một cách thì mọi điều khác uốn cong theo — không phải bị phá, bị UỐN, chậm, và không ai thấy lúc nào. Nên sáu điều dưới đây in vào hợp đồng với mọi đối tác, và chính đối tác ký vào chúng.': 'When money goes wrong, everything else bends with it — not broken but BENT, slowly, without anyone noticing when. So the six items below are printed into every partner contract, and the partners themselves sign them.',
+  'Không bao giờ bán dữ liệu riêng của gia đình': 'Never sell a family’s private data',
+  'Kể cả bản "đã ẩn danh hoá kỹ". Ẩn danh tuyệt đối không tồn tại — ghép đủ nguồn thì nhận ra được. Đây là sự thật kỹ thuật, không phải lời hứa suông.': 'Not even a “thoroughly anonymised” version. Perfect anonymity does not exist — combine enough sources and people can be identified. This is a technical fact, not an empty promise.',
+  'Không quảng cáo trong ứng dụng': 'No in-app advertising',
+  'Không băng-rôn, không gợi ý mua sắm, không hoàn tiền mua hàng. Nhà đang cố thoát nghèo thì không bán cho họ thêm nợ tiêu dùng.': 'No banners, no shopping suggestions, no cashback. A family trying to escape poverty is not sold more consumer debt.',
+  'Không bán vay nhanh, mua trước trả sau, thẻ tín dụng': 'No quick loans, buy-now-pay-later or credit cards',
+  'Đối tác tài chính chỉ được là: gửi tiết kiệm, chuyển tiền phí không. Mọi sản phẩm sinh nợ đều nằm ngoài cửa.': 'Financial partners may only offer savings and zero-fee transfers. Every debt-creating product stays outside the door.',
+  'Không bán chứng nhận': 'No selling endorsements',
+  'Thương hiệu nào trả tiền để có dòng "được Học viện tin dùng" thì đó là bán hộ niềm tin của các nhà.': 'A brand paying to carry “trusted by the Academy” would be selling the families’ trust on their behalf.',
+  'Không nhân bản mô hình mà không kèm kiểm toán': 'No replicating the model without audits',
+  'Bên nhận phải giữ nguyên các lệnh cấm và chịu kiểm toán mỗi năm. Vi phạm là chấm dứt và công khai.': 'Recipients must keep all the bans intact and accept an annual audit. A violation means termination, made public.',
+  'Không đưa dữ liệu tổng hợp cho quảng cáo hay chính trị': 'No aggregate data for advertising or politics',
+  'Chỉ cho nghiên cứu y tế và giáo dục công, có đồng ý của các nhà, và các nhà có quyền phủ quyết từng nghiên cứu.': 'Only for public health and education research, with families’ consent, and families may veto each study.',
+  'Lời đề nghị vi phạm thì từ chối bằng văn bản, và công bố trong báo cáo thường niên: năm nay từ chối bao nhiêu đề nghị, tổng giá trị bị từ chối bao nhiêu — không nêu tên bên đề nghị. Con số bị từ chối công khai là tài sản niềm tin lớn hơn mọi khoản đã nhận.': 'Violating offers are declined in writing and published in the annual report: how many offers were declined this year and their total value — without naming who made them. The publicly declined figure is a greater trust asset than anything accepted.',
+
+  /* ── Kho quà tặng ── */
+  'Cẩm nang một trang': 'One-page guide',
+  'Bảng theo dõi A{n}': 'A{n} tracking chart',
+  'Kịch bản hội thoại': 'Conversation script',
+  'Thẻ nhắc bỏ túi': 'Pocket reminder card',
+  'Bài đọc mười phút': 'Ten-minute reading',
+  'Tìm tài liệu theo tên vấn đề hoặc nhóm…': 'Search resources by issue name or group…',
+  '· Tài liệu tặng nhà mình.': '· Resources gifted to your family.',
+  'Kho quà tặng': 'Gift library',
+  'Một nghìn tài liệu, mỗi tài liệu gắn đúng một vấn đề có thật và một dạng chuẩn thương hiệu. Gia đình mắc ở đâu, mở đúng tài liệu ở đó — không phải đọc cả kho.': 'A thousand resources, each tied to one real issue and one branded format. Wherever a family is stuck, it opens exactly that resource — no need to read the whole library.',
+  'Làm gì trong bảy ngày tới — một mặt giấy, năm bước, có ô tick.': 'What to do in the next seven days — one side of paper, five steps, with tick boxes.',
+  'In ra dán tủ lạnh. Bảy dòng, ba cột: giờ bắt đầu, giờ kết thúc, số lần nhắc.': 'Print it and stick it on the fridge. Seven rows, three columns: start time, end time, number of reminders.',
+  'Câu mở đúng nhịp, ba câu hỏi mở, câu chốt, và điều tuyệt đối không nói.': 'An opening line on rhythm, three open questions, a closing line, and what never to say.',
+  'Cỡ danh thiếp. Năm câu để trong ví, mở ra đọc trước buổi khó.': 'Business-card size. Five lines to keep in your wallet and read before a hard session.',
+  'Nguyên lý, ví dụ Việt Nam, một việc làm ngay, và giới hạn của nguyên lý.': 'The principle, a Vietnamese example, one thing to do now, and the principle’s limits.',
+  'Hiện thêm {n} tài liệu': 'Show {n} more resources',
+  'Đang hiện': 'Showing',
+
+  /* ── Bản đồ cá nhân ── */
+  '· Bản đồ cá nhân {n} ô.': '· The {n}-cell personal map.',
+  'MƯỜI MỘT Ô · TỪ TẠI SAO ĐẾN TÀI NĂNG': 'ELEVEN CELLS · FROM WHY TO TALENT',
+  'Ô ĐÃ XONG': 'CELLS DONE',
+  'BẢN ĐỒ ĐÃ ĐẦY': 'MAP COMPLETE',
+  'MƯỜI VIỆC QUAN TRỌNG': 'TEN IMPORTANT TASKS',
+  'QUY TẮC ĐÃ CHỐT': 'RULES SETTLED',
+  'Mười một ô đã có chữ.': 'All eleven cells are filled.',
+  'Bản đồ không phải viết một lần rồi cất. Ba mươi ngày nữa mở lại: ô nào còn đúng thì giữ, ô nào đã khác thì sửa. Chỗ sửa nhiều nhất thường là ô {n} và ô {n}.': 'The map is not written once and put away. Reopen it in thirty days: keep the cells still true, revise the ones that have changed. The cells revised most are usually {n} and {n}.',
+  'MƯỜI MỘT Ô': 'ELEVEN CELLS',
+  'Bấm vào một ô để mở ra viết · rời ô nhập là đã lưu': 'Tap a cell to write · leaving the field saves it',
+  'Thứ tự mười một ô không phải đặt cho đẹp. Ô {n} — mười việc quan trọng — là chỗ hầu hết bảng kế hoạch trên đời bắt đầu, và cũng là lý do hầu hết bảng kế hoạch chết yểu: mười việc không nối vào một lý do thì tới thứ Năm là hoãn. Ở đây nó nằm sau năm ô, và đó là chủ ý.': 'The order of the eleven cells is not for looks. Cell {n} — ten important tasks — is where most plans in the world begin, and also why most plans die young: ten tasks not tied to a reason get postponed by Thursday. Here it comes after five cells, deliberately.',
+  'Ô {n} nằm cuối nhưng không phải là kết thúc. Viết xong ô {n} thì quay lại sửa ô {n} — vì một lộ trình không dựa trên chỗ mạnh thật của mình thì là lộ trình của người khác.': 'Cell {n} is last but not the end. After writing cell {n}, go back and revise cell {n} — because a pathway not built on your real strengths is someone else’s pathway.',
+  'Bản đồ của riêng nhà mình': 'Your family’s own map',
+  'Mười một ô, bắt đầu từ vì sao nhà mình bắt đầu — chứ không bắt đầu từ danh sách việc phải làm. Đó là lý do bản đồ này sống được qua tuần thứ ba, còn danh sách thì không.': 'Eleven cells, starting from why your family began — not from a to-do list. That is why this map survives week three while lists do not.',
+  'Bản đồ của riêng em': 'Your own map',
+  'Mười một ô, bắt đầu từ câu hỏi vì sao em làm việc này. Không có ô nào chấm điểm em. Viết được tới đâu thì lưu tới đó, hôm sau mở lại vẫn còn.': 'Eleven cells, starting with the question of why you are doing this. No cell grades you. Save as far as you get, and it will still be there when you reopen it.',
+
+  /* ── Bảng tầm nhìn ── */
+  'Viết bằng lời của chính mình…': 'Write in your own words…',
+  '{n} NĂM NỮA': '{n} YEARS FROM NOW',
+  '· Nhà mình muốn thành nhà thế nào.': '· What kind of family you want to become.',
+  'Bảng tầm nhìn gia đình': 'Family vision board',
+  'Cả nhà ngồi đủ mặt, viết gia đình mình muốn trở thành gia đình thế nào trong {n}, {n} và {n} năm tới. Viết bằng lời của từng người — không ai viết hộ ai.': 'With everyone present, write what kind of family you want to become in {n}, {n} and {n} years. In each person’s own words — no one writes for anyone else.',
+  'Việc nào trong tuần không nối được về bảng này thì bỏ.': 'Any task in the week that does not connect to this board is dropped.',
+  'Băng nền số {n} — Định hướng · rà lại mỗi {n} ngày.': 'Foundation task {n} — Direction · reviewed every {n} days.',
+  'Nhà mình sẽ là một gia đình thế nào?': 'What kind of family will we be?',
+  'Con sẽ đang làm gì, và nhà mình đang giữ điều gì?': 'What will our child be doing, and what will our family be holding on to?',
+  'Điều gì của nhà mình sẽ còn lại và truyền tiếp?': 'What of our family will remain and be passed on?',
+  'Lưu bảng tầm nhìn': 'Save the vision board',
+  'Lưu trong trình duyệt của anh chị. Khi nối máy chủ GITA {n}, bảng này đi vào hồ sơ gia đình.': 'Saved in your browser. Once connected to the GITA {n} server, this board goes into your family records.',
+  'BA THỨ PHẢI CÓ TRƯỚC KHI KHỞI ĐỘNG NĂM': 'THREE THINGS NEEDED BEFORE STARTING THE YEAR',
+  'Nhà mình sống theo ngày thì mãi chỉ giải quyết được việc của ngày. Bảng tầm nhìn là thứ duy nhất cho phép nhà mình từ chối một việc tốt vì nó không nối về đâu cả.': 'A family living day to day only ever solves the day’s problems. The vision board is the only thing that lets your family turn down a good task because it leads nowhere.',
+  '— Kim chỉ nam · Định hướng': '— Guiding principle · Direction',
+
+  /* ── Người đi cùng nhà mình ── */
+  'NGƯỜI ĐI CÙNG NHÀ MÌNH': 'YOUR FAMILY’S COMPANION',
+  'Người đi cùng không dạy cây lớn — họ chưa quên cảm giác của hạt': 'A companion does not teach a tree to grow — they have not forgotten what it feels like to be a seed',
+  'Người đi cùng nhà mình được chọn từ gia đình đã đi qua đoạn đường nhà mình đang đứng. Không phải chuyên gia. Chuyên gia nói đúng, nhưng đúng chưa từng làm ai kiên trì.': 'Your family’s companion is chosen from families who have walked the stretch you are on now. Not an expert. Experts are right, but being right has never kept anyone going.',
+  'Năm điều họ hứa với nhà mình': 'Five promises they make to your family',
+  'Đây là những điều nhà mình có quyền đòi. Một lời hứa không kiểm được thì không phải lời hứa.': 'These are things your family has the right to demand. A promise that cannot be checked is not a promise.',
+  'Người đi cùng nhà mình giữ tối đa năm nhà': 'Your companion looks after at most five families',
+  'Quá năm thì chất lượng sụp, không có ngoại lệ. Nhà mình có quyền hỏi người ấy đang giữ mấy nhà.': 'Beyond five, quality collapses, no exceptions. Your family has the right to ask how many families they look after.',
+  'Chín phần mười câu họ nói là câu hỏi': 'Nine in ten things they say are questions',
+  'Không phải lời dạy. Câu dạy dỗ nghe dễ hơn câu hỏi — và chính vì dễ mà nó độc: nó lấy đi quyền của hạt tự nứt vỏ.': 'Not lectures. Lecturing sounds easier than asking — and precisely because it is easy it is toxic: it takes away the seed’s right to crack open by itself.',
+  'Họ cho kinh nghiệm, không cho và không nhận tiền': 'They give experience, and neither give nor take money',
+  'Nhận quà cảm ơn một lần là quan hệ đổi chất ngay lần sau. Nhà mình mời thì họ được phép từ chối mà không mất lòng.': 'Accept a thank-you gift once and the relationship changes by the next time. If your family offers, they may decline without offence.',
+  'Họ không được làm thay nhà mình': 'They may not do things for your family',
+  'Gọi thay, trả nợ giúp, quyết thay — đều cấm. Làm thay là loại độc ngọt nhất: nó làm người ta cảm động, biết ơn, và đứng im mãi ở đúng chỗ được cứu.': 'Calling on your behalf, paying debts, deciding for you — all forbidden. Doing it for people is the sweetest poison: it moves them, makes them grateful, and leaves them standing still forever at the spot where they were rescued.',
+  'Mỗi năm hai lần, nhà mình được hỏi ẩn danh: có cảm thấy được lắng nghe không': 'Twice a year, your family is asked anonymously: do you feel listened to?',
+  'Điểm ấy nằm trong bảng chấm của chính họ, và nặng hơn mọi chỉ số khác. Ai chăm cây mà cây không thấy được tưới thì phép tưới ấy sai, không phải cây sai.': 'That score is part of their own evaluation and outweighs every other indicator. If the tree does not feel watered, the watering is wrong — not the tree.'
+});
 
 })();
 
@@ -2493,9 +6928,16 @@ var G = window.G || {}; window.G = G;
 var U = G.U, h = U.h;
 
 /* Bảng màu phân loại — họ xanh GITA + hai sắc nhấn. Semantic (ok/đỏ) tách
-   riêng, gọi thẳng khi cần, không nằm trong bảng phân loại này. */
-U.bdMau = ['var(--gita)','var(--gita-sau)','var(--gita-sang)','var(--ok)',
-           '--gita-ink','var(--gold-2)','var(--warn)','var(--gita-do)'];
+   riêng, gọi thẳng khi cần, không nằm trong bảng phân loại này.
+   Mỗi màu vừa làm chữ trên nền trang vừa làm nền cho chữ đặt lên nó.
+   Chữ đặt lên màu dùng token --chu-tren-mau: trắng ở nền Sáng, mực sẫm
+   ở nền Tối — vì ở nền Tối cả tám màu đều sáng lên, chữ trắng trên
+   chúng chỉ còn 1,7–3,3:1. Đo: nền Sáng tám màu đạt ≥4,5:1 cả hai
+   chiều; nền Tối chữ sẫm trên màu đạt ≥5,5:1.
+   Bản trước có --gita-sang và --gold-2 — hai tên của CÙNG một xanh nhạt
+   (2,91:1): hai nhóm số cùng một màu và cả hai khó đọc (luật TK01). */
+U.bdMau = ['var(--gita)','var(--t1)','var(--t2)','var(--ok)',
+           '--gita-ink','var(--t3)','var(--warn)','var(--gita-do-ink)'];
 function mau(i){ var m = U.bdMau[i % U.bdMau.length]; return m.slice(0,2)==='--' ? 'var('+m+')' : m; }
 
 /* Rút gọn tiền cho nhãn biểu đồ: 1.250.000.000 → "1,25 tỷ" · 450.000 → "450k".
@@ -2641,7 +7083,7 @@ U.bdPhieu = function(stages){
       ' L '+xNext+' '+(y+rowH-6)+' Z';
     svg += '<path d="'+d+'" fill="'+(s.mau||mau(i))+'" opacity="0.90"/>'+
       '<text x="'+(W/2)+'" y="'+(y+rowH/2-3)+'" text-anchor="middle" font-size="11.5" '+
-      'font-weight="600" fill="#fff">'+h(s.ten)+' · '+h(U.bdGon(s.so))+'</text>';
+      'font-weight="600" fill="var(--chu-tren-mau)">'+h(s.ten)+' · '+h(U.bdGon(s.so))+'</text>';
     if(i>0){ var tl = Math.round(U.num(s.so)/(U.num(stages[i-1].so)||1)*100);
       svg += '<text x="'+(W-6)+'" y="'+(y+4)+'" text-anchor="end" font-size="10.5" '+
         'fill="var(--ink-4)">'+tl+'%</text>'; }
@@ -3190,7 +7632,7 @@ G.LOI_PHAM_VI = function(mo, khoa, choTang){
 /* Câu chào sau khi đăng nhập — khách hàng không cần nghe chuyện "mở gói" */
 G.LOI_CHAO = function(ten){
   if(G.LA_HOC_VIEN && G.LA_HOC_VIEN() && G.LOI_CHAO_HV) return G.LOI_CHAO_HV(ten);
-  if(G.LA_KHACH()) return 'Chào ' + ten + ' — mọi thứ đã sẵn sàng.';
+  if(G.LA_KHACH()) return G.LANG === 'en' ? 'Hello ' + ten + ' — everything is ready.' : 'Chào ' + ten + ' — mọi thứ đã sẵn sàng.';
   var K = G.KHO || {};
   return 'Chào ' + ten + ' · ' + ((G.S.roleObj && G.S.roleObj.n) || '') +
     (K.cheDoMau ? ' · chế độ mẫu' : ' · đã mở ' + (K.daNap || []).length + ' gói');
@@ -3325,6 +7767,12 @@ G.NOI_HOCVIEN = {
 /* ═══════════ CÂU CHÀO VÀ CÂU NHẮC RIÊNG ═══════════ */
 G.LOI_CHAO_HV = function(ten){
   var gio = new Date().getHours();
+  /* Câu có tên người ghép giữa nên bộ dịch không tra được bằng một khoá
+     chung — chọn ngôn ngữ ngay tại chỗ ghép. */
+  if(G.LANG === 'en'){
+    var bE = gio < 11 ? 'Good morning' : gio < 14 ? 'Good afternoon' : gio < 18 ? 'Good afternoon' : 'Good evening';
+    return bE + ', ' + ten + '. What have you done today?';
+  }
   var buoi = gio < 11 ? 'Chào buổi sáng' : gio < 14 ? 'Chào buổi trưa'
            : gio < 18 ? 'Chào buổi chiều' : 'Chào buổi tối';
   return buoi + ', ' + ten + '. Hôm nay em làm được gì rồi?';
@@ -6000,7 +10448,7 @@ G.VIEWS['ban-do'] = function(){
     return '<button class="kh" data-kh="'+h(k.id)+'" style="color:'+c+'">'+
       '<i class="beam"></i>'+
       '<div class="no">KHOANG '+k.no+'</div>'+
-      '<h4 style="color:'+c+'">'+h(k.ten)+'</h4>'+
+      '<h2 style="color:'+c+'">'+h(k.ten)+'</h2>'+
       '<div class="q">'+h(k.cauHoi)+'</div>'+
       '<div class="mt-tags">'+(k.noiDung||[]).slice(0,4).map(function(x){
         return '<span>'+h(x)+'</span>';}).join('')+'</div>'+
@@ -6078,7 +10526,7 @@ G.VIEWS['chan-dung-nha'] = function(){
       '<h2 style="font-size:26px;font-weight:800;letter-spacing:-.02em">'+h(f.nha)+'</h2>'+
       '<p class="sm dim mt">Học viên <b>'+h(f.hv)+'</b> · '+h(f.lop)+' &nbsp;·&nbsp; Người lớn <b>'+h(f.ph)+'</b></p>'+
       '<p class="sm dim">Coach đồng hành: <b>'+h(f.coach)+'</b></p>'+
-      '<div class="mt2 sm"><span class="up muted">KỲ TÍCH NĂM ĐANG CHẠY</span><p class="mt" style="color:var(--gold-2)">'+h(f.kyTich)+'</p></div>'+
+      '<div class="mt2 sm"><span class="up muted">KỲ TÍCH NĂM ĐANG CHẠY</span><p class="mt" style="color:var(--gold-ink)">'+h(f.kyTich)+'</p></div>'+
     '</div></div></div>';
 
   o += '<div class="grid g4 mt2">'+
@@ -7005,7 +11453,7 @@ G.VIEWS['chin-vai'] = function(){
       '<div class="row" style="gap:7px;margin-bottom:2px"><span class="id" style="color:'+c+'">'+h(v.id)+'</span>'+
       (co?'<span style="color:var(--ok);margin-left:auto">'+ic('check','w-4 h-4')+'</span>'
          :'<span class="chip" style="margin-left:auto;color:var(--warn);border-color:rgba(251,191,36,.3)">còn trống</span>')+'</div>'+
-      '<h5 style="color:'+c+'">'+h(v.ten)+'</h5>'+
+      '<h2 style="color:'+c+'">'+h(v.ten)+'</h2>'+
       '<div class="q">'+h(v.cauHoi)+'</div>'+
       '<p>'+h(v.vaiTro)+'</p>'+
       '<div class="own">'+ic('users','w-3 h-3')+'<span>'+h(v.aiGiu)+'</span></div>'+
@@ -7023,7 +11471,7 @@ G.vaiModal = function(id){
   var o = '<div class="row wrap" style="gap:7px;margin-bottom:9px">'+U.chip(v.id,'var(--gita)')+U.chip('Khoang '+v.khoang)+
     (v.goc?U.chip('Gốc: '+v.goc):'')+'</div>'+
     '<h2 style="font-size:21px;font-weight:800;margin-bottom:8px">'+h(v.ten)+'</h2>'+
-    '<p class="serif" style="font-size:16px;font-style:italic;color:var(--gold-2);margin-bottom:14px">'+h(v.cauHoi)+'</p>'+
+    '<p class="serif" style="font-size:16px;font-style:italic;color:var(--gold-ink);margin-bottom:14px">'+h(v.cauHoi)+'</p>'+
     '<p class="sm dim mb" style="line-height:1.7">'+h(v.vaiTro)+'</p>'+
     '<div class="up muted mb mt2">VIỆC CỤ THỂ</div>'+U.list(v.viecCuThe,'var(--gita)')+
     '<div class="grid g2 mt2" style="gap:10px">'+
@@ -7070,7 +11518,11 @@ G.VIEWS['cu-hich'] = function(){
   var o = U.ph({eyebrow:'NHÓM 04 · CÚ HÍCH & NHỊP SỐNG', ic:'lightning', grad:1, t:'Cú hích lớn',
     lead:'Có những thứ không đi tới bằng bước đi, chỉ tới bằng bước nhảy. Sáu chiến dịch tạo cú hích, mỗi cú hích có lời hứa rõ và một phần thưởng thật.'});
   o += '<div class="grid g2">' + G.CUHICH.map(function(c){
-    var pct = Math.min(100, Math.round(c.thamgia/500*100));
+    /* Số "đã tham gia" chỉ hiện khi khai được nguồn (luật bảng tin:
+       không hiện con số không có nguồn). Bản mẫu thiếu hẳn trường này nên
+       từng in ra "undefined gia đình". */
+    var coSo = typeof c.thamgia === 'number' && c.nguonSo !== undefined;
+    var pct = coSo ? Math.min(100, Math.round(c.thamgia/500*100)) : 0;
     return '<div class="card lift" style="border-color:'+c.c+'2e">'+
       '<div class="row wrap" style="gap:7px;margin-bottom:10px">'+U.chip(c.ma,c.c)+U.chip(c.tier)+
       U.chip(c.muc, c.muc==='Cú hích chấn động'?'#BE0E16':(c.muc==='Cú hích lớn'?'#BE0E16':'#2A72C6'))+
@@ -7081,8 +11533,8 @@ G.VIEWS['cu-hich'] = function(){
         '<span class="tiny up muted">VÌ SAO CÚ HÍCH NÀY MẠNH</span>'+
         '<p class="sm mt" style="line-height:1.6">'+h(c.vi)+'</p></div>'+
       '<div class="row" style="gap:10px;margin-bottom:8px"><span class="tiny muted">Đã tham gia</span>'+
-        '<b class="mono" style="color:'+c.c+'">'+c.thamgia+' gia đình</b></div>'+
-      U.bar(pct,c.c)+
+        (coSo ? '<b class="mono" style="color:'+c.c+'">'+h(c.thamgia)+' gia đình</b></div>'+U.bar(pct,c.c)
+              : '<span class="tiny muted">chưa có sổ đếm</span></div>')+
       '<div class="row mt2" style="gap:9px"><span style="color:var(--gold-ink)">'+ic('crown','w-4 h-4')+'</span>'+
         '<span class="sm">'+h(c.thuong)+'</span></div>'+
       '<button class="btn pri blk mt" data-act="join-cuhich" data-ma="'+h(c.ma)+'">Đưa nhà mình vào cú hích này</button>'+
@@ -7872,6 +12324,8 @@ G.VIEWS['coach-deck'] = function(){
   var alert = G.dsNha().filter(function(f){return f.band==='DO'||f.band==='CAM';});
   var o = U.ph({eyebrow:'NHÓM 05 · VẬN HÀNH', ic:'flame', grad:1, t:'Buồng lái Coach',
     lead:'Mỗi buổi anh chị bước vào là một gia đình đổi hướng. Đây là nơi thấy rõ nên chạm vào đâu trước — và chạm bằng gì.'});
+  /* Hộp thông báo đích danh (lịch trả lương bị dời…) — màn chính của Coach. */
+  if(G.htbKhoi) o += G.htbKhoi();
 
   o += '<div class="grid g4 mb">'+
     U.stat({k:'GIA ĐÌNH PHỤ TRÁCH', v:G.dsNha().length, d:'trải năm tầng', c:'#5140B4'})+
@@ -7906,6 +12360,7 @@ G.VIEWS['tuvan-deck'] = function(){
   if(!G.can('pro_consult')) return U.lockCard();
   var o = U.ph({eyebrow:'NHÓM 05 · VẬN HÀNH', ic:'compass', grad:1, t:'Khoang mở cửa',
     lead:'Người đối diện chưa cần nghe mình giỏi thế nào. Họ cần thấy nhà mình trong tấm bản đồ này — rồi tự quyết định.'});
+  if(G.htbKhoi) o += G.htbKhoi();
 
   o += '<div class="grid g4 mb">'+
     U.stat({k:'ĐANG CHỜ PHIÊN MỞ CỬA', v:'3', d:'nhà mới trong tuần', c:'#BE0E16'})+
@@ -8733,7 +13188,7 @@ G.VIEWS['dong-hanh'] = function(){
   if(cur && traLoi[cur]){
     var r = traLoi[cur];
     o += '<div class="mt2" style="padding:18px 20px;border-radius:16px;background:var(--gita-mo-1);border-left:2px solid var(--gold)">'+
-      '<b class="serif" style="font-size:18px;font-style:italic;color:var(--gold-2);display:block;margin-bottom:8px">'+h(r.t)+'</b>'+
+      '<b class="serif" style="font-size:18px;font-style:italic;color:var(--gold-ink);display:block;margin-bottom:8px">'+h(r.t)+'</b>'+
       '<p class="sm" style="line-height:1.7">'+h(r.d)+'</p>'+
       '<button class="btn pri sm mt2" data-go="'+h(r.v)+'">'+h(r.b)+' '+ic('arrow')+'</button></div>';
   }
@@ -8944,7 +13399,7 @@ G.VIEWS['thuong-hieu'] = function(){
     '<div class="grow" style="min-width:250px">'+
     '<h2 style="font-size:26px;font-weight:800">'+h(B.ten)+'</h2>'+
     '<p class="up" style="color:var(--ink-4);margin:2px 0 10px">'+h(B.dinhVi)+'</p>'+
-    '<p class="serif" style="font-size:18px;font-style:italic;color:var(--gold-2)">"'+h(B.cauLoi)+'"</p>'+
+    '<p class="serif" style="font-size:18px;font-style:italic;color:var(--gold-ink)">"'+h(B.cauLoi)+'"</p>'+
     '<p class="sm dim mt">'+h(B.giaiNghia)+'</p></div></div></div>';
 
   o += U.sec('BẢNG MÀU','Màu năm tầng giữ nguyên mã của hệ thống v6.9 — không đổi khi in, khi chiếu hay khi làm ảnh');
@@ -8961,7 +13416,7 @@ G.VIEWS['thuong-hieu'] = function(){
     var serif = c.k.indexOf('Playfair')===0;
     return '<div class="card"><b style="font-size:16px;display:block;margin-bottom:6px">'+h(c.k)+'</b>'+
       '<p class="sm muted" style="line-height:1.6;margin-bottom:12px">'+h(c.d)+'</p>'+
-      '<p class="'+(serif?'serif':'')+'" style="font-size:'+(serif?'19px;font-style:italic':'17px;font-weight:700')+';color:var(--gold-2)">'+h(c.vd)+'</p></div>';
+      '<p class="'+(serif?'serif':'')+'" style="font-size:'+(serif?'19px;font-style:italic':'17px;font-weight:700')+';color:var(--gold-ink)">'+h(c.vd)+'</p></div>';
   }).join('') + '</div>';
 
   o += U.sec('GIỌNG NÓI','Cùng một ý, hai kết quả khác hẳn nhau');
@@ -9647,7 +14102,7 @@ G.VIEWS['ra-soat-kh'] = function(){
     return '<button class="ck '+(d?'done':'')+'" data-check="m'+i+'" style="align-items:flex-start">'+
       '<span class="bx">'+ic('check','w-3 h-3')+'</span>'+
       '<span class="tx"><b>'+h(m.ma)+' · '+h(m.ten)+'</b>'+
-      '<span style="display:block;margin-top:4px;font-style:italic;color:var(--gold-2)">"'+h(m.hoi)+'"</span>'+
+      '<span style="display:block;margin-top:4px;font-style:italic;color:var(--gold-ink)">"'+h(m.hoi)+'"</span>'+
       '<span style="display:block;margin-top:5px;color:var(--bad)">⚠ '+h(m.dau)+'</span></span></button>';
   }).join('') + '</div>';
   return o;
@@ -9966,7 +14421,7 @@ G.VIEWS['quy-trinh-tc'] = function(){
   o += U.sec(L.ten, L.cot);
   o += '<div class="card glow mb" style="border-color:var(--gita-vien-2)">'+
     '<div class="up mb" style="color:var(--gold-ink)">CÔNG THỨC</div>'+
-    '<p class="mono" style="font-size:14.5px;line-height:1.8;color:var(--gold-2)">'+h(L.congThuc)+'</p></div>';
+    '<p class="mono" style="font-size:14.5px;line-height:1.8;color:var(--gold-ink)">'+h(L.congThuc)+'</p></div>';
   o += '<div class="grid g2 mb">' + L.thanhPhan.map(function(p){
     return '<div class="card" style="border-color:'+p.c+'2a">'+
       '<b style="font-size:16px;display:block;margin-bottom:8px;color:'+p.c+'">'+h(p.t)+'</b>'+
@@ -12709,7 +17164,7 @@ function veMuoiViec(){
         }).join('')+
       '</select>'+
       '<button class="btn ghost sm" data-bdsao="'+i+'" title="Đánh dấu là một trong ba việc quan trọng nhất" '+
-        'style="flex:none;'+(v.sao ? 'color:#B4720F;border-color:#B4720F' : '')+'">'+
+        'style="flex:none;'+(v.sao ? 'color:var(--warn);border-color:#B4720F' : '')+'">'+
         (v.sao ? '★' : '☆')+'</button>'+
       (v.v ? '<button class="btn ghost sm" data-v="'+h(v.v)+'" style="flex:none">Mở màn</button>' : '')+
     '</div>';
@@ -14080,7 +18535,7 @@ G.VIEWS['do-thoi-gian'] = function(){
        chăm, và khen nhầm chỗ ấy là dạy người ta ngồi lâu hơn. */
     if(hn.quaTran.giay > 0)
       o += '<div class="card mb" style="border-color:#B4720F45">' +
-        '<b class="sm" style="color:#B4720F">' + h(phut(hn.quaTran.giay)) +
+        '<b class="sm" style="color:var(--warn)">' + h(phut(hn.quaTran.giay)) +
         ' trong số đó là phút VƯỢT TRẦN của ' + hn.quaTran.man.length + ' màn</b>' +
         '<p class="sm mt" style="line-height:1.75">' + h(M.viKhongKhen || '') + '</p>' +
         '<p class="tiny dim mt" style="line-height:1.7">' +
@@ -14328,10 +18783,10 @@ G.VIEWS['gioi-thieu'] = function(){
      Đặt ngay sau sứ mệnh và tầm nhìn vì đây là chỗ hai câu ấy được quy
      ra số. Câu ranh giới đứng TRƯỚC bảng, không đứng sau: đọc bảng rồi
      mới gặp ranh giới thì bảng đã kịp được hiểu thành lời hứa. */
-  /* Mốc 2030 của Học viện đứng trước mục tiêu của một nhà: người đọc cần
+  /* Mốc 2035 của Học viện đứng trước mục tiêu của một nhà: người đọc cần
      thấy Học viện tự đặt cho mình một con số có hạn trước khi đọc những
      con số Học viện đặt cho nhà mình. */
-  var m30 = C.moc2030;
+  var m30 = C.moc2035;
   if(m30 && m30.big)
     o += '<div class="card mt2" style="border-left:3px solid var(--gita-do-ink)">'+
       '<span class="tiny up" style="color:var(--gita-do-ink);letter-spacing:.09em">'+h(m30.t)+'</span>'+
@@ -14490,7 +18945,7 @@ G.VIEWS['gioi-thieu'] = function(){
         '<p class="sm mt" style="line-height:1.65">'+h(x.d)+'</p></div>';
     }).join('') +'</div></div>';
 
-  o += '<div class="tiny up muted mt2 mb">BỐN BĂNG — HỆ THỐNG ĐỔI CÁCH CHẠM THEO TÌNH TRẠNG, KHÔNG ĐỢI AI BÁO</div>';
+  o += '<div class="sm b mt2 mb" style="color:var(--ink-2)">Bốn băng — hệ thống đổi cách chạm theo tình trạng, không đợi ai báo</div>';
   o += U.tbl(['Băng','Dấu hiệu','Hệ thống làm gì','Không làm gì'],
     (DH.bang || []).map(function(x){
       return ['<b class="sm" style="color:'+x.c+'">'+h(x.ma)+'</b><div class="tiny muted">'+h(x.ten)+'</div>',
@@ -14565,7 +19020,7 @@ G.VIEWS['gioi-thieu'] = function(){
         'Phần không làm được đọc đủ, không rút gọn — đó là phần mua được lòng tin.',
         'Không đọc phần năm tầng ở buổi đầu. Nhà mới nghe năm tầng thì thấy dài và thấy xa.',
         'Sứ mệnh và tầm nhìn đọc khi nhà HỎI về Học viện, không đọc để mở đầu. Mở đầu bằng '+
-        'tầm nhìn 2030 là nói chuyện của mình trong lúc người ta đang lo chuyện tối nay.',
+        'mốc 2035 là nói chuyện của mình trong lúc người ta đang lo chuyện tối nay.',
         'Bảng mục tiêu chỉ đưa ra khi nhà hỏi "bao lâu thì thấy gì". Đưa ra thì đọc luôn câu '+
         'ranh giới đứng trên bảng — đó là chuẩn quy trình, không phải cam kết kết quả.',
         'Phần chiến lược đồng hành để dành cho buổi thứ hai, và khi đọc thì đọc cả khối NĂM '+
@@ -14691,7 +19146,7 @@ G.veChuyenTG = function(c, gon){
 
     (c.luu
       ? '<div class="mt2" style="padding:11px 14px;border-radius:11px;background:#B4720F14;border:1px solid #B4720F44">'+
-        '<span class="tiny up" style="color:#B4720F">'+ic('bell','w-3 h-3')+' NÓI CHO ĐÚNG</span>'+
+        '<span class="tiny up" style="color:var(--warn)">'+ic('bell','w-3 h-3')+' NÓI CHO ĐÚNG</span>'+
         '<p class="tiny mt" style="line-height:1.7">'+h(c.luu)+'</p></div>'
       : '');
 
@@ -14726,7 +19181,7 @@ G.VIEWS['chuyen-the-gioi'] = function(){
     'việc có thật, đều là ghi chép công khai.</p>'+
     '<p class="sm mt" style="line-height:1.75">Vì thế Học viện chỉ ghi phần được ghi chép rộng rãi, không dựng lời '+
     'thoại và không kể đời tư. Con số nào do chính nhân vật kể thì nói rõ là họ kể. Và chỗ nào bản kể phổ biến '+
-    'đã bị thổi lên thì có một dòng <b style="color:#B4720F">NÓI CHO ĐÚNG</b> — vì truyện truyền cảm hứng mà sai '+
+    'đã bị thổi lên thì có một dòng <b style="color:var(--warn)">NÓI CHO ĐÚNG</b> — vì truyện truyền cảm hứng mà sai '+
     'sự thật thì lần sau người đọc không tin cả những phần đúng.</p></div>';
 
   o += '<div class="row wrap mt2" style="gap:12px">'+
@@ -15382,7 +19837,9 @@ G.VIEWS['sat-hach'] = function(){
 
   var o = U.ph({eyebrow:'NĂM TẦNG NĂNG LỰC · BỐN BÀI TỐT NGHIỆP · TÁM TRỤC', ic:'shield', grad:1,
     t:'Sát hạch năng lực — ' + V.ten,
-    lead: V.y + ' Bài kiểm tra ở đây không dùng để loại người. Nó trả lời đúng một câu: '+
+    /* Kho vai chưa nạp (bản mẫu) thì vaiObj trả bản lùi không có câu y —
+       từng in ra "undefined Bài kiểm tra…" ở đầu màn. */
+    lead: (V.y ? V.y + ' ' : '') + 'Bài kiểm tra ở đây không dùng để loại người. Nó trả lời đúng một câu: '+
       'mình đang ở cấp độ nào, và cần học gì tiếp.'});
 
   o += '<div class="row wrap mt2" style="gap:12px">'+
@@ -15812,6 +20269,764 @@ document.addEventListener('click', function(e){
   }
 });
 
+})();
+
+})();
+
+/* ═════════ src/dao-tao-ct.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — CHƯƠNG TRÌNH ĐÀO TẠO (màn chuong-trinh-dt)
+
+   Ba chương trình Tư vấn · Nhân sự · Coach — xếp theo thứ tự trình bày,
+   không chương trình nào đòi chứng nhận của chương trình khác. Mỗi bước TRỎ
+   vào một màn đã có (sổ tay, nghề, kho nghề, sát hạch, ba cửa) — màn
+   này không chép lại nội dung học, nó giữ SỔ: ai học tới đâu, ai chấm,
+   ai ký chứng nhận.
+
+   G.DTC_CT là bản đối chiếu của may-chu/dao-tao-ct.js → CT.
+   tools/thu-dao-tao-ct.mjs so hai bản từng ô; lệch là đỏ.
+
+   Tiến độ CHỈ nằm ở máy chủ. Chưa nối máy chủ thì màn vẫn hiện chương
+   trình nhưng nói thẳng là không ghi được — không giữ tiến độ trong
+   máy, vì một dấu tick nằm trong trình duyệt của chính người học thì
+   không ai kiểm lại được, và nó trông y hệt một dấu tick thật.
+   ═══════════════════════════════════════════════════════════════ */
+var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
+(function(){
+  var U = G.U, h = U.h, ic = U.ic;
+
+  G.DTC_CT = [
+    { ma:'tuvan', ten:'Tư vấn viên', vaiChinh:['R11'], chamToi:4, capToi:3, buoc:[
+      { ma:'TV01', loai:'tuHoc', man:'bo-nao', ten:'Hiến pháp 13 điều và hàng rào 10 điểm' },
+      { ma:'TV02', loai:'tuHoc', man:'phap-ly-rui-ro', ten:'Điều 13 và quyền dữ liệu của gia đình' },
+      { ma:'TV03', loai:'tuHoc', man:'so-tay-tu-van', ten:'Sổ tay tư vấn' },
+      { ma:'TV04', loai:'tuHoc', man:'nghe-tu-van', ten:'Nghề tư vấn: hành trình khách qua năm tầng' },
+      { ma:'TV05', loai:'tuHoc', man:'kich-ban', ten:'Kịch bản và cách đáp phản đối' },
+      { ma:'TV06', loai:'tuHoc', man:'kn-tuvan', ten:'Kho nghề tư vấn' },
+      { ma:'TV07', loai:'nguoiCham', man:'kich-ban', nguong:80, ten:'Đóng vai một cuộc tư vấn đầu, có người kèm nghe' },
+      { ma:'TV08', loai:'nguoiCham', man:'sat-hach', nguong:70, ten:'Sát hạch vai tư vấn, làm trước mặt người chấm' },
+      { ma:'TV09', loai:'mayCham', man:'con-nguoi', cua:['C1','C2','C3'], ten:'Ba cửa con người' }
+    ]},
+    { ma:'nhansu', ten:'Nhập môn nhân sự', vaiChinh:['R01','R02','R03','R04','R05','R06',
+      'R07','R08','R09','R10','R11','R12'], chamToi:6, capToi:3, buoc:[
+      { ma:'NS01', loai:'tuHoc', man:'luat-lam-viec', ten:'Luật làm việc' },
+      { ma:'NS02', loai:'tuHoc', man:'phap-ly-rui-ro', ten:'Bảo mật và Điều 13' },
+      { ma:'NS03', loai:'tuHoc', man:'luat-giao-dien', ten:'Mười hai lời hứa với gia đình' },
+      { ma:'NS04', loai:'tuHoc', man:'bang-viec', ten:'Bàn làm việc và đầu việc' },
+      { ma:'NS05', loai:'tuHoc', man:'bo-nao', ten:'Hiến pháp 13 điều và hàng rào 10 điểm' },
+      { ma:'NS06', loai:'tuHoc', man:'khoa-dao-tao', ten:'Khoá đào tạo 30 bài: Học · Làm · Nộp' },
+      { ma:'NS07', loai:'nguoiCham', man:'bang-viec', nguong:70, ten:'Buổi kèm việc đầu tiên với người quản lý' },
+      { ma:'NS08', loai:'mayCham', man:'con-nguoi', cua:['C1'], ten:'Cửa 1 · Hiến pháp 13 trên 13' }
+    ]},
+    { ma:'coach', ten:'Coach', vaiChinh:['R05','R06','R07','R08'], chamToi:6, capToi:5, buoc:[
+      { ma:'CO01', loai:'tuHoc', man:'coach-ct', ten:'Hệ điều hành Coach: chương trình' },
+      { ma:'CO02', loai:'tuHoc', man:'coach-5-tang', ten:'Năm tầng đồng hành' },
+      { ma:'CO03', loai:'tuHoc', man:'nghe-coach', ten:'Nghề coach' },
+      { ma:'CO04', loai:'tuHoc', man:'kn-coach', ten:'Kho nghề coach' },
+      { ma:'CO05', loai:'tuHoc', man:'dao-tao-dh', ten:'Đào tạo đồng hành 40 giờ' },
+      { ma:'CO06', loai:'tuHoc', man:'coach-kh', ten:'Coach khách hàng và Thẻ Vùng Mạnh' },
+      { ma:'CO07', loai:'nguoiCham', man:'coach-kh', nguong:80, ten:'Ba buổi coach có người kèm' },
+      { ma:'CO08', loai:'nguoiCham', man:'sat-hach', nguong:70, ten:'Sát hạch vai coach, làm trước mặt người chấm' },
+      { ma:'CO09', loai:'mayCham', man:'con-nguoi', cua:['C1','C2','C3'], ten:'Ba cửa con người' }
+    ]}
+  ];
+
+  var LOAI = {
+    tuHoc:     { ten:'Tự học · lời khai', m:'var(--ink-4)', vi:'Chính bạn đánh dấu, kèm một câu: sau bài này bạn sẽ làm gì khác. Đây là LỜI KHAI, không phải phép đo.' },
+    nguoiCham: { ten:'Người chấm', m:'var(--gita)', vi:'Một người kèm (không phải bạn) chấm 0–100 kèm nhận xét. Tên người chấm đi cùng con số.' },
+    mayCham:   { ten:'Máy đọc', m:'var(--ok)', vi:'Máy đọc thẳng sổ ba cửa — không ai đánh dấu hộ được.' }
+  };
+  var CAU = 20;
+  var st = {};
+  /* Trạng thái gắn với MỘT tài khoản. Đổi tài khoản trên cùng một thẻ mà
+     không xoá thì người sau thấy tiến độ của người trước cho tới khi tải
+     lại trang — chỗ hở bắt được lúc thử đăng nhập lần lượt ba vai. */
+  function datLai(ai){
+    var r = (G.S && G.S.acc && G.S.acc.role) || '';
+    st = { ai:ai, ngan: r === 'R11' ? 'tuvan' : /^R0[5-8]$/.test(r) ? 'coach' : 'nhansu',
+      tai:false, loi:'', du:null, doi:{}, doiTai:'', mo:'', nguoiXem:'' };
+  }
+  function giuDung(){ var ai = (G.S && G.S.acc && G.S.acc.u) || ''; if(st.ai !== ai) datLai(ai); }
+  datLai(null);
+
+  function coMayChu(){ return typeof G.goiMayChu === 'function' && !!G.API_CAP_PHEP && !!G.PHIEN_TOKEN; }
+  function lv(){ return (G.S && G.S.roleObj && G.S.roleObj.lv) || 99; }
+  function veLai(){ if(G.render) G.render(); }
+  function ct(ma){ return G.DTC_CT.filter(function(c){ return c.ma === ma; })[0] || null; }
+  function moMan(v){ return !!G.VIEWS[v] && (!G.allowed || G.allowed(v)); }
+  function tenVai(id){ var r = G.roleById && G.roleById(id); return r ? r.short : id; }
+  function dsVai(arr){ return arr.map(tenVai).join(' · '); }
+  function tuBac(n){ var a = []; for(var i = 1; i <= n; i++) a.push('R' + (i < 10 ? '0' : '') + i); return dsVai(a); }
+  /* Đếm riêng từng loại bước — không gộp lời khai với bước được chấm vào một phân số. */
+  function demLoai(tl){
+    return ['tuHoc','nguoiCham','mayCham'].map(function(l){
+      var x = (tl || {})[l] || { xong:0, tong:0 };
+      return '<span class="dtc-tag" style="--m:' + LOAI[l].m + '">' + h(LOAI[l].ten) + ' ' + x.xong + '/' + x.tong + '</span>';
+    }).join(' ');
+  }
+
+  function tai(){
+    if(!coMayChu()) return;
+    st.tai = true; st.loi = '';
+    var cua = st;
+    G.goiMayChu('docDaoTao', st.nguoiXem ? { maNguoi:st.nguoiXem } : {}, { moi:true }).then(function(r){
+      /* Câu trả lời về trễ sau khi đã đổi tài khoản thì bỏ — không rơi vào trạng thái của người sau. */
+      if(cua !== st) return;
+      st.tai = false;
+      /* Tên chính tắc của chính mình lấy từ máy chủ — acc.u có thể là email. */
+      if(r && r.ok){ st.du = r; if(!st.nguoiXem) st.minh = r.maNguoi; } else st.loi = (r && r.error) || 'Không đọc được tiến độ.';
+      veLai();
+    });
+  }
+  function taiDoi(ma){
+    if(!coMayChu()) return;
+    st.doiTai = ma;
+    var cua = st;
+    G.goiMayChu('doiDaoTao', { ct:ma }, { moi:true }).then(function(r){
+      if(cua !== st) return;
+      st.doiTai = '';
+      st.doi[ma] = (r && r.ok) ? r.ds : { loi:(r && r.error) || 'Không đọc được đội.' };
+      veLai();
+    });
+  }
+  function goi(fn, than, xong){
+    G.goiMayChu(fn, than).then(function(r){
+      if(r && r.ok){ U.toast(xong, 'ok'); st.mo = ''; st.du = null; st.doi = {}; tai(); }
+      else U.toast((r && r.error) || 'Không ghi được.', 'err');
+    });
+  }
+
+  function thanh(){
+    var ds = G.DTC_CT.map(function(c){ return { ma:c.ma, ten:c.ten, ic:c.ma === 'coach' ? 'flame' : c.ma === 'tuvan' ? 'heart' : 'book' }; });
+    if(lv() <= 6) ds.push({ ma:'doi', ten:'Đội tôi kèm', ic:'target' });
+    return '<div class="co-tabs" role="tablist">' + ds.map(function(n){
+      return '<button class="co-tab' + (st.ngan === n.ma ? ' on' : '') + '" role="tab" aria-selected="' + (st.ngan === n.ma) + '" data-dtc="ngan" data-ma="' + n.ma + '">' + ic(n.ic) + h(n.ten) + '</button>';
+    }).join('') + '</div>';
+  }
+
+  function dongBuoc(c, b, tt, laMinh){
+    var L = LOAI[b.loai];
+    var xong = tt && tt.xong;
+    var CHU_XONG = { tuHoc:'Đã khai', nguoiCham:'Đạt', mayCham:'Đủ cửa' };
+    var den = !xong ? '<span class="co-den" style="--m:var(--ink-4)"><i></i>Chưa</span>'
+      : (b.loai === 'mayCham' && tt.coKhaiCu) ? '<span class="co-den" style="--m:var(--warn)"><i></i>Đủ cửa · có khai hộ</span>'
+      : '<span class="co-den" style="--m:' + L.m + '"><i></i>' + CHU_XONG[b.loai] + '</span>';
+    var phu = '';
+    if(b.loai === 'nguoiCham'){
+      phu = 'Đạt từ ' + b.nguong + ' điểm';
+      if(tt && typeof tt.diem === 'number') phu += ' · lượt cuối ' + tt.diem + ' điểm, chấm bởi ' + h(tt.boiAi);
+    } else if(b.loai === 'mayCham'){
+      phu = 'Cần ' + b.cua.join(' · ');
+      if(tt && tt.thieuCua && tt.thieuCua.length) phu += ' · còn thiếu ' + tt.thieuCua.join(' · ');
+      if(tt && tt.coKhaiCu) phu += ' · có cửa được khai hộ (lời khai, không phải phép đo)';
+    } else if(tt && tt.cau){
+      phu = '“' + h(tt.cau) + '”';
+    }
+    var nut = moMan(b.man)
+      ? '<button class="btn ghost sm" data-v="' + h(b.man) + '">' + ic('arrow','w-3 h-3') + 'Mở bài</button>'
+      : G.VIEWS[b.man] ? '<span class="tiny muted">Bài này chưa mở với vai của bạn</span>'
+      : '<span class="tiny muted">Bài mở khi gói nghề của vai đã nạp</span>';
+    var o = '<div class="co-dong dtc-dong"><span class="dtc-ma">' + h(b.ma) + '</span>' +
+      '<span class="co-grow"><b class="sm">' + h(b.ten) + '</b> <span class="dtc-tag" style="--m:' + L.m + '">' + h(L.ten) + '</span>' +
+      (phu ? '<br><span class="tiny muted">' + phu + '</span>' : '') + '</span>' + den + nut;
+    if(laMinh && b.loai === 'tuHoc' && !xong && coMayChu() && st.du && tt){
+      var k = c.ma + ':' + b.ma;
+      if(st.mo === k){
+        o += '<div class="dtc-form"><label class="co-f" for="dtc-cau"><span>Sau bài này bạn sẽ làm gì khác? (từ ' + CAU + ' ký tự)</span>' +
+          '<textarea class="inp" id="dtc-cau" rows="2"></textarea></label>' +
+          '<div class="co-hang"><button class="btn pri sm" data-dtc="tuhoc" data-ct="' + c.ma + '" data-b="' + b.ma + '">Đánh dấu đã học</button>' +
+          '<button class="btn ghost sm" data-dtc="dong">Thôi</button></div></div>';
+      } else o += '<button class="btn sm" data-dtc="mo" data-k="' + k + '">Đánh dấu đã học</button>';
+    }
+    return o + '</div>';
+  }
+
+  function nganCt(c){
+    var tt = st.du && st.du.ct.filter(function(x){ return x.ct === c.ma; })[0];
+    var o = '<p class="sm muted mb">Dành cho: ' + h(dsVai(c.vaiChinh)) + '. Người chấm: ' + h(tuBac(c.chamToi)) +
+      '. Người ký chứng nhận: ' + h(tuBac(c.capToi)) + '. Không ai tự chấm hay tự ký cho chính mình, và người ký phải khác người chấm.</p>';
+    if(c.ma === 'coach') o += '<div class="co-cb mb"><div style="--m:var(--gita)"><span>Đây là <b>chứng nhận hoàn thành chương trình</b>, không thay chứng chỉ hành nghề Coach. Chứng chỉ hành nghề vẫn theo Đào tạo đồng hành: mười tuần thực tập và bài thi cuối có nhiều người chấm.</span></div></div>';
+    o += '<div class="co-cb dtc-luat mb">' + ['tuHoc','nguoiCham','mayCham'].map(function(l){
+      return '<div style="--m:' + LOAI[l].m + '"><b>' + h(LOAI[l].ten) + '</b><span>' + h(LOAI[l].vi) + '</span></div>';
+    }).join('') + '</div>';
+
+    if(!coMayChu()){
+      o += '<div class="co-mau">' + ic('alert','w-4 h-4') + '<span>Tiến độ nằm ở máy chủ của Học viện. Tài khoản mẫu xem được chương trình, nhưng không ghi được bước nào — một dấu tick chỉ nằm trong máy của bạn thì không ai kiểm lại được.</span></div>';
+    } else if(st.tai && !st.du){
+      o += '<p class="sm muted">Đang đọc tiến độ…</p>';
+    } else if(st.loi && !st.du){
+      o += '<div class="co-cb"><div style="--m:var(--gita-do-ink)">' + ic('alert','w-4 h-4') + '<span>' + h(st.loi) + '</span></div></div>';
+    } else if(tt){
+      var laMinh = !st.nguoiXem;
+      o += '<div class="co-hang mb"><span class="sm co-grow">' + (laMinh ? 'Tiến độ của bạn' : 'Tiến độ của <b>' + h(st.du.maNguoi) + '</b>') +
+        ': ' + demLoai(tt.theoLoai) + '</span>' +
+        (tt.chungChi ? '<span class="co-den" style="--m:var(--ok)"><i></i>Đã có chứng nhận · ký bởi ' + h(tt.chungChi.boiAi) + '</span>'
+          : tt.duDieuKien ? '<span class="co-den" style="--m:var(--gita)"><i></i>Đủ điều kiện · chờ người ký</span>' : '') + '</div>';
+      if(tt.daThuHoi) o += '<div class="co-cb mb"><div style="--m:var(--warn)"><span>Chứng nhận đã bị thu hồi bởi ' + h(tt.daThuHoi.boiAi) + ': ' + h(tt.daThuHoi.lyDo || '') + '</span></div></div>';
+      if(!tt.ghiDanh && laMinh)
+        o += '<div class="co-hang mb"><span class="sm co-grow">Bạn chưa ghi danh chương trình này.</span><button class="btn pri sm" data-dtc="ghidanh" data-ct="' + c.ma + '">Ghi danh</button></div>';
+    }
+    o += '<div class="co-ds">' + c.buoc.map(function(b){
+      var tb = tt && tt.buoc.filter(function(x){ return x.ma === b.ma; })[0];
+      return dongBuoc(c, b, tt && tt.ghiDanh ? tb : (tb && b.loai === 'mayCham' ? tb : null), !st.nguoiXem);
+    }).join('') + '</div>';
+    return o;
+  }
+
+  function nganDoi(){
+    var o = '<p class="sm muted mb">Người kèm (' + h(tuBac(6)) + ') ghi danh hộ, chấm bước người-chấm và ký chứng nhận. Máy kiểm lại mọi điều kiện lúc ký — không tin dấu nào màn này gửi lên.</p>';
+    if(!coMayChu()) return o + '<div class="co-mau">' + ic('alert','w-4 h-4') + '<span>Đội nằm ở máy chủ. Đăng nhập bằng tài khoản thật để xem.</span></div>';
+    o += '<div class="co-form mb"><label class="co-f" for="dtc-gd-nguoi"><span>Tên đăng nhập hoặc email</span><input class="inp" id="dtc-gd-nguoi" autocomplete="off"></label>' +
+      '<label class="co-f" for="dtc-gd-ct"><span>Chương trình</span><select class="inp" id="dtc-gd-ct">' +
+      G.DTC_CT.map(function(c){ return '<option value="' + c.ma + '">' + h(c.ten) + '</option>'; }).join('') + '</select></label>' +
+      '<div class="co-f"><span>&nbsp;</span><button class="btn pri sm" data-dtc="ghidanh-ho">Ghi danh hộ</button></div></div>';
+    G.DTC_CT.forEach(function(c){
+      o += U.sec(c.ten);
+      var d = st.doi[c.ma];
+      if(!d){ if(st.doiTai !== c.ma) taiDoi(c.ma); o += '<p class="sm muted">Đang đọc…</p>'; return; }
+      if(d.loi){ o += '<p class="sm muted">' + h(d.loi) + '</p>'; return; }
+      if(!d.length){ o += '<p class="sm muted">Chưa ai ghi danh.</p>'; return; }
+      o += '<div class="co-ds">' + d.map(function(p){
+        var k = 'doi:' + c.ma + ':' + p.maNguoi;
+        var chamDuoc = c.buoc.filter(function(b){ return b.loai === 'nguoiCham'; });
+        /* Dòng của chính mình: không hiện nút chấm/ký — máy chủ cũng chặn (TUCHAM · TUCAP). */
+        var laMinh = !!st.minh && p.maNguoi === st.minh;
+        var r = '<div class="co-dong dtc-dong"><span class="co-grow"><b class="sm">' + h(p.maNguoi) + '</b><br>' + demLoai(p.theoLoai) +
+          (p.thieu.length ? '<br><span class="tiny muted">Còn thiếu ' + h(p.thieu.join(' · ')) + '</span>' : '') + '</span>' +
+          (p.coChungChi ? '<span class="co-den" style="--m:var(--ok)"><i></i>Có chứng nhận</span>' : '') +
+          '<button class="btn ghost sm" data-dtc="xem" data-n="' + h(p.maNguoi) + '" data-ct="' + c.ma + '">Xem</button>' +
+          (!laMinh && lv() <= c.chamToi ? '<button class="btn ghost sm" data-dtc="mo" data-k="' + h(k) + '">Chấm</button>' : '') +
+          (!laMinh && p.duDieuKien && !p.coChungChi && lv() <= c.capToi ? '<button class="btn pri sm" data-dtc="ky" data-n="' + h(p.maNguoi) + '" data-ct="' + c.ma + '">Ký chứng nhận</button>' : '') +
+          (p.coChungChi && lv() <= c.capToi ? '<button class="btn ghost sm" data-dtc="mo" data-k="' + h('thu:' + c.ma + ':' + p.maNguoi) + '">Thu hồi</button>' : '');
+        if(st.mo === k){
+          r += '<div class="dtc-form"><div class="co-form">' +
+            '<label class="co-f" for="dtc-ch-b"><span>Bước</span><select class="inp" id="dtc-ch-b">' + chamDuoc.map(function(b){
+              return '<option value="' + b.ma + '">' + h(b.ma + ' · ' + b.ten + ' (đạt từ ' + b.nguong + ')') + '</option>'; }).join('') + '</select></label>' +
+            '<label class="co-f" for="dtc-ch-d"><span>Điểm 0–100</span><input class="inp" id="dtc-ch-d" type="number" min="0" max="100" step="1" inputmode="numeric"></label></div>' +
+            '<label class="co-f mt" for="dtc-ch-n"><span>Nhận xét: đã làm được gì, còn thiếu gì (từ ' + CAU + ' ký tự)</span><textarea class="inp" id="dtc-ch-n" rows="2"></textarea></label>' +
+            '<div class="co-hang mt"><button class="btn pri sm" data-dtc="cham" data-n="' + h(p.maNguoi) + '" data-ct="' + c.ma + '">Ghi điểm</button><button class="btn ghost sm" data-dtc="dong">Thôi</button></div></div>';
+        }
+        if(st.mo === 'thu:' + c.ma + ':' + p.maNguoi){
+          r += '<div class="dtc-form"><label class="co-f" for="dtc-th-l"><span>Lý do thu hồi (từ ' + CAU + ' ký tự)</span><textarea class="inp" id="dtc-th-l" rows="2"></textarea></label>' +
+            '<div class="co-hang mt"><button class="btn pri sm" data-dtc="thuhoi" data-n="' + h(p.maNguoi) + '" data-ct="' + c.ma + '">Thu hồi chứng nhận</button><button class="btn ghost sm" data-dtc="dong">Thôi</button></div></div>';
+        }
+        return r + '</div>';
+      }).join('') + '</div>';
+    });
+    return o;
+  }
+
+  G.VIEWS['chuong-trinh-dt'] = function(){
+    var o = U.ph({ eyebrow:'ĐÀO TẠO & NĂNG LỰC', ic:'book', t:'Chương trình đào tạo',
+      lead:'Ba chương trình: Tư vấn · Nhân sự · Coach. Mỗi bước mở một bài đã có trong hệ; sổ ở máy chủ ghi ai học tới đâu, ai chấm, ai ký chứng nhận hoàn thành.' });
+    giuDung();
+    if(coMayChu() && !st.du && !st.tai && !st.loi) tai();
+    if(st.nguoiXem) o += '<div class="co-hang mb"><span class="sm co-grow">Đang xem tiến độ của <b>' + h(st.nguoiXem) + '</b></span><button class="btn ghost sm" data-dtc="ve-minh">Về tiến độ của tôi</button></div>';
+    o += thanh();
+    if(st.ngan === 'doi' && lv() <= 6) return o + nganDoi();
+    return o + nganCt(ct(st.ngan) || G.DTC_CT[0]);
+  };
+
+  function gt(id){ var e = document.getElementById(id); return e ? String(e.value || '').trim() : ''; }
+  document.addEventListener('click', function(e){
+    var el = e.target.closest && e.target.closest('[data-dtc]'); if(!el) return;
+    var a = el.getAttribute('data-dtc');
+    giuDung();
+    if(a === 'ngan'){ st.ngan = el.getAttribute('data-ma'); st.mo = ''; return veLai(); }
+    if(a === 'mo'){ st.mo = el.getAttribute('data-k'); veLai(); setTimeout(function(){ var t = document.querySelector('.dtc-form textarea,.dtc-form select'); if(t) t.focus(); }, 30); return; }
+    if(a === 'dong'){ st.mo = ''; return veLai(); }
+    if(a === 've-minh'){ st.nguoiXem = ''; st.du = null; return tai(); }
+    if(a === 'xem'){ st.nguoiXem = el.getAttribute('data-n'); st.ngan = el.getAttribute('data-ct'); st.du = null; return tai(); }
+    if(a === 'ghidanh') return goi('ghiDanhDaoTao', { ct:el.getAttribute('data-ct') }, 'Đã ghi danh.');
+    if(a === 'ghidanh-ho'){
+      var n = gt('dtc-gd-nguoi'); if(!n) return U.toast('Nhập tên đăng nhập hoặc email.', 'err');
+      return goi('ghiDanhDaoTao', { ct:gt('dtc-gd-ct'), maNguoi:n }, 'Đã ghi danh ' + n + '.');
+    }
+    if(a === 'tuhoc'){
+      var cau = gt('dtc-cau'); if(cau.length < CAU) return U.toast('Viết ít nhất ' + CAU + ' ký tự: bạn sẽ làm gì khác sau bài này.', 'err');
+      return goi('ghiBuocDaoTao', { ct:el.getAttribute('data-ct'), buoc:el.getAttribute('data-b'), ghiChu:cau }, 'Đã đánh dấu.');
+    }
+    if(a === 'cham'){
+      var nx = gt('dtc-ch-n'), d = gt('dtc-ch-d');
+      if(d === '' || nx.length < CAU) return U.toast('Cần điểm 0–100 và nhận xét từ ' + CAU + ' ký tự.', 'err');
+      return goi('ghiBuocDaoTao', { ct:el.getAttribute('data-ct'), buoc:gt('dtc-ch-b'), maNguoi:el.getAttribute('data-n'),
+        diem:Number(d), ghiChu:nx }, 'Đã ghi điểm.');
+    }
+    if(a === 'ky') return goi('capChungChiDaoTao', { ct:el.getAttribute('data-ct'), maNguoi:el.getAttribute('data-n') }, 'Đã ký chứng nhận.');
+    if(a === 'thuhoi'){
+      var ly = gt('dtc-th-l'); if(ly.length < CAU) return U.toast('Viết lý do từ ' + CAU + ' ký tự.', 'err');
+      return goi('thuHoiChungChiDaoTao', { ct:el.getAttribute('data-ct'), maNguoi:el.getAttribute('data-n'), lyDo:ly }, 'Đã thu hồi.');
+    }
+  });
+})();
+
+})();
+
+/* ═════════ src/thi-chung-chi.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — THI CHỨNG CHỈ (màn thi-chung-chi)
+
+   Tư vấn 50 cấp · Coach 100 cấp. Cấp càng cao mở càng nhiều phần kho
+   cấp cao. Mỗi tháng thi lại để giữ cấp; bỏ một tháng thì tụt một cấp.
+
+   Màn này KHÔNG giữ bản chép nào của khung cấp: khung, luật và % kho đọc
+   từ máy chủ (khungThi · thiCuaToi). Đề thi ghép ở máy chủ lúc bắt đầu
+   từ kho cấp cao × dạng nhiệm vụ × biến cố, riêng cho từng người, nên
+   đọc mã màn hình không ra đề.
+
+   Ba việc máy KHÔNG làm, và màn nói thẳng ra:
+   - máy không chấm bài — người chấm khác người thi, chấm mù;
+   - máy không tự đình chỉ hay tính bồi thường — chỉ ghi đề nghị lên
+     Giám đốc và Super Admin;
+   - vấn đề khó không có lối tự xử lý — phải xin ý kiến, và người duyệt
+     có thể chuyển ca cho người có năng lực cao hơn.
+   ═══════════════════════════════════════════════════════════════ */
+var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
+(function(){
+  var U = G.U, h = U.h, ic = U.ic;
+  var NX_TOI_THIEU = 30, LD_TOI_THIEU = 30;
+  var LY_KHO = { quanLy:'quản lý mở hết', congTat:'cổng thi đang tắt', khoaDoViPham:'đang khoá do vi phạm',
+    vaiKhongDocKho:'vai này không đọc kho cấp cao', khongThuocHe:'không thuộc thang thi nào' };
+  function ngayNgan(ts){ return ts ? new Date(Number(ts)).toLocaleDateString('vi-VN') : ''; }
+  /* Tiêu chuẩn của cấp — người thi đọc để biết bị chấm theo gì, người chấm
+     đọc để chấm đúng cấp chứ không chấm theo cảm giác. */
+  function tieuChuanCap(cd){
+    if(!cd) return '';
+    return '<details class="tcc-chi sm mt"><summary><b>Tiêu chuẩn cấp ' + cd.cap + '</b> · ' + h(cd.ten) + '</summary>' +
+      '<p><b>Năng lực cần thể hiện</b></p><ul>' + cd.nangLuc.map(function(x){ return '<li>' + h(x) + '</li>'; }).join('') + '</ul>' +
+      '<p><b>Tiêu chuẩn</b></p><ul>' + cd.tieuChuan.map(function(x){ return '<li>' + h(x) + '</li>'; }).join('') + '</ul>' +
+      '<p><b>Lỗi trượt ngay</b></p><ul>' + cd.loiTruot.map(function(x){ return '<li>' + h(x) + '</li>'; }).join('') + '</ul></details>';
+  }
+  var st = {};
+  /* Trạng thái gắn với MỘT tài khoản — cùng lý do màn chuong-trinh-dt:
+     đổi tài khoản trên cùng một thẻ thì người sau không được thấy bài
+     đang làm hay hàng chấm của người trước. */
+  function datLai(ai){
+    st = { ai:ai, ngan:'toi', toi:null, khung:null, tai:{}, loi:{}, luot:'', bai:null, nhap:{},
+      cham:null, chamLuot:'', chamBai:null, yk:null, doi:{}, soVp:null, moCap:'', mo:'', xh:null, xhKy:'', lich:null };
+  }
+  function giuDung(){ var ai = (G.S && G.S.acc && G.S.acc.u) || ''; if(st.ai !== ai) datLai(ai); }
+  datLai(null);
+
+  function coMayChu(){ return typeof G.goiMayChu === 'function' && !!G.API_CAP_PHEP && !!G.PHIEN_TOKEN; }
+  function lv(){ return (G.S && G.S.roleObj && G.S.roleObj.lv) || 99; }
+  function laR01(){ return ((G.S && G.S.acc && G.S.acc.role) || '') === 'R01'; }
+  function veLai(){ if(G.render) G.render(); }
+  function ngay(ts){ if(!ts) return ''; var d = new Date(Number(ts)); return d.toLocaleDateString('vi-VN') + ' ' + d.toTimeString().slice(0, 5); }
+  function gt(id){ var e = document.getElementById(id); return e ? String(e.value || '').trim() : ''; }
+  function canhBaoMau(chu, m){ return '<div class="co-cb mb"><div style="--m:' + (m || 'var(--gita-do-ink)') + '">' + ic('alert','w-4 h-4') + '<span>' + chu + '</span></div></div>'; }
+
+  /* Một hàm đọc cho mọi cửa: bỏ câu trả lời về trễ sau khi đổi tài khoản. */
+  function doc(k, fn, than, xong){
+    if(!coMayChu() || st.tai[k]) return;
+    st.tai[k] = true; delete st.loi[k];
+    var cua = st;
+    G.goiMayChu(fn, than || {}, { moi:true }).then(function(r){
+      if(cua !== st) return;
+      st.tai[k] = false;
+      if(r && r.ok) xong(r); else st.loi[k] = (r && r.error) || 'Không đọc được.';
+      veLai();
+    });
+  }
+  function ghi(fn, than, loiOk, sau){
+    G.goiMayChu(fn, than).then(function(r){
+      if(r && r.ok){ U.toast(loiOk(r), 'ok'); if(sau) sau(r); }
+      else U.toast((r && r.error) || 'Không ghi được.', 'err');
+    });
+  }
+  function taiLai(){ st.toi = null; st.yk = null; st.cham = null; st.soVp = null; st.doi = {}; veLai(); }
+  function capDef(he, cap){ return st.khung && st.khung.cap[he] ? st.khung.cap[he][cap - 1] : null; }
+
+  var TT = { dangLam:['Đang làm','var(--gita)'], choCham:['Chờ chấm','var(--warn)'], dat:['Đạt','var(--ok)'], truot:['Trượt','var(--gita-do-ink)'] };
+  function denMau(chu, m){ return '<span class="co-den" style="--m:' + m + '"><i></i>' + h(chu) + '</span>'; }
+  function den(tt, them){ var x = TT[tt] || [tt, 'var(--ink-4)']; return denMau(x[0] + (them || ''), x[1]); }
+
+  function thanh(){
+    var ds = [{ ma:'toi', ten:'Cấp của tôi', ic:'target' }, { ma:'xephang', ten:'Xếp hạng tháng', ic:'chart' }, { ma:'khung', ten:'Khung cấp', ic:'grid' }, { ma:'ykien', ten:'Xin ý kiến', ic:'chat' }];
+    if(lv() <= 6) ds.push({ ma:'cham', ten:'Chấm bài', ic:'check' });
+    if(lv() <= 5) ds.push({ ma:'quanly', ten:'Đội · vi phạm', ic:'shield' });
+    return '<div class="co-tabs" role="tablist">' + ds.map(function(n){
+      return '<button class="co-tab' + (st.ngan === n.ma ? ' on' : '') + '" role="tab" aria-selected="' + (st.ngan === n.ma) + '" data-tcc="ngan" data-ma="' + n.ma + '">' + ic(n.ic) + h(n.ten) + '</button>';
+    }).join('') + '</div>';
+  }
+
+  /* ── CẤP CỦA TÔI ── */
+  function nganToi(){
+    if(!st.toi){ doc('toi', 'thiCuaToi', {}, function(r){ st.toi = r; }); return st.loi.toi ? canhBaoMau(h(st.loi.toi)) : '<p class="sm muted">Đang đọc cấp của bạn…</p>'; }
+    var t = st.toi, o = '';
+    o += t.cong
+      ? canhBaoMau('Cổng thi đang <b>BẬT</b>: phần kho cấp cao bạn mở được đi theo cấp đang giữ. Vấn đề vượt cấp hoặc hạng VVIP · DIAMOND phải xin ý kiến trước khi đề xuất.', 'var(--gita)')
+      : canhBaoMau('Cổng thi đang <b>TẮT</b>: kho cấp cao chưa khoá theo cấp. Bạn vẫn thi được để có cấp sẵn trước khi Super Admin bật cổng.', 'var(--ink-4)');
+    o += t.moHomNay
+      ? canhBaoMau('Hôm nay là <b>ngày thi ' + t.ngayThi + '</b>. Mỗi tháng tối đa hai lượt, cả hai đều trong ngày hôm nay.', 'var(--ok)')
+      : canhBaoMau('Thi chứng chỉ mở vào <b>ngày ' + t.ngayThi + ' hằng tháng</b>. Kỳ thi tới: <b>' + h(ngayNgan(t.ngayThiKe)) + '</b>. Bài đang làm dở vẫn nộp được tới hết giờ.', 'var(--ink-4)');
+    if(!t.he.length) return o + '<p class="sm">Vai của bạn không thuộc thang thi nào. Thang Tư vấn dành cho Tư vấn viên; thang Coach dành cho Trưởng nhóm Coach, Coach cao cấp, Coach và Giáo viên.</p>';
+    t.he.forEach(function(x){
+      o += U.sec('Thang ' + x.ten + ' · ' + x.soCap + ' cấp');
+      o += '<div class="dtc-so"><div><span class="tiny muted">Cấp đang giữ</span><b>' + x.cap + ' / ' + x.soCap + '</b><span class="tiny">' + h(x.tenCap || 'Chưa có cấp') + '</span></div>' +
+        '<div><span class="tiny muted">Phần kho cấp cao mở</span><b>' + (x.khoHet ? '100%' : x.kho + '%') + '</b><span class="tiny">' + h(LY_KHO[x.khoLy] || (x.khoHet ? 'không khoá' : 'theo cấp')) + '</span></div>' +
+        (x.cap ? '<div><span class="tiny muted">Chứng chỉ ' + h(x.ten) + '</span><b>' + h(x.tenCap ? 'Cấp ' + x.cap : '') + '</b><span class="tiny">hiệu lực tới ' + h(ngayNgan(x.hieuLucDen)) + '</span></div>' : '') +
+        '<div><span class="tiny muted">Tháng ' + h(x.thangNay) + '</span><b>' + (x.datThangNay ? 'Đã giữ cấp' : 'Chưa thi') + '</b><span class="tiny">còn ' + x.conLanThang + ' lượt thi tháng này</span></div></div>';
+      if(x.khoaDen && x.khoaDen > Date.now()) o += canhBaoMau('Kho cấp cao đang khoá tới ' + h(ngay(x.khoaDen)) + ' do vi phạm mức 3.');
+      if(!x.datThangNay && x.cap > 0) o += canhBaoMau('Tháng này bạn chưa thi giữ cấp. Bỏ kỳ thi ngày ' + t.ngayThi + ' mà chưa có bài đạt ở cấp ' + x.cap + ' trở lên thì hết tháng cấp tụt một bậc.', 'var(--warn)');
+      var dang = x.bai.filter(function(b){ return b.trangThai === 'dangLam' && b.hanLuc > Date.now(); })[0];
+      o += '<div class="co-hang mb">';
+      if(dang) o += '<button class="btn pri sm" data-tcc="lam" data-l="' + h(dang.luot) + '">' + ic('arrow','w-3 h-3') + 'Làm tiếp bài cấp ' + dang.cap + '</button>';
+      else if(!t.moHomNay) o += '<span class="sm muted">Mở thi ngày ' + t.ngayThi + ' · kỳ tới ' + h(ngayNgan(t.ngayThiKe)) + '</span>';
+      else if(x.conLanThang > 0){
+        if(x.cap < x.soCap) o += '<button class="btn pri sm" data-tcc="batdau" data-he="' + x.he + '" data-muc="len">Thi lên cấp ' + x.capKe + ' · ' + h(x.tenCapKe) + '</button>';
+        if(x.cap > 0) o += '<button class="btn ghost sm" data-tcc="batdau" data-he="' + x.he + '" data-muc="giu">Thi giữ cấp ' + x.cap + '</button>';
+      } else o += '<span class="sm muted">Đã dùng hết lượt thi tháng này.</span>';
+      o += '</div>';
+      if(x.bai.length) o += '<div class="co-ds">' + x.bai.map(function(b){
+        var het = b.trangThai === 'dangLam' && b.hanLuc <= Date.now();
+        return '<div class="co-dong"><span class="co-grow"><b class="sm">Cấp ' + b.cap + '</b> <span class="tiny muted">· ' + (b.muc === 'giu' ? 'giữ cấp' : 'lên cấp') + ' · tháng ' + h(b.thang) + '</span></span>' +
+          (het ? denMau('Hết giờ, chưa nộp', 'var(--ink-4)') : den(b.trangThai, b.quaGio ? ' · nộp quá giờ' : '')) +
+          '<button class="btn ghost sm" data-tcc="lam" data-l="' + h(b.luot) + '">' + (b.trangThai === 'dangLam' && !het ? 'Làm bài' : 'Xem') + '</button></div>';
+      }).join('') + '</div>';
+    });
+    if(t.viPham.length){
+      o += U.sec('Vi phạm đã ghi');
+      o += '<div class="co-ds">' + t.viPham.map(function(v){
+        var k = 'gt:' + v.id;
+        var r = '<div class="co-dong"><span class="co-grow"><b class="sm">' + h(v.tenLoai || v.loai) + '</b> <span class="tiny muted">· mức ' + v.mucDo + ' · ' + h(ngay(v.luc)) + ' · ghi bởi ' + h(v.boiAi) + '</span>' +
+          '<br><span class="tiny">' + h(v.chungCu) + '</span>' +
+          (v.giaiTrinh ? '<br><span class="tiny muted">Giải trình của bạn: “' + h(v.giaiTrinh) + '”</span>' : '') + '</span>' +
+          (v.quyet === 'huy' ? denMau('Đã huỷ', 'var(--ok)') : v.quyet === 'xacNhan' ? denMau('Đã xác nhận', 'var(--gita-do-ink)') : denMau('Chờ Super Admin', 'var(--warn)')) +
+          (!v.quyet ? '<button class="btn ghost sm" data-tcc="mo" data-k="' + h(k) + '">Viết giải trình</button>' : '');
+        if(st.mo === k) r += '<div class="dtc-form"><label class="co-f" for="tcc-gt"><span>Giải trình (từ ' + LD_TOI_THIEU + ' ký tự): việc đã làm, chứng cứ ở đâu</span><textarea class="inp" id="tcc-gt" rows="3"></textarea></label>' +
+          '<div class="co-hang mt"><button class="btn pri sm" data-tcc="giaitrinh" data-id="' + h(v.id) + '">Gửi giải trình</button><button class="btn ghost sm" data-tcc="dong">Thôi</button></div></div>';
+        return r + '</div>';
+      }).join('') + '</div>';
+    }
+    return o;
+  }
+
+  /* ── LÀM BÀI / XEM BÀI CỦA MÌNH ── */
+  function nganBai(){
+    var o = '<div class="co-hang mb"><button class="btn ghost sm" data-tcc="ve">' + ic('arrow','w-3 h-3') + 'Về cấp của tôi</button></div>';
+    if(!st.bai){ doc('bai', 'docBaiThi', { luot:st.luot }, function(r){ st.bai = r; }); return o + (st.loi.bai ? canhBaoMau(h(st.loi.bai)) : '<p class="sm muted">Đang mở bài…</p>'); }
+    if(!st.khung) doc('khung', 'khungThi', {}, function(r){ st.khung = r; });
+    var b = st.bai, mo = b.trangThai === 'dangLam' && b.hanLuc > Date.now(), toiThieu = b.chuToiThieu || 200;
+    var conPhut = Math.max(0, Math.round((b.hanLuc - Date.now()) / 60000));
+    o += '<h3 class="hvh-h">' + h(b.ma) + ' · ' + h(b.tenCap) + '</h3>';
+    o += '<p class="sm muted mb">' + b.de.length + ' ca · đạt từ ' + b.nguong + ' điểm · ' + b.canNguoi + ' người chấm' +
+      (mo ? ' · hạn nộp ' + h(ngay(b.hanLuc)) + ' (còn ' + conPhut + ' phút)' : ' · ' + (TT[b.trangThai] ? TT[b.trangThai][0] : b.trangThai)) + '</p>';
+    o += tieuChuanCap(capDef(b.he, b.cap));
+    if(mo) o += canhBaoMau('Viết bằng lời của bạn, mỗi ca từ ' + toiThieu + ' ký tự; mỗi ca chấm riêng, một ca dưới ' + (b.sanCa || 50) + ' điểm là trượt cả bài. Bài trùng lời giải trong kho sẽ bị máy đánh dấu cho người chấm xem. Vấn đề vượt quyền của bạn thì viết rõ bạn xin ý kiến ai — tự xử lý vấn đề khó là lỗi trượt.', 'var(--gita)');
+    var nhap = st.nhap[b.luot] || (st.nhap[b.luot] = []);
+    b.de.forEach(function(c, i){
+      o += '<div class="card mt tcc-ca"><div class="co-hang"><b class="co-grow">Ca ' + (i + 1) + ' · ' + h(c.ten || c.ma) + '</b><span class="dtc-tag" style="--m:var(--gita)">' + h(c.hang || '') + '</span><span class="dtc-tag" style="--m:var(--ink-4)">' + h(c.tenDang || c.dang) + '</span></div>' +
+        '<p class="sm mt">' + h(c.van) + '</p>' + (c.boiCanh ? '<p class="tiny muted">Bối cảnh: ' + h(c.boiCanh) + '</p>' : '') +
+        (c.bien.length ? '<div class="co-cb mt">' + c.bien.map(function(x){ return '<div style="--m:var(--warn)"><b>Biến cố</b><span>' + h(x) + '</span></div>'; }).join('') + '</div>' : '') +
+        '<p class="sm mt"><b>Nhiệm vụ:</b> ' + h(c.yeuCau) + '</p>' +
+        '<div class="tcc-thang tiny">' + c.thang.map(function(t){ return '<div><b>' + h(t.ten) + '</b><span>' + h(t.moTa) + '</span></div>'; }).join('') + '</div>';
+      if(mo){
+        var v = nhap[i] || '';
+        o += '<label class="co-f mt" for="tcc-bl-' + i + '"><span>Bài làm ca ' + (i + 1) + ' · <span id="tcc-dem-' + i + '">' + v.length + '</span>/' + toiThieu + ' ký tự</span>' +
+          '<textarea class="inp" id="tcc-bl-' + i + '" rows="7" data-tcc-nhap="' + i + '">' + h(v) + '</textarea></label>';
+      } else if(b.baiLam[i]) o += '<div class="tcc-bai mt sm">' + h(b.baiLam[i]) + '</div>';
+      o += '</div>';
+    });
+    if(mo) o += '<div class="co-hang mt"><button class="btn pri" data-tcc="nop">Nộp bài</button><span class="tiny muted">Nộp rồi không sửa được.</span></div>';
+    if(!mo && b.cham && b.cham.length){
+      o += U.sec('Điểm và nhận xét');
+      o += '<div class="co-ds">' + b.cham.map(function(c){
+        return '<div class="co-dong"><span class="co-grow"><b class="sm">' + c.diem + ' điểm</b> <span class="tiny muted">· chấm bởi ' + h(c.boiAi) + '</span>' +
+          (c.loiTruot ? '<br><span class="tiny" style="color:var(--gita-do-ink)">Lỗi trượt: ' + h(c.loiTruot) + '</span>' : '') +
+          '<br><span class="tiny">' + h(c.ghiChu) + '</span></span></div>';
+      }).join('') + '</div>';
+    } else if(b.trangThai === 'choCham') o += '<p class="sm muted mt">Bài đang chờ chấm. Điểm chỉ hiện khi đủ người chấm.</p>';
+    return o;
+  }
+
+  /* ── KHUNG CẤP ── */
+  function nganKhung(){
+    if(!st.khung){ doc('khung', 'khungThi', {}, function(r){ st.khung = r; }); return st.loi.khung ? canhBaoMau(h(st.loi.khung)) : '<p class="sm muted">Đang đọc khung…</p>'; }
+    var k = st.khung, L = k.luat, o = '';
+    o += '<div class="co-cb mb">' +
+      '<div style="--m:var(--gita)"><b>Mỗi tháng</b><span>Thi tối đa ' + L.lanToiDa + ' lượt một thang. Có bài đạt ở cấp đang giữ trở lên thì giữ cấp; không có thì cuối tháng tụt một cấp.</span></div>' +
+      '<div style="--m:var(--ink-4)"><b>Đề riêng</b><span>Mỗi bài ghép từ kho cấp cao × ' + k.dang.length + ' dạng nhiệm vụ × ' + k.soBien + ' biến cố, theo tên người, cấp, tháng và lượt. Không có ngân hàng câu hỏi để học thuộc.</span></div>' +
+      '<div style="--m:var(--warn)"><b>Vấn đề khó</b><span>Hạng ' + h(L.hangKho.join(' · ')) + ' và mọi vấn đề vượt cấp phải xin ý kiến. Ý kiến được duyệt có hiệu lực ' + L.ngayChoPhep + ' ngày.</span></div>' +
+      '<div style="--m:var(--gita-do-ink)"><b>Vi phạm</b><span>Mức 1 hạ ' + L.heQua[1].ha + ' cấp · mức 2 hạ ' + L.heQua[2].ha + ' cấp · mức 3 về cấp 0 và khoá kho ' + L.heQua[3].khoaNgay + ' ngày. Đình chỉ và bồi thường là quyết định của người, máy chỉ ghi đề nghị.</span></div></div>';
+    Object.keys(k.he).forEach(function(he){
+      var H = k.he[he];
+      o += U.sec('Thang ' + H.ten + ' · ' + H.soCap + ' cấp');
+      o += '<div class="tcc-bang" role="region" aria-label="Khung cấp ' + h(H.ten) + '" tabindex="0"><table class="tbl sm"><tr><th>Cấp</th><th>Tên</th><th>Ca</th><th>Biến cố</th><th>Đạt từ</th><th>Người chấm</th><th>Phút</th><th>Kho mở</th><th></th></tr>' +
+        k.cap[he].map(function(c){
+          var key = he + ':' + c.cap;
+          var r = '<tr><td class="mono">' + h(c.ma) + '</td><td>' + h(c.ten) + '<br><span class="tiny muted">' + h(c.daiTen) + '</span></td><td>' + c.soCa + '</td><td>' + c.soBien + '</td><td>' + c.nguong + '</td><td>' + c.soNguoiCham + '</td><td>' + c.phut + '</td><td>' + c.kho + '%</td>' +
+            '<td><button class="btn ghost sm" data-tcc="mocap" data-k="' + h(key) + '">' + (st.moCap === key ? 'Thu' : 'Xem') + '</button></td></tr>';
+          if(st.moCap === key) r += '<tr><td colspan="9"><div class="tcc-chi sm"><p><b>Trọng tâm:</b> ' + h(c.trongTam) + '</p><p><b>Khó hơn cấp trước:</b> ' + h(c.khoHon) + '</p>' +
+            '<p><b>Năng lực cần thể hiện</b></p><ul>' + c.nangLuc.map(function(x){ return '<li>' + h(x) + '</li>'; }).join('') + '</ul>' +
+            '<p><b>Tiêu chuẩn</b></p><ul>' + c.tieuChuan.map(function(x){ return '<li>' + h(x) + '</li>'; }).join('') + '</ul>' +
+            '<p><b>Lỗi trượt ngay</b></p><ul>' + c.loiTruot.map(function(x){ return '<li>' + h(x) + '</li>'; }).join('') + '</ul></div></td></tr>';
+          return r;
+        }).join('') + '</table></div>';
+    });
+    return o;
+  }
+
+  /* ── XIN Ý KIẾN ── */
+  function nganYKien(){
+    var o = '<p class="sm muted mb">Vấn đề khó, vượt cấp hay chưa chắc thì xin ý kiến trước khi đề xuất cho nhà. Người duyệt có thể cho làm, chuyển ca cho người có năng lực cao hơn, hoặc từ chối. Giấu vấn đề hay tự xử lý theo kinh nghiệm cá nhân là vi phạm.</p>';
+    o += '<div class="co-form mb"><label class="co-f" for="tcc-yk-nha"><span>Mã nhà</span><input class="inp" id="tcc-yk-nha" autocomplete="off"></label>' +
+      '<label class="co-f" for="tcc-yk-ma"><span>Mã vấn đề (vd. V2-B-014)</span><input class="inp" id="tcc-yk-ma" autocomplete="off"></label></div>' +
+      '<label class="co-f" for="tcc-yk-ly"><span>Vấn đề gì, vì sao khó, đã làm gì, đề nghị ai xử lý (từ ' + LD_TOI_THIEU + ' ký tự)</span><textarea class="inp" id="tcc-yk-ly" rows="3"></textarea></label>' +
+      '<div class="co-hang mt mb"><button class="btn pri sm" data-tcc="xin">Gửi xin ý kiến</button></div>';
+    if(!st.yk){ doc('yk', 'dsYKien', {}, function(r){ st.yk = r; }); return o + (st.loi.yk ? canhBaoMau(h(st.loi.yk)) : '<p class="sm muted">Đang đọc…</p>'); }
+    o += U.sec(st.yk.quanLy ? 'Mọi lượt xin ý kiến' : 'Lượt xin của tôi');
+    if(!st.yk.ds.length) return o + '<p class="sm muted">Chưa có lượt nào.</p>';
+    var Q = { cho:['Cho làm','var(--ok)'], chuyen:['Đã chuyển','var(--gita)'], tuChoi:['Từ chối','var(--gita-do-ink)'] };
+    o += '<div class="co-ds">' + st.yk.ds.map(function(y){
+      var q = Q[y.quyet], k = 'yk:' + y.id;
+      var r = '<div class="co-dong"><span class="co-grow"><b class="sm">' + h(y.ma) + '</b> <span class="tiny muted">· nhà ' + h(y.maNha) + ' · ' + h(y.boiAi) + ' · ' + h(ngay(y.luc)) + '</span><br><span class="tiny">' + h(y.lyDo) + '</span>' +
+        (y.quyet === 'chuyen' && y.choAi ? '<br><span class="tiny muted">Giao cho ' + h(y.choAi) + '</span>' : '') + '</span>' +
+        (q ? '<span class="co-den" style="--m:' + q[1] + '"><i></i>' + q[0] + '</span>' : '<span class="co-den" style="--m:var(--warn)"><i></i>Chờ duyệt</span>') +
+        (st.yk.quanLy && !y.quyet ? '<button class="btn ghost sm" data-tcc="mo" data-k="' + h(k) + '">Duyệt</button>' : '');
+      if(st.mo === k) r += '<div class="dtc-form"><div class="co-form"><label class="co-f" for="tcc-dy-q"><span>Quyết định</span><select class="inp" id="tcc-dy-q">' +
+        '<option value="cho">Cho người xin làm</option><option value="chuyen">Chuyển cho người khác</option><option value="tuChoi">Từ chối</option></select></label>' +
+        '<label class="co-f" for="tcc-dy-ai"><span>Chuyển cho (tên đăng nhập hoặc email)</span><input class="inp" id="tcc-dy-ai" autocomplete="off"></label></div>' +
+        '<label class="co-f mt" for="tcc-dy-gc"><span>Lý do quyết định (từ 10 ký tự)</span><textarea class="inp" id="tcc-dy-gc" rows="2"></textarea></label>' +
+        '<div class="co-hang mt"><button class="btn pri sm" data-tcc="duyet" data-id="' + h(y.id) + '">Ghi quyết định</button><button class="btn ghost sm" data-tcc="dong">Thôi</button></div></div>';
+      return r + '</div>';
+    }).join('') + '</div>';
+    return o;
+  }
+
+  /* ── CHẤM BÀI ── */
+  function nganCham(){
+    if(st.chamLuot) return nganChamBai();
+    var o = '<p class="sm muted mb">Bạn chỉ thấy bài mình được chấm: không phải bài của mình, và nếu không phải quản lý thì bài ở cấp thấp hơn cấp bạn đang giữ. Chấm mù: chưa chấm thì không thấy điểm của người chấm khác.</p>';
+    if(!st.cham){ doc('cham', 'dsBaiCham', {}, function(r){ st.cham = r.ds; }); return o + (st.loi.cham ? canhBaoMau(h(st.loi.cham)) : '<p class="sm muted">Đang đọc hàng chấm…</p>'); }
+    if(!st.cham.length) return o + '<p class="sm muted">Không có bài nào chờ bạn chấm.</p>';
+    return o + '<div class="co-ds">' + st.cham.map(function(d){
+      return '<div class="co-dong"><span class="co-grow"><b class="sm">' + h(d.ma) + '</b> <span class="tiny muted">· nộp ' + h(ngay(d.nopLuc)) + ' · đã chấm ' + d.daCham + '/' + d.canNguoi + '</span></span>' +
+        (d.coCanhBao ? '<span class="co-den" style="--m:var(--gita-do-ink)"><i></i>Máy báo trùng kho</span>' : '') +
+        '<button class="btn pri sm" data-tcc="mocham" data-l="' + h(d.luot) + '">Chấm</button></div>';
+    }).join('') + '</div>';
+  }
+  function nganChamBai(){
+    var o = '<div class="co-hang mb"><button class="btn ghost sm" data-tcc="vecham">' + ic('arrow','w-3 h-3') + 'Về hàng chấm</button></div>';
+    if(!st.khung) doc('khung', 'khungThi', {}, function(r){ st.khung = r; });
+    if(!st.chamBai){ doc('chamBai', 'docBaiThi', { luot:st.chamLuot }, function(r){ st.chamBai = r; }); return o + (st.loi.chamBai ? canhBaoMau(h(st.loi.chamBai)) : '<p class="sm muted">Đang mở bài…</p>'); }
+    var b = st.chamBai, cd = capDef(b.he, b.cap);
+    o += '<h3 class="hvh-h">' + h(b.ma) + ' · ' + h(b.tenCap) + (b.muc === 'giu' ? ' · thi giữ cấp' : '') + '</h3><p class="sm muted mb">Đạt từ ' + b.nguong + ' điểm (trung bình các ca, mỗi ca 4 tiêu chí × 25) và không ca nào dưới ' + (b.sanCa || 50) + '. Mỗi người chấm một lần, không sửa được. Người thi không hiện tên.</p>' + tieuChuanCap(cd);
+    if(b.canhBao && b.canhBao.length) o += canhBaoMau('Máy thấy bài trùng lời giải trong kho ở ' + b.canhBao.map(function(c){ return 'ca ' + c.ca + ' (' + c.tyLe + '%' + (c.cum ? ', ' + c.cum + ' cụm' : '') + ')'; }).join(' · ') + '. Đọc kỹ trước khi chấm; nếu là chép thì ghi lỗi trượt và báo quản lý ghi vi phạm "Gian lận khi thi".');
+    b.de.forEach(function(c, i){
+      o += '<div class="card mt tcc-ca"><b>Ca ' + (i + 1) + ' · ' + h(c.ten || c.ma) + '</b> <span class="tiny muted">· ' + h(c.tenDang || c.dang) + '</span>' +
+        '<p class="sm mt">' + h(c.van) + '</p>' + (c.bien.length ? '<p class="tiny muted">Biến cố: ' + h(c.bien.join(' · ')) + '</p>' : '') +
+        '<p class="sm"><b>Nhiệm vụ:</b> ' + h(c.yeuCau) + '</p><div class="tcc-bai mt sm">' + h(b.baiLam[i] || '') + '</div>' +
+        '<div class="co-form mt">' + c.thang.map(function(t, j){
+          return '<label class="co-f" for="tcc-d-' + i + '-' + j + '"><span>' + h(t.ten) + ' (0–25)</span><input class="inp" id="tcc-d-' + i + '-' + j + '" type="number" min="0" max="25" step="1" inputmode="numeric" title="' + h(t.moTa) + '"></label>';
+        }).join('') + '</div></div>';
+    });
+    o += '<label class="co-f mt" for="tcc-lt"><span>Lỗi trượt ngay (nếu có — chọn thì bài trượt dù điểm cao)</span><select class="inp" id="tcc-lt"><option value="">Không có</option>' +
+      (cd ? cd.loiTruot.map(function(x){ return '<option value="' + h(x) + '">' + h(x) + '</option>'; }).join('') : '') + '</select></label>' +
+      '<label class="co-f mt" for="tcc-nx"><span>Nhận xét: điểm mạnh, chỗ cần nâng (từ ' + NX_TOI_THIEU + ' ký tự)</span><textarea class="inp" id="tcc-nx" rows="3"></textarea></label>' +
+      '<div class="co-hang mt"><button class="btn pri" data-tcc="cham" data-n="' + b.de.length + '">Ghi điểm</button></div>';
+    return o;
+  }
+
+  /* ── XẾP HẠNG LƯƠNG THƯỞNG THÁNG · LỊCH TRẢ LƯƠNG ── */
+  function kyTruoc(){ var d = new Date(Date.now() + 7 * 3600000 - 20 * 86400000); return d.toISOString().slice(0, 7); }
+  /* Ba trạng thái, không gộp: đạt · không đạt · CHƯA XÉT (thiếu mẫu phiếu). */
+  function oThuong(t){
+    if(!t) return '<span class="muted">—</span>';
+    var nhan = t.trangThai === 'dat' ? '<b style="color:var(--gita)">Thưởng ' + (t.ptLuong || 0) + '% lương</b>' : t.trangThai === 'chuaXet' ? '<span class="muted">Chưa xét</span>' : '<span>Chưa đạt</span>';
+    return nhan + (t.tyLeHaiLong !== null && t.tyLeHaiLong !== undefined ? '<br><span class="tiny muted">hài lòng ' + t.tyLeHaiLong + '%</span>' : '') +
+      '<br><span class="tiny muted">' + h(t.lyDo) + '</span>';
+  }
+  function nganXepHang(){
+    var ky = st.xhKy || kyTruoc();
+    var o = '<p class="sm muted mb">Hạng tháng ghép từ bốn thứ đo được trong sổ: điểm thi ngày 28, cấp chứng chỉ, phiếu tháng của chính các gia đình mình phụ trách, và điểm sát hạch nghiệp vụ do người chấm khác mình ghi. Không ô nào người được xếp hạng tự gõ.</p>';
+    o += '<div class="co-form mb"><label class="co-f" for="tcc-xh-ky"><span>Kỳ (tháng)</span><input class="inp" id="tcc-xh-ky" type="month" value="' + h(ky) + '"></label>' +
+      '<div class="co-f"><span>&nbsp;</span><button class="btn ghost sm" data-tcc="xhky">Xem kỳ này</button></div></div>';
+    if(!st.xh || st.xh.ky !== ky){ doc('xh', 'xepHangThang', { ky:ky }, function(r){ st.xh = r; }); o += st.loi.xh ? canhBaoMau(h(st.loi.xh)) : '<p class="sm muted">Đang tính…</p>'; }
+    else {
+      var x = st.xh, L = x.luat;
+      if(x.ngayTra) o += canhBaoMau('Lương kỳ ' + h(x.ky) + ' trả ngày <b>' + h(x.ngayTra.ngay.split('-').reverse().join('/')) + '</b>' + (x.ngayTra.doi ? ' (dời vì ' + h(x.ngayTra.lyDo) + ')' : '') + '.', 'var(--gita)');
+      o += '<div class="co-cb mb"><div style="--m:var(--ink-4)"><span>Trọng số KPI: thi ngày 28 ' + L.trongSo.thi + ' · cấp chứng chỉ ' + L.trongSo.cap + ' · tỷ lệ nhà hài lòng ' + L.trongSo.phanHoi + ' · thi nghiệp vụ ' + L.trongSo.nghiepVu + ' (sát hạch có người chấm, giá trị ' + L.hanNghiepVu + ' ngày; chưa sát hạch tính 0)' +
+        '. Hạng ' + L.hang.map(function(g){ return g.hang + (g.tu ? ' từ ' + g.tu : ''); }).join(' · ') + '. Dưới ' + L.mauToiThieu + ' nhà có phiếu thì phần phản hồi ghi "chưa đủ mẫu", không tính là 0. ' +
+        (L.thuong ? '<b>Thưởng lương</b> khi KPI từ ' + L.thuong.kpi + ' VÀ từ ' + L.thuong.haiLong + '% nhà hài lòng (nhà hài lòng = điểm hài lòng trung bình từ ' + L.csatHaiLong + '/5); mức thưởng ' +
+          (L.mucThuong || []).slice().reverse().map(function(m){ return m.pt + '% lương từ KPI ' + m.tu; }).join(' · ') + '. ' : '') + h(x.gioiHan) + '</span></div></div>';
+      if(!x.ds.length) o += '<p class="sm muted">' + (x.chiDongCuaToi ? 'Vai của bạn không nằm trong thang Coach / Tư vấn.' : 'Chưa có Coach hay Tư vấn viên nào.') + '</p>';
+      else o += '<div class="tcc-bang" role="region" aria-label="Xếp hạng lương thưởng" tabindex="0"><table class="tbl sm"><tr><th>Nhân sự</th><th>Hạng</th><th>Điểm</th><th>Thi ngày 28</th><th>Cấp</th><th>Nhà hài lòng</th><th>Nghiệp vụ</th><th>Thưởng</th></tr>' +
+        x.ds.map(function(d){
+          var tp = {}; d.thanhPhan.forEach(function(t){ tp[t.ma] = t; });
+          var o2 = function(t){ return (t.giaTri === null ? '<span class="muted">chưa đủ mẫu</span>' : t.giaTri) + (t.ghiChu ? '<br><span class="tiny muted">' + h(t.ghiChu) + '</span>' : ''); };
+          return '<tr><td>' + h(d.maNguoi) + '<br><span class="tiny muted">' + h(d.role) + ' · ' + d.soNhaPhuTrach + ' nhà phụ trách</span></td><td><b>' + h(d.hang) + '</b></td><td>' + d.diem +
+            (d.trongBoQua ? '<br><span class="tiny muted">bỏ ' + d.trongBoQua + '% trọng số</span>' : '') + '</td><td>' + o2(tp.thi) + '</td><td>' + o2(tp.cap) + '</td><td>' + o2(tp.phanHoi) + '</td><td>' + (tp.nghiepVu ? o2(tp.nghiepVu) : '—') + '</td><td>' + oThuong(d.thuong) + '</td></tr>';
+        }).join('') + '</table></div>';
+    }
+    o += U.sec('Lịch trả lương');
+    if(!st.lich){ doc('lich', 'lichTraLuong', {}, function(r){ st.lich = r; }); o += st.loi.lich ? canhBaoMau(h(st.loi.lich)) : '<p class="sm muted">Đang đọc…</p>'; }
+    else {
+      o += '<p class="sm muted mb">Ngày ' + st.lich.luat.ngayTra + ' hằng tháng trả lương của tháng trước; ngày ấy trùng ngày nghỉ (thứ Bảy, Chủ nhật, lễ, ngày Super Admin khai) thì trả ngày ' + st.lich.luat.ngayLui + '; ngày ' + st.lich.luat.ngayLui + ' cũng nghỉ thì trả ngày làm việc kế tiếp. Ngày trả bị dời thì mỗi nhân sự nhận một thông báo trong hộp thông báo.</p>';
+      o += '<div class="tcc-bang" role="region" aria-label="Lịch trả lương ' + st.lich.nam + '" tabindex="0"><table class="tbl sm"><tr><th>Lương tháng</th><th>Ngày trả</th></tr>' + st.lich.lich.map(function(l){
+        return '<tr><td>' + h(l.ky) + '</td><td>' + h(l.ngay.split('-').reverse().join('/')) + (l.doi ? ' <span class="tiny muted">· ' + h(l.lyDo) + '</span>' : '') + '</td></tr>'; }).join('') + '</table></div>';
+      if(st.lich.nghiKhai.length) o += '<p class="tiny muted">Ngày đã khai: ' + st.lich.nghiKhai.map(function(n){ return h(n.ngay + ' ' + (n.nghi ? 'nghỉ' : 'làm') + ' · ' + n.ten); }).join(' · ') + '</p>';
+      if(laR01()) o += '<div class="co-form mt"><label class="co-f" for="tcc-nn-ngay"><span>Ngày (Tết âm lịch, nghỉ bù…)</span><input class="inp" id="tcc-nn-ngay" type="date"></label>' +
+        '<label class="co-f" for="tcc-nn-ten"><span>Tên ngày</span><input class="inp" id="tcc-nn-ten" autocomplete="off"></label>' +
+        '<div class="co-f"><span>&nbsp;</span><div class="co-hang"><button class="btn pri sm" data-tcc="nghi" data-n="1">Khai là ngày nghỉ</button><button class="btn ghost sm" data-tcc="nghi" data-n="0">Khai là ngày làm</button></div></div></div>';
+    }
+    return o;
+  }
+
+  /* ── ĐỘI · VI PHẠM ── */
+  function nganQuanLy(){
+    var o = '';
+    if(laR01()){
+      var bat = st.toi ? st.toi.cong : null;
+      o += U.sec('Cổng thi');
+      o += '<p class="sm mb">Bật cổng thì kho cấp cao khoá theo cấp của từng người, và vấn đề khó phải xin ý kiến. Quản lý (R01–R04) không qua cổng.' +
+        (bat === null ? '' : ' Hiện đang <b>' + (bat ? 'BẬT' : 'TẮT') + '</b>.') + '</p>' +
+        '<label class="co-f" for="tcc-cong-ly"><span>Lý do bật/tắt (ghi vào sổ)</span><input class="inp" id="tcc-cong-ly" autocomplete="off"></label>' +
+        '<div class="co-hang mt mb"><button class="btn pri sm" data-tcc="cong" data-bat="1">Bật cổng</button><button class="btn ghost sm" data-tcc="cong" data-bat="0">Tắt cổng</button></div>';
+      if(!st.toi) doc('toi', 'thiCuaToi', {}, function(r){ st.toi = r; });
+    }
+    o += U.sec('Ghi vi phạm');
+    o += '<p class="sm muted mb">Chỉ ghi cho người bậc thấp hơn mình. Máy hạ cấp ngay theo mức; đề nghị đình chỉ hay bồi thường chỉ được gửi lên Giám đốc và Super Admin — máy không tự làm.</p>' +
+      '<div class="co-form"><label class="co-f" for="tcc-vp-ai"><span>Tên đăng nhập hoặc email</span><input class="inp" id="tcc-vp-ai" autocomplete="off"></label>' +
+      '<label class="co-f" for="tcc-vp-he"><span>Thang</span><select class="inp" id="tcc-vp-he"><option value="tuvan">Tư vấn</option><option value="coach">Coach</option></select></label>' +
+      '<label class="co-f" for="tcc-vp-loai"><span>Loại</span><select class="inp" id="tcc-vp-loai">' +
+      (st.khung ? Object.keys(st.khung.luat.viPham).map(function(k){ return '<option value="' + k + '">' + h(st.khung.luat.viPham[k]) + '</option>'; }).join('') : '') + '</select></label>' +
+      '<label class="co-f" for="tcc-vp-muc"><span>Mức</span><select class="inp" id="tcc-vp-muc"><option value="1">Mức 1</option><option value="2">Mức 2</option><option value="3">Mức 3</option></select></label>' +
+      '<label class="co-f" for="tcc-vp-dx"><span>Đề nghị lên cấp cao</span><select class="inp" id="tcc-vp-dx"><option value="">Không</option><option value="dinhChi">Đề nghị đình chỉ</option><option value="boiThuong">Đề nghị bồi thường</option></select></label></div>' +
+      '<label class="co-f mt" for="tcc-vp-cc"><span>Chứng cứ: việc gì, lúc nào, ở ca nào (từ ' + LD_TOI_THIEU + ' ký tự)</span><textarea class="inp" id="tcc-vp-cc" rows="3"></textarea></label>' +
+      '<div class="co-hang mt mb"><button class="btn pri sm" data-tcc="ghivp">Ghi vi phạm</button></div>';
+    if(!st.khung) doc('khung', 'khungThi', {}, function(r){ st.khung = r; });
+
+    o += U.sec('Sổ vi phạm');
+    if(!st.soVp){ doc('soVp', 'dsViPham', {}, function(r){ st.soVp = r.ds; }); o += st.loi.soVp ? canhBaoMau(h(st.loi.soVp)) : '<p class="sm muted">Đang đọc…</p>'; }
+    else if(!st.soVp.length) o += '<p class="sm muted">Chưa có vi phạm nào được ghi.</p>';
+    else o += '<div class="co-ds">' + st.soVp.map(function(v){
+      var k = 'q:' + v.id;
+      var r = '<div class="co-dong"><span class="co-grow"><b class="sm">' + h(v.maNguoi) + '</b> <span class="tiny muted">· ' + h(v.tenLoai || v.loai) + ' · mức ' + v.mucDo + ' · ghi bởi ' + h(v.boiAi) + ' · ' + h(ngay(v.luc)) + '</span>' +
+        '<br><span class="tiny">' + h(v.chungCu) + '</span>' + (v.deXuat ? '<br><span class="tiny" style="color:var(--gita-do-ink)">Đề nghị ' + (v.deXuat === 'dinhChi' ? 'đình chỉ' : 'bồi thường') + ' — chờ người có thẩm quyền</span>' : '') +
+        '<br><span class="tiny muted">Giải trình: ' + (v.giaiTrinh ? '“' + h(v.giaiTrinh) + '”' : 'chưa có') + '</span></span>' +
+        (v.quyet ? '<span class="co-den" style="--m:' + (v.quyet === 'huy' ? 'var(--ok)' : 'var(--gita-do-ink)') + '"><i></i>' + (v.quyet === 'huy' ? 'Đã huỷ' : 'Đã xác nhận') + '</span>'
+          : laR01() ? '<button class="btn ghost sm" data-tcc="mo" data-k="' + h(k) + '">Quyết định</button>' : '<span class="co-den" style="--m:var(--warn)"><i></i>Chờ Super Admin</span>');
+      if(st.mo === k) r += '<div class="dtc-form"><label class="co-f" for="tcc-q-gc"><span>Lý do (từ 10 ký tự)</span><textarea class="inp" id="tcc-q-gc" rows="2"></textarea></label>' +
+        '<div class="co-hang mt"><button class="btn pri sm" data-tcc="quyet" data-q="xacNhan" data-id="' + h(v.id) + '">Xác nhận vi phạm</button><button class="btn ghost sm" data-tcc="quyet" data-q="huy" data-id="' + h(v.id) + '">Huỷ (ghi nhầm)</button><button class="btn ghost sm" data-tcc="dong">Thôi</button></div></div>';
+      return r + '</div>';
+    }).join('') + '</div>';
+
+    ['tuvan', 'coach'].forEach(function(he){
+      o += U.sec('Đội · thang ' + (he === 'coach' ? 'Coach' : 'Tư vấn'));
+      var d = st.doi[he];
+      if(!d){ doc('doi-' + he, 'doiThi', { he:he }, function(r){ st.doi[he] = r.ds; }); o += st.loi['doi-' + he] ? canhBaoMau(h(st.loi['doi-' + he])) : '<p class="sm muted">Đang đọc…</p>'; return; }
+      if(!d.length){ o += '<p class="sm muted">Chưa có nhân sự nào ở thang này.</p>'; return; }
+      o += '<div class="tcc-bang" role="region" aria-label="Đội thang ' + he + '" tabindex="0"><table class="tbl sm"><tr><th>Nhân sự</th><th>Vai</th><th>Cấp</th><th>Tháng này</th></tr>' + d.map(function(p){
+        return '<tr><td>' + h(p.maNguoi) + '</td><td>' + h(p.role) + '</td><td>' + p.cap + '</td><td>' + (p.datThangNay ? 'Đã giữ cấp' : 'Chưa thi') +
+          (p.khoaDen && p.khoaDen > Date.now() ? ' · kho khoá tới ' + h(ngay(p.khoaDen)) : '') + '</td></tr>';
+      }).join('') + '</table></div>';
+    });
+    return o;
+  }
+
+  G.VIEWS['thi-chung-chi'] = function(){
+    var o = U.ph({ eyebrow:'ĐÀO TẠO & NĂNG LỰC', ic:'shield', t:'Thi chứng chỉ',
+      lead:'Tư vấn 50 cấp · Coach 100 cấp. Cấp càng cao mở càng nhiều phần kho cấp cao. Mỗi tháng thi lại để giữ cấp; đề ghép riêng cho từng người từ tình huống thật trong kho, người chấm khác người thi.' });
+    giuDung();
+    if(!coMayChu()) return o + '<div class="co-mau">' + ic('alert','w-4 h-4') + '<span>Bài thi, điểm và cấp nằm ở máy chủ của Học viện. Tài khoản mẫu không thi được: một cấp chỉ nằm trong máy của bạn thì không ai kiểm lại được, và không được mở kho.</span></div>' +
+      '<div class="co-cb"><div style="--m:var(--gita)"><b>Thi ở đâu</b><span>Đăng nhập bằng tài khoản nhân sự thật. Tư vấn viên thi thang Tư vấn; Trưởng nhóm Coach, Coach cao cấp, Coach và Giáo viên thi thang Coach.</span></div>' +
+      '<div style="--m:var(--warn)"><b>Vấn đề khó</b><span>Luôn xin ý kiến qua ngăn "Xin ý kiến"; người duyệt có thể chuyển ca cho người có năng lực cao hơn. Giấu vấn đề hay tự xử lý là vi phạm và bị hạ cấp.</span></div></div>';
+    o += thanh();
+    if(st.ngan === 'toi' && st.luot) return o + nganBai();
+    if(st.ngan === 'xephang') return o + nganXepHang();
+    if(st.ngan === 'khung') return o + nganKhung();
+    if(st.ngan === 'ykien') return o + nganYKien();
+    if(st.ngan === 'cham' && lv() <= 6) return o + nganCham();
+    if(st.ngan === 'quanly' && lv() <= 5) return o + nganQuanLy();
+    return o + nganToi();
+  };
+
+  /* Bài đang viết giữ trong bộ nhớ của trang — màn vẽ lại (toast, đổi
+     ngăn) không được làm mất chữ. Không ghi vào localStorage: bài thi
+     nằm trên máy dùng chung thì người sau đọc được. */
+  document.addEventListener('input', function(e){
+    var el = e.target; if(!el || !el.getAttribute) return;
+    var i = el.getAttribute('data-tcc-nhap'); if(i === null || !st.luot) return;
+    (st.nhap[st.luot] || (st.nhap[st.luot] = []))[Number(i)] = el.value;
+    var d = document.getElementById('tcc-dem-' + i); if(d) d.textContent = String(el.value.length);
+  });
+  document.addEventListener('click', function(e){
+    var el = e.target.closest && e.target.closest('[data-tcc]'); if(!el) return;
+    var a = el.getAttribute('data-tcc');
+    giuDung();
+    if(a === 'ngan'){ st.ngan = el.getAttribute('data-ma'); st.mo = ''; st.luot = ''; st.bai = null; st.chamLuot = ''; st.chamBai = null; return veLai(); }
+    if(a === 'mo'){ st.mo = el.getAttribute('data-k'); veLai(); setTimeout(function(){ var t = document.querySelector('.dtc-form textarea,.dtc-form select'); if(t) t.focus(); }, 30); return; }
+    if(a === 'dong'){ st.mo = ''; return veLai(); }
+    if(a === 'mocap'){ var k = el.getAttribute('data-k'); st.moCap = st.moCap === k ? '' : k; return veLai(); }
+    if(a === 'lam'){ st.luot = el.getAttribute('data-l'); st.bai = null; return veLai(); }
+    if(a === 've'){ st.luot = ''; st.bai = null; st.toi = null; return veLai(); }
+    if(a === 'batdau'){
+      var muc = el.getAttribute('data-muc');
+      el.disabled = true;
+      return G.goiMayChu('batDauThi', { he:el.getAttribute('data-he'), muc:muc }).then(function(r){
+        el.disabled = false;
+        if(r && r.ok){ U.toast('Đã mở bài cấp ' + r.cap + ' · ' + r.phut + ' phút.', 'ok'); st.luot = r.luot; st.bai = null; st.toi = null; veLai(); }
+        else U.toast((r && r.error) || 'Không mở được bài.', 'err');
+      });
+    }
+    if(a === 'nop'){
+      var bl = (st.nhap[st.luot] || []).slice(0, st.bai ? st.bai.de.length : 0);
+      var tt = (st.bai && st.bai.chuToiThieu) || 200;
+      var thieu = (st.bai ? st.bai.de : []).map(function(_, i){ return (bl[i] || '').trim().length < tt ? i + 1 : 0; }).filter(Boolean);
+      if(thieu.length) return U.toast('Ca ' + thieu.join(', ') + ' chưa đủ ' + tt + ' ký tự.', 'err');
+      if(!window.confirm('Nộp bài? Nộp rồi không sửa được.')) return;
+      return ghi('nopBaiThi', { luot:st.luot, baiLam:bl.map(function(s){ return s.trim(); }) }, function(r){ return r.quaGio ? 'Đã nộp — quá giờ, bài sẽ không đạt.' : 'Đã nộp. Bài chờ chấm.'; },
+        function(){ delete st.nhap[st.luot]; st.bai = null; st.toi = null; veLai(); });
+    }
+    if(a === 'giaitrinh'){
+      var gtx = gt('tcc-gt'); if(gtx.length < LD_TOI_THIEU) return U.toast('Giải trình từ ' + LD_TOI_THIEU + ' ký tự.', 'err');
+      return ghi('giaiTrinhViPham', { id:el.getAttribute('data-id'), noiDung:gtx }, function(){ return 'Đã gửi giải trình.'; }, function(){ st.mo = ''; taiLai(); });
+    }
+    if(a === 'xin'){
+      var ly = gt('tcc-yk-ly');
+      if(!gt('tcc-yk-nha') || !gt('tcc-yk-ma') || ly.length < LD_TOI_THIEU) return U.toast('Cần mã nhà, mã vấn đề và lời trình bày từ ' + LD_TOI_THIEU + ' ký tự.', 'err');
+      return ghi('xinYKienKho', { maNha:gt('tcc-yk-nha'), ma:gt('tcc-yk-ma').toUpperCase(), lyDo:ly }, function(){ return 'Đã gửi. Chờ người quản lý duyệt.'; }, taiLai);
+    }
+    if(a === 'duyet'){
+      var q = gt('tcc-dy-q'), gc = gt('tcc-dy-gc');
+      if(gc.length < 10) return U.toast('Ghi lý do từ 10 ký tự.', 'err');
+      if(q === 'chuyen' && !gt('tcc-dy-ai')) return U.toast('Nhập người nhận ca.', 'err');
+      return ghi('duyetYKien', { id:el.getAttribute('data-id'), quyet:q, choAi:gt('tcc-dy-ai'), ghiChu:gc }, function(r){ return r.choAi ? 'Đã ghi. Ca giao cho ' + r.choAi + '.' : 'Đã ghi quyết định.'; }, function(){ st.mo = ''; taiLai(); });
+    }
+    if(a === 'mocham'){ st.chamLuot = el.getAttribute('data-l'); st.chamBai = null; return veLai(); }
+    if(a === 'vecham'){ st.chamLuot = ''; st.chamBai = null; st.cham = null; return veLai(); }
+    if(a === 'cham'){
+      var n = Number(el.getAttribute('data-n')), ct = [], sai = false;
+      for(var i = 0; i < n; i++){ var dong = []; for(var j = 0; j < 4; j++){ var s = gt('tcc-d-' + i + '-' + j), v = Number(s); if(s === '' || !(v >= 0 && v <= 25) || Math.round(v) !== v) sai = true; dong.push(v); } ct.push(dong); }
+      if(sai) return U.toast('Mỗi ca 4 tiêu chí, mỗi tiêu chí số nguyên 0–25.', 'err');
+      var nx = gt('tcc-nx'); if(nx.length < NX_TOI_THIEU) return U.toast('Nhận xét từ ' + NX_TOI_THIEU + ' ký tự.', 'err');
+      return ghi('chamBaiThi', { luot:st.chamLuot, chiTiet:ct, loiTruot:gt('tcc-lt'), ghiChu:nx }, function(r){ return 'Đã ghi ' + r.diem + ' điểm. ' + (TT[r.trangThai] ? TT[r.trangThai][0] : ''); },
+        function(){ st.chamLuot = ''; st.chamBai = null; st.cham = null; veLai(); });
+    }
+    if(a === 'cong'){
+      var lyc = gt('tcc-cong-ly'); if(lyc.length < 10) return U.toast('Ghi lý do từ 10 ký tự.', 'err');
+      return ghi('datCongThi', { bat:el.getAttribute('data-bat') === '1', lyDo:lyc }, function(r){ return r.bat ? 'Đã bật cổng thi.' : 'Đã tắt cổng thi.'; }, taiLai);
+    }
+    if(a === 'ghivp'){
+      var cc = gt('tcc-vp-cc');
+      if(!gt('tcc-vp-ai') || cc.length < LD_TOI_THIEU) return U.toast('Cần người bị ghi và chứng cứ từ ' + LD_TOI_THIEU + ' ký tự.', 'err');
+      return ghi('ghiViPham', { maNguoi:gt('tcc-vp-ai'), he:gt('tcc-vp-he'), loai:gt('tcc-vp-loai'), mucDo:Number(gt('tcc-vp-muc')), deXuat:gt('tcc-vp-dx'), chungCu:cc },
+        function(r){ return r.vi || 'Đã ghi.'; }, taiLai);
+    }
+    if(a === 'xhky'){ var k = gt('tcc-xh-ky'); if(!/^\d{4}-\d{2}$/.test(k)) return U.toast('Chọn một tháng.', 'err'); st.xhKy = k; st.xh = null; return veLai(); }
+    if(a === 'nghi'){
+      var nn = gt('tcc-nn-ngay'), tn = gt('tcc-nn-ten');
+      if(!nn || tn.length < 3) return U.toast('Chọn ngày và ghi tên ngày (từ 3 ký tự).', 'err');
+      return ghi('khaiNgayNghi', { ngay:nn, ten:tn, nghi:el.getAttribute('data-n') === '1' }, function(){ return 'Đã khai ngày ' + nn + '.'; }, function(){ st.lich = null; st.xh = null; veLai(); });
+    }
+    if(a === 'quyet'){
+      var qg = gt('tcc-q-gc'); if(qg.length < 10) return U.toast('Ghi lý do từ 10 ký tự.', 'err');
+      return ghi('quyetViPham', { id:el.getAttribute('data-id'), quyet:el.getAttribute('data-q'), ghiChu:qg }, function(){ return 'Đã ghi quyết định.'; }, function(){ st.mo = ''; taiLai(); });
+    }
+  });
 })();
 
 })();
@@ -17367,13 +22582,19 @@ G.thuMayChu = function(){
       Cần số tươi thì gọi G.goiMayChu(fn, than, {moi:true}).
    3. Máy chủ báo RATE/BUSY → TỰ NGHỈ đúng thuLaiSau, không gọi lại vô ích.
    4. CẦU DAO: 3 lượt hỏng mạng/5xx liền nhau → ngắt 30 giây. Một vòng lặp
-      lỗi ở màn hình không biến thành hàng nghìn lượt Worker. */
-var DEM_DOC = {}, DANG_BAY = {}, NGHI_DEN = 0, HONG_LIEN = 0, NGAT_DEN = 0, NGHI_FN = {};
+      lỗi ở màn hình không biến thành hàng nghìn lượt Worker.
+      NHƯNG một lượt 500 MANG MÃ YÊU CẦU (x-gita-ma) là máy chủ ĐÃ trả lời
+      — chỉ một cửa hỏng. Bản đầu đếm nó vào cầu dao chung, nên một màn
+      hỏng (Truy vấn đa chiều, 10/2026) làm ứng dụng báo "máy chủ không
+      trả lời" và khoá MỌI màn 30 giây trong khi máy chủ vẫn chạy. Nay lỗi
+      có mã chỉ khoá ĐÚNG cửa ấy (HONG_FN → NGHI_FN), cầu dao chung chỉ
+      đếm lỗi mạng và 5xx không mã (Worker sập, quá giới hạn, 502/503). */
+var DEM_DOC = {}, DANG_BAY = {}, NGHI_DEN = 0, HONG_LIEN = 0, NGAT_DEN = 0, NGHI_FN = {}, HONG_FN = {};
 var DEM_GIAY = 15;
 /* Việc chỉ đọc: tên bắt đầu bằng các tiền tố này. Việc theo dõi tiến độ
    (phimXemViec, phimTrangThai) cố ý KHÔNG đệm — chúng phải luôn tươi. */
 var LA_DOC = /^(doc|ds|xem|soi|lichSu|bangTin|baoCao|crmDanhSach|crmChiTiet|crmBangDieuKhien|tongHop)/;
-var KHONG_DEM = {phimXemViec:1, phimTrangThai:1, docHomNay:1, hopThongBao:1};
+var KHONG_DEM = {phimXemViec:1, phimTrangThai:1, docHomNay:1, hopThongBao:1, kimChiNam:1};
 G.laViecDoc = function(fn){ return LA_DOC.test(fn) && !KHONG_DEM[fn]; };
 G.xoaDemMayChu = function(){ DEM_DOC = {}; };
 
@@ -17411,7 +22632,19 @@ G.goiMayChu = function(fn, than, tuyChon){
     body: JSON.stringify(body)
   }).then(function(r){
       try { ma = r.headers.get('x-gita-ma') || ''; } catch(_e){}
-      if(r.status >= 500) HONG_LIEN++; else HONG_LIEN = 0;
+      if(r.status >= 500 && !ma) HONG_LIEN++;
+      else {
+        HONG_LIEN = 0;
+        if(r.status >= 500){
+          HONG_FN[fn] = (HONG_FN[fn] || 0) + 1;
+          if(HONG_FN[fn] >= 3){
+            HONG_FN[fn] = 0;
+            NGHI_FN[fn] = {den: Date.now() + 30000, d: {ok:false, code:'CUA_HONG', maYeuCau: ma,
+              error:'Phần này đang gặp trục trặc ở máy chủ (mã ' + ma + '). Các phần khác vẫn dùng bình thường; ' +
+                'ứng dụng sẽ tự thử lại phần này sau 30 giây.'}};
+          }
+        } else delete HONG_FN[fn];
+      }
       return r.json();
     })
     .then(function(d){
@@ -18654,7 +23887,7 @@ Object.keys(GAN).forEach(function(v){
 'use strict';
 var G = window.G, U = G.U, h = U.h, ic = U.ic;
 
-var TC = G.TCGP = G.TCGP || { q:'', chon:null, nk:{}, nhap:{}, dangSoan:{}, dangGhi:false };
+var TC = G.TCGP = G.TCGP || { q:'', chon:null, nk:{}, nhap:{}, dangSoan:{}, dangGhi:false, ngan:'kh', k:{}, kvd:{}, nap:null, cao:null, kcvd:{}, caoTang:0, caoHang:'', gia:null, gio:[], gui:null, nhaXem:'', dxNha:null, napCao:null };
 
 function chuan(s){ return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd'); }
 
@@ -18848,12 +24081,326 @@ function napSo(ma){
   });
 }
 
+/* ═══════════ KHO 1000 VẤN ĐỀ — đọc từ MÁY CHỦ ═══════════
+   500 vấn đề khách hàng · 500 vấn đề nội bộ. Nội dung không nằm trong gói
+   gửi xuống máy: máy chủ chỉ gửi TÊN cho cả danh sách và gửi NỘI DUNG cho
+   đúng phần trăm vai được xem — tỷ lệ ở đây được cắt thật ở máy chủ. */
+var NGAN = [['kh', 'Khách hàng · 500'], ['ns', 'Nội bộ · 500'], ['nghe', 'Phác đồ & tình huống'], ['cao', 'Cấp cao · 6 hạng']];
+/* Cùng ngưỡng với cổng máy chủ (may-chu/kho-cao.js → docDuocHe): hệ Coach
+   (tầng 4–5) mở cho R01–R07; hệ Tư vấn (tầng 1–3) mở thêm cho R11. Màn chỉ
+   ẩn ngăn; máy chủ mới là cổng. */
+function lvCao(){ var r = (G.ROLES || []).filter(function(x){ return x.id === G.S.role; })[0]; return r ? r.lv : 99; }
+function moHeCao(he){ var b = lvCao(); return he === 'coach' ? b <= 7 : he === 'tuvan' ? (b <= 7 || b === 11) : false; }
+function moCao(){ return moHeCao('coach') || moHeCao('tuvan'); }
+var HE_CAO = { coach:{ ten:'Hệ Coach', tang:[4, 5] }, tuvan:{ ten:'Hệ Tư vấn', tang:[1, 2, 3] } };
+function heCao(){ var he = TC.caoHe || (moHeCao('coach') ? 'coach' : 'tuvan'); return moHeCao(he) ? he : 'tuvan'; }
+function coMayChu(){ return !!(G.API_CAP_PHEP && G.PHIEN_TOKEN && G.goiMayChu); }
+function napDsKho(loai){
+  if(!coMayChu() || TC.k[loai] === 'dang') return;
+  TC.k[loai] = 'dang';
+  G.goiMayChu('dsKhoVanDe', { loai:loai }, { moi:true }).then(function(r){
+    TC.k[loai] = r && r.ok ? r : { loi:(r && r.error) || 'Chưa đọc được kho.' };
+    if(G.S.view === 'tra-cuu-gp' && G.render) G.render();
+  });
+}
+function napVdKho(ma){
+  TC.kvd[ma] = 'dang';
+  G.goiMayChu('docKhoVanDe', { ma:ma }, { moi:true }).then(function(r){
+    TC.kvd[ma] = r && r.ok ? r.vd : { loi:(r && r.error) || 'Chưa đọc được vấn đề.' };
+    if(G.S.view === 'tra-cuu-gp' && G.render) G.render();
+  });
+}
+function vanDeDangChon(){
+  if(TC.ngan === 'nghe') return timVanDe(TC.chon);
+  if(TC.ngan === 'cao'){ var c = TC.kcvd[TC.chon]; return c && c.ma ? c : null; }
+  var v = TC.kvd[TC.chon];
+  return v && v.ma ? v : null;
+}
+function veChiTietKho(vd){
+  var p = vd.phanTich || {}, t = vd.t2080 || {}, tv = vd.thamVan || {}, nk = TC.nk[vd.ma];
+  var CAP = ['', 'Cơ bản', 'Thường gặp', 'Cần kỹ năng', 'Phức tạp', 'Nhạy cảm cao'];
+  var o = '';
+  o += muc('01', 'Vấn đề', '<b class="sm" style="display:block;margin-bottom:4px">' + h(vd.ten) + '</b>' +
+    '<div class="row wrap" style="gap:6px">' + U.chip(vd.ma) + U.chip(vd.nhomTen || vd.nhom, 'var(--gita)') +
+      (vd.hang ? U.chip(vd.tenHang + ' · ' + vd.gia + ' credit', 'var(--gita-do)') + U.chip('Tầng ' + vd.tang) : U.chip('Cấp ' + vd.cap + ' · ' + (CAP[vd.cap] || ''))) + '</div>' + doan(vd.van),
+    vd.hang ? 'kho cấp cao · ' + (vd.he === 'coach' ? 'Coach' : 'Tư vấn') : vd.loai === 'kh' ? 'khách hàng' : 'nội bộ');
+  o += muc('02', 'Phân tích vấn đề (theo quy trình)', U.list([
+    'Hiện tượng · ' + (p.hienTuong || ''), 'Bối cảnh · ' + (p.boiCanh || ''),
+    'Nguyên nhân gốc · ' + (p.nguyenNhan || []).join(' / '), 'Tác động nếu để yên · ' + (p.tacDong || ''),
+    'Điểm đòn bẩy · ' + (p.donBay || '')]), 'hiện tượng → bối cảnh → nguyên nhân → tác động → đòn bẩy');
+  o += muc('03', 'Phác đồ xử lý', U.list(vd.phacDo || []));
+  o += muc('04', 'Tư duy 20/80 trong xử lý', '<p class="tiny muted mb">20% việc tạo 80% thay đổi:</p>' + U.list(t.lam || [], 'var(--gita)') +
+    (t.gac ? '<p class="sm mt" style="line-height:1.7"><b>Tạm gác:</b> ' + h(t.gac) + '</p>' : ''));
+  o += muc('05', 'Kỹ năng xử lý', U.list(vd.kyNang || []));
+  o += muc('06', 'Các bước xử lý', U.list((vd.buoc || []).map(function(b, i){ return (i + 1) + '. ' + String(b).replace(/^Bước\s*\d+\s*[:.\-–—]?\s*/i, ''); })));
+  o += muc('07', 'Sổ nhật ký giải pháp', veSo(vd, nk), 'mỗi lần đem ra dùng');
+  o += muc('08', 'Các lưu ý khi xử lý', U.list(vd.luuY || [], 'var(--gita-do)'));
+  o += muc('09', 'Tham vấn chuyên gia', '<p class="sm" style="line-height:1.7"><b>Khi nào:</b> ' + h(tv.khi || '') + '</p>' +
+    '<p class="sm" style="line-height:1.7"><b>Tham vấn ai:</b> ' + h(tv.ai || '') + '</p>');
+  o += muc('10', 'Các phương án xử lý', (vd.phuongAn || []).map(function(x){
+    return '<div class="mb"><b class="sm">' + h(x.ten) + '</b><p class="tiny muted">Khi: ' + h(x.khi) + '</p>' + doan(x.cach) + '</div>';
+  }).join(''));
+  o += muc('11', 'Kết quả', '<p class="sm" style="line-height:1.7"><b>Kết quả mong đợi:</b> ' + h(vd.ketQua || '') + '</p>' +
+    (nk && nk.tong ? '<p class="sm mt"><b>Đã dùng ' + nk.tong + ' lần:</b> ' + nk.dem.tot + ' đạt · ' + nk.dem.motPhan + ' đạt một phần · ' + nk.dem.chua + ' chưa đạt.</p>'
+      : '<p class="tiny muted mt">Chưa có lượt dùng nào trong sổ nhật ký — kết quả thật sẽ hiện ở đây.</p>'));
+  o += muc('12', 'Công cụ đánh giá kết quả', U.list(vd.doBang || [], 'var(--ok)'));
+  var bh = nk && nk.ds ? nk.ds.filter(function(r){ return r.baiHoc; }).slice(0, 5) : [];
+  o += muc('13', 'Bài học rút ra', doan(vd.baiHoc) +
+    bh.map(function(r){ return '<p class="sm mb" style="line-height:1.7">' + h(r.baiHoc) + ' <span class="tiny muted">— ' + h(r.boiAi || '') + ' · ' + h(new Date(r.luc).toLocaleDateString('vi-VN')) + '</span></p>'; }).join(''),
+    bh.length ? 'kho + ' + bh.length + ' bài học của đội' : 'kho');
+  if(vd.hang) o += muc('14', 'Gói giải pháp ở hạng ' + vd.tenHang, veGoi(vd), vd.gia + ' credit một lượt');
+  return o;
+}
+/* Nạp gói mã hoá (chỉ Super Admin). Gói nằm trong kho mã ở dạng đã mã hoá
+   AES-256-GCM; mật khẩu không nằm trong kho mã, không gửi lên máy chủ —
+   máy này tự mở gói rồi gửi từng lô bản ghi đã mở cho cửa napKhoVanDe. */
+function b64(s){ var b = atob(s), a = new Uint8Array(b.length); for(var i = 0; i < b.length; i++) a[i] = b.charCodeAt(i); return a; }
+function moGoi(matKhau, tep){
+  return fetch(tep || 'kho-van-de/goi.enc', { cache:'no-store' }).then(function(r){
+    if(!r.ok) throw new Error('Không tải được gói (mã ' + r.status + ').');
+    return r.json();
+  }).then(function(g){
+    var enc = new TextEncoder();
+    return crypto.subtle.importKey('raw', enc.encode(matKhau), 'PBKDF2', false, ['deriveKey']).then(function(k){
+      return crypto.subtle.deriveKey({ name:'PBKDF2', salt:b64(g.salt), iterations:g.n, hash:'SHA-256' }, k, { name:'AES-GCM', length:256 }, false, ['decrypt']);
+    }).then(function(key){
+      return crypto.subtle.decrypt({ name:'AES-GCM', iv:b64(g.iv) }, key, b64(g.ct));
+    }).catch(function(){ throw new Error('Sai mật khẩu gói, hoặc gói đã bị sửa.'); }).then(function(nen){
+      var ds = new Blob([nen]).stream().pipeThrough(new DecompressionStream('gzip'));
+      return new Response(ds).text();
+    }).then(function(t){ return { ban:g.ban, ds:JSON.parse(t) }; });
+  });
+}
+function napGoi(matKhau){
+  TC.nap = { dang:true, xong:0, tong:0, loi:'' }; G.render && G.render();
+  moGoi(matKhau).then(function(goi){
+    var ds = goi.ds, LO = 50, i = 0;
+    TC.nap.tong = ds.length;
+    function lo(){
+      if(i >= ds.length){ TC.nap.dang = false; TC.k = {}; U.toast('Đã nạp ' + ds.length + ' vấn đề vào kho.', 'ok'); G.render && G.render(); return; }
+      return G.goiMayChu('napKhoVanDe', { ds:ds.slice(i, i + LO), ban:goi.ban }).then(function(r){
+        if(!(r && r.ok)) throw new Error(((r && r.error) || 'Máy chủ từ chối lô.') + (r && r.hong ? ' ' + r.hong.slice(0, 3).join(' · ') : ''));
+        i += LO; TC.nap.xong = Math.min(i, ds.length); G.render && G.render();
+        return lo();
+      });
+    }
+    return lo();
+  }).catch(function(e){ TC.nap.dang = false; TC.nap.loi = String(e && e.message || e); G.render && G.render(); });
+}
+function veNap(){
+  if(G.S.role !== 'R01') return '';
+  var n = TC.nap;
+  return '<details class="card pad-sm mb"' + (n && (n.dang || n.loi) ? ' open' : '') + '><summary class="sm" style="cursor:pointer">' + ic('lock', 'w-3 h-3') +
+    ' Super Admin · nạp hoặc cập nhật kho 1000 vấn đề từ gói mã hoá</summary>' +
+    '<div class="mt" style="display:grid;gap:8px">' +
+      '<p class="tiny muted">Mật khẩu gói nằm trong Google Drive của chủ hệ (tài liệu “GITA365 — Mật khẩu gói Kho 1000 vấn đề”). Máy này tự mở gói; mật khẩu không gửi lên máy chủ.</p>' +
+      '<input id="tcgpMk" class="inp" type="password" autocomplete="off" aria-label="Mật khẩu gói kho 1000 vấn đề" placeholder="Mật khẩu gói">' +
+      '<div><button class="btn sm pri" data-tcgp-nap="1"' + (n && n.dang ? ' disabled' : '') + '>' + ic('check', 'w-3 h-3') +
+        (n && n.dang ? 'Đang nạp ' + n.xong + ' / ' + (n.tong || '…') : 'Mở gói và nạp') + '</button></div>' +
+      (n && n.loi ? '<p class="tiny" style="color:var(--gita-do-ink)">' + h(n.loi) + '</p>' : '') +
+    '</div></details>';
+}
+function veKho(loai, q){
+  var o = veNap();
+  if(!coMayChu()) return o + U.empty('Kho 1000 vấn đề nằm trên máy chủ', 'Đăng nhập bằng tài khoản thật để tra cứu — tài khoản trải nghiệm chỉ mở được phác đồ & tình huống trong máy.');
+  var k = TC.k[loai];
+  if(!k){ napDsKho(loai); k = 'dang'; }
+  if(k === 'dang') return o + '<div class="card pad-sm"><p class="sm muted">Đang đọc kho…</p></div>';
+  if(k.loi) return o + '<div class="card pad-sm"><p class="sm" style="color:var(--gita-do-ink)">' + h(k.loi) + '</p></div>';
+  if(!k.tong) return o + U.empty('Kho chưa được nạp', 'Super Admin mở gói mã hoá để nạp 1000 vấn đề vào máy chủ.');
+  o += '<p class="sm mb">' + ic(k.so < k.tong ? 'lock' : 'check', 'w-3 h-3') + ' Vai của anh/chị mở <b>' + k.pt + '%</b> kho ' + h(loai === 'kh' ? 'khách hàng' : 'nội bộ') +
+    ': <b>' + k.so + '</b> / ' + k.tong + ' vấn đề' + (k.so < k.tong ? ', xếp từ cấp cơ bản lên. Vấn đề ngoài phần ấy hiện tên kèm ổ khoá.' : '.') + '</p>';
+  var loc = q ? k.ds.filter(function(v){ return chuan(v.ten + ' ' + (k.nhomTen[v.nhom] || '') + ' ' + v.ma).indexOf(q) >= 0; }) : k.ds;
+  o += '<div class="tcgp-lo"><div class="tcgp-ds"><input id="tcgpQ" class="inp" placeholder="Tìm vấn đề, nhóm hoặc mã…" value="' + h(TC.q) + '">' +
+    '<p class="tiny muted mt mb">' + loc.length + ' / ' + k.ds.length + ' vấn đề</p>' +
+    loc.slice(0, 60).map(function(v){
+      if(!v.mo) return '<div class="card pad-sm mb tcgp-mot tcgp-khoa" title="Ngoài phần trăm vai này được xem">' +
+        ic('lock', 'w-3 h-3') + ' <span class="mono tiny muted">' + h(v.ma) + '</span> <span class="sm muted">' + h(v.ten) + '</span></div>';
+      return '<button class="card pad-sm lift mb tcgp-mot' + (TC.chon === v.ma ? ' on' : '') + '" data-tcgp-kho="' + h(v.ma) + '" style="text-align:left;width:100%">' +
+        '<span class="mono tiny muted">' + h(v.ma) + ' · C' + v.cap + '</span> <b class="sm">' + h(v.ten) + '</b>' +
+        '<div class="tiny muted">' + h(k.nhomTen[v.nhom] || '') + '</div></button>';
+    }).join('') + (loc.length > 60 ? '<p class="tiny muted">… gõ thêm chữ để thu hẹp.</p>' : '') + '</div>';
+  var vd = TC.kvd[TC.chon];
+  o += '<div class="tcgp-ct">' + (vd && vd.ma && vd.loai === loai ? veChiTietKho(vd)
+    : vd && vd.loi ? '<div class="card pad-sm"><p class="sm" style="color:var(--gita-do-ink)">' + h(vd.loi) + '</p></div>'
+    : vd === 'dang' ? '<div class="card pad-sm"><p class="sm muted">Đang mở vấn đề…</p></div>'
+    : '<div class="card pad-sm"><p class="sm muted">Chọn một vấn đề ở danh sách để xem đủ 13 mục.</p></div>') + '</div>';
+  return o + '</div>';
+}
+
+/* ═══════════ KHO CẤP CAO · 6 HẠNG · TRẢ BẰNG CREDIT ═══════════
+   Coach tầng 4–5: 2000 vấn đề, mỗi vấn đề một hạng (1 sao … Diamond).
+   Hạng cao hơn = vấn đề phức tạp hơn và gói giải pháp sâu hơn; giá một
+   lượt áp dụng do MÁY CHỦ tính (bảng giá Super Admin đặt) — màn không giữ
+   bản giá thứ hai. An toàn không bao giờ bị khoá theo gói: lượt an toàn
+   không trừ credit. */
+var HANG_CAO = ['S1', 'S3', 'S5', 'VIP', 'VVIP', 'DIAMOND'];
+function napGia(){
+  if(!coMayChu() || TC.gia === 'dang') return;
+  TC.gia = 'dang';
+  G.goiMayChu('giaKhoCao', {}, { moi:true }).then(function(r){
+    TC.gia = r && r.ok ? r : { loi:(r && r.error) || 'Chưa đọc được bảng giá.' };
+    if(G.S.view === 'tra-cuu-gp' && G.render) G.render();
+  });
+}
+function napCao(){
+  if(!coMayChu() || TC.cao === 'dang') return;
+  TC.cao = 'dang';
+  G.goiMayChu('dsKhoCao', { he:heCao() }, { moi:true }).then(function(r){
+    TC.cao = r && r.ok ? r : { loi:(r && r.error) || 'Chưa đọc được kho cấp cao.' };
+    if(G.S.view === 'tra-cuu-gp' && G.render) G.render();
+  });
+}
+function napVdCao(ma){
+  TC.kcvd[ma] = 'dang';
+  G.goiMayChu('docKhoCao', { ma:ma }, { moi:true }).then(function(r){
+    TC.kcvd[ma] = r && r.ok ? r.vd : { loi:(r && r.error) || 'Chưa đọc được vấn đề.' };
+    if(G.S.view === 'tra-cuu-gp' && G.render) G.render();
+  });
+}
+function veGoi(vd){
+  var g = vd.goi || {}, trong = TC.gio.indexOf(vd.ma) >= 0;
+  var o = U.list(['Phạm vi · ' + (g.phamVi || ''), 'Cá nhân hoá · ' + (g.caNhanHoa || ''), 'Theo dõi · ' + (g.theoDoi || '')]) +
+    '<p class="sm mt" style="line-height:1.7"><b>Gia đình cần làm:</b> ' + h(g.dieuKien || '') + '</p>' +
+    '<p class="tiny muted mt">Giải pháp phát huy theo mức gia đình thực hiện. Không hứa kết quả.</p>';
+  if(!coMayChu()) return o;
+  return o + '<div class="row wrap mt" style="gap:8px"><button class="btn sm' + (trong ? '' : ' pri') + '" data-kc-gio="' + h(vd.ma) + '"' + (!trong && TC.gio.length >= 3 ? ' disabled title="Đề xuất tối đa 3 phương án"' : '') + '>' +
+    ic(trong ? 'check' : 'plus', 'w-3 h-3') + (trong ? 'Đã có trong đề xuất · bỏ ra' : 'Thêm vào đề xuất cho nhà') + '</button></div>';
+}
+/* Giỏ đề xuất: Coach gom 1–3 phương án (thường là cùng vấn đề ở các hạng
+   khác nhau) rồi gửi cho một nhà. Credit KHÔNG bị trừ ở bước này — nhà tự
+   chọn trong ví credit của mình, lúc ấy mới trừ. */
+function veGio(){
+  var k = TC.cao && TC.cao.ds ? TC.cao.ds : [], tim = function(m){ return k.filter(function(v){ return v.ma === m; })[0]; };
+  var o = '<div class="card pad-sm mb"><div class="tiny up mb">Đề xuất cho một nhà · ' + TC.gio.length + '/3 phương án</div>';
+  o += TC.gio.length ? U.tbl(['Mã', 'Hạng', 'Credit', ''], TC.gio.map(function(m){ var v = tim(m) || {};
+      return [h(m), h((TC.cao.tenHang || {})[v.hang] || v.hang || ''), h(String(v.gia || '')), '<button class="btn sm ghost" data-kc-gio="' + h(m) + '">Bỏ</button>']; }))
+    : '<p class="tiny muted">Mở một vấn đề rồi bấm "Thêm vào đề xuất". Nên đưa cùng một hướng ở vài hạng để nhà chọn mức phù hợp.</p>';
+  o += '<div class="row wrap mt" style="gap:8px"><input id="kcNha" class="inp" style="max-width:220px" aria-label="Mã khách hàng của nhà" placeholder="Mã khách hàng của nhà" value="' + h(TC.nhaXem) + '">' +
+    '<input id="kcGhi" class="inp" style="flex:1;min-width:200px" aria-label="Lời nhắn cho nhà" placeholder="Lời nhắn cho nhà (không ghi tên, số điện thoại)">' +
+    '<button class="btn sm pri" data-kc-gui="1"' + (!TC.gio.length || TC.gui === 'dang' ? ' disabled' : '') + '>' + ic('check', 'w-3 h-3') + 'Gửi đề xuất · nhà tự chọn</button></div>';
+  o += '<p class="tiny muted mt">Credit chỉ bị trừ khi gia đình chọn một phương án trong ví credit của nhà.</p>';
+  o += '<div class="row wrap mt" style="gap:8px"><button class="btn sm ghost" data-kc-xemnha="1">' + ic('compass', 'w-3 h-3') + 'Xem đề xuất của nhà này</button>' +
+    '<button class="btn sm" data-kc-at="1" style="border-color:var(--gita-do);color:var(--gita-do-ink)">' + ic('shield', 'w-3 h-3') + 'Dấu hiệu an toàn · chuyển ngay, 0 credit</button></div>' +
+    '<p class="tiny muted">An toàn không bao giờ bị khoá theo gói: tự làm đau, ý nghĩ tự tử, bạo lực, xâm hại → chuyển ngay, mọi hạng, không cần số dư. Bấm là báo ngay Giám đốc và Super Admin.</p>';
+  var d = TC.dxNha;
+  if(d && d.loi) o += '<p class="tiny mt" style="color:var(--gita-do-ink)">' + h(d.loi) + '</p>';
+  else if(d && d.ds){
+    o += d.ds.length ? '<div class="mt">' + U.tbl(['Đề xuất', 'Trạng thái', 'Phương án', ''], d.ds.map(function(x){
+      var tt = { cho:'Chờ nhà chọn', chon:'Nhà đã chọn ' + x.maChon, huy:'Đã huỷ' }[x.trangThai] || x.trangThai;
+      return [h(x.id), h(tt), h(x.phuongAn.map(function(p){ return p.ma + ' · ' + p.tenHang + ' · ' + p.gia; }).join(' | ')),
+        x.trangThai === 'chon' ? '<button class="btn sm" data-kc-xong="' + h(x.id) + '">Ghi hoàn thành</button>'
+        : x.trangThai === 'cho' ? '<button class="btn sm ghost" data-kc-huy="' + h(x.id) + '">Huỷ</button>' : ''];
+    })) + '</div>' : '<p class="tiny muted mt">Nhà này chưa có đề xuất nào.</p>';
+  }
+  return o + '</div>';
+}
+function giaTriO(id){ var el = document.getElementById(id); return el ? el.value.trim() : ''; }
+function napDxNha(){
+  TC.nhaXem = giaTriO('kcNha') || TC.nhaXem;
+  if(!TC.nhaXem){ U.toast('Nhập mã khách hàng của nhà.', 'err'); return; }
+  G.goiMayChu('dsDeXuatNha', { maNha:TC.nhaXem }, { moi:true }).then(function(r){
+    TC.dxNha = r && r.ok ? r : { loi:(r && r.error) || 'Chưa đọc được đề xuất.' };
+    G.render && G.render();
+  });
+}
+function veBangGia(){
+  var g = TC.gia;
+  if(!g){ napGia(); return ''; }
+  if(g === 'dang' || g.loi) return '';
+  var o = '<details class="card pad-sm mb"><summary class="sm" style="cursor:pointer">' + ic('star', 'w-3 h-3') + ' Bảng giá credit theo hạng × tầng' + (g.khoiDau ? ' · thang chủ hệ duyệt' : '') + '</summary>' +
+    '<div class="mt">' + U.tbl(['Tầng'].concat(g.hang.map(function(x){ return g.tenHang[x]; })), HE_CAO[heCao()].tang.map(function(t){
+      return ['Tầng ' + t].concat(g.hang.map(function(x){ return h(String(g.theoTang[t][x])); }));
+    })) + '<p class="tiny muted mt">1 credit = 10đ. Hạng cao hơn = gói sâu hơn: nhiều buổi hơn, cá nhân hoá hơn, nhiều người hỗ trợ hơn, theo dõi dài hơn.' +
+    (g.lyDo ? ' Lần sửa gần nhất: ' + h(g.lyDo) + '.' : '') + '</p>';
+  if(G.S.role === 'R01'){
+    o += '<div class="mt" style="display:grid;gap:8px"><p class="tiny up">Super Admin · sửa giá gốc (tầng 1–3) và hệ số tầng</p>' +
+      '<div class="row wrap" style="gap:6px">' + g.hang.map(function(x){ return '<input class="inp" style="width:110px" data-kc-goc="' + x + '" aria-label="Giá gốc ' + h(g.tenHang[x]) + '" value="' + h(String(g.bang.goc[x])) + '">'; }).join('') + '</div>' +
+      '<div class="row wrap" style="gap:6px">' + [1, 2, 3, 4, 5].map(function(t){ return '<input class="inp" style="width:90px" data-kc-heso="' + t + '" aria-label="Hệ số tầng ' + t + '" value="' + h(String(g.bang.heSo[t])) + '">'; }).join('') + '</div>' +
+      '<input id="kcLyDo" class="inp" aria-label="Lý do đổi giá" placeholder="Lý do đổi giá (ít nhất 10 ký tự)">' +
+      '<div><button class="btn sm pri" data-kc-gia="1">' + ic('check', 'w-3 h-3') + 'Lưu bảng giá mới</button></div></div>';
+  }
+  return o + '</div></details>';
+}
+function veNapCao(){
+  if(G.S.role !== 'R01') return '';
+  var n = TC.napCao;
+  return '<details class="card pad-sm mb"' + (n && (n.dang || n.loi) ? ' open' : '') + '><summary class="sm" style="cursor:pointer">' + ic('lock', 'w-3 h-3') +
+    ' Super Admin · nạp kho cấp cao từ gói mã hoá</summary>' +
+    '<div class="mt" style="display:grid;gap:8px">' +
+      '<p class="tiny muted">Mật khẩu gói nằm trong Google Drive của chủ hệ (tài liệu “GITA365 — Mật khẩu gói Kho cấp cao”). Máy này tự mở gói; mật khẩu không gửi lên máy chủ.</p>' +
+      '<input id="kcMk" class="inp" type="password" autocomplete="off" aria-label="Mật khẩu gói kho cấp cao" placeholder="Mật khẩu gói">' +
+      '<div><button class="btn sm pri" data-kc-nap="1"' + (n && n.dang ? ' disabled' : '') + '>' + ic('check', 'w-3 h-3') +
+        (n && n.dang ? 'Đang nạp ' + n.xong + ' / ' + (n.tong || '…') : 'Mở gói và nạp') + '</button></div>' +
+      (n && n.loi ? '<p class="tiny" style="color:var(--gita-do-ink)">' + h(n.loi) + '</p>' : '') +
+    '</div></details>';
+}
+function napGoiCao(matKhau){
+  TC.napCao = { dang:true, xong:0, tong:0, loi:'' }; G.render && G.render();
+  moGoi(matKhau, 'kho-cao/goi.enc').then(function(goi){
+    var ds = goi.ds, LO = 50, i = 0;
+    TC.napCao.tong = ds.length;
+    function lo(){
+      if(i >= ds.length){ TC.napCao.dang = false; TC.cao = null; U.toast('Đã nạp ' + ds.length + ' vấn đề cấp cao.', 'ok'); G.render && G.render(); return; }
+      return G.goiMayChu('napKhoCao', { ds:ds.slice(i, i + LO), ban:goi.ban }).then(function(r){
+        if(!(r && r.ok)) throw new Error(((r && r.error) || 'Máy chủ từ chối lô.') + (r && r.hong ? ' ' + r.hong.slice(0, 3).join(' · ') : ''));
+        i += LO; TC.napCao.xong = Math.min(i, ds.length); G.render && G.render();
+        return lo();
+      });
+    }
+    return lo();
+  }).catch(function(e){ TC.napCao.dang = false; TC.napCao.loi = String(e && e.message || e); G.render && G.render(); });
+}
+function veCao(q){
+  var o = veNapCao();
+  if(!coMayChu()) return o + U.empty('Kho cấp cao nằm trên máy chủ', 'Đăng nhập bằng tài khoản thật để tra cứu.');
+  o += veBangGia();
+  var k = TC.cao, he = heCao(), T = HE_CAO[he].tang;
+  if(k && k.he && k.he !== he){ TC.cao = k = null; }
+  if(!k){ napCao(); k = 'dang'; }
+  if(moHeCao('coach') && moHeCao('tuvan'))
+    o = '<div class="row wrap mb" style="gap:6px">' + ['coach', 'tuvan'].map(function(x){
+      return '<button class="btn sm' + (x === he ? ' pri' : '') + '" data-kc-he="' + x + '">' + h(HE_CAO[x].ten + ' · tầng ' + HE_CAO[x].tang[0] + '–' + HE_CAO[x].tang[HE_CAO[x].tang.length - 1]) + '</button>';
+    }).join('') + '</div>' + o;
+  if(k === 'dang') return o + '<div class="card pad-sm"><p class="sm muted">Đang đọc kho cấp cao…</p></div>';
+  if(k.loi) return o + '<div class="card pad-sm"><p class="sm" style="color:var(--gita-do-ink)">' + h(k.loi) + '</p></div>';
+  if(!k.tong) return o + U.empty('Kho cấp cao chưa được nạp', 'Super Admin mở gói mã hoá để nạp vấn đề tầng ' + T[0] + '–' + T[T.length - 1] + ' của ' + HE_CAO[he].ten.toLowerCase() + ' vào máy chủ.');
+  o += veGio();
+  o += '<p class="sm mb">' + ic('check', 'w-3 h-3') + ' <b>' + k.tong + '</b> vấn đề ' + h(HE_CAO[he].ten.toLowerCase()) + ' · tầng ' + T[0] + '–' + T[T.length - 1] + ' · ' + HANG_CAO.map(function(x){ return h(k.tenHang[x]) + ' ' + (k.dem[x] || 0); }).join(' · ') + '</p>';
+  o += '<div class="row wrap mb" style="gap:6px">' +
+    [[0, 'Mọi tầng']].concat(T.map(function(t){ return [t, 'Tầng ' + t]; })).map(function(t){ return '<button class="btn sm' + (TC.caoTang === t[0] ? ' pri' : '') + '" data-kc-tang="' + t[0] + '">' + h(t[1]) + '</button>'; }).join('') +
+    '<span style="width:8px"></span>' +
+    [['', 'Mọi hạng']].concat(HANG_CAO.map(function(x){ return [x, k.tenHang[x]]; })).map(function(x){ return '<button class="btn sm' + (TC.caoHang === x[0] ? ' pri' : '') + '" data-kc-hang="' + x[0] + '">' + h(x[1]) + '</button>'; }).join('') + '</div>';
+  var loc = k.ds.filter(function(v){
+    return (!TC.caoTang || v.tang === TC.caoTang) && (!TC.caoHang || v.hang === TC.caoHang) &&
+      (!q || chuan(v.ten + ' ' + (k.nhomTen[v.nhom] || '') + ' ' + v.ma).indexOf(q) >= 0);
+  });
+  o += '<div class="tcgp-lo"><div class="tcgp-ds"><input id="tcgpQ" class="inp" placeholder="Tìm vấn đề, nhóm hoặc mã…" value="' + h(TC.q) + '">' +
+    '<p class="tiny muted mt mb">' + loc.length + ' / ' + k.ds.length + ' vấn đề</p>' +
+    loc.slice(0, 60).map(function(v){
+      return '<button class="card pad-sm lift mb tcgp-mot' + (TC.chon === v.ma ? ' on' : '') + '" data-kc-chon="' + h(v.ma) + '" style="text-align:left;width:100%">' +
+        '<span class="mono tiny muted">' + h(v.ma) + ' · ' + h(k.tenHang[v.hang] || v.hang) + ' · ' + h(String(v.gia)) + ' cr</span> <b class="sm">' + h(v.ten) + '</b>' +
+        '<div class="tiny muted">' + h(k.nhomTen[v.nhom] || '') + '</div></button>';
+    }).join('') + (loc.length > 60 ? '<p class="tiny muted">… gõ thêm chữ hoặc lọc tầng, hạng để thu hẹp.</p>' : '') + '</div>';
+  var vd = TC.kcvd[TC.chon];
+  o += '<div class="tcgp-ct">' + (vd && vd.ma ? veChiTietKho(vd)
+    : vd && vd.loi ? '<div class="card pad-sm"><p class="sm" style="color:var(--gita-do-ink)">' + h(vd.loi) + '</p></div>'
+    : vd === 'dang' ? '<div class="card pad-sm"><p class="sm muted">Đang mở vấn đề…</p></div>'
+    : '<div class="card pad-sm"><p class="sm muted">Chọn một vấn đề để xem đủ 13 mục và gói giải pháp của hạng.</p></div>') + '</div>';
+  return o + '</div>';
+}
 G.VIEWS['tra-cuu-gp'] = function(){
   if(!G.can('ca_xu_ly')) return U.lockCard();
-  var ds = dsVanDe(), q = chuan(TC.q), quyen = G.tcgpMo(G.S.role, ds);
-  var loc = q ? ds.filter(function(v){ return chuan(v.ten + ' ' + v.nhomTen + ' ' + v.ma).indexOf(q) >= 0; }) : ds;
+  var q = chuan(TC.q);
   var o = U.ph({ eyebrow:'TRA CỨU · TỪ CHUYÊN VIÊN TƯ VẤN', ic:'compass', t:'Tra cứu giải pháp · 13 mục',
-    lead:'Chọn một vấn đề: mười ba mục từ phân tích tới bài học, đọc thẳng từ kho nghề và sổ nhật ký của cả đội. Mục nào kho chưa có thì nói rõ là chưa có.' });
+    lead:'Chọn một vấn đề: mười ba mục từ phân tích tới bài học, đọc từ kho 1000 vấn đề, kho nghề và sổ nhật ký của cả đội.' });
+  o += '<div class="row wrap mb" role="tablist" style="gap:6px">' + NGAN.filter(function(n){ return n[0] !== 'cao' || moCao(); }).map(function(n){
+    return '<button class="btn sm' + (TC.ngan === n[0] ? ' pri' : '') + '" role="tab" aria-selected="' + (TC.ngan === n[0]) + '" data-tcgp-ngan="' + n[0] + '">' + h(n[1]) + '</button>';
+  }).join('') + '</div>';
+  if(TC.ngan === 'cao') return o + (moCao() ? veCao(q) : U.lockCard());
+  if(TC.ngan !== 'nghe') return o + veKho(TC.ngan, q);
+  var ds = dsVanDe(), quyen = G.tcgpMo(G.S.role, ds);
+  var loc = q ? ds.filter(function(v){ return chuan(v.ten + ' ' + v.nhomTen + ' ' + v.ma).indexOf(q) >= 0; }) : ds;
   if(!ds.length) return o + U.empty('Kho nghề chưa mở với tài khoản này', 'Phác đồ và tình huống nằm trong gói nghề — đăng nhập bằng tài khoản có quyền để mở.');
   o += '<p class="sm mb">' + ic(quyen.so < quyen.tong ? 'lock' : 'check', 'w-3 h-3') + ' Vai của anh/chị mở <b>' + quyen.pt + '%</b> kho tra cứu: <b>' + quyen.so + '</b> / ' + quyen.tong + ' vấn đề' +
     (quyen.so < quyen.tong ? ', xếp từ tầng thấp lên. Vấn đề ngoài phần ấy hiện tên kèm ổ khoá.' : '.') + '</p>';
@@ -18875,6 +24422,93 @@ G.VIEWS['tra-cuu-gp'] = function(){
 };
 
 document.addEventListener('click', function(e){
+  var ng = e.target.closest && e.target.closest('[data-tcgp-ngan]');
+  if(ng){ TC.ngan = ng.getAttribute('data-tcgp-ngan'); TC.chon = null; TC.q = ''; G.render && G.render(); return; }
+  var kc = e.target.closest && e.target.closest('[data-kc-chon]');
+  if(kc){ var m2 = kc.getAttribute('data-kc-chon'); TC.chon = m2; if(!TC.kcvd[m2] || TC.kcvd[m2].loi) napVdCao(m2); if(!TC.nk[m2]) napSo(m2); G.render && G.render(); return; }
+  var khe = e.target.closest && e.target.closest('[data-kc-he]');
+  if(khe){ TC.caoHe = khe.getAttribute('data-kc-he'); TC.caoTang = 0; TC.cao = null; TC.chon = ''; TC.gio = []; G.render && G.render(); return; }
+  var kt = e.target.closest && e.target.closest('[data-kc-tang]');
+  if(kt){ TC.caoTang = Number(kt.getAttribute('data-kc-tang')) || 0; G.render && G.render(); return; }
+  var kh = e.target.closest && e.target.closest('[data-kc-hang]');
+  if(kh){ TC.caoHang = kh.getAttribute('data-kc-hang') || ''; G.render && G.render(); return; }
+  var kg = e.target.closest && e.target.closest('[data-kc-gio]');
+  if(kg){ var mg = kg.getAttribute('data-kc-gio'), vt = TC.gio.indexOf(mg);
+    if(vt >= 0) TC.gio.splice(vt, 1); else if(TC.gio.length < 3) TC.gio.push(mg);
+    G.render && G.render(); return; }
+  if(e.target.closest && e.target.closest('[data-kc-gui]')){
+    var nha = giaTriO('kcNha'); if(!nha){ U.toast('Nhập mã khách hàng của nhà.', 'err'); return; }
+    TC.gui = 'dang'; TC.nhaXem = nha; G.render && G.render();
+    G.goiMayChu('deXuatKhoCao', { maNha:nha, ds:TC.gio.slice(), ghiChu:giaTriO('kcGhi') }).then(function(r){
+      TC.gui = null;
+      if(r && r.ok){ U.toast('Đã gửi đề xuất ' + r.id + ' — nhà sẽ tự chọn trong ví credit.', 'ok'); TC.gio = []; napDxNha(); }
+      else U.toast((r && r.error) || 'Chưa gửi được.', 'err');
+      G.render && G.render();
+    });
+    return;
+  }
+  if(e.target.closest && e.target.closest('[data-kc-xemnha]')){ napDxNha(); return; }
+  if(e.target.closest && e.target.closest('[data-kc-at]')){
+    var nhaAt = giaTriO('kcNha'); if(!nhaAt){ U.toast('Nhập mã khách hàng của nhà để chuyển an toàn.', 'err'); return; }
+    G.goiMayChu('chuyenAnToan', { maNha:nhaAt, ghiChu:giaTriO('kcGhi') }).then(function(r){
+      U.toast(r && r.ok ? r.vi : ((r && r.error) || 'Chưa ghi được — báo ngay Trưởng nhóm Coach.'), r && r.ok ? 'ok' : 'err');
+    });
+    return;
+  }
+  var kx = e.target.closest && e.target.closest('[data-kc-xong]');
+  if(kx){
+    var bc = window.prompt('Bằng chứng gia đình đã làm (không ghi tên, số điện thoại):', '');
+    if(bc == null) return;
+    G.goiMayChu('hoanThanhKhoCao', { id:kx.getAttribute('data-kc-xong'), bangChung:bc }).then(function(r){
+      U.toast(r && r.ok ? (r.choXacNhan ? r.vi : r.trung ? 'Gói này đã ghi hoàn thành trước đó.' : 'Đã ghi hoàn thành' + (r.thuong ? ' · nhà được thưởng ' + r.thuong + ' credit.' : '.' + (r.thuongLoi ? ' ' + r.thuongLoi : ''))) : ((r && r.error) || 'Chưa ghi được.'), r && r.ok ? 'ok' : 'err');
+      napDxNha();
+    });
+    return;
+  }
+  var kh2 = e.target.closest && e.target.closest('[data-kc-huy]');
+  if(kh2){
+    G.goiMayChu('huyDeXuat', { id:kh2.getAttribute('data-kc-huy') }).then(function(r){
+      U.toast(r && r.ok ? 'Đã huỷ đề xuất.' : ((r && r.error) || 'Chưa huỷ được.'), r && r.ok ? 'ok' : 'err'); napDxNha(); });
+    return;
+  }
+  if(e.target.closest && e.target.closest('[data-kc-nap]')){
+    var mkc = document.getElementById('kcMk'), mkcv = mkc ? mkc.value : '';
+    if(G.S.role !== 'R01' || TC.napCao && TC.napCao.dang) return;
+    if(mkcv.length < 12){ U.toast('Mật khẩu gói dài ít nhất 12 ký tự.', 'err'); return; }
+    napGoiCao(mkcv); return;
+  }
+  if(e.target.closest && e.target.closest('[data-kc-gia]')){
+    if(G.S.role !== 'R01') return;
+    var goc = {}, heSo = {};
+    document.querySelectorAll('[data-kc-goc]').forEach(function(el){ goc[el.getAttribute('data-kc-goc')] = Number(el.value); });
+    document.querySelectorAll('[data-kc-heso]').forEach(function(el){ heSo[el.getAttribute('data-kc-heso')] = Number(el.value); });
+    var ld = document.getElementById('kcLyDo');
+    G.goiMayChu('datGiaKhoCao', { goc:goc, heSo:heSo, lyDo:ld ? ld.value : '' }).then(function(r){
+      if(r && r.ok){ U.toast('Đã lưu bảng giá mới.', 'ok'); TC.gia = null; TC.cao = null; TC.kcvd = {}; }
+      else U.toast((r && r.error) || 'Chưa lưu được.', 'err');
+      if(G.render) G.render();
+    });
+    return;
+  }
+  var kb = e.target.closest && e.target.closest('[data-tcgp-kho]');
+  if(kb){
+    var mk = kb.getAttribute('data-tcgp-kho'), dsk = TC.k[TC.ngan];
+    var dong = dsk && dsk.ds ? dsk.ds.filter(function(v){ return v.ma === mk; })[0] : null;
+    if(!dong || !dong.mo) return;
+    TC.chon = mk;
+    if(!TC.kvd[mk] || TC.kvd[mk].loi) napVdKho(mk);
+    if(!TC.nk[mk]) napSo(mk);
+    G.render && G.render();
+    return;
+  }
+  var nb = e.target.closest && e.target.closest('[data-tcgp-nap]');
+  if(nb){
+    var mkEl = document.getElementById('tcgpMk'), mkv = mkEl ? mkEl.value : '';
+    if(G.S.role !== 'R01' || TC.nap && TC.nap.dang) return;
+    if(mkv.length < 12){ U.toast('Mật khẩu gói dài ít nhất 12 ký tự.', 'err'); return; }
+    napGoi(mkv);
+    return;
+  }
   var t = e.target.closest && e.target.closest('[data-tcgp-chon]');
   if(t){
     var ma0 = t.getAttribute('data-tcgp-chon');
@@ -18899,7 +24533,7 @@ document.addEventListener('click', function(e){
   }
   var gb = e.target.closest && e.target.closest('[data-tcgp-ghi]');
   if(gb){
-    var v2 = timVanDe(TC.chon); if(!v2) return;
+    var v2 = vanDeDangChon(); if(!v2) return;
     var gt = function(id){ var el = document.getElementById(id); return el ? el.value : ''; };
     TC.dangGhi = true;
     G.goiMayChu('ghiNhatKyGiaiPhap', { maVanDe:v2.ma, tenVanDe:v2.ten, phuongAn:gt('tcgpPa'), ketQua:gt('tcgpKq'), danhGia:gt('tcgpDg'), baiHoc:gt('tcgpBh') }).then(function(r){
@@ -28262,7 +33896,7 @@ G.VIEWS = G.VIEWS || {};
         '<b>' + h(g.ten) + '</b><span class="tiny muted">' + h(g.dau) + '</span></div>' +
         '<p class="sm" style="line-height:1.8"><b style="color:#BE0E16">Mối nguy:</b> ' + h(g.nguy) + '</p>' +
         '<p class="sm mt" style="line-height:1.8"><b style="color:#0B7350">Việc chính:</b> ' + h(g.lam) + '</p>' +
-        '<p class="sm mt" style="line-height:1.8"><b style="color:#B4720F">Phải nhịn:</b> ' + h(g.dung) + '</p>' +
+        '<p class="sm mt" style="line-height:1.8"><b style="color:var(--warn)">Phải nhịn:</b> ' + h(g.dung) + '</p>' +
         '<p class="tiny mt" style="line-height:1.7"><b>Xong giai đoạn khi:</b> ' + h(g.ra) + '</p></div>';
     }).join('');
 
@@ -28575,7 +34209,7 @@ G.VIEWS = G.VIEWS || {};
         '<p class="sm mt" style="line-height:1.8"><b>Vòng:</b> ' + h(b.vong) + '</p>' +
         (moRoi
           ? '<p class="sm dim mt" style="line-height:1.8">' + h(b.y) + '</p>' +
-            '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>Dấu hiệu đang đứng:</b> ' + h(b.dau) + '</p>' +
+            '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>Dấu hiệu đang đứng:</b> ' + h(b.dau) + '</p>' +
             '<div class="mt">' + b.nho.map(function (n) {
               return '<div class="tiny" style="padding:5px 0;border-top:1px solid var(--gita-vien-2)">' +
                 '<b>' + h(n.ten) + '</b> — ' + h(n.viec) +
@@ -29354,7 +34988,7 @@ G.VIEWS = G.VIEWS || {};
     o += U.sec('Chín phần mười', (q.vi || ''));
     o += '<div class="card mb"><div class="row wrap" style="gap:16px">' +
       '<b style="color:#0B7350">Hỏi ' + q.hoi + '%</b>' +
-      '<b style="color:#B4720F">Kể chuyện của chính mình ' + q.keChuyenMinh + '%</b>' +
+      '<b style="color:var(--warn)">Kể chuyện của chính mình ' + q.keChuyenMinh + '%</b>' +
       '<b style="color:#BE0E16">Dạy ' + q.day + '%</b></div>' +
       '<p class="tiny dim mt" style="line-height:1.7"><b>Đo bằng:</b> ' + h(q.doBang || '') + '</p>' +
       '<p class="tiny mt" style="line-height:1.7">' + h(q.lech1 || '') + ' ' + h(q.lech2 || '') + '</p></div>';
@@ -30133,13 +35767,13 @@ G.VIEWS = G.VIEWS || {};
         return '<div style="padding:7px 0;border-bottom:1px solid var(--gita-vien-2)">' +
           '<b class="sm">' + c.so + '. ' + h(c.t) + '</b>' +
           (c.theoDuong ? '<span class="tiny up" style="color:#0B7350"> ĐỌC TỪ ĐƯỜNG TỰ CHỦ</span>' : '') +
-          (c.chuaDo ? '<span class="tiny up" style="color:#B4720F"> CHƯA ĐO ĐƯỢC</span>' : '') +
+          (c.chuaDo ? '<span class="tiny up" style="color:var(--warn)"> CHƯA ĐO ĐƯỢC</span>' : '') +
           (c.thieu ? '<div class="tiny muted">thiếu: ' + h(c.thieu) + '</div>' : '') +
           (c.vi ? '<div class="tiny dim">' + h(c.vi) + '</div>' : '') + '</div>';
       }).join('') +
       '<p class="sm mt" style="line-height:1.8"><b>' + h((G.BN_MORUNG_LUAT || {}).cot || '') + '</b> ' +
       h((G.BN_MORUNG_LUAT || {}).vi || '') + '</p>' +
-      (chuaDo.length ? '<p class="tiny mt" style="line-height:1.7;color:#B4720F">' + chuaDo.length +
+      (chuaDo.length ? '<p class="tiny mt" style="line-height:1.7;color:var(--warn)">' + chuaDo.length +
         ' cửa chưa đo được vì còn chờ một ô chủ hệ điền.</p>' : '') + '</div>';
 
     var gl = G.BN_GIEOLAI || {};
@@ -30476,7 +36110,7 @@ G.VIEWS = G.VIEWS || {};
           '<p class="tiny mt" style="line-height:1.7"><b>Tài liệu đề nghị:</b> ' + h(c.banGoc) + '</p>' +
           '<p class="tiny mt" style="line-height:1.7"><b>Lệnh đứng của chủ hệ:</b> ' + h(c.lenhDung) + '</p>' +
           '<p class="tiny dim mt" style="line-height:1.7">' + h(c.vi) + '</p>' +
-          '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>Cần gì:</b> ' + h(c.canGi) + '</p></div>';
+          '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>Cần gì:</b> ' + h(c.canGi) + '</p></div>';
       }).join('') +
         '<p class="tiny dim mt" style="line-height:1.7">' + h((G.PL_CHOCHU_LUAT || {}).vi || '') + '</p></div>';
     }
@@ -30920,7 +36554,7 @@ G.VIEWS = G.VIEWS || {};
           '<p class="tiny mt" style="line-height:1.7"><b>Sổ tay đề nghị:</b> ' + h(c.banGoc) + '</p>' +
           '<p class="tiny mt" style="line-height:1.7"><b>Trạng thái đang giữ:</b> ' + h(c.lenhDung) + '</p>' +
           '<p class="tiny dim mt" style="line-height:1.7">' + h(c.vi) + '</p>' +
-          '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>Cần gì:</b> ' + h(c.canGi) + '</p></div>';
+          '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>Cần gì:</b> ' + h(c.canGi) + '</p></div>';
       }).join('') +
         '<p class="tiny dim mt" style="line-height:1.7">' + h((G.TV_CHOCHU_LUAT || {}).vi || '') + '</p></div>';
     }
@@ -31539,7 +37173,7 @@ G.VIEWS = G.VIEWS || {};
       '<p class="sm mt" style="line-height:1.8"><b>Đạt:</b> ' + h(k3.dat || '') + '</p>' +
       '<p class="sm mt" style="line-height:1.8;color:#BE0E16"><b>Trượt:</b> ' + h(k3.truot || '') + '</p>' +
       '<p class="tiny dim mt" style="line-height:1.7">' + h(k3.viToanTrang || '') + '</p>' +
-      (k3.chuaDo ? '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>Chưa đo được:</b> ' +
+      (k3.chuaDo ? '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>Chưa đo được:</b> ' +
         h(k3.thieu || '') + '</p>' : '') + '</div>';
 
     o += U.sec('Chuông nhà bấm khác chuông hệ rung', ((G.SG_CHUONG_LUAT || {}).cot || ''));
@@ -31578,7 +37212,7 @@ G.VIEWS = G.VIEWS || {};
           '<p class="tiny mt" style="line-height:1.7"><b>Sổ tay để trống:</b> ' + h(c.banGoc) + '</p>' +
           '<p class="tiny mt" style="line-height:1.7"><b>Đang giữ:</b> ' + h(c.lenhDung) + '</p>' +
           '<p class="tiny dim mt" style="line-height:1.7">' + h(c.vi) + '</p>' +
-          '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>Cần gì:</b> ' + h(c.canGi) + '</p></div>';
+          '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>Cần gì:</b> ' + h(c.canGi) + '</p></div>';
       }).join('') +
         '<p class="tiny dim mt" style="line-height:1.7">' + h((G.SG_CHOCHU_LUAT || {}).vi || '') + '</p></div>';
     }
@@ -31799,7 +37433,7 @@ G.VIEWS = G.VIEWS || {};
       return '<div style="padding:10px 0;border-bottom:1px solid var(--gita-vien-2)">' +
         '<b class="sm">' + n.so + '. ' + h(n.hoi) + '</b>' +
         (n.hepHon ? '<p class="tiny mt" style="line-height:1.7"><b>Hẹp hơn:</b> ' + h(n.hepHon) + '</p>' : '') +
-        (n.chuaTraLoi ? '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>Chưa trả lời được:</b> ' +
+        (n.chuaTraLoi ? '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>Chưa trả lời được:</b> ' +
           h(n.chuaTraLoi) + '</p>' : '') +
         (n.khongDungBua ? '<p class="tiny dim mt" style="line-height:1.7">' + h(n.khongDungBua) + '</p>' : '') +
         '</div>';
@@ -31820,7 +37454,7 @@ G.VIEWS = G.VIEWS || {};
           '<p class="tiny mt" style="line-height:1.7"><b>Tài liệu đề nghị:</b> ' + h(c.banGoc) + '</p>' +
           '<p class="tiny mt" style="line-height:1.7"><b>Đang giữ:</b> ' + h(c.lenhDung) + '</p>' +
           '<p class="tiny dim mt" style="line-height:1.7">' + h(c.vi) + '</p>' +
-          '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>Cần gì:</b> ' + h(c.canGi) + '</p></div>';
+          '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>Cần gì:</b> ' + h(c.canGi) + '</p></div>';
       }).join('') + '</div>';
     }
 
@@ -32508,7 +38142,7 @@ G.VIEWS = G.VIEWS || {};
         '<p class="sm mt" style="line-height:1.8"><b>Vì sao rơi vào:</b> ' + h(r.viSaoRoiVao) + '</p>' +
         '<p class="sm mt" style="line-height:1.8;color:' + r.c + '"><b>Đường về:</b> ' + h(r.duongVe) + '</p>' +
         '<p class="tiny dim mt" style="line-height:1.7">Đo bằng: ' + h(r.doBang) + '</p>' +
-        (r.banGocKhongRo ? '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>Chữ bản gốc:</b> ' +
+        (r.banGocKhongRo ? '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>Chữ bản gốc:</b> ' +
           h(r.banGocKhongRo) + '</p>' : '') + '</div>';
     }).join('');
     o += '<p class="tiny dim mb" style="line-height:1.7"><b>' +
@@ -36032,7 +41666,7 @@ G.VIEWS = G.VIEWS || {};
        không lời giải thích. */
     if (bt.chuaCoTinSong)
       o += '<div class="card mb"><p class="sm" style="line-height:1.8">' +
-        '<b style="color:#B4720F">Bảng này đang trống vì chưa có tin thật.</b> Trên kia là ' +
+        '<b style="color:var(--warn)">Bảng này đang trống vì chưa có tin thật.</b> Trên kia là ' +
         'ĐÚNG những dòng sẽ hiện khi có nhà đầu tiên vượt tầng. Ba sổ đếm còn thiếu:</p>' +
         '<p class="tiny dim mt" style="line-height:1.75">' +
         bt.nguon.map(function (n) { return h((n.ten || n.ma) + ' — ' + (n.thieu || '')); })
@@ -36068,14 +41702,14 @@ G.VIEWS = G.VIEWS || {};
         than = '<p class="sm mt" style="line-height:1.75"><b>' + h(String(x.so)) + '</b></p>' +
           '<p class="tiny dim mt" style="line-height:1.7">Đếm từ: ' + h(x.demTu || '') + '</p>';
       else if (x.chuaCoNguon)
-        than = '<p class="sm mt" style="line-height:1.75;color:#B4720F"><b>Thiếu:</b> ' + h(x.thieu || '') + '</p>' +
+        than = '<p class="sm mt" style="line-height:1.75;color:var(--warn)"><b>Thiếu:</b> ' + h(x.thieu || '') + '</p>' +
           '<p class="tiny dim mt" style="line-height:1.7">' + h(x.vi || '') + '</p>';
       else if (x.chuaHoiMayChu)
-        than = '<p class="sm mt" style="line-height:1.75;color:#B4720F">Chưa hỏi được máy chủ. ' +
+        than = '<p class="sm mt" style="line-height:1.75;color:var(--warn)">Chưa hỏi được máy chủ. ' +
           'Sổ đếm có rồi, nhưng chưa nối được thì không in con số cũ ra thay.</p>' +
           '<p class="tiny dim mt" style="line-height:1.7">Đếm từ: ' + h(x.demTu || '') + '</p>';
       else
-        than = '<p class="sm mt" style="line-height:1.75;color:#B4720F">Chưa gộp đủ để hiện' +
+        than = '<p class="sm mt" style="line-height:1.75;color:var(--warn)">Chưa gộp đủ để hiện' +
           (x.nguong ? ' — cần từ ' + h(String(x.nguong)) + ' nhà trở lên' : '') + '.</p>' +
           '<p class="tiny dim mt" style="line-height:1.7">Số nhỏ là chỉ mặt từng nhà mà ' +
           'không cần tên. Sổ đã đếm rồi, chỉ chưa được phép in ra.</p>';
@@ -36101,11 +41735,11 @@ G.VIEWS = G.VIEWS || {};
     var kn = G.tinSoiSoKhongNguon();
     if (kn.length)
       o += '<div class="card mb" style="border-color:#B4720F5e">' +
-        '<span class="tiny up" style="color:#B4720F">' + kn.length + ' CON SỐ TRONG KHO CHƯA KHAI NGUỒN</span>' +
+        '<span class="tiny up" style="color:var(--warn)">' + kn.length + ' CON SỐ TRONG KHO CHƯA KHAI NGUỒN</span>' +
         '<p class="sm mt" style="line-height:1.8">' + h(kn.join(' · ')) + '</p>' +
         '<p class="tiny dim mt" style="line-height:1.7">' +
         h((G.TIN_NGUON_LUAT || {}).daCoMotChoNhuThe || '') + '</p>' +
-        '<p class="tiny mt" style="line-height:1.7;color:#B4720F">Bảng tin này không mượn lại chúng. ' +
+        '<p class="tiny mt" style="line-height:1.7;color:var(--warn)">Bảng tin này không mượn lại chúng. ' +
         'Sửa nội dung đã phát hành là việc của chủ hệ.</p></div>';
 
     /* ── Bốn loại tin sẽ đăng ── */
@@ -36125,7 +41759,7 @@ G.VIEWS = G.VIEWS || {};
       return '<div style="padding:10px 0;border-bottom:1px solid var(--gita-vien-2)">' +
         '<b class="sm">' + t.no + '. ' + h(t.t) + '</b>' +
         '<p class="sm mt" style="line-height:1.75;color:#0B7350"><b>Đạt:</b> ' + h(t.dat) + '</p>' +
-        '<p class="sm mt" style="line-height:1.75;color:#B4720F"><b>Trượt:</b> ' + h(t.truot) + '</p></div>';
+        '<p class="sm mt" style="line-height:1.75;color:var(--warn)"><b>Trượt:</b> ' + h(t.truot) + '</p></div>';
     }).join('') + '</div>';
     o += '<p class="tiny dim mb" style="line-height:1.7">' +
       h((G.TIN_TIEUCHI_LUAT || {}).aiChon || '') + '</p>';
@@ -36135,9 +41769,9 @@ G.VIEWS = G.VIEWS || {};
     o += U.sec('CHUYỆN ĐƯỢC CHỌN THÌ NHÀ ẤY ĐƯỢC GÌ', '');
     o += '<div class="card mb">' +
       '<p class="sm" style="line-height:1.8"><b>Luôn có:</b> ' + h(tw.luonCo || '') + '</p>' +
-      '<p class="sm mt" style="line-height:1.8;color:#B4720F"><b>Chờ chủ hệ chốt:</b> ' +
+      '<p class="sm mt" style="line-height:1.8;color:var(--warn)"><b>Chờ chủ hệ chốt:</b> ' +
       h(tw.diemChoChu || '') + '</p>' +
-      '<p class="sm mt" style="line-height:1.8;color:#B4720F"><b>Chờ chủ hệ chốt:</b> ' +
+      '<p class="sm mt" style="line-height:1.8;color:var(--warn)"><b>Chờ chủ hệ chốt:</b> ' +
       h(tw.quaChoChu || '') + '</p>' +
       '<p class="tiny dim mt" style="line-height:1.7">' + h(tw.viRangBuoc || '') + '</p></div>';
 
@@ -36481,7 +42115,7 @@ G.VIEWS = G.VIEWS || {};
       '<p class="sm mt" style="line-height:1.8">' + h(loi.baMat || '') + '</p>' +
       '<p class="sm mt" style="line-height:1.8">' + h(loi.quyenCuaNha || '') + '</p>' +
       '<p class="tiny dim mt" style="line-height:1.7">' + h(loi.vi || '') + '</p>' +
-      '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>' + h(loi.hauQuaNeuGiau || '') + '</b></p></div>';
+      '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>' + h(loi.hauQuaNeuGiau || '') + '</b></p></div>';
 
     o += G.kaKhung ? G.kaKhung('coach-5-tang', 'dau') : '';
 
@@ -36517,7 +42151,7 @@ G.VIEWS = G.VIEWS || {};
           return '<div style="padding:7px 0;border-bottom:1px solid var(--gita-vien-2)">' +
             '<b class="sm">' + (i + 1) + '. ' + h(n.t) + '</b>' +
             '<p class="tiny dim mt" style="line-height:1.7">Đo bằng: ' + h(n.do) +
-            (thieu ? ' <span style="color:#B4720F">· thước ở gói nghề</span>' : '') +
+            (thieu ? ' <span style="color:var(--warn)">· thước ở gói nghề</span>' : '') +
             '</p></div>';
         }).join('') + '</div>' +
         '<p class="sm mt" style="line-height:1.8;color:' + t.c + '"><b>Kết quả:</b> ' + h(t.ketQua) + '</p>' +
@@ -36590,7 +42224,7 @@ G.VIEWS = G.VIEWS || {};
           (d.co ? '✓ ' : '○ ') + h(d.ten) + '</b>' +
           '<p class="tiny dim mt" style="line-height:1.7">' + h(d.dungDe) + '</p>' +
           (d.co ? '<p class="tiny mt" style="color:#0B7350">Chạy trên kho ' + h(d.theoKho) + '</p>'
-                : '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>Thiếu:</b> ' + h(d.thieu) + '</p>' +
+                : '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>Thiếu:</b> ' + h(d.thieu) + '</p>' +
                   '<p class="tiny dim mt" style="line-height:1.7">' + h(d.viSaoChuaLam || '') + '</p>') +
           '</div>';
       }).join('') + '</div>';
@@ -36647,7 +42281,7 @@ G.VIEWS = G.VIEWS || {};
         'Ghi lại để lần sau không bàn lại.');
       o += (G.CS_LECH || []).map(function (l) {
         return '<div class="card mb" style="border-color:#B4720F3e">' +
-          '<span class="tiny up" style="color:#B4720F">' + h(l.ma) + ' · ' + h(l.o) + '</span>' +
+          '<span class="tiny up" style="color:var(--warn)">' + h(l.ma) + ' · ' + h(l.o) + '</span>' +
           '<p class="sm mt" style="line-height:1.8"><b>Tranh ghi:</b> ' + h(l.tranhGhi) + '</p>' +
           '<p class="sm mt" style="line-height:1.8"><b>Hệ đã có:</b> ' + h(l.heDaCo) + '</p>' +
           '<p class="sm mt" style="line-height:1.8;color:#0B7350"><b>Xử lý:</b> ' + h(l.xuLy) + '</p>' +
@@ -38235,6 +43869,9 @@ G.VIEWS = G.VIEWS || {};
         'kế toán thu không có việc gì phải biết lương kế toán chi.</p></div>';
 
     o += U.sec('Kỳ ' + d.ky, d.vi || '');
+    /* Ngày trả lương do máy chủ tính (05 tháng sau, trùng ngày nghỉ thì 08). */
+    if (d.ngayTra) o += '<p class="sm mb">Ngày trả lương kỳ này: <b>' + h(d.ngayTra.ngay.split('-').reverse().join('/')) + '</b>' +
+      (d.ngayTra.doi ? ' <span class="tiny muted">· ' + h(d.ngayTra.lyDo) + ', lùi sang ngày 08</span>' : '') + '</p>';
     o += U.tbl(['Người', 'Vị trí', 'Điểm', 'Bậc', 'Cứng', 'Theo KPI', 'Ghi nhận', 'Tổng', ''],
       d.dong.map(function (x) {
         var co = x.luongCung !== null && x.luongCung !== undefined;
@@ -52357,6 +57994,56 @@ G.nhaMoChang = function (el) {
     el.getAttribute('data-vpten') || '');
 };
 
+/* ══ VÒNG BÁNH ĐÀ: QUAY HAY DỪNG ══ (chủ hệ 10/10/2026: "vòng tròn bên
+   trong đang dừng không chuyển động")
+   Đo trên máy thật: vòng VẪN quay — nó chỉ dừng khi máy bật "giảm chuyển
+   động" (Windows: Settings → Accessibility → Visual effects → Animation
+   effects TẮT; nhiều laptop tắt sẵn để tiết kiệm pin). CSS tôn trọng lời
+   xin ấy, nên người xem thấy một vòng đứng yên mà không biết vì sao.
+   Nay: máy xin giảm chuyển động → vòng QUAY CHẬM (240 giây/vòng) thay vì
+   dừng hẳn; rê chuột/Tab vào bánh là đứng lại; nút "Dừng" luôn có. Người
+   dùng tự chọn trong app thì lựa chọn ấy thắng — "Cho quay" là đủ nhịp 60
+   giây dù máy xin giảm, "Dừng" là đứng yên. Không nhớ được (trình duyệt
+   chặn lưu) thì theo mặc định, không vỡ màn. */
+var KHOA_QUAY = 'gita.nhaQuay';
+G.nhaCheDoQuay = function () {
+  try { var v = localStorage.getItem(KHOA_QUAY); if (v === 'quay' || v === 'dung') return v; } catch (e) {}
+  return '';
+};
+G.nhaMayGiamDong = function () {
+  return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+};
+G.nhaDangQuay = function () { return G.nhaCheDoQuay() !== 'dung'; };
+G.nhaDoiQuay = function () {
+  var moi = G.nhaDangQuay() ? 'dung' : 'quay';
+  try { localStorage.setItem(KHOA_QUAY, moi); } catch (e) {}
+  /* Đổi lớp tại chỗ — không dựng lại cả màn (dựng lại là vòng nhảy về góc 0). */
+  var vong = document.querySelector('.nha-ring');
+  if (vong) { vong.classList.toggle('nha-quay', moi === 'quay'); vong.classList.toggle('nha-dung', moi === 'dung'); }
+  /* Thay khối nút rồi TRẢ tiêu điểm về nút mới — thay outerHTML mà không trả
+     thì người dùng bàn phím / trình đọc màn hình bị đẩy về đầu trang. */
+  var nut = document.querySelector('.nha-quay-nut');
+  if (nut) { nut.outerHTML = G.nhaNutQuay(); var moi = document.querySelector('.nha-quay-nut button'); if (moi && moi.focus) moi.focus(); }
+};
+/* Máy xin giảm chuyển động mà người dùng muốn đủ nhịp 60 giây: chọn "quay". */
+G.nhaQuayNhanh = function () {
+  try { localStorage.setItem(KHOA_QUAY, 'quay'); } catch (e) {}
+  var vong = document.querySelector('.nha-ring');
+  if (vong) { vong.classList.add('nha-quay'); vong.classList.remove('nha-dung'); }
+  var nut = document.querySelector('.nha-quay-nut');
+  if (nut) { nut.outerHTML = G.nhaNutQuay(); var moi = document.querySelector('.nha-quay-nut button'); if (moi && moi.focus) moi.focus(); }
+};
+G.nhaNutQuay = function () {
+  var ic = G.U.ic, quay = G.nhaDangQuay();
+  /* Nhãn đổi theo trạng thái, KHÔNG kèm aria-pressed: "Dừng…, đã nhấn" đọc
+     lên không rõ vòng đang quay hay đã dừng. Trạng thái nói bằng chữ. */
+  return '<div class="nha-quay-nut"><button type="button" class="btn sm" onclick="G.nhaDoiQuay()">' +
+    ic(quay ? 'x' : 'spark') + (quay ? ' Dừng vòng bánh đà' : ' Cho vòng bánh đà quay') + '</button>' +
+    (quay && G.nhaMayGiamDong() && G.nhaCheDoQuay() !== 'quay'
+      ? '<button type="button" class="btn sm" onclick="G.nhaQuayNhanh()">Quay đủ nhịp</button>' +
+        '<span class="tiny muted">Máy đang bật "giảm chuyển động" nên vòng quay chậm.</span>' : '') + '</div>';
+};
+
 (function () {
   var U = G.U, h = U.h, ic = U.ic;
 
@@ -52446,8 +58133,9 @@ G.nhaMoChang = function (el) {
       ' GITA 365</span>';
     /* Có bánh đà (kho nền đã mở) thì mới treo nhãn — nhãn mà không có
        bánh nào bên dưới là một lời hứa trống. */
-    if (bdHtml) o += '<p class="nha-bd-nhan">Mười bánh đà quay quanh vận hành cả nhà</p>';
-    o += '<div class="nha-ring">';
+    if (bdHtml) o += '<p class="nha-bd-nhan">Mười bánh đà quay quanh vận hành cả nhà</p>' + G.nhaNutQuay();
+    var cd = G.nhaCheDoQuay();
+    o += '<div class="nha-ring' + (cd === 'quay' ? ' nha-quay' : cd === 'dung' ? ' nha-dung' : '') + '">';
     /* VÒNG NGOÀI — khẩu hiệu chạy quanh con dấu thịnh vượng. Dùng SVG
        textPath (một vòng tròn, chữ bám theo), ĐỨNG YÊN để đọc được; chỉ
        vòng bánh đà bên trong mới quay.
@@ -53639,7 +59327,7 @@ G.VIEWS = G.VIEWS || {};
   function tabKhach() {
     var ds = khDs(), that = ds[0] && ds[0].that;
     var o = '<div class="ntv-note">' + ic('map', 'w-4 h-4') + ' Mỗi khách đi qua <b>5 giai đoạn chăm sóc</b>. Bảng theo dõi trọn hồ sơ: đang ở đâu, bước kế, tài liệu, dữ liệu buổi, đánh giá, bằng chứng và tiềm năng nâng gói.' +
-      (that ? ' <b style="color:#0B7350">Đang chạy trên khách thật.</b>' : ' <span style="color:#B4720F">(minh hoạ)</span>') + '</div>';
+      (that ? ' <b style="color:#0B7350">Đang chạy trên khách thật.</b>' : ' <span style="color:var(--warn)">(minh hoạ)</span>') + '</div>';
     o += '<div class="ntv-gdj">';
     GDJ.forEach(function (g) {
       var so = ds.filter(function (k) { return k.gdj === g.n; }).length;
@@ -53665,7 +59353,7 @@ G.VIEWS = G.VIEWS || {};
         '<td>' + lk('tang34', 'Tài liệu') + '</td>' +
         '<td class="tiny ntv-center">' + k.buoi + ' buổi</td>' +
         '<td class="tiny ntv-center">' + (k.danhGia != null ? ('<b>' + k.danhGia.toFixed(1) + '</b>/5') : '—') + '</td>' +
-        '<td class="tiny ntv-center">' + (k.bangChung === 'Có' ? '<span style="color:#0B7350;font-weight:700">✓ Có</span>' : '<span style="color:#B4720F">Chưa</span>') + '</td>' +
+        '<td class="tiny ntv-center">' + (k.bangChung === 'Có' ? '<span style="color:#0B7350;font-weight:700">✓ Có</span>' : '<span style="color:var(--warn)">Chưa</span>') + '</td>' +
         '<td><span class="ntv-nhom" style="--nc:' + tnc + '">' + h(tn) + '</span></td>' +
         '<td>' + lk('tt-cskh', 'Mở lộ trình') + '</td>' +
       '</tr>';
@@ -59880,8 +65568,14 @@ G.dtTaoTuyen = function () {
   var ten = giaTri('dt-ty-ten').trim();
   var dong = giaTri('dt-ty-chang').split('\n').map(function (s) { return s.trim(); }).filter(Boolean);
   var chang = [], sai = '';
-  dong.forEach(function (s) { var p = s.split('|'); if (p.length < 2 || !p[0].trim() || !p[1].trim()) sai = s; else chang.push({ loai: p[0].trim(), de: p.slice(1).join('|').trim() }); });
-  if (sai) { U.toast('Dòng sai khuôn "loai | đề": ' + sai, 'err'); return; }
+  /* Đầu dòng là MÃ VAI của đội (NGHIEN_CUU · PHAN_TICH · SOAN · SOAT · LEAD)
+     hoặc loại việc kiểu cũ (phanTich · chienLuoc… — khi cần bậc mô hình cao). */
+  dong.forEach(function (s) {
+    var p = s.split('|'); if (p.length < 2 || !p[0].trim() || !p[1].trim()) { sai = s; return; }
+    var dau = p[0].trim(), de = p.slice(1).join('|').trim();
+    chang.push(/^[A-Z_]+$/.test(dau) ? { vai: dau, de: de } : { loai: dau, de: de });
+  });
+  if (sai) { U.toast('Dòng sai khuôn "VAI | đề": ' + sai, 'err'); return; }
   var tuChay = !!(document.getElementById('dt-ty-tu') || {}).checked;
   G.goiMayChu('taoTuyenDaTri', { ten: ten, chang: chang, tuChay: tuChay }).then(function (x) {
     U.toast(x && x.ok ? 'Đã tạo tuyến ' + x.ma + ' · ' + x.soChang + ' chặng' + (x.tuChay ? ' · bộ não sẽ tự chạy từng chặng.' : '.') : ((x && x.error) || 'Không tạo được.'), x && x.ok ? 'ok' : 'err');
@@ -59893,7 +65587,7 @@ G.dtChayChang = function (ma) {
   G.dtChangDangChay = true; veLai();
   G.goiMayChu('chayChangDaTri', { ma: ma }).then(function (x) {
     G.dtChangDangChay = false;
-    if (x && x.ok) { U.toast(x.chotChan, 'ok'); G.dtTuyen = null; G.dtXemTuyen(ma); }
+    if (x && x.ok) { U.toast(x.chotChan, x.dat === false ? 'err' : 'ok'); G.dtTuyen = null; G.dtDoi = null; G.dtXemTuyen(ma); }
     else U.toast((x && x.error) || 'Không chạy được.', 'err');
     veLai();
   });
@@ -59905,6 +65599,75 @@ G.dtTuChay = function (ma, bat) {
     G.dtTuyen = null; G.dtTuyenTai();
   });
 };
+/* ── Đội Agent: thẻ vai · bộ nhớ chung · đo lường · chấp nhận chặng chưa đạt ── */
+G.dtDoi = G.dtDoi || null;
+G.dtDoiTai = function () {
+  if (!G.goiMayChu || G.dtDoiDangTai) return;
+  G.dtDoiDangTai = true;
+  G.goiMayChu('docDoiAgent', {}).then(function (x) { G.dtDoiDangTai = false; G.dtDoi = x || { ok: false, error: 'Không có phản hồi.' }; veLai(); });
+};
+G.dtGhiNho = function () {
+  G.goiMayChu('ghiBoNhoAgent', { loai: giaTri('dt-nho-loai'), noiDung: giaTri('dt-nho-nd').trim() }).then(function (x) {
+    U.toast(x && x.ok ? 'Đã ghi vào bộ nhớ đội — mọi chặng sau đều đọc.' : ((x && x.error) || 'Không ghi được.'), x && x.ok ? 'ok' : 'err');
+    if (x && x.ok) { G.dtDoi = null; G.dtDoiTai(); }
+  });
+};
+G.dtBatNho = function (id, bat) {
+  G.goiMayChu('batBoNhoAgent', { id: id, bat: !!bat }).then(function (x) {
+    U.toast(x && x.ok ? (bat ? 'Đã bật — mục này vào bộ nhớ đội.' : 'Đã tắt — mục vẫn được giữ trong sổ.') : ((x && x.error) || 'Không đổi được.'), x && x.ok ? 'ok' : 'err');
+    G.dtDoi = null; G.dtDoiTai();
+  });
+};
+G.dtChotChang = function (ma) {
+  G.goiMayChu('chotChangDaTri', { ma: ma, lyDo: giaTri('dt-chot-ly').trim() }).then(function (x) {
+    U.toast(x && x.ok ? 'Đã chấp nhận chặng — lý do ở lại trong tuyến.' : ((x && x.error) || 'Không chấp nhận được.'), x && x.ok ? 'ok' : 'err');
+    if (x && x.ok) { G.dtTuyen = null; G.dtDoi = null; G.dtXemTuyen(ma); }
+  });
+};
+function veDoi() {
+  var d = G.dtDoi;
+  if (!d) { if (G.goiMayChu) G.dtDoiTai(); return ''; }
+  if (!d.ok) return '<div class="card mt tiny" style="color:var(--gita-do)">' + h(d.error || 'Không đọc được đội Agent.') + '</div>';
+  var m = d.doLuong || {}, laR01 = G.S && G.S.role === 'R01';
+  var o = '<div class="card mt"><b>Đội Agent · 5 vai, một Trưởng nhóm</b>' +
+    '<div class="tiny muted mt">' + h(d.luong) + '</div>' +
+    '<div class="row mt" style="gap:6px;flex-wrap:wrap">' +
+      '<span class="chip">7 ngày: ' + (m.tuyenXong || 0) + '/' + (m.tuyen || 0) + ' tuyến xong</span>' +
+      '<span class="chip">' + (m.changDat || 0) + ' chặng đạt</span>' +
+      '<span class="chip" style="color:var(--gita-do-ink)">' + (m.loiBat || 0) + ' lỗi Trưởng nhóm bắt</span>' +
+      '<span class="chip">' + (m.tuSuaDat || 0) + ' tự sửa đạt</span>' +
+      '<span class="chip">' + (m.nguoiChapNhan || 0) + ' người chấp nhận</span>' +
+      '<span class="chip">' + (m.token || 0) + ' token</span>' +
+      '<span class="chip" title="' + h(m.gioTietKiemVi || '') + '">giờ tiết kiệm: chưa đo</span></div>' +
+    (d.the || []).map(function (a) {
+      return '<details class="mt"><summary class="sm" style="cursor:pointer"><span class="chip mono">' + h(a.ma) + '</span> <b>' + h(a.ten) + '</b> — ' + h(a.viec) + '</summary>' +
+        '<div class="tiny mt" style="line-height:1.7"><b>Vào:</b> ' + h(a.vao) + '<br><b>Ra:</b> ' + h(a.raGi) +
+        '<br><b>Không được:</b> ' + h(a.khongDuoc.join(' · ')) + '<br><b>Dừng hỏi người khi:</b> ' + h(a.dungHoi.join(' · ')) +
+        '<br><b>Mô hình:</b> ' + h(a.mau) + '<br><b>Thế nào là tốt:</b> ' + h(a.tot) +
+        '<br><b>Ba kiểu hỏng:</b> ' + h(a.hong.map(function (x) { return x.khi + ' → ' + x.xuLy; }).join(' · ')) +
+        '<br><b>Ví dụ tốt:</b> ' + h(a.viDuTot) + '<br><b>Ví dụ xấu:</b> ' + h(a.viDuXau) + '</div>' +
+        '<details class="mt"><summary class="tiny" style="cursor:pointer">Lời hệ thống (' + a.soChu + ' chữ)</summary><div class="tiny" style="white-space:pre-wrap">' + h(a.he) + '</div></details></details>';
+    }).join('') + '</div>';
+  o += '<div class="card mt"><b>Bộ nhớ chung của đội</b><div class="tiny muted mt">Mọi chặng có vai đều đọc phần này trước khi làm (tối đa 900 ký tự). Chỉ Super Admin ghi; máy chỉ đề xuất lỗi cần tránh — tắt sẵn, người bật mới có hiệu lực.</div>' +
+    ((d.boNho || []).length ? (d.boNho || []).map(function (r) {
+      return '<div class="row mt" style="gap:6px;flex-wrap:wrap;align-items:center"><span class="chip">' + h((d.loaiNho || {})[r.loai] || r.loai) + '</span><span class="sm">' + h(r.noiDung) + '</span>' +
+        (laR01 ? nut('G.dtBatNho(\'' + h(r.id) + '\',false)', 'Tắt') : '') + '</div>';
+    }).join('') : '<div class="tiny muted mt">Chưa có mục nào.</div>') +
+    ((d.deXuat || []).length ? '<div class="tiny up mt">MÁY ĐỀ XUẤT · CHỜ DUYỆT</div>' + d.deXuat.map(function (r) {
+      return '<div class="row mt" style="gap:6px;flex-wrap:wrap;align-items:center"><span class="chip">' + h(r.boiAi || '') + '</span><span class="sm muted">' + h(r.noiDung) + '</span>' +
+        nut('G.dtBatNho(\'' + h(r.id) + '\',true)', 'Bật vào bộ nhớ') + '</div>';
+    }).join('') : '') +
+    (laR01 ? '<div class="row mt" style="gap:6px;flex-wrap:wrap"><select id="dt-nho-loai" aria-label="Loại bộ nhớ">' +
+      Object.keys(d.loaiNho || {}).map(function (k) { return '<option value="' + h(k) + '">' + h(d.loaiNho[k]) + '</option>'; }).join('') + '</select>' +
+      '<input id="dt-nho-nd" style="flex:1;min-width:200px" maxlength="300" placeholder="Một câu ngắn — không tên, không số điện thoại">' + nut('G.dtGhiNho()', 'Ghi', 'pri') + '</div>' : '') + '</div>';
+  return o;
+}
+G.dtDoiAgent = function (ma) {
+  G.goiMayChu('doiSangDoiAgent', { ma: ma }).then(function (x) {
+    U.toast(x && x.ok ? 'Đã chuyển ' + x.doi + ' chặng sang đội Agent — chạy tiếp được bằng Workers AI.' : ((x && x.error) || 'Không chuyển được.'), x && x.ok ? 'ok' : 'err');
+    G.dtTuyen = null; G.dtTuyenTai();
+  });
+};
 G.dtXemTuyen = function (ma) {
   G.goiMayChu('docTuyenDaTri', { ma: ma }).then(function (x) { G.dtTuyenChi = x || { ok: false }; veLai(); });
 };
@@ -59912,11 +65675,13 @@ function veTuyen() {
   var t = G.dtTuyen, o = '';
   if (!t) { if (G.goiMayChu) G.dtTuyenTai(); return chuaNoi(); }
   if (!t.ok) return '<div class="card mt" style="color:var(--gita-do)">' + h(t.error || 'Không đọc được.') + '</div>';
+  o += veDoi();
   o += '<div class="card mt"><b>Tuyến nhiều chặng có chốt chặn</b><div class="tiny muted mt">Một việc lớn đi qua nhiều chặng; hệ <b>dừng sau mỗi chặng</b> ' +
     'chờ Super Admin đọc và kiểm chứng — không tự chạy trọn một mạch. Kết quả chặng trước làm ngữ cảnh chặng sau (vòng lặp đo lường quay lại). Chỉ Super Admin tạo và chạy.</div>' +
-    '<div class="tiny muted mt">Khuôn mỗi dòng: <code>loai | đề chặng</code> · loai ∈ phanLoai · tomTat · soan · phanTich · chienLuoc · 2–7 chặng.</div>' +
+    '<div class="tiny muted mt">Khuôn mỗi dòng: <code>VAI | đề chặng</code> · VAI ∈ LEAD · NGHIEN_CUU · PHAN_TICH · SOAN · SOAT (có thẻ vai, bộ nhớ, bảng kiểm). ' +
+      'Việc cần mô hình bậc cao thì dùng kiểu cũ <code>phanTich | đề</code> hoặc <code>chienLuoc | đề</code>. 2–7 chặng. Sau MỖI chặng Trưởng nhóm soát; chưa đạt thì dừng chờ người.</div>' +
     '<input id="dt-ty-ten" class="mt" style="width:100%" placeholder="Tên tuyến (vd: Ra mắt gói học mới)">' +
-    '<textarea id="dt-ty-chang" rows="4" class="mt" style="width:100%" placeholder="phanTich | Phân tích ba đối thủ chính&#10;soan | Soạn thông điệp giới thiệu"></textarea>' +
+    '<textarea id="dt-ty-chang" rows="4" class="mt" style="width:100%" placeholder="NGHIEN_CUU | Gom phản hồi tuần này&#10;SOAN | Viết thư trả lời mẫu&#10;SOAT | Soát thư trả lời"></textarea>' +
     '<label class="row mt tiny" style="gap:6px;align-items:center"><input type="checkbox" id="dt-ty-tu"> Tự chạy — bộ não vận hành chạy tiếp chặng kế ở mỗi lượt làm việc (làm 30 phút · nghỉ 30 phút), trong ngân sách ngày. Đọc kết quả ở đây khi xong.</label>' +
     '<div class="row mt">' + nut('G.dtTaoTuyen()', 'Tạo tuyến', 'pri') + '</div></div>';
   (t.ds || []).forEach(function (r) {
@@ -59926,7 +65691,9 @@ function veTuyen() {
       (r.tuChay ? '<span class="chip" style="color:var(--gita)">tự chạy</span>' : '') + '</div>' +
       '<div class="row mt" style="gap:8px">' + nut('G.dtXemTuyen(\'' + h(r.ma) + '\')', 'Xem') +
       (r.trangThai !== 'xong' ? nut('G.dtTuChay(\'' + h(r.ma) + '\',' + (r.tuChay ? 'false' : 'true') + ')', r.tuChay ? 'Tắt tự chạy' : 'Bật tự chạy') : '') +
-      (r.trangThai !== 'xong' ? nut('G.dtChayChang(\'' + h(r.ma) + '\')', G.dtChangDangChay ? 'Đang chạy…' : 'Chạy chặng kế', 'pri') : '') + '</div></div>';
+      (r.trangThai !== 'xong' ? nut('G.dtChayChang(\'' + h(r.ma) + '\')', G.dtChangDangChay ? 'Đang chạy…' : 'Chạy chặng kế', 'pri') : '') +
+      (r.trangThai !== 'xong' && r.conChangCu ? nut('G.dtDoiAgent(\'' + h(r.ma) + '\')', 'Chuyển sang đội Agent') : '') + '</div>' +
+      (r.trangThai !== 'xong' && r.conChangCu ? '<div class="tiny muted mt">Còn chặng kiểu cũ (phanTich/chienLuoc) — ở chế độ tiết kiệm chúng cần AI bậc cao nên có thể kẹt. Chuyển sang đội Agent để chạy bằng Workers AI, có Trưởng nhóm soát.</div>' : '') + '</div>';
   });
   if (t.ds && !t.ds.length) o += '<div class="card mt tiny muted">Chưa có tuyến nào.</div>';
   var c2 = G.dtTuyenChi;
@@ -59934,10 +65701,18 @@ function veTuyen() {
     var ty = c2.tuyen;
     o += '<div class="card mt" style="border-color:var(--gita-sau)"><b>' + h(ty.ten) + '</b> <span class="chip mono">' + h(ty.ma) + '</span>';
     ty.cacChang.forEach(function (ch, i) {
-      var kq = (ty.ketQua || []).filter(function (x) { return x.chang === i; })[0];
-      o += '<div class="mt"><span class="chip">' + (i + 1) + '</span> <b>' + h(ch.loai) + '</b> <span class="tiny">' + h(ch.de) + '</span>' +
-        (kq ? '<div class="tiny muted">' + h(kq.ncc) + ' · ' + kq.token + ' token · ' + new Date(kq.luc).toLocaleString('vi-VN') + '</div>' +
-          '<div class="sm" style="white-space:pre-wrap">' + h(kq.traLoi) + '</div>' :
+      var kq = (ty.ketQua || []).filter(function (x) { return x.chang === i; }).pop();
+      var sv = kq && kq.soat, choChot = kq && kq.nhan === false && i === ty.dangO && G.S && G.S.role === 'R01';
+      o += '<div class="mt"><span class="chip">' + (i + 1) + '</span> <b>' + h(ch.vai || ch.loai) + '</b> <span class="tiny">' + h(ch.de) + '</span>' +
+        (kq ? '<div class="tiny muted">' + h(kq.ncc) + ' · ' + kq.token + ' token · ' + new Date(kq.luc).toLocaleString('vi-VN') + (kq.suaLan ? ' · tự sửa 1 lần' : '') + '</div>' +
+          (sv ? '<div class="row" style="gap:6px;flex-wrap:wrap">' + (sv.dat ? '<span class="chip" style="color:var(--ok)">Trưởng nhóm: đạt</span>' :
+            '<span class="chip" style="color:var(--gita-do-ink)">Trưởng nhóm: chưa đạt</span>') +
+            sv.loi.map(function (l) { return '<span class="tiny" style="color:var(--gita-do-ink)">' + h(l.vi) + '</span>'; }).join(' ') +
+            sv.canhBao.map(function (c) { return '<span class="tiny" style="color:var(--gita-sau)">' + h(c.vi) + '</span>'; }).join(' ') + '</div>' : '') +
+          (kq.nguoiNhan ? '<div class="tiny">Chấp nhận bởi <b>' + h(kq.nguoiNhan) + '</b>: ' + h(kq.lyDoNhan || '') + '</div>' : '') +
+          '<div class="sm" style="white-space:pre-wrap">' + h(kq.traLoi) + '</div>' +
+          (choChot ? '<div class="row mt" style="gap:6px;flex-wrap:wrap"><input id="dt-chot-ly" style="flex:1;min-width:200px" placeholder="Lý do chấp nhận dù chưa đạt (≥10 ký tự)">' +
+            nut('G.dtChotChang(\'' + h(ty.ma) + '\')', 'Chấp nhận') + nut('G.dtChayChang(\'' + h(ty.ma) + '\')', 'Chạy lại chặng', 'pri') + '</div>' : '') :
           '<div class="tiny muted">— chưa chạy (chốt chặn đang chờ)</div>') + '</div>';
     });
     o += '</div>';
@@ -60555,7 +66330,12 @@ G.VIEWS = G.VIEWS || {};
 (function () {
   var U = G.U, h = U.h, ic = U.ic;
   function nut(on, nd, k) { return '<button class="btn ' + (k || 'ghost') + ' sm" onclick="' + on + '">' + nd + '</button>'; }
-  function tien(n) { return Number(n || 0).toLocaleString('vi-VN') + ' đ'; }
+  /* null = máy chủ không đo được chỉ số ấy (bảng chưa có trên D1 này…).
+     Hiện "chưa đo được", không hiện 0 — một số thiếu đọc ra như số 0 là
+     một lời nói dối mang dấu hệ thống. */
+  var CHUA = 'chưa đo được';
+  function tien(n) { return n === null || n === undefined ? CHUA : Number(n).toLocaleString('vi-VN') + ' đ'; }
+  function soO(n, duoi) { return n === null || n === undefined ? CHUA : n + (duoi || ''); }
 
   G.dcNgay = G.dcNgay || 30;
   G.dcTai = function (ngay) {
@@ -60596,15 +66376,18 @@ G.VIEWS = G.VIEWS || {};
       ['Chi phí vận hành', tien(d.chiPhi.tong)],
       ['Khoản lớn nhất', (d.chiPhi.top[0] ? d.chiPhi.top[0].khoanMuc + ' · ' + tien(d.chiPhi.top[0].n) : '—')],
       ['Lương kỳ gần nhất', d.chiPhi.luong ? tien(d.chiPhi.luong.n) + ' · ' + d.chiPhi.luong.soNguoi + ' người · kỳ ' + d.chiPhi.luong.ky : 'chưa có'],
-      ['Token AI', (d.chiPhi.aiToken || []).map(function (x) { return x.ncc + ' ' + Number(x.n).toLocaleString('vi-VN'); }).join(' · ') || '0', 'token, không phải tiền']]);
+      ['Token AI', d.chiPhi.aiToken === null ? CHUA : (d.chiPhi.aiToken || []).map(function (x) { return x.ncc + ' ' + Number(x.n).toLocaleString('vi-VN'); }).join(' · ') || '0', 'token, không phải tiền']]);
     o += theDong('Dòng giá trị khách nhận', 'spark', [
-      ['Bài học hoàn thành', d.giaTri.baiHoc], ['Lượt WOW ghi sổ', d.giaTri.wow],
-      ['Lượt lên tầng', d.giaTri.lenTang], ['Kho giải pháp đã dùng', d.giaTri.khoDung + ' lần', '0 token mỗi lần'],
-      ['Tuyến dự án hoàn tất', d.giaTri.tuyenXong]]);
+      ['Bài học hoàn thành', soO(d.giaTri.baiHoc)], ['Lượt WOW ghi sổ', soO(d.giaTri.wow)],
+      ['Lượt lên tầng', soO(d.giaTri.lenTang)], ['Kho giải pháp đã dùng', soO(d.giaTri.khoDung, ' lần'), '0 token mỗi lần'],
+      ['Tuyến dự án hoàn tất', soO(d.giaTri.tuyenXong)]]);
     o += theDong('Dòng công việc', 'pulse', [
-      ['Tổng lượt ghi sổ', d.congViec.tongLuot], ['Trung bình/ngày', d.congViec.trungBinhNgay],
+      ['Tổng lượt ghi sổ', soO(d.congViec.tongLuot)], ['Trung bình/ngày', soO(d.congViec.trungBinhNgay)],
       ['Việc nhiều nhất', d.congViec.top[0] ? d.congViec.top[0].viec + ' · ' + d.congViec.top[0].n + ' lượt' : '—']]);
     o += '</div>';
+    if (d.chuaDo && d.chuaDo.length)
+      o += '<div class="card mt tiny" style="color:var(--gita-do-ink)"><b>' + d.chuaDo.length + ' chỉ số chưa đo được trên máy chủ này:</b> ' +
+        h(d.chuaDo.join(' · ')) + '. Phần còn lại vẫn đúng. Bảng còn thiếu trên D1 được dựng bằng lệnh <span class="mono">npx wrangler d1 execute gita365 --file=csdl.sql --remote</span> (docs/TRIEN_KHAI_WEB.md).</div>';
 
     if (d.tien.theoThang && d.tien.theoThang.length)
       o += '<div class="card mt"><b>Thu theo tháng (6 kỳ gần nhất)</b><table class="tbl sm mt"><tr><th>Tháng</th><th>Thu đã duyệt</th></tr>' +
@@ -63657,60 +69440,52 @@ G.VIEWS = G.VIEWS || {};
 /* ═══════════════════════════════════════════════════════════════
    GITA 365 — CỬA TRƯỚC: NGƯỜI LẠ NHÌN TRƯỚC KHI ĐĂNG KÝ
 
-   Anh Quang kể một hành trình cụ thể: anh Hoàng tình cờ biết tới
-   GITA365, tò mò vào xem, rồi mới đăng ký và làm bài test để nói ra
-   chuyện nhà mình. Rồi anh hỏi: phần giao diện ấy đâu, phần năm bài
-   test đâu.
+   Bản đầu (dựng theo câu chuyện anh Hoàng) mở ba ngăn: "GITA làm gì",
+   "Đường vào sáu bước", "Năm bài test". Đo trên điện thoại 390px thì ba
+   ngăn ấy dài 43.495 ký tự — khoảng năm mươi lăm lần vuốt màn, bốn mươi
+   phút đọc — và nút đăng ký nằm ở CUỐI. Chủ hệ chốt (10/10): giảm một
+   nửa, dẫn theo hành trình ra quyết định, và bảo mật hơn.
 
-   Đo lại thì ra hai chỗ hụt, cả hai đều thật:
+   Nay là MỘT trang, đi đúng thứ tự năm chặng của hành trình 100 điểm
+   chạm trước quyết định: Nhận ra → Hiểu → Tin → Thử → Quyết. Người lạ
+   gặp phần đầu của hành trình ấy ở đây; phần còn lại diễn ra ngoài
+   trang (bài viết, nhóm cộng đồng, buổi nghe giới thiệu, bảy ngày thử).
+   100 là CÁCH ĐẾM, không phải chỉ tiêu — cùng câu trả lời của SUP-01.
 
-   1. Màn đăng nhập không có cửa nào cho người CHƯA có tài khoản nhìn
-      vào. Ba nút ở đó là "Bước vào bản đồ" (cuộn xuống ô mật khẩu),
-      "Xem 15 tài khoản trải nghiệm" (bảng tài khoản nội bộ) và "Đăng
-      ký". Không nút nào trả lời câu hỏi đầu tiên của một người lạ:
-      chỗ này làm gì, và tôi có đúng chỗ không. Màn giới thiệu và màn
-      đường vào sáu bước đều đã dựng xong — nhưng cả hai nằm SAU tường
-      đăng nhập. Mời người ta bước qua cửa rồi khoá chính cái cửa ấy.
+   Ba thứ CỐ Ý rút khỏi trang công khai, vì chúng không giúp người lạ
+   quyết mà chỉ giúp người muốn chép mô hình:
+   · quy mô kho nghề (số kịch bản, phác đồ, tình huống, mô thức);
+   · bí quyết vận hành (bốn bước ngôn từ, năm bước vận hành);
+   · câu hỏi thật của bài đo và ngưỡng điểm cảnh báo — biết trước câu
+     và ngưỡng thì phép đo nền mất giá trị với chính nhà làm bài.
+   Rút khỏi MÀN chưa phải là bảo vệ: kho/mau.json vẫn tải được. Dữ liệu
+   ở đây cũng không còn đổ vào G — giữ trong biến của tệp này, chỉ lấy
+   đúng ô cần vẽ — nên đăng nhập ngay sau đó không để lại gì trong bộ
+   nhớ. Cắt chính gói mau.json là bước sau, ở tools/ma-hoa-kho.js.
 
-   2. Bản xem thử chỉ mở MỘT bài test trong khi cả lời hứa lẫn màn
-      test đều nói năm bài. (Chỗ ấy sửa ở tools/ma-hoa-kho.js.)
+   Luật chữ của trang này: khát khao thay đổi đi từ HÌNH ẢNH TƯƠNG LAI,
+   không đi từ nỗi sợ (Hiến pháp chín điều, điều 5); không hứa kết quả,
+   không từ tuyệt đối (bộ lọc quảng cáo QC1–QC3).
 
-   Tệp này dựng cửa số 1. Nó KHÔNG mở thêm dữ liệu nào: cả ba phần
-   dưới đây đọc đúng kho/mau.json — gói công khai mà bất kỳ ai cũng
-   tải được sẵn, và packer đã cố ý để mở với lý do ghi ngay trong đó
-   ("khoá nó lại là khoá đúng cái cửa mình đang mời người ta bước
-   qua"). Kho nghề, 1.000 kịch bản, 220 phác đồ, ma trận, học phí vẫn
-   khoá nguyên trong bảy gói .enc.
-
-   Một điều cố ý KHÔNG làm: người chưa đăng ký xem được HÌNH DẠNG năm
-   bài test nhưng không làm được bài. Vì bài làm xong phải có chỗ ghi
-   — mã gia đình — và mã đó chỉ có sau khi đăng ký. Cho làm bài rồi
-   vứt kết quả đi là lấy 75 phút của một gia đình để đổi lấy không gì
-   cả.
+   Một điều KHÔNG đổi: người chưa đăng ký xem được tên năm bài nhưng
+   không làm được bài — bài xong phải có mã gia đình để ghi vào.
    ═══════════════════════════════════════════════════════════════ */
 'use strict';
 var G = window.G || {}; window.G = G;
 
 (function () {
-  var DA_NAP = false;      /* mau.json chỉ tải một lần cho mỗi phiên */
-  var PHAN = 'gita';       /* gita · duong · test */
+  var D = null;            /* dữ liệu cửa trước — KHÔNG đổ vào G */
 
-  function U() { return G.U; }
   function h(x) { return G.U.h(x); }
   function ic(a, b) { return G.U.ic(a, b); }
 
   /* ─── Tải gói công khai ───
-     Cùng đường dẫn mà napMau() dùng, kể cả khi Apps Script phục vụ. */
+     Bản một tệp không có thư mục kho/ cạnh trang — dong-goi.py nhúng
+     gói mẫu vào G.MAU_NHUNG. Đọc chỗ ấy trước, nếu không thì cửa trước
+     hỏng đúng ở bản người lạ hay mở nhất. */
   function napCongKhai() {
-    if (DA_NAP) return Promise.resolve(true);
-
-    /* Bản một tệp (GITA365-…-gioi-thieu.html, và bản xem thử gửi khách)
-       không có thư mục kho/ cạnh trang — tools/dong-goi.py nhúng thẳng
-       gói mẫu vào G.MAU_NHUNG. Không đọc chỗ ấy trước thì fetch trả 404
-       và cửa trước hỏng đúng ở bản mà người lạ hay mở nhất: cái tệp
-       được gửi cho họ xem. */
+    if (D) return Promise.resolve(true);
     if (window.G && G.MAU_NHUNG) return Promise.resolve(nhan(G.MAU_NHUNG));
-
     var duong = window.GITA_NGUON_KHO ? (window.GITA_NGUON_KHO + 'mau') : 'kho/mau.json';
     return fetch(duong)
       .then(function (r) { return r.json(); })
@@ -63718,179 +69493,96 @@ var G = window.G || {}; window.G = G;
       .catch(function () { return false; });
   }
 
-  /* Chỉ nhận những kho của CỬA TRƯỚC. Gói mẫu có 50 kho; đổ hết vào G
-     lúc chưa đăng nhập là để lại dữ liệu của phiên trước trong bộ nhớ
-     khi người dùng bấm đăng nhập ngay sau đó, và donKho() lúc đăng nhập
-     sẽ không biết chúng từ đâu ra. */
-  var LAY = ['DV_BUOC', 'DV_CHAN', 'DV_HOI', 'TEST750', 'HANHTRINH12', 'TRU_GITA'];
+  /* Chỉ giữ đúng ô cần vẽ. Bài đo giữ TÊN, người làm, số phút, số miền
+     và câu giới hạn — bỏ câu hỏi, nhóm điểm và ngưỡng cảnh báo. */
   function nhan(m) {
     if (!m) return false;
-    Object.keys(m).forEach(function (k) {
-      if (k.indexOf('GT_') === 0 || LAY.indexOf(k) >= 0) G[k] = m[k];
+    var bai = (m.TEST750 || []).filter(function (b) { return b.tang === 'T1'; }).map(function (b) {
+      return { bo: b.bo, ten: b.ten, ai: b.ai, phut: b.phut, soMien: (b.mien || []).length, gioiHan: b.gioiHan };
     });
-    DA_NAP = true;
+    D = {
+      motCau: m.GT_MOT_CAU || '', viSao: m.GT_VISAO || {}, hua: m.GT_HUA || [], tang: m.GT_TANG || [],
+      vai: m.GT_VAI || [], khong: m.GT_KHONG || [], ranh: m.GT_MUCTIEU_RANH || '',
+      buoc: m.DV_BUOC || [], hoi: m.DV_HOI || [], bai: bai
+    };
     return true;
   }
 
-  /* ─── Ba phần ─── */
-  var PHANS = [
-    { k: 'gita',  t: 'GITA 365 làm gì',
-      h: 'Một câu định nghĩa, sáu mục tiêu có mốc ngày và ngưỡng đạt, bảy giá trị mỗi giá trị kèm một việc nên làm và một việc không làm — và sáu điều Học viện KHÔNG nhận làm.' },
-    { k: 'duong', t: 'Đường vào sáu bước',
-      h: 'Sáu chặng đi theo thứ tự. Mỗi chặng ghi rõ ai làm, mất bao lâu, xong thì cầm được gì trong tay, và chưa xong thì bị chặn ở đâu — chặn để bước sau không chạy trên nền sai.' },
-    { k: 'test',  t: 'Năm bài test đánh giá',
-      h: 'Cấu trúc thật của phép đo nền: đo miền nào, bốn mức được tả ra sao, cho ra cái gì, cảnh báo nào tự bật ở ngưỡng nào — kèm một câu thật lấy nguyên từ mỗi bài.' }
+  /* ─── Năm chặng ra quyết định ─── */
+  /* Mỗi chặng nói AI sẽ ở bên nhà mình ở chặng ấy — chủ hệ (10/10): khách
+     không được thấy mình đi một mình. Tên vai khớp G.GT_VAI; câu nói điều
+     vai ấy LÀM, không hứa một mức an tâm nào (không từ tuyệt đối, QC1). */
+  var CHANG = [
+    { k: 1, t: 'Nhận ra', ben: 'Chuyên gia tư vấn — buổi đầu chỉ nghe nhà mình kể.' },
+    { k: 2, t: 'Hiểu',    ben: 'Chuyên gia tư vấn và trợ lý ảo — trả lời mọi câu hỏi về bản đồ.' },
+    { k: 3, t: 'Tin',     ben: 'Coach và mentor — người thật, đi cùng nhà mình từng chặng.' },
+    { k: 4, t: 'Thử',     ben: 'Chuyên gia đánh giá — đọc hồ sơ cùng cả nhà, bằng dữ liệu.' },
+    { k: 5, t: 'Quyết',   ben: 'Coach — cùng nhà mình chọn chặng đầu tiên, và ở lại suốt năm tầng.' }
   ];
 
-  /* Màn năm bài test cho người CHƯA đăng ký: nói đúng hình dạng bài,
-     không mở nút làm bài. Không dùng lại G.VIEWS['bo-test'] vì màn ấy
-     đọc G.S.test và mở nút làm bài — cả hai đều cần tài khoản. */
-  function manTest() {
-    var T = (G.TEST750 || []).slice();
-    if (!T.length)
-      return U().empty('Chưa tải được phần xem trước',
-        'Phần này tải từ gói công khai kho/mau.json. Mở lại trang rồi bấm lại.');
+  /* Năm tình huống để người lạ tự nhận ra nhà mình. Mỗi tình huống có
+     HAI phần: GITA bắt đầu từ đâu (dựa trên điều Học viện ĐÃ làm — đo
+     bảy ngày, chín vai, mười phút mỗi tối, xếp việc theo khoảng vụn),
+     và MỘT việc làm được ngay tối nay, không cần đăng ký. Chủ hệ (10/10):
+     "để họ bắt tay hành động thay vì gửi thông điệp lý thuyết". Việc tối
+     nay phải nhỏ, quan sát được, không trách ai, và không hứa kết quả. */
+  var GUONG = [
+    { t: 'Tối nào cũng phải nhắc con nhiều lần mới chịu ngồi vào bàn.',
+      d: 'Bảy ngày đầu, bên em chưa sửa gì cả — chỉ cùng nhà mình đếm. Có một con số chung thì cả nhà thôi ' +
+         'tranh luận bằng cảm giác, và việc đầu tiên nhắm tới thường chính là giảm số lần phải nhắc.',
+      viec: 'Tối nay chỉ đếm, chưa sửa. Mỗi lần nhắc con, gạch một vạch lên tờ giấy dán ở tủ lạnh — không nhắc ' +
+         'thêm, không trách. Sáng mai cả nhà cùng nhìn con số ấy.' },
+    { t: 'Bố mẹ đều thương con, nhưng mỗi người một cách.',
+      d: 'Không ai bị bắt đổi ngay. Bản đồ chia rõ việc nào của ai — chín vai trong nhà, mỗi vai có người giữ — ' +
+         'để người lớn đứng cùng một phía trước khi nói với con.',
+      viec: 'Tối nay, khi con đã ngủ, mỗi người nói một câu: điều mình mong nhất ở con trong năm nay. Chỉ nghe ' +
+         'nhau, chưa bàn cách làm.' },
+    { t: 'Kế hoạch nào cũng hăng hái tuần đầu rồi bỏ dở.',
+      d: 'Nhịp quan trọng hơn cường độ. Mức tối thiểu là mười phút mỗi tối, đặt sao cho hôm mệt nhất vẫn làm được. ' +
+         'Lỡ một nhịp thì có đường quay lại, không phải làm lại từ đầu.',
+      viec: 'Chọn một việc nhỏ đến mức hôm mệt nhất vẫn làm được — mười phút đọc sách cùng con chẳng hạn. Tối nay ' +
+         'làm đúng việc ấy, rồi đánh một dấu lên lịch treo tường.' },
+    { t: 'Con ít kể chuyện, hỏi gì cũng chỉ "bình thường".',
+      d: 'Bắt đầu từ cách người lớn hỏi, không bắt đầu từ việc bắt con nói. Người đồng hành gợi cho cha mẹ những ' +
+         'câu mở lời cho buổi tối, rồi cùng nhà mình nhìn lại sau mỗi tuần.',
+      viec: 'Tối nay đổi câu hỏi. Thay vì "Hôm nay học thế nào?", hỏi "Hôm nay có chuyện gì làm con bật cười?" — ' +
+         'rồi nghe hết, không góp ý.' },
+    { t: 'Cả nhà bận, buổi tối mỗi người một màn hình.',
+      d: 'Người bận không thiếu thời gian — họ có thời gian ở dạng vụn. Người đồng hành xếp việc vào đúng những ' +
+         'khoảng vụn ấy, bắt đầu từ một nếp nhỏ cả nhà giữ được.',
+      viec: 'Tối nay dành mười lăm phút không màn hình cho cả nhà, kể cả bố mẹ. Đặt điện thoại vào một chỗ chung, ' +
+         'rồi ngồi cùng nhau làm bất cứ việc gì.' }
+  ];
+  var CHON = 0;
 
-    var t1 = T.filter(function (b) { return b.tang === 'T1'; });
-    var ds = t1.length ? t1 : T;
-    var cauThat = ds.reduce(function (a, b) { return a + (b.soCauThat || b.cau.length); }, 0);
-    var mien = ds[0] && ds[0].mien ? ds[0].mien.length : 0;
-    var soCB = ds.reduce(function (a, b) { return a + (b.canhBao || []).length; }, 0);
-    var moiMien = mien ? Math.round((ds[0].soCauThat || ds[0].cau.length) / mien) : 0;
+  /* Ba tối thử tại nhà, TRƯỚC khi đăng ký. Đánh dấu chỉ lưu trên máy
+     này (localStorage, bọc try/catch) — không gửi đi đâu, và trang vẫn
+     chạy đủ khi trình duyệt chặn bộ nhớ. Dùng nút bật/tắt chứ không
+     dùng ô tích: bộ bắt sự kiện chung của app.js chặn hành vi mặc định
+     của cú bấm, nên ô tích sẽ không tự đổi trạng thái. */
+  var BA_TOI = [
+    { t: 'Tối thứ nhất · Đếm', y: 'Đếm số lần phải nhắc con bắt đầu việc học. Chỉ đếm — không nhắc thêm, không trách.' },
+    { t: 'Tối thứ hai · Trao', y: 'Trước giờ học, hỏi con: "Hôm nay con muốn bắt đầu bằng việc gì?" — rồi để con chọn.' },
+    { t: 'Tối thứ ba · Nhìn lại', y: 'Cả nhà ngồi mười phút, mỗi người kể một điều mình thấy ổn hơn trong ba tối vừa qua.' }
+  ];
+  var KHOA_TOI = 'gita365.bataithu';
+  function docToi() {
+    try { var v = JSON.parse(localStorage.getItem(KHOA_TOI) || '[]'); return Array.isArray(v) ? v : []; }
+    catch (e) { return []; }
+  }
+  function ghiToi(v) { try { localStorage.setItem(KHOA_TOI, JSON.stringify(v)); } catch (e) {} }
 
-    var o = U().sec('NĂM BÀI CỦA TẦNG MỘT — ĐO CÁI GÌ, VÀ ĐO NHƯ THẾ NÀO',
-      'Đây không phải bài trắc nghiệm tính cách và không phải bài kiểm tra kiến thức. Nó là một phép ĐO NỀN: ' +
-      'ghi lại thực trạng bảy ngày gần nhất của một nhà, bằng hành vi quan sát được, để bảy ngày sau đối chiếu ' +
-      'xem cái gì đã đổi. Học viên làm ba bài, phụ huynh làm hai bài — cùng một nhà nhìn từ hai chỗ đứng, và ' +
-      'chỗ hai phía trả lời lệch nhau là chỗ buổi đọc hồ sơ mở ra trước tiên.');
-
-    o += '<div class="grid g4 mb">' +
-      U().stat({ k: 'Bài', v: String(ds.length), d: '3 bài học viên · 2 bài phụ huynh', c: '#185AB4' }) +
-      U().stat({ k: 'Câu hỏi', v: String(cauThat), d: mien + ' miền × ' + moiMien + ' câu mỗi bài', c: '#5140B4' }) +
-      U().stat({ k: 'Lựa chọn', v: String(cauThat * 4), d: 'bốn mức cho mỗi câu', c: '#0B6675' }) +
-      U().stat({ k: 'Cảnh báo tự bật', v: String(soCB), d: 'theo ngưỡng từng miền', c: '#B45309' }) +
-      '</div>';
-
-    /* ─ Chỗ khác biệt thật, nói bằng chính dữ liệu đang hiển thị ─ */
-    o += '<div class="card mb" style="border-color:var(--gita-vien-2)">' +
-      '<div class="row mb" style="gap:8px"><span style="color:var(--gold-ink)">' + ic('target', 'w-4 h-4') + '</span>' +
-      '<b>Bốn lựa chọn là bốn MỨC HÀNH VI, không phải bốn mức "tốt – khá – trung bình – kém"</b></div>' +
-      '<p class="sm dim" style="line-height:1.8">Đây là chỗ bộ đo này khác một bảng khảo sát. Mỗi lựa chọn ' +
-      'không phải một tính từ mà là một TÌNH HUỐNG ĐƯỢC TẢ — trung bình sáu mươi hai ký tự, có mốc thời gian ' +
-      'hoặc số lần để người trả lời tự soi vào tuần vừa rồi. Hỏi "em có chăm học không" thì mười nhà trả lời ' +
-      'ra mười thang đo khác nhau; tả ra "em lùi lại nhiều lần, có hôm quá một tiếng mới bắt đầu" thì hai nhà ' +
-      'cùng cảnh sẽ chọn cùng một mức. Nhờ vậy điểm của nhà mình so được với chính nhà mình chặng sau, ' +
-      'và Coach đọc điểm là biết ngay phải hỏi tiếp câu gì.</p></div>';
-
-    /* ─ Năm thẻ bài, mỗi thẻ mở một câu thật ─ */
-    o += U().sec('TỪNG BÀI ĐO GÌ VÀ CHO RA GÌ', 'Mỗi thẻ kèm một câu thật lấy nguyên từ bài, đủ bốn mức.');
-    o += '<div class="grid g1 mb">' + ds.map(function (b) {
-      var laPH = b.ai === 'PH';
-      var mauAi = laPH ? '#B45309' : '#185AB4';
-      var q = (b.cau || [])[0];
-      var x = '<div class="card mb" style="border-color:' + mauAi + '22">' +
-        '<div class="row wrap mb" style="gap:7px">' + U().chip('Bài ' + h(b.bo), mauAi) +
-        U().chip(laPH ? 'Phụ huynh làm' : 'Học viên làm', mauAi) +
-        '<span class="tiny muted">' + (b.soCauThat || b.cau.length) + ' câu · ' +
-        h(String(b.phut)) + ' phút · tuổi ' + h(b.tuoi || '') + '</span></div>' +
-        '<b style="display:block;font-size:16px;line-height:1.35;margin-bottom:7px;color:' + mauAi + '">' +
-        h(b.ten) + '</b>' +
-        '<p class="sm dim" style="line-height:1.75;margin-bottom:12px">' + h(b.muc || '') + '</p>';
-
-      x += '<div class="grid g2 mb">' +
-        '<div class="card pad-sm"><div class="tiny up muted mb">SÁU MIỀN ĐO</div>' +
-        '<p class="tiny" style="line-height:1.7">' +
-        (b.mien || []).map(function (m) { return h(m); }).join(' · ') + '</p></div>' +
-        '<div class="card pad-sm" style="border-color:' + mauAi + '33">' +
-        '<div class="tiny up mb" style="color:' + mauAi + '">LÀM XONG THÌ CẦM ĐƯỢC GÌ</div>' +
-        '<p class="tiny" style="line-height:1.7">' + h(b.ra || '') + '</p></div></div>';
-
-      if (q) {
-        x += '<div class="card pad-sm" style="border-color:var(--gita-vien-1);background:var(--gita-mo-1)">' +
-          '<div class="tiny up muted mb">MỘT CÂU THẬT TRONG BÀI · MIỀN "' + h(q.mien) + '"</div>' +
-          '<p class="sm" style="line-height:1.7;margin-bottom:9px"><b>' + h(q.hoi) + '</b></p>' +
-          (q.chon || []).map(function (c) {
-            var mc = c.muc === 1 ? '#BE0E16' : c.muc === 2 ? '#FB923C' : c.muc === 3 ? '#B45309' : '#0B7350';
-            return '<div class="row" style="gap:9px;align-items:flex-start;margin-bottom:6px">' +
-              '<span class="chip" style="flex:none;color:' + mc + ';border-color:' + mc +
-              '40;background:' + mc + '14">Mức ' + c.muc + '</span>' +
-              '<span class="tiny" style="line-height:1.65;flex:1">' + h(c.t) + '</span></div>';
-          }).join('') +
-          '<p class="tiny muted mt" style="line-height:1.6">Mức 1 tới mức 4 quy về thang 100 theo miền, ' +
-          'không cộng dồn thành một điểm tổng duy nhất — vì một nhà mạnh miền này yếu miền kia thì điểm tổng ' +
-          'giấu mất đúng chỗ cần chạm.</p></div>';
-      }
-      return x + '</div>';
-    }).join('') + '</div>';
-
-    /* ─ Cảnh báo tự bật ─ */
-    var cbs = [];
-    ds.forEach(function (b) {
-      (b.canhBao || []).forEach(function (c) { cbs.push({ b: b, c: c }); });
-    });
-    if (cbs.length) {
-      o += U().sec(cbs.length + ' CẢNH BÁO TỰ BẬT THEO NGƯỠNG',
-        'Bài chấm xong không dừng ở bảng điểm. Miền nào tụt dưới ngưỡng thì một cảnh báo tự bật, và cảnh báo ' +
-        'nói VIỆC PHẢI LÀM chứ không kết luận nguyên nhân — kết luận nguyên nhân là việc của buổi đọc hồ sơ ' +
-        'có người ngồi cùng, không phải việc của một phép tính.');
-      o += '<div class="grid g2 mb">' + cbs.slice(0, 4).map(function (x) {
-        var nang = x.c.severity === 'high';
-        var mc = nang ? '#BE0E16' : '#B45309';
-        var ng = /domain\('([^']+)'\)\s*<\s*(\d+)/.exec(x.c['if'] || '');
-        return '<div class="card pad-sm" style="border-color:' + mc + '33">' +
-          '<div class="row wrap mb" style="gap:6px">' + U().chip('Bài ' + h(x.b.bo), mc) +
-          U().chip(nang ? 'ưu tiên cao' : 'theo dõi', mc) + '</div>' +
-          '<p class="tiny mb" style="line-height:1.65;color:var(--ink-3)">Bật khi miền <b>' +
-          h(ng ? ng[1] : '—') + '</b> dưới ' + h(ng ? ng[2] : '—') + ' điểm</p>' +
-          '<p class="tiny" style="line-height:1.7">' + h(x.c['then']) + '</p></div>';
-      }).join('') + '</div>';
-      o += '<p class="tiny muted mb">Bốn cảnh báo trên là ví dụ lấy từ bài A và bài B. Đủ ' + cbs.length +
-        ' cảnh báo chỉ bật khi có bài làm thật để chấm — mà bài làm thật thì cần mã gia đình.</p>';
-    }
-
-    /* ─ Bốn nhóm ─ */
-    if (ds[0] && ds[0].nhom) {
-      o += U().sec('ĐIỂM MIỀN RƠI VÀO MỘT TRONG BỐN BĂNG',
-        'Băng không phải xếp hạng nhà. Nó quyết định NHỊP CHẠM: băng đỏ thì Coach chạm dày, băng xanh thì ' +
-        'Học viện lùi ra để nhà mình tự chạy. Không băng nào là trượt, và băng đổi được theo tuần.');
-      o += '<div class="grid g4 mb">' + ds[0].nhom.map(function (n) {
-        return '<div class="card pad-sm" style="border-color:' + n.color + '33">' +
-          '<div class="row mb" style="gap:8px">' + U().dot(n.color) +
-          '<b class="sm" style="color:' + n.color + '">' + h(n.label) + '</b></div>' +
-          '<div class="tiny muted mb">' + n.min + '–' + n.max + ' điểm</div>' +
-          '<p class="tiny dim" style="line-height:1.65">' + h(n.meaning) + '</p>' +
-          (n.action ? '<div class="card pad-sm mt" style="border-color:' + n.color + '2e">' +
-            '<div class="tiny up mb" style="color:' + n.color + '">VIỆC LÀM NGAY</div>' +
-            '<p class="tiny" style="line-height:1.65">' + h(n.action) + '</p></div>' : '') +
-          '</div>';
-      }).join('') + '</div>';
-    }
-
-    if (ds[0] && ds[0].gioiHan)
-      o += '<div class="card mb" style="border-color:var(--gita-vien-1)">' +
-        '<div class="row mb" style="gap:8px"><span style="color:var(--gold-ink)">' + ic('shield', 'w-4 h-4') + '</span>' +
-        '<b>Ba việc bộ đo này KHÔNG làm</b></div>' +
-        '<p class="sm dim" style="line-height:1.8">' + h(ds[0].gioiHan) + '</p>' +
-        '<p class="tiny muted mt" style="line-height:1.7">Dòng trên nằm nguyên trong dữ liệu của cả năm bài, ' +
-        'không phải một câu miễn trừ dán thêm ở chân trang. Một bộ đo không tự khai chỗ nó dừng lại là một ' +
-        'bộ đo sẽ bị dùng quá tay.</p></div>';
-
-    o += '<div class="card" style="border-color:var(--alert);background:rgba(251,146,60,.06)">' +
-      '<div class="row" style="gap:10px;align-items:flex-start">' +
-      '<span style="color:var(--alert);flex:none">' + ic('lock', 'w-4 h-4') + '</span>' +
-      '<div style="flex:1"><b class="sm">Xem được cấu trúc bài, làm bài thì cần mã gia đình</b>' +
-      '<p class="tiny mt" style="line-height:1.75;color:var(--ink-2)">' +
-      'Không phải để giữ bài. Là vì phép đo này chỉ có nghĩa khi có chỗ ghi và có mốc để đối chiếu: ' +
-      'điểm hôm nay là baseline, bảy ngày sau đo lại mới ra được cái gì đã đổi. Chỗ ghi ấy là mã gia đình ' +
-      'dạng F-xxx, và mã đó sinh ra lúc đăng ký. Cho làm trước rồi vứt kết quả đi là lấy ' +
-      (ds.length * 15) + ' phút của cả nhà để đổi lấy một con số không so được với gì.</p></div></div></div>';
-    return o;
+  function dau(k, tieu, phu) {
+    var c = CHANG[k - 1];
+    return '<div id="ct-s' + k + '" class="ct-dau">' +
+      '<div class="tiny up" style="color:var(--gold-ink)">Chặng ' + k + ' · ' + h(c.t) + '</div>' +
+      '<h2 class="ct-h">' + h(tieu) + '</h2>' +
+      '<div class="ct-ben">' + ic('users', 'w-3 h-3') + '<span><b>Ai ở bên nhà mình:</b> ' + h(c.ben) + '</span></div>' +
+      (phu ? '<p class="sm dim" style="line-height:1.75;max-width:62ch">' + h(phu) + '</p>' : '') + '</div>';
   }
 
-  function than() {
-    if (PHAN === 'duong') return G.VIEWS && G.VIEWS['tham-gia'] ? G.VIEWS['tham-gia']() : '';
-    if (PHAN === 'test') return manTest();
-    return G.VIEWS && G.VIEWS['gioi-thieu'] ? G.VIEWS['gioi-thieu']() : '';
+  function nutDangKy(nhan) {
+    return '<button class="btn pri" data-act="mo-dang-ky">' + ic('plus') + h(nhan || 'Đăng ký tài khoản') + '</button>';
   }
 
   function khung() {
@@ -63900,45 +69592,123 @@ var G = window.G || {}; window.G = G;
       '<button class="btn ghost sm" data-act="ct-dong">' + ic('arrow') + 'Quay lại đăng nhập</button>' +
       '<button class="btn pri sm" data-act="mo-dang-ky">' + ic('plus') + 'Đăng ký</button></div>';
 
-    o += '<div class="view" style="max-width:1080px;margin:0 auto;padding:22px 18px 60px">';
+    o += '<div class="view ct-trang">';
 
-    o += '<div class="card mb" style="border-color:var(--gita-vien-1);background:var(--gita-mo-1)">' +
-      '<p class="tiny" style="line-height:1.75;color:var(--ink-2)">' +
-      '<b>Phần này mở cho người chưa có tài khoản, và mở đúng ba thứ.</b> Học viện làm gì và không nhận ' +
-      'làm gì · đường vào đi qua sáu chặng nào và mỗi chặng chặn ở đâu · phép đo nền đo miền nào và ' +
-      'cho ra cái gì. Ba thứ ấy vốn là những gì Học viện phải nói trước khi một gia đình quyết định — ' +
-      'giấu chúng đi thì lời mời không có nghĩa.' +
-      '<br><br><b>Cái không mở ở đây</b>: 1.000 kịch bản làm việc, 220 phác đồ xử lý, 250 tình huống, ' +
-      '42 mô thức và ma trận năm tầng — đó là tài sản nghề, nằm trong bảy gói mã hoá và chỉ mở theo ' +
-      'đúng vai, đúng tầng, đúng phiên sau khi đăng nhập. Ngân hàng câu hỏi cũng vậy: ở đây chỉ hiện ' +
-      'một câu mẫu mỗi bài để xem cách hỏi, không phải cả bài.</p></div>';
+    /* Dải năm chặng — bấm để nhảy tới chặng ấy. */
+    o += '<nav class="ct-chang" aria-label="Năm chặng ra quyết định">' + CHANG.map(function (c) {
+      return '<button class="chip" data-ctc="s' + c.k + '">' + c.k + ' · ' + h(c.t) + '</button>';
+    }).join('') + '</nav>';
 
-    o += '<div class="row wrap mb" style="gap:8px">' + PHANS.map(function (x) {
-      return '<button class="btn ghost sm' + (x.k === PHAN ? ' on' : '') + '" data-ct="' + x.k + '">' +
-        h(x.t) + '</button>';
+    /* ── Mở đầu ── */
+    o += '<div class="card ct-mo">' +
+      '<div class="tiny up" style="color:var(--gold-ink)">Dành cho cha mẹ muốn buổi tối ở nhà nhẹ hơn</div>' +
+      '<h1 class="ct-h1">Mỗi tối một bước nhỏ — để ba trăm sáu mươi lăm ngày sau, nhà mình tự đi trên đôi chân của mình.</h1>' +
+      '<p style="line-height:1.8;max-width:62ch">' + h(D.motCau) + '</p>' +
+      '<div class="row wrap" style="gap:10px">' +
+      '<button class="btn pri" data-ctc="s1">' + ic('arrow') + 'Thử một việc ngay tối nay</button>' +
+      '<button class="btn ghost" data-act="mo-dang-ky">Đăng ký · 5 phút, chưa mất phí</button></div></div>';
+
+    /* ── 1 · Nhận ra ── */
+    o += dau(1, 'Nhà mình đang ở đâu?', 'Chọn câu giống nhà mình nhất. Mỗi câu có một việc làm được ngay tối nay. Lựa chọn chỉ nằm trên máy này.');
+    o += '<div class="ct-guong">' + GUONG.map(function (g, i) {
+      return '<button class="ct-o' + (i === CHON ? ' on' : '') + '" data-ctc="g' + i + '" aria-pressed="' + (i === CHON) + '">' + h(g.t) + '</button>';
+    }).join('') + '</div>';
+    o += GUONG.map(function (g, i) {
+      return '<div class="card ct-tra" data-ctg="' + i + '"' + (i === CHON ? '' : ' hidden') + '>' +
+        '<div class="tiny up" style="color:var(--gold-ink)">GITA bắt đầu từ đâu với nhà như thế</div>' +
+        '<p style="line-height:1.8">' + h(g.d) + '</p>' +
+        '<div class="ct-viec-nay"><div class="tiny up">Việc của tối nay</div>' +
+        '<p style="line-height:1.75">' + h(g.viec) + '</p></div></div>';
+    }).join('');
+
+    /* ── 2 · Hiểu ── */
+    o += dau(2, 'Nhà mình không thiếu cố gắng — chỉ thiếu một tấm bản đồ', D.viSao.canh || '');
+    if ((D.viSao.hong || []).length)
+      o += '<div class="card pad-sm"><b class="sm" style="display:block;margin-bottom:6px">Vì sao cố gắng hay bị trôi</b>' +
+        '<ul class="tiny dim" style="line-height:1.75;margin:0;padding-left:18px;display:grid;gap:4px">' +
+        D.viSao.hong.map(function (x) { return '<li>' + h(x) + '</li>'; }).join('') + '</ul>' +
+        (D.viSao.chot ? '<p class="sm mt" style="line-height:1.7">' + h(D.viSao.chot) + '</p>' : '') + '</div>';
+    o += '<div class="ct-luoi">' + D.hua.map(function (x) {
+      return '<div class="card pad-sm"><b class="sm" style="display:block;margin-bottom:4px">' + h(x.t) + '</b>' +
+        '<p class="tiny dim" style="line-height:1.7">' + h(x.y) + '</p></div>';
+    }).join('') + '</div>';
+    o += '<b class="sm">Năm tầng — và nhà mình sẽ thấy gì khi qua mỗi tầng</b>';
+    o += '<div class="ct-tang">' + D.tang.map(function (x) {
+      return '<div class="ct-tg" style="border-top-color:' + h(x.c || 'var(--gita-vien-2)') + '">' +
+        '<div class="tiny muted">' + h(x.t) + '</div><b class="sm">' + h(x.ten) + '</b>' +
+        '<p class="tiny dim" style="line-height:1.65">' + h(x.max || x.y || '') + '</p></div>';
     }).join('') + '</div>';
 
-    o += '<p class="tiny muted mb">' + h((PHANS.filter(function (x) { return x.k === PHAN; })[0] || {}).h || '') + '</p>';
+    /* ── 3 · Tin ── */
+    o += dau(3, 'Có người thật đi cùng — và nói thật khi nhà mình đang trượt', D.ranh);
+    o += '<div class="ct-luoi">' + D.vai.map(function (x) {
+      return '<div class="card pad-sm"><b class="sm" style="display:block;margin-bottom:4px">' + h(x.t) + '</b>' +
+        '<p class="tiny dim" style="line-height:1.65">' + h(x.y) + '</p></div>';
+    }).join('') + '</div>';
+    if (D.khong.length)
+      o += '<details class="card pad-sm ct-mo-rong"><summary class="sm"><b>Sáu điều Học viện KHÔNG nhận làm</b>' +
+        ' <span class="tiny muted">— đọc trước khi quyết</span></summary>' +
+        '<ol class="tiny dim" style="line-height:1.75;margin:10px 0 0;padding-left:20px">' +
+        D.khong.map(function (x) { return '<li>' + h(x) + '</li>'; }).join('') + '</ol></details>';
 
-    o += than();
+    /* ── 4 · Thử ── */
+    var daLam = docToi();
+    o += dau(4, 'Ba tối thử ngay tại nhà — trước cả khi đăng ký',
+      'Không cần tài khoản, không mất phí. Làm xong tối nào thì bấm đánh dấu tối ấy.');
+    o += '<div class="ct-ba-toi">' + BA_TOI.map(function (x, i) {
+      var xong = daLam.indexOf(i) >= 0;
+      return '<button class="ct-toi' + (xong ? ' on' : '') + '" data-ctc="v' + i + '" aria-pressed="' + xong + '">' +
+        '<span class="ct-dau-tich" aria-hidden="true">' + (xong ? '✓' : (i + 1)) + '</span>' +
+        '<span><b class="sm" style="display:block">' + h(x.t) + '</b><span class="tiny dim">' + h(x.y) + '</span></span></button>';
+    }).join('') + '</div>';
+    o += '<p class="sm" id="ct-ngot" style="line-height:1.75">' + loiNgot(daLam.length) + '</p>';
 
-    o += '<div class="card mt2" style="border-color:var(--gita-vien-2);background:var(--gita-mo-1)">' +
-      '<div class="row wrap" style="gap:14px;align-items:center">' +
-      '<div class="grow" style="min-width:260px">' +
-      '<b class="sm" style="display:block;margin-bottom:6px">Đọc xong ba mục trên rồi mới quyết — đó là ' +
-      'thứ tự Học viện muốn</b>' +
-      '<p class="tiny" style="line-height:1.75;color:var(--ink-2)">' +
-      'Đăng ký mất năm phút, không mất phí, và không mở khoá bằng thẻ. Xong thì nhà mình có ba thứ: ' +
-      'một mã gia đình dạng F-xxx đi theo suốt năm tầng, một hồ sơ trống chờ số liệu, và năm bài đánh ' +
-      'giá của tầng một mở ra để đo nền.' +
-      '<br><br>Nếu đọc mục "sáu điều Học viện KHÔNG làm" mà thấy có dòng không hợp với nhà mình, thì ' +
-      'dừng ở đây là đúng — bên em thà mất một đăng ký còn hơn nhận một gia đình mình không giúp được.' +
-      '</p></div>' +
-      '<button class="btn pri" data-act="mo-dang-ky">' + ic('plus') + 'Đăng ký tài khoản</button>' +
+    o += '<b class="sm" style="margin-top:10px">Khi nhà mình sẵn sàng: đường vào sáu bước, chưa bước nào mất phí</b>';
+    o += '<ol class="ct-buoc">' + D.buoc.map(function (x) {
+      return '<li><b class="sm">' + h(x.ten) + '</b><span class="tiny muted">' + h(x.lau || '') + '</span></li>';
+    }).join('') + '</ol>';
+    if (D.bai.length) {
+      o += '<div class="card pad-sm ct-bai"><b class="sm" style="display:block;margin-bottom:8px">Năm bài đo nền của tầng một</b>' +
+        '<ul class="tiny" style="margin:0;padding:0;list-style:none;display:grid;gap:6px">' +
+        D.bai.map(function (b) {
+          return '<li><b>Bài ' + h(b.bo) + ' · ' + h(b.ten) + '</b> <span class="muted">— ' +
+            (b.ai === 'PH' ? 'phụ huynh' : 'học viên') + ' · ' + h(b.phut) + ' phút · ' + h(b.soMien) + ' miền</span></li>';
+        }).join('') + '</ul>' +
+        '<p class="tiny dim mt" style="line-height:1.7">' + h(D.bai[0].gioiHan || '') +
+        ' Làm bài cần mã gia đình, vì điểm hôm nay là mốc để bảy ngày sau đo lại.</p></div>';
+    }
+
+    /* ── 5 · Quyết ── */
+    o += dau(5, 'Ba câu cha mẹ hay hỏi trước khi quyết', '');
+    o += '<div class="card pad-sm">' + D.hoi.slice(0, 3).map(function (x, i) {
+      return '<div' + (i ? ' class="mt"' : '') + '><b class="sm">' + h(x.h) + '</b>' +
+        '<p class="tiny dim" style="line-height:1.7">' + h(x.d) + '</p></div>';
+    }).join('') + '</div>';
+    if (D.hoi.length > 3)
+      o += '<details class="card pad-sm ct-mo-rong"><summary class="sm"><b>' + (D.hoi.length - 3) + ' câu hỏi khác</b></summary>' +
+        D.hoi.slice(3).map(function (x) {
+          return '<div class="mt"><b class="sm">' + h(x.h) + '</b><p class="tiny dim" style="line-height:1.7">' + h(x.d) + '</p></div>';
+        }).join('') + '</details>';
+
+    o += '<div class="card ct-cuoi">' +
+      '<div style="flex:1;min-width:0"><b style="display:block;margin-bottom:6px">Mang con số của ba tối ấy theo — nhà mình đã bắt đầu rồi</b>' +
+      '<p class="tiny" style="line-height:1.75;color:var(--ink-2)">Đăng ký mất năm phút và chưa mất phí. Xong là nhà mình có ' +
+      'một mã gia đình đi theo suốt năm tầng, một hồ sơ chờ số liệu, và năm bài đo nền của tầng một — người đồng hành sẽ ' +
+      'đo tiếp từ đúng chỗ nhà mình đang đứng. Nếu đọc sáu điều Học viện không nhận làm mà thấy có dòng không hợp, dừng ở ' +
+      'đây là đúng — bên em thà mất một đăng ký còn hơn nhận một gia đình mình không giúp được.</p></div>' +
+      '<div class="row wrap" style="gap:10px">' + nutDangKy() +
       '<button class="btn ghost" data-act="ct-dong">Đã có tài khoản</button></div></div>';
 
     o += '</div>';
     return o;
+  }
+
+  /* Câu theo số tối đã làm. Không hứa kết quả: vị ngọt là thứ nhà mình
+     TỰ nhìn thấy trong con số của mình, không phải thứ bên em cam kết. */
+  function loiNgot(n) {
+    if (n >= 3) return 'Ba tối, ba việc — nhà mình vừa tự tạo ra con số đầu tiên của riêng mình. Nếu có dù chỉ một lần nhắc ít hơn, một câu chuyện dài hơn, thì đó là thay đổi do chính nhà mình làm ra. Người đồng hành sẽ đo tiếp từ đúng con số ấy.';
+    if (n > 0) return 'Đã làm ' + n + '/3 tối. Cứ giữ đúng nhịp ấy — lỡ một tối thì làm tiếp tối sau, không phải làm lại từ đầu.';
+    return 'Vị ngọt đầu tiên thường đến từ một con số rất nhỏ. Con số ấy là của nhà mình — bên em chỉ giúp nhà mình nhìn thấy nó.';
   }
 
   function ve() {
@@ -63949,8 +69719,8 @@ var G = window.G || {}; window.G = G;
   }
 
   /* ─── Cửa vào ─── */
-  G.moCuaTruoc = function (phan) {
-    if (phan) PHAN = phan;
+  G.moCuaTruoc = function () {
+    CHON = 0;
     var app = document.getElementById('app');
     if (app) app.innerHTML = '<div id="gate"><div class="gate-body center" style="padding:80px 20px">' +
       '<p class="sm muted">Đang mở phần xem trước…</p></div></div>';
@@ -63964,13 +69734,47 @@ var G = window.G || {}; window.G = G;
   };
 
   G.dongCuaTruoc = function () {
-    PHAN = 'gita';
     if (G.veCong) G.veCong();
   };
 
-  G.doiPhanCuaTruoc = function (k) {
-    if (!PHANS.filter(function (x) { return x.k === k; }).length) return;
-    PHAN = k; ve();
+  /* Một cửa cho hai việc: "sN" nhảy tới chặng N, "gN" chọn tình huống N.
+     Chọn tình huống chỉ ẩn/hiện tại chỗ — vẽ lại thì trang nhảy về đầu. */
+  G.chonCuaTruoc = function (el) {
+    var v = String(el.getAttribute('data-ctc') || '');
+    if (v.charAt(0) === 's') {
+      var dich = document.getElementById('ct-s' + v.slice(1));
+      if (!dich) return;
+      var it = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      try { dich.scrollIntoView({ behavior: it ? 'auto' : 'smooth', block: 'start' }); } catch (e) { dich.scrollIntoView(); }
+      return;
+    }
+    if (v.charAt(0) === 'v') {
+      var k = parseInt(v.slice(1), 10);
+      if (!(k >= 0 && k < BA_TOI.length)) return;
+      var ds0 = docToi(), vt = ds0.indexOf(k);
+      if (vt >= 0) ds0.splice(vt, 1); else ds0.push(k);
+      ghiToi(ds0);
+      var xong = ds0.indexOf(k) >= 0;
+      el.className = 'ct-toi' + (xong ? ' on' : '');
+      el.setAttribute('aria-pressed', xong ? 'true' : 'false');
+      var tich = el.querySelector('.ct-dau-tich');
+      if (tich) tich.textContent = xong ? '\u2713' : String(k + 1);
+      var ngot = document.getElementById('ct-ngot');
+      if (ngot) ngot.innerHTML = loiNgot(ds0.length);
+      return;
+    }
+    if (v.charAt(0) !== 'g') return;
+    var i = parseInt(v.slice(1), 10);
+    if (!(i >= 0 && i < GUONG.length)) return;
+    CHON = i;
+    var ds = document.querySelectorAll('[data-ctc^="g"]');
+    for (var a = 0; a < ds.length; a++) {
+      var la = ds[a].getAttribute('data-ctc') === v;
+      ds[a].className = 'ct-o' + (la ? ' on' : '');
+      ds[a].setAttribute('aria-pressed', la ? 'true' : 'false');
+    }
+    var tra = document.querySelectorAll('[data-ctg]');
+    for (var b = 0; b < tra.length; b++) tra[b].hidden = tra[b].getAttribute('data-ctg') !== String(i);
   };
 })();
 
@@ -64037,7 +69841,7 @@ var G = window.G || {}; window.G = G;
      đọc ở Thư viện vận hành, kèm bảng việc áp dụng. tools/thu-ap-dung.mjs
      canh: không vai nhân sự nào còn trỏ vào màn mẫu đã gộp. */
   var AZ10 = ['trung-tam-do','dk-cua-toi','phong-tai-chinh','crm','coach-dp','do-luong-he','phan-quyen','nang-luc-ns',
-              'bang-viec','thu-vien-v50','phong-ban','credit-gita','nguoi-dung','studio','noi-may-chu'];
+              'bang-viec','thu-vien-v50','phong-ban','credit-gita','nguoi-dung','xuong-ai','noi-may-chu'];
   G.KG_VIEC = {
     /* R01 Super Admin · R02 Admin — 10 công cụ quản trị */
     R01:{cap:10, ds:AZ10},
@@ -64717,7 +70521,7 @@ G.VIEWS = G.VIEWS || {};
   function tabKhach() {
     var ds = khDs(), that = ds[0] && ds[0].that;
     var o = '<div class="ntv-note">' + ic('map', 'w-4 h-4') + ' Mỗi gia đình đi qua <b>5 giai đoạn đồng hành</b>. Bảng theo dõi trọn hồ sơ: đang ở đâu, bước kế, tài liệu Coach, dữ liệu buổi, đánh giá, bằng chứng và tiềm năng nâng gói.' +
-      (that ? ' <b style="color:#0B7350">Đang chạy trên gia đình thật.</b>' : ' <span style="color:#B4720F">(minh hoạ)</span>') + '</div>';
+      (that ? ' <b style="color:#0B7350">Đang chạy trên gia đình thật.</b>' : ' <span style="color:var(--warn)">(minh hoạ)</span>') + '</div>';
     o += '<div class="ntv-gdj">';
     GDJ.forEach(function (g) {
       var so = ds.filter(function (k) { return k.gdj === g.n; }).length;
@@ -64743,7 +70547,7 @@ G.VIEWS = G.VIEWS || {};
         '<td>' + lk('kho-tai-lieu', 'Tài liệu') + '</td>' +
         '<td class="tiny ntv-center">' + k.buoi + ' buổi</td>' +
         '<td class="tiny ntv-center">' + (k.danhGia != null ? ('<b>' + k.danhGia.toFixed(1) + '</b>/5') : '—') + '</td>' +
-        '<td class="tiny ntv-center">' + (k.bangChung === 'Có' ? '<span style="color:#0B7350;font-weight:700">✓ Có</span>' : '<span style="color:#B4720F">Chưa</span>') + '</td>' +
+        '<td class="tiny ntv-center">' + (k.bangChung === 'Có' ? '<span style="color:#0B7350;font-weight:700">✓ Có</span>' : '<span style="color:var(--warn)">Chưa</span>') + '</td>' +
         '<td><span class="ntv-nhom" style="--nc:' + tnc + '">' + h(tn) + '</span></td>' +
         '<td>' + lk('bando-coach', 'Mở lộ trình') + '</td>' +
       '</tr>';
@@ -65716,7 +71520,7 @@ G.VIEWS = G.VIEWS || {};
   function tabKhach(S) {
     var ds = khDs(), that = ds[0] && ds[0].that;
     var o = '<div class="ntv-note">' + ic('map', 'w-4 h-4') + ' ' + S.cNote +
-      (that ? ' <b style="color:#0B7350">Đang chạy trên dữ liệu thật.</b>' : ' <span style="color:#B4720F">(minh hoạ)</span>') + '</div>';
+      (that ? ' <b style="color:#0B7350">Đang chạy trên dữ liệu thật.</b>' : ' <span style="color:var(--warn)">(minh hoạ)</span>') + '</div>';
     o += '<div class="ntv-gdj">';
     S.gdj.forEach(function (g) {
       var so = ds.filter(function (k) { return k.gdj === g.n; }).length;
@@ -65741,7 +71545,7 @@ G.VIEWS = G.VIEWS || {};
         '<td>' + lk(S.cTLkey, 'Mở') + '</td>' +
         '<td class="tiny ntv-center">' + k.buoi + '</td>' +
         '<td class="tiny ntv-center">' + (k.danhGia != null ? ('<b>' + k.danhGia.toFixed(1) + '</b>/5') : '—') + '</td>' +
-        '<td class="tiny ntv-center">' + (k.bangChung === 'Có' ? '<span style="color:#0B7350;font-weight:700">✓ Có</span>' : '<span style="color:#B4720F">Chưa</span>') + '</td>' +
+        '<td class="tiny ntv-center">' + (k.bangChung === 'Có' ? '<span style="color:#0B7350;font-weight:700">✓ Có</span>' : '<span style="color:var(--warn)">Chưa</span>') + '</td>' +
         '<td><span class="ntv-nhom" style="--nc:' + tnc + '">' + h(tn) + '</span></td>' +
         '<td>' + lk(S.cLoTrinh, 'Mở lộ trình') + '</td>' +
       '</tr>';
@@ -69423,7 +75227,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       return '<div class="co-the nhan" style="--c:'+h(c.c||'#185AB4')+';border-top:4px solid '+h(c.c||'#185AB4')+'">'+
         '<div class="co-hang" style="gap:6px">'+(c.tang||[]).map(tangChip).join('')+
           '<span class="co-tag">'+h(LOAI[c.loai]||c.loai||'')+'</span>'+(laTuTK(c)?'<span class="co-tag">tự thiết kế</span>':'')+'</div>'+
-        '<h3>'+h(c.ten)+'</h3>'+
+        '<h2>'+h(c.ten)+'</h2>'+
         '<div class="co-meta"><span>'+icI('calendar')+' '+h(c.ngay)+' ngày</span><span>· '+tongBuoi(c)+' buổi</span><span>· '+(c.gd||[]).length+' giai đoạn</span><span>· Coach từ '+h(vai(c.capCoach).short)+'</span></div>'+
         '<div class="sm"><b>Đối tượng:</b> '+h(c.doiTuong||'—')+'</div>'+
         '<p class="sm muted" style="margin:0;line-height:1.5">'+h(c.muc||'')+'</p>'+
@@ -69455,7 +75259,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     o += '<div class="co-the nhan mb" style="--c:'+h(c)+';border-left:5px solid '+h(c)+'">'+
       '<div class="co-hang" style="gap:6px">'+(ct.tang||[]).map(tangChip).join('')+'<span class="co-tag">'+h(LOAI[ct.loai]||ct.loai||'')+'</span>'+
         (laTuTK(ct)?'<span class="co-tag">tự thiết kế</span>':'')+'<span class="tiny muted">mã '+h(ct.ma)+'</span></div>'+
-      '<h3 style="font-size:19px">'+h(ct.ten)+'</h3>'+
+      '<h2 style="font-size:19px">'+h(ct.ten)+'</h2>'+
       '<div class="co-meta"><span>'+h(ct.ngay)+' ngày</span><span>· '+tongBuoi(ct)+' buổi</span><span>· '+(ct.gd||[]).length+' giai đoạn</span><span>· '+dkDang(ct.ma).length+' nhà đang chạy</span></div>'+
       '<p style="margin:2px 0 0;line-height:1.55"><b>Mục tiêu.</b> '+h(ct.muc||'—')+'</p>'+
       '<div class="co-hang mt"><button class="btn sm" data-co="ct-ghep-mo" data-ma="'+h(ct.ma)+'">'+ic('plus','w-3 h-3')+'Ghép cho nhà</button>'+
@@ -71066,7 +76870,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     return '<div class="co-the nhan" style="--c:'+t.c+'"><div class="co-meta"><span style="color:'+t.c+';font-weight:700">'+h(t.k+' · '+t.short)+'</span>'+
       '<span>'+h(g.ma)+'</span><span>'+h(tangTxt(g.tang))+'</span><span>'+(g.ngay||'—')+' ngày</span>'+
       (laTu(g) ? '<span class="co-tag">'+(g.duyet?'tự soạn · đã duyệt':'tự soạn')+'</span>' : '')+'</div>'+
-      '<h3>'+h(g.ten)+'</h3><p class="tiny muted" style="margin:0;line-height:1.5">'+h(g.muc||'')+'</p>'+(them||'')+
+      '<h2>'+h(g.ten)+'</h2><p class="tiny muted" style="margin:0;line-height:1.5">'+h(g.muc||'')+'</p>'+(them||'')+
       '<div><button class="btn ghost sm" data-co="gp-mo" data-ma="'+h(g.ma)+'">'+ic('eye','w-3 h-3')+'Xem chi tiết</button></div></div>';
   }
 
@@ -73613,7 +79417,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       return '<div class="co-the nhan" data-nlp-tim="'+h(chuoiTim(k))+'" style="--c:'+h(c)+';border-top:4px solid '+h(c)+'">'+
         '<div class="co-hang" style="gap:6px">'+U.chip(TEN_NHOM[k.nhom]||k.nhom, MAU_NHOM[k.nhom])+(k.tru||[]).map(function(t){ return U.chip(t, mauTru(t)); }).join('')+
           (k.icf||[]).map(function(x){ return '<span class="co-tag">'+h(x)+'</span>'; }).join('')+(daGhim(k.ma)?'<span class="co-tag" style="margin-left:auto">'+icI('star')+' đã ghim</span>':'')+'</div>'+
-        '<h3>'+h(k.ten)+'</h3><div class="tiny muted" style="margin-top:-4px"><i>'+h(k.goc||'')+'</i></div>'+
+        '<h2>'+h(k.ten)+'</h2><div class="tiny muted" style="margin-top:-4px"><i>'+h(k.goc||'')+'</i></div>'+
         hinh(k, false)+
         '<p class="sm" style="margin:0;line-height:1.5">'+h(k.muc||'')+'</p>'+
         '<div class="co-hang" style="margin-top:auto;padding-top:6px">'+badge(k)+'<span class="co-grow"></span>'+
@@ -73772,7 +79576,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     o += '<div class="co-ds mb">'+ QT.map(function(q, i){
       return '<div class="co-the" style="border-left:5px solid '+MAU7[i]+'">'+
         '<div class="co-hang"><span class="co-so" style="flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;background:'+MAU7[i]+'">'+(i+1)+'</span>'+
-          '<h3 class="co-grow" style="min-width:160px">'+h(q.ten)+'</h3><span class="co-hang" style="gap:4px">'+q.icf.map(function(c){ return '<span class="co-tag" title="'+h((icf(c)||{}).ten||c)+'">'+h(c)+' · '+h((icf(c)||{}).ten||'')+'</span>'; }).join('')+'</span></div>'+
+          '<h2 class="co-grow" style="min-width:160px">'+h(q.ten)+'</h2><span class="co-hang" style="gap:4px">'+q.icf.map(function(c){ return '<span class="co-tag" title="'+h((icf(c)||{}).ten||c)+'">'+h(c)+' · '+h((icf(c)||{}).ten||'')+'</span>'; }).join('')+'</span></div>'+
         '<p class="sm" style="margin:0;line-height:1.55"><b>Làm gì.</b> '+h(q.lam)+'</p>'+
         '<div class="grid g2" style="gap:8px">'+q.hoi.map(function(c){ return '<div class="co-dong" style="border-left:3px solid '+MAU7[i]+'"><span class="sm"><i>“'+h(c)+'”</i></span></div>'; }).join('')+'</div>'+
         '<div class="co-hang" style="gap:6px"><span class="tiny muted">Công cụ</span>'+q.kt.map(chipKT).join('')+'</div>'+
@@ -73844,7 +79648,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     o += '<div class="co-ds mb">'+ P.map(function(p, i){
       return '<div class="co-the" style="border-left:5px solid '+MAU7[i]+'">'+
         '<div class="co-hang"><span class="co-so" style="flex:none;width:34px;height:30px;border-radius:9px;display:grid;place-items:center;font-weight:800;color:#fff;background:'+MAU7[i]+'">P'+p.so+'</span>'+
-          '<h3 class="co-grow" style="min-width:160px">'+h(p.ten)+'</h3><span class="tiny muted">≈ '+Math.round(p.ty*100)+'% thời lượng</span></div>'+
+          '<h2 class="co-grow" style="min-width:160px">'+h(p.ten)+'</h2><span class="tiny muted">≈ '+Math.round(p.ty*100)+'% thời lượng</span></div>'+
         '<p class="sm" style="margin:0;line-height:1.55"><b>Mục đích.</b> '+h(p.muc)+'</p>'+
         '<div class="co-cb"><div style="--m:'+MAU7[i]+'">'+icI('shield')+'<span class="sm"><b>Cổng:</b> '+h(p.cong)+'</span></div></div>'+
         '<div class="grid g2" style="gap:10px">'+
@@ -74508,7 +80312,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
 (function(){
   var U = G.U, h = U.h, ic = U.ic;
   var CRV = G.CRV = {};
-  var st = { vi:null, dangTai:false, loi:'', chon:'', qt:null, phieu:null, traNha:'', traVi:null, traSo:null };
+  var st = { vi:null, dangTai:false, loi:'', chon:'', qt:null, phieu:null, traNha:'', traVi:null, traSo:null, dx:null, dxChon:'' };
   function so(n){ return Math.round(Number(n)||0).toLocaleString('vi-VN'); }
   /* Ví thật cần PHIÊN máy chủ (đăng nhập thật) — tài khoản mẫu thì nói thẳng, không gọi. */
   function coMayChu(){ return typeof G.goiMayChu === 'function' && !!G.API_CAP_PHEP && !!G.PHIEN_TOKEN; }
@@ -74566,11 +80370,37 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       return '<div class="co-dong"><span class="co-grow sm"><b>'+h(tenTieu(m))+'</b><br><span class="tiny muted">'+so(g)+' credit · ≈ '+so(g*10)+'đ</span></span>'+
         (xac ? '<button class="btn pri sm" data-crv="dung" data-m="'+h(m)+'">Xác nhận trừ '+so(g)+'</button><button class="btn ghost sm" data-crv="huy">Thôi</button>'
              : '<button class="btn sm" data-crv="chon" data-m="'+h(m)+'"'+(du?'':' disabled title="Chưa đủ credit"')+'>Dùng</button>')+'</div>'; }).join('')+'</div>';
+    o += veDeXuat();
     o += bangCachTich(V);
     o += U.sec('Lịch sử gần đây', (V.gan||[]).length ? 'Mỗi dòng là một giao dịch đã ghi ở máy chủ — không sửa, không xoá' : 'Chưa có giao dịch nào');
     o += '<div class="co-ds">'+(V.gan||[]).map(dongSo).join('')+'</div>';
     return o;
   };
+  /* ═══════════ GIẢI PHÁP COACH ĐỀ XUẤT — NHÀ TỰ CHỌN ═══════════
+     Kho cấp cao 6 hạng: Coach đề xuất 1–3 phương án, nhà xem giá + gói rồi
+     TỰ CHỌN — credit chỉ bị trừ ở bước này, không bao giờ do Coach bấm. */
+  function taiDeXuat(){
+    st.dx = 'dang';
+    G.goiMayChu('dsDeXuatNha', {}, { moi:true }).then(function(r){ st.dx = r && r.ok ? r : { loi:(r && r.error) || '' }; veLai(); });
+  }
+  function veDeXuat(){
+    if(!st.dx){ taiDeXuat(); return ''; }
+    if(st.dx === 'dang' || st.dx.loi || !st.dx.ds) return '';
+    var cho = st.dx.ds.filter(function(d){ return d.trangThai === 'cho' && d.phuongAn.length; });
+    if(!cho.length) return '';
+    var o = U.sec('Giải pháp Coach đề xuất cho nhà mình', 'Hạng cao hơn là gói sâu hơn: nhiều buổi hơn, cá nhân hoá hơn, theo dõi dài hơn. Nhà chọn mức phù hợp — credit chỉ trừ khi nhà bấm chọn.');
+    cho.forEach(function(d){
+      o += '<div class="card pad-sm mb">' + (d.ghiChu ? '<p class="sm mb">' + h(d.ghiChu) + ' <span class="tiny muted">— Coach ' + h(d.boiAi || '') + '</span></p>' : '') +
+        '<div class="co-ds">' + d.phuongAn.map(function(p){
+          var k = d.id + '|' + p.ma, du = st.dx.soDu && st.dx.soDu.tong >= p.gia;
+          return '<div class="co-dong"><span class="co-grow sm"><b>' + h(p.tenHang) + ' · ' + so(p.gia) + ' credit</b> <span class="tiny muted">≈ ' + so(p.gia * 10) + 'đ</span><br>' + h(p.ten) +
+            '<br><span class="tiny muted">' + h(p.goi.phamVi) + ' · ' + h(p.goi.theoDoi) + '</span><br><span class="tiny"><b>Nhà cần làm:</b> ' + h(p.goi.dieuKien) + '</span></span>' +
+            (st.dxChon === k ? '<button class="btn pri sm" data-crv="dx-chon" data-id="' + h(d.id) + '" data-m="' + h(p.ma) + '">Xác nhận trừ ' + so(p.gia) + '</button><button class="btn ghost sm" data-crv="dx-thoi">Thôi</button>'
+              : '<button class="btn sm" data-crv="dx-xem" data-k="' + h(k) + '"' + (du ? '' : ' disabled title="Chưa đủ credit"') + '>Chọn</button>') + '</div>';
+        }).join('') + '</div><div class="co-hang mt"><button class="btn ghost sm" data-crv="dx-huy" data-id="' + h(d.id) + '">Không chọn đề xuất này</button></div></div>';
+    });
+    return o;
+  }
   function bangCachTich(V){
     var ds = V ? Object.keys(V.giaThuong).map(function(m){ return [tenThuong(m), V.giaThuong[m].cr, V.giaThuong[m].toiDa, V.giaThuong[m].tuDong]; })
                : (function(){ var t = Number((G.S && G.S.acc && G.S.acc.tang) || 1) || 1;
@@ -74630,7 +80460,22 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     var el = e.target.closest && e.target.closest('[data-crv]'); if(!el) return;
     e.preventDefault();
     var a = el.getAttribute('data-crv');
-    if(a==='lam-moi'){ st.vi = null; CRV.taiVi(); return; }
+    if(a==='lam-moi'){ st.vi = null; st.dx = null; CRV.taiVi(); return; }
+    if(a==='dx-xem'){ st.dxChon = el.getAttribute('data-k'); veLai(); return; }
+    if(a==='dx-thoi'){ st.dxChon = ''; veLai(); return; }
+    if(a==='dx-chon'){
+      st.dxChon = '';
+      G.goiMayChu('chonDeXuat', { id:el.getAttribute('data-id'), ma:el.getAttribute('data-m') }).then(function(r){
+        if(r && r.ok){ U.toast('Đã chọn gói · trừ '+so(r.so)+' credit. Coach sẽ bắt đầu theo gói này.','ok'); st.vi = null; st.dx = null; CRV.taiVi(); }
+        else { U.toast((r && r.error) || 'Chưa chọn được.','err'); veLai(); }
+      });
+      return;
+    }
+    if(a==='dx-huy'){
+      G.goiMayChu('huyDeXuat', { id:el.getAttribute('data-id') }).then(function(r){
+        U.toast(r && r.ok ? 'Đã báo Coach: nhà không chọn đề xuất này.' : ((r && r.error) || 'Chưa ghi được.'), r && r.ok ? 'ok' : 'err'); st.dx = null; veLai(); });
+      return;
+    }
     if(a==='chon'){ st.chon = el.getAttribute('data-m'); veLai(); return; }
     if(a==='huy'){ st.chon = ''; veLai(); return; }
     if(a==='dung'){
@@ -75347,7 +81192,17 @@ var G = window.G || {}; window.G = G;
 (function(){
   var U = G.U, h = U.h, ic = U.ic, VIEW = 'ho-so-thang';
   G.VIEWS = G.VIEWS || {};
-  var st = { ai:'', ho:null, ls:null, tai:0, loi:'', nps:null, csat:null, daGui:'', ghi:'' };
+  var st = { ai:'', ho:null, ls:null, tai:0, loi:'', nps:null, csat:null, tc:[], daGui:'', ghi:'' };
+  /* Năm tiêu chí của phiếu tháng — bản đối chiếu của may-chu/xep-hang-luong.js →
+     TIEU_CHI; tools/thu-xep-hang.mjs so hai bản từng ô. Phiếu là căn cứ lương
+     thưởng của người đồng hành, nên mỗi câu hỏi về một việc nhà mình THẤY được. */
+  G.XH_TIEU_CHI = [
+    { ma:'T1', ten:'Người đồng hành lắng nghe và hiểu đúng nhà mình' },
+    { ma:'T2', ten:'Đúng hẹn, giữ lời đã hứa' },
+    { ma:'T3', ten:'Hướng dẫn rõ ràng, nhà mình làm theo được' },
+    { ma:'T4', ten:'Nhà mình thấy thay đổi thật ở con hoặc ở nếp nhà' },
+    { ma:'T5', ten:'Tôn trọng, không phán xét, không so sánh nhà mình với nhà khác' }
+  ];
   function coMayChu(){ return !!(G.DLG && G.DLG.coMayChu()); }
   function so(n){ return n == null ? '—' : Math.round(Number(n) || 0).toLocaleString('vi-VN'); }
   function haiSo(n){ return (n < 10 ? '0' : '') + n; }
@@ -75404,7 +81259,7 @@ var G = window.G || {}; window.G = G;
     if(!G.DL) return U.lockCard('Thiếu công thức đo lường.');
     if(!(typeof G.laKhachCredit === 'function' && G.laKhachCredit())) return U.lockCard('Báo cáo tháng này dành cho gia đình (Phụ huynh · Học viên). Đội dẫn dắt xem ở màn Đo lường toàn diện khách hàng.');
     var ai = String((G.S && G.S.acc && G.S.acc.u) || '');
-    if(st.ai !== ai){ st = { ai:ai, ho:null, ls:null, tai:0, loi:'', nps:null, csat:null, daGui:'', ghi:'' }; }
+    if(st.ai !== ai){ st = { ai:ai, ho:null, ls:null, tai:0, loi:'', nps:null, csat:null, tc:[], daGui:'', ghi:'' }; }
     var server = coMayChu();
     if(server && !st.ho && !st.loi) tai();
     var x = server && st.ho ? st.ho.ho : soDoMay();
@@ -75438,12 +81293,17 @@ var G = window.G || {}; window.G = G;
     o += '<div class="card pad-sm"><b class="sm">Sáu tháng gần nhất</b>'+(xu.length > 1 ? bieuDo(xu) : '<p class="tiny muted">Có từ hai tháng số đo trở lên thì đường xu hướng hiện ở đây.</p>')+'</div></div>';
 
     /* Phiếu hài lòng tháng */
-    o += '<div class="card mb"><b>Nhà mình thấy tháng này thế nào?</b><p class="sm muted" style="margin:4px 0 10px">Hai câu, mỗi tháng một lần. Học viện đọc từng phiếu để sửa chương trình và làm sản phẩm mới.</p>'+
+    o += '<div class="card mb"><b>Nhà mình thấy tháng này thế nào?</b><p class="sm muted" style="margin:4px 0 10px">Mỗi tháng một lần. Học viện đọc từng phiếu để sửa chương trình và làm sản phẩm mới.</p>'+
       '<div class="sm mb">Khả năng nhà mình giới thiệu GITA365 cho một gia đình khác <span class="tiny muted">(0 = không bao giờ · 10 = chắc chắn)</span></div>'+
       '<div class="co-hang mb" role="group" aria-label="Điểm giới thiệu">'+[0,1,2,3,4,5,6,7,8,9,10].map(function(n){ return '<button class="btn sm '+(st.nps===n?'':'ghost')+'" data-hst="nps" data-v2="'+n+'" aria-pressed="'+(st.nps===n)+'">'+n+'</button>'; }).join('')+'</div>'+
       '<div class="sm mb">Mức hài lòng với tháng này</div><div class="co-hang mb" role="group" aria-label="Mức hài lòng">'+[[1,'Rất không hài lòng'],[2,'Chưa hài lòng'],[3,'Tạm được'],[4,'Hài lòng'],[5,'Rất hài lòng']].map(function(c){
         return '<button class="btn sm '+(st.csat===c[0]?'':'ghost')+'" data-hst="csat" data-v2="'+c[0]+'" aria-pressed="'+(st.csat===c[0])+'">'+c[0]+' · '+h(c[1])+'</button>'; }).join('')+'</div>'+
+      '<div class="sm mb">Năm điều về người đồng hành tháng này <span class="tiny muted">(1 = chưa có · 5 = rất rõ)</span></div>'+
+      G.XH_TIEU_CHI.map(function(t, i){
+        return '<div class="mb"><div class="tiny">'+h(t.ten)+'</div><div class="co-hang" role="group" aria-label="'+h(t.ten)+'">'+[1,2,3,4,5].map(function(n){
+          return '<button class="btn sm '+(st.tc[i]===n?'':'ghost')+'" data-hst="tc" data-i="'+i+'" data-v2="'+n+'" aria-pressed="'+(st.tc[i]===n)+'">'+n+'</button>'; }).join('')+'</div></div>'; }).join('')+
       '<label class="co-f"><span class="sm">Một điều nhà mình muốn Học viện biết <span class="tiny muted">(không bắt buộc)</span></span><textarea class="inp" id="hst-ghi" rows="3" maxlength="1000">'+h(st.ghi)+'</textarea></label>'+
+      '<p class="tiny muted">Phiếu ghi kèm người đồng hành của nhà mình tháng này và là một căn cứ đánh giá công việc của họ.</p>'+
       '<div class="co-hang mt"><button class="btn pri sm" data-hst="gui-phieu">Gửi phiếu tháng '+(+thangNay().slice(5))+'</button>'+(st.daGui ? '<span class="tiny" style="color:#0B7350">'+h(st.daGui)+'</span>' : '')+'</div></div>';
 
     var ls = st.ls && st.ls.ds ? st.ls.ds : [];
@@ -75457,12 +81317,14 @@ var G = window.G || {}; window.G = G;
     var o = document.getElementById('hst-ghi'); if(o) st.ghi = String(o.value || '').slice(0, 1000);
     if(a === 'nps') st.nps = v;
     else if(a === 'csat') st.csat = v;
+    else if(a === 'tc') st.tc[Number(el.getAttribute('data-i'))] = v;
     else if(a === 'gui'){ if(G.DLG) G.DLG.gui(true).then(function(r){ if(r && r.ok){ U.toast('Đã gửi số đo.', 'ok'); st.ho = null; st.loi = ''; } else if(r && !r.boQua) U.toast((r && r.error) || 'Chưa gửi được.', 'err'); veLai(); }); return; }
     else if(a === 'gui-phieu'){
       if(st.nps == null || st.csat == null){ U.toast('Chọn điểm giới thiệu và mức hài lòng trước khi gửi.', 'err'); return; }
+      for(var i = 0; i < G.XH_TIEU_CHI.length; i++) if(!st.tc[i]){ U.toast('Chấm đủ năm điều về người đồng hành trước khi gửi.', 'err'); return; }
       if(!coMayChu()){ U.toast('Phiếu cần tài khoản thật của nhà mình trên máy chủ.', 'err'); return; }
       var g = document.getElementById('hst-ghi');
-      G.goiMayChu('guiDanhGiaKH', { nps:st.nps, csat:st.csat, ghiChu:g ? String(g.value || '').slice(0, 1000) : '' }).then(function(r){
+      G.goiMayChu('guiDanhGiaKH', { nps:st.nps, csat:st.csat, tieuChi:st.tc.slice(0, G.XH_TIEU_CHI.length), ghiChu:g ? String(g.value || '').slice(0, 1000) : '' }).then(function(r){
         if(r && r.ok){ st.daGui = 'Đã nhận phiếu '+tenThang(r.thang)+'. Cảm ơn nhà mình.'; st.ghi = ''; U.toast('Đã gửi phiếu hài lòng.', 'ok'); }
         else U.toast((r && r.error) || 'Chưa gửi được phiếu.', 'err');
         veLai();
@@ -75874,6 +81736,12 @@ var G = window.G || {}; window.G = G;
   /* Trùng một lối vào khác: rút khỏi cột trái, không chuyển hướng
      (Bảng điều khiển của tôi đang dựng chính các màn này theo vai). */
   V.AN = {
+    /* Xưởng phim: chủ hệ chốt gộp về MỘT cửa (10/2026). Hai mã màn cũ KHÔNG
+       chuyển hướng (bảng GOP) mà rút khỏi cột trái: chúng vẫn là màn chủ của
+       ngăn mình và tự vẽ khung Xưởng phim AI (src/xuong-ai.js) — vì
+       studio.js và xuong-phim.js chỉ vẽ lại khi G.S.view đúng tên chúng. */
+    'studio':      ['xuong-ai', 'GITA Studio đã gộp vào Xưởng phim AI — ngăn "Studio dựng video".'],
+    'xuong-phim':  ['xuong-ai', 'Xưởng phim ngắn 9:16 đã gộp vào Xưởng phim AI — ngăn "Phim ngắn 9:16".'],
     'van-hanh-10': ['dk-cua-toi', 'Bảng điều khiển của tôi mở đúng bảng này cho Super Admin / Admin.'],
     'van-hanh-gd': ['dk-cua-toi', 'Bảng điều khiển của tôi mở đúng bảng này cho Giám đốc.']
   };
@@ -76093,7 +81961,7 @@ var G = window.G || {}; window.G = G;
     { id:'khach-crm', khu:'nhansu', ten:'Khách hàng & CRM',         ic:'heart',   viec:'CRM theo quyền được cấp, CSKH, đo lường khách, trải nghiệm, tài liệu gia đình.',
       phan:['toan-canh-crm','crm','tt-cskh','do-luong-he','trai-nghiem-kh','nguoi-dan-dat','tai-lieu-khach','gui-tu-lieu','tang5-pro','khung-du-lieu'], kho:['TUVAN','VIP','TRAI'] },
     { id:'dao-tao', khu:'nhansu',   ten:'Đào tạo & năng lực',       ic:'book',    viec:'Khoá đào tạo, sát hạch, cuộc thi viết — mở theo cấp bậc đạt được.',
-      phan:['khoa-dao-tao','sat-hach','thi-viet'], kho:['NGHE','PP'] },
+      phan:['chuong-trinh-dt','thi-chung-chi','khoa-dao-tao','sat-hach','thi-viet'], kho:['NGHE','PP'] },
     { id:'kho-nghe', khu:'nhansu',  ten:'Kho nghề & tài liệu',      ic:'vault',   viec:'14 kho nghề theo cụm, thư viện tài liệu — chương mở theo vai, tầng, gói.',
       phan:['thu-vien-v50','tra-cuu-gp','kn-pp','kn-kho','kn-nghe','kn-coach','kn-tuvan','kn-vip','kn-trai','kn-mk','kn-gd','kn-nha','kn-pl','kn-tc','kn-kt','kn-ct','thu-vien'], kho:[] },
     { id:'dieu-hanh', khu:'nhansu', ten:'Điều hành & đo lường',     ic:'chart',   viec:'Trung tâm đo lường 41 chỉ số, V20, 16 ban, các vai, phòng ban, năng lực, con người.',
@@ -76105,7 +81973,7 @@ var G = window.G || {}; window.G = G;
     { id:'van-hanh-he', khu:'nhansu', ten:'Vận hành hệ thống',      ic:'pulse',   viec:'Máy chủ, tài nguyên, liên thông dữ liệu, sức chứa, AI, thanh tra, soát màn, kiểm thử.',
       phan:['noi-may-chu','theo-doi-tai-nguyen','lien-thong','suc-chua-toc-do','bo-nao-da-tri','thanh-tra-soi','phap-ly-rui-ro','soat-toan-man','kiem-theo-vai','soat-day-du'], kho:['KT','PL'] },
     { id:'noi-dung', khu:'nhansu',  ten:'Nội dung & truyền thông',  ic:'spark',    viec:'Studio, xưởng phim, thị giác, biên soạn, sửa chữ hiển thị, duyệt tài liệu và đánh giá.',
-      phan:['studio','xuong-phim','kien-truc-thi-giac','bien-soan-noi-dung','sua-hien-thi','duyet-tai-lieu','duyet-danh-gia','sap-xep'], kho:['MK'] }
+      phan:['xuong-ai','kien-truc-thi-giac','bien-soan-noi-dung','sua-hien-thi','duyet-tai-lieu','duyet-danh-gia','sap-xep'], kho:['MK'] }
   ];
 
   /* Màn chính theo vai, đúng trần chủ hệ đặt. 'khach-la' = chưa đăng nhập. */
@@ -76146,6 +82014,7 @@ var G = window.G || {}; window.G = G;
                     [/^dk-(?!cua-toi$|cac-vai$)/, 'ban-lam-viec'], [/^va-/, 'ban-lam-viec'], [/^gd-/, 'ban-lam-viec'],
                     [/^van-hanh-(10|gd)$/, 'ban-lam-viec']];
   M.KHOP = { 'studio-he':'noi-dung', 'lam-phim-10':'noi-dung', 'ban-dung':'noi-dung', 'san-xuat-ai':'noi-dung',
+             'studio':'noi-dung', 'xuong-phim':'noi-dung',
              'ban-co-tong':'ban-lam-viec', 'pham-vi':'quan-tri' };
 
   var PHAN_CUA = {};
@@ -76874,7 +82743,7 @@ var G = window.G || {}; window.G = G;
     var nguoi = d.nguoi || [], bayNgay = new Date(Date.now() - 7 * 864e5).toISOString();
     o += U.sec('Từng người (nhân sự)', 'Ai đang quá tải, ai đang ít việc, ai lâu không vào — căn cứ để phân bổ');
     o += '<div class="co-tb mb"><table><thead><tr><th>Người</th><th>Vai</th><th>Lần vào cuối</th><th>Thao tác</th><th>Lượt chạm</th><th>CRM</th><th>Nhà kèm</th><th>Việc tối ưu</th><th>Tín hiệu</th></tr></thead><tbody>'+nguoi.map(function(p){
-      var tin = []; if(!p.lanCuoi || p.lanCuoi < bayNgay) tin.push('<span style="color:#BE0E16">lâu không vào</span>'); if(p.nhaKem > 40 || p.viecMo >= 3) tin.push('<span style="color:#B4720F">quá tải</span>'); if(p.viecTre) tin.push('<span style="color:#BE0E16">'+p.viecTre+' việc trễ</span>');
+      var tin = []; if(!p.lanCuoi || p.lanCuoi < bayNgay) tin.push('<span style="color:#BE0E16">lâu không vào</span>'); if(p.nhaKem > 40 || p.viecMo >= 3) tin.push('<span style="color:var(--warn)">quá tải</span>'); if(p.viecTre) tin.push('<span style="color:#BE0E16">'+p.viecTre+' việc trễ</span>');
       return '<tr><td><b>'+h(p.u)+'</b>'+(p.ten ? '<div class="tiny muted">'+h(p.ten)+'</div>' : '')+'</td><td>'+h(p.vai)+'</td><td class="tiny">'+(p.lanCuoi ? h(new Date(p.lanCuoi).toLocaleDateString('vi-VN')) : '—')+'</td>'+
         '<td class="so">'+so(p.thaoTac)+'</td><td class="so">'+so(p.cham)+'</td><td class="so">'+so(p.crm)+'</td><td class="so">'+so(p.nhaKem)+'</td><td class="so">'+so(p.viecMo)+'</td><td class="tiny">'+(tin.join(' · ') || '<span style="color:#0B7350">ổn</span>')+'</td></tr>'; }).join('')+'</tbody></table></div>';
     return o;
@@ -76973,7 +82842,7 @@ var G = window.G || {}; window.G = G;
     var o = U.sec('Quy trình tối ưu khép kín', 'Bảy bước — mỗi vòng kết thúc bằng một lần đo lại') + '<div class="card pad-sm mb"><ol class="sm" style="margin:0;padding-left:20px;line-height:1.8">'+T().QUY_TRINH.map(function(q){ return '<li><b>'+h(q[0])+'</b> — '+h(q[1])+'</li>'; }).join('')+'</ol></div>';
     o += U.sec('Bản đồ gom màn', 'Mỗi khối dùng các màn này; màn số mẫu trùng việc đã ghi rõ màn thay thế') + T().KHOI.concat([{ ma:'TONG', ten:'Màn tổng quan cũ' }]).map(function(K){
       return '<div class="card pad-sm mb"><b class="sm">'+h(K.ten)+'</b><div class="mt">'+(T().BAN_DO[K.ma]||[]).map(function(m){ var L = LOAI[m[2]] || ['', '#73849F'];
-        return '<div class="co-dong"><span class="co-tag" style="color:'+L[1]+';background:color-mix(in srgb,'+L[1]+' 13%,transparent);min-width:72px;text-align:center">'+h(L[0])+'</span><span class="co-grow sm">'+h(m[1])+(m[3] ? '<br><span class="tiny" style="color:#B4720F">'+h(m[3])+'</span>' : '')+'</span><button class="btn ghost sm" data-v="'+h(m[0])+'">Mở</button></div>'; }).join('')+'</div></div>'; }).join('');
+        return '<div class="co-dong"><span class="co-tag" style="color:'+L[1]+';background:color-mix(in srgb,'+L[1]+' 13%,transparent);min-width:72px;text-align:center">'+h(L[0])+'</span><span class="co-grow sm">'+h(m[1])+(m[3] ? '<br><span class="tiny" style="color:var(--warn)">'+h(m[3])+'</span>' : '')+'</span><button class="btn ghost sm" data-v="'+h(m[0])+'">Mở</button></div>'; }).join('')+'</div></div>'; }).join('');
     return o;
   }
 
@@ -77001,7 +82870,9 @@ var G = window.G || {}; window.G = G;
                    : 'Các giải pháp tối ưu Super Admin giao cho anh/chị: tick từng bước, đóng khi xong — máy tự đo lại chỉ số.' });
     /* Hộp thông báo trong hệ (src/hop-thong-bao.js) đứng ĐẦU màn cấp quản lý:
        yêu cầu tư vấn và việc chờ duyệt là việc của hôm nay, không phải số đo. */
-    if(laQL() && G.htbKhoi) o += G.htbKhoi();
+    /* Mọi nhân sự mở màn này đều có hộp riêng: máy chủ chỉ trả dòng gửi
+       tới VAI hoặc TÊN của phiên, nên không có gì phải lọc ở đây. */
+    if(G.htbKhoi) o += G.htbKhoi();
     /* Trang công khai (src/do-trang-cong-khai.js): khách làm gì trước khi đăng ký. */
     if(laQL() && G.dtcKhoi) o += G.dtcKhoi();
     /* Việc kẹt (src/viec-ket.js): việc nằm im không ai cầm ở mọi hàng đợi. */
@@ -78271,6 +84142,24 @@ G.KHUNG_DL = {
      "luc",
      "TEXT",
      "NOT NULL",
+     ""
+    ],
+    [
+     "tieuChi",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "coach",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "tuVan",
+     "TEXT",
+     "",
      ""
     ],
     [
@@ -80240,9 +86129,12 @@ var G = window.G || {}; window.G = G;
   var U = G.U, h = U.h;
   var st = { ai:'', d:null, dang:false, loi:'', mo:{} };
   function coMayChu(){ return !!(G.API_CAP_PHEP && G.PHIEN_TOKEN); }
-  function veLai(){ if(G.S && G.S.view === 'trung-tam-do' && G.render) G.render(); }
+  /* Khối này nằm ở màn chính của nhiều vai (Điều hành · Buồng lái Coach ·
+     Khoang mở cửa) — vẽ lại đúng màn đang mở nó, không cứng một tên màn. */
+  var MAN_CO_HOP = { 'trung-tam-do':1, 'coach-deck':1, 'tuvan-deck':1 };
+  function veLai(){ if(G.S && MAN_CO_HOP[G.S.view] && G.render) G.render(); }
   function gio(s){ try { var d = new Date(s); return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2) + ' · ' + d.getDate() + '/' + (d.getMonth() + 1); } catch(e){ return ''; } }
-  var LOAI = { lienHe:'Yêu cầu tư vấn', viecKet:'Việc kẹt' };
+  var LOAI = { lienHe:'Yêu cầu tư vấn', viecKet:'Việc kẹt', traLuong:'Lịch trả lương' };
   var MUC = { gap:['gấp','var(--gita-do)'], canXem:['cần xem','var(--warn)'], tin:['tin','var(--ink-4)'] };
 
   function nap(){
@@ -80285,7 +86177,7 @@ var G = window.G || {}; window.G = G;
     if(st.loi) return o + '<p class="tiny" style="color:var(--gita-do);margin:8px 0 0">' + h(st.loi) + '</p></section>';
     if(!st.d) return o + '<p class="tiny muted" style="margin:8px 0 0">Đang đọc…</p></section>';
     var ds = st.d.ds || [];
-    if(!ds.length) return o + '<p class="tiny muted" style="margin:8px 0 0">Không có thông báo nào chờ xem. Yêu cầu tư vấn từ trang Liên hệ cũng hiện ở đây.</p></section>';
+    if(!ds.length) return o + '<p class="tiny muted" style="margin:8px 0 0">Không có thông báo nào chờ xem. Lịch trả lương bị dời và yêu cầu gửi tới vai của bạn sẽ hiện ở đây.</p></section>';
     o += '<p class="tiny muted" style="margin:6px 0 10px">' + ds.length + ' thông báo chờ xem — gửi tới vai của bạn.</p>';
     o += ds.map(function(x){
       var m = MUC[x.mucDo] || MUC.tin, mo = !!st.mo[x.id];
@@ -80302,6 +86194,180 @@ var G = window.G || {}; window.G = G;
     }).join('');
     return o + '</section>';
   };
+})();
+
+})();
+
+/* ═════════ src/kim-chi-nam.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — KIM CHỈ NAM Ở ĐẦU MỌI MÀN CỦA KHÁCH
+
+   Chủ hệ 10/10: khách không được thấy mình đi một mình — mọi phần của
+   khách đều có kim chỉ nam chỉ đường, luôn thấy người đồng hành và chuyên
+   gia bên cạnh.
+
+   Một dải gọn ở đầu mỗi màn khách (R13–R15), chèn ở ĐÚNG MỘT CHỖ — render()
+   của app.js — nên màn viết sau cũng tự có. Ba câu, không hơn:
+   · Nhà mình đang ở đâu — tầng mấy, và màn này nằm ở phần nào của bản đồ.
+   · Bước tiếp theo — một nút, không phải một danh sách.
+   · Ai đang đi cùng — tên người đồng hành, và ai đứng sau họ khi việc khó.
+
+   Mặc định CHỈ MỘT DÒNG, bấm mới mở chi tiết: chủ hệ vừa yêu cầu giảm một
+   nửa chữ trên màn (10/10) — một dải to ở đầu 70 màn là đi ngược yêu cầu ấy.
+   Trạng thái mở/đóng nhớ trên máy (localStorage, bọc try/catch).
+
+   Tên người đồng hành lấy từ cửa kimChiNam (chỉ đọc, chỉ họ tên, nhà lấy
+   từ phiên). Không có máy chủ (bản thử) thì nói chung, không bịa tên.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+(function () {
+  var st = { ai: '', d: null, dang: false };
+  var KHOA_MO = 'gita365.kcn.mo';
+  var BO_QUA = { 'tro-ly': 1 };          /* màn trợ lý chiếm trọn chiều cao */
+  var BUOC_TIEP = ['hom-nay', 'bat-dau', 'ban-do'];
+
+  function h(x) { return G.U.h(x); }
+  function ic(a, b) { return G.U.ic(a, b); }
+  function coMayChu() { return !!(G.API_CAP_PHEP && G.PHIEN_TOKEN && typeof G.goiMayChu === 'function'); }
+  function moSan() { try { return localStorage.getItem(KHOA_MO) === '1'; } catch (e) { return false; } }
+
+  function nap() {
+    var ai = String((G.S && G.S.acc && G.S.acc.u) || '');
+    if (st.ai !== ai) st = { ai: ai, d: null, dang: false };
+    if (!coMayChu() || st.d || st.dang) return;
+    st.dang = true;
+    G.goiMayChu('kimChiNam', {}).then(function (r) {
+      st.dang = false;
+      st.d = (r && r.ok) ? r : { loi: true };
+      if (G.S && G.S.acc && !BO_QUA[G.S.view] && G.render) G.render();
+    });
+  }
+
+  function tenMan(v) {
+    var k = G.NOI_KHACH && G.NOI_KHACH['nav.' + v + '.t'];
+    if (k) return k;
+    var it = G.navItem ? G.navItem(v) : null;
+    return it ? it.t : '';
+  }
+  function nhomMan(v) {
+    var ten = '';
+    (G.NAV || []).forEach(function (g) { (g.items || []).forEach(function (x) { if (x.v === v) ten = g.t; }); });
+    return ten;
+  }
+  function tenTang(n) {
+    var t = (G.TIERS || []).filter(function (x) { return x.id === n; })[0];
+    return t ? t.n : '';
+  }
+  function buocTiep(v) {
+    for (var i = 0; i < BUOC_TIEP.length; i++) {
+      var b = BUOC_TIEP[i];
+      if (b !== v && G.VIEWS && G.VIEWS[b] && (!G.allowed || G.allowed(b))) return b;
+    }
+    return '';
+  }
+
+  function manNha() {
+    var p = G.myPortal ? G.myPortal() : '';
+    var home = G.PORTALS && G.PORTALS[p] && G.PORTALS[p].home;
+    return home === 'dieu-hanh' ? 'trung-tam-do' : (home || 'ban-do');
+  }
+
+  /* Thành viên hệ thống: việc THẬT đang chờ chính người ấy, cấp chứng chỉ,
+     và ai đỡ khi việc khó — tất cả đọc từ cửa kimChiNam. Không có máy chủ
+     (bản thử) thì không có việc thật nào để chỉ, nên chỉ nói đường xin ý kiến. */
+  function thanhVien(v, d) {
+    var viec = d ? (d.viec || []) : [], b = d && d.buocTiep;
+    var cap = d ? (d.cap || []) : [];
+    var chip = cap.length ? cap.map(function (c) { return c.he + ' cấp ' + c.cap + '/' + c.soCap; }).join(' · ')
+      : ((G.S && G.S.roleObj && G.S.roleObj.n) || 'Thành viên GITA365');
+    var manViec = function (x) { return x.man || manNha(); };
+    var o = '<details class="kcn"' + (moSan() ? ' open' : '') + ' data-kcn>' +
+      '<summary class="kcn-dong">' + ic('compass', 'w-4 h-4') + '<b>Kim chỉ nam</b><span class="kcn-chip">' + h(chip) + '</span>' +
+      '<span class="kcn-phu">' + (b ? 'Việc tiếp: ' + h(b.nhan) : d ? 'Không có việc nào đang chờ bạn' : 'Việc của bạn ở màn chính') + '</span>' +
+      (d && d.nguoiDo ? '<span class="kcn-phu">Đỡ bạn: ' + h(d.nguoiDo.vai + (d.nguoiDo.ten ? ' · ' + d.nguoiDo.ten : '')) + '</span>' : '') + '</summary>';
+    o += '<div class="kcn-ben">';
+    o += '<div class="kcn-o"><div class="tiny up">Bạn đang ở đây</div>' +
+      (cap.length ? cap.map(function (c) { return '<p class="sm">' + h(c.he) + ': cấp <b>' + c.cap + '</b>/' + c.soCap +
+        (c.datThangNay ? ' · <span class="muted">đã giữ cấp tháng này</span>' : '') + '</p>'; }).join('') : '') +
+      '<p class="tiny dim">' + (nhomMan(v) ? 'Màn này thuộc phần <b>' + h(nhomMan(v)) + '</b>' + (tenMan(v) ? ' · ' + h(tenMan(v)) : '') + '.' : '') + '</p></div>';
+    o += '<div class="kcn-o"><div class="tiny up">Việc đang chờ bạn</div>' +
+      (viec.length ? viec.map(function (x) {
+        return '<button class="btn ' + (x === b ? 'pri' : 'ghost') + ' sm" data-v="' + h(manViec(x)) + '">' + ic('arrow', 'w-3 h-3') + h(x.nhan) + '</button>';
+      }).join('') : '<p class="tiny dim">' + (d ? 'Không có việc nào đang chờ. Việc của khách đi theo màn chính của bạn.' : 'Việc của bạn nằm ở màn chính.') + '</p>' +
+        (v !== manNha() ? '<button class="btn ghost sm" data-v="' + h(manNha()) + '">Về màn chính</button>' : '')) + '</div>';
+    o += '<div class="kcn-o"><div class="tiny up">Khi việc khó</div>' +
+      (d && d.nguoiDo ? '<p class="sm">' + ic('users', 'w-3 h-3') + ' ' + h(d.nguoiDo.vai) + (d.nguoiDo.ten ? ': <b>' + h(d.nguoiDo.ten) + '</b>' : '') + '</p>' : '') +
+      '<p class="tiny dim">' + h((d && d.chuyenGia) || 'Việc vượt cấp của mình thì xin ý kiến cấp quản lý trước khi trả lời khách.') + '</p></div>';
+    return o + '</div></details>';
+  }
+
+  G.kcnThanh = function (v) {
+    if (!G.S || !G.S.acc || BO_QUA[v]) return '';
+    nap();
+    var d = st.d && !st.d.loi ? st.d : null;
+    if (!G.LA_KHACH || !G.LA_KHACH()) return thanhVien(v, d && d.thanhVien ? d : null);
+    var tang = d && d.tang ? d.tang : null;
+    var ds = d ? (d.nguoiDongHanh || []) : [];
+    var coTen = ds.filter(function (x) { return x.daXep && x.ten; });
+    var b = buocTiep(v);
+    /* Việc hôm nay của nhà — đúng một việc, từ cửa của màn Hôm nay. */
+    var vh = d && d.viecHomNay;
+    var nhanViec = vh && vh.ten ? 'Việc hôm nay: ' + vh.ten : vh && vh.xongHet ? 'Xong việc hôm nay' :
+      vh && vh.chuaCoNhip ? 'Đặt nhịp đầu tiên cho nhà mình' : vh && vh.dangBao ? 'Nhà mình đang ở Chế độ Bão — nghỉ, chuỗi vẫn giữ' : '';
+    /* Đại sứ / cộng tác viên không có "nhà" và không có tầng — nói theo vai của họ. */
+    var ctv = G.S && G.S.role === 'R15';
+
+    var chip = ctv ? 'Cộng tác viên' : tang ? 'Tầng ' + tang + ' · ' + tenTang(tang) : (d && d.nha === false ? 'Đang lập hồ sơ' : 'Hành trình 5 tầng');
+    var diCung = ctv ? 'Ban vận hành Học viện' : coTen.length ? coTen[0].ten : 'người đồng hành của nhà mình';
+
+    var o = '<details class="kcn"' + (moSan() ? ' open' : '') + ' data-kcn>' +
+      '<summary class="kcn-dong">' + ic('compass', 'w-4 h-4') +
+      '<b>Kim chỉ nam</b><span class="kcn-chip">' + h(chip) + '</span>' +
+      (nhanViec ? '<span class="kcn-phu">' + h(nhanViec) + '</span>' : b ? '<span class="kcn-phu">Bước tiếp: ' + h(tenMan(b)) + '</span>' : '') +
+      '<span class="kcn-phu">Đi cùng: ' + h(diCung) + '</span></summary>';
+
+    o += '<div class="kcn-ben">';
+    /* A · Nhà mình đang ở đâu */
+    o += '<div class="kcn-o"><div class="tiny up">' + (ctv ? 'Bạn đang ở đây' : 'Nhà mình đang ở đây') + '</div>' +
+      (ctv ? '' : '<div class="kcn-tang" aria-label="' + h(tang ? 'Tầng ' + tang + ' trên 5' : 'Chưa xếp tầng') + '">' +
+      [1, 2, 3, 4, 5].map(function (n) { return '<span class="' + (tang && n <= tang ? 'on' : '') + '"></span>'; }).join('') + '</div>') +
+      '<p class="tiny dim">' + (nhomMan(v) ? 'Màn này thuộc phần <b>' + h(nhomMan(v)) + '</b>' + (tenMan(v) ? ' · ' + h(tenMan(v)) : '') + '.' : 'Mỗi màn là một phần của bản đồ năm tầng.') + '</p></div>';
+    /* B · Bước tiếp theo — một nút */
+    o += '<div class="kcn-o"><div class="tiny up">Bước tiếp theo</div>' +
+      (vh && vh.ten && v !== 'hom-nay' ? '<button class="btn pri sm" data-v="hom-nay">' + ic('arrow', 'w-3 h-3') + h(vh.ten) + '</button>' +
+        (vh.conLai ? '<p class="tiny dim">Sau việc này còn ' + vh.conLai + ' nhịp nữa trong ngày.</p>' : '')
+      : b ? '<button class="btn pri sm" data-v="' + h(b) + '">' + ic('arrow', 'w-3 h-3') + h(tenMan(b)) + '</button>'
+        : '<p class="tiny dim">Nhà mình đang ở đúng màn của việc hôm nay.</p>') +
+      '<p class="tiny dim">Làm từng việc nhỏ, đúng nhịp — Làm Đúng, Làm Đủ, rồi Làm Đều.</p></div>';
+    /* C · Ai đang đi cùng */
+    o += '<div class="kcn-o"><div class="tiny up">' + (ctv ? 'Ai hỗ trợ bạn' : 'Người đi cùng nhà mình') + '</div>';
+    if (ds.length) {
+      o += ds.map(function (x) {
+        return '<p class="sm">' + ic('users', 'w-3 h-3') + ' <b>' + h(x.vai) + ':</b> ' +
+          (x.daXep ? h(x.ten) : '<span class="muted">Học viện đang xếp người cho nhà mình</span>') + '</p>';
+      }).join('');
+    } else if (ctv) {
+      o += '<p class="sm">' + ic('users', 'w-3 h-3') + ' Ban vận hành của Học viện hỗ trợ cộng tác viên trong từng việc.</p>';
+    } else {
+      o += '<p class="sm">' + ic('users', 'w-3 h-3') + ' Coach và chuyên gia tư vấn của nhà mình đi cùng suốt năm tầng.</p>';
+    }
+    o += '<p class="tiny dim">' + h((d && d.chuyenGia) || 'Khi việc khó vượt quá phần của người đi cùng, họ xin ý kiến Trưởng nhóm chuyên môn trước khi trả lời nhà mình.') + '</p>' +
+      '<div class="row wrap" style="gap:8px">' +
+      (!ctv && G.VIEWS && G.VIEWS['doi-dong-hanh'] && (!G.allowed || G.allowed('doi-dong-hanh')) && v !== 'doi-dong-hanh' ? '<button class="btn ghost sm" data-v="doi-dong-hanh">Người đi cùng nhà mình</button>' : '') +
+      (G.VIEWS && G.VIEWS['tro-ly'] && (!G.allowed || G.allowed('tro-ly')) ? '<button class="btn ghost sm" data-v="tro-ly">Hỏi trợ lý GITA ngay</button>' : '') +
+      '</div></div>';
+    o += '</div></details>';
+    return o;
+  };
+
+  /* Nhớ mở/đóng. Sự kiện toggle không nổi bọt — bắt ở pha bắt. */
+  document.addEventListener('toggle', function (e) {
+    var el = e.target;
+    if (!el || !el.hasAttribute || !el.hasAttribute('data-kcn')) return;
+    try { localStorage.setItem(KHOA_MO, el.open ? '1' : '0'); } catch (x) {}
+  }, true);
 })();
 
 })();
@@ -81815,7 +87881,7 @@ var G = window.G || {}; window.G = G;
     return '<div class="row" style="gap:8px;flex-wrap:wrap;align-items:center">'+
         '<span class="bd-chip">'+kh.canh.length+' cảnh</span><span class="bd-chip">'+dem.noi+' cảnh nói</span><span class="bd-chip">'+dem.dien+' cảnh diễn</span>'+
         '<span class="bd-chip">~'+kh.tongGiay+' giây phim</span></div>'+
-      (kh.canhBao.length ? '<p class="bd-tip" style="color:#B4720F;margin-top:6px">'+kh.canhBao.map(h).join('<br>')+'</p>' : '')+
+      (kh.canhBao.length ? '<p class="bd-tip" style="color:var(--warn);margin-top:6px">'+kh.canhBao.map(h).join('<br>')+'</p>' : '')+
       '<details style="margin-top:8px"><summary class="tiny muted" style="cursor:pointer">Xem xưởng phân cảnh thế nào</summary>'+
       '<ol class="tiny" style="margin:6px 0 0 18px;color:var(--ink-2);line-height:1.6">'+kh.canh.map(function(c){
         var ten = c.nv.map(function(id){ return (s.nv.filter(function(n){return n.id===id;})[0]||{}).ten||id; }).join(' + ');
@@ -82075,14 +88141,14 @@ var G = window.G || {}; window.G = G;
       '<span class="bd-chip">'+kh.canh.length+' cảnh · ~'+Math.round(kh.tongGiay/6)/10+' phút</span>'+
       '<span class="bd-chip">'+noi+' cảnh nói (khớp môi)</span><span class="bd-chip">'+(kh.canh.length-noi)+' cảnh diễn</span></div>'+
       '<p class="bd-tip" style="margin-top:6px">≈ '+(Math.round(u.gioGPU*10)/10)+' giờ GPU Kaggle cho phim này (ước tính, chưa đo thật) · Kaggle cho ~30 giờ/tuần → khoảng <b>'+u.phimThang+' phim/tháng</b>.</p>'+
-      (kh.canhBao.length?'<p class="bd-tip" style="color:#B4720F">'+kh.canhBao.map(h).join('<br>')+'</p>':'');
+      (kh.canhBao.length?'<p class="bd-tip" style="color:var(--warn)">'+kh.canhBao.map(h).join('<br>')+'</p>':'');
     o += '<div class="gd-wrap" style="margin-top:8px"><table class="gd-tb"><thead><tr><th>#</th><th>Loại</th><th>Nội dung</th><th>Giây</th><th>Ảnh khung đầu (Anh/số.jpg)</th></tr></thead><tbody>'+
       kh.canh.map(function(c){
         var nd = (c.nv.length?h(c.nv.map(tenNv).join(' + '))+' · ':'')+(c.thoai?'“'+h(c.thoai)+'”':h(c.mo_ta||''))+
           '<br><span class="tiny muted">Ảnh nên có: '+h(goiYAnh(c))+'</span>'+
-          (c.khongRo?'<br><span class="tiny" style="color:#B4720F">⚠ Mô tả không nhắc ai trong dàn nhân vật — đang dùng '+h(tenNv(c.nv[0]))+'. Ảnh Anh/'+c.id+'.jpg của anh/chị sẽ quyết định ai xuất hiện.</span>':'');
+          (c.khongRo?'<br><span class="tiny" style="color:var(--warn)">⚠ Mô tả không nhắc ai trong dàn nhân vật — đang dùng '+h(tenNv(c.nv[0]))+'. Ảnh Anh/'+c.id+'.jpg của anh/chị sẽ quyết định ai xuất hiện.</span>':'');
         var anh = coAnh[c.id] ? '<span style="color:#0B7350">✓ Anh/'+c.id+'.jpg</span>'
-          : (c.nv[0] && coNv[c.nv[0]] ? '<span style="color:#B4720F">dùng ảnh nhân vật</span><br><span class="tiny muted">nên thêm Anh/'+c.id+'.jpg</span>'
+          : (c.nv[0] && coNv[c.nv[0]] ? '<span style="color:var(--warn)">dùng ảnh nhân vật</span><br><span class="tiny muted">nên thêm Anh/'+c.id+'.jpg</span>'
           : '<span style="color:#B42318">thiếu Anh/'+c.id+'.jpg</span>');
         return '<tr><td>'+c.id+'</td><td>'+(c.loai==='noi'?'🗣 Nói':'🎬 Diễn')+'</td><td style="min-width:240px">'+nd+'</td><td>'+c.giay+'</td><td>'+(s.tep?anh:'<span class="tiny muted">Anh/'+c.id+'.jpg</span>')+'</td></tr>'; }).join('')+
       '</tbody></table></div>';
@@ -82097,12 +88163,12 @@ var G = window.G || {}; window.G = G;
       Object.keys(NHOM).map(function(n){ return chip(n).replace('</span>',' · '+Math.round(u.g[n])+'s</span>'); }).join('')+'</div>'+
       '<p class="bd-tip" style="margin-top:6px">AI chỉ chiếm '+(kh.tongGiay?Math.round(u.g.ai/kh.tongGiay*100):0)+'% thời lượng → ≈ '+(Math.round(u.gioGPU*10)/10)+' giờ GPU Kaggle mỗi phim. '+
         'Kaggle cho ~30 giờ/tuần → làm được khoảng <b>'+u.phimThang+' phim/tháng</b> (phần quay thật và ráp không tốn giờ GPU).</p>'+
-      (kh.canhBao.length?'<p class="bd-tip" style="color:#B4720F">'+kh.canhBao.map(h).join('<br>')+'</p>':'');
+      (kh.canhBao.length?'<p class="bd-tip" style="color:var(--warn)">'+kh.canhBao.map(h).join('<br>')+'</p>':'');
     o += '<div class="gd-wrap" style="margin-top:8px"><table class="gd-tb"><thead><tr><th>#</th><th>Làm bằng</th><th>Nội dung</th><th>Giây</th><th>Tệp trên Drive</th></tr></thead><tbody>'+
       kh.canh.map(function(c){
         var noi = (c.nv.length?h(c.nv.map(tenNv).join(' + '))+' · ':'')+(c.thoai?'“'+h(c.thoai.slice(0,80))+(c.thoai.length>80?'…':'')+'”':h((c.mo_ta||'').slice(0,80)))+
-          (c.khongRo?'<br><span class="tiny" style="color:#B4720F">⚠ Mô tả không nhắc ai trong dàn nhân vật — đang tạm dùng '+h(tenNv(c.nv[0]))+'. Thêm nhân vật ở tab Làm phim nhanh nếu cần.</span>':'');
-        var tep = s.tep ? (co[c.id] ? (co[c.id]===c.nhom?'<span style="color:#0B7350">✓ '+c.id+'</span>':'<span style="color:#B4720F">✓ '+c.id+' (ở thư mục '+h(THU_MUC[co[c.id]]||co[c.id])+')</span>') : '<span style="color:#B42318">thiếu '+c.id+'.mp4</span>') : '<span class="tiny muted">'+c.id+'.mp4 → '+THU_MUC[c.nhom]+'</span>';
+          (c.khongRo?'<br><span class="tiny" style="color:var(--warn)">⚠ Mô tả không nhắc ai trong dàn nhân vật — đang tạm dùng '+h(tenNv(c.nv[0]))+'. Thêm nhân vật ở tab Làm phim nhanh nếu cần.</span>':'');
+        var tep = s.tep ? (co[c.id] ? (co[c.id]===c.nhom?'<span style="color:#0B7350">✓ '+c.id+'</span>':'<span style="color:var(--warn)">✓ '+c.id+' (ở thư mục '+h(THU_MUC[co[c.id]]||co[c.id])+')</span>') : '<span style="color:#B42318">thiếu '+c.id+'.mp4</span>') : '<span class="tiny muted">'+c.id+'.mp4 → '+THU_MUC[c.nhom]+'</span>';
         return '<tr><td>'+c.id+'</td><td><select onchange="G.axda.doiNhom(\''+c.khoa+'\',this.value)" style="padding:4px;border:1px solid var(--line);border-radius:8px">'+
           Object.keys(NHOM).map(function(n){ return '<option value="'+n+'"'+(c.nhom===n?' selected':'')+'>'+NHOM[n][0]+(c.tuDong===n?' (gợi ý)':'')+'</option>'; }).join('')+'</select></td>'+
           '<td style="min-width:220px">'+noi+'</td><td>'+c.giay+'</td><td>'+tep+'</td></tr>'; }).join('')+'</tbody></table></div>';
@@ -82123,7 +88189,7 @@ var G = window.G || {}; window.G = G;
     o += '<div class="row mb" style="gap:8px;flex-wrap:wrap">'+
       '<button class="btn sm '+(A?'':'ghost')+'" onclick="G.axda.cheDo(\'ai100\')">✨ 100% AI từ ảnh</button>'+
       '<button class="btn sm '+(A?'ghost':'')+'" onclick="G.axda.cheDo(\'lai\')">🎥 Quay thật + AI</button></div>';
-    if(!k) o += '<div class="card pad-sm mb"><p class="tiny" style="color:#B4720F">Cần nối kho Google Drive trước (tab 🗄 Kho phim → Cài đặt kho Drive).</p></div>';
+    if(!k) o += '<div class="card pad-sm mb"><p class="tiny" style="color:var(--warn)">Cần nối kho Google Drive trước (tab 🗄 Kho phim → Cài đặt kho Drive).</p></div>';
     /* 1 · kịch bản */
     o += '<div class="card pad-sm mb"><b class="sm">① Kịch bản</b>'+
       '<div class="row mt" style="gap:8px;flex-wrap:wrap"><input type="text" value="'+h(s.ten)+'" onchange="G.axda.dat(\'ten\',this.value)" placeholder="Tên dự án" style="flex:1;min-width:200px;padding:8px;border:1px solid var(--line);border-radius:8px">'+
@@ -82812,7 +88878,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     o += '<div class="gd-wrap mb"><table class="gd-tb"><thead><tr><th>#</th><th>Cảnh</th><th>Động cơ sẽ chạy</th><th>Loại</th></tr></thead><tbody>'+
       p.canh.map(function(c,i){ var nv=nvById(c.nvId)||{}; var k=chonDongCo(c,p); var phi=!laMo(k);
         return '<tr><td>'+(i+1)+'</td><td>'+h(nv.ten||'?')+' · '+h((c.boiCanh||'').slice(0,40))+'</td><td>'+h(tenDC(k))+(c.dongCo?' <span class="bd-chip">riêng</span>':'')+'</td>'+
-          '<td><span class="bd-chip" style="'+(phi?'border-color:#B4720F;color:#B4720F':'')+'">'+(phi?('Có phí'+(GIA[k]!=null?' · $'+GIA[k]+'/s':'')):'Free')+'</span></td></tr>'; }).join('')+
+          '<td><span class="bd-chip" style="'+(phi?'border-color:#B4720F;color:var(--warn)':'')+'">'+(phi?('Có phí'+(GIA[k]!=null?' · $'+GIA[k]+'/s':'')):'Free')+'</span></td></tr>'; }).join('')+
       '</tbody></table></div>';
     o += '<div class="card pad-sm"><b class="sm">Dây chuyền hậu kỳ cao cấp</b><div style="margin-top:8px">'+
       HAUKY.map(function(x){ return '<label style="display:flex;gap:9px;align-items:center;padding:6px 0;font-size:13px;color:var(--ink-2)">'+
@@ -82848,12 +88914,16 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       t:'Bộ điều khiển sản xuất phim AI',
       lead:'App GITA là bộ não của xưởng nội bộ: dàn nhân vật khoá mặt, phim trường, phân cảnh, máy quay ảo, kỹ xảo — rồi xuất cấu hình cho động cơ model mở chạy trên GPU (Kaggle hoặc máy thuê theo giờ). Thuê ngoài tối đa 10% — không slideshow, không ảnh mấp máy môi.' });
 
-    o += '<div class="row mb" style="gap:8px;flex-wrap:wrap">'+
+    /* Nhúng trong khung Xưởng phim AI (src/xuong-ai.js): bỏ đầu trang, hai
+       hàng nút và hàng tab — danh mục bên trái của khung đã làm việc ấy. */
+    var nhung = !!G.S.axNhung;
+    if(nhung) o = '';
+    if(!nhung) o += '<div class="row mb" style="gap:8px;flex-wrap:wrap">'+
       '<button class="btn ghost sm" data-v="studio-he">'+ic('arrow','w-3 h-3')+'Hệ điều hành xưởng</button>'+
       '<button class="btn ghost sm" data-v="lam-phim-10">'+ic('sparkle','w-3 h-3')+'Chương trình 10 bước</button>'+
       '</div>';
 
-    o += '<div class="row mb" style="gap:6px;flex-wrap:wrap">'+
+    if(!nhung) o += '<div class="row mb" style="gap:6px;flex-wrap:wrap">'+
       tabBtn('nhanh','⚡ Làm phim nhanh')+tabBtn('duan','🎬 Dự án phim')+tabBtn('khophim','🗄 Kho phim')+tabBtn('nv','Kho nhân vật')+tabBtn('phim','Phim & phân cảnh')+tabBtn('prompt','Prompt & cấu hình')+tabBtn('bang','Bảng sản xuất')+tabBtn('phimtruong','Phim trường')+tabBtn('kyxao','Kỹ xảo & Động cơ')+tabBtn('tudong','Tự động')+'</div>';
 
     if(G.S.axTab==='nhanh') o += (G.axn && G.axn.ve ? G.axn.ve() : '');
@@ -82870,6 +88940,765 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     o += '<p class="tiny muted" style="margin-top:14px">'+ic('shield','w-3 h-3')+' Dữ liệu nhân vật & phân cảnh lưu trên máy anh/chị, giữ qua phiên. Ảnh mẫu, kịch bản và phim nằm trong Google Drive của anh/chị (hoặc trạm/máy GPU riêng của GITA nếu có thuê) — chỉ gửi khi anh/chị bấm, không qua dịch vụ AI bên ngoài.</p>';
     return o;
   };
+})();
+
+})();
+
+/* ═════════ src/cat-nhip.js ═════════ */
+(function(){
+/* ═════════════════════════════════════════════════
+   GITA 365 · XƯỞNG PHIM AI — CẮT CẢNH THEO NHỊP NHẠC
+
+   Nạp một bài nhạc và một bộ ảnh/clip. Máy nghe nhạc, tìm nhịp, rồi đặt
+   mỗi chỗ chuyển cảnh đúng vào một nhịp. Xem thử ngay, xuất ra .webm.
+
+   Chạy HOÀN TOÀN trên thiết bị (Web Audio + Canvas + MediaRecorder):
+   nhạc, ảnh, clip không rời máy, không gọi máy chủ, không dịch vụ AI
+   ngoài. Không đụng studio.js. View con của 'xuong-ai' (G.catNhip.ve).
+
+   Vì sao dò nhịp ở đây chứ không dùng thư viện: thư viện nghe nhạc tốt
+   đều nặng vài trăm KB và phải tải từ mạng. Thuật toán dưới đây (năng
+   lượng → dòng khởi âm → tự tương quan ra BPM → căn pha lưới nhịp) đủ cho
+   nhạc nền có trống rõ — đúng loại nhạc phim ngắn hay dùng. Nhạc không
+   có nhịp rõ (piano tự do, nhạc nền không trống) thì máy NÓI THẲNG độ tin
+   thấp và cho người chỉnh tay BPM, không lặng lẽ cắt sai.
+
+   timNhip() là hàm thuần (nhận mẫu âm thanh, trả nhịp), không chạm DOM,
+   nên tools/thu-xuong-ai.mjs thử được trên Node bằng tín hiệu tự dựng.
+   ═════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+
+(function(){
+var U = G.U || {}, h = U.h || function(s){ return String(s == null ? '' : s); };
+
+/* ════════ DÒ NHỊP — hàm thuần ════════ */
+var KHUNG = 1024, BUOC = 512;
+
+/* Dòng khởi âm: năng lượng từng khung, lấy phần TĂNG so với khung trước.
+   Tiếng trống là một cú tăng năng lượng đột ngột; tiếng đàn ngân là năng
+   lượng đều — lấy phần tăng thì giữ trống, bỏ ngân. */
+function dongKhoiAm(kenh, sr){
+  var n = Math.max(0, Math.floor((kenh.length - KHUNG) / BUOC) + 1);
+  var nl = new Float32Array(n), ka = new Float32Array(n);
+  for (var i = 0; i < n; i++){
+    var s = 0, o = i * BUOC;
+    for (var j = 0; j < KHUNG; j++){ var v = kenh[o + j]; s += v * v; }
+    nl[i] = Math.sqrt(s / KHUNG);
+  }
+  for (var k = 1; k < n; k++){ var d = nl[k] - nl[k - 1]; ka[k] = d > 0 ? d : 0; }
+  return { ka: ka, fps: sr / BUOC };
+}
+
+/* Làm mượt và bỏ trung bình. Mượt: một cú trống hay rơi lệch nửa khung,
+   lúc khung này lúc khung kia — không mượt thì chu kỳ 21,5 khung chẳng
+   khớp 21 cũng chẳng khớp 22, và máy chọn nhầm chu kỳ GẤP ĐÔI (43 khung,
+   khớp gần trọn) — 120 nhịp/phút đọc ra 60. Bỏ trung bình: để tự tương
+   quan của tiếng ồn quanh 0, nhờ đó độ tin nói đúng "không có nhịp". */
+function chuanHoa(ka){
+  var n = ka.length, z = new Float32Array(n), tb = 0;
+  for (var i = 0; i < n; i++){
+    var m = (ka[i - 1] || 0) + 2 * ka[i] + (ka[i + 1] || 0);
+    z[i] = m / 4; tb += z[i];
+  }
+  tb = tb / (n || 1);
+  for (var k = 0; k < n; k++) z[k] -= tb;
+  return z;
+}
+/* Tự tương quan ở độ trễ LẺ (nội suy tuyến tính), chia cho năng lượng:
+   ra hệ số từ -1 tới 1, so được giữa hai bài khác nhau. */
+function tuongQuan(z, lag, r0){
+  var s = 0, f = Math.floor(lag), p = lag - f;
+  for (var i = f + 1; i < z.length; i++) s += z[i] * (z[i - f] * (1 - p) + z[i - f - 1] * p);
+  return r0 ? s / r0 : 0;
+}
+
+/* BPM: quét 60–180 nhịp/phút từng 0,25. Ưu tiên nhẹ vùng 90–140 (nhịp hay
+   gặp của nhạc nền); chu kỳ chậm dưới 90 mà gấp đôi tốc độ vẫn khớp gần
+   bằng thì lấy tốc độ gấp đôi — cùng một bài, cắt dày hơn dễ thưa lại
+   bằng "cắt mỗi N nhịp", cắt thưa thì không dày lên được. */
+function uocBpm(z, fps){
+  var r0 = 0;
+  for (var q = 0; q < z.length; q++) r0 += z[q] * z[q];
+  if (!r0) return { bpm: 0, tin: 0 };
+  var tot = -1, botBpm = 0, botR = 0;
+  for (var bpm = 60; bpm <= 180; bpm += 0.25){
+    var r = tuongQuan(z, fps * 60 / bpm, r0);
+    var w = r * ((bpm >= 90 && bpm <= 140) ? 1.12 : 1);
+    if (w > tot){ tot = w; botBpm = bpm; botR = r; }
+  }
+  if (botBpm < 90){
+    var r2 = tuongQuan(z, fps * 60 / (botBpm * 2), r0);
+    if (r2 >= 0.85 * botR){ botBpm = botBpm * 2; botR = r2; }
+  }
+  return { bpm: botBpm, tin: Math.max(0, botR) };
+}
+
+/* Căn pha: trong một chu kỳ nhịp, chọn điểm bắt đầu sao cho lưới nhịp
+   trùng nhiều khởi âm nhất. */
+function canPha(ka, fps, bpm){
+  var chuKy = fps * 60 / bpm, tot = -1, pha = 0;
+  for (var p = 0; p < chuKy; p += 0.25){
+    var s = 0;
+    for (var t = p; t < ka.length - 1; t += chuKy){
+      var f = Math.floor(t), d = t - f;
+      s += (ka[f] || 0) * (1 - d) + (ka[f + 1] || 0) * d;
+    }
+    if (s > tot){ tot = s; pha = p; }
+  }
+  return pha / fps;
+}
+
+/* Tinh chỉnh bằng các đỉnh khởi âm thật: lưới quét theo bước 0,25 nhịp/
+   phút và khung đo 23 mili-giây thì sai lệch tích luỹ — sau 40 nhịp lệch
+   gần một phần tư nhịp. Lấy các đỉnh rõ (nội suy parabol để vượt độ phân
+   giải khung), gán mỗi đỉnh vào nhịp gần nhất, rồi khớp đường thẳng bình
+   phương nhỏ nhất: độ dốc là chu kỳ thật, hệ số chặn là pha thật. */
+function tinhChinh(z, fps, chuKy, coDinh){
+  var mx = 0, dinh = [];
+  for (var i = 0; i < z.length; i++) if (z[i] > mx) mx = z[i];
+  for (var k = 1; k < z.length - 1; k++){
+    if (z[k] > 0.3 * mx && z[k] > z[k - 1] && z[k] >= z[k + 1]){
+      var a = z[k - 1], b = z[k], c = z[k + 1], mau = a - 2 * b + c;
+      dinh.push((k + (mau ? 0.5 * (a - c) / mau : 0)) / fps);
+    }
+  }
+  if (dinh.length < 8) return null;
+  var n = [], sn = 0, st = 0, snn = 0, snt = 0, m = dinh.length;
+  /* Đánh số nhịp theo KHOẢNG GIỮA HAI ĐỈNH LIỀN NHAU, không theo khoảng
+     cách tới đỉnh đầu: chu kỳ thô lệch 2% thì sau 40 nhịp đã lệch gần
+     một nhịp, làm tròn từ đỉnh đầu sẽ gán sai số nhịp ở cuối bài. Từng
+     khoảng một thì sai 2% không bao giờ đủ để làm tròn nhầm. */
+  n[0] = 0;
+  for (var j = 1; j < m; j++){ n[j] = n[j - 1] + Math.max(1, Math.round((dinh[j] - dinh[j - 1]) / chuKy)); }
+  for (var q = 0; q < m; q++){ sn += n[q]; st += dinh[q]; snn += n[q] * n[q]; snt += n[q] * dinh[q]; }
+  var P = coDinh ? chuKy : (m * snt - sn * st) / (m * snn - sn * sn);
+  if (!(P > 0) || Math.abs(P - chuKy) / chuKy > 0.08) return null;
+  var a0 = (st - P * sn) / m;
+  return { chuKy: P, pha: ((a0 % P) + P) % P };
+}
+
+/* timNhip(mẫu âm, tần số mẫu [, bpmTay]) → { bpm, tin, nhip:[giây…], dai } */
+function timNhip(kenh, sr, bpmTay){
+  var dai = kenh.length / sr;
+  var dk = dongKhoiAm(kenh, sr);
+  var z = chuanHoa(dk.ka);
+  var u = uocBpm(z, dk.fps);
+  var bpm = bpmTay > 0 ? bpmTay : u.bpm;
+  if (!bpm) return { bpm: 0, tin: 0, nhip: [], dai: dai };
+  var pha = canPha(z, dk.fps, bpm), buoc = 60 / bpm, nhip = [];
+  var tc = tinhChinh(z, dk.fps, buoc, bpmTay > 0);
+  if (tc){ buoc = tc.chuKy; pha = tc.pha; bpm = 60 / buoc; }
+  /* Bù độ trễ của khung đo: khung thứ i phủ mẫu [512i, 512i+1024], nên cú
+     trống làm năng lượng nhảy ở khung bắt đầu SỚM hơn nó trung bình
+     1024 − 256 mẫu. Không bù thì mọi điểm cắt rơi sớm ~35 mili-giây —
+     đủ để mắt thấy hình đổi trước tiếng trống. */
+  pha = (pha + (KHUNG - BUOC / 2) / sr) % buoc;
+  for (var t = pha; t < dai; t += buoc) nhip.push(Math.round(t * 1000) / 1000);
+  return { bpm: Math.round(bpm * 10) / 10, tin: Math.round(u.tin * 100) / 100, nhip: nhip, dai: dai };
+}
+
+/* Điểm cắt: mỗi N nhịp một lần chuyển, từ giây bắt đầu. Đoạn cuối luôn
+   kết ở hết bài để phim không cụt giữa câu nhạc. */
+function diemCat(nhip, moiN, tuGiay, dai){
+  var ds = [], n = Math.max(1, moiN | 0), tu = +tuGiay || 0;
+  var lo = nhip.filter(function(t){ return t >= tu; });
+  for (var i = 0; i < lo.length; i += n) ds.push(lo[i]);
+  if (!ds.length || ds[0] > tu + 0.05) ds.unshift(tu);
+  var doan = [];
+  for (var k = 0; k < ds.length; k++){
+    var a = ds[k], b = k + 1 < ds.length ? ds[k + 1] : dai;
+    if (b - a > 0.05) doan.push({ tu: a, den: b });
+  }
+  return doan;
+}
+
+/* ════════ TRẠNG THÁI (chỉ trong bộ nhớ tab — nhạc và ảnh không lưu) ════════
+   gan[i] = chỉ số tệp đặt vào cảnh i; vắng thì cảnh i lấy tệp i theo vòng. */
+var S = { nhac: null, ten: '', kq: null, doan: [], moiN: 2, tuGiay: 0, bpmTay: 0, vat: [], gan: {}, tua: 0,
+          dangChay: false, ghi: null };
+var AC = null, raf = 0, nguon = null;
+function ac(){ return (AC = AC || new (window.AudioContext || window.webkitAudioContext)()); }
+
+var KHUNG_XUAT = { '9:16': [720, 1280], '16:9': [1280, 720], '1:1': [1080, 1080], '4:5': [864, 1080] };
+function khung(){ return KHUNG_XUAT[G.S && G.S.xaKhung] || KHUNG_XUAT['9:16']; }
+
+/* Trộn mọi kênh thành một trước khi dò: nhạc nhiều bài để trống lệch
+   sang một bên, nghe mỗi kênh trái là nghe thiếu. */
+function kenhTron(buf){
+  if (buf.numberOfChannels < 2) return buf.getChannelData(0);
+  var n = buf.length, ra = new Float32Array(n), c = buf.numberOfChannels;
+  for (var k = 0; k < c; k++){ var d = buf.getChannelData(k); for (var i = 0; i < n; i++) ra[i] += d[i] / c; }
+  return ra;
+}
+var KENH = null;
+function tinhLai(){
+  if (!S.nhac) return;
+  S.kq = timNhip(KENH, S.nhac.sampleRate, +S.bpmTay || 0);
+  S.doan = diemCat(S.kq.nhip, S.moiN, S.tuGiay, S.kq.dai);
+  if (S.tua < S.tuGiay || S.tua > S.kq.dai) S.tua = S.tuGiay;
+}
+function vatCuaDoan(i){
+  if (!S.vat.length) return null;
+  var g = S.gan[i];
+  return S.vat[(g != null && g < S.vat.length ? g : i) % S.vat.length];
+}
+
+/* ════════ NẠP ════════ */
+G.catNhip = G.catNhip || {};
+G.catNhip.timNhip = timNhip;
+G.catNhip.diemCat = diemCat;
+
+function dangGhi(){
+  if (!S.ghi) return false;
+  U.toast && U.toast('Đang ghi phim — chờ ghi xong hoặc bấm Dừng để huỷ bản ghi.', 'err');
+  return true;
+}
+G.catNhip.napNhac = function(inp){
+  var f = inp.files && inp.files[0]; if (!f || dangGhi()) return;
+  G.catNhip.dung();
+  S.ten = f.name;
+  f.arrayBuffer().then(function(b){ return ac().decodeAudioData(b); })
+    .then(function(buf){ S.nhac = buf; KENH = kenhTron(buf); S.gan = {}; S.tua = 0; tinhLai(); G.catNhip.veLai();
+      U.toast && U.toast('Đã nghe xong bài nhạc — tìm thấy ' + S.kq.nhip.length + ' nhịp.', 'ok'); })
+    .catch(function(){ U.toast && U.toast('Không đọc được tệp nhạc này. Thử MP3 hoặc WAV.', 'err'); });
+};
+G.catNhip.napVat = function(inp){
+  var fs = [].slice.call(inp.files || []), con = fs.length, hong = [];
+  if (!con || dangGhi()) return;
+  function xong(){
+    if (--con > 0) return;
+    S.vat.sort(function(a, b){ return a.ten.localeCompare(b.ten); });
+    if (hong.length) U.toast && U.toast('Không đọc được ' + hong.length + ' tệp: ' + hong.join(', '), 'err');
+    G.catNhip.veLai();
+  }
+  fs.forEach(function(f){
+    var la = /^video\//.test(f.type) ? 'clip' : (/^image\//.test(f.type) ? 'anh' : '');
+    if (!la){ hong.push(f.name); xong(); return; }
+    var fr = new FileReader();
+    fr.onerror = function(){ hong.push(f.name); xong(); };
+    fr.onload = function(){
+      var v = { ten: f.name, loai: la, src: fr.result, el: null };
+      if (la === 'anh'){
+        var im = new Image();
+        /* Ảnh thu nhỏ 96px cho dải cảnh — nhúng ảnh gốc vào mỗi ô thì một
+           phim 40 cảnh kéo theo vài chục MB chữ trong trang. */
+        im.onload = function(){
+          try {
+            var tc = document.createElement('canvas'), tl = 96 / Math.max(im.naturalWidth, im.naturalHeight);
+            tc.width = Math.max(1, Math.round(im.naturalWidth * tl)); tc.height = Math.max(1, Math.round(im.naturalHeight * tl));
+            tc.getContext('2d').drawImage(im, 0, 0, tc.width, tc.height);
+            v.nho = tc.toDataURL('image/jpeg', 0.7);
+            if (document.getElementById('cn-goc') && !S.dangChay) G.catNhip.veLai();
+          } catch (e) {}
+        };
+        im.src = fr.result; v.el = im;
+      }
+      else { var vd = document.createElement('video'); vd.src = fr.result; vd.muted = true; vd.playsInline = true; vd.preload = 'auto'; v.el = vd; }
+      S.vat.push(v); xong();
+    };
+    fr.readAsDataURL(f);
+  });
+};
+G.catNhip.xoaVat = function(i){ if (dangGhi()) return; S.vat.splice(i, 1); S.gan = {}; G.catNhip.veLai(); };
+G.catNhip.dat = function(k, v){
+  if (dangGhi()) return;
+  G.catNhip.dung();
+  S[k] = (k === 'moiN' || k === 'bpmTay' || k === 'tuGiay') ? Math.max(0, +v || 0) : v;
+  if (k === 'moiN' && S.moiN < 1) S.moiN = 1;
+  S.gan = {};
+  tinhLai(); G.catNhip.veLai();
+};
+/* Đổi tệp của một cảnh: bấm ô cảnh trên dải để lấy tệp kế tiếp. */
+G.catNhip.doiVat = function(i){
+  if (dangGhi() || !S.vat.length) return;
+  var cu = S.gan[i] != null ? S.gan[i] : i % S.vat.length;
+  S.gan[i] = (cu + 1) % S.vat.length;
+  S.tua = S.doan[i] ? S.doan[i].tu : S.tua;
+  G.catNhip.veLai();
+};
+
+/* ════════ VẼ MỘT KHUNG HÌNH ════════ */
+function doanTai(t){
+  var i = 0;
+  while (i < S.doan.length - 1 && t >= S.doan[i].den) i++;
+  return i;
+}
+function veKhung(x, W, H, t, dangPhat){
+  x.fillStyle = '#000'; x.fillRect(0, 0, W, H);
+  if (!S.doan || !S.doan.length || !S.vat.length) return;
+  var i = doanTai(t), d = S.doan[i], v = vatCuaDoan(i), el = v && v.el;
+  if (!el) return;
+  var tien = Math.max(0, Math.min(1, (t - d.tu) / Math.max(0.05, d.den - d.tu)));
+  var w0 = el.videoWidth || el.naturalWidth || el.width, h0 = el.videoHeight || el.naturalHeight || el.height;
+  if (!w0 || !h0) return;
+  if (v.loai === 'clip' && dangPhat && el.paused){ try { el.currentTime = 0; el.play(); } catch (e) {} }
+  /* Lấp đầy khung (cắt mép, không méo) + đẩy máy chậm 4% — ảnh tĩnh đứng
+     im trông như trình chiếu; chuyển động nhỏ đủ để thấy là phim. */
+  var tl = Math.max(W / w0, H / h0) * (1 + 0.04 * tien);
+  var dw = w0 * tl, dh = h0 * tl;
+  x.drawImage(el, (W - dw) / 2, (H - dh) / 2, dw, dh);
+  /* Nháy sáng 80 mili-giây ở mỗi điểm cắt — mắt bắt được cú cắt đúng nhịp. */
+  var sau = t - d.tu;
+  if (i > 0 && sau >= 0 && sau < 0.08){ x.save(); x.globalAlpha = 0.35 * (1 - sau / 0.08); x.fillStyle = '#fff'; x.fillRect(0, 0, W, H); x.restore(); }
+}
+
+function cv(){ return document.getElementById('cn-cv'); }
+function veTinh(){
+  var c = cv(); if (!c || !S.kq) return;
+  var k = khung(); c.width = k[0]; c.height = k[1];
+  veKhung(c.getContext('2d'), c.width, c.height, S.tua, false);
+  veViTri(S.tua);
+}
+
+function choi(ghiLai){
+  if (S.ghi){ dangGhi(); return; }
+  if (!S.nhac){ U.toast && U.toast('Nạp một bài nhạc trước.', 'err'); return; }
+  if (!S.vat.length){ U.toast && U.toast('Nạp ít nhất một ảnh hoặc clip.', 'err'); return; }
+  G.catNhip.dung();
+  var c = cv(); if (!c) return;
+  var k = khung(); c.width = k[0]; c.height = k[1];
+  var x = c.getContext('2d'), ctx = ac();
+  ctx.resume();
+  nguon = ctx.createBufferSource(); nguon.buffer = S.nhac;
+  /* Phim bắt đầu ở "Bắt đầu từ giây" khi xuất; xem thử thì từ chỗ đang tua. */
+  var tu = ghiLai ? S.tuGiay : Math.max(S.tuGiay, S.tua >= S.kq.dai - 0.2 ? S.tuGiay : S.tua);
+  var mr = null, manh = [];
+  if (ghiLai){
+    if (!c.captureStream || typeof MediaRecorder === 'undefined'){
+      U.toast && U.toast('Trình duyệt này chưa xuất được video. Dùng Chrome hoặc Edge trên máy tính.', 'err'); nguon = null; return; }
+    var dest = ctx.createMediaStreamDestination();
+    nguon.connect(dest);
+    var st = new MediaStream(c.captureStream(30).getVideoTracks().concat(dest.stream.getAudioTracks()));
+    var mime = MediaRecorder.isTypeSupported('video/webm;codecs=vp9') ? 'video/webm;codecs=vp9' : 'video/webm';
+    mr = new MediaRecorder(st, { mimeType: mime }); S.ghi = mr;
+    mr.ondataavailable = function(e){ if (e.data.size) manh.push(e.data); };
+    mr.onstop = function(){
+      var du = mr._du; S.ghi = null;
+      if (!du){ U.toast && U.toast('Đã huỷ bản ghi dở.', 'ok'); return; }
+      var fr = new FileReader();
+      fr.onload = function(){ var a = document.createElement('a'); a.download = 'gita-cat-nhip-' + Date.now() + '.webm'; a.href = fr.result; a.click();
+        U.toast && U.toast('Đã xuất phim cắt theo nhịp (.webm).', 'ok'); };
+      fr.readAsDataURL(new Blob(manh, { type: mime }));
+    };
+  }
+  nguon.connect(ctx.destination);
+  var t0 = ctx.currentTime + 0.05;
+  nguon.start(t0, tu);
+  if (mr) mr.start();
+  S.dangChay = true;
+  function nhip(){
+    if (!S.dangChay) return;
+    /* Rời màn thì dừng nhạc; màn vẽ lại thì đi theo khung xem mới. */
+    var c2 = cv();
+    if (!c2){ G.catNhip.dung(); return; }
+    if (c2 !== c){
+      if (mr){ G.catNhip.dung(); return; }
+      c = c2; c.width = k[0]; c.height = k[1]; x = c.getContext('2d');
+    }
+    var t = tu + ctx.currentTime - t0;
+    if (t >= S.kq.dai){ if (mr) mr._du = true; G.catNhip.dung(); S.tua = S.tuGiay; return; }
+    S.tua = Math.max(tu, t);
+    veKhung(x, c.width, c.height, S.tua, true);
+    veViTri(S.tua);
+    raf = requestAnimationFrame(nhip);
+  }
+  raf = requestAnimationFrame(nhip);
+  if (ghiLai) U.toast && U.toast('Đang ghi phim theo thời gian thực — giữ tab này mở tới hết bài.', 'ok');
+}
+G.catNhip.xemThu = function(){ choi(false); };
+G.catNhip.xuat = function(){ choi(true); };
+G.catNhip.dung = function(){
+  S.dangChay = false; cancelAnimationFrame(raf);
+  try { if (nguon) nguon.stop(); } catch (e) {}
+  nguon = null;
+  try { if (S.ghi && S.ghi.state !== 'inactive') S.ghi.stop(); } catch (e2) {}
+  S.vat.forEach(function(v){ if (v.loai === 'clip' && v.el) try { v.el.pause(); } catch (e3) {} });
+};
+/* Bấm lên dạng sóng để tua: khung xem nhảy tới đúng giây ấy. */
+G.catNhip.tuaToi = function(ev){
+  var c = document.getElementById('cn-truc'); if (!c || !S.kq || S.ghi) return;
+  var r = c.getBoundingClientRect();
+  S.tua = Math.max(0, Math.min(S.kq.dai, (ev.clientX - r.left) / r.width * S.kq.dai));
+  if (S.dangChay){ G.catNhip.dung(); choi(false); } else veTinh();
+};
+
+/* ════════ TRỤC THỜI GIAN — dòng nhạc, nhịp, điểm cắt ════════ */
+function veTruc(){
+  var c = document.getElementById('cn-truc'); if (!c || !S.kq) return;
+  var W = c.clientWidth || 600, H = 64; c.width = W; c.height = H;
+  var x = c.getContext('2d'), cs = getComputedStyle(document.documentElement);
+  var mau = function(k, d){ return (cs.getPropertyValue(k) || '').trim() || d; };
+  x.clearRect(0, 0, W, H);
+  var kenh = KENH, buoc = Math.max(1, Math.floor(kenh.length / W));
+  x.fillStyle = mau('--line-2', '#ccc');
+  for (var i = 0; i < W; i++){
+    var mx = 0, o = i * buoc;
+    for (var j = 0; j < buoc; j += 16){ var v = Math.abs(kenh[o + j] || 0); if (v > mx) mx = v; }
+    var hh = Math.max(1, mx * (H - 10)); x.fillRect(i, (H - hh) / 2, 1, hh);
+  }
+  var dai = S.kq.dai;
+  x.fillStyle = mau('--ink-4', '#888');
+  S.kq.nhip.forEach(function(t){ x.fillRect(Math.round(t / dai * W), H - 6, 1, 6); });
+  x.fillStyle = mau('--gita', '#2A72C6');
+  S.doan.forEach(function(d){ x.fillRect(Math.round(d.tu / dai * W), 0, 2, H); });
+  veViTri(S.tua);
+  veTinh();
+}
+function veViTri(t){
+  var m = document.getElementById('cn-vitri'); if (!m || !S.kq) return;
+  m.style.left = Math.min(100, t / S.kq.dai * 100) + '%';
+}
+
+/* ════════ GIAO DIỆN ════════ */
+G.catNhip.veLai = function(){
+  var o = document.getElementById('cn-goc');
+  if (o){ o.outerHTML = G.catNhip.ve(); setTimeout(veTruc, 0); }
+};
+
+function veDai(){
+  /* Dải cảnh: mỗi ô rộng theo độ dài cảnh, mang ảnh thu nhỏ của tệp đặt vào.
+     Bấm một ô để đổi sang tệp kế tiếp — dựng phim bằng cách xếp, không bằng gõ. */
+  if (!S.kq || !S.doan.length || !S.vat.length) return '';
+  var dai = S.kq.dai;
+  return '<div class="cn-dai" role="list" aria-label="Các cảnh theo thời gian">' + S.doan.map(function(d, i){
+    var v = vatCuaDoan(i), rong = Math.max(2, (d.den - d.tu) / dai * 100);
+    var nen = v && v.nho ? ' style="flex-basis:' + rong + '%;background-image:url(' + v.nho + ')"' : ' style="flex-basis:' + rong + '%"';
+    return '<button class="cn-dai-o' + (v && v.loai === 'clip' ? ' clip' : '') + '" role="listitem"' + nen +
+      ' onclick="G.catNhip.doiVat(' + i + ')" title="Cảnh ' + (i + 1) + ' · ' + h(v ? v.ten : '') + ' — bấm để đổi tệp"' +
+      ' aria-label="Cảnh ' + (i + 1) + ', ' + (Math.round((d.den - d.tu) * 10) / 10) + ' giây, ' + h(v ? v.ten : '') + '. Bấm để đổi tệp">' +
+      '<span>' + (i + 1) + '</span></button>';
+  }).join('') + '</div>';
+}
+
+G.catNhip.ve = function(){
+  var kq = S.kq, k = khung(), ghi = !!S.ghi;
+  var o = '<div id="cn-goc" class="cn">';
+  o += '<div class="cn-buoc">' +
+    '<label class="cn-nap"><b>1 · Nhạc</b><span class="tiny muted">' + (S.ten ? h(S.ten) : 'MP3 hoặc WAV, có trống rõ là tốt nhất') + '</span>' +
+    '<span class="btn sm">Chọn bài nhạc</span><input type="file" accept="audio/*" onchange="G.catNhip.napNhac(this)"></label>' +
+    '<label class="cn-nap"><b>2 · Ảnh / clip</b><span class="tiny muted">' + (S.vat.length ? S.vat.length + ' tệp · xếp theo tên' : 'Chọn nhiều tệp một lượt') + '</span>' +
+    '<span class="btn sm">Chọn ảnh, clip</span><input type="file" accept="image/*,video/*" multiple onchange="G.catNhip.napVat(this)"></label>' +
+    '</div>';
+
+  if (kq){
+    var tinThap = kq.tin < 0.3 && !(S.bpmTay > 0);
+    o += '<div class="cn-so">' +
+      '<div><span class="tiny muted">Nhịp/phút</span><b class="mono">' + (kq.bpm || '—') + '</b></div>' +
+      '<div><span class="tiny muted">Số nhịp</span><b class="mono">' + kq.nhip.length + '</b></div>' +
+      '<div><span class="tiny muted">Số cảnh</span><b class="mono">' + S.doan.length + '</b></div>' +
+      '<div><span class="tiny muted">Độ dài</span><b class="mono">' + Math.round(kq.dai - S.tuGiay) + 's</b></div></div>';
+    if (tinThap) o += '<p class="cn-bao">Bài này nhịp không rõ (độ tin ' + Math.round(kq.tin * 100) + '%) — máy có thể bắt lệch. Nếu biết nhịp/phút của bài, gõ vào ô bên dưới để cắt đúng.</p>';
+  }
+
+  /* Bàn dựng: khung xem ở trên, trục thời gian và dải cảnh ở dưới — đúng
+     bố cục của phòng dựng: nhìn hình, thấy nhịp, xếp cảnh. */
+  o += '<div class="cn-xem"><canvas id="cn-cv" width="' + k[0] + '" height="' + k[1] + '" style="aspect-ratio:' + k[0] + '/' + k[1] + '" aria-label="Khung xem thử phim"></canvas></div>';
+  o += '<div class="row" style="gap:8px;flex-wrap:wrap">' +
+    '<button class="btn pri" onclick="G.catNhip.xemThu()"' + (kq && S.vat.length && !ghi ? '' : ' disabled') + '>Xem thử</button>' +
+    '<button class="btn" onclick="G.catNhip.dung()">Dừng' + (ghi ? ' (huỷ bản ghi)' : '') + '</button>' +
+    '<button class="btn" onclick="G.catNhip.xuat()"' + (kq && S.vat.length && !ghi ? '' : ' disabled') + '>Xuất phim .webm</button></div>';
+  if (kq){
+    o += '<div class="cn-truc-boc"><canvas id="cn-truc" height="64" onclick="G.catNhip.tuaToi(event)" aria-label="Dạng sóng bài nhạc: vạch xanh là điểm cắt cảnh, bấm để tua tới giây ấy"></canvas><span id="cn-vitri" class="cn-vitri"></span></div>';
+    o += veDai();
+    o += '<div class="cn-chinh">' +
+      '<label>Cắt mỗi <select onchange="G.catNhip.dat(\'moiN\',this.value)">' +
+      [1, 2, 4, 8].map(function(n){ return '<option value="' + n + '"' + (n === S.moiN ? ' selected' : '') + '>' + n + ' nhịp</option>'; }).join('') + '</select></label>' +
+      '<label>Bắt đầu từ giây <input type="number" min="0" step="0.5" value="' + S.tuGiay + '" onchange="G.catNhip.dat(\'tuGiay\',this.value)"></label>' +
+      '<label>Nhịp/phút gõ tay <input type="number" min="0" step="0.1" placeholder="tự dò" value="' + (S.bpmTay || '') + '" onchange="G.catNhip.dat(\'bpmTay\',this.value)"></label>' +
+      '</div>';
+  }
+  if (S.vat.length){
+    o += '<details class="cn-ds"><summary class="sm">Danh sách tệp (' + S.vat.length + ')</summary><div class="cn-vat">' + S.vat.map(function(v, i){
+      return '<div class="cn-vat-o"><span class="tiny">' + (i + 1) + ' · ' + h(v.ten) + '</span><button class="btn ghost sm" onclick="G.catNhip.xoaVat(' + i + ')" aria-label="Bỏ tệp ' + h(v.ten) + '">Bỏ</button></div>';
+    }).join('') + '</div></details>';
+  }
+  o += '<p class="tiny muted mt">Khổ ' + h(G.S && G.S.xaKhung || '9:16') + ' · ' + k[0] + '×' + k[1] + ' — đổi ở mục "Mẫu & khổ hình". Nhạc, ảnh và clip chỉ nằm trong tab này, không gửi đi đâu; tải lại trang là phải nạp lại.</p>';
+  o += '</div>';
+  setTimeout(veTruc, 0);
+  return o;
+};
+})();
+
+})();
+
+/* ═════════ src/xuong-ai.js ═════════ */
+(function(){
+/* ═════════════════════════════════════════════════
+   GITA 365 · XƯỞNG PHIM AI — KHUNG BA CỘT
+
+   Chủ hệ: "đang ở dạng liệt kê làm rất khó bao quát và thiếu chuyên
+   nghiệp". Mười một công cụ phim nằm rải ở năm màn, mỗi màn một hàng tab
+   riêng — muốn làm một phim phải nhớ công cụ nào ở màn nào.
+
+   Màn này KHÔNG viết lại công cụ nào. Nó là cái khung kiểu phòng dựng
+   chuyên nghiệp:
+     · trái  — danh mục theo nhóm (Bắt đầu · Tạo phim · Tài nguyên ·
+               Dựng & hậu kỳ · Quản lý)
+     · giữa  — bảng làm việc: gọi THẲNG bộ vẽ của công cụ đã có
+     · phải  — dự án đang mở, khổ hình, bước nên làm tiếp
+   Công cụ mới duy nhất là "Cắt theo nhịp nhạc" (src/cat-nhip.js).
+
+   Không đụng studio.js: mục "Studio dựng video" chỉ GỌI bộ vẽ của nó.
+   Bản thân khung không gọi máy chủ hay dịch vụ ngoài; các công cụ bên
+   trong thì có thể (Làm phim nhanh gửi lên trạm GPU nội bộ, Tự động A–Z
+   gọi dịch vụ ảnh/video qua máy chủ có trần ngân sách) — đúng như khi
+   chúng đứng riêng, và chỉ khi người dùng bấm.
+
+   GỘP MỘT CỬA (chủ hệ chốt 10/2026): GITA Studio và Xưởng phim ngắn 9:16
+   không còn mục cột trái riêng. Hai mã màn 'studio' · 'xuong-phim' vẫn
+   sống, nhưng tự vẽ CHÍNH KHUNG NÀY với ngăn của mình — không chuyển
+   hướng sang 'xuong-ai', vì studio.js và xuong-phim.js chỉ vẽ lại khi
+   G.S.view đúng tên chúng (đã thử: chuyển hướng thì sửa gì cũng không
+   hiện lên màn). View: xuong-ai. Mở cho qt_trang.
+   ═════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
+
+(function(){
+var U = G.U, h = U.h, ic = U.ic;
+
+/* Danh mục: mỗi mục trỏ vào một bộ vẽ CÓ THẬT. Thêm công cụ mới thì thêm
+   một dòng ở đây — không dựng thêm màn. tools/thu-xuong-ai.mjs đối chiếu
+   từng dòng với bộ vẽ thật trong src/. */
+var NHOM = [
+  { t: 'Bắt đầu', ds: [
+    { k: 'nha', t: 'Trang chủ xưởng', ic: 'home' },
+    { k: 'mau', t: 'Mẫu & khổ hình', ic: 'grid' } ] },
+  { t: 'Tạo phim', ds: [
+    { k: 'nhanh', t: 'Làm phim nhanh', ic: 'lightning', ve: function(){ return G.axn && G.axn.ve && G.axn.ve(); } },
+    { k: 'tudong', t: 'Tự động A–Z', ic: 'sparkle', ve: function(){ return sxa('tudong'); } },
+    { k: 'duan', t: 'Dự án phim', ic: 'target', ve: function(){ return G.axda && G.axda.ve && G.axda.ve(); } },
+    { k: 'phancanh', t: 'Phân cảnh', ic: 'list', ve: function(){ return sxa('phim'); } },
+    { k: 'phim916', t: 'Phim ngắn 9:16', ic: 'spark', ve: function(){ return goiMan('xuong-phim'); } },
+    { k: 'studio', t: 'Studio dựng video', ic: 'orbit', ve: function(){ return goiMan('studio'); } } ] },
+  { t: 'Tài nguyên', ds: [
+    { k: 'nv', t: 'Nhân vật', ic: 'users', ve: function(){ return sxa('nv'); } },
+    { k: 'giong', t: 'Giọng đọc', ic: 'chat' },
+    { k: 'phimtruong', t: 'Phim trường', ic: 'map', ve: function(){ return sxa('phimtruong'); } },
+    { k: 'thuonghieu', t: 'Bộ nhận diện', ic: 'crown' } ] },
+  { t: 'Dựng & hậu kỳ', ds: [
+    { k: 'catnhip', t: 'Cắt theo nhịp nhạc', ic: 'pulse', ve: function(){ return G.catNhip && G.catNhip.ve && G.catNhip.ve(); } },
+    { k: 'bandung', t: 'Bàn dựng', ic: 'tools', ve: function(){ return goiMan('ban-dung'); } },
+    { k: 'kyxao', t: 'Kỹ xảo & động cơ', ic: 'tools', ve: function(){ return sxa('kyxao'); } } ] },
+  { t: 'Quản lý', ds: [
+    { k: 'kho', t: 'Kho phim', ic: 'vault', ve: function(){ return G.khoDrive && G.khoDrive.ve && G.khoDrive.ve(); } },
+    { k: 'bang', t: 'Bảng sản xuất', ic: 'chart', ve: function(){ return sxa('bang'); } },
+    { k: 'prompt', t: 'Prompt & cấu hình', ic: 'edit', ve: function(){ return sxa('prompt'); } },
+    { k: 'hdh', t: 'Hệ điều hành xưởng', ic: 'compass', ve: function(){ return goiMan('studio-he'); } },
+    { k: 'b10', t: 'Chương trình 10 bước', ic: 'book', ve: function(){ return goiMan('lam-phim-10'); } } ] }
+];
+G.XA_NHOM = NHOM;
+
+/* Bốn màn con của xưởng không có mục cột trái nên không vào được bảng
+   gộp V50 (bảng ấy chỉ nhận mục cột trái — thu-ap-dung canh). Nút trong
+   các công cụ cũ vẫn trỏ data-v tới chúng; không bắt lại thì người đang
+   ở trong khung bị đẩy ra một màn rời. render() ở app.js đọc bảng này. */
+G.XA_CUA = { 'san-xuat-ai': 'nha', 'ban-dung': 'bandung', 'studio-he': 'hdh', 'lam-phim-10': 'b10' };
+
+/* Màn chủ của từng ngăn. Mặc định là 'xuong-ai'; hai ngăn dưới đây thuộc
+   về mã màn cũ của chúng, vì bộ vẽ lại của hai công cụ ấy kiểm tên màn. */
+var CHU = { studio: 'studio', phim916: 'xuong-phim' };
+G.XA_CHU = CHU;
+/* Bộ vẽ gốc của hai màn được giữ lại trước khi thay bằng khung. Thứ tự
+   gộp (danh-sach-src.json) đặt studio.js và xuong-phim.js TRƯỚC tệp này —
+   tools/thu-xuong-ai.mjs canh thứ tự ấy. */
+var GOC = {};
+
+function muc(k){
+  for (var i = 0; i < NHOM.length; i++) for (var j = 0; j < NHOM[i].ds.length; j++)
+    if (NHOM[i].ds[j].k === k) return NHOM[i].ds[j];
+  return null;
+}
+
+/* Gọi bộ vẽ của một màn khác và bỏ phần đầu trang của nó: khung này đã có
+   tiêu đề, hai tiêu đề lớn chồng nhau thì người đọc không biết mình đang
+   ở đâu. U.ph() luôn dựng <header class="ph"> ở đầu chuỗi. */
+function goiMan(v){
+  var f = GOC[v] || G.VIEWS[v]; if (typeof f !== 'function') return '';
+  return String(f() || '').replace(/^\s*<header class="ph">[\s\S]*?<\/header>/, '');
+}
+/* Một ngăn của bộ điều khiển sản xuất: chế độ nhúng bỏ đầu trang và hàng
+   tab của nó — hàng tab ấy chính là danh mục bên trái của khung này. */
+function sxa(tab){
+  var cu = G.S.axTab; G.S.axTab = tab; G.S.axNhung = 1;
+  try { return goiMan('san-xuat-ai'); } finally { G.S.axNhung = 0; G.S.axTab = cu; }
+}
+
+G.xaMo = function(k){
+  if (!muc(k)) return;
+  G.S.xaMuc = k;
+  var chu = CHU[k] || 'xuong-ai';
+  if (G.S.view !== chu && G.go) G.go(chu);
+  else { if (G.save) G.save(); if (G.render) G.render(); }
+};
+/* Nút trong công cụ cũ gọi G.ax.tab('khophim')… để đổi tab của bộ điều
+   khiển sản xuất. Trong khung, tab ấy là một ngăn — đổi ngăn thay vì đổi
+   một tab đang bị giấu (bản đầu: bấm "Xem trong Kho phim" không có gì xảy ra). */
+var TAB_NGAN = { nhanh: 'nhanh', duan: 'duan', khophim: 'kho', nv: 'nv', phim: 'phancanh', prompt: 'prompt',
+                 bang: 'bang', phimtruong: 'phimtruong', kyxao: 'kyxao', tudong: 'tudong' };
+G.XA_TAB_NGAN = TAB_NGAN;
+setTimeout(function(){
+  if (!G.ax || !G.ax.tab || G.ax.tab._xa) return;
+  var tabCu = G.ax.tab;
+  G.ax.tab = function(t){
+    if (G.S && (G.S.view === 'xuong-ai' || CHU_MAN[G.S.view]) && TAB_NGAN[t]) return G.xaMo(TAB_NGAN[t]);
+    return tabCu(t);
+  };
+  G.ax.tab._xa = 1;
+}, 0);
+var CHU_MAN = { studio: 1, 'xuong-phim': 1 };
+G.xaKhung = function(k){ G.S.xaKhung = k; if (G.save) G.save(); if (G.render) G.render(); };
+
+/* ════════ BA NGĂN TỰ VẼ (không có công cụ cũ tương ứng) ════════ */
+var KHO_HINH = [
+  { k: '9:16', t: 'Dọc 9:16', d: 'Reels · TikTok · Shorts — khổ chính của phim ngắn GITA' },
+  { k: '16:9', t: 'Ngang 16:9', d: 'YouTube · màn chiếu hội trường' },
+  { k: '1:1', t: 'Vuông 1:1', d: 'Bảng tin Facebook, Zalo' },
+  { k: '4:5', t: 'Dọc 4:5', d: 'Bảng tin Instagram — chiếm nhiều màn hơn 1:1' }
+];
+
+function veNha(){
+  var da = G.xpDA || {}, ax = G.S.axDA || {};
+  var the = function(k, ic1, t, d){
+    return '<button class="xa-tao" onclick="G.xaMo(\'' + k + '\')">' + ic(ic1, 'w-5 h-5') + '<b>' + h(t) + '</b><span>' + h(d) + '</span></button>';
+  };
+  var o = '<div class="xa-tao-luoi">' +
+    the('nhanh', 'lightning', 'Làm phim nhanh', 'Chọn ảnh nhân vật, dán kịch bản, bấm một nút — máy GPU nội bộ dựng 1080p.') +
+    the('duan', 'target', 'Dự án phim 4–8 phút', 'Cảnh quay thật, cảnh nền miễn phí, cảnh AI — ráp trên Google Drive.') +
+    the('phim916', 'spark', 'Phim ngắn 9:16', 'Kịch bản → prompt từng cảnh → nạp clip → phụ đề, logo, nhạc.') +
+    the('catnhip', 'pulse', 'Cắt theo nhịp nhạc', 'Một bài nhạc + một bộ ảnh — mỗi cú chuyển cảnh rơi đúng một nhịp.') +
+    '</div>';
+  o += '<h2 class="xa-h">Đang làm dở</h2><div class="xa-gan">';
+  var co = false;
+  if (da.ten){ co = true; o += '<button class="xa-gan-o" onclick="G.xaMo(\'phim916\')"><b>' + h(da.ten) + '</b><span>Phim ngắn 9:16 · tập ' + h(da.tap || 1) + ' · ' + ((da.canh || []).length) + ' cảnh</span></button>'; }
+  if (ax.ten){ co = true; o += '<button class="xa-gan-o" onclick="G.xaMo(\'duan\')"><b>' + h(ax.ten) + '</b><span>Dự án phim · ' + h(ax.cheDo === 'ai100' ? '100% AI từ ảnh' : (ax.cheDo || 'chưa chọn cách làm')) + '</span></button>'; }
+  if (!co) o += '<p class="muted sm">Chưa có dự án nào. Chọn một ô ở trên để bắt đầu.</p>';
+  o += '</div>';
+  return o;
+}
+
+function veMau(){
+  var cur = G.S.xaKhung || '9:16';
+  var o = '<p class="sm" style="color:var(--ink-2)">Khổ hình dùng chung cho công cụ "Cắt theo nhịp nhạc". Các công cụ khác giữ khổ riêng trong dự án của chúng.</p>';
+  o += '<div class="xa-kho">' + KHO_HINH.map(function(x){
+    var p = x.k.split(':'), r = (+p[0]) / (+p[1]);
+    return '<button class="xa-kho-o' + (x.k === cur ? ' on' : '') + '" aria-pressed="' + (x.k === cur) + '" onclick="G.xaKhung(\'' + x.k + '\')">' +
+      '<span class="xa-kho-hinh" style="aspect-ratio:' + p[0] + '/' + p[1] + ';' + (r >= 1 ? 'width:56px' : 'height:56px') + '"></span>' +
+      '<b>' + h(x.t) + '</b><span>' + h(x.d) + '</span></button>';
+  }).join('') + '</div>';
+  o += '<h2 class="xa-h">Mẫu có sẵn</h2><div class="xa-gan">' +
+    '<button class="xa-gan-o" onclick="G.xaMo(\'b10\')"><b>Chương trình 10 bước ra phim</b><span>Đi từ ý tưởng tới phim 9:16 hoàn chỉnh, mỗi bước có việc tick được</span></button>' +
+    '<button class="xa-gan-o" onclick="G.xaMo(\'phim916\')"><b>Dự án mẫu "Bữa Cơm Muộn"</b><span>Trong Phim ngắn 9:16 → "Nạp lại dự án mẫu"</span></button></div>';
+  return o;
+}
+
+function veGiong(){
+  /* Thứ tự này là quyết định đã chốt: giọng người thật có đồng ý trước,
+     rồi mới tới giọng máy, và giọng máy chạy trên máy nội bộ. */
+  var ds = [
+    ['Thu âm giọng người thật', 'Ưu tiên số một. Người đọc đồng ý cho dùng giọng, mỗi câu truy được về một người đã nói câu ấy.'],
+    ['VieNeu-TTS — tiếng Việt', 'Mô hình mở chạy trên máy GPU nội bộ, không gửi văn bản ra dịch vụ ngoài. Dùng khi chưa có người đọc.'],
+    ['Chatterbox — tiếng Anh', 'Cho phim tiếng Anh. Cũng chạy nội bộ.']
+  ];
+  return '<ol class="xa-giong">' + ds.map(function(x){ return '<li><b>' + h(x[0]) + '</b><span>' + h(x[1]) + '</span></li>'; }).join('') + '</ol>' +
+    '<p class="sm" style="color:var(--ink-2)">Cấu hình động cơ giọng nằm ở <button class="btn ghost sm" onclick="G.xaMo(\'kyxao\')">Kỹ xảo & động cơ</button>. Không nhái giọng một người khi chưa có sự đồng ý của chính người ấy.</p>';
+}
+
+function veThuongHieu(){
+  /* Đọc THẲNG token lúc vẽ — một bảng màu chép tay ở đây sẽ lệch với
+     style.css ngay lần đổi màu sau. */
+  var cs = getComputedStyle(document.documentElement);
+  var mau = [['--gita-sau', 'Xanh sâu · chữ GITA'], ['--gita', 'Xanh GITA · nút, viền'], ['--gita-sang', 'Xanh sáng · chuyển sắc'],
+             ['--gita-do', 'Đỏ GITA · ngôi sao đỏ'], ['--ink', 'Mực chữ'], ['--bg-1', 'Nền giấy']];
+  var o = '<div class="xa-logo"><img src="assets/brand/logo-gita.png" alt="Logo GITA 365" width="96" height="96" loading="lazy">' +
+    '<img src="assets/brand/dau-gita.png" alt="Dấu GITA" width="96" height="96" loading="lazy"></div>';
+  o += '<div class="xa-mau">' + mau.map(function(m){
+    var v = (cs.getPropertyValue(m[0]) || '').trim();
+    return '<div class="xa-mau-o"><span class="xa-mau-cham" style="background:var(' + m[0] + ')"></span><b class="mono">' + h(v) + '</b><span>' + h(m[1]) + '</span></div>';
+  }).join('') + '</div>';
+  o += '<p class="sm" style="color:var(--ink-2)">Chữ: <b>Be Vietnam Pro</b> cho thân bài và nhãn, <b>Playfair Display</b> cho tiêu đề lớn. Logo và màu lấy từ tệp logo gốc — không đổi sắc, không kéo méo, chừa khoảng trống quanh logo.</p>';
+  return o;
+}
+
+var TU_VE = { nha: veNha, mau: veMau, giong: veGiong, thuonghieu: veThuongHieu };
+
+/* ════════ CỘT PHẢI ════════ */
+var TIEP = {
+  nha: ['nhanh', 'Bắt đầu nhanh nhất: Làm phim nhanh'],
+  nhanh: ['kho', 'Phim xong nằm ở Kho phim'],
+  duan: ['kho', 'Tệp dự án nằm trên Google Drive — xem ở Kho phim'],
+  phim916: ['catnhip', 'Có nhạc nền? Thử cắt cảnh theo nhịp'],
+  catnhip: ['mau', 'Đổi khổ hình ở Mẫu & khổ'],
+  nv: ['phimtruong', 'Nhân vật xong thì chọn phim trường'],
+  phimtruong: ['prompt', 'Xuất prompt & cấu hình cho máy GPU'],
+  prompt: ['bang', 'Theo dõi từng cảnh ở Bảng sản xuất'],
+  bandung: ['catnhip', 'Muốn cắt khớp nhạc: Cắt theo nhịp']
+};
+function veCotPhai(k){
+  var da = G.xpDA || {}, ax = G.S.axDA || {}, tp = TIEP[k];
+  var o = '<div class="xa-the"><span class="tiny muted">Khổ hình</span><b>' + h(G.S.xaKhung || '9:16') + '</b>' +
+    '<button class="btn ghost sm" onclick="G.xaMo(\'mau\')">Đổi</button></div>';
+  o += '<div class="xa-the"><span class="tiny muted">Phim 9:16 đang mở</span><b>' + h(da.ten || 'Chưa có') + '</b>' +
+    (da.ten ? '<span class="tiny">Tập ' + h(da.tap || 1) + ' · ' + ((da.canh || []).length) + ' cảnh · ' + h(da.khung || '') + '</span>' : '') + '</div>';
+  o += '<div class="xa-the"><span class="tiny muted">Dự án phim</span><b>' + h(ax.ten || 'Chưa có') + '</b></div>';
+  if (tp) o += '<button class="xa-tiep" onclick="G.xaMo(\'' + tp[0] + '\')">' + ic('arrow', 'w-4 h-4') + '<span>' + h(tp[1]) + '</span></button>';
+  o += '<p class="tiny muted">' + ic('shield', 'w-3 h-3') + ' Ảnh, nhạc, kịch bản xử lý trên máy anh/chị hoặc trạm GPU riêng của GITA — chỉ gửi khi anh/chị bấm.</p>';
+  return o;
+}
+
+/* ════════ MÀN ════════ */
+function veKhung(){
+  if (!(typeof G.can === 'function' && G.can('qt_trang')))
+    return U.lockCard('Xưởng phim AI mở cho Super Admin / Admin. Đăng nhập đúng vai để xem.');
+  var k = muc(G.S.xaMuc) ? G.S.xaMuc : 'nha', m = muc(k);
+
+  var o = U.ph({ eyebrow: 'XƯỞNG PHIM AI', ic: 'orbit', t: 'Xưởng phim AI',
+    lead: 'Một chỗ cho cả quy trình: tạo phim, tài nguyên, dựng, kho. Chọn việc ở danh mục.' });
+
+  o += '<div class="xa">';
+  o += '<nav class="xa-trai" aria-label="Danh mục xưởng phim">' + NHOM.map(function(n){
+    return '<div class="xa-nhom"><span class="xa-nhom-t">' + h(n.t) + '</span>' + n.ds.map(function(x){
+      return '<button class="xa-muc' + (x.k === k ? ' on' : '') + '"' + (x.k === k ? ' aria-current="page"' : '') +
+        ' onclick="G.xaMo(\'' + x.k + '\')">' + ic(x.ic, 'w-4 h-4') + '<span>' + h(x.t) + '</span></button>';
+    }).join('') + '</div>';
+  }).join('') + '</nav>';
+
+  var than = '';
+  var loiVe = '';
+  try { than = TU_VE[k] ? TU_VE[k]() : (m.ve ? m.ve() : ''); }
+  catch (e) { than = ''; loiVe = (e && e.message) || String(e); if (window.console) console.error('xuong-ai/' + k, e); }
+  if (!than) than = U.empty(loiVe ? 'Công cụ này gặp lỗi khi mở' : 'Công cụ này chưa sẵn sàng trên máy này',
+    loiVe ? 'Lỗi: ' + loiVe + ' — chụp dòng này gửi bộ phận kỹ thuật.' : 'Có thể vai hiện tại chưa mở gói của công cụ, hoặc trình duyệt chặn một tính năng nó cần.', true);
+
+  o += '<section class="xa-giua" aria-labelledby="xa-giua-t"><h2 id="xa-giua-t" class="xa-giua-t">' + ic(m.ic, 'w-5 h-5') + h(m.t) + '</h2>' + than + '</section>';
+  o += '<aside class="xa-phai" aria-label="Dự án và bước tiếp theo">' + veCotPhai(k) + '</aside>';
+  o += '</div>';
+  /* Trên điện thoại danh mục là một dải cuộn ngang: mục đang mở có thể nằm
+     ngoài mép phải, người dùng không thấy mình đang ở đâu. Cuộn nó vào giữa. */
+  /* Chỉ cuộn NGANG dải danh mục — scrollIntoView sẽ kéo cả trang lên đầu
+     mỗi lần một công cụ bên trong vẽ lại, đúng lúc người dùng đang đọc ở dưới. */
+  setTimeout(function(){
+    var e = document.querySelector('.xa-muc.on'), d = document.querySelector('.xa-trai');
+    if (e && d && window.innerWidth <= 860) d.scrollLeft = Math.max(0, e.offsetLeft - (d.clientWidth - e.offsetWidth) / 2);
+  }, 0);
+  return o;
+}
+
+G.VIEWS['xuong-ai'] = function(){
+  /* Đang ở một ngăn có màn chủ riêng mà vào bằng 'xuong-ai' (cột trái,
+     địa chỉ cũ) — về trang chủ xưởng, đừng vẽ công cụ dưới tên màn sai. */
+  if (CHU[G.S.xaMuc]) G.S.xaMuc = 'nha';
+  return veKhung();
+};
+Object.keys(CHU_MAN).forEach(function(v){
+  GOC[v] = G.VIEWS[v];
+  G.VIEWS[v] = function(){
+    var ngan = v === 'studio' ? 'studio' : 'phim916';
+    G.S.xaMuc = ngan;
+    return veKhung();
+  };
+});
 })();
 
 })();
@@ -83046,7 +89875,10 @@ G.tfeel = function(t){ var e=G.TIER_EN[t.code]; return (G.LANG==='en'&&e)?e.feel
 G.setLang = function(k){
   G.LANG = k;
   try{ localStorage.setItem('gita365.lang', k); }catch(e){}
+  if(k !== 'en' && G.traLaiTiengViet) G.traLaiTiengViet();
   if(G.S.acc) shell(); else gate();
+  /* Phần đứng yên trong index.html không đi qua render() — dịch một lượt cả trang. */
+  if(k === 'en' && G.dichDom) G.dichDom(document.body);
   U.toast(k==='en'?'Interface switched to English.':'Đã chuyển về tiếng Việt.','ok');
 };
 
@@ -84092,6 +90924,12 @@ function render(){
       if(d50.mo && G.TTD_MO) G.TTD_MO(d50.mo);
     }
   }
+  /* Màn con của Xưởng phim AI (không có mục cột trái) → mở trong khung. */
+  if(G.XA_CUA && G.XA_CUA[G.S.view] && G.VIEWS['xuong-ai'] && (!G.allowed || G.allowed('xuong-ai'))){
+    /* Bộ điều khiển sản xuất mở ở tab nào thì vào đúng ngăn ấy. */
+    var nganTab = G.S.view === 'san-xuat-ai' && G.XA_TAB_NGAN && G.XA_TAB_NGAN[G.S.axTab];
+    G.S.xaMuc = nganTab || G.XA_CUA[G.S.view]; G.S.view = 'xuong-ai';
+  }
   /* Màn của gói nghề mà mã chưa về: NÓI ĐANG MỞ, đừng nhảy về bản đồ.
 
      Trước bản 9.23 dòng này chỉ có một vế — thiếu màn thì đổi sang
@@ -84151,8 +90989,12 @@ function render(){
   /* V50: màn học thuyết có thêm thanh ÁP DỤNG (bảng việc đo được + chỉ số
      chịu tác động) — src/v50-ap-dung.js. Màn vừa được gộp có dòng báo. */
   var v50 = (G.v50PhanBar ? G.v50PhanBar(G.S.view) : '') + (G.v50Thanh ? G.v50Thanh(G.S.view) : '');
-  main.innerHTML = '<div class="view">' + nhac + hdThanh + v50 + noiDung + '</div>';
+  /* Kim chỉ nam ở đầu MỌI màn của khách (src/kim-chi-nam.js) — một chỗ chèn,
+     màn viết sau cũng tự có. Nhân sự không thấy dải này. */
+  var kcn = G.kcnThanh ? G.kcnThanh(G.S.view) : '';
+  main.innerHTML = '<div class="view">' + kcn + nhac + hdThanh + v50 + noiDung + '</div>';
   if(G.a11yNhan) G.a11yNhan(main);   /* bù tên đọc được cho mọi ô nhập (a11y) */
+  if(G.dichDom) G.dichDom(main);     /* tiếng Anh: dịch phần chữ viết thẳng của màn (src/dich-giao-dien.js) */
   /* Màn trợ lý là một CỬA SỔ chiếm trọn chiều cao, nên nó cần lề dưới
      của vùng nội dung nhỏ lại. Lớp này là chỗ duy nhất khai chuyện ấy —
      tự tính chiều cao trong CSS mà không gỡ lề thì cửa sổ luôn thừa ra
@@ -84472,7 +91314,7 @@ on('[data-pq]', function(el){
   G.doiO(p[0], p[1]);
 });
 on('[data-lang]', function(el){ G.setLang(el.getAttribute('data-lang')); });
-on('[data-ct]', function(el){ G.doiPhanCuaTruoc(el.getAttribute('data-ct')); });
+on('[data-ctc]', function(el){ G.chonCuaTruoc(el); });
 /* ── Bảng công việc ── */
 on('[data-cvnhan]',   function(el){ G.cvNhanHoiDap(el.getAttribute('data-cvnhan')); });
 on('[data-cvbatdau]', function(el){ G.cvBatDauHoiDap(el.getAttribute('data-cvbatdau')); });
@@ -84969,6 +91811,8 @@ G.boot = function(){
   if(G.batLinkKichHoat) G.batLinkKichHoat();
   sparks();
   try{ var lg = localStorage.getItem('gita365.lang'); if(lg && G.UI[lg]) G.LANG = lg; }catch(e){}
+  /* Mở lại máy mà nhớ tiếng Anh: phần đứng yên của index.html cũng phải đổi. */
+  if(G.LANG === 'en' && G.dichDom) G.dichDom(document.body);
   /* Trên màn hình hẹp, thanh phải mở dạng ngăn kéo — đóng sẵn để không che nội dung */
   if(window.innerWidth < 1180) G.S.rightOpen = false;
   /* Đọc trước khi khôi phục phiên: có dấu hiệu xin về màn đăng nhập thì bỏ

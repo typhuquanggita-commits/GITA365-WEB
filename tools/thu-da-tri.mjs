@@ -38,9 +38,13 @@ globalThis.fetch = async (url, op) => {
   if (op.method === 'GET') return { ok: true, json: async () => ({ data: (dsMau[host] || []).map(id => ({ id })) }) };
   const b = JSON.parse(op.body); thanCuoi[host] = b;
   if (host === 'api.anthropic.com') return { ok: true, json: async () => ({ content: [{ type: 'text', text: 'claude: ' + b.model }], usage: { input_tokens: 50, output_tokens: 20 } }) };
-  return { ok: true, json: async () => ({ choices: [{ message: { content: host + ' trả lời' } }], usage: { prompt_tokens: 40, completion_tokens: 30 } }) };
+  return { ok: true, json: async () => ({ choices: [{ message: { content: host + ' trả lời' + duoiTra } }], usage: { prompt_tokens: 40, completion_tokens: 30 } }) };
 };
 let cfGoi = 0, cfTra = 'workers-ai trả lời';
+/* Từ khi Trưởng nhóm soát mỗi chặng (doi-agent.js), một đầu ra dưới 40 ký tự
+   là chặng RỖNG và không được chuyển tiếp — đúng luật. Khối tuyến nối đuôi
+   này để câu giả dài như một câu trả lời thật; phép đo câu rỗng ở thu-doi-agent. */
+let duoiTra = '';
 const env = {
   GITA_DA_TRI_BAT: '1',
   AI: { async run(m, x) { cfGoi++; return { response: cfTra, usage: { prompt_tokens: 30, completion_tokens: 10 } }; } },
@@ -231,6 +235,7 @@ kiem('lỗi lặp có vết DA_TRI_LOI_LAP trong sổ', sq.prepare("SELECT COUNT
 kiem('tuyến: R05 không tạo được', (await taoTuyenDaTri({ ten: 'Tuyến thử nghiệm', chang: [{ loai: 'soan', de: 'a bc' }, { loai: 'soan', de: 'd ef' }] }, env, db, r05)).code === 'NOPERM');
 kiem('tuyến: loại việc lạ bị từ chối', (await taoTuyenDaTri({ ten: 'Tuyến thử nghiệm', chang: [{ loai: 'la', de: 'a bc' }, { loai: 'soan', de: 'd ef' }] }, env, db, r01)).code === 'SAI');
 kiem('tuyến: 1 chặng bị từ chối (cần 2–' + HAN_CHANG + ')', (await taoTuyenDaTri({ ten: 'Tuyến thử nghiệm', chang: [{ loai: 'soan', de: 'a bc' }] }, env, db, r01)).code === 'SAI');
+duoiTra = ': ba đối thủ đều dạy theo khoá ngắn, chưa ai đi cùng cả năm với gia đình.'; cfTra = 'workers-ai trả lời' + duoiTra;
 const ty = await taoTuyenDaTri({ ten: 'Ra mắt gói học mới', chang: [
   { loai: 'phanTich', de: 'Phân tích ba đối thủ giáo dục gia đình' },
   { loai: 'soan', de: 'Soạn thông điệp giới thiệu gói học' }] }, env, db, r01);

@@ -117,7 +117,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       return '<div class="co-the nhan" data-nlp-tim="'+h(chuoiTim(k))+'" style="--c:'+h(c)+';border-top:4px solid '+h(c)+'">'+
         '<div class="co-hang" style="gap:6px">'+U.chip(TEN_NHOM[k.nhom]||k.nhom, MAU_NHOM[k.nhom])+(k.tru||[]).map(function(t){ return U.chip(t, mauTru(t)); }).join('')+
           (k.icf||[]).map(function(x){ return '<span class="co-tag">'+h(x)+'</span>'; }).join('')+(daGhim(k.ma)?'<span class="co-tag" style="margin-left:auto">'+icI('star')+' đã ghim</span>':'')+'</div>'+
-        '<h3>'+h(k.ten)+'</h3><div class="tiny muted" style="margin-top:-4px"><i>'+h(k.goc||'')+'</i></div>'+
+        '<h2>'+h(k.ten)+'</h2><div class="tiny muted" style="margin-top:-4px"><i>'+h(k.goc||'')+'</i></div>'+
         hinh(k, false)+
         '<p class="sm" style="margin:0;line-height:1.5">'+h(k.muc||'')+'</p>'+
         '<div class="co-hang" style="margin-top:auto;padding-top:6px">'+badge(k)+'<span class="co-grow"></span>'+
@@ -276,7 +276,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     o += '<div class="co-ds mb">'+ QT.map(function(q, i){
       return '<div class="co-the" style="border-left:5px solid '+MAU7[i]+'">'+
         '<div class="co-hang"><span class="co-so" style="flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;background:'+MAU7[i]+'">'+(i+1)+'</span>'+
-          '<h3 class="co-grow" style="min-width:160px">'+h(q.ten)+'</h3><span class="co-hang" style="gap:4px">'+q.icf.map(function(c){ return '<span class="co-tag" title="'+h((icf(c)||{}).ten||c)+'">'+h(c)+' · '+h((icf(c)||{}).ten||'')+'</span>'; }).join('')+'</span></div>'+
+          '<h2 class="co-grow" style="min-width:160px">'+h(q.ten)+'</h2><span class="co-hang" style="gap:4px">'+q.icf.map(function(c){ return '<span class="co-tag" title="'+h((icf(c)||{}).ten||c)+'">'+h(c)+' · '+h((icf(c)||{}).ten||'')+'</span>'; }).join('')+'</span></div>'+
         '<p class="sm" style="margin:0;line-height:1.55"><b>Làm gì.</b> '+h(q.lam)+'</p>'+
         '<div class="grid g2" style="gap:8px">'+q.hoi.map(function(c){ return '<div class="co-dong" style="border-left:3px solid '+MAU7[i]+'"><span class="sm"><i>“'+h(c)+'”</i></span></div>'; }).join('')+'</div>'+
         '<div class="co-hang" style="gap:6px"><span class="tiny muted">Công cụ</span>'+q.kt.map(chipKT).join('')+'</div>'+
@@ -348,7 +348,7 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     o += '<div class="co-ds mb">'+ P.map(function(p, i){
       return '<div class="co-the" style="border-left:5px solid '+MAU7[i]+'">'+
         '<div class="co-hang"><span class="co-so" style="flex:none;width:34px;height:30px;border-radius:9px;display:grid;place-items:center;font-weight:800;color:#fff;background:'+MAU7[i]+'">P'+p.so+'</span>'+
-          '<h3 class="co-grow" style="min-width:160px">'+h(p.ten)+'</h3><span class="tiny muted">≈ '+Math.round(p.ty*100)+'% thời lượng</span></div>'+
+          '<h2 class="co-grow" style="min-width:160px">'+h(p.ten)+'</h2><span class="tiny muted">≈ '+Math.round(p.ty*100)+'% thời lượng</span></div>'+
         '<p class="sm" style="margin:0;line-height:1.55"><b>Mục đích.</b> '+h(p.muc)+'</p>'+
         '<div class="co-cb"><div style="--m:'+MAU7[i]+'">'+icI('shield')+'<span class="sm"><b>Cổng:</b> '+h(p.cong)+'</span></div></div>'+
         '<div class="grid g2" style="gap:10px">'+

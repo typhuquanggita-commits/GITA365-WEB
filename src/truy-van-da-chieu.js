@@ -15,7 +15,12 @@ G.VIEWS = G.VIEWS || {};
 (function () {
   var U = G.U, h = U.h, ic = U.ic;
   function nut(on, nd, k) { return '<button class="btn ' + (k || 'ghost') + ' sm" onclick="' + on + '">' + nd + '</button>'; }
-  function tien(n) { return Number(n || 0).toLocaleString('vi-VN') + ' đ'; }
+  /* null = máy chủ không đo được chỉ số ấy (bảng chưa có trên D1 này…).
+     Hiện "chưa đo được", không hiện 0 — một số thiếu đọc ra như số 0 là
+     một lời nói dối mang dấu hệ thống. */
+  var CHUA = 'chưa đo được';
+  function tien(n) { return n === null || n === undefined ? CHUA : Number(n).toLocaleString('vi-VN') + ' đ'; }
+  function soO(n, duoi) { return n === null || n === undefined ? CHUA : n + (duoi || ''); }
 
   G.dcNgay = G.dcNgay || 30;
   G.dcTai = function (ngay) {
@@ -56,15 +61,18 @@ G.VIEWS = G.VIEWS || {};
       ['Chi phí vận hành', tien(d.chiPhi.tong)],
       ['Khoản lớn nhất', (d.chiPhi.top[0] ? d.chiPhi.top[0].khoanMuc + ' · ' + tien(d.chiPhi.top[0].n) : '—')],
       ['Lương kỳ gần nhất', d.chiPhi.luong ? tien(d.chiPhi.luong.n) + ' · ' + d.chiPhi.luong.soNguoi + ' người · kỳ ' + d.chiPhi.luong.ky : 'chưa có'],
-      ['Token AI', (d.chiPhi.aiToken || []).map(function (x) { return x.ncc + ' ' + Number(x.n).toLocaleString('vi-VN'); }).join(' · ') || '0', 'token, không phải tiền']]);
+      ['Token AI', d.chiPhi.aiToken === null ? CHUA : (d.chiPhi.aiToken || []).map(function (x) { return x.ncc + ' ' + Number(x.n).toLocaleString('vi-VN'); }).join(' · ') || '0', 'token, không phải tiền']]);
     o += theDong('Dòng giá trị khách nhận', 'spark', [
-      ['Bài học hoàn thành', d.giaTri.baiHoc], ['Lượt WOW ghi sổ', d.giaTri.wow],
-      ['Lượt lên tầng', d.giaTri.lenTang], ['Kho giải pháp đã dùng', d.giaTri.khoDung + ' lần', '0 token mỗi lần'],
-      ['Tuyến dự án hoàn tất', d.giaTri.tuyenXong]]);
+      ['Bài học hoàn thành', soO(d.giaTri.baiHoc)], ['Lượt WOW ghi sổ', soO(d.giaTri.wow)],
+      ['Lượt lên tầng', soO(d.giaTri.lenTang)], ['Kho giải pháp đã dùng', soO(d.giaTri.khoDung, ' lần'), '0 token mỗi lần'],
+      ['Tuyến dự án hoàn tất', soO(d.giaTri.tuyenXong)]]);
     o += theDong('Dòng công việc', 'pulse', [
-      ['Tổng lượt ghi sổ', d.congViec.tongLuot], ['Trung bình/ngày', d.congViec.trungBinhNgay],
+      ['Tổng lượt ghi sổ', soO(d.congViec.tongLuot)], ['Trung bình/ngày', soO(d.congViec.trungBinhNgay)],
       ['Việc nhiều nhất', d.congViec.top[0] ? d.congViec.top[0].viec + ' · ' + d.congViec.top[0].n + ' lượt' : '—']]);
     o += '</div>';
+    if (d.chuaDo && d.chuaDo.length)
+      o += '<div class="card mt tiny" style="color:var(--gita-do-ink)"><b>' + d.chuaDo.length + ' chỉ số chưa đo được trên máy chủ này:</b> ' +
+        h(d.chuaDo.join(' · ')) + '. Phần còn lại vẫn đúng. Bảng còn thiếu trên D1 được dựng bằng lệnh <span class="mono">npx wrangler d1 execute gita365 --file=csdl.sql --remote</span> (docs/TRIEN_KHAI_WEB.md).</div>';
 
     if (d.tien.theoThang && d.tien.theoThang.length)
       o += '<div class="card mt"><b>Thu theo tháng (6 kỳ gần nhất)</b><table class="tbl sm mt"><tr><th>Tháng</th><th>Thu đã duyệt</th></tr>' +

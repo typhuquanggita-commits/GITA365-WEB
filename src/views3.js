@@ -116,6 +116,8 @@ G.VIEWS['coach-deck'] = function(){
   var alert = G.dsNha().filter(function(f){return f.band==='DO'||f.band==='CAM';});
   var o = U.ph({eyebrow:'NHÓM 05 · VẬN HÀNH', ic:'flame', grad:1, t:'Buồng lái Coach',
     lead:'Mỗi buổi anh chị bước vào là một gia đình đổi hướng. Đây là nơi thấy rõ nên chạm vào đâu trước — và chạm bằng gì.'});
+  /* Hộp thông báo đích danh (lịch trả lương bị dời…) — màn chính của Coach. */
+  if(G.htbKhoi) o += G.htbKhoi();
 
   o += '<div class="grid g4 mb">'+
     U.stat({k:'GIA ĐÌNH PHỤ TRÁCH', v:G.dsNha().length, d:'trải năm tầng', c:'#5140B4'})+
@@ -150,6 +152,7 @@ G.VIEWS['tuvan-deck'] = function(){
   if(!G.can('pro_consult')) return U.lockCard();
   var o = U.ph({eyebrow:'NHÓM 05 · VẬN HÀNH', ic:'compass', grad:1, t:'Khoang mở cửa',
     lead:'Người đối diện chưa cần nghe mình giỏi thế nào. Họ cần thấy nhà mình trong tấm bản đồ này — rồi tự quyết định.'});
+  if(G.htbKhoi) o += G.htbKhoi();
 
   o += '<div class="grid g4 mb">'+
     U.stat({k:'ĐANG CHỜ PHIÊN MỞ CỬA', v:'3', d:'nhà mới trong tuần', c:'#BE0E16'})+

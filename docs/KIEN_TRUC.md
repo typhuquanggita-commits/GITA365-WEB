@@ -669,7 +669,7 @@ Trước v7.7 câu **tầm nhìn** có hai bản khác nhau chạy song song:
 
 | Ở đâu | Câu gì |
 |---|---|
-| `G.CULTURE.tamNhin` (`src/data.core.js`) | "Đến năm 2030, một triệu người Việt…" |
+| `G.CULTURE.tamNhin` (`src/data.core.js`) | "Đến năm 2035, một triệu người Việt…" |
 | `G.UI.vi.gateVisionTitle` (`src/i18n.js`) | "Kiến tạo một hệ sinh thái gia đình phát triển bền vững…" |
 
 Cổng đăng nhập và thanh la bàn bên phải đọc bản thứ hai; màn *GITA 365 là
@@ -680,7 +680,7 @@ Cách chữa:
 
 1. `G.CULTURE.tamNhin` giữ **câu tầm nhìn** (bản "kiến tạo hệ sinh
    thái…"), vì đó là câu đã đứng ở cổng — bề mặt nhiều người nhìn nhất.
-2. Con số có hạn tách ra thành `G.CULTURE.moc2030`. Tầm nhìn nói *loại
+2. Con số có hạn tách ra thành `G.CULTURE.moc2035`. Tầm nhìn nói *loại
    thế giới muốn tạo ra*; mốc nói *con số và hạn*. Gộp rồi gọi chung là
    "tầm nhìn" thì cái nào cũng đọc không rõ. Màn giới thiệu hiện cả hai,
    nhưng gọi đúng tên từng cái.
@@ -689,7 +689,7 @@ Cách chữa:
    `data.core.js`). Khối `en` vẫn giữ bản dịch riêng — dịch là việc của
    người, không suy ra được từ bản tiếng Việt.
 4. Mục 35 của bộ kiểm chốt lại: `G.UI.vi.gateVisionTitle` phải bằng đúng
-   `G.CULTURE.tamNhin.big`, và `moc2030` phải khác `tamNhin`. Gõ tay lại
+   `G.CULTURE.tamNhin.big`, và `moc2035` phải khác `tamNhin`. Gõ tay lại
    chuỗi vào i18n là bài kiểm đỏ ngay.
 
 **Quy tắc rút ra:** một câu mà sản phẩm nói ra ngoài thì chỉ được có một

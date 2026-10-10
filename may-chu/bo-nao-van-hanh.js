@@ -192,6 +192,9 @@ export async function nhipVanHanh(env, opt) {
     for (const x of ds) {
       const r = await chayChangDaTri({ ma: x.ma }, env, db, HE);
       const k = { ma: x.ma, ok: !!(r && r.ok), chang: r && r.ok ? r.chang + 1 : undefined, xong: !!(r && r.xong), ncc: r && r.ncc, loi: r && !r.ok ? (r.code || r.error) : undefined };
+      /* Trưởng nhóm trả lại chặng (bảng kiểm chưa đạt): tuyến đã tự tắt "tự
+         chạy" và chờ Super Admin đọc — báo lên, không chạy tiếp. */
+      if (r && r.ok && r.dat === false) { k.chuaDat = true; k.vi = r.chotChan; }
       /* Chặng phân tích sâu / chiến lược cần nhà cung cấp bậc ≥ 2. Chế độ tiết
          kiệm chỉ có Workers AI (bậc 1) → tuyến ấy CHỜ, nói rõ vì sao; các tuyến
          khác vẫn chạy. Hết ngân sách ngày thì dừng cả lượt. */
@@ -199,9 +202,9 @@ export async function nhipVanHanh(env, opt) {
       ket.push(k);
       if (r && r.code === 'VUOT_HAN') break;
     }
-    const loi = ket.filter(k => !k.ok);
+    const loi = ket.filter(k => !k.ok || k.chuaDat);
     return { so: ds.length, daChay: ket.filter(k => k.ok).length, ket, tt: loi.length ? 'canhBao' : 'ok',
-      ghiChu: loi.some(k => k.loi === 'KHONG_NCC') ? 'Có tuyến chờ nhà cung cấp AI bậc cao.' : '' };
+      ghiChu: loi.some(k => k.loi === 'KHONG_NCC') ? 'Có tuyến chờ nhà cung cấp AI bậc cao.' : loi.some(k => k.chuaDat) ? 'Có chặng bị Trưởng nhóm trả lại — chờ Super Admin đọc.' : '' };
   });
 
   /* Xưởng tài liệu gia đình: đề án bật "tự chạy" đi tiếp MỘT bước mỗi lượt

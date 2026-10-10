@@ -59,6 +59,12 @@ var G = window.G || {}; window.G = G;
   /* Trùng một lối vào khác: rút khỏi cột trái, không chuyển hướng
      (Bảng điều khiển của tôi đang dựng chính các màn này theo vai). */
   V.AN = {
+    /* Xưởng phim: chủ hệ chốt gộp về MỘT cửa (10/2026). Hai mã màn cũ KHÔNG
+       chuyển hướng (bảng GOP) mà rút khỏi cột trái: chúng vẫn là màn chủ của
+       ngăn mình và tự vẽ khung Xưởng phim AI (src/xuong-ai.js) — vì
+       studio.js và xuong-phim.js chỉ vẽ lại khi G.S.view đúng tên chúng. */
+    'studio':      ['xuong-ai', 'GITA Studio đã gộp vào Xưởng phim AI — ngăn "Studio dựng video".'],
+    'xuong-phim':  ['xuong-ai', 'Xưởng phim ngắn 9:16 đã gộp vào Xưởng phim AI — ngăn "Phim ngắn 9:16".'],
     'van-hanh-10': ['dk-cua-toi', 'Bảng điều khiển của tôi mở đúng bảng này cho Super Admin / Admin.'],
     'van-hanh-gd': ['dk-cua-toi', 'Bảng điều khiển của tôi mở đúng bảng này cho Giám đốc.']
   };

@@ -15,6 +15,7 @@ Chạy đúng các lệnh CI đang chạy (`.github/workflows/kiem-tra.yml` là 
 2. `node tools/gop-src.js --kiem` · `for f in may-chu/*.js; do node --check "$f"; done` · `node -e "import('./may-chu/worker.js')"`.
 3. Mọi `run:` trong kiem-tra.yml (các `tools/thu-*.mjs`, `tools/thu-ky-luat.mjs`, `tools/soat-bi-mat.js`, `tools/do-16-he.js`, `tools/ra-soat-day-du.js`).
 4. Màn có đổi giao diện: mở bằng trình duyệt headless (Chromium tại `/opt/pw-browsers`) ở **390px** và 1280px, cho từng vai liên quan — không tràn ngang, không lỗi JS, vai không quyền thấy thẻ khoá.
+   Kèm `xvfb-run -a node tools/soat-thiet-ke.js --im` (máy chủ tĩnh cổng 8099, như do-khung-man): luật `chan` bằng 0, luật `tran` không thêm màn mới. Cách sửa theo skill `gita-thiet-ke`.
 
 **Done when:** mọi lệnh xanh, có kết quả thật in ra (không đoán).
 

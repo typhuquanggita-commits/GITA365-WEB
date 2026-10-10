@@ -170,7 +170,7 @@ var G = window.G || {}; window.G = G;
     var nguoi = d.nguoi || [], bayNgay = new Date(Date.now() - 7 * 864e5).toISOString();
     o += U.sec('Từng người (nhân sự)', 'Ai đang quá tải, ai đang ít việc, ai lâu không vào — căn cứ để phân bổ');
     o += '<div class="co-tb mb"><table><thead><tr><th>Người</th><th>Vai</th><th>Lần vào cuối</th><th>Thao tác</th><th>Lượt chạm</th><th>CRM</th><th>Nhà kèm</th><th>Việc tối ưu</th><th>Tín hiệu</th></tr></thead><tbody>'+nguoi.map(function(p){
-      var tin = []; if(!p.lanCuoi || p.lanCuoi < bayNgay) tin.push('<span style="color:#BE0E16">lâu không vào</span>'); if(p.nhaKem > 40 || p.viecMo >= 3) tin.push('<span style="color:#B4720F">quá tải</span>'); if(p.viecTre) tin.push('<span style="color:#BE0E16">'+p.viecTre+' việc trễ</span>');
+      var tin = []; if(!p.lanCuoi || p.lanCuoi < bayNgay) tin.push('<span style="color:#BE0E16">lâu không vào</span>'); if(p.nhaKem > 40 || p.viecMo >= 3) tin.push('<span style="color:var(--warn)">quá tải</span>'); if(p.viecTre) tin.push('<span style="color:#BE0E16">'+p.viecTre+' việc trễ</span>');
       return '<tr><td><b>'+h(p.u)+'</b>'+(p.ten ? '<div class="tiny muted">'+h(p.ten)+'</div>' : '')+'</td><td>'+h(p.vai)+'</td><td class="tiny">'+(p.lanCuoi ? h(new Date(p.lanCuoi).toLocaleDateString('vi-VN')) : '—')+'</td>'+
         '<td class="so">'+so(p.thaoTac)+'</td><td class="so">'+so(p.cham)+'</td><td class="so">'+so(p.crm)+'</td><td class="so">'+so(p.nhaKem)+'</td><td class="so">'+so(p.viecMo)+'</td><td class="tiny">'+(tin.join(' · ') || '<span style="color:#0B7350">ổn</span>')+'</td></tr>'; }).join('')+'</tbody></table></div>';
     return o;
@@ -269,7 +269,7 @@ var G = window.G || {}; window.G = G;
     var o = U.sec('Quy trình tối ưu khép kín', 'Bảy bước — mỗi vòng kết thúc bằng một lần đo lại') + '<div class="card pad-sm mb"><ol class="sm" style="margin:0;padding-left:20px;line-height:1.8">'+T().QUY_TRINH.map(function(q){ return '<li><b>'+h(q[0])+'</b> — '+h(q[1])+'</li>'; }).join('')+'</ol></div>';
     o += U.sec('Bản đồ gom màn', 'Mỗi khối dùng các màn này; màn số mẫu trùng việc đã ghi rõ màn thay thế') + T().KHOI.concat([{ ma:'TONG', ten:'Màn tổng quan cũ' }]).map(function(K){
       return '<div class="card pad-sm mb"><b class="sm">'+h(K.ten)+'</b><div class="mt">'+(T().BAN_DO[K.ma]||[]).map(function(m){ var L = LOAI[m[2]] || ['', '#73849F'];
-        return '<div class="co-dong"><span class="co-tag" style="color:'+L[1]+';background:color-mix(in srgb,'+L[1]+' 13%,transparent);min-width:72px;text-align:center">'+h(L[0])+'</span><span class="co-grow sm">'+h(m[1])+(m[3] ? '<br><span class="tiny" style="color:#B4720F">'+h(m[3])+'</span>' : '')+'</span><button class="btn ghost sm" data-v="'+h(m[0])+'">Mở</button></div>'; }).join('')+'</div></div>'; }).join('');
+        return '<div class="co-dong"><span class="co-tag" style="color:'+L[1]+';background:color-mix(in srgb,'+L[1]+' 13%,transparent);min-width:72px;text-align:center">'+h(L[0])+'</span><span class="co-grow sm">'+h(m[1])+(m[3] ? '<br><span class="tiny" style="color:var(--warn)">'+h(m[3])+'</span>' : '')+'</span><button class="btn ghost sm" data-v="'+h(m[0])+'">Mở</button></div>'; }).join('')+'</div></div>'; }).join('');
     return o;
   }
 
@@ -297,7 +297,9 @@ var G = window.G || {}; window.G = G;
                    : 'Các giải pháp tối ưu Super Admin giao cho anh/chị: tick từng bước, đóng khi xong — máy tự đo lại chỉ số.' });
     /* Hộp thông báo trong hệ (src/hop-thong-bao.js) đứng ĐẦU màn cấp quản lý:
        yêu cầu tư vấn và việc chờ duyệt là việc của hôm nay, không phải số đo. */
-    if(laQL() && G.htbKhoi) o += G.htbKhoi();
+    /* Mọi nhân sự mở màn này đều có hộp riêng: máy chủ chỉ trả dòng gửi
+       tới VAI hoặc TÊN của phiên, nên không có gì phải lọc ở đây. */
+    if(G.htbKhoi) o += G.htbKhoi();
     /* Trang công khai (src/do-trang-cong-khai.js): khách làm gì trước khi đăng ký. */
     if(laQL() && G.dtcKhoi) o += G.dtcKhoi();
     /* Việc kẹt (src/viec-ket.js): việc nằm im không ai cầm ở mọi hàng đợi. */

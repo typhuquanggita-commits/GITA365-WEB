@@ -447,7 +447,7 @@ G.VIEWS = G.VIEWS || {};
       '<p class="sm mt" style="line-height:1.8"><b>Đạt:</b> ' + h(k3.dat || '') + '</p>' +
       '<p class="sm mt" style="line-height:1.8;color:#BE0E16"><b>Trượt:</b> ' + h(k3.truot || '') + '</p>' +
       '<p class="tiny dim mt" style="line-height:1.7">' + h(k3.viToanTrang || '') + '</p>' +
-      (k3.chuaDo ? '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>Chưa đo được:</b> ' +
+      (k3.chuaDo ? '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>Chưa đo được:</b> ' +
         h(k3.thieu || '') + '</p>' : '') + '</div>';
 
     o += U.sec('Chuông nhà bấm khác chuông hệ rung', ((G.SG_CHUONG_LUAT || {}).cot || ''));
@@ -486,7 +486,7 @@ G.VIEWS = G.VIEWS || {};
           '<p class="tiny mt" style="line-height:1.7"><b>Sổ tay để trống:</b> ' + h(c.banGoc) + '</p>' +
           '<p class="tiny mt" style="line-height:1.7"><b>Đang giữ:</b> ' + h(c.lenhDung) + '</p>' +
           '<p class="tiny dim mt" style="line-height:1.7">' + h(c.vi) + '</p>' +
-          '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>Cần gì:</b> ' + h(c.canGi) + '</p></div>';
+          '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>Cần gì:</b> ' + h(c.canGi) + '</p></div>';
       }).join('') +
         '<p class="tiny dim mt" style="line-height:1.7">' + h((G.SG_CHOCHU_LUAT || {}).vi || '') + '</p></div>';
     }

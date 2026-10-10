@@ -922,7 +922,7 @@ G.NAV = [
     {v:'thuong-hieu', t:'Nhận diện thương hiệu',       h:'Màu · chữ · giọng nói · điều cấm kỵ',ic:'star', perm:'nghe_chung', capMo:'nghe'},
     {v:'van-dung',    t:'Năm cấp độ vận dụng',           h:'Chiều sâu nghề · giới hạn tầng · báo cáo', ic:'brain', perm:'nghe_chung', capMo:'nghe', star:1},
     {v:'xu-ly-ca',    t:'Xử lý ca theo quy trình',       h:'7 bước · bằng chứng bắt buộc · 4 ràng buộc', ic:'shield', perm:'ca_xu_ly', capMo:'nghe', star:1},
-    {v:'tra-cuu-gp',  t:'Tra cứu giải pháp · 13 mục',    h:'Vấn đề → phân tích → phác đồ → 20/80 → … → bài học · sổ nhật ký', ic:'compass', perm:'ca_xu_ly', capMo:'nghe', star:1},
+    {v:'tra-cuu-gp',  t:'Tra cứu giải pháp · 13 mục',    h:'Kho 1000 vấn đề: 500 khách hàng · 500 nội bộ — phân tích → phác đồ → 20/80 → … → bài học', ic:'compass', perm:'ca_xu_ly', capMo:'nghe', star:1},
     {v:'gui-tu-lieu', t:'Gửi tư liệu cho gia đình',      h:'Lời xin đang chờ · cửa KPI 80%',      ic:'share', perm:'tl_gui_khach', capMo:'nghe', star:1},
     {v:'tro-ly',      t:'Trợ lý GITA',                 h:'Hỏi bất cứ điều gì, trích dẫn nguồn',ic:'spark', capMo:'chung', star:1}
    ]},
@@ -940,6 +940,8 @@ G.NAV = [
     {v:'thi-viet',    t:'Cuộc thi viết 7 – 21 – 90 – 365', h:'Bài đạt mốc 90 và 365 nhận học bổng 10%', ic:'crown', star:1, capMo:'chung'},
     {v:'sat-hach',    t:'Sát hạch năng lực',          h:'5 tầng · 4 bài tốt nghiệp · 8 trục đánh giá', ic:'shield', star:1, capMo:'chung'},
     {v:'khoa-dao-tao',t:'Khoá đào tạo của tôi',       h:'Học · Làm · Nộp · bài kế tiếp tự mở', ic:'book', star:1, capMo:'chung'},
+    {v:'chuong-trinh-dt', t:'Chương trình đào tạo', h:'Tư vấn → Nhân sự → Coach · người chấm khác người học · chứng chỉ có người ký', ic:'book', perm:'nghe_chung', capMo:'chung'},
+    {v:'thi-chung-chi', t:'Thi chứng chỉ', h:'Tư vấn 50 cấp · Coach 100 cấp · thi lại mỗi tháng · cấp cao mở nhiều kho hơn', ic:'shield', perm:'nghe_chung', capMo:'chung'},
     {v:'do-thoi-gian',t:'Thời gian · thưởng · phạt', h:'Đồng hồ thật · ba ngưỡng · chuẩn hoàn thành · quy đổi điểm', ic:'pulse', star:1, capMo:'chung'},
     {v:'chin-vai',    t:'Chín vai giữ trong nhà',      h:'Ai giữ gì, ai đang bị bỏ ra ngoài',  ic:'users', star:1, perm:'kh_gia_dinh', capMo:'nha'},
     {v:'thoi-quen',   t:'Thói quen & nghi lễ',         h:'Bốn nghi lễ giữ nhịp cả năm',        ic:'ritual', perm:'kh_gia_dinh', capMo:'nha'},
@@ -1082,6 +1084,7 @@ G.NAV = [
     {v:'giam-sat', t:'Trần giám sát', h:'GITA-VIP dựng CÁI TRẦN trước, chưa dựng bộ giám sát — một cái cổng dựng sau một cái cửa đã chạy thì nó chỉ là một lời nhắc · sáu điều CẤM TUYỆT ĐỐI không lệnh nào mở được, kể cả lệnh R01 có chữ ký · ba ngăn phạm vi khác nhau ở CĂN CỨ PHÁP LÝ chứ không ở mức độ · lệnh uỷ quyền phải có hạn và tự thu hồi · sổ nối băm, sửa một dòng là vỡ mọi dòng sau', ic:'shield', star:1, perm:'nghe_chung', capMo:'chung'},
     {v:'supreme', t:'GITA Supreme · bản đồ', h:'Bản đồ ba quyển nghiên cứu của chủ hệ và CÁI TRẦN của chúng — ngăn đầu là BẪY TÊN GỌI: ba thang cùng mang chữ điểm chạm (1.000 tiến độ · 9 cảm xúc · 100.000 hệ thống), và một luật bị phạm thì có người cãi còn hai thang cùng tên thì không ai cãi · bốn chỗ va MỚI, không chép lại sáu điều cấm đã có · hai chỗ phép dò của chính tôi BẮT OAN vì tài liệu đang phê phán chính thứ bị dò · ma trận 28 năng lực · mười lớp điểm chạm · 45/100 phần đã có chữ', ic:'shield', star:1, perm:'nghe_chung', capMo:'chung'},
     {v:'bien-soan-noi-dung', t:'Biên soạn nội dung', h:'Khuôn 24 khối · máy đo · thang năm cổng · hiến pháp nội dung', ic:'book', star:1, perm:'qt_trang', capMo:'chung'},
+    {v:'xuong-ai', t:'Xưởng phim AI · GITA Studio', h:'Một cửa cho cả quy trình làm phim — đã gộp Xưởng phim ngắn 9:16 và GITA Studio: tạo phim · nhân vật · giọng · phim trường · bộ nhận diện · cắt theo nhịp nhạc · bàn dựng · kho phim', ic:'orbit', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'studio', t:'GITA Studio · Xưởng dựng video', h:'Kịch bản · MC tham chiếu · chuyển động 2.5D · phối âm cục bộ', ic:'spark', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'xuong-phim', t:'Xưởng phim ngắn AI · phim dọc 9:16', h:'Sổ nhân vật · kịch bản → prompt từng cảnh cho công cụ video AI · nạp clip · phụ đề, logo, số tập, nhạc · xuất phim ngay trên máy', ic:'spark', star:1, perm:'qt_trang', capMo:'chung'},
     {v:'tu-hoan-thien', t:'Vòng tự hoàn thiện · lấp kho có cấp phép', h:'Kho rỗng lúc tư vấn thì Bộ não SOẠN từ dữ liệu đã có, KHÔNG bịa — nhưng 入库 (đưa vào kho phục vụ khách) phải qua Bộ phận sản phẩm → Giám đốc → Super Admin · máy soạn không nhập, hai cửa tách hẳn · đủ ba chữ ký hay chưa TÍNH LÚC ĐỌC từ sổ, không cột đãDuyệt · ba cấp ba người khác nhau · sự chậm là có thật và được nói thẳng với khách', ic:'shield', star:1, perm:'nghe_chung', capMo:'chung'},
@@ -1147,12 +1150,12 @@ G.CULTURE = {
     big:'Kiến tạo một hệ sinh thái gia đình phát triển bền vững, nơi mỗi người biết hiểu mình, rèn mình, làm chủ cuộc đời và cùng nhau kiến tạo hạnh phúc, thành công, thịnh vượng qua nhiều thế hệ.',
     sub:'Nhiều thế hệ, không phải một khoá học. Đích đo bằng đời người, không đo bằng học kỳ.'
   },
-  /* Mốc 2030 tách khỏi TẦM NHÌN có chủ ý: tầm nhìn nói về loại thế giới
+  /* Mốc 2035 tách khỏi TẦM NHÌN có chủ ý: tầm nhìn nói về loại thế giới
      muốn tạo ra, mốc nói con số và hạn. Gộp hai thứ vào một chỗ rồi gọi
      chung là "tầm nhìn" thì cái nào cũng đọc không rõ. */
-  moc2030:{
-    t:'MỐC 2030',
-    big:'Đến năm 2030, một triệu người Việt lớn lên trong một gia đình vận hành được — nơi đứa trẻ tự cầm lái đời mình và người lớn cũng đang lớn lên mỗi ngày.',
+  moc2035:{
+    t:'MỐC 2035',
+    big:'Đến năm 2035, một triệu người Việt lớn lên trong một gia đình vận hành được — nơi đứa trẻ tự cầm lái đời mình và người lớn cũng đang lớn lên mỗi ngày.',
     sub:'Không phải một triệu đứa trẻ ngoan hơn. Là một triệu gia đình khác đi.'
   },
   suMenh:{

@@ -31,6 +31,8 @@
      nhạt ink-4 thì nó tụt xuống 3,98:1 trên nền trang, dưới ngưỡng
      4,5 — đổi một lỗi nhìn thấy lấy một lỗi không nhìn thấy. */
   --ink:#172234;  --ink-2:#3C4C64;  --ink-3:#4A5A73;  --ink-4:#56657D;
+  --chu-tren-mau:#fff;   /* chữ đặt lên một màu đặc của bảng phân loại (biểu đồ) */
+  --chu-tren-anh:#fff;   /* chữ đặt lên ẢNH (kèm bóng chữ) — ảnh không đổi theo nền nên token này không đổi */
 
   /* ══ MÀU THƯƠNG HIỆU — lấy từ logo chuẩn GITA ══
      Logo có ba nét: xanh ngoài đậm, xanh trong sáng, và một nét đỏ; kèm
@@ -100,6 +102,7 @@
   --phu-3:rgba(255,255,255,.08);  --phu-4:rgba(255,255,255,.11);
   --phu-5:rgba(255,255,255,.16);  --phu-6:rgba(255,255,255,.24);
   --ink:#EFF3FA;  --ink-2:#C8D3E2;  --ink-3:#A1B0C5;  --ink-4:#94A2B5;
+  --chu-tren-mau:#0B1424;
   --gita:#4A8FE0;        --gita-sang:#8FBEF2;   --gita-sau:#2A72C6;
   --gita-ink:#7FB0F0;    --gita-do:#FF5A5F;     --gita-do-ink:#FF8A8E;
   --gita-mo-1:rgba(122,168,235,.10);  --gita-mo-2:rgba(122,168,235,.18);
@@ -260,7 +263,7 @@ svg{width:1.15em;height:1.15em;flex:none;display:block}
 .chip{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:99px;
   font-size:12.5px;font-weight:600;border:1px solid var(--line-2);
   background:var(--surface-2);color:var(--ink-2);white-space:nowrap}
-.chip.on{background:var(--gita-mo-2);border-color:var(--gita-vien-2);color:var(--gold-2)}
+.chip.on{background:var(--gita-mo-2);border-color:var(--gita-vien-2);color:var(--gold-ink)}
 .dot{width:7px;height:7px;border-radius:50%;flex:none;background:currentColor;
   box-shadow:0 0 9px 1px currentColor}
 .pill{display:inline-block;padding:3px 9px;border-radius:8px;font-size:10.5px;font-weight:800;
@@ -365,7 +368,7 @@ svg{width:1.15em;height:1.15em;flex:none;display:block}
   width:2px;height:0;border-radius:9px;background:var(--gold);transition:.24s}
 .nav-i:hover{background:var(--phu-2);color:var(--ink)}
 .nav-i.on{background:linear-gradient(90deg,var(--gita-mo-2),var(--gita-mo-1));
-  color:var(--gold-2);font-weight:600}
+  color:var(--gold-ink);font-weight:600}
 .nav-i.on:before{height:20px}
 .nav-i svg{width:15px;height:15px;flex:none;opacity:.75}
 .nav-i.on svg{opacity:1}
@@ -387,11 +390,11 @@ svg{width:1.15em;height:1.15em;flex:none;display:block}
 .rt button{padding:7px 10px;border-radius:9px;font-size:12.5px;font-weight:700;letter-spacing:.03em;
   color:var(--ink-3);transition:.18s;white-space:nowrap}
 .rt button:hover{color:var(--ink);background:var(--phu-3)}
-.rt button.on{background:var(--gita-mo-2);color:var(--gold-2)}
+.rt button.on{background:var(--gita-mo-2);color:var(--gold-ink)}
 #right .scroll{flex:1;overflow-y:auto;padding:16px 14px 26px}
 
 .creed{border-left:2px solid var(--gita-vien-2);padding:2px 0 2px 13px;margin:14px 0}
-.creed p{font-family:var(--serif);font-size:16px;line-height:1.55;color:var(--gold-2);font-style:italic}
+.creed p{font-family:var(--serif);font-size:16px;line-height:1.55;color:var(--gold-ink);font-style:italic}
 .creed cite{display:block;margin-top:6px;font-size:12.5px;color:var(--ink-4);font-style:normal}
 .rblock{margin-bottom:22px}
 .rblock > h4{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-4);
@@ -465,7 +468,7 @@ main{grid-column:2;padding:26px 30px calc(90px + var(--sab));min-width:0}
 .kh:hover{transform:translateY(-6px)}
 .kh.on{border-color:currentColor}
 .kh .no{font-size:10.5px;font-weight:900;letter-spacing:.16em;opacity:.75}
-.kh h4{font-size:14.5px;font-weight:800;margin:7px 0 8px;line-height:1.22;letter-spacing:-.01em}
+.kh h2{font-size:14.5px;font-weight:800;margin:7px 0 8px;line-height:1.22;letter-spacing:-.01em}
 .kh .q{font-size:12.5px;color:var(--ink-3);font-style:italic;line-height:1.5;flex:1}
 .kh .mt-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:10px}
 .kh .mt-tags span{font-size:10.5px;padding:2px 6px;border-radius:6px;background:var(--phu-3);color:var(--ink-3)}
@@ -477,8 +480,8 @@ main{grid-column:2;padding:26px 30px calc(90px + var(--sab));min-width:0}
   transition:.24s;position:relative;overflow:hidden}
 .vai:hover{transform:translateY(-3px);border-color:var(--line-2)}
 .vai .id{font-size:10.5px;font-weight:900;letter-spacing:.14em;color:var(--ink-4)}
-.vai h5{font-size:14.5px;font-weight:800;margin:5px 0 6px;letter-spacing:.01em}
-.vai .q{font-size:12.5px;color:var(--gold-2);font-style:italic;line-height:1.45;margin-bottom:8px}
+.vai h2{font-size:14.5px;font-weight:800;margin:5px 0 6px;letter-spacing:.01em}
+.vai .q{font-size:12.5px;color:var(--gold-ink);font-style:italic;line-height:1.45;margin-bottom:8px}
 .vai p{font-size:12.5px;color:var(--ink-3);line-height:1.55}
 .vai .own{margin-top:10px;padding-top:9px;border-top:1px dashed var(--phu-4);
   font-size:12.5px;color:var(--ink-3);display:flex;align-items:center;gap:6px}
@@ -506,7 +509,7 @@ main{grid-column:2;padding:26px 30px calc(90px + var(--sab));min-width:0}
   background:linear-gradient(120deg,var(--gita-mo-1),rgba(139,92,246,.06));position:relative}
 .quote:before{content:'"';position:absolute;left:12px;top:-14px;font-family:var(--serif);
   font-size:74px;color:var(--gita-mo-3);line-height:1}
-.quote p{font-family:var(--serif);font-size:18px;line-height:1.55;font-style:italic;color:var(--gold-2)}
+.quote p{font-family:var(--serif);font-size:18px;line-height:1.55;font-style:italic;color:var(--gold-ink)}
 .quote cite{display:block;margin-top:10px;font-size:12.5px;color:var(--ink-3);font-style:normal}
 
 /* ── Danh sách kiểm ── */
@@ -550,7 +553,7 @@ main{grid-column:2;padding:26px 30px calc(90px + var(--sab));min-width:0}
 .gate-body{flex:1;display:grid;grid-template-columns:1.08fr .92fr;gap:52px;
   align-items:center;padding:10px 60px 60px;max-width:1440px;margin:0 auto;width:100%}
 .hero .kicker{display:inline-flex;align-items:center;gap:9px;padding:6px 15px;border-radius:99px;
-  border:1px solid var(--gita-vien-1);background:var(--gita-mo-1);color:var(--gold-2);
+  border:1px solid var(--gita-vien-1);background:var(--gita-mo-1);color:var(--gold-ink);
   font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:22px}
 .hero h1{font-size:clamp(38px,4.6vw,62px);line-height:1.04;font-weight:800;letter-spacing:-.03em;margin-bottom:20px}
 .hero h1 em{font-family:var(--serif);font-style:italic;font-weight:600}
@@ -564,6 +567,59 @@ main{grid-column:2;padding:26px 30px calc(90px + var(--sab));min-width:0}
    mọi bảng của cả kho có thể vỡ hai dòng, và đó là đổi một lỗi nhìn
    thấy lấy một trăm chỗ chưa ai nhìn. */
 .gate-body .btn{white-space:normal;overflow-wrap:anywhere}
+
+/* Cửa trước — một trang năm chặng thay ba ngăn (src/cua-truoc.js).
+   Cột đọc 820px: dài hơn thì mắt lạc dòng; các lưới đều minmax(0,1fr)
+   vì `1fr` trần không co dưới bề rộng chữ và đẩy cả trang cuộn ngang. */
+.ct-trang{max-width:820px;width:100%;min-width:0;box-sizing:border-box;margin:0 auto;padding:18px 18px 60px;display:flex;flex-direction:column;gap:16px}
+.ct-trang .btn{white-space:normal;overflow-wrap:anywhere}
+.ct-chang{display:flex;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:3;padding:8px 0;background:var(--bg-0)}
+.ct-mo{display:flex;flex-direction:column;gap:14px;border-color:var(--gita-vien-2);background:var(--gita-mo-1)}
+.ct-h1{font-size:26px;line-height:1.3;font-weight:800;text-wrap:balance;margin:0}
+.ct-dau{display:flex;flex-direction:column;gap:6px;margin-top:22px;scroll-margin-top:72px}
+.ct-ben{display:flex;gap:6px;align-items:flex-start;font-size:12.5px;line-height:1.6;color:var(--ink-2)}
+.ct-ben svg{flex:none;margin-top:3px;color:var(--gold-ink)}
+.ct-h{font-size:21px;line-height:1.35;font-weight:800;text-wrap:balance;margin:0}
+.ct-guong{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:10px}
+.ct-o{text-align:left;font:inherit;font-size:14.5px;line-height:1.6;padding:12px 14px;border-radius:var(--r-lg);
+  border:1px solid var(--line-2);background:var(--phu-1);color:var(--ink);cursor:pointer;min-height:44px}
+.ct-o.on{border-color:var(--gita-vien-2);background:var(--gita-mo-2)}
+.ct-o:focus-visible{outline:2px solid var(--gita-vien-2);outline-offset:2px}
+.ct-luoi{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:10px}
+.ct-tra{display:flex;flex-direction:column;gap:8px}
+.ct-tra[hidden]{display:none}
+.ct-viec-nay{border-left:3px solid var(--gita-vien-2);background:var(--gita-mo-1);border-radius:var(--r-sm);padding:10px 12px}
+.ct-viec-nay .up{color:var(--gold-ink);margin-bottom:4px}
+.ct-ba-toi{display:grid;gap:10px}
+.ct-toi{display:flex;gap:12px;align-items:flex-start;text-align:left;font:inherit;color:var(--ink);padding:12px 14px;
+  border-radius:var(--r-lg);border:1px solid var(--line-2);background:var(--phu-1);cursor:pointer;min-height:44px}
+.ct-toi.on{border-color:var(--gita-vien-2);background:var(--gita-mo-2)}
+.ct-toi:focus-visible{outline:2px solid var(--gita-vien-2);outline-offset:2px}
+.ct-dau-tich{flex:none;width:28px;height:28px;border-radius:99px;border:1px solid var(--gita-vien-2);
+  display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:12.5px;color:var(--gold-ink)}
+.ct-tang{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,145px),1fr));gap:10px}
+.ct-tg{border:1px solid var(--line-2);border-top:3px solid;border-radius:var(--r-lg);padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+.ct-buoc{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:8px}
+.ct-buoc li{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.ct-mo-rong summary{cursor:pointer;min-height:32px;display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.ct-cuoi{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:22px;border-color:var(--gita-vien-2);background:var(--gita-mo-1)}
+/* Kim chỉ nam ở đầu mọi màn khách (src/kim-chi-nam.js). Mặc định một dòng;
+   mở ra mới thấy ba ô. Lưới minmax(0,1fr) để không đẩy trang cuộn ngang. */
+.kcn{border:1px solid var(--gita-vien-2);background:var(--gita-mo-1);border-radius:var(--r-lg);margin:0 0 14px}
+.kcn-dong{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:8px 14px;min-height:40px;cursor:pointer;list-style:none;font-size:14.5px}
+.kcn-dong::-webkit-details-marker{display:none}
+.kcn-dong svg{color:var(--gold-ink);flex:none}
+.kcn-dong:focus-visible{outline:2px solid var(--gita-vien-2);outline-offset:2px}
+.kcn-chip{font-size:12.5px;font-weight:700;padding:2px 10px;border-radius:99px;border:1px solid var(--gita-vien-2);color:var(--gold-ink)}
+.kcn-phu{font-size:12.5px;color:var(--ink-2)}
+.kcn-ben{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:12px;padding:4px 14px 14px}
+.kcn-o{display:flex;flex-direction:column;gap:6px;min-width:0}
+.kcn-o .up{color:var(--gold-ink)}
+.kcn-tang{display:flex;gap:4px}
+.kcn-tang span{flex:1;height:6px;border-radius:99px;background:var(--line-2)}
+.kcn-tang span.on{background:var(--gita-vien-2)}
+@media(max-width:600px){.ct-h1{font-size:21px}.ct-h{font-size:18px}
+  .ct-chang{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;max-width:100%;min-width:0}.ct-chang .chip{flex:none}}
 
 .gate-card{padding:28px;border-radius:var(--r-xl);border:1px solid var(--line-2);
   background:linear-gradient(165deg,var(--phu-3),var(--phu-1));
@@ -901,7 +957,7 @@ select.inp option{background:var(--bg-1);color:var(--ink)}
 .nd-hang.sua{background:var(--gita-mo-1)}
 .nd-goc p{font-size:12.5px;line-height:1.55;color:var(--ink-2);margin-top:3px}
 .nd-o{font-size:12.5px}
-.nd-hang.sua .nd-o{border-color:var(--gita-vien-2);color:var(--gold-2)}
+.nd-hang.sua .nd-o{border-color:var(--gita-vien-2);color:var(--gold-ink)}
 @media(max-width:760px){ .nd-hang{grid-template-columns:1fr;gap:7px} }
 
 /* Bảng tài khoản xếp theo ba tầng quyền */
@@ -1438,7 +1494,7 @@ main{container-type:inline-size}
   align-items:center;justify-content:center;gap:6px;text-align:center;padding:14px}
 .ka-giua>svg{color:var(--gita);opacity:.75}
 .ka-giua b{font-size:14.5px;line-height:1.4;color:var(--ink-2)}
-.ka-ky{font-size:10.5px;letter-spacing:.06em;color:var(--ink-4)}
+.ka-ky{font-size:10.5px;letter-spacing:.04em;color:var(--ink-4)}
 .ka-brief,.ka-vi,.ka-khoa,.ka-loi{font-size:12.5px;line-height:1.7;margin-top:9px}
 .ka-brief{color:var(--ink-2)}
 .ka-vi{color:var(--ink-3)}
@@ -1675,7 +1731,7 @@ main{container-type:inline-size}
 .bd-cd-h b{color:var(--ink);font-variant-numeric:tabular-nums}
 .bd-dong{display:flex;gap:0;align-items:stretch;min-width:min-content}
 .bd-dong-cot{display:flex;flex-direction:column;min-width:132px;flex:none}
-.bd-dong-dau{color:#fff;font-size:12.5px;font-weight:600;padding:8px 10px;border-radius:10px 10px 0 0;text-align:center}
+.bd-dong-dau{color:var(--chu-tren-mau);font-size:12.5px;font-weight:600;padding:8px 10px;border-radius:10px 10px 0 0;text-align:center}
 .bd-dong-than{border:1px solid var(--line);border-top:none;border-radius:0 0 10px 10px;
   padding:8px;display:flex;flex-direction:column;gap:6px;flex:1;background:var(--bg-1)}
 .bd-dong-o{background:var(--gita-mo-1);border:1px solid var(--gita-vien-1);border-radius:8px;
@@ -1791,7 +1847,7 @@ main{container-type:inline-size}
 .bc-vong-d{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px}
 .bc-vong-d b{font-size:14.5px}
 .bc-vong-d span{font-size:10.5px;letter-spacing:.08em;color:var(--ink-4)}
-.bc-vong-kho{color:#B4720F!important;font-weight:800}
+.bc-vong-kho{color:var(--warn)!important;font-weight:800}
 .bc-bien{font-size:12.5px;line-height:1.7;color:var(--ink-2);margin-top:8px;max-width:56ch}
 .bc-bien s{color:var(--ink-4)}
 .bc-nutbien{font:inherit;font-size:12.5px;margin-top:8px;padding:6px 12px;border-radius:99px;
@@ -1800,7 +1856,7 @@ main{container-type:inline-size}
 /* Báo trước chỗ khó của tầng */
 .bc-baotruoc{margin:12px 0;padding:13px 15px;border-radius:14px;
   border:1px solid #B4720F45;background:color-mix(in srgb,#B4720F 6%,transparent)}
-.bc-baotruoc b{display:block;font-size:14.5px;color:#B4720F}
+.bc-baotruoc b{display:block;font-size:14.5px;color:var(--warn)}
 .bc-baotruoc p{font-size:12.5px;line-height:1.75;color:var(--ink-2);margin-top:4px;max-width:60ch}
 
 /* ═══ TẦNG BA · v9.36 ═══
@@ -1831,7 +1887,7 @@ main{container-type:inline-size}
   background:color-mix(in srgb,var(--ok) 6%,transparent)}
 .bc-nhip.giu b{color:var(--ok)}
 .bc-nhip.tut{border-color:#B4720F45;background:color-mix(in srgb,#B4720F 6%,transparent)}
-.bc-nhip.tut b{color:#B4720F}
+.bc-nhip.tut b{color:var(--warn)}
 .bc-nhip.chua{border-style:dashed}
 .bc-nhip.chua b{color:var(--ink-3)}
 
@@ -1871,11 +1927,11 @@ main{container-type:inline-size}
 .bc-kem>b{display:block;font-size:14.5px;color:var(--gita)}
 .bc-kem p{font-size:12.5px;line-height:1.75;color:var(--ink-2);margin-top:4px;max-width:62ch}
 .bc-kem p.dim{color:var(--ink-4);font-size:10.5px;line-height:1.7}
-.bc-kem p.canh{color:#B4720F}
+.bc-kem p.canh{color:var(--warn)}
 .bc-kem.chua{border-style:dashed;border-color:var(--line);background:transparent}
 .bc-kem.chua>b{color:var(--ink-3)}
 .bc-kem.het{border-color:#B4720F45;background:color-mix(in srgb,#B4720F 6%,transparent)}
-.bc-kem.het>b{color:#B4720F}
+.bc-kem.het>b{color:var(--warn)}
 /* ═══ HOA HỒNG KÈM · v9.43 ═══
    Phần duy nhất trên màn ra TIỀN thật, nên nó có viền riêng và mọi câu
    "chưa chứng minh được" đứng cùng một màu cảnh báo, không lẫn vào chữ
@@ -1885,7 +1941,7 @@ main{container-type:inline-size}
 .bc-hh>b{display:block;font-size:14.5px}
 .bc-hh p{font-size:12.5px;line-height:1.75;color:var(--ink-2);margin-top:5px;max-width:62ch}
 .bc-hh p.dim{color:var(--ink-4);font-size:10.5px;line-height:1.7}
-.bc-hh p.canh{color:#B4720F}
+.bc-hh p.canh{color:var(--warn)}
 .bc-hh-bac{display:grid;gap:6px;margin-top:8px}
 .bc-hh-hang{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:baseline}
 .bc-hh-hang b{font-size:18px;color:var(--gita);min-width:48px}
@@ -1986,7 +2042,7 @@ main{container-type:inline-size}
   background:var(--surface);color:var(--ink-2);font-size:12.5px;font-weight:600;
   cursor:pointer;transition:.16s}
 .ph-n:hover{border-color:var(--gita-vien-2);color:var(--ink)}
-.ph-n.on{background:var(--gita-mo-2);border-color:var(--gita-vien-2);color:var(--gold-2)}
+.ph-n.on{background:var(--gita-mo-2);border-color:var(--gita-vien-2);color:var(--gold-ink)}
 .ph-tron{width:36px;min-width:36px;padding:0;display:grid;place-items:center;font-size:18px}
 .ph-so{min-width:58px;text-align:center;font-size:14.5px;font-weight:800;
   font-variant-numeric:tabular-nums;color:var(--ink)}
@@ -2601,6 +2657,10 @@ button.nha-o-nen:hover .nha-ic{transform:scale(1.06)}
 .nha-bd-slot{position:static;display:inline-flex}
 .nha-ring-nodes .nha-bd-o{pointer-events:auto}
 .nha-khauhieu{display:none}
+/* Nút quay chỉ có nghĩa khi vòng tròn được dựng (khổ rộng); khổ hẹp bánh
+   đà xếp phẳng, không có gì để quay. Đặt TRƯỚC khối @container: cùng độ
+   nặng thì dòng sau thắng — đặt sau là khối container không bật được nút. */
+.nha-quay-nut{display:none;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 6px}
 
 /* vòng quay (ngoài) + bánh counter-quay (trong) — cùng 60s, ngược chiều,
    nên bánh ĐI THEO VÒNG mà CHỮ ĐỨNG YÊN thẳng đứng. */
@@ -2619,7 +2679,12 @@ button.nha-o-nen:hover .nha-ic{transform:scale(1.06)}
   /* VÒNG BÁNH ĐÀ (trong, bán kính 37%) — cách vòng khẩu hiệu ~10% (~2 cm) */
   .nha-ring::before{content:"";display:block;position:absolute;inset:13%;
     border:2px dashed var(--gita-vien-2);border-radius:50%;pointer-events:none}
-  .nha-ring-nodes{position:absolute;inset:0;display:block;margin:0;z-index:3;animation:nhaQuay 60s linear infinite}
+  /* pointer-events:none — lớp vòng là một HÌNH VUÔNG TRONG SUỐT phủ cả con
+     dấu và nằm TRÊN ngôi nhà (z-index 3). Thiếu dòng này thì mọi cú bấm vào
+     11 phần của nhà rơi vào lớp vòng: đo ở 9.99.254 ra 0/11 phần bấm trúng
+     trên máy tính, trong khi màn ghi "Kích vào từng phần để mở nội dung".
+     Chỉ các nút bánh đà nhận bấm (pointer-events:auto ở dưới). */
+  .nha-ring-nodes{position:absolute;inset:0;display:block;margin:0;z-index:3;pointer-events:none;animation:nhaQuay 60s linear infinite}
   .nha-ring-nodes .nha-bd-slot{position:absolute;display:block;width:0;height:0}
   .nha-ring-nodes .nha-bd-o{position:absolute;left:0;top:0;margin:0;max-width:13.5cqi;white-space:normal;text-align:left;
     min-height:4cqi;padding:.55cqi 1.3cqi .55cqi .55cqi;gap:.8cqi;font-size:1.2cqi;border-radius:99px;
@@ -2650,9 +2715,30 @@ button.nha-o-nen:hover .nha-ic{transform:scale(1.06)}
   .nha-ring .nha-o-nen{min-height:3.6cqi;gap:.8cqi}
   .nha-ring .nha-o-nen .nha-ic{width:2.8cqi;height:2.8cqi}
   .nha-ring .nha-o-nen .nha-ic svg{width:1.5cqi;height:1.5cqi}
-  @media(prefers-reduced-motion:reduce){.nha-ring-nodes,.nha-ring-nodes .nha-bd-o{animation:none}}
+  /* MÁY XIN GIẢM CHUYỂN ĐỘNG → vòng QUAY CHẬM (240 giây/vòng, 1,5°/giây), không
+     dừng hẳn (chủ hệ 10/10/2026: "vòng tròn đang dừng không chuyển động").
+     Chậm là đã giảm; đường dừng vẫn đủ: rê chuột/Tab vào bánh là đứng lại,
+     nút "Dừng vòng bánh đà" luôn có (WCAG 2.2.2 — chuyển động tự chạy phải
+     dừng được). !important vì luật chung *{animation-duration:.01ms!important}
+     ở đầu tệp ép mọi hoạt ảnh về 0 — thiếu nó vòng GIẬT góc thay vì quay. */
+  @media(prefers-reduced-motion:reduce){.nha-ring-nodes,.nha-ring-nodes .nha-bd-o{animation-duration:240s!important}}
+  /* LỰA CHỌN CỦA NGƯỜI DÙNG thắng mặc định của máy (ngoi-nha.js → nhaDoiQuay).
+     Độ nặng 0,3–0,4 thắng các luật "giảm chuyển động" thường (0,1–0,2) ở
+     dưới tệp, NHƯNG không thắng được luật `*{animation-duration:.01ms
+     !important}` (dòng ~750): độ nặng không bao giờ thắng !important. Thiếu
+     dòng animation-duration !important bên dưới thì "Cho quay" làm vòng GIẬT
+     góc mỗi khung hình thay vì quay êm 60 giây (tổ soát bắt 10/10/2026). */
+  .nha-quay-nut{display:flex}
+  .nha-ring.nha-quay .nha-ring-nodes{animation:nhaQuay 60s linear infinite}
+  .nha-ring.nha-quay .nha-ring-nodes .nha-bd-o{animation:nhaGiu 60s linear infinite}
+  .nha-ring.nha-quay .nha-ring-nodes,.nha-ring.nha-quay .nha-ring-nodes .nha-bd-o{animation-duration:60s!important}
+  .nha-ring.nha-dung .nha-ring-nodes,.nha-ring.nha-dung .nha-ring-nodes .nha-bd-o{animation:none}
+  /* Rê chuột / Tab vào MỘT bánh thì cả vòng đứng lại để bấm trúng. Dừng
+     CẢ vòng lẫn bánh cùng lúc — dừng một bên thì chữ nghiêng theo góc đang dở. */
+  .nha-ring-nodes:hover,.nha-ring-nodes:hover .nha-bd-o,
+  .nha-ring-nodes:focus-within,.nha-ring-nodes:focus-within .nha-bd-o{animation-play-state:paused}
 }
-@media(prefers-reduced-motion:reduce){.nha-ring-nodes{animation:none}}
+/* (Luật tắt vòng khi giảm chuyển động đã gom về MỘT chỗ — trong khối @container ở trên.) */
 
 /* ── TỔNG QUAN (tong-quan.js) — thẻ ít chữ, số to, lưới co giãn ── */
 .tq-luoi{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:10px;margin-top:10px}
@@ -2988,8 +3074,9 @@ body.hdp-khoa{overflow:hidden}
 /* ── TẮT chuyển động khi máy xin giảm ── */
 @media(prefers-reduced-motion:reduce){
   .view,.nha-luoi-8>*,.dp-mien>*,.nha-bd-o,.cd-loc-o,.hdp-khung{animation:none}
-  /* Vòng bánh đà: tắt cả quay vòng lẫn giữ-thẳng chữ khi máy xin giảm chuyển động. */
-  .nha-ring-nodes,.nha-ring-nodes .nha-bd-o{animation:none}
+  /* Vòng bánh đà KHÔNG tắt ở đây: khi máy xin giảm chuyển động nó quay chậm
+     (luật duy nhất nằm trong khối @container nhaVong). Ba bản chép của cùng
+     một luật từng nằm ở ba chỗ — gom về một để không có ngày lệch nhau. */
   [data-v],.nav-i,.chip,.tbtn,.btn,.nha-o,.dp-mien-o,.dp-tl-o,.cd-loc-o,.val,.cd-chitiet,.dp-luat-o,.tln-fab,#left,#right{transition:none}
   .tln-fab::after,.tln-fab-cham,.ch-soan .soan-cham i{animation:none}
   .nha-o:hover,.dp-mien-o:hover,.val:hover,.dp-luat-o:hover{transform:none}
@@ -3275,7 +3362,7 @@ body.hdp-khoa{overflow:hidden}
   border:1px solid var(--line);background:var(--surface);color:var(--ink-2);font:inherit;font-size:14.5px;font-weight:600;cursor:pointer}
 .tabs .tab svg{width:15px;height:15px}
 .tabs .tab:hover{border-color:var(--gita-vien-2)}
-.tabs .tab.on{background:var(--gita-mo-2);border-color:var(--gita-vien-2);color:var(--gold-2)}
+.tabs .tab.on{background:var(--gita-mo-2);border-color:var(--gita-vien-2);color:var(--gold-ink)}
 .tabs .tab:focus-visible{outline:2px solid var(--gita-vien-2);outline-offset:2px}
 /* Mũi tên lịch sử màn — ← màn trước · → màn đang làm (src/app.js · G.lsLui/G.lsToi). */
 .ls-cum{display:inline-flex;gap:6px;align-items:center;flex:none}
@@ -4067,7 +4154,7 @@ html[data-may="yeu"] *,html[data-may="yeu"] *::before,html[data-may="yeu"] *::af
 .co-luoi{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
 .co-the{border:1px solid var(--line);border-radius:var(--r,16px);background:var(--surface);padding:14px 16px;display:flex;flex-direction:column;gap:8px;position:relative}
 .co-the.nhan{border-color:var(--c,var(--gita))}
-.co-the h3{margin:0;font-size:15px;line-height:1.35}
+.co-the h2,.co-the h3{margin:0;font-size:15px;line-height:1.35}
 .co-the .co-meta{display:flex;flex-wrap:wrap;gap:6px;font-size:11.5px;color:var(--ink-4)}
 .co-so{font-variant-numeric:tabular-nums}
 .co-hang{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
@@ -4219,3 +4306,124 @@ html[data-may="yeu"] *,html[data-may="yeu"] *::before,html[data-may="yeu"] *::af
 .bn-b{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border:1px solid var(--line);border-left:4px solid var(--bt);border-radius:10px}
 .bn-b > div{min-width:0}
 .bn-nut{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+
+/* ═══════════ XƯỞNG PHIM AI — khung ba cột (src/xuong-ai.js) ═══════════
+   Trái: danh mục theo nhóm · giữa: bảng làm việc · phải: dự án và bước
+   tiếp. Dưới 1180px cột phải xuống dưới; dưới 860px danh mục thành một
+   dải cuộn ngang ở đầu — ngón cái với tới, không chiếm nửa màn. */
+.xa{display:grid;grid-template-columns:220px minmax(0,1fr) 260px;gap:18px;align-items:start}
+.xa-trai{position:sticky;top:calc(var(--top-tong,66px) + 12px);display:flex;flex-direction:column;gap:14px;
+  padding:12px;border:1px solid var(--line);border-radius:var(--r,14px);background:var(--surface)}
+.xa-nhom{display:flex;flex-direction:column;gap:2px}
+.xa-nhom-t{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-4);padding:0 8px 4px}
+.xa-muc{display:flex;align-items:center;gap:10px;min-height:36px;padding:6px 10px;border:0;border-radius:10px;
+  background:transparent;color:var(--ink-2);font:inherit;font-size:14.5px;text-align:left;cursor:pointer}
+.xa-muc:hover{background:var(--phu-2)}
+.xa-muc.on{background:var(--gita-mo-2);color:var(--gold-ink);font-weight:700}
+.xa-muc:focus-visible,.xa-tao:focus-visible,.xa-gan-o:focus-visible,.xa-kho-o:focus-visible,.xa-tiep:focus-visible{outline:2px solid var(--gita);outline-offset:2px}
+/* Bảng giữa KHÔNG có viền và nền: công cụ bên trong đã có thẻ của chúng,
+   bọc thêm một thẻ là thẻ lồng thẻ (luật TK14 bắt ở lần soát đầu). */
+.xa-giua{min-width:0;padding:2px 0 0}
+.xa-giua-t{display:flex;align-items:center;gap:10px;font-size:21px;font-weight:800;margin:0 0 14px;color:var(--ink)}
+.xa-phai{position:sticky;top:calc(var(--top-tong,66px) + 12px);display:flex;flex-direction:column;gap:10px}
+.xa-the{display:flex;flex-direction:column;gap:2px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.xa-the b{font-size:16px;color:var(--ink)}
+.xa-the .btn{align-self:flex-start;margin-top:6px}
+.xa-tiep{display:flex;align-items:center;gap:8px;min-height:44px;padding:10px 14px;border:1px solid var(--gita-vien-1);border-radius:12px;
+  background:var(--gita-mo-1);color:var(--gold-ink);font:inherit;font-size:14.5px;font-weight:600;text-align:left;cursor:pointer}
+.xa-h{font-size:16px;font-weight:800;margin:20px 0 10px;color:var(--ink)}
+.xa-tao-luoi{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.xa-tao{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:16px;border:1px solid var(--line);border-radius:12px;
+  background:var(--bg-1);color:var(--ink);font:inherit;text-align:left;cursor:pointer;min-height:132px}
+.xa-tao:hover{border-color:var(--gita-vien-2)}
+.xa-tao svg{color:var(--gita)}
+.xa-tao b{font-size:16px}
+.xa-tao span{font-size:14.5px;line-height:1.5;color:var(--ink-2)}
+.xa-gan{display:flex;flex-direction:column;gap:8px}
+.xa-gan-o{display:flex;flex-direction:column;gap:2px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;
+  background:var(--bg-1);color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.xa-gan-o span{font-size:12.5px;color:var(--ink-3)}
+.xa-kho{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:10px}
+.xa-kho-o{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:14px;border:1px solid var(--line);border-radius:12px;
+  background:var(--bg-1);color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.xa-kho-o.on{border-color:var(--gita);background:var(--gita-mo-1)}
+.xa-kho-o span:last-child{font-size:12.5px;color:var(--ink-3);line-height:1.45}
+.xa-kho-hinh{display:block;border:2px solid var(--gita);border-radius:6px;background:var(--gita-mo-2)}
+.xa-giong{display:flex;flex-direction:column;gap:10px;padding-left:20px;margin:0 0 12px}
+.xa-giong li b{display:block;font-size:16px;color:var(--ink)}
+.xa-giong li span{font-size:14.5px;color:var(--ink-2);line-height:1.55}
+.xa-logo{display:flex;gap:16px;margin-bottom:14px}
+.xa-logo img{border:1px solid var(--line);border-radius:12px;background:#fff;padding:6px}
+.xa-mau{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+.xa-mau-o{display:flex;flex-direction:column;gap:3px;font-size:12.5px;color:var(--ink-3)}
+.xa-mau-o b{font-size:14.5px;color:var(--ink)}
+.xa-mau-cham{display:block;height:44px;border-radius:10px;border:1px solid var(--line)}
+/* Cắt theo nhịp nhạc (src/cat-nhip.js) */
+.cn{display:flex;flex-direction:column;gap:14px}
+.cn-buoc{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.cn-nap{display:flex;flex-direction:column;gap:6px;padding:14px;border:1px dashed var(--line-2);border-radius:12px;background:var(--bg-1);cursor:pointer}
+.cn-nap{position:relative}
+.cn-nap b{font-size:14.5px;color:var(--ink)}
+.cn-nap .btn{align-self:flex-start;pointer-events:none}
+/* Ô chọn tệp gốc của trình duyệt in chữ tiếng Anh ("Choose File") — giấu
+   đi nhưng vẫn bấm được qua cả nhãn, và vẫn nhận phím Tab. */
+.cn-nap input[type=file]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.cn-nap:focus-within{outline:2px solid var(--gita);outline-offset:2px}
+.cn-so{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.cn-so>div{display:flex;flex-direction:column;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg-1)}
+.cn-so b{font-size:21px;color:var(--ink)}
+.cn-bao{margin:0;padding:10px 12px;border-radius:10px;background:var(--phu-2);color:var(--warn);font-size:14.5px;line-height:1.5}
+.cn-truc-boc{position:relative;border:1px solid var(--line);border-radius:10px;background:var(--bg-1);overflow:hidden}
+#cn-truc{display:block;width:100%;height:64px}
+.cn-vitri{position:absolute;top:0;bottom:0;left:0;width:2px;background:var(--gita-do-ink);pointer-events:none}
+.cn-chinh{display:flex;flex-wrap:wrap;gap:12px}
+.cn-chinh label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--ink-3)}
+.cn-vat{display:flex;flex-direction:column;gap:4px;max-height:180px;overflow:auto}
+.cn-vat-o{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 8px;border-radius:8px;background:var(--phu-1)}
+.cn-xem{display:flex;justify-content:center;background:#000;border-radius:12px;padding:10px}
+#cn-cv{max-width:100%;max-height:60vh;max-height:60dvh;height:auto;width:auto;border-radius:6px}
+@media(max-width:1180px){
+  .xa{grid-template-columns:200px minmax(0,1fr)}
+  .xa-phai{position:static;grid-column:1/-1;flex-direction:row;flex-wrap:wrap}
+  .xa-phai>*{flex:1 1 200px}
+}
+@media(max-width:860px){
+  .xa{grid-template-columns:minmax(0,1fr)}
+  .xa-trai{position:static;flex-direction:row;overflow-x:auto;gap:4px;padding:8px;-webkit-overflow-scrolling:touch}
+  .xa-nhom{flex-direction:row;gap:4px}
+  .xa-nhom-t{display:none}
+  .xa-muc{white-space:nowrap;flex:none}
+  .cn-so{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(prefers-reduced-motion:reduce){.xa-muc,.xa-tao,.xa-gan-o{transition:none}}
+/* Dải cảnh của bàn dựng cắt nhịp — mỗi ô rộng theo độ dài cảnh */
+.cn-dai{display:flex;gap:2px;height:56px;border-radius:10px;overflow:hidden;background:var(--phu-2)}
+.cn-dai-o{position:relative;flex:0 0 auto;min-width:8px;border:0;padding:0;cursor:pointer;
+  background:var(--gita-mo-2) center/cover no-repeat;color:var(--chu-tren-anh);font:inherit}
+.cn-dai-o.clip{background-color:var(--t2)}
+.cn-dai-o span{position:absolute;left:4px;bottom:3px;font-size:10.5px;font-weight:700;color:var(--chu-tren-anh);
+  text-shadow:0 1px 2px rgba(0,0,0,.8)}
+.cn-dai-o:focus-visible{outline:2px solid var(--gita);outline-offset:-2px}
+.cn-dai-o:hover{filter:brightness(1.08)}
+#cn-truc{cursor:pointer}
+.cn-ds summary{cursor:pointer;color:var(--ink-2)}
+
+/* ═══════════ CHƯƠNG TRÌNH ĐÀO TẠO (src/dao-tao-ct.js) ═══════════
+   Dùng lại khung co-* của Hệ điều hành Coach; ở đây chỉ thêm nhãn loại
+   bước (màu đọc từ --m, không gõ tay) và ô biểu mẫu mở ngay dưới dòng. */
+.dtc-ma{font-size:10.5px;font-weight:700;letter-spacing:.06em;color:var(--ink-4);font-variant-numeric:tabular-nums;min-width:38px}
+.dtc-tag{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.03em;padding:1px 8px;border-radius:999px;vertical-align:1px;
+  color:var(--m);background:color-mix(in srgb,var(--m) 12%,transparent)}
+.dtc-form{flex-basis:100%;display:flex;flex-direction:column;gap:8px;padding-top:8px;border-top:1px dashed var(--line)}
+.dtc-form .inp{width:100%}
+.dtc-luat > div{flex-direction:column;gap:2px}
+/* Thi chứng chỉ (src/thi-chung-chi.js) */
+.tcc-ca{display:flex;flex-direction:column;gap:4px}
+.tcc-ca textarea{width:100%}
+.tcc-thang{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-top:8px}
+.tcc-thang > div{display:flex;flex-direction:column;gap:2px;padding:8px 10px;border:1px solid var(--line);border-radius:10px}
+.tcc-bai{white-space:pre-wrap;overflow-wrap:anywhere;padding:10px 12px;border-left:3px solid var(--gita);background:var(--surface);border-radius:8px}
+.tcc-bang{overflow-x:auto;margin-bottom:12px}
+.tcc-chi ul{margin:4px 0 8px 18px}
+.tcc-chi p{margin:6px 0 2px}
+.tcc-chi summary{cursor:pointer;min-height:32px;display:flex;align-items:center;gap:6px}

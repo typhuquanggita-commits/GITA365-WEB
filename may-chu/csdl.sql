@@ -2384,12 +2384,27 @@ CREATE TABLE IF NOT EXISTS vongKhoaHocDaTri (luc INTEGER PRIMARY KEY, soPhatHien
 CREATE TABLE IF NOT EXISTS soLocDaTri (ngay TEXT, cua TEXT, luot INTEGER DEFAULT 0, PRIMARY KEY (ngay, cua));
 CREATE TABLE IF NOT EXISTS loiNccDaTri (ngay TEXT, ncc TEXT, soLan INTEGER DEFAULT 0, PRIMARY KEY (ngay, ncc));
 CREATE TABLE IF NOT EXISTS tuyenDaTri (ma TEXT PRIMARY KEY, ten TEXT, cacChang TEXT, dangO INTEGER DEFAULT 0, ketQua TEXT, trangThai TEXT DEFAULT 'dangChay', luc INTEGER, lucSua INTEGER, tuChay INTEGER DEFAULT 0);
+-- Đội Agent (10/10/2026): bộ nhớ chung đọc trước mỗi chặng — Super Admin ghi; máy chỉ đề xuất (bat = 0).
+CREATE TABLE IF NOT EXISTS boNhoAgent (id TEXT PRIMARY KEY, loai TEXT NOT NULL, noiDung TEXT NOT NULL, bat INTEGER NOT NULL DEFAULT 1, boiAi TEXT, luc INTEGER NOT NULL);
 -- Trợ lý V50 (10/10/2026): thông điệp Super Admin gửi bộ não vận hành → một tuyến Agent ba chặng.
 CREATE TABLE IF NOT EXISTS thongDiepBoNao (id TEXT PRIMARY KEY, noiDung TEXT NOT NULL, phuongAn TEXT, mucDo TEXT NOT NULL DEFAULT 'thuong', phanHe TEXT, tuyen TEXT, boiAi TEXT, luc INTEGER NOT NULL, trangThai TEXT NOT NULL DEFAULT 'daGui');
 CREATE INDEX IF NOT EXISTS ix_tdbn_luc ON thongDiepBoNao (luc);
 -- Tra cứu giải pháp 13 mục (10/10/2026): sổ nhật ký mỗi lần đem giải pháp ra dùng — không giữ dữ liệu nhận dạng gia đình.
 CREATE TABLE IF NOT EXISTS soNhatKyGiaiPhap (id TEXT PRIMARY KEY, maVanDe TEXT NOT NULL, tenVanDe TEXT, phuongAn TEXT NOT NULL, ketQua TEXT NOT NULL, danhGia TEXT, baiHoc TEXT, boiAi TEXT, vai TEXT, luc INTEGER NOT NULL);
 CREATE INDEX IF NOT EXISTS ix_nkgp_van_de ON soNhatKyGiaiPhap (maVanDe, luc);
+-- Kho 1000 vấn đề (10/10/2026): 500 khách hàng · 500 nội bộ, mỗi vấn đề đủ 13 mục. Nạp từ gói mã hoá, chỉ Super Admin; tỷ lệ xem theo vai cắt ở máy chủ.
+CREATE TABLE IF NOT EXISTS khoVanDe (ma TEXT PRIMARY KEY, loai TEXT NOT NULL, nhom TEXT NOT NULL, cap INTEGER NOT NULL, stt INTEGER NOT NULL, ten TEXT NOT NULL, noiDung TEXT NOT NULL, ban TEXT, napLuc INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS ix_kvd_hang ON khoVanDe (loai, cap, stt);
+CREATE TABLE IF NOT EXISTS khoCao (ma TEXT PRIMARY KEY, he TEXT NOT NULL, tang INTEGER NOT NULL, nhom TEXT NOT NULL, hang TEXT NOT NULL, stt INTEGER NOT NULL, ten TEXT NOT NULL, noiDung TEXT NOT NULL, ban TEXT, napLuc INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS ix_kc_loc ON khoCao (he, tang, nhom, stt);
+CREATE TABLE IF NOT EXISTS giaKhoCao (id TEXT PRIMARY KEY, bang TEXT NOT NULL, lyDo TEXT NOT NULL, boiAi TEXT, luc INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS deXuatKhoCao (id TEXT PRIMARY KEY, maNha TEXT NOT NULL, luaChon TEXT NOT NULL, ghiChu TEXT, trangThai TEXT NOT NULL, maChon TEXT, boiAi TEXT, luc INTEGER NOT NULL, chonLuc INTEGER, chonBoiAi TEXT);
+CREATE INDEX IF NOT EXISTS ix_dxkc_nha ON deXuatKhoCao (maNha, luc);
+CREATE TABLE IF NOT EXISTS luotKhoCao (id TEXT PRIMARY KEY, deXuat TEXT NOT NULL, ma TEXT NOT NULL, maNha TEXT NOT NULL, hang TEXT NOT NULL, tang INTEGER NOT NULL, so INTEGER NOT NULL, boiAi TEXT, luc INTEGER NOT NULL, xongLuc INTEGER, bangChung TEXT);
+CREATE INDEX IF NOT EXISTS ix_lkc_nha ON luotKhoCao (maNha, luc);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_lkc_dx ON luotKhoCao (deXuat);
+CREATE TABLE IF NOT EXISTS chuyenAnToan (id TEXT PRIMARY KEY, maNha TEXT NOT NULL, ghiChu TEXT, boiAi TEXT, luc INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS ix_cat_nha ON chuyenAnToan (maNha, luc);
 
 -- ═════════════════════════════════════════════════════════════
 --  VÍ CREDIT (may-chu/credit.js) — 1 credit = 10 đồng, bảng chủ hệ
@@ -2443,8 +2458,24 @@ CREATE TABLE IF NOT EXISTS suKienKH (id TEXT PRIMARY KEY, maNha TEXT NOT NULL, u
   loai TEXT NOT NULL, giaTri REAL, ngay TEXT NOT NULL, khoaDuy TEXT NOT NULL, ghiChu TEXT, luc TEXT NOT NULL);
 CREATE UNIQUE INDEX IF NOT EXISTS ux_skkh_khoa ON suKienKH (khoaDuy);
 CREATE INDEX IF NOT EXISTS ix_skkh_nha ON suKienKH (maNha, ngay);
+-- danhGiaKH: phiếu tháng của gia đình. tieuChi = năm điểm 1–5 (TIEU_CHI ở
+-- xep-hang-luong.js); coach · tuVan = người phụ trách nhà LÚC GỬI — phiếu tháng
+-- ấy thuộc người đã làm tháng ấy, kể cả khi nhà đổi người phụ trách sau đó.
 CREATE TABLE IF NOT EXISTS danhGiaKH (maNha TEXT NOT NULL, uid TEXT NOT NULL, thang TEXT NOT NULL,
-  nps INTEGER, csat INTEGER, ghiChu TEXT, luc TEXT NOT NULL, PRIMARY KEY (maNha, uid, thang));
+  nps INTEGER, csat INTEGER, ghiChu TEXT, luc TEXT NOT NULL, tieuChi TEXT, coach TEXT, tuVan TEXT, PRIMARY KEY (maNha, uid, thang));
+CREATE INDEX IF NOT EXISTS ix_dgkh_coach ON danhGiaKH (thang, coach);
+CREATE INDEX IF NOT EXISTS ix_dgkh_tuvan ON danhGiaKH (thang, tuVan);
+-- ngayNghi: ngày nghỉ Super Admin khai (Tết âm lịch, nghỉ bù…) cho lịch trả
+-- lương 05/08. Chỉ thêm dòng; dòng mới nhất của mỗi ngày quyết (nghi=0 là gỡ).
+CREATE TABLE IF NOT EXISTS ngayNghi (
+  id     TEXT PRIMARY KEY,
+  ngay   TEXT NOT NULL,
+  nghi   INTEGER NOT NULL,
+  ten    TEXT NOT NULL,
+  boiAi  TEXT NOT NULL,
+  luc    INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_ngaynghi ON ngayNghi (ngay, luc);
 CREATE TABLE IF NOT EXISTS hoSoThang (maNha TEXT NOT NULL, thang TEXT NOT NULL, duLieu TEXT NOT NULL,
   tiemNang INTEGER, tangCS TEXT, chot INTEGER NOT NULL DEFAULT 0, boiAi TEXT, luc TEXT NOT NULL, PRIMARY KEY (maNha, thang));
 
@@ -2587,3 +2618,151 @@ CREATE TABLE IF NOT EXISTS chiPhiPhim (
 CREATE INDEX IF NOT EXISTS ix_cpp_du_an ON chiPhiPhim (duAnId, tap, trangThai);
 CREATE INDEX IF NOT EXISTS ix_cpp_luc ON chiPhiPhim (giuLuc);
 CREATE INDEX IF NOT EXISTS ix_cpp_viec ON chiPhiPhim (maViec);
+
+-- ═════════════════════════════════════════════════════════════
+--  CHƯƠNG TRÌNH ĐÀO TẠO — Tư vấn · Nhân sự · Coach (dao-tao-ct.js)
+--
+--  Ba bảng, đều CHỈ THÊM DÒNG. Không có cột "đã đủ", "tiến độ" hay
+--  "đã xong": đủ điều kiện tính lúc đọc từ dtBuoc, và chứng chỉ là một
+--  hành động có chữ ký ở dtChungChi. Một cột tóm tắt thì hoặc bị gõ đè
+--  — một phép đo thành một lời khai mà nhìn vẫn y hệt — hoặc cũ đi lặng
+--  lẽ (cùng luật cột conHan · den · ba cửa).
+--
+--  dtBuoc giữ mọi lượt chấm, không sửa đè: chấm lại thì thêm dòng, dòng
+--  cuối thắng, và lịch sử trả lời được câu "ai chấm, lúc nào, bao nhiêu".
+-- ═════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS dtGhiDanh (
+  id        TEXT PRIMARY KEY,
+  maNguoi   TEXT NOT NULL,        -- username viết thường, đã tra chính tắc
+  ct        TEXT NOT NULL,        -- tuvan · nhansu · coach
+  boiAi     TEXT NOT NULL,        -- chính người học, hoặc người kèm ghi danh hộ
+  ghiLuc    TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_dtgd_nguoi ON dtGhiDanh (maNguoi, ct);
+CREATE INDEX IF NOT EXISTS ix_dtgd_ct ON dtGhiDanh (ct, ghiLuc);
+
+CREATE TABLE IF NOT EXISTS dtBuoc (
+  id        TEXT PRIMARY KEY,
+  maNguoi   TEXT NOT NULL,
+  ct        TEXT NOT NULL,
+  buoc      TEXT NOT NULL,        -- TV01 · NS06 · CO07 …
+  loai      TEXT NOT NULL,        -- tuHoc · nguoiCham (mayCham không ghi ở đây)
+  boiAi     TEXT NOT NULL,        -- tuHoc: chính người học · nguoiCham: người chấm (≠ người học)
+  diem      INTEGER,              -- chỉ bước nguoiCham, 0–100
+  ghiChu    TEXT NOT NULL,        -- câu bắt buộc: điều sẽ làm khác / nhận xét của người chấm
+  ghiLuc    TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_dtb_nguoi ON dtBuoc (maNguoi, ct, ghiLuc);
+
+CREATE TABLE IF NOT EXISTS dtChungChi (
+  id        TEXT PRIMARY KEY,
+  maNguoi   TEXT NOT NULL,
+  ct        TEXT NOT NULL,
+  loai      TEXT NOT NULL,        -- cap · thuHoi — trạng thái = dòng cuối
+  boiAi     TEXT NOT NULL,        -- người ký (≠ người học)
+  ghiChu    TEXT,                 -- bắt buộc với thuHoi (lý do)
+  ghiLuc    TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_dtcc_nguoi ON dtChungChi (maNguoi, ct, ghiLuc);
+
+-- ═════════════════════════════════════════════════════════════
+--  THI CHỨNG CHỈ THEO CẤP — Tư vấn 50 · Coach 100 (thi-cap.js)
+--
+--  Mọi bảng CHỈ THÊM DÒNG. Không có cột "cấp hiện tại", "đã đạt", "trạng
+--  thái": cấp phát lại từ thiLuot + thiCham + viPhamNangLuc lúc đọc; trạng
+--  thái một ý kiến / một vi phạm là dòng quyết định MỚI NHẤT.
+-- ═════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS thiCauHinh (
+  id        TEXT PRIMARY KEY,
+  khoa      TEXT NOT NULL,        -- 'cong'
+  giaTri    TEXT NOT NULL,        -- 'bat' | 'tat'
+  lyDo      TEXT NOT NULL,
+  boiAi     TEXT NOT NULL,
+  luc       INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_thch_khoa ON thiCauHinh (khoa, luc);
+
+CREATE TABLE IF NOT EXISTS thiLuot (
+  id        TEXT PRIMARY KEY,
+  maNguoi   TEXT NOT NULL,
+  he        TEXT NOT NULL,        -- tuvan | coach
+  cap       INTEGER NOT NULL,
+  muc       TEXT NOT NULL,        -- giu | len
+  thang     TEXT NOT NULL,        -- YYYY-MM giờ Việt Nam
+  de        TEXT NOT NULL,        -- [{ma, dang, bien[]}] — ghép lúc chạy
+  batDau    INTEGER NOT NULL,
+  hanLuc    INTEGER NOT NULL,
+  nopLuc    INTEGER,
+  baiLam    TEXT,
+  canhBao   TEXT                  -- [{ca, loai:'chepKho', tyLe}] — máy báo, người chấm quyết
+);
+CREATE INDEX IF NOT EXISTS ix_thl_nguoi ON thiLuot (maNguoi, he, thang);
+CREATE INDEX IF NOT EXISTS ix_thl_nop ON thiLuot (nopLuc);
+
+CREATE TABLE IF NOT EXISTS thiCham (
+  id        TEXT PRIMARY KEY,
+  luot      TEXT NOT NULL,
+  boiAi     TEXT NOT NULL,        -- ≠ người thi
+  diem      INTEGER NOT NULL,     -- 0–100, trung bình các ca
+  chiTiet   TEXT NOT NULL,        -- [[t1,t2,t3,t4] mỗi ca], mỗi tiêu chí 0–25
+  loiTruot  TEXT,                 -- có = trượt dù điểm cao
+  ghiChu    TEXT NOT NULL,
+  luc       INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_thc_luot ON thiCham (luot, luc);
+-- Mỗi người chấm một bài đúng một lần: chấm lại từng phá được chấm mù.
+CREATE UNIQUE INDEX IF NOT EXISTS ux_thc_nguoi ON thiCham (luot, boiAi);
+
+CREATE TABLE IF NOT EXISTS xinYKien (
+  id        TEXT PRIMARY KEY,
+  maNha     TEXT NOT NULL,
+  ma        TEXT NOT NULL,        -- mã vấn đề kho cấp cao
+  boiAi     TEXT NOT NULL,
+  lyDo      TEXT NOT NULL,
+  luc       INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_xyk_nha ON xinYKien (maNha, ma);
+CREATE INDEX IF NOT EXISTS ix_xyk_ma ON xinYKien (ma);
+CREATE INDEX IF NOT EXISTS ix_xyk_ai ON xinYKien (boiAi, luc);
+
+CREATE TABLE IF NOT EXISTS xinYKienQuyet (
+  id        TEXT PRIMARY KEY,
+  xin       TEXT NOT NULL,
+  quyet     TEXT NOT NULL,        -- cho | chuyen | tuChoi
+  choAi     TEXT,                 -- người được xử lý (người xin, hoặc người được chuyển)
+  boiAi     TEXT NOT NULL,        -- quản lý ≠ người xin
+  ghiChu    TEXT NOT NULL,
+  luc       INTEGER NOT NULL,
+  hetHan    INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_xykq_xin ON xinYKienQuyet (xin, luc);
+
+CREATE TABLE IF NOT EXISTS viPhamNangLuc (
+  id        TEXT PRIMARY KEY,
+  maNguoi   TEXT NOT NULL,
+  he        TEXT NOT NULL,
+  loai      TEXT NOT NULL,        -- GIAU_VAN_DE · TU_Y_XU_LY · VUOT_QUYEN · SAI_QUY_TRINH · GIAN_LAN_THI
+  mucDo     INTEGER NOT NULL,     -- 1 · 2 · 3
+  chungCu   TEXT NOT NULL,
+  deXuat    TEXT,                 -- dinhChi | boiThuong — ĐỀ NGHỊ, người có thẩm quyền quyết
+  boiAi     TEXT NOT NULL,
+  luc       INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_vpnl_nguoi ON viPhamNangLuc (maNguoi, he, luc);
+
+CREATE TABLE IF NOT EXISTS viPhamGiaiTrinh (
+  id        TEXT PRIMARY KEY,
+  viPham    TEXT NOT NULL,
+  noiDung   TEXT NOT NULL,
+  luc       INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_vpgt ON viPhamGiaiTrinh (viPham, luc);
+CREATE TABLE IF NOT EXISTS viPhamQuyet (
+  id        TEXT PRIMARY KEY,
+  viPham    TEXT NOT NULL,
+  quyet     TEXT NOT NULL,        -- huy | xacNhan — chỉ Super Admin
+  boiAi     TEXT NOT NULL,
+  ghiChu    TEXT NOT NULL,
+  luc       INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_vpq ON viPhamQuyet (viPham, luc);

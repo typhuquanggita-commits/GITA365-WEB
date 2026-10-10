@@ -15,7 +15,17 @@ var G = window.G || {}; window.G = G;
 (function(){
   var U = G.U, h = U.h, ic = U.ic, VIEW = 'ho-so-thang';
   G.VIEWS = G.VIEWS || {};
-  var st = { ai:'', ho:null, ls:null, tai:0, loi:'', nps:null, csat:null, daGui:'', ghi:'' };
+  var st = { ai:'', ho:null, ls:null, tai:0, loi:'', nps:null, csat:null, tc:[], daGui:'', ghi:'' };
+  /* Năm tiêu chí của phiếu tháng — bản đối chiếu của may-chu/xep-hang-luong.js →
+     TIEU_CHI; tools/thu-xep-hang.mjs so hai bản từng ô. Phiếu là căn cứ lương
+     thưởng của người đồng hành, nên mỗi câu hỏi về một việc nhà mình THẤY được. */
+  G.XH_TIEU_CHI = [
+    { ma:'T1', ten:'Người đồng hành lắng nghe và hiểu đúng nhà mình' },
+    { ma:'T2', ten:'Đúng hẹn, giữ lời đã hứa' },
+    { ma:'T3', ten:'Hướng dẫn rõ ràng, nhà mình làm theo được' },
+    { ma:'T4', ten:'Nhà mình thấy thay đổi thật ở con hoặc ở nếp nhà' },
+    { ma:'T5', ten:'Tôn trọng, không phán xét, không so sánh nhà mình với nhà khác' }
+  ];
   function coMayChu(){ return !!(G.DLG && G.DLG.coMayChu()); }
   function so(n){ return n == null ? '—' : Math.round(Number(n) || 0).toLocaleString('vi-VN'); }
   function haiSo(n){ return (n < 10 ? '0' : '') + n; }
@@ -72,7 +82,7 @@ var G = window.G || {}; window.G = G;
     if(!G.DL) return U.lockCard('Thiếu công thức đo lường.');
     if(!(typeof G.laKhachCredit === 'function' && G.laKhachCredit())) return U.lockCard('Báo cáo tháng này dành cho gia đình (Phụ huynh · Học viên). Đội dẫn dắt xem ở màn Đo lường toàn diện khách hàng.');
     var ai = String((G.S && G.S.acc && G.S.acc.u) || '');
-    if(st.ai !== ai){ st = { ai:ai, ho:null, ls:null, tai:0, loi:'', nps:null, csat:null, daGui:'', ghi:'' }; }
+    if(st.ai !== ai){ st = { ai:ai, ho:null, ls:null, tai:0, loi:'', nps:null, csat:null, tc:[], daGui:'', ghi:'' }; }
     var server = coMayChu();
     if(server && !st.ho && !st.loi) tai();
     var x = server && st.ho ? st.ho.ho : soDoMay();
@@ -106,12 +116,17 @@ var G = window.G || {}; window.G = G;
     o += '<div class="card pad-sm"><b class="sm">Sáu tháng gần nhất</b>'+(xu.length > 1 ? bieuDo(xu) : '<p class="tiny muted">Có từ hai tháng số đo trở lên thì đường xu hướng hiện ở đây.</p>')+'</div></div>';
 
     /* Phiếu hài lòng tháng */
-    o += '<div class="card mb"><b>Nhà mình thấy tháng này thế nào?</b><p class="sm muted" style="margin:4px 0 10px">Hai câu, mỗi tháng một lần. Học viện đọc từng phiếu để sửa chương trình và làm sản phẩm mới.</p>'+
+    o += '<div class="card mb"><b>Nhà mình thấy tháng này thế nào?</b><p class="sm muted" style="margin:4px 0 10px">Mỗi tháng một lần. Học viện đọc từng phiếu để sửa chương trình và làm sản phẩm mới.</p>'+
       '<div class="sm mb">Khả năng nhà mình giới thiệu GITA365 cho một gia đình khác <span class="tiny muted">(0 = không bao giờ · 10 = chắc chắn)</span></div>'+
       '<div class="co-hang mb" role="group" aria-label="Điểm giới thiệu">'+[0,1,2,3,4,5,6,7,8,9,10].map(function(n){ return '<button class="btn sm '+(st.nps===n?'':'ghost')+'" data-hst="nps" data-v2="'+n+'" aria-pressed="'+(st.nps===n)+'">'+n+'</button>'; }).join('')+'</div>'+
       '<div class="sm mb">Mức hài lòng với tháng này</div><div class="co-hang mb" role="group" aria-label="Mức hài lòng">'+[[1,'Rất không hài lòng'],[2,'Chưa hài lòng'],[3,'Tạm được'],[4,'Hài lòng'],[5,'Rất hài lòng']].map(function(c){
         return '<button class="btn sm '+(st.csat===c[0]?'':'ghost')+'" data-hst="csat" data-v2="'+c[0]+'" aria-pressed="'+(st.csat===c[0])+'">'+c[0]+' · '+h(c[1])+'</button>'; }).join('')+'</div>'+
+      '<div class="sm mb">Năm điều về người đồng hành tháng này <span class="tiny muted">(1 = chưa có · 5 = rất rõ)</span></div>'+
+      G.XH_TIEU_CHI.map(function(t, i){
+        return '<div class="mb"><div class="tiny">'+h(t.ten)+'</div><div class="co-hang" role="group" aria-label="'+h(t.ten)+'">'+[1,2,3,4,5].map(function(n){
+          return '<button class="btn sm '+(st.tc[i]===n?'':'ghost')+'" data-hst="tc" data-i="'+i+'" data-v2="'+n+'" aria-pressed="'+(st.tc[i]===n)+'">'+n+'</button>'; }).join('')+'</div></div>'; }).join('')+
       '<label class="co-f"><span class="sm">Một điều nhà mình muốn Học viện biết <span class="tiny muted">(không bắt buộc)</span></span><textarea class="inp" id="hst-ghi" rows="3" maxlength="1000">'+h(st.ghi)+'</textarea></label>'+
+      '<p class="tiny muted">Phiếu ghi kèm người đồng hành của nhà mình tháng này và là một căn cứ đánh giá công việc của họ.</p>'+
       '<div class="co-hang mt"><button class="btn pri sm" data-hst="gui-phieu">Gửi phiếu tháng '+(+thangNay().slice(5))+'</button>'+(st.daGui ? '<span class="tiny" style="color:#0B7350">'+h(st.daGui)+'</span>' : '')+'</div></div>';
 
     var ls = st.ls && st.ls.ds ? st.ls.ds : [];
@@ -125,12 +140,14 @@ var G = window.G || {}; window.G = G;
     var o = document.getElementById('hst-ghi'); if(o) st.ghi = String(o.value || '').slice(0, 1000);
     if(a === 'nps') st.nps = v;
     else if(a === 'csat') st.csat = v;
+    else if(a === 'tc') st.tc[Number(el.getAttribute('data-i'))] = v;
     else if(a === 'gui'){ if(G.DLG) G.DLG.gui(true).then(function(r){ if(r && r.ok){ U.toast('Đã gửi số đo.', 'ok'); st.ho = null; st.loi = ''; } else if(r && !r.boQua) U.toast((r && r.error) || 'Chưa gửi được.', 'err'); veLai(); }); return; }
     else if(a === 'gui-phieu'){
       if(st.nps == null || st.csat == null){ U.toast('Chọn điểm giới thiệu và mức hài lòng trước khi gửi.', 'err'); return; }
+      for(var i = 0; i < G.XH_TIEU_CHI.length; i++) if(!st.tc[i]){ U.toast('Chấm đủ năm điều về người đồng hành trước khi gửi.', 'err'); return; }
       if(!coMayChu()){ U.toast('Phiếu cần tài khoản thật của nhà mình trên máy chủ.', 'err'); return; }
       var g = document.getElementById('hst-ghi');
-      G.goiMayChu('guiDanhGiaKH', { nps:st.nps, csat:st.csat, ghiChu:g ? String(g.value || '').slice(0, 1000) : '' }).then(function(r){
+      G.goiMayChu('guiDanhGiaKH', { nps:st.nps, csat:st.csat, tieuChi:st.tc.slice(0, G.XH_TIEU_CHI.length), ghiChu:g ? String(g.value || '').slice(0, 1000) : '' }).then(function(r){
         if(r && r.ok){ st.daGui = 'Đã nhận phiếu '+tenThang(r.thang)+'. Cảm ơn nhà mình.'; st.ghi = ''; U.toast('Đã gửi phiếu hài lòng.', 'ok'); }
         else U.toast((r && r.error) || 'Chưa gửi được phiếu.', 'err');
         veLai();

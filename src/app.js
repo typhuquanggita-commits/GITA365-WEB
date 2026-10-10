@@ -168,7 +168,10 @@ G.tfeel = function(t){ var e=G.TIER_EN[t.code]; return (G.LANG==='en'&&e)?e.feel
 G.setLang = function(k){
   G.LANG = k;
   try{ localStorage.setItem('gita365.lang', k); }catch(e){}
+  if(k !== 'en' && G.traLaiTiengViet) G.traLaiTiengViet();
   if(G.S.acc) shell(); else gate();
+  /* Phần đứng yên trong index.html không đi qua render() — dịch một lượt cả trang. */
+  if(k === 'en' && G.dichDom) G.dichDom(document.body);
   U.toast(k==='en'?'Interface switched to English.':'Đã chuyển về tiếng Việt.','ok');
 };
 
@@ -1214,6 +1217,12 @@ function render(){
       if(d50.mo && G.TTD_MO) G.TTD_MO(d50.mo);
     }
   }
+  /* Màn con của Xưởng phim AI (không có mục cột trái) → mở trong khung. */
+  if(G.XA_CUA && G.XA_CUA[G.S.view] && G.VIEWS['xuong-ai'] && (!G.allowed || G.allowed('xuong-ai'))){
+    /* Bộ điều khiển sản xuất mở ở tab nào thì vào đúng ngăn ấy. */
+    var nganTab = G.S.view === 'san-xuat-ai' && G.XA_TAB_NGAN && G.XA_TAB_NGAN[G.S.axTab];
+    G.S.xaMuc = nganTab || G.XA_CUA[G.S.view]; G.S.view = 'xuong-ai';
+  }
   /* Màn của gói nghề mà mã chưa về: NÓI ĐANG MỞ, đừng nhảy về bản đồ.
 
      Trước bản 9.23 dòng này chỉ có một vế — thiếu màn thì đổi sang
@@ -1273,8 +1282,12 @@ function render(){
   /* V50: màn học thuyết có thêm thanh ÁP DỤNG (bảng việc đo được + chỉ số
      chịu tác động) — src/v50-ap-dung.js. Màn vừa được gộp có dòng báo. */
   var v50 = (G.v50PhanBar ? G.v50PhanBar(G.S.view) : '') + (G.v50Thanh ? G.v50Thanh(G.S.view) : '');
-  main.innerHTML = '<div class="view">' + nhac + hdThanh + v50 + noiDung + '</div>';
+  /* Kim chỉ nam ở đầu MỌI màn của khách (src/kim-chi-nam.js) — một chỗ chèn,
+     màn viết sau cũng tự có. Nhân sự không thấy dải này. */
+  var kcn = G.kcnThanh ? G.kcnThanh(G.S.view) : '';
+  main.innerHTML = '<div class="view">' + kcn + nhac + hdThanh + v50 + noiDung + '</div>';
   if(G.a11yNhan) G.a11yNhan(main);   /* bù tên đọc được cho mọi ô nhập (a11y) */
+  if(G.dichDom) G.dichDom(main);     /* tiếng Anh: dịch phần chữ viết thẳng của màn (src/dich-giao-dien.js) */
   /* Màn trợ lý là một CỬA SỔ chiếm trọn chiều cao, nên nó cần lề dưới
      của vùng nội dung nhỏ lại. Lớp này là chỗ duy nhất khai chuyện ấy —
      tự tính chiều cao trong CSS mà không gỡ lề thì cửa sổ luôn thừa ra
@@ -1594,7 +1607,7 @@ on('[data-pq]', function(el){
   G.doiO(p[0], p[1]);
 });
 on('[data-lang]', function(el){ G.setLang(el.getAttribute('data-lang')); });
-on('[data-ct]', function(el){ G.doiPhanCuaTruoc(el.getAttribute('data-ct')); });
+on('[data-ctc]', function(el){ G.chonCuaTruoc(el); });
 /* ── Bảng công việc ── */
 on('[data-cvnhan]',   function(el){ G.cvNhanHoiDap(el.getAttribute('data-cvnhan')); });
 on('[data-cvbatdau]', function(el){ G.cvBatDauHoiDap(el.getAttribute('data-cvbatdau')); });
@@ -2091,6 +2104,8 @@ G.boot = function(){
   if(G.batLinkKichHoat) G.batLinkKichHoat();
   sparks();
   try{ var lg = localStorage.getItem('gita365.lang'); if(lg && G.UI[lg]) G.LANG = lg; }catch(e){}
+  /* Mở lại máy mà nhớ tiếng Anh: phần đứng yên của index.html cũng phải đổi. */
+  if(G.LANG === 'en' && G.dichDom) G.dichDom(document.body);
   /* Trên màn hình hẹp, thanh phải mở dạng ngăn kéo — đóng sẵn để không che nội dung */
   if(window.innerWidth < 1180) G.S.rightOpen = false;
   /* Đọc trước khi khôi phục phiên: có dấu hiệu xin về màn đăng nhập thì bỏ

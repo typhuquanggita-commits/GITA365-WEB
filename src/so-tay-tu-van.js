@@ -322,7 +322,7 @@ G.VIEWS = G.VIEWS || {};
           '<p class="tiny mt" style="line-height:1.7"><b>Sổ tay đề nghị:</b> ' + h(c.banGoc) + '</p>' +
           '<p class="tiny mt" style="line-height:1.7"><b>Trạng thái đang giữ:</b> ' + h(c.lenhDung) + '</p>' +
           '<p class="tiny dim mt" style="line-height:1.7">' + h(c.vi) + '</p>' +
-          '<p class="tiny mt" style="line-height:1.7;color:#B4720F"><b>Cần gì:</b> ' + h(c.canGi) + '</p></div>';
+          '<p class="tiny mt" style="line-height:1.7;color:var(--warn)"><b>Cần gì:</b> ' + h(c.canGi) + '</p></div>';
       }).join('') +
         '<p class="tiny dim mt" style="line-height:1.7">' + h((G.TV_CHOCHU_LUAT || {}).vi || '') + '</p></div>';
     }

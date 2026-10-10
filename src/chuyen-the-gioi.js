@@ -101,7 +101,7 @@ G.veChuyenTG = function(c, gon){
 
     (c.luu
       ? '<div class="mt2" style="padding:11px 14px;border-radius:11px;background:#B4720F14;border:1px solid #B4720F44">'+
-        '<span class="tiny up" style="color:#B4720F">'+ic('bell','w-3 h-3')+' NÓI CHO ĐÚNG</span>'+
+        '<span class="tiny up" style="color:var(--warn)">'+ic('bell','w-3 h-3')+' NÓI CHO ĐÚNG</span>'+
         '<p class="tiny mt" style="line-height:1.7">'+h(c.luu)+'</p></div>'
       : '');
 
@@ -136,7 +136,7 @@ G.VIEWS['chuyen-the-gioi'] = function(){
     'việc có thật, đều là ghi chép công khai.</p>'+
     '<p class="sm mt" style="line-height:1.75">Vì thế Học viện chỉ ghi phần được ghi chép rộng rãi, không dựng lời '+
     'thoại và không kể đời tư. Con số nào do chính nhân vật kể thì nói rõ là họ kể. Và chỗ nào bản kể phổ biến '+
-    'đã bị thổi lên thì có một dòng <b style="color:#B4720F">NÓI CHO ĐÚNG</b> — vì truyện truyền cảm hứng mà sai '+
+    'đã bị thổi lên thì có một dòng <b style="color:var(--warn)">NÓI CHO ĐÚNG</b> — vì truyện truyền cảm hứng mà sai '+
     'sự thật thì lần sau người đọc không tin cả những phần đúng.</p></div>';
 
   o += '<div class="row wrap mt2" style="gap:12px">'+

@@ -21,6 +21,19 @@
      phải chuẩn ngành.
    - Tín hiệu "cần nâng cấp" là đèn đỏ để người nhìn vào — nó không
      tự phạt, không tự đổi quy trình (máy đề xuất, người quyết, AT5).
+
+   ══ MỘT CHỈ SỐ HỎNG KHÔNG ĐƯỢC KÉO SẬP CẢ MÀN (sửa 10/2026) ══
+   Bản đầu chạy ~35 câu NỐI TIẾP, câu nào ném là cả cửa ném → 500. Trên
+   D1 thật hai thứ làm nó ném: (1) bảng thêm sau chưa có trên D1 cũ —
+   vaLuocDo chỉ THÊM CỘT, không dựng bảng; (2) lọc `substr(cot,1,10) >= ?`
+   không dùng được chỉ mục, nên bấm "365 ngày" là quét trọn sổ audit một
+   năm. Ba lượt 500 liền thì máy khách NGẮT cả ứng dụng 30 giây — người
+   dùng thấy "máy chủ không trả lời" trong khi máy chủ vẫn chạy.
+   Nay: mỗi chỉ số chạy RIÊNG trong `doRieng`, hỏng thì giá trị là null
+   và tên chỉ số vào `chuaDo` (KHÔNG kèm lời lỗi — lời lỗi CSDL kể tên
+   bảng, tên cột). Lọc ngày viết `cot >= ?` — cùng nghĩa với substr trên
+   chuỗi ISO (tu dài 10 ký tự), nhưng đi được chỉ mục. Các câu chạy song
+   song thay vì nối tiếp.
    ═══════════════════════════════════════════════════════════════ */
 'use strict';
 
@@ -42,85 +55,105 @@ export async function docDongChay(y, env, db, hoSo) {
   const c7 = new Date(Date.now() - 7 * 86400e3).toISOString();
   const c24 = new Date(Date.now() - 86400e3).toISOString().slice(0, 19);
 
-  /* ── DÒNG TIỀN ── */
-  const thu = await so(db, "SELECT COALESCE(SUM(soTien),0) n FROM phieuThu WHERE trangThai = 'daDuyet' AND substr(ghiLuc,1,10) >= ?", tu);
-  const hoan = await so(db, "SELECT COALESCE(SUM(soTien),0) n FROM hoanTien WHERE trangThai = 'daDuyet' AND substr(deXuatLuc,1,10) >= ?", tu);
-  const hoaHong = await so(db, "SELECT COALESCE(SUM(soTien),0) n FROM hoaHongTra WHERE trangThai = 'daTra' AND substr(traLuc,1,10) >= ?", tu);
-  const theoThang = await dsach(db,
-    "SELECT substr(ghiLuc,1,7) thang, COALESCE(SUM(soTien),0) n FROM phieuThu WHERE trangThai = 'daDuyet' GROUP BY thang ORDER BY thang DESC LIMIT 6");
+  /* Mỗi chỉ số một lời hứa riêng: hỏng thì null + ghi tên vào chuaDo.
+     Lời lỗi chỉ vào nhật ký máy chủ, không ra máy khách. */
+  const chuaDo = [];
+  const doRieng = (ten, fn) => fn().catch(e => {
+    chuaDo.push(ten);
+    console.error('DONG_CHAY_CHI_SO_HONG', ten, String(e && e.message || e).slice(0, 160));
+    return null;
+  });
 
-  /* ── DÒNG CHI PHÍ ── */
-  const chi = await so(db, 'SELECT COALESCE(SUM(soTien),0) n FROM chiPhi WHERE trangThai = \'daDuyet\' AND substr(ngayChi,1,10) >= ?', tu);
-  const chiTop = await dsach(db,
-    'SELECT khoanMuc, COALESCE(SUM(soTien),0) n FROM chiPhi WHERE trangThai = \'daDuyet\' AND substr(ngayChi,1,10) >= ? GROUP BY khoanMuc ORDER BY n DESC LIMIT 5', tu);
-  const luong = (await db.prepare('SELECT ky, COALESCE(SUM(luongCung + phanKpi),0) n, COUNT(*) soNguoi FROM bangLuong GROUP BY ky ORDER BY ky DESC LIMIT 1').first()) || null;
-  const aiToken = await dsach(db, 'SELECT ncc, SUM(vao + ra) n FROM soTokenDaTri WHERE ngay >= ? GROUP BY ncc ORDER BY n DESC', tu);
+  const v = {};
+  const viec = {
+    /* ── DÒNG TIỀN ── */
+    thu: ['Thu đã duyệt', () => so(db, "SELECT COALESCE(SUM(soTien),0) n FROM phieuThu WHERE trangThai = 'daDuyet' AND ghiLuc >= ?", tu)],
+    hoan: ['Hoàn tiền', () => so(db, "SELECT COALESCE(SUM(soTien),0) n FROM hoanTien WHERE trangThai = 'daDuyet' AND deXuatLuc >= ?", tu)],
+    hoaHong: ['Hoa hồng đã trả', () => so(db, "SELECT COALESCE(SUM(soTien),0) n FROM hoaHongTra WHERE trangThai = 'daTra' AND traLuc >= ?", tu)],
+    theoThang: ['Thu theo tháng', () => dsach(db,
+      "SELECT substr(ghiLuc,1,7) thang, COALESCE(SUM(soTien),0) n FROM phieuThu WHERE trangThai = 'daDuyet' GROUP BY thang ORDER BY thang DESC LIMIT 6")],
+    /* ── DÒNG CHI PHÍ ── */
+    chi: ['Chi phí vận hành', () => so(db, "SELECT COALESCE(SUM(soTien),0) n FROM chiPhi WHERE trangThai = 'daDuyet' AND ngayChi >= ?", tu)],
+    chiTop: ['Khoản chi lớn nhất', () => dsach(db,
+      "SELECT khoanMuc, COALESCE(SUM(soTien),0) n FROM chiPhi WHERE trangThai = 'daDuyet' AND ngayChi >= ? GROUP BY khoanMuc ORDER BY n DESC LIMIT 5", tu)],
+    luong: ['Lương kỳ gần nhất', async () => (await db.prepare('SELECT ky, COALESCE(SUM(luongCung + phanKpi),0) n, COUNT(*) soNguoi FROM bangLuong GROUP BY ky ORDER BY ky DESC LIMIT 1').first()) || null],
+    aiToken: ['Token AI', () => dsach(db, 'SELECT ncc, SUM(vao + ra) n FROM soTokenDaTri WHERE ngay >= ? GROUP BY ncc ORDER BY n DESC', tu)],
+    /* ── DÒNG GIÁ TRỊ (thứ khách nhận được) ── */
+    baiHoc: ['Bài học hoàn thành', () => so(db, 'SELECT COUNT(*) n FROM baiHocHoanThanh WHERE ngay >= ?', tu)],
+    wow: ['Lượt WOW ghi sổ', () => so(db, "SELECT COUNT(*) n FROM soCham WHERE kieu = 'wow' AND ngay >= ?", tu)],
+    lenTang: ['Lượt lên tầng', () => so(db, 'SELECT COUNT(*) n FROM lichSuTang WHERE denTang > COALESCE(tuTang,0) AND luc >= ?', tu)],
+    khoDung: ['Kho giải pháp đã dùng', () => so(db, 'SELECT COALESCE(SUM(dung),0) n FROM khoGiaiPhapDaTri')],
+    tuyenXong: ['Tuyến dự án hoàn tất', () => so(db, "SELECT COUNT(*) n FROM tuyenDaTri WHERE trangThai = 'xong'")],
+    /* ── DÒNG CÔNG VIỆC (ai làm gì, bao nhiêu) ── */
+    congViec: ['Việc nhiều nhất', () => dsach(db,
+      'SELECT viec, COUNT(*) n FROM audit WHERE luc >= ? GROUP BY viec ORDER BY n DESC LIMIT 10', tu)],
+    tongLuot: ['Tổng lượt ghi sổ', () => so(db, 'SELECT COUNT(*) n FROM audit WHERE luc >= ?', tu)],
+    /* ── TÍN HIỆU 16 BAN ── */
+    ttNang: ['B01 · mức NẶNG', () => so(db, "SELECT COUNT(*) n FROM thanhTraSo WHERE mucDo = 'nang' AND luc >= ?", tu)],
+    baiViet: ['B02 · bài nội dung', () => so(db, 'SELECT COUNT(*) n FROM baiNoiDung')],
+    tlCho: ['B03 · tài liệu chờ', () => so(db, "SELECT COUNT(*) n FROM tailieu WHERE trangThai = 'cho'")],
+    khoNhap: ['B04 · giải pháp nháp', () => so(db, "SELECT COUNT(*) n FROM khoGiaiPhapDaTri WHERE trangThai = 'nhap'")],
+    khoQuaHan: ['B04 · giải pháp quá hạn soát', () => so(db, "SELECT COUNT(*) n FROM khoGiaiPhapDaTri WHERE trangThai = 'duyet' AND lucSoat < ?", Date.now() - 90 * 86400e3)],
+    chamDo: ['B05 · chạm lúc đèn ĐỎ', () => so(db, "SELECT COUNT(*) n FROM soCham WHERE denLuc = 'DO' AND ngay >= ?", tu)],
+    chamTong: ['B05 · lượt chạm', () => so(db, 'SELECT COUNT(*) n FROM soCham WHERE ngay >= ?', tu)],
+    xoaTre: ['B07 · yêu cầu xoá quá hạn', () => so(db, 'SELECT COUNT(*) n FROM yeuCauXoa WHERE xoaTrongSo IS NULL AND hanXuLy < ?', hn)],
+    cong24: ['B07 · cổng bảo vệ 24 giờ', () => so(db,
+      "SELECT COUNT(*) n FROM audit WHERE viec IN ('ATAI_DIEU13','XOA_DU_LIEU','KHOA_KHOANG','CUU_HE_DONG_BANG') AND luc >= ?", c24)],
+    tuyenTre: ['B08 · tuyến treo', () => so(db, "SELECT COUNT(*) n FROM tuyenDaTri WHERE trangThai = 'dangChay' AND lucSua < ?", Date.now() - 7 * 86400e3)],
+    dgXau: ['B09 · câu AI chưa tốt', () => so(db, 'SELECT COALESCE(SUM(xau),0) n FROM danhGiaDaTri')],
+    dgTong: ['B09 · câu AI đã chấm', () => so(db, 'SELECT COALESCE(SUM(tot + xau),0) n FROM danhGiaDaTri')],
+    thuTre: ['B11 · phiếu thu chờ quá 3 ngày', () => so(db, "SELECT COUNT(*) n FROM phieuThu WHERE trangThai = 'choDuyet' AND ghiLuc < ?", c3)],
+    luongTrong: ['B13 · lương trọng số không đo', () => so(db, 'SELECT COUNT(*) n FROM bangLuong WHERE trongBoQua > 30')],
+    henTre: ['B14 · hẹn chạm quá hạn', () => so(db, "SELECT COUNT(*) n FROM crmKhach WHERE henTiep IS NOT NULL AND henTiep < ? AND giaiDoan NOT IN ('roi')", hn)],
+    vongKH: ['B15 · vòng nhà khoa học', async () => { const r = await db.prepare('SELECT MAX(luc) n FROM vongKhoaHocDaTri').first(); return (r && r.n) || 0; }]
+  };
+  await Promise.all(Object.keys(viec).map(k => doRieng(viec[k][0], viec[k][1]).then(x => { v[k] = x; })));
 
-  /* ── DÒNG GIÁ TRỊ (thứ khách nhận được) ── */
-  const baiHoc = await so(db, 'SELECT COUNT(*) n FROM baiHocHoanThanh WHERE substr(ngay,1,10) >= ?', tu);
-  const wow = await so(db, "SELECT COUNT(*) n FROM soCham WHERE kieu = 'wow' AND substr(ngay,1,10) >= ?", tu);
-  const lenTang = await so(db, 'SELECT COUNT(*) n FROM lichSuTang WHERE denTang > COALESCE(tuTang,0) AND substr(luc,1,10) >= ?', tu);
-  const khoDung = await so(db, 'SELECT COALESCE(SUM(dung),0) n FROM khoGiaiPhapDaTri');
-  const tuyenXong = await so(db, "SELECT COUNT(*) n FROM tuyenDaTri WHERE trangThai = 'xong'");
+  /* null = chưa đo được. Phép trừ/so chỉ chạy khi đủ số — một số thiếu
+     không được đọc ra như số 0. */
+  const coDu = (...a) => a.every(x => x !== null && x !== undefined);
+  const xauKhi = (x, dk) => x !== null && dk;
 
-  /* ── DÒNG CÔNG VIỆC (ai làm gì, bao nhiêu) ── */
-  const congViec = await dsach(db,
-    'SELECT viec, COUNT(*) n FROM audit WHERE substr(luc,1,10) >= ? GROUP BY viec ORDER BY n DESC LIMIT 10', tu);
-  const tongLuot = await so(db, 'SELECT COUNT(*) n FROM audit WHERE substr(luc,1,10) >= ?', tu);
-
-  /* ── BẢNG ĐIỂM 16 BAN — tín hiệu theo mã, ngưỡng khai ở đây ── */
   const ban = {};
-  const ttNang = await so(db, "SELECT COUNT(*) n FROM thanhTraSo WHERE mucDo = 'nang' AND substr(luc,1,10) >= ?", tu);
-  ban.B01 = { chiSo: [{ ten: 'Phát hiện mức NẶNG chưa xử lý (kỳ này)', giaTri: ttNang, nguong: '= 0', xau: ttNang > 0 }] };
-  const baiViet = await so(db, 'SELECT COUNT(*) n FROM baiNoiDung');
-  ban.B02 = { chiSo: [{ ten: 'Bài nội dung trong kho', giaTri: baiViet, nguong: 'tham chiếu', xau: false }] };
-  const tlCho = await so(db, "SELECT COUNT(*) n FROM tailieu WHERE trangThai = 'cho'");
-  ban.B03 = { chiSo: [{ ten: 'Tài liệu chờ duyệt', giaTri: tlCho, nguong: '= 0', xau: tlCho > 0 }] };
-  const khoNhap = await so(db, "SELECT COUNT(*) n FROM khoGiaiPhapDaTri WHERE trangThai = 'nhap'");
-  const khoQuaHan = await so(db, "SELECT COUNT(*) n FROM khoGiaiPhapDaTri WHERE trangThai = 'duyet' AND lucSoat < ?", Date.now() - 90 * 86400e3);
+  ban.B01 = { chiSo: [{ ten: 'Phát hiện mức NẶNG chưa xử lý (kỳ này)', giaTri: v.ttNang, nguong: '= 0', xau: xauKhi(v.ttNang, v.ttNang > 0) }] };
+  ban.B02 = { chiSo: [{ ten: 'Bài nội dung trong kho', giaTri: v.baiViet, nguong: 'tham chiếu', xau: false }] };
+  ban.B03 = { chiSo: [{ ten: 'Tài liệu chờ duyệt', giaTri: v.tlCho, nguong: '= 0', xau: xauKhi(v.tlCho, v.tlCho > 0) }] };
   ban.B04 = { chiSo: [
-    { ten: 'Giải pháp nháp chờ duyệt', giaTri: khoNhap, nguong: '= 0', xau: khoNhap > 0 },
-    { ten: 'Giải pháp quá 90 ngày chưa soát', giaTri: khoQuaHan, nguong: '= 0', xau: khoQuaHan > 0 }] };
-  const chamDo = await so(db, "SELECT COUNT(*) n FROM soCham WHERE denLuc = 'DO' AND substr(ngay,1,10) >= ?", tu);
-  const chamTong = await so(db, 'SELECT COUNT(*) n FROM soCham WHERE substr(ngay,1,10) >= ?', tu);
+    { ten: 'Giải pháp nháp chờ duyệt', giaTri: v.khoNhap, nguong: '= 0', xau: xauKhi(v.khoNhap, v.khoNhap > 0) },
+    { ten: 'Giải pháp quá 90 ngày chưa soát', giaTri: v.khoQuaHan, nguong: '= 0', xau: xauKhi(v.khoQuaHan, v.khoQuaHan > 0) }] };
   ban.B05 = { chiSo: [
-    { ten: 'Lượt chạm trong kỳ', giaTri: chamTong, nguong: 'tham chiếu', xau: false },
-    { ten: 'Lượt chạm lúc đèn ĐỎ', giaTri: chamDo, nguong: '= 0', xau: chamDo > 0 }] };
-  ban.B06 = { chiSo: [{ ten: 'Bài học hoàn thành trong kỳ', giaTri: baiHoc, nguong: 'tham chiếu', xau: false }] };
-  const xoaTre = await so(db, 'SELECT COUNT(*) n FROM yeuCauXoa WHERE xoaTrongSo IS NULL AND hanXuLy < ?', hn);
+    { ten: 'Lượt chạm trong kỳ', giaTri: v.chamTong, nguong: 'tham chiếu', xau: false },
+    { ten: 'Lượt chạm lúc đèn ĐỎ', giaTri: v.chamDo, nguong: '= 0', xau: xauKhi(v.chamDo, v.chamDo > 0) }] };
+  ban.B06 = { chiSo: [{ ten: 'Bài học hoàn thành trong kỳ', giaTri: v.baiHoc, nguong: 'tham chiếu', xau: false }] };
   ban.B07 = { chiSo: [
-    { ten: 'Yêu cầu xoá dữ liệu QUÁ HẠN xử lý', giaTri: xoaTre, nguong: '= 0', xau: xoaTre > 0 },
-    { ten: 'Cổng bảo vệ hành động ra lệnh trong 24 giờ qua', giaTri: await so(db,
-      "SELECT COUNT(*) n FROM audit WHERE viec IN ('ATAI_DIEU13','XOA_DU_LIEU','KHOA_KHOANG','CUU_HE_DONG_BANG') AND substr(luc,1,19) >= ?", c24),
-      nguong: 'tham chiếu', xau: false }] };
-  const tuyenTre = await so(db, "SELECT COUNT(*) n FROM tuyenDaTri WHERE trangThai = 'dangChay' AND lucSua < ?", Date.now() - 7 * 86400e3);
-  ban.B08 = { chiSo: [{ ten: 'Tuyến dự án treo quá 7 ngày', giaTri: tuyenTre, nguong: '= 0', xau: tuyenTre > 0 }] };
-  const dgXau = await so(db, 'SELECT COALESCE(SUM(xau),0) n FROM danhGiaDaTri');
-  const dgTong = await so(db, 'SELECT COALESCE(SUM(tot + xau),0) n FROM danhGiaDaTri');
-  ban.B09 = { chiSo: [
-    { ten: 'Tỉ lệ câu AI bị chấm "chưa tốt"', giaTri: dgTong ? Math.round(dgXau * 1000 / dgTong) / 10 : 0, donVi: '%', nguong: '< 50%', xau: dgTong >= 5 && dgXau * 2 > dgTong }] };
+    { ten: 'Yêu cầu xoá dữ liệu QUÁ HẠN xử lý', giaTri: v.xoaTre, nguong: '= 0', xau: xauKhi(v.xoaTre, v.xoaTre > 0) },
+    { ten: 'Cổng bảo vệ hành động ra lệnh trong 24 giờ qua', giaTri: v.cong24, nguong: 'tham chiếu', xau: false }] };
+  ban.B08 = { chiSo: [{ ten: 'Tuyến dự án treo quá 7 ngày', giaTri: v.tuyenTre, nguong: '= 0', xau: xauKhi(v.tuyenTre, v.tuyenTre > 0) }] };
+  const dgDu = coDu(v.dgXau, v.dgTong);
+  ban.B09 = { chiSo: [{ ten: 'Tỉ lệ câu AI bị chấm "chưa tốt"',
+    giaTri: !dgDu ? null : (v.dgTong ? Math.round(v.dgXau * 1000 / v.dgTong) / 10 : 0), donVi: '%', nguong: '< 50%',
+    xau: dgDu && v.dgTong >= 5 && v.dgXau * 2 > v.dgTong }] };
   ban.B10 = { chiSo: [{ ten: 'Lá chắn đo ở CI mỗi PR — không đo được từ D1', giaTri: null, nguong: 'xem tools/do-16-he.js', xau: false }] };
-  const thuTre = await so(db, "SELECT COUNT(*) n FROM phieuThu WHERE trangThai = 'choDuyet' AND substr(ghiLuc,1,10) < ?", c3);
-  ban.B11 = { chiSo: [{ ten: 'Phiếu thu chờ duyệt quá 3 ngày', giaTri: thuTre, nguong: '= 0', xau: thuTre > 0 }] };
+  ban.B11 = { chiSo: [{ ten: 'Phiếu thu chờ duyệt quá 3 ngày', giaTri: v.thuTre, nguong: '= 0', xau: xauKhi(v.thuTre, v.thuTre > 0) }] };
   ban.B12 = { chiSo: [{ ten: 'Nội dung tiếp thị: xem chỉ số B02 + thư đã gửi (sổ THU_)', giaTri: null, nguong: 'tham chiếu', xau: false }] };
-  const luongTrong = (await db.prepare('SELECT COUNT(*) n FROM bangLuong WHERE trongBoQua > 30').first()) || { n: 0 };
-  ban.B13 = { chiSo: [{ ten: 'Dòng lương có > 30% trọng số không đo được', giaTri: luongTrong.n || 0, nguong: '= 0', xau: (luongTrong.n || 0) > 0 }] };
-  const henTre = await so(db, "SELECT COUNT(*) n FROM crmKhach WHERE henTiep IS NOT NULL AND henTiep < ? AND giaiDoan NOT IN ('roi')", hn);
-  ban.B14 = { chiSo: [{ ten: 'Hẹn chạm khách QUÁ HẠN', giaTri: henTre, nguong: '= 0', xau: henTre > 0 }] };
-  const vongKH = (await db.prepare('SELECT MAX(luc) n FROM vongKhoaHocDaTri').first()) || { n: 0 };
-  const vongKHTre = !vongKH.n || vongKH.n < Date.parse(c7);
-  ban.B15 = { chiSo: [{ ten: 'Vòng nhà khoa học chạy trong 7 ngày qua', giaTri: vongKH.n ? new Date(vongKH.n).toISOString().slice(0, 10) : 'chưa từng', nguong: 'có', xau: vongKHTre }] };
+  ban.B13 = { chiSo: [{ ten: 'Dòng lương có > 30% trọng số không đo được', giaTri: v.luongTrong, nguong: '= 0', xau: xauKhi(v.luongTrong, v.luongTrong > 0) }] };
+  ban.B14 = { chiSo: [{ ten: 'Hẹn chạm khách QUÁ HẠN', giaTri: v.henTre, nguong: '= 0', xau: xauKhi(v.henTre, v.henTre > 0) }] };
+  ban.B15 = { chiSo: [{ ten: 'Vòng nhà khoa học chạy trong 7 ngày qua',
+    giaTri: v.vongKH === null ? null : (v.vongKH ? new Date(v.vongKH).toISOString().slice(0, 10) : 'chưa từng'), nguong: 'có',
+    xau: v.vongKH !== null && (!v.vongKH || v.vongKH < Date.parse(c7)) }] };
   ban.B16 = { chiSo: [{ ten: 'Nhà cung cấp ngoài: theo dõi ở sổ bộ não (soDaTri)', giaTri: null, nguong: 'tham chiếu', xau: false }] };
   Object.keys(ban).forEach(ma => {
     const cs = ban[ma].chiSo;
     ban[ma].danhGia = cs.every(c => c.giaTri === null) ? 'chua-do' : (cs.some(c => c.xau) ? 'can-nang-cap' : 'chuan');
   });
 
-  return { ok: true, ngay, tu,
-    tien: { thu, hoan, hoaHong, rong: thu - hoan - hoaHong, theoThang },
-    chiPhi: { tong: chi, top: chiTop, luong, aiToken },
-    giaTri: { baiHoc, wow, lenTang, khoDung, tuyenXong },
-    congViec: { top: congViec, tongLuot, trungBinhNgay: Math.round(tongLuot / ngay) },
+  return { ok: true, ngay, tu, chuaDo,
+    tien: { thu: v.thu, hoan: v.hoan, hoaHong: v.hoaHong,
+      rong: coDu(v.thu, v.hoan, v.hoaHong) ? v.thu - v.hoan - v.hoaHong : null, theoThang: v.theoThang || [] },
+    chiPhi: { tong: v.chi, top: v.chiTop || [], luong: v.luong, aiToken: v.aiToken },
+    giaTri: { baiHoc: v.baiHoc, wow: v.wow, lenTang: v.lenTang, khoDung: v.khoDung, tuyenXong: v.tuyenXong },
+    congViec: { top: v.congViec || [], tongLuot: v.tongLuot,
+      trungBinhNgay: v.tongLuot === null ? null : Math.round(v.tongLuot / ngay) },
     ban,
     gioiHan: ['Ngưỡng xấu là ngưỡng vận hành do chủ hệ hiệu chỉnh, không phải chuẩn ngành.',
       'Đèn đỏ là để người nhìn vào — hệ không tự phạt, không tự đổi quy trình (AT5).',

@@ -319,7 +319,7 @@ G.VIEWS['do-thoi-gian'] = function(){
        chăm, và khen nhầm chỗ ấy là dạy người ta ngồi lâu hơn. */
     if(hn.quaTran.giay > 0)
       o += '<div class="card mb" style="border-color:#B4720F45">' +
-        '<b class="sm" style="color:#B4720F">' + h(phut(hn.quaTran.giay)) +
+        '<b class="sm" style="color:var(--warn)">' + h(phut(hn.quaTran.giay)) +
         ' trong số đó là phút VƯỢT TRẦN của ' + hn.quaTran.man.length + ' màn</b>' +
         '<p class="sm mt" style="line-height:1.75">' + h(M.viKhongKhen || '') + '</p>' +
         '<p class="tiny dim mt" style="line-height:1.7">' +
