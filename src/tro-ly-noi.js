@@ -55,7 +55,6 @@ var G = window.G || {}; window.G = G;
             'title="Ẩn hẳn — hiện lại ở mép phải màn">' + ic('x') + '</button>' +
         '</header>' +
         '<div id="chKhungNoi" class="ch-khung tln-cuon"></div>' +
-        '<div class="tln-goiy" id="tlnGoiy"></div>' +
         '<div class="tln-go">' +
           '<textarea id="aiQNoi" rows="1" autocomplete="off" ' +
             'placeholder="Nhà mình đang mắc chuyện gì?"></textarea>' +
@@ -108,7 +107,6 @@ var G = window.G || {}; window.G = G;
     var ten = (G.S && G.S.acc && G.S.acc.ten) || '';
     if (duoi) duoi.innerHTML = '<span class="tln-cham"></span>đang nghe' +
       (ten ? ' · cùng ' + h(ten) : '');
-    napGoiy();
     if (G.veChat) G.veChat(); else napKhung();
     setTimeout(function () {
       var i = document.getElementById('aiQNoi'); if (i) i.focus();
@@ -151,22 +149,14 @@ var G = window.G || {}; window.G = G;
     var k = document.getElementById('chKhungNoi');
     if (k && G.chatCuon) { k.innerHTML = G.chatCuon(); k.scrollTop = k.scrollHeight; }
   }
-  function napGoiy() {
-    var g = document.getElementById('tlnGoiy');
-    if (!g || !G.chatGoiY) return;
-    /* Chỉ hiện gợi ý khi chưa có lượt nào — đỡ rối, đúng tinh thần "giảm
-       phần dư thừa". Có chuyện rồi thì ô gõ là chính. */
-    if (G.CHAT && G.CHAT.length) { g.innerHTML = ''; return; }
-    g.innerHTML = G.chatGoiY().slice(0, 3).map(function (q) {
-      return '<button class="tln-chip" data-aiq="' + h(q) + '">' + h(q) + '</button>';
-    }).join('');
-  }
+  /* V50 (chủ hệ 10/10/2026): ô nổi không còn hàng câu gợi ý — người hỏi
+     gõ đúng câu của mình, trợ lý trả lời đúng câu ấy. */
 
   function guiNoi() {
     var i = document.getElementById('aiQNoi'); if (!i) return;
     var v = String(i.value || '').trim(); if (!v) return;
     if (G.chatHoi) G.chatHoi(v);      /* G.chatHoi → ve() cập nhật #chKhungNoi */
-    i.value = ''; caoNoi(i); napGoiy();
+    i.value = ''; caoNoi(i);
   }
   function caoNoi(el) {
     if (!el) return;
@@ -187,11 +177,6 @@ var G = window.G || {}; window.G = G;
       else if (act === 'an') an();
       else if (act === 'hien') { hien(); moPanel(); }
       else if (act === 'gui') guiNoi();
-      return;
-    }
-    /* Chip trong ô nổi: bộ bắt chung đã gửi câu; ở đây chỉ dọn gợi ý. */
-    if (e.target.closest && e.target.closest('#tlnGoiy [data-aiq]')) {
-      setTimeout(napGoiy, 0);
       return;
     }
     /* Chạm vào thẻ đang thu gọn để mở lại nguyên cuộc trò chuyện. */

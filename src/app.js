@@ -1015,6 +1015,7 @@ function topBar(){
     '<button class="brand" data-v="'+h((G.PORTALS[r.portal]||{}).home||'ban-do')+'" style="gap:11px">'+
     '<span class="mark">'+G.dauGita()+'</span><div class="deskonly" style="text-align:left">'+
     '<div class="nm">GITA 365</div><div class="sub">'+h(G.L('brandSub'))+'</div></div></button></div>'+
+    '<span id="lsNut" class="ls-cum">'+nutLichSu()+'</span>'+
     '<button id="search" data-act="cmd">'+ic('search')+'<span>'+h(G.L('search'))+'</span><kbd>Ctrl K</kbd></button>'+
     '<span class="grow"></span>'+
     '<span class="chip deskonly" style="color:'+r.c+';border-color:'+r.c+'55">'+ic('shield','w-3 h-3')+h(r.short)+' · LV'+r.lv+'</span>'+
@@ -1271,6 +1272,7 @@ function render(){
   if(left) left.innerHTML = leftNav();
   /* Thanh ngang phần chính: đồng bộ tab đang sáng theo nhóm của màn */
   var hn = document.getElementById('hnav'); if(hn) hn.innerHTML = hnav();
+  veNutLichSu();
   /* Thanh dưới phải vẽ lại mỗi lần đổi màn, không thì ô đang đứng sáng
      ở chỗ cũ và nó chỉ sai đường cho người dùng. */
   if(G.duoiVe) G.duoiVe();
@@ -1300,10 +1302,46 @@ G.save   = save;
 G.load   = load;
 G.dangXuat = function(){ var b=document.querySelector('[data-act="logout"]'); if(b) b.click(); };
 
+/* ── LỊCH SỬ MÀN: mũi tên ← màn trước · → màn đang làm (chủ hệ 10/10/2026) ──
+   Hai ngăn xếp trong phiên: `sau` là các màn đã đi qua, `toi` là các màn vừa
+   lùi khỏi — bấm → là quay lại đúng màn đang tương tác dở. Đi một màn mới thì
+   ngăn `toi` xoá, như trình duyệt. Không ghi ra đĩa: lịch sử của một phiên. */
+G.LS = G.LS || { sau: [], toi: [] };
+var diLichSu = false;
+function denLichSu(tu, sang){
+  var ls = G.LS;
+  while(ls[tu].length){
+    var v = ls[tu].pop();
+    if(v === G.S.view || !G.manCoThat(v) || !G.allowed(v)) continue;
+    var cu = G.S.view;
+    diLichSu = true;
+    try{ G.go(v); } finally { diLichSu = false; }
+    if(G.S.view === v){ if(cu) ls[sang].push(cu); veNutLichSu(); return true; }
+    ls[tu].push(v); return false;                  /* bị chặn (hạ nhịp…) — giữ nguyên */
+  }
+  veNutLichSu();
+  return false;
+}
+G.lsLui = function(){ if(!denLichSu('sau', 'toi')) U.toast('Đây là màn đầu tiên của phiên này.', 'ok'); };
+G.lsToi = function(){ if(!denLichSu('toi', 'sau')) U.toast('Không có màn nào để quay lại.', 'ok'); };
+function tenManLs(v){ var it = v && G.navItem ? G.navItem(v) : null; return it ? (G.iname ? G.iname(it) : it.t) : (v || ''); }
+function nutLichSu(){
+  var ls = G.LS, coSau = ls.sau.length > 0, coToi = ls.toi.length > 0;
+  return '<button class="tbtn ls-nut" data-act="ls-lui"'+(coSau?'':' disabled')+' aria-label="Về màn trước" title="'+
+      h(coSau ? 'Về màn trước: '+tenManLs(ls.sau[ls.sau.length-1])+' (Alt + ←)' : 'Chưa có màn trước')+'">'+ic('arrowL')+'</button>'+
+    '<button class="tbtn ls-nut" data-act="ls-toi"'+(coToi?'':' disabled')+' aria-label="Quay lại màn đang làm" title="'+
+      h(coToi ? 'Quay lại màn đang làm: '+tenManLs(ls.toi[ls.toi.length-1])+' (Alt + →)' : 'Không có màn để quay lại')+'">'+ic('arrow')+'</button>';
+}
+function veNutLichSu(){ var el = document.getElementById('lsNut'); if(el) el.innerHTML = nutLichSu(); }
+
 G.go = function(v){
   if(!G.manCoThat(v)) return;
   if(!G.allowed(v)){ U.toast(G.L('lock'),'err'); return; }
   if(G.isCanh && G.isCanh(v) && G.throttled && G.throttled()) return;
+  if(!diLichSu && G.S.view && G.S.view !== v){
+    G.LS.sau.push(G.S.view); if(G.LS.sau.length > 40) G.LS.sau.shift();
+    G.LS.toi = [];
+  }
   if(['thanh-toan','quy-trinh-tc'].indexOf(G.S.view) >= 0 &&
       ['thanh-toan','quy-trinh-tc'].indexOf(v) < 0 &&
       G.xoaThongTinNhanThanhToan) G.xoaThongTinNhanThanhToan();
@@ -1739,6 +1777,8 @@ on('[data-act]', function(el){
     _lo.classList.toggle('open', _mo);
     document.getElementById('scrim').classList.toggle('on', _mo);
   }
+  else if(a==='ls-lui'){ G.lsLui(); }
+  else if(a==='ls-toi'){ G.lsToi(); }
   else if(a==='thu-cot'){
     /* Thu gọn / mở lại hai cột. Đổi CLASS THÂN TRANG chứ không dựng lại
        vỏ: dựng lại vỏ thì mất trạng thái cuộn và nhấp nháy. Vẽ lại thanh
@@ -1872,6 +1912,11 @@ document.addEventListener('input', function(e){
 document.addEventListener('keydown', function(e){
   if((e.ctrlKey||e.metaKey) && e.key && e.key.toLowerCase()==='k'){ e.preventDefault(); if(G.S.acc) openCmd(); }
   if(e.key==='Escape'){ U.closeModal(); document.getElementById('cmd').classList.remove('on'); closeMobile(); }
+  /* Alt + ← / Alt + → : màn trước · màn đang làm. Không bắt khi đang gõ chữ. */
+  if(e.altKey && G.S.acc && !/^(INPUT|TEXTAREA|SELECT)$/.test((e.target && e.target.tagName) || '')){
+    if(e.key === 'ArrowLeft'){ e.preventDefault(); G.lsLui(); }
+    else if(e.key === 'ArrowRight'){ e.preventDefault(); G.lsToi(); }
+  }
   if(e.key==='Enter' && e.target.id==='inP') doLogin(document.getElementById('inU').value, e.target.value);
   /* Enter trên #aiQ do src/tro-ly-chat.js xử lý — một chỗ, không ba. */
   if(e.key==='Enter' && e.target.id==='cmdIn'){

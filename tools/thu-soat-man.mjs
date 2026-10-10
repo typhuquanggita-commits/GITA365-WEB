@@ -78,7 +78,10 @@ for (let i = 0; i < 5; i++) { cuoi = await M.ghiSoatMan({ goi: than, so: 270 + i
 kiem('R01 gửi được; ghi nhật ký', cuoi.ok && Number(sq.prepare("SELECT COUNT(*) n FROM audit WHERE viec = 'SOAT_TOAN_MAN'").get().n) === 5);
 kiem('chỉ giữ 3 bản mới nhất', Number(sq.prepare('SELECT COUNT(*) n FROM soatMan').get().n) === 3);
 const lay = await M.layBaoCaoSoat({}, {}, db);
-kiem('cửa công khai trả bản mới nhất (274 màn), đúng bản mã, không tên người gửi', lay.ok && lay.so === 274 && lay.goi === than && !('u' in lay) && !JSON.stringify(lay).includes('chu'));
+/* Dò tên người gửi trên MỌI ô TRỪ bản mã: bản mã là base64 ngẫu nhiên và
+   thỉnh thoảng tự chứa ba ký tự "chu" — phép đo cũ vì thế đỏ chập chờn
+   vài phần trăm số lượt, mà đỏ thỉnh thoảng là lớp tệ nhất. */
+kiem('cửa công khai trả bản mới nhất (274 màn), đúng bản mã, không tên người gửi', lay.ok && lay.so === 274 && lay.goi === than && !('u' in lay) && !JSON.stringify(Object.assign({}, lay, { goi: '' })).includes('chu'));
 sq.prepare("UPDATE soatMan SET luc = '2020-01-01T00:00:00.000Z'").run();
 kiem('quá 14 ngày → tự xoá, cửa trả "trống"', (await M.layBaoCaoSoat({}, {}, db)).trong === true && Number(sq.prepare('SELECT COUNT(*) n FROM soatMan').get().n) === 0);
 

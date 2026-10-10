@@ -1299,7 +1299,7 @@ const { chromium } = require(PW);
       return {demTong:dem.tong, tong, mo, pt: tong ? mo / tong : 0,
         nhaPt: nha.phanTramNen, kpiThat,
         coKhung:/id="chKhung"/.test(man), coBong:/ch-bong-ai/.test(man),
-        coGoiY:/data-aiq=/.test(man), coXin:/data-xin=/.test(man),
+        coGoiY:!/data-aiq=|kb-chip|tln-chip/.test(man), coXin:/data-xin=/.test(man),
         nMo, nCho, khanDung: khan.khan, khanKhongNguon: khan.nguon.length === 0,
         xinOk: xin.ok, tuCapChan: !tuCap.ok, capThapChan: !capThap.ok,
         capThapLy: capThap.ly || '', capDuOk: capDu.ok,
@@ -1309,7 +1309,7 @@ const { chromium } = require(PW);
     });
 
     bao(r.coKhung && r.coBong, 'trợ lý hiện dưới dạng khung trò chuyện, có bóng nói hai bên');
-    bao(r.coGoiY, 'khung trò chuyện có sẵn câu gợi ý để gia đình bấm là hỏi được');
+    bao(r.coGoiY, 'khung trò chuyện KHÔNG còn chip câu gợi ý — người hỏi gõ đúng câu của mình (chủ hệ 10/10/2026)');
     bao(r.nMo + r.nCho > 0 && r.nCho > 0 && r.coXinThang,
       'tư liệu ngoài phần nền vẫn hiện tên và có nút nhờ Tư vấn gửi',
       r.nMo + ' mở ngay · ' + r.nCho + ' qua người thật · hỏi thẳng "' +

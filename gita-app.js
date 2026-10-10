@@ -2130,6 +2130,7 @@ U.P = {
   star:'m12 3.5 2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3.5Z',
   lock:'M6 11h12v9H6v-9Zm2.5 0V7.5a3.5 3.5 0 1 1 7 0V11',
   arrow:'M4 12h15m-6-6 6 6-6 6',
+  arrowL:'M20 12H5m6-6-6 6 6 6',
   moon:'M20.5 14.8A8.6 8.6 0 1 1 9.2 3.5a7.1 7.1 0 0 0 11.3 11.3Z',
   sun:'M12 16.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8m10.6 10.6 1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8',
   home:'M4 11 12 4l8 7v9h-5v-6H9v6H4v-9Z',
@@ -22251,6 +22252,9 @@ function loiChao(){
       ((G.tlVai && G.tlVai().ten) || 'chuyên viên tư vấn').toLowerCase() + ' của GITA 365. ' +
       ((K && K.moDau && K.moDau.nha) || 'Nhà mình đang cần em hỗ trợ chuyện gì, anh chị cứ kể tự nhiên nhé.');
   }
+  if(G.S && G.S.role === 'R01')
+    return 'Chào ' + tenToi() + '. Em là Trợ lý GITA V50. Anh/chị hỏi bất cứ việc gì của hệ, hoặc giao một yêu cầu — ' +
+      'em lên phương án đủ mục tiêu, bước làm, rủi ro, cách đo, và gửi được thẳng tới bộ não vận hành để chuỗi Agent làm tiếp.';
   return 'Chào ' + tenToi() + '. ' + ((K && K.moDau && K.moDau.nghe) ||
     'Anh chị cần tra phác đồ, kịch bản, mô thức, tình huống hay quy trình nào, cứ gõ tự nhiên — em tìm đúng tư liệu trong kho, có mã để mở lại.');
 }
@@ -22285,6 +22289,87 @@ G.chatHoi = function(cauHoi){
   if(!cauHoi) return;
   kiemTraPhien();
   G.CHAT.push({ai:'toi', loi:cauHoi, luc:new Date()});
+  /* V50 (chủ hệ 10/10/2026): câu cần SUY NGHĨ đi tới bộ não máy chủ —
+     đọc vai từ phiên, đọc cảm xúc, trả lời đúng câu hỏi. Câu khẩn, câu xã
+     giao, câu hỏi thẳng về dữ liệu nhà mình và câu trả lời cho vòng đang
+     hỏi vẫn ở trong máy: nhanh hơn, và đúng dữ liệu của nhà hơn. */
+  if(nenHoiMayChu(cauHoi)){ hoiMayChu(cauHoi); return; }
+  traLoiTrongMay(cauHoi);
+};
+
+/* ═══════════ V50 · BỘ NÃO MÁY CHỦ ═══════════ */
+var tatMayChuDen = 0;
+function coMayChu(){
+  return typeof G.goiMayChu === 'function' && !!G.API_CAP_PHEP && !!G.PHIEN_TOKEN && Date.now() > tatMayChuDen;
+}
+function nenHoiMayChu(cau){
+  if(!coMayChu()) return false;
+  if(G.aiCoKhan && G.aiCoKhan(cau)) return false;
+  if(coVongDangDo()) return false;
+  if(G.htLoaiCau && G.htLoaiCau(cau)) return false;
+  if(G.htVoNghia && G.htVoNghia(cau)) return false;
+  var hs = G.htHoSo ? G.htHoSo() : null;
+  if(hs && G.htSuyLuan && G.htSuyLuan(cau, hs)) return false;
+  return true;
+}
+/* Chữ của một lượt để gửi kèm làm ngữ cảnh — chỉ phần lời, không HTML. */
+function chuCuaLuot(m){
+  if(m.ai === 'toi') return m.loi || '';
+  var d = m.dap || {};
+  if(d.v50) return d.loi || '';
+  if(d.gon) return [d.gon.mo, d.gon.chinh, d.gon.hoi].filter(Boolean).join(' ');
+  return d.loi || (d.chuoi && d.chuoi.hoi) || '';
+}
+function hoiMayChu(cau){
+  var cho = {ai:'trolY', dap:{v50:true, dangCho:true}, luc:new Date()};
+  var lichSu = G.CHAT.slice(-8, -1).map(function(m){ return {ai:m.ai, loi:String(chuCuaLuot(m)).slice(0, 600)}; })
+    .filter(function(x){ return x.loi; });
+  G.CHAT.push(cho); ve();
+  function luiVeMay(){
+    var i = G.CHAT.indexOf(cho);
+    if(i < 0) return;
+    G.CHAT.splice(i, 1);
+    traLoiTrongMay(cau);
+  }
+  G.goiMayChu('troLyV50', {cau:cau, lichSu:lichSu}).then(function(r){
+    var i = G.CHAT.indexOf(cho);
+    if(i < 0) return;           /* đã "Bắt đầu lại" trong lúc chờ */
+    if(r && r.ok && r.tra){
+      G.CHAT[i] = {ai:'trolY', luc:new Date(), dap:{v50:true, loi:r.tra, khan:!!r.khan,
+        vaiV50:r.vai || '', phuongAn:!!r.phuongAn, cauGoc:cau}};
+      ve();
+      return;
+    }
+    /* Bộ não tắt, chưa có nhà cung cấp, hết lượt ngày: thôi hỏi máy chủ một
+       quãng — đừng bắt mỗi câu sau chờ một lượt hỏng. */
+    if(r && /^(CUADONG|KHONG_NCC|HETTRAN|NOPERM|AUTH)$/.test(r.code || '')) tatMayChuDen = Date.now() + 10 * 60e3;
+    luiVeMay();
+  }, luiVeMay);
+}
+/* Super Admin gửi yêu cầu + phương án tới bộ não vận hành (chuỗi Agent). */
+function guiBoNao(i){
+  var m = G.CHAT[i], d = m && m.dap;
+  if(!d || !d.v50 || d.dangGui || d.daGui) return;
+  d.dangGui = true; ve();
+  G.goiMayChu('guiThongDiepBoNao', {noiDung:d.cauGoc, phuongAn:d.loi}).then(function(r){
+    d.dangGui = false;
+    if(r && r.ok) d.daGui = r.vi || ('Đã gửi · tuyến ' + r.tuyen);
+    else d.loiGui = (r && r.error) || 'Chưa gửi được — thử lại sau.';
+    ve();
+  }, function(){ d.dangGui = false; d.loiGui = 'Chưa gửi được — thử lại sau.'; ve(); });
+}
+
+/* Lời trả lời của bộ não: giữ đoạn và dòng như người viết, không HTML. */
+function veLoiV50(t){
+  return String(t || '').split(/\n{2,}/).map(function(doan){
+    return '<p class="ai-loi">' + doan.split('\n').map(h).join('<br>') + '</p>';
+  }).join('');
+}
+
+/* ═══════════ TRẢ LỜI TRONG MÁY ═══════════
+   Động cơ luật trong máy: chạy khi chưa nối máy chủ, khi bộ não máy chủ
+   chưa sẵn, và cho các câu không cần suy nghĩ (xem nenHoiMayChu). */
+function traLoiTrongMay(cauHoi){
 
   /* ── LỚP HỘI THOẠI (src/tro-ly-hoi-thoai.js, V50·168) ──
      Câu chào, cảm ơn, đồng ý, tạm biệt, chê, khen được ĐÁP NHƯ NGƯỜI —
@@ -22306,7 +22391,7 @@ G.chatHoi = function(cauHoi){
     /* Chưa đưa việc nào mà khách nói "chưa hiểu" giữa chuỗi: là chưa hiểu
        CÂU HỎI — hỏi lại đơn giản hơn, không đọc câu ấy thành câu trả lời. */
     if(!gt && dangHoi) gt = { mo: hs.nhom === 'hocVien' ? 'Mình hỏi đơn giản hơn nhé.' : 'Dạ, em hỏi đơn giản hơn ạ.',
-      chinh: 'Anh chị chọn một ý gần nhất bên dưới là được — không cần đúng hẳn.', hoi:dangHoi.hoi, chips:dangHoi.chips };
+      chinh: 'Anh chị trả lời ngắn một ý gần nhất là được — không cần đúng hẳn.', hoi:dangHoi.hoi, chips:dangHoi.chips };
     if(gt){ phatTung({ gon:gt, vai:G.tlVai ? G.tlVai() : null, nguon:[], chuoi: !!dangHoi }); return; }
   }
   if(lc && G.htDapXaGiao){
@@ -22420,7 +22505,7 @@ G.chatHoi = function(cauHoi){
     cauHoi.slice(0, 80) + ' → ' + (d.khan ? 'chuyển người thật' : d.nguon.length + ' nguồn'),
     d.khan ? 'Cảnh báo' : 'Ghi nhận');
   phatTung(d);
-};
+}
 
 /* Chuỗi đang dở: đã có câu mở chuyện và lượt trước của trợ lý đang hỏi một vòng. */
 function coVongDangDo(){
@@ -22576,8 +22661,20 @@ function soDo(buoc){
   }).join('') + '</div>';
 }
 
-function theDap(d){
+function theDap(d, idx){
   var o = '';
+  if(d.v50 && !d.khan){
+    if(d.vaiV50 && !khach()) o += '<div class="ai-nhip">'+ic('shield','w-3 h-3')+'<span>Theo vai '+h(d.vaiV50)+'</span></div>';
+    o += veLoiV50(d.loi);
+    if(d.phuongAn && G.S && G.S.role === 'R01'){
+      o += '<div class="ht-nut">' + (d.daGui
+        ? '<p class="tiny">'+ic('check','w-3 h-3')+' '+h(d.daGui)+'</p>'
+        : '<button class="btn sm" data-gui-bn="'+idx+'"'+(d.dangGui ? ' disabled' : '')+'>'+ic('arrow','w-3 h-3')+
+            (d.dangGui ? 'Đang gửi…' : 'Gửi tới bộ não vận hành')+'</button>' +
+          (d.loiGui ? '<p class="tiny">'+h(d.loiGui)+'</p>' : '')) + '</div>';
+    }
+    return o;
+  }
   if(d.khan)
     return '<div class="ai-khan">'+ic('shield','w-5 h-5')+
       '<div><b>Việc này cần người thật, không phải trợ lý</b>'+
@@ -22728,10 +22825,8 @@ function theDap(d){
         'lúc xảy ra hoặc mã nhà để khoanh sát hơn.')+'</p>';
 
     /* Câu hỏi của vòng — đúng MỘT câu. */
-    o += '<p class="kb-hoi">'+h(c.hoi)+'</p>'+
-      '<div class="kb-goiy">'+ (c.goiY||[]).map(function(g){
-        return '<button class="kb-chip" data-kbv="'+h(g)+'">'+h(g)+'</button>';
-      }).join('') +'</div>';
+    /* Không chip gợi ý (chủ hệ 10/10/2026): người hỏi gõ câu trả lời của mình. */
+    o += '<p class="kb-hoi">'+h(c.hoi)+'</p>';
     if(c.quayLai)
       o += '<p class="kb-quaylai tiny dim">'+ic('compass','w-3 h-3')+
         ' Trả lời xong vòng này, mình quay lại vòng một — lần sau với một con số thật của '+
@@ -22915,7 +23010,7 @@ function bongSoan(m){
     '<div class="ch-bong ch-bong-ai ch-soan">'+bongVai(vai)+
     '<span class="soan-cham" aria-label="đang soạn"><i></i><i></i><i></i></span></div></div>';
 }
-function bongTroLy(m, xung){
+function bongTroLy(m, xung, idx){
   var d = m.dap || {};
   /* Xưng vai một lần: đoạn đầu (hiểu-ý) đã xưng thì đoạn trả lời không
      lặp lại (_khongVai). Câu khẩn không xưng vai — đó là lúc chuyển
@@ -22923,7 +23018,7 @@ function bongTroLy(m, xung){
   var vai = (xung && !d.khan && !d._khongVai) ? d.vai : null;
   return '<div class="ch-luot ch-troly">'+
     '<div class="ch-anh ch-anh-ai">'+ic('spark','w-4 h-4')+'</div>'+
-    '<div class="ch-bong ch-bong-ai">'+bongVai(vai)+theDap(d)+
+    '<div class="ch-bong ch-bong-ai">'+bongVai(vai)+theDap(d, idx)+
       '<span class="cs-gio">'+h(gio(m.luc))+'</span></div></div>';
 }
 
@@ -22938,11 +23033,12 @@ function cuonChat(live){
     '<div class="ch-luot ch-troly"><div class="ch-anh ch-anh-ai">'+ic('spark','w-4 h-4')+'</div>'+
     '<div class="ch-bong ch-bong-ai"><p class="ai-loi">'+h(loiChao())+'</p></div></div>' +
     /* Xưng vai MỘT lần (bóng đầu của trợ lý) — in lại ở mọi bóng là giọng máy. */
-    (function(){ var daXung = false; return G.CHAT.map(function(m){
+    (function(){ var daXung = false; return G.CHAT.map(function(m, i){
       if(m.ai === 'toi') return bongToi(m);
+      if(m.dap && m.dap.dangCho) return bongSoan(m);
       if(live && m._hien && m._hien > bay) return bongSoan(m);
       var x = !daXung; daXung = true;
-      return bongTroLy(m, x);
+      return bongTroLy(m, x, i);
     }).join(''); })();
 }
 
@@ -22954,12 +23050,6 @@ function ve(){
   var list = document.querySelectorAll('.ch-khung');
   if(!list.length) return;
   var html = cuonChat(true);
-  /* Gia đình: hàng câu gợi ý chỉ đứng trước lượt đầu — có chuyện rồi thì ô gõ là chính. */
-  var gy = document.querySelectorAll('.cs-goiy');
-  for(var q = 0; q < gy.length; q++) gy[q].hidden = !!(khach() && G.CHAT.length);
-  /* Ô chat nổi: gợi ý chỉ đứng trước lượt đầu — kể cả khi lượt đến từ một chip. */
-  var tg = document.getElementById('tlnGoiy');
-  if(tg && G.CHAT.length) tg.innerHTML = '';
   for(var i = 0; i < list.length; i++){
     list[i].innerHTML = html; list[i].scrollTop = list[i].scrollHeight;
   }
@@ -22999,18 +23089,9 @@ G.VIEWS['tro-ly'] = function(){
     '</div>' +
     '<div id="chKhung" class="ch-khung cs-cuon">'+cuonChat()+'</div>' +
     '<div class="cs-go">' +
-      /* ── CÂU GỢI Ý Ở LẠI SUỐT CUỘC TRÒ CHUYỆN ──
-         Bản đầu tôi giấu chúng đi sau câu hỏi thứ nhất, vì trên màn
-         hẹp chúng xuống dòng thành năm hàng và ăn mất 175px của dòng
-         chuyện. Bộ kiểm mục 18 đỏ ngay, và nó đúng: một phụ huynh
-         không biết mở lời thì ở lượt thứ năm cũng vẫn không biết, chứ
-         không phải chỉ ở lượt thứ nhất.
-         Chỗ ngồi lấy lại được bằng cách khác — cho chúng chạy ngang
-         một hàng và cuộn, hết 35px thay vì 175px. Sửa cái chiếm chỗ,
-         đừng bỏ cái có ích. */
-      '<div class="cs-goiy">' +
-      ((kh && G.CHAT.length) ? [] : kh ? goiY().slice(0, 4) : goiY()).map(function(g){ return '<button class="chip" data-aiq="'+h(g)+'">'+h(g)+'</button>'; }).join('') +
-      '</div>' +
+      /* V50 (chủ hệ 10/10/2026): BỎ hàng câu gợi ý. Trợ lý trả lời đúng
+         câu người ta gõ; một hàng câu soạn sẵn kéo người hỏi về câu của
+         máy thay vì câu của họ. Lời chào đầu đã nói có thể hỏi gì. */
       '<div class="cs-o">' +
         '<textarea id="aiQ" rows="1" autocomplete="off" placeholder="'+
           (kh ? 'Nhà mình đang mắc chuyện gì?' : 'Tra phác đồ, kịch bản, mô thức, tình huống…')+
@@ -23020,7 +23101,8 @@ G.VIEWS['tro-ly'] = function(){
         '<button class="cs-nut pri" data-act="ai-ask" aria-label="Gửi">'+ic('arrow')+'</button>' +
       '</div>' +
       '<p class="cs-meo">Enter để gửi · Shift+Enter xuống dòng · ' +
-        'cuộc trò chuyện chạy trong máy, không gửi đi đâu cả.</p>' +
+        (coMayChu() ? 'trả lời qua máy chủ Học viện; tên, số điện thoại bị chặn trước khi tới bộ não AI, nội dung câu hỏi không lưu lại.'
+                    : 'đang trả lời ngay trong máy, không gửi đi đâu cả.')+'</p>' +
     '</div></div>';
 
   /* ══ CỘT PHẢI ══
@@ -23073,7 +23155,8 @@ G.VIEWS['tro-ly'] = function(){
         'Nghe chuyện bằng lời thường ngày, không bắt ai nói đúng thuật ngữ.',
         'Tra trong kho của Học viện và chỉ ra đúng tư liệu, có mã để mở lại.',
         'Trả lời trong đúng phần vai và chặng của tài khoản đang dùng.',
-        'Chạy hoàn toàn trong máy — chuyện của nhà mình không gửi đi đâu cả.'
+        'Biết người hỏi thuộc vai nào, đọc được điều người hỏi đang lo, trả lời đúng câu vừa hỏi.',
+        'Câu hỏi đi qua máy chủ Học viện: tên, số điện thoại, địa chỉ bị chặn lại trước khi tới bộ não AI; máy chủ không lưu nội dung câu hỏi. Chưa nối máy chủ thì trả lời ngay trong máy.'
       ])+'</div>'+
     '<div class="card pad-sm">'+
       '<div class="up mb" style="color:var(--gita-do-ink)">'+ic('x','w-4 h-4')+' TUYỆT ĐỐI KHÔNG</div>'+
@@ -23169,6 +23252,8 @@ document.addEventListener('click', function(e){
      gợi ý sẽ mở nhầm một cửa sổ chẳng liên quan. */
   var v = e.target.closest && e.target.closest('[data-kbv]');
   if(v){ G.chatHoi(v.getAttribute('data-kbv')); return; }
+  var gb = e.target.closest && e.target.closest('[data-gui-bn]');
+  if(gb){ guiBoNao(Number(gb.getAttribute('data-gui-bn'))); return; }
   var x = e.target.closest && e.target.closest('[data-xin]');
   if(x){
     var p = x.getAttribute('data-xin').split('|');
@@ -23603,7 +23688,8 @@ var G = window.G || {}; window.G = G;
     if(g.mo) o += '<p class="ai-loi">' + esc(g.mo) + '</p>';
     if(g.chinh) o += '<p class="ai-loi">' + (g.html ? g.chinh : esc(g.chinh)) + '</p>';
     if(g.hoi) o += '<p class="kb-hoi">' + esc(g.hoi) + '</p>';
-    if(g.chips && g.chips.length) o += '<div class="kb-goiy">' + g.chips.map(function(x){ return '<button class="kb-chip" data-kbv="' + esc(x) + '">' + esc(x) + '</button>'; }).join('') + '</div>';
+    /* g.chips vẫn là DỮ LIỆU (bộ thử đọc, chuỗi dùng để hiểu câu trả lời
+       ngắn) nhưng không vẽ thành nút: chủ hệ 10/10/2026 bỏ câu gợi ý. */
     var ds = (g.nut || []).slice();
     if(g.baiDoc) ds.push({ nhan:'Bài đọc ngắn: ' + ngan(g.baiDoc.ten, 48), v:g.baiDoc.go });
     if(ds.length) o += '<div class="ht-nut">' + ds.map(function(n){
@@ -25075,7 +25161,6 @@ var G = window.G || {}; window.G = G;
             'title="Ẩn hẳn — hiện lại ở mép phải màn">' + ic('x') + '</button>' +
         '</header>' +
         '<div id="chKhungNoi" class="ch-khung tln-cuon"></div>' +
-        '<div class="tln-goiy" id="tlnGoiy"></div>' +
         '<div class="tln-go">' +
           '<textarea id="aiQNoi" rows="1" autocomplete="off" ' +
             'placeholder="Nhà mình đang mắc chuyện gì?"></textarea>' +
@@ -25128,7 +25213,6 @@ var G = window.G || {}; window.G = G;
     var ten = (G.S && G.S.acc && G.S.acc.ten) || '';
     if (duoi) duoi.innerHTML = '<span class="tln-cham"></span>đang nghe' +
       (ten ? ' · cùng ' + h(ten) : '');
-    napGoiy();
     if (G.veChat) G.veChat(); else napKhung();
     setTimeout(function () {
       var i = document.getElementById('aiQNoi'); if (i) i.focus();
@@ -25171,22 +25255,14 @@ var G = window.G || {}; window.G = G;
     var k = document.getElementById('chKhungNoi');
     if (k && G.chatCuon) { k.innerHTML = G.chatCuon(); k.scrollTop = k.scrollHeight; }
   }
-  function napGoiy() {
-    var g = document.getElementById('tlnGoiy');
-    if (!g || !G.chatGoiY) return;
-    /* Chỉ hiện gợi ý khi chưa có lượt nào — đỡ rối, đúng tinh thần "giảm
-       phần dư thừa". Có chuyện rồi thì ô gõ là chính. */
-    if (G.CHAT && G.CHAT.length) { g.innerHTML = ''; return; }
-    g.innerHTML = G.chatGoiY().slice(0, 3).map(function (q) {
-      return '<button class="tln-chip" data-aiq="' + h(q) + '">' + h(q) + '</button>';
-    }).join('');
-  }
+  /* V50 (chủ hệ 10/10/2026): ô nổi không còn hàng câu gợi ý — người hỏi
+     gõ đúng câu của mình, trợ lý trả lời đúng câu ấy. */
 
   function guiNoi() {
     var i = document.getElementById('aiQNoi'); if (!i) return;
     var v = String(i.value || '').trim(); if (!v) return;
     if (G.chatHoi) G.chatHoi(v);      /* G.chatHoi → ve() cập nhật #chKhungNoi */
-    i.value = ''; caoNoi(i); napGoiy();
+    i.value = ''; caoNoi(i);
   }
   function caoNoi(el) {
     if (!el) return;
@@ -25207,11 +25283,6 @@ var G = window.G || {}; window.G = G;
       else if (act === 'an') an();
       else if (act === 'hien') { hien(); moPanel(); }
       else if (act === 'gui') guiNoi();
-      return;
-    }
-    /* Chip trong ô nổi: bộ bắt chung đã gửi câu; ở đây chỉ dọn gợi ý. */
-    if (e.target.closest && e.target.closest('#tlnGoiy [data-aiq]')) {
-      setTimeout(napGoiy, 0);
       return;
     }
     /* Chạm vào thẻ đang thu gọn để mở lại nguyên cuộc trò chuyện. */
@@ -83485,6 +83556,7 @@ function topBar(){
     '<button class="brand" data-v="'+h((G.PORTALS[r.portal]||{}).home||'ban-do')+'" style="gap:11px">'+
     '<span class="mark">'+G.dauGita()+'</span><div class="deskonly" style="text-align:left">'+
     '<div class="nm">GITA 365</div><div class="sub">'+h(G.L('brandSub'))+'</div></div></button></div>'+
+    '<span id="lsNut" class="ls-cum">'+nutLichSu()+'</span>'+
     '<button id="search" data-act="cmd">'+ic('search')+'<span>'+h(G.L('search'))+'</span><kbd>Ctrl K</kbd></button>'+
     '<span class="grow"></span>'+
     '<span class="chip deskonly" style="color:'+r.c+';border-color:'+r.c+'55">'+ic('shield','w-3 h-3')+h(r.short)+' · LV'+r.lv+'</span>'+
@@ -83741,6 +83813,7 @@ function render(){
   if(left) left.innerHTML = leftNav();
   /* Thanh ngang phần chính: đồng bộ tab đang sáng theo nhóm của màn */
   var hn = document.getElementById('hnav'); if(hn) hn.innerHTML = hnav();
+  veNutLichSu();
   /* Thanh dưới phải vẽ lại mỗi lần đổi màn, không thì ô đang đứng sáng
      ở chỗ cũ và nó chỉ sai đường cho người dùng. */
   if(G.duoiVe) G.duoiVe();
@@ -83770,10 +83843,46 @@ G.save   = save;
 G.load   = load;
 G.dangXuat = function(){ var b=document.querySelector('[data-act="logout"]'); if(b) b.click(); };
 
+/* ── LỊCH SỬ MÀN: mũi tên ← màn trước · → màn đang làm (chủ hệ 10/10/2026) ──
+   Hai ngăn xếp trong phiên: `sau` là các màn đã đi qua, `toi` là các màn vừa
+   lùi khỏi — bấm → là quay lại đúng màn đang tương tác dở. Đi một màn mới thì
+   ngăn `toi` xoá, như trình duyệt. Không ghi ra đĩa: lịch sử của một phiên. */
+G.LS = G.LS || { sau: [], toi: [] };
+var diLichSu = false;
+function denLichSu(tu, sang){
+  var ls = G.LS;
+  while(ls[tu].length){
+    var v = ls[tu].pop();
+    if(v === G.S.view || !G.manCoThat(v) || !G.allowed(v)) continue;
+    var cu = G.S.view;
+    diLichSu = true;
+    try{ G.go(v); } finally { diLichSu = false; }
+    if(G.S.view === v){ if(cu) ls[sang].push(cu); veNutLichSu(); return true; }
+    ls[tu].push(v); return false;                  /* bị chặn (hạ nhịp…) — giữ nguyên */
+  }
+  veNutLichSu();
+  return false;
+}
+G.lsLui = function(){ if(!denLichSu('sau', 'toi')) U.toast('Đây là màn đầu tiên của phiên này.', 'ok'); };
+G.lsToi = function(){ if(!denLichSu('toi', 'sau')) U.toast('Không có màn nào để quay lại.', 'ok'); };
+function tenManLs(v){ var it = v && G.navItem ? G.navItem(v) : null; return it ? (G.iname ? G.iname(it) : it.t) : (v || ''); }
+function nutLichSu(){
+  var ls = G.LS, coSau = ls.sau.length > 0, coToi = ls.toi.length > 0;
+  return '<button class="tbtn ls-nut" data-act="ls-lui"'+(coSau?'':' disabled')+' aria-label="Về màn trước" title="'+
+      h(coSau ? 'Về màn trước: '+tenManLs(ls.sau[ls.sau.length-1])+' (Alt + ←)' : 'Chưa có màn trước')+'">'+ic('arrowL')+'</button>'+
+    '<button class="tbtn ls-nut" data-act="ls-toi"'+(coToi?'':' disabled')+' aria-label="Quay lại màn đang làm" title="'+
+      h(coToi ? 'Quay lại màn đang làm: '+tenManLs(ls.toi[ls.toi.length-1])+' (Alt + →)' : 'Không có màn để quay lại')+'">'+ic('arrow')+'</button>';
+}
+function veNutLichSu(){ var el = document.getElementById('lsNut'); if(el) el.innerHTML = nutLichSu(); }
+
 G.go = function(v){
   if(!G.manCoThat(v)) return;
   if(!G.allowed(v)){ U.toast(G.L('lock'),'err'); return; }
   if(G.isCanh && G.isCanh(v) && G.throttled && G.throttled()) return;
+  if(!diLichSu && G.S.view && G.S.view !== v){
+    G.LS.sau.push(G.S.view); if(G.LS.sau.length > 40) G.LS.sau.shift();
+    G.LS.toi = [];
+  }
   if(['thanh-toan','quy-trinh-tc'].indexOf(G.S.view) >= 0 &&
       ['thanh-toan','quy-trinh-tc'].indexOf(v) < 0 &&
       G.xoaThongTinNhanThanhToan) G.xoaThongTinNhanThanhToan();
@@ -84209,6 +84318,8 @@ on('[data-act]', function(el){
     _lo.classList.toggle('open', _mo);
     document.getElementById('scrim').classList.toggle('on', _mo);
   }
+  else if(a==='ls-lui'){ G.lsLui(); }
+  else if(a==='ls-toi'){ G.lsToi(); }
   else if(a==='thu-cot'){
     /* Thu gọn / mở lại hai cột. Đổi CLASS THÂN TRANG chứ không dựng lại
        vỏ: dựng lại vỏ thì mất trạng thái cuộn và nhấp nháy. Vẽ lại thanh
@@ -84342,6 +84453,11 @@ document.addEventListener('input', function(e){
 document.addEventListener('keydown', function(e){
   if((e.ctrlKey||e.metaKey) && e.key && e.key.toLowerCase()==='k'){ e.preventDefault(); if(G.S.acc) openCmd(); }
   if(e.key==='Escape'){ U.closeModal(); document.getElementById('cmd').classList.remove('on'); closeMobile(); }
+  /* Alt + ← / Alt + → : màn trước · màn đang làm. Không bắt khi đang gõ chữ. */
+  if(e.altKey && G.S.acc && !/^(INPUT|TEXTAREA|SELECT)$/.test((e.target && e.target.tagName) || '')){
+    if(e.key === 'ArrowLeft'){ e.preventDefault(); G.lsLui(); }
+    else if(e.key === 'ArrowRight'){ e.preventDefault(); G.lsToi(); }
+  }
   if(e.key==='Enter' && e.target.id==='inP') doLogin(document.getElementById('inU').value, e.target.value);
   /* Enter trên #aiQ do src/tro-ly-chat.js xử lý — một chỗ, không ba. */
   if(e.key==='Enter' && e.target.id==='cmdIn'){
