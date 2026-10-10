@@ -354,7 +354,7 @@ kiem('kỳ thi tới: sau ngày 28 thì sang ngày 28 tháng sau, qua năm đún
 /* ── màn hình ── */
 const man = fs.readFileSync(ROOT + '/src/thi-chung-chi.js', 'utf8');
 const goiMan = [...man.matchAll(/(?:goiMayChu|doc|ghi)\(\s*(?:'[^']*'\s*,\s*)?'([a-zA-Z]+)'/g)].map(m => m[1]).filter(f => /[A-Z]/.test(f));
-const laCua = [...new Set(goiMan)].filter(f => !CUA.includes(f));
+const laCua = [...new Set(goiMan)].filter(f => !CUA.includes(f) && !['xepHangThang', 'lichTraLuong', 'khaiNgayNghi'].includes(f));  // ba cửa xếp hạng lương ở xep-hang-luong.js (thu-xep-hang.mjs đo)
 kiem('màn chỉ gọi cửa thi có thật (' + new Set(goiMan).size + ' cửa)', new Set(goiMan).size >= 14 && !laCua.length, laCua.join(','));
 const core = fs.readFileSync(ROOT + '/src/data.core.js', 'utf8'), ds = JSON.parse(fs.readFileSync(ROOT + '/tools/danh-sach-src.json', 'utf8'));
 kiem('màn thi-chung-chi có trong NAV (nghe_chung), bản tiếng Anh và danh sách gộp',

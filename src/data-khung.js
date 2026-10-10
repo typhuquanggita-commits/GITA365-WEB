@@ -461,6 +461,24 @@ G.KHUNG_DL = {
      ""
     ],
     [
+     "tieuChi",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "coach",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
+     "tuVan",
+     "TEXT",
+     "",
+     ""
+    ],
+    [
      "(ràng buộc)",
      "",
      "PRIMARY KEY (maNha, uid, thang)",

@@ -134,7 +134,7 @@ export async function datCongThi(y, env, db, hoSo) {
 }
 
 /* ═══════════════ CHẤM · ĐẠT HAY KHÔNG (tính lúc đọc) ═══════════════ */
-async function ketQuaLuot(db, l) {
+export async function ketQuaLuot(db, l) {
   const capDef = defThi(l.he, l.cap, l.muc);
   const r = await db.prepare('SELECT boiAi, diem, loiTruot, chiTiet, ghiChu, luc FROM thiCham WHERE luot = ? ORDER BY luc ASC, rowid ASC').bind(l.id).all();
   /* Mỗi người chấm đúng MỘT lần (chỉ mục duy nhất luot+boiAi); chỉ tính

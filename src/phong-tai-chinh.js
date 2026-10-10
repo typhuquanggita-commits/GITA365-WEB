@@ -805,6 +805,9 @@ G.VIEWS = G.VIEWS || {};
         'kế toán thu không có việc gì phải biết lương kế toán chi.</p></div>';
 
     o += U.sec('Kỳ ' + d.ky, d.vi || '');
+    /* Ngày trả lương do máy chủ tính (05 tháng sau, trùng ngày nghỉ thì 08). */
+    if (d.ngayTra) o += '<p class="sm mb">Ngày trả lương kỳ này: <b>' + h(d.ngayTra.ngay.split('-').reverse().join('/')) + '</b>' +
+      (d.ngayTra.doi ? ' <span class="tiny muted">· ' + h(d.ngayTra.lyDo) + ', lùi sang ngày 08</span>' : '') + '</p>';
     o += U.tbl(['Người', 'Vị trí', 'Điểm', 'Bậc', 'Cứng', 'Theo KPI', 'Ghi nhận', 'Tổng', ''],
       d.dong.map(function (x) {
         var co = x.luongCung !== null && x.luongCung !== undefined;

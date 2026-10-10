@@ -67,6 +67,7 @@ import { quyenCua, VI_TRI_TC, capDuyetTheoTien } from './chi-tieu.js';
 import { chamKpiTaiChinh } from './kpi-tai-chinh.js';
 
 import { BAC } from './vai-tro.js';
+import { ngayTraLuong, docNgayNghi } from './xep-hang-luong.js';
 
 const dinhDang = n => Number(n).toLocaleString('vi-VN') + 'đ';
 
@@ -338,7 +339,9 @@ export async function bangLuong(y, env, db, hoSo) {
   }
 
   const thieu = dong.filter(x => x.thieuHeSo).map(x => x.viTri);
-  return {ok: true, ky, chiDongCuaToi: rieng, so: dong.length, dong,
+  /* Ngày trả: 05 tháng sau, trùng ngày nghỉ thì 08 (chủ hệ chốt 10/2026). */
+  const ngayTra = ngayTraLuong(ky, (await docNgayNghi(db)).khai);
+  return {ok: true, ky, ngayTra, chiDongCuaToi: rieng, so: dong.length, dong,
     bacDiem: BAC_DIEM, nguongNgoiLai: NGUONG_NGOI_LAI,
     daChot: dong.length > 0 && dong.every(x => x.trangThai === 'daChot'),
     choChuHeChot: thieu.length

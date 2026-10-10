@@ -2458,8 +2458,24 @@ CREATE TABLE IF NOT EXISTS suKienKH (id TEXT PRIMARY KEY, maNha TEXT NOT NULL, u
   loai TEXT NOT NULL, giaTri REAL, ngay TEXT NOT NULL, khoaDuy TEXT NOT NULL, ghiChu TEXT, luc TEXT NOT NULL);
 CREATE UNIQUE INDEX IF NOT EXISTS ux_skkh_khoa ON suKienKH (khoaDuy);
 CREATE INDEX IF NOT EXISTS ix_skkh_nha ON suKienKH (maNha, ngay);
+-- danhGiaKH: phiếu tháng của gia đình. tieuChi = năm điểm 1–5 (TIEU_CHI ở
+-- xep-hang-luong.js); coach · tuVan = người phụ trách nhà LÚC GỬI — phiếu tháng
+-- ấy thuộc người đã làm tháng ấy, kể cả khi nhà đổi người phụ trách sau đó.
 CREATE TABLE IF NOT EXISTS danhGiaKH (maNha TEXT NOT NULL, uid TEXT NOT NULL, thang TEXT NOT NULL,
-  nps INTEGER, csat INTEGER, ghiChu TEXT, luc TEXT NOT NULL, PRIMARY KEY (maNha, uid, thang));
+  nps INTEGER, csat INTEGER, ghiChu TEXT, luc TEXT NOT NULL, tieuChi TEXT, coach TEXT, tuVan TEXT, PRIMARY KEY (maNha, uid, thang));
+CREATE INDEX IF NOT EXISTS ix_dgkh_coach ON danhGiaKH (thang, coach);
+CREATE INDEX IF NOT EXISTS ix_dgkh_tuvan ON danhGiaKH (thang, tuVan);
+-- ngayNghi: ngày nghỉ Super Admin khai (Tết âm lịch, nghỉ bù…) cho lịch trả
+-- lương 05/08. Chỉ thêm dòng; dòng mới nhất của mỗi ngày quyết (nghi=0 là gỡ).
+CREATE TABLE IF NOT EXISTS ngayNghi (
+  id     TEXT PRIMARY KEY,
+  ngay   TEXT NOT NULL,
+  nghi   INTEGER NOT NULL,
+  ten    TEXT NOT NULL,
+  boiAi  TEXT NOT NULL,
+  luc    INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_ngaynghi ON ngayNghi (ngay, luc);
 CREATE TABLE IF NOT EXISTS hoSoThang (maNha TEXT NOT NULL, thang TEXT NOT NULL, duLieu TEXT NOT NULL,
   tiemNang INTEGER, tangCS TEXT, chot INTEGER NOT NULL DEFAULT 0, boiAi TEXT, luc TEXT NOT NULL, PRIMARY KEY (maNha, thang));
 
