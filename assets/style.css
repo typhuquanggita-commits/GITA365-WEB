@@ -3094,6 +3094,36 @@ body.hdp-khoa{overflow:hidden}
 .ch-bong-ai{ border:1px solid var(--line); box-shadow:var(--noi-1) }
 .ch-bong{ background:linear-gradient(135deg, var(--gita), var(--gita-sau)) }
 
+/* ── TRỢ LÝ V50 · KHÔNG MÀU NỀN, CHỈ CHỮ ĐEN (chủ hệ 10/10/2026) ──
+   Cố ý MỘT sắc ở cả chế độ sáng lẫn tối: nền trắng, chữ đen #111, viền
+   xám mảnh để tách lượt. Chữ đen trên nền tối thì không đọc được, nên nền
+   trắng đi kèm chữ đen ở MỌI chế độ — không phải quên chế độ tối.
+   Đặt độ nặng bằng phạm vi (.ch-khung, .cs-lo, #tln) chứ không bằng
+   !important: thắng luật thành phần mà vẫn đè lại được khi cần. */
+.cs-lo .cs-win, .cs-lo .cs-dau, .cs-lo .cs-go, .cs-lo .cs-cuon, .cs-lo .cs-o,
+#tln .tln-panel, #tln .tln-dau, #tln .tln-cuon, #tln .tln-go{ background:#fff; color:#111 }
+#tln .tln-panel{ border-color:#d4d4d4; box-shadow:0 12px 32px -14px rgba(0,0,0,.35) }
+#tln .tln-dau{ border-bottom:1px solid #e5e5e5 }
+#tln .tln-dau .tln-ten b, #tln .tln-dau .tln-duoi, #tln .tln-dau .tln-nut{ color:#111 }
+#tln .tln-dau .tln-nut:hover{ background:transparent; text-decoration:underline }
+#tln .tln-dau .tln-anh, .cs-lo .cs-anh, .ch-khung .ch-anh{ background:transparent; color:#111;
+  border:1px solid #d4d4d4; box-shadow:none }
+.ch-khung .ch-bong, .ch-khung .ch-bong-ai{ background:transparent; color:#111; box-shadow:none }
+.ch-khung .ch-bong{ border:1px solid #d4d4d4 }
+.ch-khung .ch-bong-ai{ border:0; padding-left:2px; padding-right:2px }
+.ch-khung .ch-bong *:not(.btn):not(.btn *):not(i){ background:transparent; color:#111 }
+.ch-khung .ch-bong .btn{ background:#fff; color:#111; border:1px solid #9a9a9a }
+.ch-khung .ai-khan{ border:1px solid #111; border-left:4px solid #b42318 }
+.ch-khung .cs-vach{ background:transparent; color:#444; border-color:#e5e5e5 }
+.ch-khung .cs-gio{ color:#555; opacity:1 }
+.ch-khung .soan-cham i{ background:#111 }
+.cs-lo .cs-o, #tln .tln-go textarea{ border-color:#bdbdbd }
+.cs-lo .cs-o textarea, #tln .tln-go textarea{ background:#fff; color:#111 }
+.cs-lo .cs-o textarea::placeholder, #tln .tln-go textarea::placeholder{ color:#666 }
+.cs-lo .cs-meo, .cs-lo .cs-duoi, .cs-lo .cs-ten b{ color:#111 }
+.cs-lo .cs-nut, .cs-lo .cs-nut.pri, #tln .tln-gui{ background:#fff; border:1px solid #9a9a9a; color:#111 }
+#tln.tln-mini .tln-panel::after{ color:#444 }
+
 /* ── SƠ ĐỒ KIẾN TRÚC CRM (kiểu CRMOnline): Người dùng · 3 cột · Dữ liệu ── */
 .crm-so{border:1px solid var(--line-2);border-radius:var(--r-lg);background:var(--surface);
   box-shadow:var(--noi-2), 0 2px 8px -3px color-mix(in srgb,var(--gita) 20%, transparent);
@@ -3247,6 +3277,37 @@ body.hdp-khoa{overflow:hidden}
 .tabs .tab:hover{border-color:var(--gita-vien-2)}
 .tabs .tab.on{background:var(--gita-mo-2);border-color:var(--gita-vien-2);color:var(--gold-2)}
 .tabs .tab:focus-visible{outline:2px solid var(--gita-vien-2);outline-offset:2px}
+/* Mũi tên lịch sử màn — ← màn trước · → màn đang làm (src/app.js · G.lsLui/G.lsToi). */
+.ls-cum{display:inline-flex;gap:6px;align-items:center;flex:none}
+.tbtn.ls-nut[disabled]{opacity:.35;cursor:default}
+/* THANH TRÊN KHÔNG ĐƯỢC ÉP NÚT (10/10/2026). Đo ra: ở 1024px thanh cần
+   1064px, ở 390px cần 423px — trình duyệt co mỗi nút từ 38px xuống 21px
+   (dưới ngưỡng chạm 32px) và đẩy ảnh đại diện ra ngoài mép; ô tìm kiếm thì
+   gãy chữ gợi ý thành sáu dòng chồng lên thanh dưới. Ba bậc:
+   · mọi khổ: nút không co (flex:none), chữ ô tìm kiếm cắt bằng dấu …
+   · ≤1180px: ô tìm kiếm thu về một nút kính lúp, tên người ẩn (ảnh còn)
+   · ≤600px: bỏ mũi tên "tới" (vuốt "lùi" mới là việc hay làm), thanh
+     trượt ngang được thay vì ép nút — không chức năng nào bị bỏ. */
+#top .tbtn,#top .who{flex:none}
+#search{min-width:0}
+#search span{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:1366px){
+  #search{flex:0 0 38px;padding:0;justify-content:center}
+  #search span,#search kbd{display:none}
+}
+@media(max-width:1180px){
+  #top .who .tx,#top .brand .deskonly{display:none}
+  #top .who{padding:4px}
+}
+@media(max-width:1000px){ #top > .chip{display:none} }
+@media(max-width:600px){
+  #top{gap:6px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none}
+  #top::-webkit-scrollbar{display:none}
+  #top .tbtn{width:34px;height:34px}
+  #top .brand{gap:6px}
+  #top .ls-nut[data-act="ls-toi"]{display:none}
+}
+@media(max-width:420px){ #top .brand .mark{display:none} }
 /* Dòng giải thích của bảng rỗng — U.tbl (src/ui.js). */
 .tbl td.tbl-rong{color:var(--ink-3);font-style:italic;text-align:left;white-space:normal}
 

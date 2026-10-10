@@ -100,7 +100,11 @@ export const LOAI = {
   tomTat:    { ten: 'Tóm tắt',              tu: 1, den: 3, ra: 400,  vao: 6000, nho: 7,  r01: false, uuTien: ['gemini'] },
   soan:      { ten: 'Soạn nháp',            tu: 1, den: 3, ra: 1000, vao: 4000, nho: 1,  r01: false },
   phanTich:  { ten: 'Phân tích sâu',        tu: 2, den: 4, ra: 1500, vao: 6000, nho: 1,  r01: false },
-  chienLuoc: { ten: 'Chiến lược cấp hệ',    tu: 3, den: 4, ra: 2000, vao: 6000, nho: 1,  r01: true }
+  chienLuoc: { ten: 'Chiến lược cấp hệ',    tu: 3, den: 4, ra: 2000, vao: 6000, nho: 1,  r01: true },
+  /* Trợ lý V50 (10/10/2026): làn RIÊNG của cửa troLyV50 — lời hệ thống do
+     tro-ly-v50.js dựng theo vai · cảm xúc · ý hỏi. chiTroLy chặn nó ở cửa
+     hỏi đa trí và ở tuyến chặng: làn trò chuyện không phải một loại việc. */
+  troLy:     { ten: 'Trợ lý trò chuyện',    tu: 1, den: 3, ra: 700,  vao: 5000, nho: 0,  r01: false, chiTroLy: true }
 };
 
 /* Lời hệ thống NGẮN — gửi mỗi lượt nên mỗi chữ là token nhân với số lượt. */
@@ -199,8 +203,10 @@ const chuan = s => String(s || '').toLowerCase().replace(/\s+/g, ' ').trim();
 
 async function goiMot(n, env, loai, cau, triThuc, tuy) {
   const l = LOAI[loai], model = mauCua(n, env), ra = (tuy && tuy.ra) || l.ra;
-  const he = LOI_HE + '\n' + ((tuy && tuy.khuon) || KHUON[loai] || '') +
-    (triThuc ? '\nNguyên lý tham chiếu (dùng nếu hợp):\n' + triThuc : '');
+  /* tuy.he: mô-đun gọi tự dựng TRỌN lời hệ thống (trợ lý V50 dựng theo vai
+     · cảm xúc · ý hỏi). Cổng Điều 13 vẫn soát CÂU ở goiTheoLoai trước khi tới đây. */
+  const he = (tuy && tuy.he) || (LOI_HE + '\n' + ((tuy && tuy.khuon) || KHUON[loai] || '') +
+    (triThuc ? '\nNguyên lý tham chiếu (dùng nếu hợp):\n' + triThuc : ''));
   const messages = [{ role: 'system', content: he }, { role: 'user', content: cau }];
   if (n.kieu === 'cf') {
     const r = await env.AI.run(model, { messages, max_tokens: ra });
@@ -347,7 +353,7 @@ const canSoat = r => r.trangThai === 'duyet' && Date.now() - (r.lucSoat || r.luc
 function kiemVao(y, hoSo) {
   const loai = String((y || {}).loai || 'soan');
   const l = LOAI[loai];
-  if (!l) return { loi: { ok: false, code: 'LOAILA', error: 'Loại việc không hợp lệ.' } };
+  if (!l || l.chiTroLy) return { loi: { ok: false, code: 'LOAILA', error: 'Loại việc không hợp lệ.' } };
   if (l.r01 && !laR01(hoSo)) return { loi: { ok: false, code: 'NOPERM', error: 'Việc chiến lược cấp hệ chỉ mở cho Super Admin.' } };
   const cau = String((y || {}).cau || '').trim();
   if (cau.length < 4 || cau.length > l.vao)
@@ -550,7 +556,7 @@ export async function soDaTri(y, env, db, hoSo) {
   return { ok: true, bat: moBat(env), tietKiem: tietKiem(env), tranTai: Math.round(tranTai(env) * 100), loc, loiNcc,
     ncc: NCC.map(n => ({ ma: n.ma, ten: n.ten, bac: n.bac, sanSang: sanSang(n, env), model: mauCua(n, env) || null,
       nganNgay: nganCua(n, env), nganGoc: nganGoc(n, env), bien: n.khoa || 'binding AI', bienMau: n.bienMau })),
-    loai: Object.keys(LOAI).map(k => Object.assign({ ma: k }, LOAI[k], { khuon: KHUON[k] })),
+    loai: Object.keys(LOAI).filter(k => !LOAI[k].chiTroLy).map(k => Object.assign({ ma: k }, LOAI[k], { khuon: KHUON[k] })),
     tinhTuy: TINH_TUY, hanSoat: HAN_SOAT_NGAY, lucCanhMau: (nhip && nhip.luc) || 0,
     kho: { duyet: kho.filter(r => r.trangThai === 'duyet').length, nhap: kho.filter(r => r.trangThai === 'nhap').length,
       canSoat: kho.filter(canSoat).length, dung: kho.reduce((s, r) => s + (r.dung || 0), 0) },
@@ -849,7 +855,7 @@ export async function taoTuyenDaTri(y, env, db, hoSo) {
   const sach = [];
   for (const c of chang) {
     const loai = String((c || {}).loai || ''), de = String((c || {}).de || '').trim();
-    if (!LOAI[loai]) return { ok: false, code: 'SAI', error: 'Chặng có loại việc không hợp lệ: ' + loai };
+    if (!LOAI[loai] || LOAI[loai].chiTroLy) return { ok: false, code: 'SAI', error: 'Chặng có loại việc không hợp lệ: ' + loai };
     if (de.length < 4 || de.length > 2000) return { ok: false, code: 'SAI', error: 'Đề mỗi chặng phải từ 4 đến 2000 ký tự.' };
     sach.push({ loai, de });
   }

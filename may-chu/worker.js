@@ -114,6 +114,7 @@ import { hoiDaTri, hoiDongDaTri, chamDaTri, soDaTri, luuGiaiPhap, duyetGiaiPhap,
   taoTuyenDaTri, datTuChayTuyen, chayChangDaTri, docTuyenDaTri } from './bo-nao-da-tri.js';
 import { lapDeAnTaiLieu, chayBuocTaiLieu, docDeAnTaiLieu, datTuChayTaiLieu, lapKeHoachKho } from './xuong-tai-lieu.js';
 import { docViecKet } from './viec-ket.js';
+import { troLyV50, guiThongDiepBoNao, docThongDiepBoNao } from './tro-ly-v50.js';
 import { lapDuAnPhim, docXuongPhimNganSach, datCanhTraPhi, moLaiDuAnPhim, DON_GIU_CHO } from './phim-ngan-sach.js';
 import { docKpiCayTien } from './cay-tien.js';
 import { docDongChay } from './dong-chay.js';
@@ -340,6 +341,7 @@ const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau'
   'hoiDaTri', 'hoiDongDaTri', 'chamDaTri', 'soDaTri',
   'luuGiaiPhap', 'duyetGiaiPhap', 'dsGiaiPhap', 'boSungGiaiPhap', 'canhMauDaTri', 'thuMauDaTri', 'docVongKhoaHoc',
   'taoTuyenDaTri', 'chayChangDaTri', 'docTuyenDaTri',
+  'troLyV50', 'guiThongDiepBoNao', 'docThongDiepBoNao',
   'lapDeAnTaiLieu', 'chayBuocTaiLieu', 'docDeAnTaiLieu', 'datTuChayTaiLieu', 'lapKeHoachKho', 'docViecKet',
   'lapDuAnPhim', 'docXuongPhimNganSach', 'datCanhTraPhi', 'moLaiDuAnPhim', 'docKpiCayTien', 'docDongChay',
   'phimTrangThai', 'phimGuiViec', 'phimXemViec', 'phimTinhHuong', 'phimMienPhi', 'quayKhopMoi', 'quayChuyenDong', 'quayVideoDong', 'taoNhanVatAI', 'quayXem', 'quayXoa', 'quayGiongNoi', 'quayPhimMoi', 'dongGoiPhanTu', 'xemPhanTu',
@@ -781,6 +783,9 @@ async function lam(fn, y, env, db, req) {
   if (fn === 'docVongKhoaHoc')    return await docVongKhoaHoc(y, env, db, hoSo);
   if (fn === 'taoTuyenDaTri')     return await taoTuyenDaTri(y, env, db, hoSo);
   if (fn === 'chayChangDaTri')    return await chayChangDaTri(y, env, db, hoSo);
+  if (fn === 'troLyV50')          return await troLyV50(y, env, db, hoSo);
+  if (fn === 'guiThongDiepBoNao') return await guiThongDiepBoNao(y, env, db, hoSo);
+  if (fn === 'docThongDiepBoNao') return await docThongDiepBoNao(y, env, db, hoSo);
   if (fn === 'lapDeAnTaiLieu')    return await lapDeAnTaiLieu(y, env, db, hoSo);
   if (fn === 'chayBuocTaiLieu')   return await chayBuocTaiLieu(y, env, db, hoSo);
   if (fn === 'docDeAnTaiLieu')    return await docDeAnTaiLieu(y, env, db, hoSo);

@@ -92,6 +92,9 @@ jobs:
       - name: Thử lớp hội thoại trợ lý (nghe như tư vấn viên · phân vai · đúng giới hạn)
         run: node tools/thu-tro-ly-hoi-thoai.mjs
 
+      - name: Thử Trợ lý GITA V50 (vai từ phiên · cảm xúc · khẩn không tới AI · Điều 13 · không gợi ý · SA gửi bộ não)
+        run: node tools/thu-tro-ly-v50.mjs
+
       - name: Chạy thử bộ não vận hành V50 (nhịp mỗi giờ · có khách là chạy · lịch · quyền)
         run: node tools/thu-bo-nao-van-hanh.mjs
 

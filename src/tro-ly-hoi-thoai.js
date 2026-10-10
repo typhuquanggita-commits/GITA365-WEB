@@ -393,7 +393,8 @@ var G = window.G || {}; window.G = G;
     if(g.mo) o += '<p class="ai-loi">' + esc(g.mo) + '</p>';
     if(g.chinh) o += '<p class="ai-loi">' + (g.html ? g.chinh : esc(g.chinh)) + '</p>';
     if(g.hoi) o += '<p class="kb-hoi">' + esc(g.hoi) + '</p>';
-    if(g.chips && g.chips.length) o += '<div class="kb-goiy">' + g.chips.map(function(x){ return '<button class="kb-chip" data-kbv="' + esc(x) + '">' + esc(x) + '</button>'; }).join('') + '</div>';
+    /* g.chips vẫn là DỮ LIỆU (bộ thử đọc, chuỗi dùng để hiểu câu trả lời
+       ngắn) nhưng không vẽ thành nút: chủ hệ 10/10/2026 bỏ câu gợi ý. */
     var ds = (g.nut || []).slice();
     if(g.baiDoc) ds.push({ nhan:'Bài đọc ngắn: ' + ngan(g.baiDoc.ten, 48), v:g.baiDoc.go });
     if(ds.length) o += '<div class="ht-nut">' + ds.map(function(n){
