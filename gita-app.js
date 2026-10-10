@@ -1018,6 +1018,7 @@ G.NAV = [
     {v:'phim-cau-noi',t:'Phim cầu nối cấp độ',        h:'50 phim nối cấp trước → cấp mới → hé cấp sau · 5 giọng chuyên gia · gửi Xưởng phim', ic:'spark', star:1, perm:'pro_consult', capMo:'nghe'},
     {v:'goi-nghe',    t:'Gói nghề · bộ phận chuyên môn', h:'Mỗi vai một gói nghề: sứ mệnh · chuẩn nghề · sát hạch · công cụ', ic:'crown', star:1, perm:'nghe_chung', capMo:'nghe'},
     {v:'assessment',  t:'Assessment Tầng 1 (chẩn đoán)', h:'6 miền · 10 bước bắt buộc · DCI · định hướng chăm sóc — công cụ Tư vấn/Assessor', ic:'check', star:1, perm:'pro_consult', capMo:'nghe'},
+    {v:'phong-vvip',  t:'Phòng VVIP · Master Blueprint', h:'Bảng 80% · nhóm trọng điểm · 12 tài liệu · 10K WOW', ic:'crown', star:1, perm:'pro_consult', capMo:'chung'},
     {v:'hang-vip',    t:'Phân hạng VIP & VVIP',        h:'4 hạng · chuẩn phục vụ · AI chăm sóc',ic:'crown', star:1, perm:'pro_consult', capMo:'nghe'},
     {v:'hoso-vip',    t:'Chuẩn hồ sơ VIP & VVIP',      h:'7 phần · 30 trường · ba mươi giây',  ic:'book', star:1, perm:'pro_consult', capMo:'nghe'},
     {v:'cay-tien',    t:'Cây tiền — chăm sóc VIP',     h:'4 việc · điểm cây tiền · 12 nhịp',   ic:'seed', perm:'pro_consult', capMo:'nghe'},
@@ -1640,6 +1641,7 @@ G.ITEM_EN = {
   'referral':['Referral trigger sheet','5 portraits · 12 signals · PAIN GOAL GAP'],
   'chan-dung-kh':['Six customer portraits','Read the family right, send the right path'],
   'do-luong-kh':['Customer measurement system','7 metrics · 6 cadences · improvement loop'],
+  'phong-vvip':['VVIP office · Master Blueprint','80% board · key accounts · 12-document dossier · 10K WOW'],
   'hang-vip':['VIP & VVIP tiers','4 tiers · service standards · AI care'],
   'cay-tien':['Money tree — VIP care','4 moves · money-tree score · 12 cadences'],
   'cay-tien-vip':['VIP Money Tree · 28 capabilities','4 pillars · 5 clusters · 28 strengths caring for VIP profiles'],
@@ -21882,6 +21884,577 @@ G.BTG_ANH = G.BTG_ANH || {};
 
 })();
 
+/* ═════════ src/phong-vvip.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   GITA 365 — PHÒNG VVIP (màn hình) · khu Khách hàng & CRM
+
+   Chủ hệ 10/10/2026 gửi "GITA 365 VVIP — MASTER BLUEPRINT 1.0" và dặn:
+   "ứng dụng vào phần Khách hàng và CRM để tối ưu hóa cho hệ thống khách
+   hàng VIP và VVIP … nghiêm cấm làm hời hợt."
+
+   Màn này là chỗ LÀM VIỆC của bốn tài sản cốt lõi Blueprint chọn trước:
+   bảng điều khiển 80% · CRM nhóm trọng điểm · thư viện điểm chạm WOW · bộ
+   hồ sơ 12 tài liệu — cộng chiến dịch và toàn văn Blueprint.
+
+   KHÔNG có một chữ nội dung Blueprint nào trong tệp này: src/ gộp thành
+   gita-app.js tải trước đăng nhập, ai mở trang cũng đọc được. Mọi nội dung
+   và số liệu đi xuống từ máy chủ (may-chu/vvip.js) theo vai. Luật nằm ở máy
+   chủ; đây chỉ là cách trình bày.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+G.VIEWS = G.VIEWS || {};
+
+(function () {
+  /* Lớp giao diện chung ở G.U (ui.js) — cùng lối các màn khác. Bản đầu viết
+     window.U || {}: window.U không tồn tại, màn giữ một vật rỗng và mọi U.tbl
+     nổ — mà nổ ở ngăn có dữ liệu, nên lượt dựng đầu (đang tải) vẫn trông lành. */
+  var U = G.U, h = U.h, ic = U.ic;
+  G.VV = G.VV || { tab: 'tong', nd: null, bang: null, nhan: null, pv: null, dc: null, cd: null, hs: null, maNha: '', bao: '' };
+  function goi(fn, y) {
+    if (!G.goiMayChu) return Promise.resolve({ ok: false, error: 'Chưa nối máy chủ.' });
+    return G.goiMayChu(fn, y || {}).catch(function (e) { return { ok: false, error: (e && e.message) || 'Không gọi được máy chủ.' }; });
+  }
+  function ve() { if (G.S && G.S.view === 'phong-vvip' && G.render) G.render(); }
+  function bao(x, okMsg) {
+    U.toast(x && x.ok ? okMsg : ((x && x.error) || 'Không thực hiện được.'), x && x.ok ? 'ok' : 'err');
+  }
+  var TAI = {
+    tong: function () { goi('bangVvip').then(function (x) { G.VV.bang = x; ve(); }); },
+    nhan: function () { goi('nhanDienVvip').then(function (x) { G.VV.nhan = x; ve(); }); },
+    phucvu: function () { goi('soatPhucVuVvip').then(function (x) { G.VV.pv = x; ve(); }); },
+    wow: function () { goi('dsDiemCham').then(function (x) { G.VV.dc = x; ve(); }); },
+    chiendich: function () { goi('dsChienDichVvip').then(function (x) { G.VV.cd = x; ve(); }); },
+    vanhanh: function () {
+      G.VV.vh = 'dang';
+      var lay = [goi('docKhoiDong'), goi('dsYeuCauVvip'), (G.S && G.S.roleObj && G.S.roleObj.lv <= 3) ? goi('dsChiPhiPhucVu') : Promise.resolve(null)];
+      Promise.all(lay).then(function (r) { G.VV.vh = { kd: r[0], yc: r[1], cp: r[2] }; ve(); });
+    }
+  };
+  function napNoiDung() { if (!G.VV.nd) goi('noiDungVvip').then(function (x) { G.VV.nd = x; ve(); }); }
+  G.vvTab = function (t) { G.VV.tab = t; ve(); window.scrollTo && window.scrollTo(0, 0); };
+  G.vvTaiLai = function () { var t = G.VV.tab; G.VV[{ tong: 'bang', nhan: 'nhan', phucvu: 'pv', wow: 'dc', chiendich: 'cd', vanhanh: 'vh' }[t]] = null; ve(); };
+
+  /* ── thao tác ── */
+  G.vvDeXuat = function (el) {
+    var f = el.closest('form'), x = { maNha: f.maNha.value, nhom: f.nhom.value, lyDo: f.lyDo.value };
+    goi('deXuatNhomVvip', x).then(function (r) { bao(r, 'Đã gửi đề xuất — chờ một người duyệt khác.'); if (r.ok) { G.VV.nhan = null; ve(); } });
+    return false;
+  };
+  G.vvDuyetNhom = function (el) {
+    var id = el.getAttribute('data-id'), quyet = el.getAttribute('data-q');
+    var ghiChu = '';
+    var o = el.closest('.vv-cho'), o2 = o && o.querySelector('textarea');
+    if (o2) ghiChu = o2.value;
+    goi('duyetNhomVvip', { id: id, quyet: quyet, ghiChu: ghiChu }).then(function (r) { bao(r, quyet === 'tuChoi' ? 'Đã từ chối.' : 'Đã duyệt — ảnh chụp bảy dấu hiệu đã vào hồ sơ quyết định.'); if (r.ok) { G.VV.nhan = null; ve(); } });
+  };
+  G.vvPhanCong = function (el) {
+    var f = el.closest('form');
+    goi('phanCongVvip', { maNha: f.maNha.value, vaiTro: f.vaiTro.value, nguoi: f.nguoi.value, lyDo: f.lyDo.value })
+      .then(function (r) { bao(r, 'Đã phân công ' + (r.nguoi || '') + ' (hạng ' + (r.hang || '') + ')' + (r.ngoaiChuan ? ' — NGOÀI CHUẨN' : '') + '.'); if (r.ok) { G.VV.pv = null; ve(); } });
+    return false;
+  };
+  G.vvMoHoSo = function (el) {
+    var f = el.closest('form'), ma = (f.maNha.value || '').trim();
+    G.VV.maNha = ma; G.VV.hs = null;
+    if (ma) goi('docHoSoVvip', { maNha: ma }).then(function (r) { G.VV.hs = r; ve(); });
+    ve(); return false;
+  };
+  G.vvLuuTaiLieu = function (el) {
+    var f = el.closest('form'), tl = f.getAttribute('data-tl'), nd = {};
+    Array.prototype.forEach.call(f.querySelectorAll('[data-k]'), function (o) { nd[o.getAttribute('data-k')] = o.value; });
+    goi('luuHoSoVvip', { maNha: G.VV.maNha, taiLieu: tl, noiDung: nd }).then(function (r) {
+      bao(r, 'Đã lưu tài liệu ' + tl + ' — bản ' + (r.phienBan || '') + '.');
+      if (r.ok) goi('docHoSoVvip', { maNha: G.VV.maNha }).then(function (x) { G.VV.hs = x; ve(); });
+    });
+    return false;
+  };
+  G.vvSoanDC = function (el) {
+    var f = el.closest('form'), d = {};
+    Array.prototype.forEach.call(f.querySelectorAll('[data-k]'), function (o) { d[o.getAttribute('data-k')] = o.value; });
+    goi('soanDiemCham', { ma: f.ma.value, diemCham: d }).then(function (r) { bao(r, 'Đã nộp ' + (r.ma || '') + ' — chờ một người khác duyệt đủ mười tiêu chuẩn.'); if (r.ok) { G.VV.dc = null; ve(); } });
+    return false;
+  };
+  G.vvDuyetDC = function (el) {
+    var ma = el.getAttribute('data-ma'), box = el.closest('.vv-dc'), chuan = [];
+    Array.prototype.forEach.call(box.querySelectorAll('input[type=checkbox]:checked'), function (c) { chuan.push(Number(c.value)); });
+    goi('duyetDiemCham', { ma: ma, chuan: chuan }).then(function (r) { bao(r, 'Đã bật ' + ma + '.'); if (r.ok) { G.VV.dc = null; ve(); } });
+  };
+  G.vvDungDC = function (el) {
+    goi('duyetDiemCham', { ma: el.getAttribute('data-ma'), quyet: 'tamDung' }).then(function (r) { bao(r, 'Đã tạm dừng.'); if (r.ok) { G.VV.dc = null; ve(); } });
+  };
+  G.vvNapMau = function () { goi('napMauDiemCham').then(function (r) { bao(r, 'Đã nạp ' + (r.moi || 0) + ' điểm chạm mẫu — chờ duyệt.'); if (r.ok) { G.VV.dc = null; ve(); } }); };
+  G.vvGuiDC = function (el) {
+    var f = el.closest('form');
+    goi('kichHoatDiemCham', { ma: f.ma.value, maNha: f.maNha.value, noiDung: f.noiDung.value })
+      .then(function (r) { bao(r, 'Đã ghi lượt chạm vào sổ.'); });
+    return false;
+  };
+  G.vvLapCD = function (el) {
+    var f = el.closest('form'), dt = [];
+    Array.prototype.forEach.call(f.querySelectorAll('input[name=doiTuong]:checked'), function (c) { dt.push(c.value); });
+    var c = { mau: f.mau.value, ten: f.ten.value, mucTieu: f.mucTieu.value, doLuong: f.doLuong.value, noiDung: f.noiDung.value,
+      khongLam: f.khongLam.value, batDau: f.batDau.value, ketThuc: f.ketThuc.value, doiTuong: dt };
+    goi('lapChienDichVvip', { chienDich: c }).then(function (r) { bao(r, 'Đã lập chiến dịch — chờ một người khác duyệt.'); if (r.ok) { G.VV.cd = null; ve(); } });
+    return false;
+  };
+  G.vvDuyetCD = function (el) {
+    goi('duyetChienDichVvip', { id: el.getAttribute('data-id'), quyet: el.getAttribute('data-q') })
+      .then(function (r) { bao(r, 'Đã cập nhật chiến dịch.'); if (r.ok) { G.VV.cd = null; ve(); } });
+  };
+
+  /* ── mảnh trình bày ── */
+  function pct(v) { return v == null ? '—' : String(v).replace('.', ',') + '%'; }
+  function tien(v) { return v == null ? '—' : Math.round(v).toLocaleString('vi-VN') + 'đ'; }
+  function loi(x) { return '<div class="card vv-loi">' + ic('alert') + ' ' + h((x && x.error) || 'Không đọc được.') + '</div>'; }
+  function cho() { return '<p class="muted">Đang đọc từ máy chủ…</p>'; }
+  function nhan(t, cls) { return '<span class="vv-nhan ' + (cls || '') + '">' + h(t) + '</span>'; }
+
+  function veTong() {
+    var b = G.VV.bang;
+    if (!b) { TAI.tong(); return cho(); }
+    if (!b.ok) return loi(b) + '<p class="sm muted">Bảng doanh thu nhóm trọng điểm thuộc luật tài chính: chỉ R01–R03. Các ngăn khác vẫn mở theo vai.</p>';
+    var B = b.baChiSo, o = '';
+    o += '<div class="vv-ba">' +
+      '<div class="vv-o"><div class="vv-k">Doanh thu từ nhóm trọng điểm</div><div class="vv-so">' + pct(B.DOANHTHU.giaTri) + '</div>' +
+        '<div class="sm muted">đích ' + B.DOANHTHU.dich + '% · VVIP ' + pct(B.DOANHTHU.vvip) + ' · VIP ' + pct(B.DOANHTHU.vip) + '</div>' +
+        '<div class="sm">' + tien(B.DOANHTHU.trongDiem) + ' / ' + tien(B.DOANHTHU.tong) + ' · ' + B.DOANHTHU.soNhaVVIP + ' nhà VVIP · ' + B.DOANHTHU.soNhaVIP + ' nhà VIP</div></div>' +
+      '<div class="vv-o"><div class="vv-k">Lợi nhuận đóng góp</div><div class="vv-so">' + (B.LOINHUAN.giaTri == null ? '<span class="vv-chua">chưa đo</span>' : pct(B.LOINHUAN.giaTri)) + '</div>' +
+        (B.LOINHUAN.loiNhuanTrongDiem != null ? '<div class="sm">' + tien(B.LOINHUAN.loiNhuanTrongDiem) + ' / ' + tien(B.LOINHUAN.loiNhuanTatCa) + ' · ' + B.LOINHUAN.nhaCoChiPhi + '/' + B.LOINHUAN.nhaTrongDiem + ' nhà trọng điểm đã ghi chi phí</div>' : '') +
+        '<div class="sm muted">' + h(B.LOINHUAN.vi || 'Thực thu trừ chi phí phục vụ đã ghi, chỉ trên nhà đã ghi chi phí.') + '</div></div>' +
+      '<div class="vv-o"><div class="vv-k">Tăng trưởng từ nhóm trọng điểm</div><div class="vv-so">' + (B.TANGTRUONG.giaTri == null ? '<span class="vv-chua">chưa đo</span>' : pct(B.TANGTRUONG.giaTri)) + '</div>' +
+        '<div class="sm muted">' + h(B.TANGTRUONG.giaDinh || B.TANGTRUONG.vi || '') + '</div></div></div>';
+    o += '<p class="sm muted">' + h(b.canhBao) + ' Cửa sổ ' + h(b.cuaSo.tu) + ' → ' + h(b.cuaSo.den) + '. Doanh thu = phiếu thu đã duyệt trừ hoàn tiền đã duyệt.</p>';
+    o += U.sec('Đường cong tập trung doanh thu', 'Bao nhiêu % doanh thu đến từ bao nhiêu % nhà — kiểm chứng giả thuyết 80/20 bằng sổ thật');
+    var t = b.tapTrung;
+    o += '<div class="vv-cot" role="img" aria-label="Tỷ trọng doanh thu luỹ kế theo từng 10% số nhà">' + (t.cong10 || []).map(function (v, i) {
+      return '<div class="vv-c"><div class="vv-cb" style="height:' + Math.max(2, v || 0) + '%"></div><span>' + ((i + 1) * 10) + '%</span><b>' + pct(v) + '</b></div>';
+    }).join('') + '</div>';
+    o += '<p class="sm">' + t.soNha + ' nhà có doanh thu · 20% nhà đầu tạo ' + pct(t.top20) + (t.soNha80 ? ' · ' + t.soNha80 + ' nhà tạo 80% doanh thu' : '') + '</p>';
+    if (b.ruiRo && b.ruiRo.length) o += '<div class="card vv-canh">' + b.ruiRo.map(function (x) { return '<p class="sm">' + ic('alert') + ' ' + h(x) + '</p>'; }).join('') + '</div>';
+    var doDuoc = b.kpi.filter(function (k) { return k.giaTri !== undefined; }), chua = b.kpi.filter(function (k) { return k.giaTri === undefined; });
+    o += U.sec('Mười KPI quản trị — phần ĐO ĐƯỢC', 'Tính từ sổ mỗi lần mở bảng');
+    o += U.tbl(['Nhóm', 'Chỉ số', 'Giá trị', 'Đo thế nào'], doDuoc.map(function (k) {
+      return [h(k.nhom), h(k.chiSo), '<b>' + h(k.donVi === '%' ? pct(k.giaTri) : (k.donVi === 'đồng/nhà mới' ? tien(k.giaTri) : k.giaTri + ' ' + (k.donVi || ''))) + '</b>', h(k.do || '') + (k.ghiChu ? '<br><span class="tiny muted">' + h(k.ghiChu) + '</span>' : '')];
+    }));
+    o += U.sec('Mười KPI quản trị — phần CHƯA ĐO', 'Không trả số 0 thay cho "chưa biết"');
+    o += U.tbl(['Nhóm', 'Chỉ số', 'Vì sao chưa đo'], chua.map(function (k) { return [h(k.nhom), h(k.chiSo), h(k.vi || '')]; }));
+    o += U.sec('Bốn mục tiêu vận hành thử nghiệm');
+    o += U.tbl(['Mục tiêu', 'Ngưỡng', 'Hiện tại', 'Đạt?'], b.thuNghiem.map(function (m) {
+      return [h(m.ten), '≥ ' + m.nguong + '%', m.giaTri == null ? '<span class="muted">' + h(m.vi || 'chưa đo') + '</span>' : '<b>' + pct(m.giaTri) + '</b>',
+        m.dat === undefined ? '—' : (m.dat ? nhan('đạt', 'xanh') : nhan('chưa', 'do'))];
+    }));
+    o += '<p class="sm muted">' + h(b.kpiCanhBao) + '</p>';
+    return o;
+  }
+
+  function veNhan() {
+    var x = G.VV.nhan;
+    if (!x) { TAI.nhan(); return cho(); }
+    if (!x.ok) return loi(x);
+    var o = '<p class="sm">' + h(x.luat) + '</p>';
+    if (x.choDuyet && x.choDuyet.length) {
+      o += U.sec('Đề xuất chờ duyệt', x.duocDuyet ? 'Người duyệt phải khác người đề xuất' : 'Chỉ R01–R03 duyệt');
+      o += x.choDuyet.map(function (d) {
+        return '<div class="card vv-cho"><b>' + h(d.maNha) + ' → ' + h(d.nhom) + '</b> <span class="sm muted">· ' + h(d.deXuat) + '</span><p class="sm">' + h(d.lyDo) + '</p>' +
+          (x.duocDuyet ? '<label class="sm">Ghi chú (bắt buộc khi từ chối, ≥ 20 ký tự)<textarea rows="2"></textarea></label><div class="row" style="gap:8px">' +
+            '<button class="btn" data-id="' + h(d.id) + '" data-q="daDuyet" onclick="G.vvDuyetNhom(this)">Duyệt</button>' +
+            '<button class="btn ghost" data-id="' + h(d.id) + '" data-q="tuChoi" onclick="G.vvDuyetNhom(this)">Từ chối</button></div>' : '') + '</div>';
+      }).join('');
+    }
+    o += U.sec('Bảy dấu hiệu của từng nhà', x.soNeu + ' nhà máy nêu cần xem xét · ' + x.soNha + ' nhà đang học');
+    o += U.tbl(['Nhà', 'Nhóm', 'Dấu hiệu', 'Máy nêu', 'Cần hỗ trợ', 'Phụ trách'].concat(x.xemTien ? ['Doanh thu 12 tháng'] : []), x.ds.map(function (d) {
+      var dau = d.dau.map(function (z) { return '<span class="vv-dau ' + (z.dat === true ? 'co' : (z.dat === null ? 'chua' : 'khong')) + '" title="' + h(z.ten) + '">' + h(z.ma.slice(0, 2)) + '</span>'; }).join('');
+      return [h(d.maNha) + (d.ten ? '<br><span class="tiny muted">' + h(d.ten) + '</span>' : ''), h(d.nhom), dau + '<br><span class="tiny">' + d.dat + '/7' + (d.chuaBiet ? ' · ' + d.chuaBiet + ' chưa biết' : '') + '</span>',
+        d.neu ? nhan(d.neu, 'vang') : '—', d.recovery ? nhan(d.recovery.join(', '), 'do') : '—', h(d.phuTrach.coach) + (d.phuTrach.tuVan ? ' · ' + h(d.phuTrach.tuVan) : '')]
+        .concat(x.xemTien ? [tien(d.doanhThu12)] : []);
+    }));
+    o += U.sec('Đề xuất nhóm cho một nhà', 'Lý do ≥ 30 ký tự, nói bằng dữ kiện');
+    o += '<form class="card vv-form" onsubmit="return G.vvDeXuat(this)"><label>Mã nhà<input name="maNha" required></label>' +
+      '<label>Nhóm<select name="nhom"><option value="VVIP">VVIP — Strategic</option><option value="VIP">VIP — Growth</option><option value="CORE">Rút về Core</option></select></label>' +
+      '<label class="vv-rong">Lý do bằng dữ kiện<textarea name="lyDo" rows="3" minlength="30" required></textarea></label>' +
+      '<button class="btn" type="submit">Gửi đề xuất</button></form>';
+    return o;
+  }
+
+  function vePhucVu() {
+    var x = G.VV.pv;
+    if (!x) { TAI.phucvu(); return cho(); }
+    if (!x.ok) return loi(x);
+    var o = '<p class="sm">' + h(x.luat) + '</p><p class="sm">' + x.tong + ' nhà trọng điểm · <b>' + x.quaHan + '</b> quá hạn chạm · <b>' + x.quaHanGapDoi + '</b> quá gấp đôi nhịp · ' + x.coKeHoach + ' có kế hoạch tiếp theo.</p>';
+    o += U.tbl(['Nhà', 'Nhóm', 'Ngày từ lượt chạm cuối', 'Nhịp', 'Người phục vụ', 'Kế hoạch tiếp theo'], x.ds.map(function (d) {
+      return [h(d.maNha), h(d.nhom) + (d.recovery ? '<br>' + nhan('cần hỗ trợ', 'do') : ''),
+        (d.ngayTuChamCuoi == null ? 'chưa chạm lần nào' : d.ngayTuChamCuoi + ' ngày') + (d.quaHanGapDoi ? ' ' + nhan('quá gấp đôi', 'do') : (d.quaHan ? ' ' + nhan('quá hạn', 'vang') : '')),
+        d.nhip + ' ngày', h(d.coach) + (d.hangCoach ? ' · hạng ' + h(d.hangCoach) : '') + (d.ngoaiChuan ? ' ' + nhan('ngoài chuẩn', 'vang') : '') + (d.chuaPhanCongChuan ? '<br><span class="tiny muted">chưa phân công theo chuẩn</span>' : ''),
+        d.coKeHoachTiep ? h(d.phuTrachCRM) + ' · hẹn ' + h(d.henTiep) : nhan('thiếu', 'vang')];
+    }));
+    o += U.sec('Phân công người phục vụ', 'Hạng đọc từ bảng xếp hạng lương thưởng tháng trước — VVIP cần hạng A');
+    o += '<form class="card vv-form" onsubmit="return G.vvPhanCong(this)"><label>Mã nhà<input name="maNha" required></label>' +
+      '<label>Vai<select name="vaiTro"><option value="coach">Coach phục vụ chính</option><option value="tuVan">Tư vấn viên</option></select></label>' +
+      '<label>Tên đăng nhập nhân sự<input name="nguoi" required></label>' +
+      '<label class="vv-rong">Lý do (bắt buộc ≥ 40 ký tự nếu giao người hạng B cho nhà VVIP)<textarea name="lyDo" rows="2"></textarea></label>' +
+      '<button class="btn" type="submit">Phân công</button></form>';
+    return o;
+  }
+
+  function veHoSo() {
+    var nd = G.VV.nd, x = G.VV.hs;
+    var o = '<form class="card vv-form" onsubmit="return G.vvMoHoSo(this)"><label>Mã nhà<input name="maNha" value="' + h(G.VV.maNha) + '" required></label>' +
+      '<button class="btn" type="submit">Mở bộ hồ sơ</button><p class="tiny muted vv-rong">Mỗi lượt mở được ghi vào nhật ký (Luật 91 · ai truy cập dữ liệu gia đình nào).</p></form>';
+    if (nd && nd.ok) o += '<div class="card"><b>Năm câu bộ hồ sơ phải trả lời được</b><ol class="sm">' + nd.namCauHoi.map(function (c) { return '<li>' + h(c) + '</li>'; }).join('') + '</ol></div>';
+    if (!G.VV.maNha) return o;
+    if (!x) return o + cho();
+    if (!x.ok) return o + loi(x);
+    o += '<p class="sm">Độ đầy: <b>' + x.doDay.coBan + '/' + x.doDay.canViet + '</b> tài liệu cần viết đã có' + (x.doDay.thieu.length ? ' · còn thiếu ' + h(x.doDay.thieu.join(', ')) : '') + '.</p>';
+    o += x.taiLieu.map(function (t) {
+      var ban = x.ban[t.ma], may = x.may[t.ma];
+      var s = '<details class="card vv-tl"' + (t.ma === '01' ? ' open' : '') + '><summary><b>' + h(t.ma) + ' · ' + h(t.ten) + '</b> <span class="tiny muted">' + h(t.en) + '</span> ' +
+        nhan(t.nguon === 'may' ? 'máy ghép' : (t.nguon === 'ghep' ? 'viết + máy' : 'người viết'), t.nguon === 'may' ? 'xanh' : '') + (t.truong ? (ban ? ' ' + nhan('bản ' + ban.phienBan) : ' ' + nhan('chưa có', 'vang')) : '') + '</summary>' +
+        '<p class="sm muted">' + h(t.muc) + '</p>';
+      if (may) s += '<div class="vv-may"><div class="tiny muted">Máy ghép từ sổ</div><pre>' + h(JSON.stringify(may, null, 2)) + '</pre></div>';
+      else if (t.taiChinh) s += '<p class="tiny muted">Tài liệu tài chính — chỉ R01–R03.</p>';
+      if (t.may && !may) s += '<p class="tiny muted">' + h(t.may) + '</p>';
+      if (t.truong) {
+        s += '<form class="vv-form" data-tl="' + h(t.ma) + '" onsubmit="return G.vvLuuTaiLieu(this)">' + t.truong.map(function (f) {
+          var v = ban && ban.noiDung[f.k] || '';
+          return '<label class="vv-rong">' + h(f.t) + (f.batBuoc ? ' *' : '') + '<span class="tiny muted">' + h(f.vi) + '</span><textarea data-k="' + h(f.k) + '" rows="2">' + h(v) + '</textarea></label>';
+        }).join('') + (t.conCan ? '<p class="tiny muted vv-rong">Tài liệu này chứa dữ liệu về con: chỉ lưu được khi cha mẹ đã ký đồng ý dữ liệu con.</p>' : '') +
+          '<button class="btn" type="submit">Lưu thành bản mới</button>' + (ban ? '<span class="tiny muted">bản ' + ban.phienBan + ' · ' + h(ban.boiAi) + '</span>' : '') + '</form>';
+      }
+      return s + '</details>';
+    }).join('');
+    return o;
+  }
+
+  function veWow() {
+    var x = G.VV.dc, nd = G.VV.nd;
+    if (!x) { TAI.wow(); return cho(); }
+    if (!x.ok) return loi(x);
+    var o = '<p class="sm">' + h(x.quyMo) + '</p>';
+    o += U.tbl(['Giai đoạn', 'Phân bổ thiết kế', 'Đang bật', 'Tổng trong thư viện'], x.theoGiaiDoan.map(function (g) {
+      return [h(g.ma + ' · ' + g.ten), g.phanBo.toLocaleString('vi-VN'), '<b>' + g.dangBat + '</b>', g.tong];
+    }));
+    o += '<p class="sm">Đang bật <b>' + x.dangBat + '</b> · mốc thử nghiệm ' + x.moc + ' · sức chứa ' + x.sucChua.toLocaleString('vi-VN') +
+      (x.chuaPhanBo ? ' · <b>' + x.chuaPhanBo.toLocaleString('vi-VN') + ' chưa phân bổ</b> (năm con số của Blueprint cộng ra ' + (x.sucChua - x.chuaPhanBo).toLocaleString('vi-VN') + ' — giữ làm dự phòng, phân bổ sau 90 ngày thử theo QD6)' : '') + '</p>';
+    if (G.S && G.S.acc && G.S.acc.role === 'R01') o += '<button class="btn ghost" onclick="G.vvNapMau()">Nạp 10 điểm chạm mẫu (chờ duyệt)</button>';
+    o += U.sec('Thư viện', 'Đủ bảy lớp mới nộp · người khác người soạn tích đủ mười tiêu chuẩn mới bật');
+    var chuan = nd && nd.ok ? nd.chuanWow10 : [];
+    o += x.ds.length ? x.ds.map(function (d) {
+      var s = '<details class="card vv-dc"><summary><b>' + h(d.ma) + ' · ' + h(d.ten) + '</b> ' + nhan(d.giaiDoan) + ' ' + nhan(d.nhomWow) + ' ' +
+        nhan(d.trangThai === 'daDuyet' ? 'đang bật' : (d.trangThai === 'tamDung' ? 'tạm dừng' : 'chờ duyệt'), d.trangThai === 'daDuyet' ? 'xanh' : 'vang') + '</summary>';
+      s += (nd && nd.ok ? nd.lop7 : []).map(function (l) { return '<div class="tt-o"><b>' + h(l.ten) + '</b><span>' + h(d[l.k] || '') + '</span></div>'; }).join('');
+      s += '<p class="tiny muted">Soạn: ' + h(d.tacGia) + (d.nguoiDuyet ? ' · duyệt: ' + h(d.nguoiDuyet) : '') + '</p>';
+      if (d.trangThai === 'choDuyet' && chuan.length) s += '<fieldset class="vv-chuan"><legend class="sm"><b>Mười tiêu chuẩn WOW</b></legend>' + chuan.map(function (c, i) {
+        return '<label class="sm"><input type="checkbox" value="' + i + '"> ' + h(c) + '</label>'; }).join('') + '</fieldset>' +
+        '<button class="btn" data-ma="' + h(d.ma) + '" onclick="G.vvDuyetDC(this)">Bật điểm chạm</button>';
+      if (d.trangThai === 'daDuyet') s += '<button class="btn ghost" data-ma="' + h(d.ma) + '" onclick="G.vvDungDC(this)">Tạm dừng</button>';
+      return s + '</details>';
+    }).join('') : U.empty('Thư viện chưa có điểm chạm nào', 'Super Admin nạp mười điểm chạm mẫu của Blueprint, hoặc soạn điểm chạm đầu tiên ở dưới.', true);
+    o += U.sec('Gửi một điểm chạm cho một nhà', 'Máy kiểm năm quy tắc tần suất rồi ghi qua sổ chạm — đèn đỏ phải gọi, người chưa qua ba cửa không chạm một mình');
+    o += '<form class="card vv-form" onsubmit="return G.vvGuiDC(this)"><label>Mã điểm chạm<input name="ma" placeholder="DC-M07" required></label><label>Mã nhà<input name="maNha" required></label>' +
+      '<label class="vv-rong">Nội dung đã cá nhân hoá (bỏ trống thì dùng thông điệp chuẩn)<textarea name="noiDung" rows="2"></textarea></label><button class="btn" type="submit">Gửi và ghi sổ</button></form>';
+    if (nd && nd.ok) {
+      o += U.sec('Soạn điểm chạm mới', 'Bảy lớp, mỗi lớp ≥ 12 ký tự');
+      o += '<form class="card vv-form" onsubmit="return G.vvSoanDC(this)"><label>Mã (DC-XXXX)<input name="ma" placeholder="DC-A001"></label>' +
+        '<label>Tên<input data-k="ten" required></label>' +
+        '<label>Giai đoạn<select data-k="giaiDoan">' + nd.giaiDoan5.map(function (g) { return '<option value="' + h(g.ma) + '">' + h(g.ma + ' · ' + g.ten) + '</option>'; }).join('') + '</select></label>' +
+        '<label>Nhóm WOW<select data-k="nhomWow">' + nd.nhomWow10.map(function (g) { return '<option value="' + h(g.ma) + '">' + h(g.ma + ' · ' + g.ten) + '</option>'; }).join('') + '</select></label>' +
+        '<label>Kiểu chạm<select data-k="kieuCham"><option value="nhan">Tin nhắn</option><option value="goi">Cuộc gọi</option><option value="buoi">Buổi làm việc</option><option value="wow">Khoảnh khắc WOW</option></select></label>' +
+        nd.lop7.map(function (l) { return '<label class="vv-rong">' + h(l.ten) + ' <span class="tiny muted">' + h(l.hoi) + '</span><textarea data-k="' + h(l.k) + '" rows="2" required></textarea></label>'; }).join('') +
+        '<button class="btn" type="submit">Nộp chờ duyệt</button></form>';
+    }
+    return o;
+  }
+
+  function veChienDich() {
+    var x = G.VV.cd;
+    if (!x) { TAI.chiendich(); return cho(); }
+    if (!x.ok) return loi(x);
+    var vai = G.S && G.S.acc ? G.S.acc.role : '', duyet = /^R0[1-3]$/.test(vai);
+    var o = '<p class="sm muted">' + h(x.giaDinh) + ' Gắn mã chiến dịch (CD:…) vào ô căn cứ của lượt chạm để lượt ấy được tính.</p>';
+    o += x.ds.length ? U.tbl(['Chiến dịch', 'Trạng thái', 'Đối tượng', 'Đã chạm', 'Doanh thu (trong / trước)', ''], x.ds.map(function (c) {
+      return ['<b>' + h(c.ten) + '</b><br><span class="tiny muted">' + h(c.mau) + ' · ' + h(c.batDau) + ' → ' + h(c.ketThuc) + ' · ' + h(c.id) + '</span><br><span class="tiny">' + h(c.mucTieu) + '</span>',
+        h(c.trangThai), c.ketQua.soDoiTuong + ' nhà', c.ketQua.daCham + ' (' + pct(c.ketQua.phuSong) + ')',
+        c.ketQua.doanhThuTrong === undefined ? '<span class="tiny muted">chỉ R01–R03</span>' : tien(c.ketQua.doanhThuTrong) + ' / ' + tien(c.ketQua.doanhThuTruoc),
+        duyet && c.trangThai === 'choDuyet' ? '<button class="btn" data-id="' + h(c.id) + '" data-q="daDuyet" onclick="G.vvDuyetCD(this)">Duyệt</button> <button class="btn ghost" data-id="' + h(c.id) + '" data-q="tuChoi" onclick="G.vvDuyetCD(this)">Từ chối</button>' : ''];
+    })) : U.empty('Chưa có chiến dịch nào', 'Lập chiến dịch đầu tiên từ một trong mười sáu mẫu ở dưới.', true);
+    var mau = x.mau || { mkt: [], chamSoc: [] };
+    o += U.sec('Lập chiến dịch', 'Mục tiêu đo được · ranh giới KHÔNG làm · tối đa 120 ngày · người khác duyệt');
+    o += '<form class="card vv-form" onsubmit="return G.vvLapCD(this)"><label>Mẫu<select name="mau">' +
+      mau.mkt.map(function (m) { return '<option value="' + h(m.ma) + '">' + h(m.ma + ' · ' + m.ten) + '</option>'; }).join('') +
+      mau.chamSoc.map(function (m) { return '<option value="' + h(m.ma) + '">' + h(m.ma + ' · ' + m.ten) + '</option>'; }).join('') + '<option value="KHAC">Khác</option></select></label>' +
+      '<label>Tên<input name="ten" required></label><label>Bắt đầu<input type="date" name="batDau" required></label><label>Kết thúc<input type="date" name="ketThuc" required></label>' +
+      '<fieldset class="vv-rong"><legend class="sm">Đối tượng</legend>' + ['VVIP', 'VIP', 'CORE', 'NURTURE'].map(function (z) { return '<label class="sm"><input type="checkbox" name="doiTuong" value="' + z + '"> ' + z + '</label>'; }).join(' ') + '</fieldset>' +
+      '<label class="vv-rong">Mục tiêu (thay đổi đo được)<textarea name="mucTieu" rows="2" required></textarea></label>' +
+      '<label class="vv-rong">Đo thế nào<textarea name="doLuong" rows="2" required></textarea></label>' +
+      '<label class="vv-rong">Nội dung triển khai<textarea name="noiDung" rows="3" required></textarea></label>' +
+      '<label class="vv-rong">Ranh giới — điều KHÔNG làm<textarea name="khongLam" rows="2" required></textarea></label>' +
+      '<button class="btn" type="submit">Lập chiến dịch</button></form>';
+    o += U.sec('Mẫu chiến dịch');
+    o += U.tbl(['Mã', 'Tên', 'Ý tưởng / mục tiêu', 'Bước chuyển đổi / ranh giới'], mau.mkt.map(function (m) { return [h(m.ma), h(m.ten), h(m.y), h(m.buoc)]; })
+      .concat(mau.chamSoc.map(function (m) { return [h(m.ma), h(m.ten), h(m.mucTieu), h(m.khong)]; })));
+    return o;
+  }
+
+  function danhSach(a) { return '<ul class="sm vv-ds">' + (a || []).map(function (x) { return '<li>' + h(x) + '</li>'; }).join('') + '</ul>'; }
+  function veBlueprint() {
+    var n = G.VV.nd;
+    if (!n) return cho();
+    if (!n.ok) return loi(n);
+    var o = '<div class="card vv-bia"><div class="up">' + h(n.meta.phienBan) + '</div><h2>' + h(n.meta.ten) + '</h2><p>' + h(n.meta.phu) + '</p><p class="sm muted">' + h(n.meta.doiTuong) + '</p>' +
+      '<p>' + h(n.meta.luanDiem) + '</p><p class="sm"><b>' + h(n.meta.muc80) + '</b></p></div>';
+    o += U.sec('Sáu năng lực trong một kiến trúc');
+    o += U.tbl(['Năng lực', 'Ý nghĩa', 'Trong hệ'], n.meta.sauNangLuc.map(function (x) { return [h(x.ten), h(x.y), h(x.trongHe)]; }));
+    o += U.sec('Phần I · Cây Tiền → GITA 365', n.cayTien.nguon);
+    o += U.tbl(['Chuyển hoá', 'Ý nghĩa', 'Trong hệ'], n.cayTien.chuyenHoa.map(function (x) { return [h(x.ten), h(x.y), h(x.trongHe)]; }));
+    o += U.tbl(['Nguyên tắc', 'Ý nghĩa', 'Trong hệ'], n.cayTien.nguyenTac.map(function (x) { return [h(x.ten), h(x.y), h(x.trongHe)]; }));
+    o += U.sec('Phần II · Bộ hồ sơ 12 tài liệu và năm nhóm quản trị');
+    o += U.tbl(['Mã', 'Tài liệu', 'Nội dung', 'Nguồn'], n.hoSo12.map(function (t) { return [h(t.ma), h(t.ten) + '<br><span class="tiny muted">' + h(t.en) + '</span>', h(t.muc), h(t.nguon === 'may' ? 'máy ghép' : (t.nguon === 'ghep' ? 'viết + máy' : 'người viết'))]; }));
+    o += U.tbl(['Nhóm', 'Đặc điểm', 'Cách phục vụ', 'Nhịp chạm'], n.nhom5.map(function (g) { return [h(g.ten), h(g.dacDiem), h(g.phucVu), g.nhip ? g.nhip + ' ngày' : '—']; }));
+    o += '<p class="sm"><b>' + h(n.luatNhom) + '</b></p>';
+    o += U.sec('Phần III · 10K WOW Touchpoint Engine', n.quyMoWow);
+    o += U.tbl(['Lớp', 'Câu hỏi'], n.lop7.map(function (l) { return [h(l.ten), h(l.hoi)]; }));
+    o += U.tbl(['Nhóm', 'Trải nghiệm', 'Ví dụ'], n.nhomWow10.map(function (g) { return [h(g.ma), h(g.ten), h(g.vd)]; }));
+    o += '<p class="sm">' + h(n.wowKhongDat) + '</p>';
+    o += U.tbl(['Quy tắc tần suất', 'Răng trong hệ'], n.tanSuat5.map(function (t) { return [h(t.y), h(t.rang)]; }));
+    o += '<div class="card"><b>Mười tiêu chuẩn WOW</b>' + danhSach(n.chuanWow10) + '</div>';
+    o += U.sec('Phần IV · Hệ sản phẩm', n.luatSanPham);
+    o += U.tbl(['Mã', 'Sản phẩm', 'Vai', 'Gồm'], n.sanPham6.map(function (p) { return [h(p.ma), h(p.ten), h(p.vai) + (p.dieuKien ? '<br><span class="tiny muted">' + h(p.dieuKien) + '</span>' : ''), h(p.gom.join(' · '))]; }));
+    o += U.tbl(['Từ', 'Có / tới', 'Chưa'], n.chuyenTiep.map(function (c) { return [h(c.tu), h(c.co || c.den || ''), h(c.chua || '')]; }));
+    o += U.sec('Phần V · Demand Generation & Growth Engine', n.khaiThacDinhNghia);
+    o += U.tbl(['Động cơ', 'Ý tưởng', 'Chỉ số'], n.dongCo6.map(function (d) { return [h(d.ten), h(d.y), h(d.chiSo)]; }));
+    o += '<div class="card"><b>Phễu chuẩn</b><ol class="sm">' + n.pheu11.map(function (p) { return '<li>' + h(p) + '</li>'; }).join('') + '</ol></div>';
+    o += U.tbl(['Khi', 'Làm'], n.khaiThac7.map(function (k) { return [h(k.khi), h(k.lam)]; }));
+    o += U.sec('Phần VI · Mục tiêu 80%', n.mucTieu80.canhBao);
+    o += U.tbl(['Chỉ số', 'Nghĩa'], n.mucTieu80.baChiSo.map(function (c) { return [h(c.ten), h(c.y)]; }));
+    o += '<div class="card"><b>Công thức</b>' + danhSach(n.mucTieu80.congThuc) + '<p class="sm muted">' + h(n.mucTieu80.viDu.ghiChu) + ' ' + h(n.mucTieu80.viDu.ketLuan) + '</p></div>';
+    o += U.tbl(['Bước', 'Việc', 'Trong hệ'], n.mucTieu80.namBuoc.map(function (b) { return [h(b.ten), h(b.y), h(b.trongHe)]; }));
+    o += U.sec('Phần VII · Customer Intelligence & Revenue OS', n.quyTacTuDong.khuon);
+    o += U.tbl(['Tầng', 'Trong hệ'], n.tang8.map(function (t) { return [h(t.ma + ' · ' + t.ten), h(t.trongHe)]; }));
+    o += U.tbl(['Thành phần', 'Chức năng bắt buộc', 'Trong hệ'], n.thanhPhan8.map(function (t) { return [h(t.ten), h(t.bat), h(t.trongHe)]; }));
+    o += '<div class="vv-hai"><div class="card"><b>AI tự xử lý theo quy tắc</b>' + danhSach(n.quyTacTuDong.aiTuLam) + '</div><div class="card"><b>Cần người có thẩm quyền</b>' + danhSach(n.quyTacTuDong.canNguoi) + '</div></div>';
+    o += '<p class="sm">' + h(n.quyTacTuDong.ketLuan) + '</p>';
+    o += U.sec('Phần IX · Lộ trình 90 ngày');
+    o += U.tbl(['Ngày', 'Giai đoạn', 'Việc', 'Đầu ra', 'Hệ đã dựng'], n.loTrinh90.map(function (g) { return [g.tu + '–' + g.den, h(g.ten), h(g.viec.join(' · ')), h(g.dauRa), h(g.trongHe)]; }));
+    o += '<div class="card"><b>Thứ tự ưu tiên đầu tư</b><ol class="sm">' + n.uuTienDauTu.map(function (x) { return '<li>' + h(x) + '</li>'; }).join('') + '</ol></div>';
+    o += U.sec('Phần X · Quyết định của Ban điều hành', 'Máy không chọn hộ — mỗi chốt mang ngày và người chốt, đổi được bằng một lượt phát hành');
+    o += U.tbl(['Mã', 'Câu hỏi', 'Đã chốt'], n.quyetDinh5.map(function (q) {
+      return [h(q.ma), h(q.hoi), q.chot ? h(q.chot) + '<div class="sm muted">Chốt ' + h(q.ngay || '') + ' · ' + h(q.boi || '') + '</div>' + (q.daDung ? '<div class="sm">' + nhan('đã dựng', 'xanh') + ' ' + h(q.daDung) + '</div>' : '')
+        : '<span class="muted">Chưa chốt — đang chạy theo giả định: ' + h(q.giaDinh) + '</span>'];
+    }));
+    o += U.tbl(['Nguyên tắc bảo vệ', 'Răng trong hệ'], n.baoVe6.map(function (b) { return [h(b.y), h(b.rang)]; }));
+    o += '<div class="card"><b>Chuẩn người phục vụ nhà trọng điểm</b>' + danhSach(n.chuanNguoiPhucVu) + '</div>';
+    o += '<div class="card vv-bia"><p>' + h(n.ketLuan.tuTuong) + '</p>' + danhSach(n.ketLuan.bonTaiSan) + '<p class="sm">' + h(n.ketLuan.moRong) + '</p></div>';
+    return o;
+  }
+
+  /* ══ SÁCH CÂY TIỀN — sổ tri thức đọc đủ tám chương (trang 25–292) ══
+     Nội dung không nằm trong kho mã (sách có bản quyền, kho mã công khai):
+     Super Admin mở gói kho-sach/cay-tien.enc NGAY TRÊN MÁY bằng mật khẩu ở
+     Drive rồi nạp; nhân sự R01–R11 đọc từ máy chủ, mỗi lượt mở có nhật ký. */
+  var TEN_NGAN = { nhan: 'Nhận diện', phucvu: 'Phục vụ', hoso: 'Hồ sơ', wow: 'WOW', chiendich: 'Chiến dịch', blueprint: 'Blueprint' };
+  G.vvMoChuong = function (ma) {
+    G.VV.chuong = 'dang'; ve();
+    goi('docSachNoiBo', { sach: 'cay-tien', chuong: ma }).then(function (x) { G.VV.chuong = x.ok ? x.chuong : { loi: x.error }; ve(); });
+  };
+  G.vvDongChuong = function () { G.VV.chuong = null; ve(); };
+  G.vvNapSach = function () {
+    var o = document.getElementById('vvSachMk'), mk = o ? o.value : '';
+    if (!mk) { U.toast('Nhập mật khẩu gói.', 'err'); return; }
+    if (!G.moGoiMaHoa) { U.toast('Chưa có hàm mở gói.', 'err'); return; }
+    G.VV.napSach = { dang: true }; ve();
+    G.moGoiMaHoa(mk, 'kho-sach/cay-tien.enc').then(function (g) {
+      return goi('napSachNoiBo', { sach: 'cay-tien', ds: g.ds, ban: g.ban });
+    }).then(function (r) {
+      if (!(r && r.ok)) throw new Error(((r && r.error) || 'Máy chủ từ chối.') + (r && r.hong ? ' ' + r.hong.slice(0, 3).join(' · ') : ''));
+      G.VV.napSach = null; G.VV.sach = null; U.toast('Đã nạp ' + r.nap + ' chương sách Cây Tiền.', 'ok'); ve();
+    }).catch(function (e) { G.VV.napSach = { loi: String(e && e.message || e) }; ve(); });
+  };
+  function veNapSach() {
+    if (!(G.S && G.S.roleObj && G.S.roleObj.lv === 1)) return '';
+    var n = G.VV.napSach || {};
+    /* Mở sẵn khi đang nạp hoặc vừa lỗi — báo "sai mật khẩu" nằm trong một ô
+       đã gập thì người nạp không thấy, tưởng máy treo. */
+    return '<details class="card pad-sm mb"' + (G.VV.napSach ? ' open' : '') + '><summary class="sm"><b>Nạp gói sách (Super Admin)</b></summary>' +
+      '<p class="tiny muted">Mật khẩu ở Google Drive của chủ hệ (tài liệu “GITA365 — Mật khẩu gói sách Cây Tiền”). Máy này tự mở gói; mật khẩu không gửi lên máy chủ.</p>' +
+      '<label class="tiny">Mật khẩu gói <input id="vvSachMk" class="inp" type="password" autocomplete="off"></label>' +
+      '<div class="mt"><button class="btn pri"' + (n.dang ? ' disabled' : '') + ' onclick="G.vvNapSach()">' + (n.dang ? 'Đang mở và nạp…' : 'Mở gói và nạp') + '</button></div>' +
+      (n.loi ? '<p class="tiny" style="color:var(--gita-do-ink)">' + h(n.loi) + '</p>' : '') + '</details>';
+  }
+  function veMuc(m) {
+    var o = '<div class="card mb"><div class="row wrap" style="gap:8px;align-items:baseline"><b>' + h(m.ma + ' · ' + m.ten) + '</b>' +
+      (m.trang ? '<span class="tiny muted">tr. ' + h(m.trang) + '</span>' : '') + '</div>';
+    o += '<div class="mt">' + U.list(m.yChinh || []) + '</div>';
+    if ((m.chuanSo || []).length) o += '<div class="tiny up muted mt">Chuẩn và con số của tác giả</div>' +
+      U.tbl(['Nội dung', 'Trang'], m.chuanSo.map(function (c) { return [h(c.noi), h(c.trang || '')]; }));
+    (m.trich || []).forEach(function (t) {
+      o += '<blockquote class="sm mt" style="border-left:3px solid var(--gita-vien-1);padding-left:10px;font-style:italic">“' + h(t.cau) + '” <span class="tiny muted">— tr. ' + h(t.trang || '') + '</span></blockquote>';
+    });
+    if ((m.apGita || []).length) o += '<div class="tiny up muted mt">Áp vào GITA</div>' + U.list(m.apGita, 'var(--gita)');
+    if ((m.noiVvip || []).length) o += '<div class="row wrap mt" style="gap:6px">' + m.noiVvip.map(function (n) {
+      return TEN_NGAN[n] ? '<button class="btn sm ghost" onclick="G.vvTab(\'' + n + '\')">→ ' + h(TEN_NGAN[n]) + '</button>' : '';
+    }).join('') + '</div>';
+    return o + '</div>';
+  }
+  function veSach() {
+    var o = veNapSach(), c = G.VV.chuong;
+    if (c === 'dang') return o + '<p class="sm muted">Đang mở chương…</p>';
+    if (c && c.loi) return o + '<p class="sm" style="color:var(--gita-do-ink)">' + h(c.loi) + '</p><button class="btn ghost" onclick="G.vvDongChuong()">← Mục lục</button>';
+    if (c) {
+      o += '<p><button class="btn ghost" onclick="G.vvDongChuong()">← Mục lục</button></p>';
+      o += U.sec(c.ma + ' · ' + c.ten, 'Trang ' + (c.trang || ''));
+      o += '<div class="card mb"><p class="sm" style="line-height:1.75">' + h(c.tomTat) + '</p></div>';
+      o += (c.muc || []).map(veMuc).join('');
+      if ((c.mauHoSo || []).length) {
+        o += U.sec('Mẫu hồ sơ khách hàng lớn theo sách', 'Đối chiếu với hồ sơ 12 tài liệu VVIP — trường nhạy cảm GITA bỏ');
+        o += U.tbl(['Phần', 'Trường', 'Trang', 'GITA dùng thế nào'], c.mauHoSo.map(function (p) {
+          return [h(p.phan), h((p.truong || []).join(' · ')), h(p.trang || ''), h(p.gitaDung || '')];
+        }));
+      }
+      if ((c.canhBao || []).length) o += '<div class="card mt" style="border-color:rgba(248,113,113,.3)"><b class="sm" style="color:var(--gita-do-ink)">Chỗ sách va luật GITA — đọc trước khi áp</b><div class="mt">' + U.list(c.canhBao, 'var(--gita-do)') + '</div></div>';
+      return o;
+    }
+    var s = G.VV.sach;
+    if (!s) { G.VV.sach = 'dang'; goi('dsSachNoiBo', { sach: 'cay-tien' }).then(function (x) { G.VV.sach = x; ve(); }); s = 'dang'; }
+    if (s === 'dang') return o + '<p class="sm muted">Đang đọc mục lục…</p>';
+    if (!s.ok) return o + U.empty('Chưa đọc được sách', s.error || '');
+    if (!s.ds.length) return o + U.empty('Chưa nạp gói sách', s.vi || '');
+    o += '<p class="sm muted">' + h(s.sach.ten + ' — ' + s.sach.tacGia + ' · ' + s.ds.length + '/' + s.sach.chuong + ' chương') + '. Chỉ nội bộ quản trị — không dạy học viên, không cho khách xem. Mỗi lượt mở chương được ghi nhật ký.</p>';
+    o += s.ds.map(function (c) {
+      return '<div class="card mb"><div class="row wrap" style="gap:8px;align-items:baseline"><b>' + h(c.ma + ' · ' + c.ten) + '</b><span class="tiny muted">tr. ' + h(c.trang || '') + '</span></div>' +
+        '<p class="tiny muted mt">' + h((c.muc || []).map(function (m) { return m.ten; }).join(' · ')) + '</p>' +
+        '<button class="btn sm pri mt" onclick="G.vvMoChuong(\'' + h(c.ma) + '\')">Đọc chương</button></div>';
+    }).join('');
+    return o;
+  }
+
+
+  /* ══ VẬN HÀNH — ba bộ máy QD3 (may-chu/vvip-van-hanh.js) ══
+     Khởi động sáu mốc · bàn hỗ trợ có hạn · sổ chi phí phục vụ. Màn chỉ
+     trình bày: mốc nào máy đo thì không có nút "xong"; hạn và "quá hạn" do
+     máy chủ tính lúc đọc; lợi nhuận đóng góp chỉ R01–R03 mới nhận về. */
+  function sauKhi(r, okMsg) { bao(r, okMsg); if (r && r.ok) { G.VV.vh = null; ve(); } }
+  function giaTri(f) { var o = {}; Array.prototype.forEach.call(f.querySelectorAll('[name]'), function (e) { o[e.name] = e.value; }); return o; }
+  G.vvGhiMoc = function (el) { goi('ghiMocKhoiDong', giaTri(el.closest('form'))).then(function (r) { sauKhi(r, 'Đã ghi mốc kèm căn cứ.'); }); return false; };
+  G.vvMoYC = function (el) { goi('moYeuCauVvip', giaTri(el.closest('form'))).then(function (r) { sauKhi(r, 'Đã tiếp nhận yêu cầu — hạn phân công tính từ bây giờ.'); }); return false; };
+  G.vvYC = function (el) {
+    var f = el.closest('form'), fn = el.getAttribute('data-fn'), x = giaTri(f); x.id = f.getAttribute('data-id');
+    goi(fn, x).then(function (r) { sauKhi(r, { phanCongYeuCau: 'Đã giao.', phanHoiYeuCau: 'Đã ghi phản hồi.', dongYeuCau: 'Đã đóng yêu cầu.' }[fn]); });
+    return false;
+  };
+  G.vvGhiCP = function (el) { goi('ghiChiPhiPhucVu', giaTri(el.closest('form'))).then(function (r) { sauKhi(r, 'Đã ghi chi phí phục vụ.'); }); return false; };
+  var TT_MOC = { dungHan: ['đúng hạn', 'xanh'], tre: ['trễ', 'vang'], quaHan: ['quá hạn', 'do'], dangCho: ['đang chờ', ''] };
+  var TEN_MUC = { thuong: 'Thường', gap: 'Gấp', khieuNai: 'Khiếu nại' };
+  var TEN_KENH = { dienThoai: 'Điện thoại', tinNhan: 'Tin nhắn', email: 'Email', gapMat: 'Gặp mặt', ungDung: 'Ứng dụng' };
+  function gioDoc(g) { return g < 1 ? Math.round(g * 60) + ' phút' : (g >= 48 ? (g / 24) + ' ngày' : g + ' giờ'); }
+  function ngayGio(s) { return s ? h(String(s).slice(0, 16).replace('T', ' ')) : '—'; }
+  function opt(m) { return Object.keys(m).map(function (k) { return '<option value="' + h(k) + '">' + h(m[k]) + '</option>'; }).join(''); }
+
+  function veKhoiDong(kd) {
+    if (!kd || !kd.ok) return loi(kd);
+    var o = U.sec('Khởi động sáu mốc', 'Tính từ lúc nhà được duyệt vào nhóm VIP/VVIP · ba mốc máy đọc sổ, ba mốc người ghi kèm căn cứ');
+    o += '<p class="sm">M1 hoàn thành đúng hạn: <b>' + (kd.m1 == null ? '<span class="vv-chua">chưa đo</span>' : pct(kd.m1)) + '</b>' +
+      (kd.m1Mau ? ' · trên ' + kd.m1Mau + ' nhà đã qua 30 ngày' : '') + (kd.m1Vi ? ' <span class="muted">— ' + h(kd.m1Vi) + '</span>' : '') + '</p>';
+    o += U.tbl(['Mốc', 'Hạn', 'Ai đo', 'Đo thế nào'], kd.mocChuan.map(function (m) {
+      return [h(m.ma + ' · ' + m.ten), (m.sauGio ? 'ngày ' + (m.sauGio / 24) + '–' : '') + (m.hanGio >= 48 ? (m.hanGio / 24) + ' ngày' : m.hanGio + ' giờ'), m.nguon === 'may' ? nhan('máy', 'xanh') : nhan('người', 'vang'), h(m.do)];
+    }));
+    if (!kd.ds.length) return o + U.empty('Chưa nhà nào trong khởi động', 'Nhà vào nhóm VIP/VVIP (ngăn Nhận diện, hai người duyệt) sẽ hiện ở đây với sáu mốc.');
+    o += U.tbl(['Nhà', 'Nhóm', 'Ngày', 'Sáu mốc'], kd.ds.map(function (d) {
+      return [h(d.maNha), h(d.nhom), d.ngay + '/30' + (d.quaHan ? '<br>' + nhan(d.quaHan + ' quá hạn', 'do') : ''),
+        d.moc.map(function (m) { var t = TT_MOC[m.trangThai] || ['', '']; return '<span title="' + h(m.ten + (m.boiAi ? ' · ' + m.boiAi : '') + (m.canCu ? ' · ' + m.canCu : '')) + '">' + h(m.ma) + ' ' + nhan(t[0], t[1]) + '</span>'; }).join(' ')];
+    }));
+    var nguoi = kd.mocChuan.filter(function (m) { return m.nguon === 'nguoi'; });
+    o += '<form class="card vv-form" onsubmit="return G.vvGhiMoc(this)"><b class="vv-rong">Ghi mốc do người làm</b>' +
+      '<label>Nhà<select name="maNha">' + kd.ds.map(function (d) { return '<option value="' + h(d.maNha) + '">' + h(d.maNha) + '</option>'; }).join('') + '</select></label>' +
+      '<label>Mốc<select name="ma">' + nguoi.map(function (m) { return '<option value="' + h(m.ma) + '">' + h(m.ma + ' · ' + m.ten) + '</option>'; }).join('') + '</select></label>' +
+      '<label class="vv-rong">Căn cứ (≥ 20 ký tự): việc gì, với ai, kết quả<textarea name="canCu" rows="2" minlength="20" required></textarea></label>' +
+      '<button class="btn" type="submit">Ghi mốc</button><p class="tiny muted vv-rong">OB1 · OB3 · OB4 máy đọc thẳng sổ chạm, sổ hồ sơ, sổ phân công — không có nút đánh dấu tay.</p></form>';
+    return o;
+  }
+
+  function veYeuCau(yc, dsNha) {
+    if (!yc || !yc.ok) return loi(yc);
+    var o = U.sec('Bàn hỗ trợ có hạn', 'Hạn phân công · phản hồi · đóng tính theo nhóm × mức, từ giờ tiếp nhận');
+    o += '<p class="sm">M3 phân công đúng hạn: <b>' + (yc.m3 == null ? '<span class="vv-chua">chưa đo</span>' : pct(yc.m3)) + '</b>' + (yc.m3Mau ? ' (' + yc.m3Mau + ')' : '') +
+      ' · Xử lý đúng hạn: <b>' + (yc.xuLy == null ? '<span class="vv-chua">chưa đo</span>' : pct(yc.xuLy)) + '</b>' + (yc.xuLyMau ? ' (' + yc.xuLyMau + ')' : '') +
+      ' · Đang mở <b>' + yc.dangMo + '</b> · Quá hạn <b>' + yc.quaHan + '</b></p>';
+    o += U.tbl(['Nhóm', 'Mức', 'Phân công', 'Phản hồi', 'Đóng'], ['VVIP', 'VIP'].reduce(function (a, g) {
+      return a.concat(['thuong', 'gap', 'khieuNai'].map(function (m) { var H = yc.han[g]; return [g, TEN_MUC[m], gioDoc(H.phanCong[m]), gioDoc(H.phanHoi[m]), gioDoc(H.dong[m])]; }));
+    }, []));
+    o += '<form class="card vv-form" onsubmit="return G.vvMoYC(this)"><b class="vv-rong">Tiếp nhận yêu cầu</b>' +
+      '<label>Nhà<select name="maNha">' + dsNha.map(function (k) { return '<option value="' + h(k) + '">' + h(k) + '</option>'; }).join('') + '</select></label>' +
+      '<label>Mức<select name="mucDo">' + opt(TEN_MUC) + '</select></label><label>Kênh<select name="kenh">' + opt(TEN_KENH) + '</select></label>' +
+      '<label class="vv-rong">Nội dung<textarea name="noiDung" rows="2" minlength="10" required></textarea></label><button class="btn" type="submit">Tiếp nhận</button></form>';
+    if (!yc.ds.length) return o + U.empty('Chưa có yêu cầu nào', 'Yêu cầu tiếp nhận sẽ hiện ở đây kèm ba mốc hạn.');
+    o += yc.ds.map(function (r) {
+      var c = [];
+      if (r.quaHanPhanCong) c.push(nhan('quá hạn phân công', 'do'));
+      if (r.quaHanPhanHoi) c.push(nhan('quá hạn phản hồi', 'do'));
+      if (r.quaHanDong) c.push(nhan('quá hạn đóng', 'do'));
+      var dong = r.trangThai === 'daDong';
+      var x = '<div class="card mb"><div class="row wrap" style="gap:8px;align-items:baseline"><b>' + h(r.maNha) + ' · ' + h(TEN_MUC[r.mucDo] || r.mucDo) + '</b>' +
+        nhan(r.nhom, r.nhom === 'VVIP' ? 'vang' : '') + nhan(dong ? 'đã đóng' : (r.nguoiXuLy ? 'giao ' + r.nguoiXuLy : 'chưa giao'), dong ? 'xanh' : '') + c.join(' ') + '</div>' +
+        '<p class="sm">' + h(r.noiDung) + '</p>' +
+        '<p class="tiny muted">Tiếp nhận ' + ngayGio(r.tiepNhanLuc) + ' qua ' + h(TEN_KENH[r.kenh] || r.kenh) + ' · hạn giao ' + ngayGio(r.han.phanCong) + ' · hạn phản hồi ' + ngayGio(r.han.phanHoi) + ' · hạn đóng ' + ngayGio(r.han.dong) + '</p>' +
+        (r.phanHoi ? '<p class="sm"><b>Phản hồi:</b> ' + h(r.phanHoi) + '</p>' : '') + (r.ketQua ? '<p class="sm"><b>Kết quả:</b> ' + h(r.ketQua) + ' <span class="tiny muted">— ' + h(r.dongBoi || '') + '</span></p>' : '');
+      if (!dong) x += '<form class="vv-form mt" data-id="' + h(r.id) + '" onsubmit="return false">' +
+        '<label>Giao cho (tên đăng nhập)<input name="nguoi"></label><button class="btn ghost" data-fn="phanCongYeuCau" onclick="return G.vvYC(this)">Giao</button>' +
+        '<label class="vv-rong">Phản hồi cho gia đình<textarea name="noiDung" rows="2"></textarea></label><button class="btn ghost" data-fn="phanHoiYeuCau" onclick="return G.vvYC(this)">Ghi phản hồi</button>' +
+        '<label class="vv-rong">Kết quả khi đóng (≥ 15 ký tự)' + (r.mucDo === 'khieuNai' ? ' — khiếu nại do quản lý KHÁC người xử lý đóng' : '') + '<textarea name="ketQua" rows="2"></textarea></label>' +
+        '<button class="btn" data-fn="dongYeuCau" onclick="return G.vvYC(this)">Đóng</button></form>';
+      return x + '</div>';
+    }).join('');
+    return o;
+  }
+
+  function veChiPhi(cp, dsNha) {
+    var o = U.sec('Chi phí phục vụ theo nhà', 'Để lợi nhuận đóng góp đo được — nhà chưa ghi là CHƯA GHI, không phải 0');
+    o += '<form class="card vv-form" onsubmit="return G.vvGhiCP(this)"><b class="vv-rong">Ghi một khoản</b>' +
+      '<label>Nhà<select name="maNha">' + dsNha.map(function (k) { return '<option value="' + h(k) + '">' + h(k) + '</option>'; }).join('') + '</select></label>' +
+      '<label>Loại<select name="loai"><option value="gioNguoi">Giờ người phục vụ</option><option value="taiLieu">Tài liệu · công cụ</option><option value="suKien">Sự kiện · buổi gặp</option><option value="tangPham">Tặng phẩm</option><option value="khac">Khác</option></select></label>' +
+      '<label>Số tiền (đồng)<input name="soTien" type="number" min="1" step="1000" required></label><label>Số giờ (nếu là giờ người)<input name="soGio" type="number" min="0" step="0.5"></label>' +
+      '<label>Ngày<input name="ngay" type="date"></label><label class="vv-rong">Chi cho việc gì (≥ 10 ký tự)<textarea name="ghiChu" rows="2" minlength="10" required></textarea></label>' +
+      '<button class="btn" type="submit">Ghi chi phí</button></form>';
+    if (cp == null) return o + '<p class="sm muted">Bảng lợi nhuận đóng góp theo nhà chỉ R01–R03 (luật tài chính).</p>';
+    if (!cp.ok) return o + loi(cp);
+    var t = cp.tongHop;
+    o += '<p class="sm">Tỷ trọng lợi nhuận đóng góp nhóm trọng điểm: <b>' + (t.giaTri == null ? '<span class="vv-chua">chưa đo</span>' : pct(t.giaTri)) + '</b>' + (t.vi ? ' <span class="muted">— ' + h(t.vi) + '</span>' : '') + '</p>';
+    o += U.tbl(['Nhà', 'Nhóm', 'Thực thu 12 tháng', 'Chi phí phục vụ', 'Lợi nhuận đóng góp'], cp.ds.map(function (d) {
+      return [h(d.maNha), h(d.nhom), tien(d.doanhThu), d.chiPhi == null ? nhan('chưa ghi', 'vang') : tien(d.chiPhi), d.loiNhuan == null ? '—' : tien(d.loiNhuan)];
+    }));
+    return o;
+  }
+
+  function veVanHanh() {
+    var v = G.VV.vh;
+    if (!v) { TAI.vanhanh(); return cho(); }
+    if (v === 'dang') return cho();
+    var dsNha = v.kd && v.kd.ok ? v.kd.ds.map(function (d) { return d.maNha; }) : [];
+    return veKhoiDong(v.kd) + veYeuCau(v.yc, dsNha) + veChiPhi(v.cp, dsNha);
+  }
+
+  var TABS = [['tong', 'Bảng 80%', 'chart'], ['nhan', 'Nhận diện · nhóm', 'users'], ['phucvu', 'Phục vụ · phân công', 'clock'], ['vanhanh', 'Vận hành · hỗ trợ', 'check'],
+    ['hoso', 'Hồ sơ 12 tài liệu', 'book'], ['wow', 'Điểm chạm WOW', 'spark'], ['chiendich', 'Chiến dịch', 'flame'], ['blueprint', 'Master Blueprint', 'crown'], ['sach', 'Sách Cây Tiền', 'seed']];
+
+  G.VIEWS['phong-vvip'] = function () {
+    napNoiDung();
+    var o = U.ph({ eyebrow: 'Khách hàng & CRM · VIP/VVIP', t: 'Phòng VVIP', ic: 'crown',
+      lead: 'Bốn tài sản cốt lõi của Master Blueprint 1.0: bảng điều khiển 80%, CRM nhóm trọng điểm, thư viện điểm chạm WOW và bộ hồ sơ 12 tài liệu. Mỗi con số tính từ sổ; mỗi quyết định có hai người.' });
+    o += '<div class="tt-tabs" role="tablist">' + TABS.map(function (t) {
+      return '<button class="tt-tab' + (G.VV.tab === t[0] ? ' on' : '') + '" role="tab" aria-selected="' + (G.VV.tab === t[0]) + '" onclick="G.vvTab(\'' + t[0] + '\')">' + ic(t[2]) + ' ' + t[1] + '</button>';
+    }).join('') + '</div>';
+    var tab = G.VV.tab;
+    o += tab === 'tong' ? veTong() : tab === 'nhan' ? veNhan() : tab === 'phucvu' ? vePhucVu() : tab === 'hoso' ? veHoSo() :
+      tab === 'wow' ? veWow() : tab === 'chiendich' ? veChienDich() : tab === 'sach' ? veSach() : tab === 'vanhanh' ? veVanHanh() : veBlueprint();
+    if (tab !== 'blueprint' && tab !== 'hoso' && tab !== 'sach') o += '<p class="mt"><button class="btn ghost" onclick="G.vvTaiLai()">Đọc lại từ máy chủ</button></p>';
+    o += '<p class="tiny muted mt">Liên quan: <a data-v="hang-vip">Phân hạng VIP & VVIP</a> · <a data-v="hoso-vip">Chuẩn hồ sơ VIP</a> · <a data-v="cay-tien">Cây tiền</a> · <a data-v="khach-lon">Khách lớn</a> · <a data-v="crm">CRM</a></p>';
+    return '<div class="man-vv">' + o + '</div>';
+  };
+})();
+
+})();
+
 /* ═════════ src/tu-lieu-day-du.js ═════════ */
 (function(){
 /* ═══════════════════════════════════════════════════════════════
@@ -25022,6 +25595,9 @@ function moGoi(matKhau, tep){
     }).then(function(t){ return { ban:g.ban, ds:JSON.parse(t) }; });
   });
 }
+/* Dùng chung cho mọi gói cùng định dạng (sách nội bộ ở Phòng VVIP) — một
+   hàm mở gói, không chép hàm thứ hai. */
+G.moGoiMaHoa = moGoi;
 function napGoi(matKhau){
   TC.nap = { dang:true, xong:0, tong:0, loi:'' }; G.render && G.render();
   moGoi(matKhau).then(function(goi){
@@ -51851,16 +52427,72 @@ G.VIEWS = G.VIEWS || {};
     ac().resume(); xepTieng(ac().destination);
     raf = requestAnimationFrame(nhip);
   };
-  G.xuDung = function () { chay = false; cancelAnimationFrame(raf); dungTieng(); };
+  G.xuDung = function () {
+    /* Dừng giữa lúc đang xuất = huỷ bản ghi: một tệp phim có đoạn đứng hình
+       ở giữa trông vẫn "xong", và người nhận không biết nó hỏng. */
+    if (G.xuGhi && G.xuGhi.state === 'recording' && G.xuDongHo < tong() - 0.05) { G.xuHuyXuat = true; G.xuGhi.stop(); }
+    chay = false; cancelAnimationFrame(raf); dungTieng();
+  };
   function nhip(gio) {
     if (!chay) return;
     G.xuDongHo += (gio - mocTruoc) / 1000; mocTruoc = gio;
-    if (G.xuDongHo >= tong()) { G.xuDongHo = tong(); G.xuVe(G.xuDongHo); G.xuDung(); return; }
+    if (G.xuDongHo >= tong()) {
+      G.xuDongHo = tong(); G.xuVe(G.xuDongHo);
+      if (G.xuGhi && G.xuGhi.state === 'recording') G.xuGhi.stop();
+      G.xuDung(); return;
+    }
     G.xuVe(G.xuDongHo);
     raf = requestAnimationFrame(nhip);
   }
   G.xuTua = function (v) {
     G.xuDung(); G.xuDongHo = tong() * (+v / 100); G.xuVe(G.xuDongHo);
+  };
+
+  /* ══ XUẤT PHIM (N3 · soát 10/2026) ══
+     Bản cũ chỉ có chữ "chưa nối renderer" — Studio soạn được, xem được,
+     nhưng không ra tệp nào. Nay ghi đúng thứ đang xem: canvas 1080p
+     (captureStream) + tiếng xếp bởi xepTieng vào một nút đích ghi được.
+     Cổng: một đèn ĐỎ là không xuất (LT_RM.RM-1 — không có "xuất tạm"),
+     Dừng khẩn là huỷ bản đang ghi. Lưu qua ngoại lệ có tên N4
+     (G.luuTepPhim: R01–R02, không máy khách, ghi sổ máy chủ). */
+  /* Đèn "chưa soát" cũng đóng cổng: phim là thứ rời khỏi xưởng, nên lời
+     đọc phải qua cửa nội dung TRƯỚC khi thành tệp, không phải sau. */
+  G.xuDenDo = function () { return den().filter(function (l) { return l.tt === 'bad' || l.tt === 'cho'; }); };
+  G.xuXuat = function () {
+    if (G.xuGhi && G.xuGhi.state === 'recording') return;
+    if (!tong()) { U.toast('Chưa có cảnh nào để xuất.', 'err'); return; }
+    var dd = G.xuDenDo();
+    if (dd.length) { U.toast('Cổng xuất đóng: ' + dd.map(function (l) { return l.t; }).join(' · '), 'err'); return; }
+    if (!G.duocLuuPhim || !G.duocLuuPhim()) return;
+    var cv = document.getElementById('xu-man');
+    if (!cv || !cv.captureStream || !window.MediaRecorder) {
+      U.toast('Trình duyệt này không ghi được video. Dùng Chrome hoặc Edge trên máy tính.', 'err'); return;
+    }
+    var kieu = ['video/mp4;codecs=avc1.42E01E,mp4a.40.2', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm']
+      .filter(function (k) { return MediaRecorder.isTypeSupported(k); })[0];
+    if (!kieu) { U.toast('Trình duyệt này không có định dạng video ghi được.', 'err'); return; }
+    var mp4 = /mp4/.test(kieu), duoi = mp4 ? '.mp4' : '.webm', mo = mp4 ? 'video/mp4' : 'video/webm';
+    var a = ac(); a.resume();
+    var dich = a.createMediaStreamDestination(), tron = a.createGain();
+    tron.connect(a.destination); tron.connect(dich);
+    var luong = cv.captureStream(30);
+    dich.stream.getAudioTracks().forEach(function (t) { luong.addTrack(t); });
+    var manh = [], ghi = new MediaRecorder(luong, {mimeType: kieu, videoBitsPerSecond: 8000000});
+    ghi.ondataavailable = function (e) { if (e.data && e.data.size) manh.push(e.data); };
+    ghi.onstop = function () {
+      var huy = G.xuHuyXuat; G.xuGhi = null; G.xuHuyXuat = false;
+      try { tron.disconnect(); } catch (e) {}
+      if (huy) { U.toast('Đã huỷ bản đang xuất.', 'ok'); veLai(); return; }
+      var ten = String(G.xuDA.ten || 'studio').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/đ/gi, 'd').replace(/[^a-z0-9]+/gi, '-').toLowerCase().slice(0, 60) + duoi;
+      G.luuTepPhim(new Blob(manh, {type: kieu}), ten, mo, duoi, 'phim').then(function () { veLai(); });
+    };
+    G.xuDung(); G.xuDongHo = 0; G.xuHuyXuat = false; G.xuGhi = ghi;
+    ghi.start(1000);
+    chay = true; mocTruoc = performance.now();
+    xepTieng(tron);
+    raf = requestAnimationFrame(nhip);
+    U.toast('Đang xuất theo thời gian thực (' + phut(tong()) + '). Giữ tab này mở và hiện trên màn hình.', 'ok');
   };
 
   /* ══ DỪNG KHẨN — GIỮ LẠI, không chỉ tạm dừng ══
@@ -52000,6 +52632,22 @@ G.VIEWS = G.VIEWS || {};
        một khung rỗng đọc ra là "chỗ này chưa làm xong", không đọc ra
        là "vai của bạn không mở được" (bài học 9.99.63). */
     if (!(G.XU_NGANKHO || []).length) {
+      /* N2 (soát 10/2026): bản cũ nói "dành cho tài khoản được cấp quyền"
+         kể cả với Super Admin — trong khi nguyên nhân thật là máy chủ cấp
+         phép không trả gói nghề. Nói SAI nguyên nhân thì người đọc đi xin
+         quyền, không đi nối máy chủ. Nay tách ba trường hợp. */
+      var K = G.KHO || {}, loiNghe = K.loiMo && K.loiMo.nghe;
+      var xinNghe = G.goiDuocCap ? G.goiDuocCap().indexOf('nghe') >= 0 : false;
+      if ((K.dangNap || []).indexOf('nghe') >= 0) {
+        return o + U.empty('Đang mở gói nghề…', 'Studio dựng ngay khi gói nghề giải mã xong.');
+      }
+      if (xinNghe && (K.cheDoMau || K.maTuChoi || loiNghe)) {
+        return o + U.empty('Không nối được máy chủ cấp phép — Studio cần gói nghề',
+          'Tài khoản này được xin gói nghề, nhưng máy chủ chưa trả khoá' +
+          (K.lyDoTuChoi || loiNghe ? ' (' + String(K.lyDoTuChoi || loiNghe).slice(0, 160) + ')' : '') +
+          '. Đây là chuyện nối máy chủ, không phải chuyện quyền.') +
+          (G.can && G.can('qt_trang') ? '<p><button class="btn btn-chinh" data-v="noi-may-chu">Nối máy chủ</button></p>' : '');
+      }
       return o + U.empty('Xưởng Studio dành cho tài khoản được cấp quyền',
         'Màn sản xuất nội bộ chỉ mở khi phiên có gói nghề tương ứng. Nội dung dựng, hình ' +
         'tham chiếu và âm thanh được xử lý tại thiết bị; quyền xem không đồng nghĩa với ' +
@@ -52132,8 +52780,8 @@ G.VIEWS = G.VIEWS || {};
     o += '<input type="range" min="0" max="100" step="0.1" value="0" class="xu-tua" ' +
       'aria-label="Tua video" oninput="G.xuTua(this.value)">';
     o += '<p class="note" id="xu-tt">Đây là bản xem trước 2.5D dựng tại thiết bị; chưa phải nhân vật 3D ' +
-      'biểu cảm thật, phim 4D/5D hay tệp video hoàn chỉnh. Hiện hệ thống chưa có renderer nội bộ ' +
-      'để kết xuất phim. Hình, giọng và nhạc không được gửi đi; không có nút xuất giả.</p></div>';
+      'biểu cảm thật hay phim 4D/5D. Mục 7 ghi đúng bản xem này thành tệp video. Hình, giọng và nhạc ' +
+      'không được gửi đi.</p></div>';
 
     o += G.xu3DPanel ? G.xu3DPanel() : '';
 
@@ -52169,13 +52817,123 @@ G.VIEWS = G.VIEWS || {};
     }).join('') + '</ul></div>';
 
     /* 6 · Xuất kèm */
+    var doXuat = G.xuDenDo();
     o += '<div class="giay"><h3>7 · Xuất phim</h3>' +
-      '<p class="note">Kết xuất video, phụ đề và hộ chiếu phát hành chưa được nối với renderer ' +
-      'nội bộ. Không gửi ảnh/giọng lên dịch vụ ngoài; bản xem trước chỉ giúp kiểm tra kịch bản, ' +
-      'khung hình, chuyển động và phối âm.</p></div>';
+      '<p class="note">Ghi đúng bản đang xem — canvas ' + khung().join('×') + ' cùng giọng và nhạc — thành tệp ' +
+      'video ngay trên máy, theo thời gian thực. Không gửi ảnh/giọng lên dịch vụ ngoài. Lưu tệp chỉ dành cho ' +
+      'Super Admin và Admin hệ thống, và mỗi lượt lưu vào sổ (ngoại lệ N4).</p>' +
+      (doXuat.length ? '<p class="note xu-bad">Cổng xuất đóng — còn ' + doXuat.length + ' đèn đỏ: ' +
+        doXuat.map(function (l) { return h(l.t); }).join(' · ') + '.</p>' : '') +
+      '<div class="row"><button class="btn btn-chinh" onclick="G.xuXuat()"' + (doXuat.length ? ' disabled' : '') + '>' +
+      (G.xuGhi ? 'Đang xuất…' : 'Xuất phim') + '</button>' +
+      (G.xuGhi ? '<button class="btn" onclick="G.xuDung()">Huỷ bản đang xuất</button>' : '') + '</div></div>';
 
     setTimeout(function () { G.xuCoManh(); }, 0);
     return o + '</div>';
+  };
+})();
+
+})();
+
+/* ═════════ src/luu-tep-phim.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   NGOẠI LỆ CÓ TÊN · LƯU PHIM RA MÁY (N4 · chủ hệ chốt 10/10/2026)
+
+   Luật nền vẫn đứng: khách hàng không tải bất cứ dữ liệu nào ra máy.
+   Xưởng phim là chỗ DUY NHẤT được lưu tệp ra máy, và chỉ qua hàm này.
+
+   Ba cổng, theo thứ tự:
+   1. Máy khách (G.LA_MAY_KHACH) và tài khoản bị khoá chép
+      (G.BI_KHOA_CHEP) — không lưu, kể cả Super Admin ngồi máy khách.
+   2. Quyền qt_trang (R01–R02) — đúng quyền mở màn Xưởng phim.
+   3. Cửa máy chủ `ghiLuuPhim` ghi sổ lượt lưu. Cửa từ chối hoặc không
+      gọi được thì KHÔNG lưu: một ngoại lệ không để lại dấu là một đường
+      tải tệp đội lốt ngoại lệ. Máy chủ đọc vai từ phiên, nên gọi thẳng
+      hàm này trong bảng điều khiển cũng không vượt được.
+
+   Đường lưu: hộp "Lưu thành" của hệ điều hành nếu có. Hộp ấy cần cú bấm
+   của người dùng, nên tệp sinh ra SAU một lượt ghi dài (cắt nhịp, bàn
+   dựng) sẽ bị trình duyệt từ chối mở hộp — lúc ấy lùi về thẻ tải xuống.
+   Thẻ tải xuống và địa chỉ blob CHỈ được sinh ở tệp này; phép thử
+   tools/thu-xuong-phim.mjs đỏ nếu chúng mọc ở tệp nào khác trong xưởng.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+
+(function () {
+  var LOAI = ['phim', 'khung', 'phuDe', 'prompt', 'cauHinh'];
+
+  G.LUU_PHIM_LUAT = {
+    quyen: 'qt_trang',
+    cua: 'ghiLuuPhim',
+    vi: 'Lưu tệp ra máy chỉ có ở Xưởng phim, chỉ cho Super Admin và Admin hệ thống, và mỗi lượt lưu đều vào sổ.'
+  };
+
+  function bao(t, k) { if (G.U && G.U.toast) G.U.toast(t, k || 'err'); }
+
+  /* Cổng 1 + 2 — chạy ĐỒNG BỘ để còn kịp mở hộp lưu trong cú bấm */
+  G.duocLuuPhim = function (imLang) {
+    var ly = '';
+    if (G.LA_MAY_KHACH || (G.BI_KHOA_CHEP && G.BI_KHOA_CHEP())) ly = 'Tài khoản/máy này chỉ được dùng, không được lưu tệp ra máy.';
+    else if (!(G.can && G.can('qt_trang'))) ly = 'Lưu phim ra máy chỉ dành cho Super Admin và Admin hệ thống.';
+    if (ly && !imLang) bao(ly);
+    return !ly;
+  };
+
+  /* Cổng 3 — ghi sổ trước khi ghi tệp */
+  G.ghiSoLuuPhim = function (ten, loai, co) {
+    if (!G.goiMayChu) return Promise.reject(new Error('Chưa nối máy chủ — không ghi được sổ lượt lưu.'));
+    return G.goiMayChu('ghiLuuPhim', {ten: String(ten || ''), loai: loai, co: co || 0, man: (G.S && G.S.view) || ''})
+      .then(function (x) {
+        if (!x || !x.ok) throw new Error((x && (x.vi || x.error)) || 'Máy chủ không ghi sổ lượt lưu.');
+        return true;
+      });
+  };
+
+  function taiQuaThe(du, ten) {
+    var a = document.createElement('a'), ou = URL.createObjectURL(du);
+    a.href = ou; a.download = ten; document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(ou); a.remove(); }, 4000);
+  }
+
+  /* Lưu một tệp đã có sẵn trong bộ nhớ. Trả Promise<boolean>. */
+  G.luuTepPhim = function (du, ten, mo, duoi, loai) {
+    if (LOAI.indexOf(loai) < 0) loai = 'phim';
+    if (!G.duocLuuPhim()) return Promise.resolve(false);
+    var co = (du && du.size) || 0;
+    function quaThe() {
+      return G.ghiSoLuuPhim(ten, loai, co).then(function () { taiQuaThe(du, ten); bao('Đã lưu ' + ten, 'ok'); return true; });
+    }
+    var chuoi;
+    if (window.showSaveFilePicker) {
+      var kieu = {}; kieu[mo] = [duoi];
+      chuoi = window.showSaveFilePicker({suggestedName: ten, types: [{description: duoi, accept: kieu}]})
+        .then(function (fh) {
+          return fh.createWritable().then(function (w) {
+            return G.ghiSoLuuPhim(ten, loai, co)
+              .then(function () { return w.write(du).then(function () { return w.close(); }); },
+                function (e) { try { w.abort(); } catch (e2) {} throw e; });
+          });
+        })
+        .then(function () { bao('Đã lưu ' + ten, 'ok'); return true; }, function (e) {
+          if (e && e.name === 'AbortError') return false;
+          /* Hết cú bấm (tệp sinh sau một lượt ghi dài) → lùi về thẻ tải */
+          if (e && (e.name === 'SecurityError' || e.name === 'NotAllowedError')) return quaThe();
+          throw e;
+        });
+    } else chuoi = quaThe();
+    return chuoi.catch(function (e) { bao('Không lưu được: ' + ((e && e.message) || e)); return false; });
+  };
+
+  /* Hỏi chỗ lưu cho một lượt ghi THẲNG xuống đĩa (phim dài): ghi sổ ngay
+     sau khi chọn chỗ, trước byte đầu tiên. Từ chối → không trả tay cầm. */
+  G.moNoiLuuPhim = function (ten, mo, duoi) {
+    if (!G.duocLuuPhim()) return Promise.reject(new Error('KHONG_LUU'));
+    if (!window.showSaveFilePicker) return Promise.reject(new Error('KHONG_HOP'));
+    var kieu = {}; kieu[mo] = [duoi];
+    return window.showSaveFilePicker({suggestedName: ten, types: [{description: 'Phim', accept: kieu}]})
+      .then(function (fh) { return G.ghiSoLuuPhim(ten, 'phim', 0).then(function () { return fh; }); });
   };
 })();
 
@@ -52211,10 +52969,10 @@ G.VIEWS = G.VIEWS || {};
    ── KHÔNG `URL.createObjectURL` ──
    Clip đọc bằng FileReader thành địa chỉ data: (CSP media-src có data:),
    ảnh đi thẳng vào createImageBitmap, nhạc vào decodeAudioData. Tệp phim
-   xuất ra được GHI qua hộp "Lưu thành" của hệ điều hành
-   (showSaveFilePicker) — không sinh địa chỉ blob, không thẻ <a download>.
-   Máy khách (G.LA_MAY_KHACH) và tài khoản khách hàng (G.BI_KHOA_CHEP)
-   không xuất được: đúng chính sách "chỉ dùng, không lưu".
+   xuất ra đi qua NGOẠI LỆ CÓ TÊN N4 (src/luu-tep-phim.js): chỉ R01–R02,
+   không máy khách, mỗi lượt lưu vào sổ máy chủ. Tệp này không sinh địa chỉ
+   blob hay thẻ tải xuống; trình duyệt thiếu hộp "Lưu thành" thì chính hàm
+   ngoại lệ lùi về thẻ tải, ở đúng một chỗ.
    ═══════════════════════════════════════════════════════════════ */
 'use strict';
 var G = window.G || {}; window.G = G;
@@ -52327,6 +53085,17 @@ G.VIEWS = G.VIEWS || {};
       }
       if (!cur) moi('', d); else cur.hanhDong = (cur.hanhDong ? cur.hanhDong + ' ' : '') + d;
     });
+    /* Người nói chưa có trong sổ thì thêm vào (mô tả để trống, màn hiện cảnh
+       báo vàng). Trước 10/2026 người nói bị bỏ qua: prompt không có ngoại hình
+       của họ, còn nhân vật của dự án mẫu thì nằm lại trong sổ. */
+    ds.forEach(function (c) {
+      c.thoai.concat(c.tinNhan).forEach(function (t) {
+        var ten = String(t.ai || '').trim();
+        if (!ten || ten.length > 30) return;
+        var co = da.nhanVat.some(function (n) { return String(n.ten || '').toLowerCase() === ten.toLowerCase(); });
+        if (!co) da.nhanVat.push({id: ma('nv'), ten: ten, moTa: '', prompt: ''});
+      });
+    });
     ds.forEach(function (c) {
       var chu = c.thoai.concat(c.tinNhan).map(function (t) { return t.loi; }).join(' ').length;
       c.giay = Math.min(10, Math.max(5, Math.ceil(chu / 14) + 2));
@@ -52343,24 +53112,36 @@ G.VIEWS = G.VIEWS || {};
     }
     var chu = (c.hanhDong + ' ' + c.thoai.map(function (t) { return t.ai; }).join(' ') + ' ' +
       c.tinNhan.map(function (t) { return t.ai; }).join(' ')).toLowerCase();
-    return G.xpDA.nhanVat.filter(function (n) { return n.ten && chu.indexOf(n.ten.toLowerCase()) >= 0; });
+    return G.xpDA.nhanVat.filter(function (n) { return n.ten && coTen(chu, n.ten); });
   }
+  /* Dò TÊN theo biên âm tiết, không dò chuỗi con: "Lan" chứa "an", nên bản cũ
+     (indexOf) gán nhân vật An vào cảnh có Lan — bẫy số 2 của kho. \b không
+     dùng được vì chữ có dấu nằm ngoài \w (bẫy số 1). */
+  function coTen(chu, ten) {
+    var t = String(ten).toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    try { return new RegExp('(?<![\\p{L}\\p{M}])' + t + '(?![\\p{L}\\p{M}])', 'u').test(chu); }
+    catch (e) { return chu.indexOf(String(ten).toLowerCase()) >= 0; }
+  }
+  G.xpCoTen = coTen;
   function boiCanhCua(c) {
     return G.xpDA.boiCanh.filter(function (b) { return b.id === c.boiCanh; })[0] || {ten: '', prompt: ''};
   }
+  function laNgang() { var k = String(G.xpDA.khung || '720x1280').split('x'); return (+k[0] || 0) > (+k[1] || 0); }
+  G.xpLaNgang = laNgang;
+  function khoChu() { return laNgang() ? 'Horizontal 16:9 frame' : 'Vertical 9:16 frame'; }
   G.xpPrompt = function (c) {
     var nv = nvTrongCanh(c), bc = boiCanhCua(c);
     var goc = tra(GOC, c.chiDao) || 'medium shot', may = tra(MAY, c.chiDao) || 'static camera';
     var ai = nv.map(function (n) { return n.ten + ' (' + (n.prompt || n.moTa) + ')'; }).join('; ');
     var noi = c.thoai.length ? ' The character is speaking with natural lip movement and genuine emotion.' : '';
-    var anh = 'Vertical 9:16 frame. ' + G.xpDA.phongCach + '. ' + goc + '. ' +
+    var anh = khoChu() + '. ' + G.xpDA.phongCach + '. ' + goc + '. ' +
       (ai ? 'Characters: ' + ai + '. ' : '') +
       (bc.prompt || bc.ten ? 'Setting: ' + (bc.prompt || bc.ten) + '. ' : '') +
       (c.hinh ? c.hinh + ' ' : 'Scene (Vietnamese description, translate faithfully): ' + c.hanhDong + '. ') +
       (c.tinNhan.length ? 'Close-up of a smartphone screen showing a chat conversation. ' : '') +
       'Consistent character appearance, realistic skin texture, no text, no subtitles, no watermark, no logo.';
     var vid = goc + ', ' + may + '. ' + (ai ? ai + '. ' : '') + (c.chuyenDong || c.hanhDong) + '.' + noi +
-      ' Smooth natural motion, cinematic lighting, vertical 9:16, ' + (+c.giay || 5) +
+      ' Smooth natural motion, cinematic lighting, ' + (laNgang() ? 'horizontal 16:9' : 'vertical 9:16') + ', ' + (+c.giay || 5) +
       ' seconds. No text on screen, no subtitles, no watermark.';
     var am = 'blurry, distorted face, extra fingers, deformed hands, text, subtitles, watermark, logo, cartoon, low quality';
     return {anh: anh, video: vid, am: am, nv: nv};
@@ -52377,6 +53158,8 @@ G.VIEWS = G.VIEWS || {};
     var v = c.clip && G.xpVat[c.clip];
     var can = 0;
     c.thoai.forEach(function (x) { if (x.am && G.xpVat[x.am] && x.den) can = Math.max(can, x.den + 0.4); });
+    var gc = c.giong && G.xpVat[c.giong];
+    if (gc && gc.buffer) can = Math.max(can, gc.buffer.duration + 0.5);
     if (G.xpDA.theoClip && v && v.loai === 'phim' && v.el && v.el.duration) return Math.max(v.el.duration, can);
     return Math.max(+c.giay || 5, can);
   }
@@ -52412,7 +53195,7 @@ G.VIEWS = G.VIEWS || {};
     o.push('=== NHÂN VẬT (dùng ảnh chân dung này làm ảnh tham chiếu cho mọi cảnh) ===');
     da.nhanVat.forEach(function (n) {
       o.push('• ' + n.ten + ' — ' + n.moTa);
-      o.push('  Prompt chân dung: Vertical 9:16 portrait, ' + da.phongCach + '. ' + (n.prompt || n.moTa) +
+      o.push('  Prompt chân dung: ' + (laNgang() ? 'Horizontal 16:9' : 'Vertical 9:16') + ' portrait, ' + da.phongCach + '. ' + (n.prompt || n.moTa) +
         ', neutral expression, looking at camera, plain soft background, full face clearly visible, no text.');
     });
     o.push('');
@@ -52450,6 +53233,15 @@ G.VIEWS = G.VIEWS || {};
     }
     tep.forEach(function (f) {
       var id = ma('v');
+      /* Giọng là TỆP CÓ SẴN hoặc ghi micro người thật — máy không sinh giọng (C20). */
+      if (/^giong:/.test(vai) || vai === 'loiDan') {
+        if (!/^audio\//.test(f.type) && !/^video\//.test(f.type)) { U.toast(f.name + ': giọng đọc cần tệp âm thanh.', 'err'); het(); return; }
+        f.arrayBuffer().then(function (b) { return ac().decodeAudioData(b); }).then(function (buf) {
+          G.xpVat[id] = {ma: id, ten: f.name, loai: 'giong', buffer: buf};
+          ganGiong(vai, id); het();
+        }).catch(function () { U.toast('Không đọc được giọng ' + f.name, 'err'); het(); });
+        return;
+      }
       if (vai === 'nhac') {
         if (!/^audio\//.test(f.type) && !/^video\//.test(f.type)) { U.toast(f.name + ': nhạc nền cần tệp âm thanh.', 'err'); het(); return; }
         f.arrayBuffer().then(function (b) { return ac().decodeAudioData(b); }).then(function (buf) {
@@ -52484,6 +53276,48 @@ G.VIEWS = G.VIEWS || {};
       }
       U.toast(f.name + ': chưa nhận loại tệp này.', 'err'); het();
     });
+  };
+
+  function ganGiong(vai, id) {
+    if (vai === 'loiDan') { G.xpDA.loiDan = id; return; }
+    var cid = vai.slice(6), c = G.xpDA.canh.filter(function (k) { return k.id === cid; })[0];
+    if (c) c.giong = id;
+  }
+  /* Ghi giọng người thật bằng micro cho một cảnh (hoặc lời dẫn cả phim).
+     Bản ghi đi thẳng MediaRecorder → ArrayBuffer → decodeAudioData, không địa
+     chỉ blob, không rời máy. Bấm lần nữa để dừng. */
+  var dangGhi = null;
+  G.xpGhiGiong = function (vai) {
+    if (dangGhi) { try { dangGhi.ghi.stop(); } catch (e) {} return; }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) {
+      U.toast('Trình duyệt này không ghi âm được. Dùng Chrome hoặc Edge, hoặc nạp tệp giọng có sẵn.', 'err'); return;
+    }
+    navigator.mediaDevices.getUserMedia({audio: true}).then(function (luong) {
+      var manh = [], ghi = new MediaRecorder(luong);
+      dangGhi = {ghi: ghi, vai: vai};
+      ghi.ondataavailable = function (e) { if (e.data && e.data.size) manh.push(e.data); };
+      ghi.onstop = function () {
+        luong.getTracks().forEach(function (t) { t.stop(); });
+        var vaiGhi = dangGhi.vai; dangGhi = null;
+        new Blob(manh, {type: ghi.mimeType || 'audio/webm'}).arrayBuffer()
+          .then(function (b) { return ac().decodeAudioData(b); })
+          .then(function (buf) {
+            var id = ma('g');
+            G.xpVat[id] = {ma: id, ten: 'Ghi âm ' + Math.round(buf.duration) + 's', loai: 'giong', buffer: buf};
+            ganGiong(vaiGhi, id); luuDuAn(); veLai();
+            U.toast('Đã gắn bản ghi ' + Math.round(buf.duration) + ' giây.', 'ok');
+          })
+          .catch(function () { U.toast('Không đọc được bản ghi — thử lại hoặc nạp tệp.', 'err'); veLai(); });
+      };
+      ghi.start(); veLai();
+      U.toast('Đang ghi — bấm "Dừng ghi" khi đọc xong.', 'ok');
+    }, function () { U.toast('Chưa được phép dùng micro. Cho phép micro trong trình duyệt, hoặc nạp tệp giọng có sẵn.', 'err'); });
+  };
+  G.xpDangGhi = function (vai) { return !!(dangGhi && dangGhi.vai === vai); };
+  G.xpBoGiong = function (vai) {
+    if (vai === 'loiDan') G.xpDA.loiDan = '';
+    else { var c = G.xpDA.canh.filter(function (k) { return k.id === vai.slice(6); })[0]; if (c) c.giong = ''; }
+    luuDuAn(); veLai();
   };
 
   /* ══ VẼ MỘT KHUNG ══ */
@@ -52524,11 +53358,11 @@ G.VIEWS = G.VIEWS || {};
   function veTinNhan(x, W, H, ds, tienDo) {
     var n = Math.max(1, Math.ceil(ds.length * Math.min(1, tienDo * 1.6)));
     x.fillStyle = 'rgba(0,0,0,.55)'; x.fillRect(0, 0, W, H);
-    var pw = W * 0.78, ph = H * 0.62, px = (W - pw) / 2, py = H * 0.16, r = W * 0.05;
+    var S = Math.min(W, H), pw = Math.min(W * 0.78, H * 0.5), ph = H * 0.62, px = (W - pw) / 2, py = H * 0.16, r = S * 0.05;
     x.fillStyle = '#f2f3f5'; x.beginPath();
     x.moveTo(px + r, py); x.arcTo(px + pw, py, px + pw, py + ph, r); x.arcTo(px + pw, py + ph, px, py + ph, r);
     x.arcTo(px, py + ph, px, py, r); x.arcTo(px, py, px + pw, py, r); x.fill();
-    var co = Math.round(W * 0.036), y = py + co * 2.2;
+    var co = Math.round(S * 0.036), y = py + co * 2.2;
     x.font = '600 ' + co + 'px system-ui, sans-serif'; x.textBaseline = 'top';
     var nguoiDau = ds[0] && ds[0].ai;
     ds.slice(0, n).forEach(function (t) {
@@ -52545,9 +53379,9 @@ G.VIEWS = G.VIEWS || {};
     });
   }
   function vePhuDe(x, W, H, chu) {
-    var co = Math.round(W * 0.05);
+    var co = Math.round(Math.min(W, H) * 0.05);
     x.font = '700 ' + co + 'px system-ui, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'alphabetic';
-    var dong = chuNgat(x, chu, W * 0.86), y0 = H * 0.80 - (dong.length - 1) * co * 1.25;
+    var dong = chuNgat(x, chu, W * (W > H ? 0.7 : 0.86)), y0 = H * (W > H ? 0.86 : 0.80) - (dong.length - 1) * co * 1.25;
     x.lineJoin = 'round'; x.lineWidth = co * 0.18; x.strokeStyle = 'rgba(0,0,0,.9)'; x.fillStyle = '#fff';
     dong.forEach(function (d, i) { x.strokeText(d, W / 2, y0 + i * co * 1.25); x.fillText(d, W / 2, y0 + i * co * 1.25); });
     x.textAlign = 'left';
@@ -52587,7 +53421,7 @@ G.VIEWS = G.VIEWS || {};
     x.fillStyle = '#000'; x.fillRect(0, 0, W, dai); x.fillRect(0, H - dai, W, dai);
   }
   G.xpVeKhung = function (x, c, tCanh, dCanh, tPhim) {
-    var K = kichThuoc(), W = K.w, H = K.h, v = c && c.clip && G.xpVat[c.clip];
+    var K = kichThuoc(), W = K.w, H = K.h, S = Math.min(W, H), v = c && c.clip && G.xpVat[c.clip];
     x.fillStyle = '#000'; x.fillRect(0, 0, W, H);
     if (v && v.loai === 'phim' && v.el.videoWidth) phuKin(x, v.el, v.el.videoWidth, v.el.videoHeight, W, H);
     else if (v && v.loai === 'anh') {
@@ -52596,9 +53430,9 @@ G.VIEWS = G.VIEWS || {};
     }
     else if (c) {
       x.fillStyle = '#1f2937'; x.fillRect(0, 0, W, H);
-      x.fillStyle = '#9ca3af'; x.font = '600 ' + Math.round(W * 0.04) + 'px system-ui, sans-serif'; x.textBaseline = 'top';
+      x.fillStyle = '#9ca3af'; x.font = '600 ' + Math.round(S * 0.04) + 'px system-ui, sans-serif'; x.textBaseline = 'top';
       chuNgat(x, 'Chưa có clip · ' + (c.chiDao ? '[' + c.chiDao + '] ' : '') + c.hanhDong, W * 0.8)
-        .forEach(function (d, i) { x.fillText(d, W * 0.1, H * 0.35 + i * W * 0.055); });
+        .forEach(function (d, i) { x.fillText(d, W * 0.1, H * 0.35 + i * S * 0.055); });
     }
     if (c && c.tinNhan.length) veTinNhan(x, W, H, c.tinNhan, tCanh / (dCanh || 1));
     /* Mờ dần đầu/cuối cảnh — chuyển cảnh nhẹ, không giật */
@@ -52607,19 +53441,38 @@ G.VIEWS = G.VIEWS || {};
     var pd = G.xpPhuDeNay(tPhim);
     if (pd) vePhuDe(x, W, H, pd.chu);
     var lg = G.xpDA.logoAnh && G.xpVat[G.xpDA.logoAnh];
-    if (lg) { var lw = W * 0.2, lh = lw * lg.el.height / lg.el.width; x.globalAlpha = 0.85; x.drawImage(lg.el, W * 0.04, W * 0.04, lw, lh); x.globalAlpha = 1; }
+    if (lg) { var lw = S * 0.2, lh = lw * lg.el.height / lg.el.width; x.globalAlpha = 0.85; x.drawImage(lg.el, S * 0.04, S * 0.04, lw, lh); x.globalAlpha = 1; }
     else if (G.xpDA.logo) {
-      x.font = '800 ' + Math.round(W * 0.04) + 'px system-ui, sans-serif'; x.textBaseline = 'top';
-      x.lineWidth = W * 0.006; x.strokeStyle = 'rgba(0,0,0,.7)'; x.fillStyle = 'rgba(255,255,255,.9)';
-      x.strokeText(G.xpDA.logo, W * 0.04, W * 0.04); x.fillText(G.xpDA.logo, W * 0.04, W * 0.04);
+      x.font = '800 ' + Math.round(S * 0.04) + 'px system-ui, sans-serif'; x.textBaseline = 'top';
+      x.lineWidth = S * 0.006; x.strokeStyle = 'rgba(0,0,0,.7)'; x.fillStyle = 'rgba(255,255,255,.9)';
+      x.strokeText(G.xpDA.logo, S * 0.04, S * 0.04); x.fillText(G.xpDA.logo, S * 0.04, S * 0.04);
     }
     if (G.xpDA.tap) {
       var nhan = 'Tập ' + G.xpDA.tap;
-      x.font = '700 ' + Math.round(W * 0.036) + 'px system-ui, sans-serif'; x.textBaseline = 'top';
+      x.font = '700 ' + Math.round(S * 0.036) + 'px system-ui, sans-serif'; x.textBaseline = 'top';
       var tw = x.measureText(nhan).width;
-      x.fillStyle = 'rgba(0,0,0,.45)'; x.fillRect(W - tw - W * 0.08, W * 0.035, tw + W * 0.04, W * 0.056);
-      x.fillStyle = '#fff'; x.fillText(nhan, W - tw - W * 0.06, W * 0.045);
+      x.fillStyle = 'rgba(0,0,0,.45)'; x.fillRect(W - tw - S * 0.08, S * 0.035, tw + S * 0.04, S * 0.056);
+      x.fillStyle = '#fff'; x.fillText(nhan, W - tw - S * 0.06, S * 0.045);
     }
+    /* Ngoại lệ C20 có tên (chủ hệ chốt 10/10/2026): giọng máy đọc được dùng,
+       nhưng phim PHẢI nói ra. Nhãn đè suốt phim, không chỉ vài giây đầu —
+       người xem bắt đầu xem ở giữa (cắt clip, chia sẻ lại) vẫn thấy. */
+    if (G.xpCoGiongTongHop()) {
+      var nh = 'Giọng đọc tổng hợp bằng máy';
+      x.font = '600 ' + Math.round(S * 0.026) + 'px system-ui, sans-serif'; x.textBaseline = 'top';
+      var nw = x.measureText(nh).width, ny = S * 0.035 + (G.xpDA.tap ? S * 0.07 : 0);
+      x.fillStyle = 'rgba(0,0,0,.5)'; x.fillRect(W - nw - S * 0.08, ny, nw + S * 0.04, S * 0.042);
+      x.fillStyle = '#fff'; x.fillText(nh, W - nw - S * 0.06, ny + S * 0.008);
+    }
+  };
+  /* Phim có dùng giọng máy đọc không — đọc từ VẬT LIỆU (cờ tongHop gắn lúc
+     giọng sinh ra), không đọc từ một ô người dùng tự khai. */
+  G.xpCoGiongTongHop = function () {
+    function la(id) { var v = id && G.xpVat[id]; return !!(v && v.tongHop); }
+    if (la(G.xpDA.loiDan)) return true;
+    return (G.xpDA.canh || []).some(function (c) {
+      return la(c.giong) || (c.thoai || []).some(function (t) { return la(t.am); });
+    });
   };
   var phuDeDem = null;
   G.xpPhuDeNay = function (t) {
@@ -52653,6 +53506,7 @@ G.VIEWS = G.VIEWS || {};
     tatGiong();
     G.xpDA.canh.forEach(function (c) { var v = G.xpVat[c.clip]; if (v && v.loai === 'phim') try { v.el.pause(); } catch (e) {} });
     if (chay.nhac) try { chay.nhac.stop(); } catch (e) {}
+    if (chay.loiDan) try { chay.loiDan.stop(); } catch (e) {}
   }
   G.xpPhat = function (xuat, xongFn, ghiThang) {
     if (chay && !chay.dung) { G.xpDung(); return; }
@@ -52669,6 +53523,15 @@ G.VIEWS = G.VIEWS || {};
       g.gain.value = +G.xpDA.amLuongNhac >= 0 ? +G.xpDA.amLuongNhac : 0.25;
       src.connect(g); g.connect(a.destination); if (dich) g.connect(dich);
       src.start(); chay.nhac = src;
+    }
+    /* Lời dẫn cả phim: phát MỘT LẦN, không lặp. Bản cũ khuyên trộn giọng vào
+       nhạc nền — mà nhạc nền đặt loop=true, nên lời dẫn đọc lại từ đầu khi hết. */
+    var ld = G.xpDA.loiDan && G.xpVat[G.xpDA.loiDan];
+    if (ld && ld.buffer) {
+      var sl = a.createBufferSource(), gl = a.createGain();
+      sl.buffer = ld.buffer; gl.gain.value = +G.xpDA.amLuongGiong >= 0 ? +G.xpDA.amLuongGiong : 1;
+      sl.connect(gl); gl.connect(a.destination); if (dich) gl.connect(dich);
+      sl.start(); chay.loiDan = sl;
     }
     if (xuat) {
       /* Bậc máy (src/nang-luc-may.js): máy yếu ghi 24 khung/giây, bitrate
@@ -52713,6 +53576,13 @@ G.VIEWS = G.VIEWS || {};
       tatGiong();
       /* Cảnh đã khớp khẩu hình: giọng nằm sẵn trong clip, không phát thêm lần nữa */
       var giongTrongClip = c && c.khopMoi && v && v.loai === 'phim';
+      var gc = c && !giongTrongClip && c.giong && G.xpVat[c.giong];
+      if (gc && gc.buffer) {
+        var sg = a.createBufferSource(), gg = a.createGain();
+        sg.buffer = gc.buffer; gg.gain.value = +G.xpDA.amLuongGiong >= 0 ? +G.xpDA.amLuongGiong : 1;
+        sg.connect(gg); gg.connect(a.destination); if (dich) gg.connect(dich);
+        sg.start(a.currentTime + 0.15); chay.giong.push(sg);
+      }
       (c && !giongTrongClip ? c.thoai : []).forEach(function (x) {
         var gv = x.am && G.xpVat[x.am];
         if (!gv || gv.loai !== 'giong') return;
@@ -52746,56 +53616,51 @@ G.VIEWS = G.VIEWS || {};
     if (b) b.textContent = (chay && !chay.dung) ? 'Dừng' : 'Xem thử cả tập';
   }
 
-  /* ══ LƯU TỆP — hộp "Lưu thành" của hệ điều hành, không địa chỉ blob ══ */
-  function duocLuu() {
-    if (G.LA_MAY_KHACH || (G.BI_KHOA_CHEP && G.BI_KHOA_CHEP())) {
-      U.toast('Tài khoản/máy này chỉ được dùng, không được lưu tệp ra máy.', 'err'); return false;
-    }
-    if (!window.showSaveFilePicker) {
-      U.toast('Trình duyệt này chưa có hộp "Lưu thành". Hãy mở GITA 365 bằng Chrome hoặc Edge trên máy tính.', 'err'); return false;
-    }
-    return true;
-  }
-  function luuTep(ten, du, mo, duoi) {
-    var loai = {}; loai[mo] = [duoi];
-    return window.showSaveFilePicker({suggestedName: ten, types: [{description: duoi, accept: loai}]})
-      .then(function (fh) { return fh.createWritable(); })
-      .then(function (w) { return w.write(du).then(function () { return w.close(); }); })
-      .then(function () { U.toast('Đã lưu ' + ten, 'ok'); })
-      .catch(function (e) { if (e && e.name !== 'AbortError') U.toast('Không lưu được: ' + (e.message || e), 'err'); });
-  }
+  /* ══ LƯU TỆP — mọi lượt lưu đi qua ngoại lệ có tên N4 (src/luu-tep-phim.js):
+     cổng vai qt_trang + máy khách + ghi sổ máy chủ. Tệp này không tự sinh
+     địa chỉ blob hay thẻ tải xuống. ══ */
+  function duocLuu() { return G.duocLuuPhim ? G.duocLuuPhim() : false; }
   function tenTep() { return String(G.xpDA.ten || 'phim').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/gi, 'd').replace(/[^a-z0-9]+/gi, '-').toLowerCase() + '-tap-' + (G.xpDA.tap || 1); }
   G.xpLuuChu = function (loai) {
     if (!duocLuu()) return;
-    if (loai === 'srt') luuTep(tenTep() + '.srt', new Blob([G.xpSRT()], {type: 'text/plain'}), 'text/plain', '.srt');
-    else luuTep(tenTep() + '-prompt.txt', new Blob([G.xpGoiPrompt()], {type: 'text/plain'}), 'text/plain', '.txt');
+    if (loai === 'srt') G.luuTepPhim(new Blob([G.xpSRT()], {type: 'text/plain'}), tenTep() + '.srt', 'text/plain', '.srt', 'phuDe');
+    else G.luuTepPhim(new Blob([G.xpGoiPrompt()], {type: 'text/plain'}), tenTep() + '-prompt.txt', 'text/plain', '.txt', 'prompt');
   };
   G.xpXuat = function () {
     if (chay && !chay.dung) { G.xpDung(); return; }
     if (!duocLuu()) return;
     var thieu = G.xpDA.canh.filter(function (c) { return !c.clip || !G.xpVat[c.clip]; }).length;
     if (thieu && !confirm(thieu + ' cảnh chưa có clip sẽ hiện khung xám. Vẫn xuất?')) return;
+    var ldx = G.xpDA.loiDan && G.xpVat[G.xpDA.loiDan];
+    if (ldx && ldx.buffer && ldx.buffer.duration > tongGiay() + 0.5 &&
+      !confirm('Lời dẫn dài ' + Math.round(ldx.buffer.duration) + ' giây nhưng phim chỉ ' + Math.round(tongGiay()) + ' giây — phần cuối lời dẫn sẽ bị cắt. Kéo dài cảnh cuối hoặc tăng giây các cảnh. Vẫn xuất?')) return;
     /* Hỏi chỗ lưu TRƯỚC khi ghi — hộp lưu cần cú bấm của người dùng */
     var mp4 = window.MediaRecorder && MediaRecorder.isTypeSupported('video/mp4');
     var duoi = mp4 ? '.mp4' : '.webm', mo = mp4 ? 'video/mp4' : 'video/webm';
-    var loai = {}; loai[mo] = [duoi];
-    window.showSaveFilePicker({suggestedName: tenTep() + duoi, types: [{description: 'Phim', accept: loai}]})
+    if (!window.showSaveFilePicker) {
+      /* Không có hộp "Lưu thành" (Safari, Firefox, điện thoại): ghi vào bộ nhớ
+         rồi lưu qua ngoại lệ N4 khi xong — phim dài sẽ tốn RAM, nên báo trước. */
+      U.toast('Trình duyệt này không có hộp "Lưu thành": phim ghi vào bộ nhớ rồi tải xuống khi xong (' + Math.round(tongGiay()) + ' giây). Giữ tab mở.', 'ok');
+      G.xpPhat(true, function (bl) { if (bl) G.luuTepPhim(bl, tenTep() + duoi, mo, duoi, 'phim'); });
+      return;
+    }
+    G.moNoiLuuPhim(tenTep() + duoi, mo, duoi)
       .then(function (fh) { G.xpXuatVao(fh); })
-      .catch(function (e) { if (e && e.name !== 'AbortError') U.toast('Không mở được hộp lưu: ' + (e.message || e), 'err'); });
+      .catch(function (e) { if (e && e.name !== 'AbortError' && e.message !== 'KHONG_LUU') U.toast('Không mở được hộp lưu: ' + (e.message || e), 'err'); });
   };
   /* Hỏi chỗ lưu (cần cú bấm) — dùng cho làm phim tự động: hỏi lúc bắt đầu, ghi lúc xong */
   G.xpChonNoiLuu = function () {
     if (!duocLuu()) return Promise.reject(new Error('KHONG_LUU'));
     var mp4 = window.MediaRecorder && MediaRecorder.isTypeSupported('video/mp4');
     var duoi = mp4 ? '.mp4' : '.webm', mo = mp4 ? 'video/mp4' : 'video/webm';
-    var loai = {}; loai[mo] = [duoi];
-    return window.showSaveFilePicker({suggestedName: tenTep() + duoi, types: [{description: 'Phim', accept: loai}]});
+    return G.moNoiLuuPhim(tenTep() + duoi, mo, duoi);
   };
   /* Hỏi một THƯ MỤC (cần cú bấm) — bộ phim ghi Tap-01 … Tap-10 vào đó */
   G.xpChonThuMuc = function () {
     if (!duocLuu()) return Promise.reject(new Error('KHONG_LUU'));
     if (!window.showDirectoryPicker) { U.toast('Trình duyệt này chưa chọn được thư mục. Dùng Chrome hoặc Edge trên máy tính.', 'err'); return Promise.reject(new Error('KHONG_LUU')); }
-    return window.showDirectoryPicker({id: 'gita-bo-phim', mode: 'readwrite'});
+    return window.showDirectoryPicker({id: 'gita-bo-phim', mode: 'readwrite'})
+      .then(function (th) { return G.ghiSoLuuPhim('thư mục ' + th.name, 'phim', 0).then(function () { return th; }); });
   };
   G.xpDuoiPhim = function () { return window.MediaRecorder && MediaRecorder.isTypeSupported('video/mp4') ? '.mp4' : '.webm'; };
   G.xpXuatVao = function (fh, xongFn) {
@@ -52847,6 +53712,11 @@ G.VIEWS = G.VIEWS || {};
     G.xpDA[ds] = G.xpDA[ds].filter(function (x) { return x.id !== id; }); luuDuAn(); veLai();
   };
   G.xpTach = function () {
+    var mau = duAnMau();
+    if (G.xpDA.ten === mau.ten && G.xpDA.kichBan !== mau.kichBan &&
+      confirm('Kịch bản mới nhưng dự án vẫn là dự án mẫu "' + mau.ten + '" (nhân vật Minh, An). Chuyển sang dự án trống và giữ kịch bản vừa viết?')) {
+      G.xpDA.ten = 'Phim mới'; G.xpDA.nhanVat = []; G.xpDA.boiCanh = [];
+    }
     var cu = G.xpDA.canh;
     G.xpDA.canh = G.xpTachKichBan(G.xpDA.kichBan, G.xpDA);
     /* Giữ clip đã gắn theo thứ tự cảnh */
@@ -52866,20 +53736,25 @@ G.VIEWS = G.VIEWS || {};
   };
 
   /* ══ MÀN ══ */
+  function hangGiong(vai, id, nhan) {
+    var g = id && G.xpVat[id], ghi = G.xpDangGhi(vai);
+    return '<div class="row xp-giong"><span class="note"><b>' + nhan + ':</b> ' +
+      (g ? '✓ ' + h(g.ten) + ' · ' + (Math.round(g.buffer.duration * 10) / 10) + 's' + (g.tongHop ? ' · <em>giọng máy đọc</em>' : '') : (id ? '<em>tệp đã gắn trước khi tải lại trang — nạp lại</em>' : 'chưa có')) + '</span>' +
+      '<label class="btn">Nạp tệp giọng <input type="file" accept="audio/*" hidden onchange="G.xpNhanTep(this.files,\'' + h(vai) + '\')"></label>' +
+      '<button class="btn' + (ghi ? ' btn-chinh' : '') + '" onclick="G.xpGhiGiong(\'' + h(vai) + '\')">' + (ghi ? '■ Dừng ghi' : '● Ghi micro') + '</button>' +
+      (id ? '<button class="btn" onclick="G.xpBoGiong(\'' + h(vai) + '\')">Bỏ giọng</button>' : '') + '</div>';
+  }
   function o_(lbl, val, fn, kieu) {
     return '<label>' + lbl + ' <input type="' + (kieu || 'text') + '" value="' + h(String(val == null ? '' : val)) + '" oninput="' + fn + '"></label>';
   }
   G.VIEWS['xuong-phim'] = function () {
     var da = G.xpDA, o = '';
-    o += '<div class="hd"><h2>' + ic('spark') + ' Xưởng phim ngắn AI · phim dọc 9:16</h2>' +
+    o += '<div class="hd"><h2>' + ic('spark') + ' Xưởng phim ngắn AI · dọc 9:16 hoặc ngang 16:9</h2>' +
       '<p class="sub">Viết kịch bản → máy soạn prompt cho từng cảnh → bạn tạo clip bằng công cụ video AI → nạp clip vào đây ' +
       '→ máy lắp phụ đề, logo, số tập, nhạc và xuất thành phim. Clip, ảnh và nhạc xử lý ngay trên máy, không tải lên đâu.</p></div>';
     o += '<div class="man-xu">';
-    /* Ngân sách phim AI thật (R01–R03): tiền từng tập so với trần — src/phim-ngan-sach.js */
-    if (G.pnsKhoi) o += G.pnsKhoi();
-    if (G.xpBoView) o += G.xpBoView();
-    if (G.xpKaggleView) o += G.xpKaggleView();
-    if (G.xpTuDongView) o += G.xpTuDongView();
+    o += '<p class="note"><b>Chạy ngay trên máy này:</b> mục 1–5 dưới đây làm trọn một tập phim mà không cần nối máy chủ, Drive hay GPU — kịch bản, prompt, giọng người thật, phụ đề, xuất tệp. ' +
+      'Các đường cần máy chủ (bộ phim nhiều tập, Kaggle, tự động A–Z, ngân sách phim AI) nằm ở khối cuối trang.</p>';
 
     /* Hướng dẫn nhanh */
     o += '<details class="giay"' + (da.anHuongDan ? '' : ' open') + ' ontoggle="G.xpSua(\'anHuongDan\',!this.open)"><summary><b>Cách làm một tập phim (đọc một lần)</b></summary>' +
@@ -52892,7 +53767,7 @@ G.VIEWS = G.VIEWS || {};
       '<li><b>Xem thử</b> rồi <b>Xuất phim</b> (Chrome/Edge trên máy tính). Máy ghi theo thời gian thực: phim 3 phút thì chờ 3 phút, giữ tab mở.</li></ol>' +
       '<p class="note"><b>Công cụ tạo clip AI (bạn tự đăng ký, dùng tài khoản của mình):</b> Kling AI (klingai.com) · Hailuo / MiniMax (hailuoai.video) · ' +
       'Google Veo (qua Gemini / Flow) · Runway (runwayml.com) · Pika (pika.art). Phần lớn có lượt dùng thử miễn phí mỗi ngày; muốn làm nhiều tập thì cần gói trả phí. ' +
-      'Lời thoại tiếng Việt: đưa vào phụ đề (máy tự đè), hoặc tự thu giọng rồi trộn làm nhạc nền.</p>' +
+      'Lời thoại tiếng Việt: đưa vào phụ đề (máy tự đè), và gắn <b>giọng người thật</b> cho từng cảnh ở mục 4 (nạp tệp hoặc ghi micro) hoặc một <b>lời dẫn cả phim</b> ở mục 5 — lời dẫn phát một lần, không lặp như nhạc nền.</p>' +
       '<p class="note"><b>Bản quyền:</b> hãy dùng câu chuyện và nhân vật của chính bạn. Không đăng lại phim, nhân vật, logo của đơn vị khác; không dùng gương mặt người thật khi chưa được đồng ý.</p></details>';
 
     /* 1 · Thông tin phim */
@@ -52900,15 +53775,21 @@ G.VIEWS = G.VIEWS || {};
       o_('Tên phim', da.ten, "G.xpSua('ten',this.value)") +
       o_('Tập số', da.tap, "G.xpSua('tap',this.value)", 'number') +
       o_('Chữ logo góc trái', da.logo, "G.xpSua('logo',this.value)") +
-      '<label>Độ nét <select onchange="G.xpSua(\'khung\',this.value)">' +
-      ['720x1280', '1080x1920'].map(function (k) { return '<option' + (k === da.khung ? ' selected' : '') + '>' + k + '</option>'; }).join('') +
+      '<label>Độ nét <select onchange="G.xpSua(\'khung\',this.value);G.render()">' +
+      [['720x1280', 'Dọc 9:16 · 720×1280'], ['1080x1920', 'Dọc 9:16 · 1080×1920'], ['1280x720', 'Ngang 16:9 · 1280×720 (YouTube, máy chiếu)'], ['1920x1080', 'Ngang 16:9 · 1920×1080 (hội trường)']]
+        .map(function (k) { return '<option value="' + k[0] + '"' + (k[0] === da.khung ? ' selected' : '') + '>' + k[1] + '</option>'; }).join('') +
       '</select></label></div>' +
+      '<p class="note">Phim đào tạo chiếu hội trường hay đăng YouTube: chọn <b>Ngang 16:9</b>. Prompt, phụ đề, logo và khung tin nhắn tự đổi theo khổ.</p>' +
       '<label>Phong cách hình (tiếng Anh, dùng chung mọi cảnh) <textarea rows="2" oninput="G.xpSua(\'phongCach\',this.value)">' + h(da.phongCach) + '</textarea></label>' +
       '<div class="row"><button class="btn" onclick="G.xpDuAnMoi(false)">Dự án trống</button>' +
       '<button class="btn" onclick="G.xpDuAnMoi(true)">Nạp lại dự án mẫu</button></div></div>';
 
     /* 2 · Sổ nhân vật & bối cảnh */
+    var nvThieu = da.nhanVat.filter(function (n) { return !String(n.prompt || '').trim(); }).length;
+    var bcThieu = da.boiCanh.filter(function (b) { return !String(b.prompt || '').trim(); }).length;
     o += '<div class="giay"><h3>2 · Sổ nhân vật</h3>';
+    if (nvThieu || bcThieu) o += '<p class="note xp-canh-bao">⚠ ' + (nvThieu ? nvThieu + ' nhân vật' : '') + (nvThieu && bcThieu ? ' và ' : '') + (bcThieu ? bcThieu + ' bối cảnh' : '') +
+      ' chưa có mô tả tiếng Anh — prompt của các cảnh có họ sẽ thiếu ngoại hình/bối cảnh, mỗi clip AI vẽ ra một gương mặt khác.</p>';
     da.nhanVat.forEach(function (n) {
       o += '<div class="row">' + o_('Tên', n.ten, "G.xpSuaDS('nhanVat','" + h(n.id) + "','ten',this.value)") +
         o_('Ghi chú (tiếng Việt)', n.moTa, "G.xpSuaDS('nhanVat','" + h(n.id) + "','moTa',this.value)") +
@@ -52937,11 +53818,13 @@ G.VIEWS = G.VIEWS || {};
     da.canh.forEach(function (c, i) {
       var p = G.xpPrompt(c), bc = boiCanhCua(c);
       o += '<details class="giay xu-canh"><summary><b>Cảnh ' + (i + 1) + '</b> · ' + h(bc.ten) + ' · ' + h(c.chiDao || '—') + ' · ' +
-        h(String(c.giay)) + 's' + (c.clip && G.xpVat[c.clip] ? ' · ✓ ' + h(G.xpVat[c.clip].ten) : ' · <em>chưa có clip</em>') + '</summary>' +
+        h(String(c.giay)) + 's' + (c.clip && G.xpVat[c.clip] ? ' · ✓ ' + h(G.xpVat[c.clip].ten) : ' · <em>chưa có clip</em>') +
+        (c.giong && G.xpVat[c.giong] ? ' · 🎙 giọng' : '') + '</summary>' +
         '<p class="note">' + h(c.hanhDong) + '</p>' +
         (c.thoai.length ? '<p class="note">' + c.thoai.map(function (t) { return '<b>' + h(t.ai) + ':</b> ' + h(t.loi); }).join('<br>') + '</p>' : '') +
         (c.tinNhan.length ? '<p class="note">Tin nhắn: ' + c.tinNhan.map(function (t) { return h(t.ai + ': ' + t.loi); }).join(' · ') + '</p>' : '') +
         (p.nv.length ? '' : '<p class="note">⚠ Không thấy tên nhân vật nào trong cảnh — nhắc tên nhân vật trong hành động để prompt có mô tả ngoại hình.</p>') +
+        hangGiong('giong:' + c.id, c.giong, 'Giọng cảnh này') +
         '<label>Prompt ảnh mở đầu <textarea rows="3" readonly class="cho-chep">' + h(p.anh) + '</textarea></label>' +
         '<label>Prompt video <textarea rows="3" readonly class="cho-chep">' + h(p.video) + '</textarea></label>' +
         '<div class="row"><button class="btn" onclick="G.xpChep(' + i + ',\'anh\')">Chép prompt ảnh</button>' +
@@ -52962,13 +53845,21 @@ G.VIEWS = G.VIEWS || {};
       '<div class="row">' + o_('Âm lượng clip (0–1)', da.amLuongClip == null ? 1 : da.amLuongClip, "G.xpSua('amLuongClip',this.value)", 'number') +
       o_('Âm lượng nhạc (0–1)', da.amLuongNhac == null ? 0.25 : da.amLuongNhac, "G.xpSua('amLuongNhac',this.value)", 'number') +
       '<label><input type="checkbox"' + (da.theoClip ? ' checked' : '') + ' onchange="G.xpSua(\'theoClip\',this.checked);G.render()"> Thời lượng cảnh theo độ dài clip</label></div>' +
-      (G.xpDA.nhac && G.xpVat[G.xpDA.nhac] ? '<p class="note">Nhạc nền: ' + h(G.xpVat[G.xpDA.nhac].ten) + '</p>' : '') +
+      (G.xpDA.nhac && G.xpVat[G.xpDA.nhac] ? '<p class="note">Nhạc nền: ' + h(G.xpVat[G.xpDA.nhac].ten) + ' (lặp suốt phim)</p>' : '') +
+      hangGiong('loiDan', da.loiDan, 'Lời dẫn cả phim (phát một lần, không lặp)') +
+      '<div class="row">' + o_('Âm lượng giọng (0–1)', da.amLuongGiong == null ? 1 : da.amLuongGiong, "G.xpSua('amLuongGiong',this.value)", 'number') + '</div>' +
+      '<p class="note">Giọng là <b>tệp có sẵn</b> hoặc <b>ghi micro người thật</b> — máy không tự sinh giọng (luật C20). Cảnh có giọng tự kéo dài cho đủ giọng; phụ đề chia theo độ dài giọng.</p>' +
+      (G.xpCoGiongTongHop() ? '<p class="note xp-canh-bao">Phim này có giọng máy đọc (từ đường Tự động/0 đồng). Phim tự đè nhãn "Giọng đọc tổng hợp bằng máy" suốt thời lượng — ngoại lệ C20 có tên. Muốn bỏ nhãn thì thay bằng giọng người thật.</p>' : '') +
       '<p class="note">Clip chỉ nằm trong bộ nhớ của tab này — tải lại trang thì cần nạp lại (kịch bản và prompt vẫn được giữ).</p>' +
-      '<canvas id="xp-man" style="width:100%;max-width:300px;aspect-ratio:9/16;background:#000;display:block;margin:8px 0;border-radius:8px"></canvas>' +
+      '<canvas id="xp-man" style="width:100%;max-width:' + (laNgang() ? '560px;aspect-ratio:16/9' : '300px;aspect-ratio:9/16') + ';background:#000;display:block;margin:8px 0;border-radius:8px"></canvas>' +
       '<p class="note" id="xp-tt"></p>' +
       '<div class="row"><button class="btn" id="xp-nut-phat" onclick="G.xpPhat(false)">' + (chay && !chay.dung ? 'Dừng' : 'Xem thử cả tập') + '</button>' +
       '<button class="btn btn-chinh" onclick="G.xpXuat()">Xuất phim</button></div></div>';
 
+    /* N10 (soát 10/2026): bốn khối dưới đây cần máy chủ / Kaggle. Bản cũ đặt
+       chúng lên đầu màn, đẩy phần tự tay xuống y≈6670px trên điện thoại. */
+    var khoiMay = (G.pnsKhoi ? G.pnsKhoi() : '') + (G.xpBoView ? G.xpBoView() : '') + (G.xpKaggleView ? G.xpKaggleView() : '') + (G.xpTuDongView ? G.xpTuDongView() : '');
+    if (khoiMay) o += '<details class="giay xp-may"' + (da.moKhoiMay ? ' open' : '') + ' ontoggle="G.xpSua(\'moKhoiMay\',this.open)"><summary><b>Làm bằng máy chủ · Kaggle · tự động A–Z</b> — cần nối máy chủ hoặc khoá ngoài</summary>' + khoiMay + '</details>';
     o += '</div>';
     setTimeout(function () {
       var cv = document.getElementById('xp-man');
@@ -52993,6 +53884,16 @@ G.VIEWS = G.VIEWS || {};
      · giong → Piper (mã nguồn mở) đọc tiếng Việt NGAY TRONG MÁY, không
        qua máy chủ, không gửi chữ ra ngoài. Mô hình giọng tải một lần
        (~90 MB) rồi nằm trong bộ nhớ đệm trình duyệt.
+
+   ── NGOẠI LỆ C20 CÓ TÊN (chủ hệ chốt 10/10/2026) ──
+   Luật C20: giọng là tệp có sẵn, máy chỉ trộn. Piper là chỗ máy SINH
+   giọng, nên nó chỉ được đứng với ba điều kiện:
+     1. Chỉ giọng KHO CÓ SẴN của Piper (vais1000 · vivos). KHÔNG nhái
+        giọng một người cụ thể từ mẫu thu — không có đường nạp mẫu nào.
+     2. Mọi giọng sinh ra mang cờ `tongHop`, và phim tự đè nhãn
+        "Giọng đọc tổng hợp bằng máy" suốt thời lượng (xuong-phim.js).
+     3. Phim đào tạo tự tay (giọng người thật) vẫn là đường ưu tiên số
+        một; Piper chỉ dùng cho bản nháp và chuỗi phim 0 đồng.
      · Kết quả (ảnh, giọng) nằm trong IndexedDB của máy này, địa chỉ
        dạng "idb:…" — không thuê kho lưu trữ nào.
    ═══════════════════════════════════════════════════════════════ */
@@ -53613,7 +54514,9 @@ var G = window.G || {}; window.G = G;
     if (!ctxGiai) ctxGiai = new (window.AudioContext || window.webkitAudioContext)();
     return taiBlob(url).then(function (bl) { return bl.arrayBuffer(); })
       .then(function (b) { return ctxGiai.decodeAudioData(b); })
-      .then(function (buf) { var id = G.xpMa('g'); G.xpVat[id] = {ma: id, ten: ten, loai: 'giong', buffer: buf}; return id; });
+      /* Mọi giọng của đường tự động là giọng MÁY đọc (Piper hoặc dịch vụ ngoài):
+         gắn cờ tongHop để phim tự đè nhãn — ngoại lệ C20 có tên. */
+      .then(function (buf) { var id = G.xpMa('g'); G.xpVat[id] = {ma: id, ten: ten, loai: 'giong', buffer: buf, tongHop: true}; return id; });
   }
   function chayLan(viec, gioiHan) {
     var i = 0;
@@ -54336,15 +55239,12 @@ var G = window.G || {}; window.G = G;
     var duoi = loai === 'tts' ? '.mp3' : loai === 'nv' ? '.png' : '.mp4';
     var url = apiGoc() + '/quay/phim/' + ma + duoi;
     var ten = (kgTenViec(ma) || ma).replace(/[^\w\-. ]+/g, '_').replace(/\s+/g, '-').slice(0, 60) + '-' + ma.slice(0, 6) + duoi;
+    if (!G.duocLuuPhim()) return;
     U.toast('Đang tải phim về máy…', 'ok');
+    var mo = loai === 'tts' ? 'audio/mpeg' : loai === 'nv' ? 'image/png' : 'video/mp4';
     fetch(url).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.blob(); })
-      .then(function (b) {
-        var a = document.createElement('a'), ou = URL.createObjectURL(b);
-        a.href = ou; a.download = ten; document.body.appendChild(a); a.click();
-        setTimeout(function () { URL.revokeObjectURL(ou); a.remove(); }, 5000);
-        U.toast('Đã tải xuống: ' + ten, 'ok');
-      })
-      .catch(function (e) { U.toast('Chưa tải được (' + ((e && e.message) || 'lỗi') + ') — mở link để tải tay.', 'err'); window.open(url, '_blank', 'noopener'); });
+      .then(function (b) { return G.luuTepPhim(b, ten, mo, duoi, loai === 'nv' ? 'khung' : 'phim'); })
+      .catch(function (e) { U.toast('Chưa tải được (' + ((e && e.message) || 'lỗi') + ').', 'err'); });
   };
   /* ── CỔNG 2: ĐÃ TẢI — DỌN KHO (giải phóng R2 ngay) ── */
   G.xpKgDon = function (ma) {
@@ -82717,7 +83617,7 @@ var G = window.G || {}; window.G = G;
             'Nhà đã vào học được mời giới thiệu sau khoảnh khắc WOW đầu'] },
     { ma:'VIP', ten:'VIP & khách lớn', khoi:'TV', kpi:'tv6',
       mo:'Phân hạng, hồ sơ, cây tiền VIP, tệp nhân sự trung thành, trợ lý chăm sóc.',
-      man:['hang-vip','hoso-vip','cay-tien','cay-tien-vip','khach-lon','nhan-su-tt','ai-cham'],
+      man:['phong-vvip','hang-vip','hoso-vip','cay-tien','cay-tien-vip','khach-lon','nhan-su-tt','ai-cham'],
       viec:['Danh sách VIP / VVIP cập nhật theo chuẩn phân hạng, có người phụ trách riêng',
             'Hồ sơ VIP đủ trường bắt buộc và mốc chăm sóc',
             'Lịch chạm VIP dày hơn chuẩn thường và đúng hạn',
@@ -82884,7 +83784,7 @@ var G = window.G || {}; window.G = G;
     { id:'coach', khu:'nhansu',     ten:'Hệ điều hành Coach',       ic:'flame',   viec:'Chương trình, thiết kế bài, điều phối, chất lượng, ca — mỗi buổi ghi vào tiến trình chăm sóc ở CRM.',
       phan:['coach-he','coach-dp','coach-ct','coach-tk','coach-cl','coach-gp','coach-kho','kho-nha','coach-pt','coach-v20','coach-nlp','van-hanh-cham-soc','xu-ly-ca','xuat-du-lieu'], kho:['PP','KHO','COACH'] },
     { id:'khach-crm', khu:'nhansu', ten:'Khách hàng & CRM',         ic:'heart',   viec:'CRM theo quyền được cấp, CSKH, đo lường khách, trải nghiệm, tài liệu gia đình.',
-      phan:['toan-canh-crm','crm','tt-cskh','do-luong-he','trai-nghiem-kh','nguoi-dan-dat','tai-lieu-khach','gui-tu-lieu','tang5-pro','khung-du-lieu'], kho:['TUVAN','VIP','TRAI'] },
+      phan:['phong-vvip','toan-canh-crm','crm','tt-cskh','do-luong-he','trai-nghiem-kh','nguoi-dan-dat','tai-lieu-khach','gui-tu-lieu','tang5-pro','khung-du-lieu'], kho:['TUVAN','VIP','TRAI'] },
     { id:'dao-tao', khu:'nhansu',   ten:'Đào tạo & năng lực',       ic:'book',    viec:'Khoá đào tạo, sát hạch, cuộc thi viết — mở theo cấp bậc đạt được.',
       phan:['chuong-trinh-dt','thi-chung-chi','khoa-dao-tao','sat-hach','thi-viet'], kho:['NGHE','PP'] },
     { id:'kho-nghe', khu:'nhansu',  ten:'Kho nghề & tài liệu',      ic:'vault',   viec:'14 kho nghề theo cụm, thư viện tài liệu — chương mở theo vai, tầng, gói.',
@@ -88288,12 +89188,25 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
 
   /* ════════ XUẤT ════════ */
   G.bd.xuatPNG = function(){
-    try{ var a=document.createElement('a'); a.download='gita-khung-'+Date.now()+'.png';
-      a.href=cv().toDataURL('image/png'); a.click(); U.toast('Đã xuất khung ảnh PNG.','ok'); }
+    if(!G.duocLuuPhim()) return;
+    try{ cv().toBlob(function(b){
+        if(!b){ U.toast('Không xuất được ảnh.','err'); return; }
+        G.luuTepPhim(b, 'gita-khung-'+Date.now()+'.png', 'image/png', '.png', 'khung'); }, 'image/png'); }
     catch(e){ U.toast('Không xuất được ảnh: '+(e&&e.message),'err'); }
   };
   G.bd.xuatVideo = function(){
     if(!S.khung.length){ U.toast('Cần ít nhất một khung để xuất phim.','err'); return; }
+    if(!G.duocLuuPhim()) return;
+    /* N9 (soát 10/2026): ghi dừng ở tổng giây các khung, nên giọng dài hơn
+       phim bị CẮT mất mà không báo (đo được: giọng 8s, phim 4,45s). Hỏi kéo
+       dài khung cuối cho đủ giọng + nửa giây. */
+    var thieuGiay = S.giong ? (S.giong.duration + 0.5 - tongGiay()) : 0;
+    if(thieuGiay > 0.05){
+      var cuoi = S.khung[S.khung.length-1];
+      if(confirm('Giọng đọc dài '+(Math.round(S.giong.duration*10)/10)+' giây nhưng phim chỉ '+(Math.round(tongGiay()*10)/10)+' giây — phần cuối giọng sẽ bị cắt. Kéo dài khung cuối thêm '+(Math.round(thieuGiay*10)/10)+' giây cho đủ giọng?')){
+        cuoi.giay = Math.round(((+cuoi.giay||0) + thieuGiay)*10)/10; veStrip();
+      }
+    }
     var c=cv();
     if(!c.captureStream || typeof MediaRecorder==='undefined'){
       U.toast('Trình duyệt này chưa hỗ trợ xuất video. Dùng Chrome/Edge mới, hoặc xuất từng khung PNG.','err'); return; }
@@ -88306,10 +89219,8 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       ghiMR=mr;
       mr.ondataavailable=function(e){ if(e.data.size) manh.push(e.data); };
       mr.onstop=function(){
-        var bl=new Blob(manh,{type:mime}); var fr=new FileReader();
-        fr.onload=function(){ var a=document.createElement('a'); a.download='gita-phim-'+Date.now()+'.webm'; a.href=fr.result; a.click();
-          U.toast('Đã xuất video nháp (.webm).','ok'); };
-        fr.readAsDataURL(bl); ghiMR=null;
+        ghiMR=null;
+        G.luuTepPhim(new Blob(manh,{type:mime}), 'gita-phim-'+Date.now()+'.webm', 'video/webm', '.webm', 'phim');
       };
       /* chạy slideshow + ghi đồng thời */
       choi=true; var x=c.getContext('2d'), t0=performance.now();
@@ -88794,6 +89705,11 @@ var G = window.G || {}; window.G = G;
   axn.luuTram = function(){
     var w=(document.getElementById('axn-w')||{}).value||'', k=(document.getElementById('axn-k')||{}).value||'';
     if(!/^https:\/\//.test(w.trim())) return U.toast('Địa chỉ trạm phải bắt đầu bằng https://','err');
+    /* N7 (soát 10/2026): CSP connect-src/media-src chỉ mở *.typhuquanggita.workers.dev.
+       Trạm ở tên miền khác bị trình duyệt chặn LẶNG LẼ — người dùng chỉ thấy
+       "Failed to fetch". Chặn ngay ở đây và nói vì sao (cùng luật noi-may-chu.js). */
+    var host = ''; try { host = new URL(w.trim()).hostname; } catch(e){}
+    if(!/\.typhuquanggita\.workers\.dev$/.test(host)) return U.toast('Trạm phải là máy chủ của Học viện — dạng https://<tên>.typhuquanggita.workers.dev. Tên miền khác bị chính sách bảo mật của trang chặn, trình duyệt chỉ báo "Failed to fetch".','err');
     lsSet('axWorker', w.trim()); lsSet('axToken', k.trim()); U.toast('Đã lưu cài đặt trạm trên máy này.','ok'); ve();
   };
 
@@ -88878,7 +89794,7 @@ var G = window.G || {}; window.G = G;
       s.lichSu.map(function(x){ return '<li>'+(x.duong==='drive' ? h(x.ten)+' · <a href="javascript:void 0" onclick="G.ax.tab(\'khophim\')">trong Kho phim</a>' : '<a href="'+h(t.worker+'/api/phim/'+x.job+'/video?tai=1')+'">'+h(x.ten)+'</a>')+' · '+x.canh+' cảnh · '+h(new Date(x.luc).toLocaleString('vi-VN'))+'</li>'; }).join('')+'</ul></div>';
     /* Cài đặt một lần */
     o += '<details class="card pad-sm"><summary class="sm" style="cursor:pointer"><b>Máy GPU thuê (tuỳ chọn, ~15 phút)</b> <span class="tiny muted">'+(t.worker?'· đã nối trạm':'· chưa dùng — mặc định đi đường miễn phí qua Google Drive')+'</span></summary>'+
-      '<div class="grid g2 mt" style="gap:8px"><input id="axn-w" type="url" placeholder="https://gita-xuong-phim….workers.dev" value="'+h(t.worker)+'" style="padding:8px;border:1px solid var(--line);border-radius:8px">'+
+      '<div class="grid g2 mt" style="gap:8px"><input id="axn-w" type="url" placeholder="https://<tên>.typhuquanggita.workers.dev" value="'+h(t.worker)+'" style="padding:8px;border:1px solid var(--line);border-radius:8px">'+
       '<input id="axn-k" type="password" placeholder="Mật khẩu gửi phim" value="'+h(t.token)+'" style="padding:8px;border:1px solid var(--line);border-radius:8px"></div>'+
       '<div class="row mt"><button class="btn sm" onclick="G.axn.luuTram()">Lưu</button></div>'+
       '<p class="bd-tip">Chỉ dùng khi thuê máy GPU (Modal). Đã nối kho Google Drive thì xưởng ưu tiên đường miễn phí. Hướng dẫn: <b>xuong-phim-ai/nhanh/README-nhanh.md</b>.</p></details>';
@@ -89042,7 +89958,7 @@ var G = window.G || {}; window.G = G;
   };
   da.chepDS = function(){
     var t=(document.getElementById('da-ds-quay')||{}).innerText||'';
-    if(navigator.clipboard) navigator.clipboard.writeText(t).then(function(){ U.toast('Đã chép danh sách quay.','ok'); });
+    if(navigator.clipboard) navigator.clipboard.writeText(t).then(function(){ U.toast('Đã chép danh sách quay.','ok'); }, function(){ U.toast('Trình duyệt không cho chép — bôi đen danh sách rồi Ctrl+C.','err'); });
   };
 
   /* ── giao diện ── */
@@ -89591,10 +90507,8 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     };
   }
   G.ax.taiConfig = function(){
-    try{ var cfg=configPhim(); var a=document.createElement('a');
-      a.download='gita-phim-'+(phimActive().id)+'.json';
-      a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(cfg,null,2)); a.click();
-      U.toast('Đã tải cấu hình .json cho notebook Kaggle.','ok');
+    try{ var cfg=configPhim();
+      G.luuTepPhim(new Blob([JSON.stringify(cfg,null,2)],{type:'application/json'}), 'gita-phim-'+(phimActive().id)+'.json', 'application/json', '.json', 'cauHinh');
     }catch(e){ U.toast('Lỗi xuất cấu hình: '+(e&&e.message),'err'); }
   };
 
@@ -90201,10 +91115,8 @@ function choi(ghiLai){
     mr.onstop = function(){
       var du = mr._du; S.ghi = null;
       if (!du){ U.toast && U.toast('Đã huỷ bản ghi dở.', 'ok'); return; }
-      var fr = new FileReader();
-      fr.onload = function(){ var a = document.createElement('a'); a.download = 'gita-cat-nhip-' + Date.now() + '.webm'; a.href = fr.result; a.click();
-        U.toast && U.toast('Đã xuất phim cắt theo nhịp (.webm).', 'ok'); };
-      fr.readAsDataURL(new Blob(manh, { type: mime }));
+      /* Ngoại lệ N4: lưu qua G.luuTepPhim (cổng vai + sổ máy chủ), không tự tạo thẻ tải */
+      G.luuTepPhim(new Blob(manh, { type: mime }), 'gita-cat-nhip-' + Date.now() + '.webm', 'video/webm', '.webm', 'phim');
     };
   }
   nguon.connect(ctx.destination);
@@ -90419,7 +91331,7 @@ G.XA_NHOM = NHOM;
    gộp V50 (bảng ấy chỉ nhận mục cột trái — thu-ap-dung canh). Nút trong
    các công cụ cũ vẫn trỏ data-v tới chúng; không bắt lại thì người đang
    ở trong khung bị đẩy ra một màn rời. render() ở app.js đọc bảng này. */
-G.XA_CUA = { 'san-xuat-ai': 'nha', 'ban-dung': 'bandung', 'studio-he': 'hdh', 'lam-phim-10': 'b10' };
+G.XA_CUA = { 'san-xuat-ai': 'phancanh', 'ban-dung': 'bandung', 'studio-he': 'hdh', 'lam-phim-10': 'b10' };
 
 /* Màn chủ của từng ngăn. Mặc định là 'xuong-ai'; hai ngăn dưới đây thuộc
    về mã màn cũ của chúng, vì bộ vẽ lại của hai công cụ ấy kiểm tên màn. */
@@ -90485,14 +91397,21 @@ var KHO_HINH = [
 
 function veNha(){
   var da = G.xpDA || {}, ax = G.S.axDA || {};
-  var the = function(k, ic1, t, d){
-    return '<button class="xa-tao" onclick="G.xaMo(\'' + k + '\')">' + ic(ic1, 'w-5 h-5') + '<b>' + h(t) + '</b><span>' + h(d) + '</span></button>';
+  /* N8 (soát 10/2026): trang chủ từng đưa "Làm phim nhanh" lên đầu, mà công
+     cụ ấy không chạy khi chưa nối Drive hay GPU — người mới bấm vào là gặp
+     lỗi đầu tiên. Nay ba công cụ CHẠY NGAY TRÊN MÁY đứng trước, mỗi thẻ nói
+     thẳng nó cần gì. */
+  var the = function(k, ic1, t, d, nhan, ngay){
+    return '<button class="xa-tao' + (ngay ? ' xa-ngay' : '') + '" onclick="G.xaMo(\'' + k + '\')">' + ic(ic1, 'w-5 h-5') + '<b>' + h(t) + '</b><span>' + h(d) + '</span>' +
+      '<em class="xa-nhan">' + h(nhan) + '</em></button>';
   };
-  var o = '<div class="xa-tao-luoi">' +
-    the('nhanh', 'lightning', 'Làm phim nhanh', 'Chọn ảnh nhân vật, dán kịch bản, bấm một nút — máy GPU nội bộ dựng 1080p.') +
-    the('duan', 'target', 'Dự án phim 4–8 phút', 'Cảnh quay thật, cảnh nền miễn phí, cảnh AI — ráp trên Google Drive.') +
-    the('phim916', 'spark', 'Phim ngắn 9:16', 'Kịch bản → prompt từng cảnh → nạp clip → phụ đề, logo, nhạc.') +
-    the('catnhip', 'pulse', 'Cắt theo nhịp nhạc', 'Một bài nhạc + một bộ ảnh — mỗi cú chuyển cảnh rơi đúng một nhịp.') +
+  var o = '<h2 class="xa-h">Chạy ngay trên máy này — ra tệp phim thật</h2><div class="xa-tao-luoi">' +
+    the('phim916', 'spark', 'Phim đào tạo 9:16 hoặc 16:9', 'Kịch bản → prompt từng cảnh → ảnh/clip → giọng người thật từng cảnh → phụ đề, logo, nhạc → xuất .mp4.', 'Chạy ngay · không cần máy chủ', true) +
+    the('catnhip', 'pulse', 'Cắt theo nhịp nhạc', 'Một bài nhạc + một bộ ảnh — mỗi cú chuyển cảnh rơi đúng một nhịp.', 'Chạy ngay · không cần máy chủ', true) +
+    the('bandung', 'tools', 'Bàn dựng một khung', 'Ghép ảnh, chữ và một giọng đọc thành phim dọc ngắn.', 'Chạy ngay · không cần máy chủ', true) +
+    '</div><h2 class="xa-h">Cần nối máy chủ hoặc Google Drive</h2><div class="xa-tao-luoi">' +
+    the('nhanh', 'lightning', 'Làm phim nhanh', 'Chọn ảnh nhân vật, dán kịch bản, bấm một nút — máy GPU nội bộ dựng 1080p.', 'Cần nối trạm GPU và Drive') +
+    the('duan', 'target', 'Dự án phim 4–8 phút', 'Cảnh quay thật, cảnh nền miễn phí, cảnh AI — ráp trên Google Drive.', 'Cần nối Google Drive') +
     '</div>';
   o += '<h2 class="xa-h">Đang làm dở</h2><div class="xa-gan">';
   var co = false;
@@ -90527,6 +91446,7 @@ function veGiong(){
     ['Chatterbox — tiếng Anh', 'Cho phim tiếng Anh. Cũng chạy nội bộ.']
   ];
   return '<ol class="xa-giong">' + ds.map(function(x){ return '<li><b>' + h(x[0]) + '</b><span>' + h(x[1]) + '</span></li>'; }).join('') + '</ol>' +
+    '<p class="sm"><button class="btn" onclick="G.xaMo(\'phim916\')">Ghi giọng người thật cho từng cảnh</button> — trong Phim đào tạo, mỗi cảnh có nút <b>Ghi micro</b> và <b>Nạp tệp giọng</b>; cảnh tự kéo dài cho đủ giọng, phụ đề chia theo giọng.</p>' +
     '<p class="sm" style="color:var(--ink-2)">Cấu hình động cơ giọng nằm ở <button class="btn ghost sm" onclick="G.xaMo(\'kyxao\')">Kỹ xảo & động cơ</button>. Không nhái giọng một người khi chưa có sự đồng ý của chính người ấy.</p>';
 }
 
@@ -90550,7 +91470,7 @@ var TU_VE = { nha: veNha, mau: veMau, giong: veGiong, thuonghieu: veThuongHieu }
 
 /* ════════ CỘT PHẢI ════════ */
 var TIEP = {
-  nha: ['nhanh', 'Bắt đầu nhanh nhất: Làm phim nhanh'],
+  nha: ['phim916', 'Bắt đầu nhanh nhất: Phim đào tạo (chạy ngay trên máy)'],
   nhanh: ['kho', 'Phim xong nằm ở Kho phim'],
   duan: ['kho', 'Tệp dự án nằm trên Google Drive — xem ở Kho phim'],
   phim916: ['catnhip', 'Có nhạc nền? Thử cắt cảnh theo nhịp'],

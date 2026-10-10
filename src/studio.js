@@ -601,16 +601,72 @@ G.VIEWS = G.VIEWS || {};
     ac().resume(); xepTieng(ac().destination);
     raf = requestAnimationFrame(nhip);
   };
-  G.xuDung = function () { chay = false; cancelAnimationFrame(raf); dungTieng(); };
+  G.xuDung = function () {
+    /* Dừng giữa lúc đang xuất = huỷ bản ghi: một tệp phim có đoạn đứng hình
+       ở giữa trông vẫn "xong", và người nhận không biết nó hỏng. */
+    if (G.xuGhi && G.xuGhi.state === 'recording' && G.xuDongHo < tong() - 0.05) { G.xuHuyXuat = true; G.xuGhi.stop(); }
+    chay = false; cancelAnimationFrame(raf); dungTieng();
+  };
   function nhip(gio) {
     if (!chay) return;
     G.xuDongHo += (gio - mocTruoc) / 1000; mocTruoc = gio;
-    if (G.xuDongHo >= tong()) { G.xuDongHo = tong(); G.xuVe(G.xuDongHo); G.xuDung(); return; }
+    if (G.xuDongHo >= tong()) {
+      G.xuDongHo = tong(); G.xuVe(G.xuDongHo);
+      if (G.xuGhi && G.xuGhi.state === 'recording') G.xuGhi.stop();
+      G.xuDung(); return;
+    }
     G.xuVe(G.xuDongHo);
     raf = requestAnimationFrame(nhip);
   }
   G.xuTua = function (v) {
     G.xuDung(); G.xuDongHo = tong() * (+v / 100); G.xuVe(G.xuDongHo);
+  };
+
+  /* ══ XUẤT PHIM (N3 · soát 10/2026) ══
+     Bản cũ chỉ có chữ "chưa nối renderer" — Studio soạn được, xem được,
+     nhưng không ra tệp nào. Nay ghi đúng thứ đang xem: canvas 1080p
+     (captureStream) + tiếng xếp bởi xepTieng vào một nút đích ghi được.
+     Cổng: một đèn ĐỎ là không xuất (LT_RM.RM-1 — không có "xuất tạm"),
+     Dừng khẩn là huỷ bản đang ghi. Lưu qua ngoại lệ có tên N4
+     (G.luuTepPhim: R01–R02, không máy khách, ghi sổ máy chủ). */
+  /* Đèn "chưa soát" cũng đóng cổng: phim là thứ rời khỏi xưởng, nên lời
+     đọc phải qua cửa nội dung TRƯỚC khi thành tệp, không phải sau. */
+  G.xuDenDo = function () { return den().filter(function (l) { return l.tt === 'bad' || l.tt === 'cho'; }); };
+  G.xuXuat = function () {
+    if (G.xuGhi && G.xuGhi.state === 'recording') return;
+    if (!tong()) { U.toast('Chưa có cảnh nào để xuất.', 'err'); return; }
+    var dd = G.xuDenDo();
+    if (dd.length) { U.toast('Cổng xuất đóng: ' + dd.map(function (l) { return l.t; }).join(' · '), 'err'); return; }
+    if (!G.duocLuuPhim || !G.duocLuuPhim()) return;
+    var cv = document.getElementById('xu-man');
+    if (!cv || !cv.captureStream || !window.MediaRecorder) {
+      U.toast('Trình duyệt này không ghi được video. Dùng Chrome hoặc Edge trên máy tính.', 'err'); return;
+    }
+    var kieu = ['video/mp4;codecs=avc1.42E01E,mp4a.40.2', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm']
+      .filter(function (k) { return MediaRecorder.isTypeSupported(k); })[0];
+    if (!kieu) { U.toast('Trình duyệt này không có định dạng video ghi được.', 'err'); return; }
+    var mp4 = /mp4/.test(kieu), duoi = mp4 ? '.mp4' : '.webm', mo = mp4 ? 'video/mp4' : 'video/webm';
+    var a = ac(); a.resume();
+    var dich = a.createMediaStreamDestination(), tron = a.createGain();
+    tron.connect(a.destination); tron.connect(dich);
+    var luong = cv.captureStream(30);
+    dich.stream.getAudioTracks().forEach(function (t) { luong.addTrack(t); });
+    var manh = [], ghi = new MediaRecorder(luong, {mimeType: kieu, videoBitsPerSecond: 8000000});
+    ghi.ondataavailable = function (e) { if (e.data && e.data.size) manh.push(e.data); };
+    ghi.onstop = function () {
+      var huy = G.xuHuyXuat; G.xuGhi = null; G.xuHuyXuat = false;
+      try { tron.disconnect(); } catch (e) {}
+      if (huy) { U.toast('Đã huỷ bản đang xuất.', 'ok'); veLai(); return; }
+      var ten = String(G.xuDA.ten || 'studio').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/đ/gi, 'd').replace(/[^a-z0-9]+/gi, '-').toLowerCase().slice(0, 60) + duoi;
+      G.luuTepPhim(new Blob(manh, {type: kieu}), ten, mo, duoi, 'phim').then(function () { veLai(); });
+    };
+    G.xuDung(); G.xuDongHo = 0; G.xuHuyXuat = false; G.xuGhi = ghi;
+    ghi.start(1000);
+    chay = true; mocTruoc = performance.now();
+    xepTieng(tron);
+    raf = requestAnimationFrame(nhip);
+    U.toast('Đang xuất theo thời gian thực (' + phut(tong()) + '). Giữ tab này mở và hiện trên màn hình.', 'ok');
   };
 
   /* ══ DỪNG KHẨN — GIỮ LẠI, không chỉ tạm dừng ══
@@ -750,6 +806,22 @@ G.VIEWS = G.VIEWS || {};
        một khung rỗng đọc ra là "chỗ này chưa làm xong", không đọc ra
        là "vai của bạn không mở được" (bài học 9.99.63). */
     if (!(G.XU_NGANKHO || []).length) {
+      /* N2 (soát 10/2026): bản cũ nói "dành cho tài khoản được cấp quyền"
+         kể cả với Super Admin — trong khi nguyên nhân thật là máy chủ cấp
+         phép không trả gói nghề. Nói SAI nguyên nhân thì người đọc đi xin
+         quyền, không đi nối máy chủ. Nay tách ba trường hợp. */
+      var K = G.KHO || {}, loiNghe = K.loiMo && K.loiMo.nghe;
+      var xinNghe = G.goiDuocCap ? G.goiDuocCap().indexOf('nghe') >= 0 : false;
+      if ((K.dangNap || []).indexOf('nghe') >= 0) {
+        return o + U.empty('Đang mở gói nghề…', 'Studio dựng ngay khi gói nghề giải mã xong.');
+      }
+      if (xinNghe && (K.cheDoMau || K.maTuChoi || loiNghe)) {
+        return o + U.empty('Không nối được máy chủ cấp phép — Studio cần gói nghề',
+          'Tài khoản này được xin gói nghề, nhưng máy chủ chưa trả khoá' +
+          (K.lyDoTuChoi || loiNghe ? ' (' + String(K.lyDoTuChoi || loiNghe).slice(0, 160) + ')' : '') +
+          '. Đây là chuyện nối máy chủ, không phải chuyện quyền.') +
+          (G.can && G.can('qt_trang') ? '<p><button class="btn btn-chinh" data-v="noi-may-chu">Nối máy chủ</button></p>' : '');
+      }
       return o + U.empty('Xưởng Studio dành cho tài khoản được cấp quyền',
         'Màn sản xuất nội bộ chỉ mở khi phiên có gói nghề tương ứng. Nội dung dựng, hình ' +
         'tham chiếu và âm thanh được xử lý tại thiết bị; quyền xem không đồng nghĩa với ' +
@@ -882,8 +954,8 @@ G.VIEWS = G.VIEWS || {};
     o += '<input type="range" min="0" max="100" step="0.1" value="0" class="xu-tua" ' +
       'aria-label="Tua video" oninput="G.xuTua(this.value)">';
     o += '<p class="note" id="xu-tt">Đây là bản xem trước 2.5D dựng tại thiết bị; chưa phải nhân vật 3D ' +
-      'biểu cảm thật, phim 4D/5D hay tệp video hoàn chỉnh. Hiện hệ thống chưa có renderer nội bộ ' +
-      'để kết xuất phim. Hình, giọng và nhạc không được gửi đi; không có nút xuất giả.</p></div>';
+      'biểu cảm thật hay phim 4D/5D. Mục 7 ghi đúng bản xem này thành tệp video. Hình, giọng và nhạc ' +
+      'không được gửi đi.</p></div>';
 
     o += G.xu3DPanel ? G.xu3DPanel() : '';
 
@@ -919,10 +991,16 @@ G.VIEWS = G.VIEWS || {};
     }).join('') + '</ul></div>';
 
     /* 6 · Xuất kèm */
+    var doXuat = G.xuDenDo();
     o += '<div class="giay"><h3>7 · Xuất phim</h3>' +
-      '<p class="note">Kết xuất video, phụ đề và hộ chiếu phát hành chưa được nối với renderer ' +
-      'nội bộ. Không gửi ảnh/giọng lên dịch vụ ngoài; bản xem trước chỉ giúp kiểm tra kịch bản, ' +
-      'khung hình, chuyển động và phối âm.</p></div>';
+      '<p class="note">Ghi đúng bản đang xem — canvas ' + khung().join('×') + ' cùng giọng và nhạc — thành tệp ' +
+      'video ngay trên máy, theo thời gian thực. Không gửi ảnh/giọng lên dịch vụ ngoài. Lưu tệp chỉ dành cho ' +
+      'Super Admin và Admin hệ thống, và mỗi lượt lưu vào sổ (ngoại lệ N4).</p>' +
+      (doXuat.length ? '<p class="note xu-bad">Cổng xuất đóng — còn ' + doXuat.length + ' đèn đỏ: ' +
+        doXuat.map(function (l) { return h(l.t); }).join(' · ') + '.</p>' : '') +
+      '<div class="row"><button class="btn btn-chinh" onclick="G.xuXuat()"' + (doXuat.length ? ' disabled' : '') + '>' +
+      (G.xuGhi ? 'Đang xuất…' : 'Xuất phim') + '</button>' +
+      (G.xuGhi ? '<button class="btn" onclick="G.xuDung()">Huỷ bản đang xuất</button>' : '') + '</div></div>';
 
     setTimeout(function () { G.xuCoManh(); }, 0);
     return o + '</div>';

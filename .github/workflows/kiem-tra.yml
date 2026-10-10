@@ -173,6 +173,15 @@ jobs:
       - name: Xưởng phim AI — dò nhịp đúng tới mili-giây, danh mục trỏ vào bộ vẽ có thật, nhạc và ảnh không rời máy
         run: node tools/thu-xuong-ai.mjs
 
+      - name: Xưởng phim đào tạo — giọng từng cảnh, 16:9, Studio xuất thật, lưu phim chỉ qua ngoại lệ N4 có sổ, nhãn giọng máy đọc
+        run: node tools/thu-xuong-phim.mjs
+
+      - name: Sách nội bộ Cây Tiền — chỉ Super Admin nạp, R01–R11 đọc có nhật ký, trích ngắn, kho mã chỉ có gói .enc
+        run: node tools/thu-sach-noi-bo.mjs
+
+      - name: Thử vận hành VIP/VVIP (khởi động · bàn hỗ trợ · chi phí phục vụ)
+        run: node tools/thu-vvip-van-hanh.mjs
+
       - name: Chương trình đào tạo — không tự chấm, không tự ký, máy đọc ba cửa, đủ điều kiện kiểm ở máy chủ
         run: node tools/thu-dao-tao-ct.mjs
       - name: Thi chứng chỉ — đề riêng từng người, không tự chấm, tụt cấp theo tháng, vấn đề khó phải xin ý kiến
@@ -191,6 +200,8 @@ jobs:
         run: node tools/thu-sinh-trac.mjs
       - name: Bản tin GITA — người viết khác người duyệt, bài vinh danh phải có việc cụ thể và bằng chứng, câu kiểm tra chấm ở máy chủ, tính vào KPI nghiệp vụ
         run: node tools/thu-truyen-thong.mjs
+      - name: Phòng VVIP (Master Blueprint) — nhóm do hai người quyết, người phục vụ VVIP hạng A, điểm chạm đủ bảy lớp + mười tiêu chuẩn, năm quy tắc tần suất, 80% tách ba chỉ số, chưa đo thì nói
+        run: node tools/thu-vvip.mjs
 
       - name: Soát thiết kế tĩnh — không chuyển động nảy, không chữ chạy, không màu cấm (cả dạng %23), chữ chuyển sắc không thêm chỗ mới
         run: node tools/thu-thiet-ke-tinh.mjs

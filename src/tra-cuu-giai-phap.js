@@ -305,6 +305,9 @@ function moGoi(matKhau, tep){
     }).then(function(t){ return { ban:g.ban, ds:JSON.parse(t) }; });
   });
 }
+/* Dùng chung cho mọi gói cùng định dạng (sách nội bộ ở Phòng VVIP) — một
+   hàm mở gói, không chép hàm thứ hai. */
+G.moGoiMaHoa = moGoi;
 function napGoi(matKhau){
   TC.nap = { dang:true, xong:0, tong:0, loi:'' }; G.render && G.render();
   moGoi(matKhau).then(function(goi){

@@ -352,7 +352,9 @@ var G = window.G || {}; window.G = G;
     if (!ctxGiai) ctxGiai = new (window.AudioContext || window.webkitAudioContext)();
     return taiBlob(url).then(function (bl) { return bl.arrayBuffer(); })
       .then(function (b) { return ctxGiai.decodeAudioData(b); })
-      .then(function (buf) { var id = G.xpMa('g'); G.xpVat[id] = {ma: id, ten: ten, loai: 'giong', buffer: buf}; return id; });
+      /* Mọi giọng của đường tự động là giọng MÁY đọc (Piper hoặc dịch vụ ngoài):
+         gắn cờ tongHop để phim tự đè nhãn — ngoại lệ C20 có tên. */
+      .then(function (buf) { var id = G.xpMa('g'); G.xpVat[id] = {ma: id, ten: ten, loai: 'giong', buffer: buf, tongHop: true}; return id; });
   }
   function chayLan(viec, gioiHan) {
     var i = 0;
@@ -1075,15 +1077,12 @@ var G = window.G || {}; window.G = G;
     var duoi = loai === 'tts' ? '.mp3' : loai === 'nv' ? '.png' : '.mp4';
     var url = apiGoc() + '/quay/phim/' + ma + duoi;
     var ten = (kgTenViec(ma) || ma).replace(/[^\w\-. ]+/g, '_').replace(/\s+/g, '-').slice(0, 60) + '-' + ma.slice(0, 6) + duoi;
+    if (!G.duocLuuPhim()) return;
     U.toast('Đang tải phim về máy…', 'ok');
+    var mo = loai === 'tts' ? 'audio/mpeg' : loai === 'nv' ? 'image/png' : 'video/mp4';
     fetch(url).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.blob(); })
-      .then(function (b) {
-        var a = document.createElement('a'), ou = URL.createObjectURL(b);
-        a.href = ou; a.download = ten; document.body.appendChild(a); a.click();
-        setTimeout(function () { URL.revokeObjectURL(ou); a.remove(); }, 5000);
-        U.toast('Đã tải xuống: ' + ten, 'ok');
-      })
-      .catch(function (e) { U.toast('Chưa tải được (' + ((e && e.message) || 'lỗi') + ') — mở link để tải tay.', 'err'); window.open(url, '_blank', 'noopener'); });
+      .then(function (b) { return G.luuTepPhim(b, ten, mo, duoi, loai === 'nv' ? 'khung' : 'phim'); })
+      .catch(function (e) { U.toast('Chưa tải được (' + ((e && e.message) || 'lỗi') + ').', 'err'); });
   };
   /* ── CỔNG 2: ĐÃ TẢI — DỌN KHO (giải phóng R2 ngay) ── */
   G.xpKgDon = function (ma) {

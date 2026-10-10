@@ -5,7 +5,8 @@
 # stable-diffusion.cpp NGAY TRÊN MÁY GITHUB — không cần khoá dịch vụ nào,
 # không tốn tiền. (Bản đầu gọi Workers AI bằng khoá Cloudflare ở Secrets;
 # khoá ấy chỉ có quyền triển khai, Workers AI trả 401.)
-# Bảy máy chạy song song, mỗi máy ba ảnh; máy gộp nén WebP và đẩy sang
+# Mười một máy chạy song song, mỗi máy tối đa hai ảnh (CPU ~50 phút/ảnh —
+# lượt 10/10 chia bảy máy × ba ảnh thì ba máy chạm trần 150 phút); máy gộp nén WebP và đẩy sang
 # nhánh dữ liệu riêng `anh-3d` để người duyệt trước khi vào assets/.
 # Lời nhắc chỉ ASCII, không tên người (Điều 13).
 # ═══════════════════════════════════════════════════════════════
@@ -29,11 +30,11 @@ concurrency:
 jobs:
   tao:
     runs-on: ubuntu-latest
-    timeout-minutes: 150
+    timeout-minutes: 240
     strategy:
       fail-fast: false
       matrix:
-        nhom: [0, 1, 2, 3, 4, 5, 6]
+        nhom: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     steps:
       - name: Harden runner (ghi lại mọi kết nối ra ngoài)
         uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
@@ -74,7 +75,7 @@ jobs:
           tai t5xxl.gguf https://huggingface.co/city96/t5-v1_1-xxl-encoder-gguf/resolve/main/t5-v1_1-xxl-encoder-Q5_K_M.gguf
 
       - name: Tạo ảnh nhóm ${{ matrix.nhom }}
-        run: python3 -I tools/anh-3d/chay-sdcpp.py "$SD" "$MH" ra ${{ matrix.nhom }} 7
+        run: python3 -I tools/anh-3d/chay-sdcpp.py "$SD" "$MH" ra ${{ matrix.nhom }} 11
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
@@ -108,7 +109,9 @@ jobs:
         run: |
           set -eu
           ls goc/*.png >/dev/null 2>&1 || { echo "::error::Không máy nào tạo được ảnh"; exit 1; }
-          python3 -m pip install --quiet pillow
+          # Ubuntu 24.04 khoá pip vào Python hệ thống (PEP 668) — lượt 10/10 hỏng
+          # đúng ở đây sau 2,5 giờ tạo ảnh. Cài bằng apt thì python3 -I vẫn thấy.
+          sudo apt-get install -y -qq python3-pil > /dev/null
           python3 -I tools/anh-3d/nen-anh.py goc ra/anh
           python3 -I -c "import json;d=json.load(open('tools/anh-3d/de-bai.json'));json.dump({'moHinh':'FLUX.1-schnell Q4_0 (stable-diffusion.cpp, CPU)','giayPhep':'Apache-2.0','anh':[{k:a[k] for k in ('ma','ten','alt','p')} for a in d['anh']]},open('ra/anh/nguon.json','w'),ensure_ascii=False,indent=1)"
 

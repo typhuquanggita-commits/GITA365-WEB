@@ -991,6 +991,7 @@ G.NAV = [
     {v:'phim-cau-noi',t:'Phim cầu nối cấp độ',        h:'50 phim nối cấp trước → cấp mới → hé cấp sau · 5 giọng chuyên gia · gửi Xưởng phim', ic:'spark', star:1, perm:'pro_consult', capMo:'nghe'},
     {v:'goi-nghe',    t:'Gói nghề · bộ phận chuyên môn', h:'Mỗi vai một gói nghề: sứ mệnh · chuẩn nghề · sát hạch · công cụ', ic:'crown', star:1, perm:'nghe_chung', capMo:'nghe'},
     {v:'assessment',  t:'Assessment Tầng 1 (chẩn đoán)', h:'6 miền · 10 bước bắt buộc · DCI · định hướng chăm sóc — công cụ Tư vấn/Assessor', ic:'check', star:1, perm:'pro_consult', capMo:'nghe'},
+    {v:'phong-vvip',  t:'Phòng VVIP · Master Blueprint', h:'Bảng 80% · nhóm trọng điểm · 12 tài liệu · 10K WOW', ic:'crown', star:1, perm:'pro_consult', capMo:'chung'},
     {v:'hang-vip',    t:'Phân hạng VIP & VVIP',        h:'4 hạng · chuẩn phục vụ · AI chăm sóc',ic:'crown', star:1, perm:'pro_consult', capMo:'nghe'},
     {v:'hoso-vip',    t:'Chuẩn hồ sơ VIP & VVIP',      h:'7 phần · 30 trường · ba mươi giây',  ic:'book', star:1, perm:'pro_consult', capMo:'nghe'},
     {v:'cay-tien',    t:'Cây tiền — chăm sóc VIP',     h:'4 việc · điểm cây tiền · 12 nhịp',   ic:'seed', perm:'pro_consult', capMo:'nghe'},

@@ -407,10 +407,8 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     };
   }
   G.ax.taiConfig = function(){
-    try{ var cfg=configPhim(); var a=document.createElement('a');
-      a.download='gita-phim-'+(phimActive().id)+'.json';
-      a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(cfg,null,2)); a.click();
-      U.toast('Đã tải cấu hình .json cho notebook Kaggle.','ok');
+    try{ var cfg=configPhim();
+      G.luuTepPhim(new Blob([JSON.stringify(cfg,null,2)],{type:'application/json'}), 'gita-phim-'+(phimActive().id)+'.json', 'application/json', '.json', 'cauHinh');
     }catch(e){ U.toast('Lỗi xuất cấu hình: '+(e&&e.message),'err'); }
   };
 

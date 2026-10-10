@@ -4544,3 +4544,52 @@ html[data-may="yeu"] *,html[data-may="yeu"] *::before,html[data-may="yeu"] *::af
 .tt-cs-so{display:flex;align-items:baseline;gap:10px;margin:0 0 10px}
 .tt-cs-so b{font-size:33px;font-weight:800;color:var(--gita-ink);font-variant-numeric:tabular-nums}
 .tt-cs-so span{font-size:14.5px;color:var(--ink-2)}
+
+/* ═══ Phòng VVIP (src/phong-vvip.js) — dùng lại thanh ngăn .tt-tabs của Bản tin ═══
+   Lưới tự xuống một cột (auto-fit), không thêm @media — khỏi đụng luật
+   "khối khổ chạm nằm cuối tệp". Màu chỉ lấy token. */
+.man-vv .vv-ba{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:0 0 12px}
+.man-vv .vv-o{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:16px;display:flex;flex-direction:column;gap:6px}
+.man-vv .vv-k{font-size:12.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3)}
+.man-vv .vv-so{font-family:var(--serif);font-size:33px;font-weight:600;line-height:1.1;font-variant-numeric:tabular-nums;color:var(--ink)}
+.man-vv .vv-chua{font-size:18px;color:var(--ink-3);font-family:inherit}
+.man-vv .vv-cot{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px;align-items:end;height:170px;padding:8px 0;border-bottom:1px solid var(--line)}
+.man-vv .vv-c{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:2px;font-size:10.5px;font-variant-numeric:tabular-nums;color:var(--ink-3)}
+.man-vv .vv-c b{font-size:10.5px;color:var(--ink-2)}
+.man-vv .vv-cb{width:100%;max-width:38px;background:var(--gita);border-radius:6px 6px 2px 2px;opacity:.85}
+.man-vv .vv-nhan{display:inline-block;font-size:12.5px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--phu-1);border:1px solid var(--line);color:var(--ink-2)}
+.man-vv .vv-nhan.xanh{border-color:var(--ok,var(--gita));color:var(--ok,var(--gita))}
+.man-vv .vv-nhan.vang{border-color:var(--warn,var(--gold));color:var(--warn,var(--gold))}
+.man-vv .vv-nhan.do{border-color:var(--err,var(--gita-sau));color:var(--err,var(--gita-sau))}
+.man-vv .vv-dau{display:inline-grid;place-items:center;width:22px;height:22px;margin:1px;border-radius:6px;font-size:10.5px;font-weight:700;border:1px solid var(--line)}
+.man-vv .vv-dau.co{background:var(--gita);border-color:var(--gita);color:var(--chu-tren-mau,#fff)}
+.man-vv .vv-dau.chua{border-style:dashed;color:var(--ink-3)}
+.man-vv .vv-dau.khong{color:var(--ink-4,var(--ink-3));opacity:.6}
+.man-vv .vv-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;align-items:end;margin:0 0 14px}
+.man-vv .vv-form label{display:flex;flex-direction:column;gap:4px;font-size:14.5px;font-weight:600}
+.man-vv .vv-form .vv-rong{grid-column:1/-1}
+.man-vv .vv-form textarea,.man-vv .vv-form input,.man-vv .vv-form select{width:100%}
+.man-vv .vv-cho{display:flex;flex-direction:column;gap:6px;margin:0 0 10px}
+.man-vv .vv-tl,.man-vv .vv-dc{margin:0 0 10px}
+.man-vv .vv-tl summary,.man-vv .vv-dc summary{cursor:pointer;min-height:32px;display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.man-vv .vv-may pre{white-space:pre-wrap;word-break:break-word;font-size:12.5px;background:var(--phu-1);border-radius:var(--r);padding:10px;max-height:320px;overflow:auto}
+.man-vv .vv-chuan{display:flex;flex-direction:column;gap:4px;border:1px solid var(--line);border-radius:var(--r);padding:10px;margin:8px 0}
+.man-vv .vv-chuan label{display:flex;gap:8px;align-items:center;min-height:32px}
+.man-vv .vv-hai{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.man-vv .vv-ds{margin:6px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.man-vv .vv-bia{border-left:4px solid var(--gita)}
+.man-vv .vv-bia h2{font-family:var(--serif);font-size:26px;margin:4px 0}
+.man-vv .vv-loi,.man-vv .vv-canh{border-color:var(--warn,var(--gold))}
+/* Nút trong Phòng VVIP được xuống dòng: .btn chung khai nowrap, và một nhãn
+   dài đẩy cả trang cuộn ngang ở khổ 390px (đo được 440px). Nới ĐÚNG trong màn
+   này, không nới .btn toàn cục. */
+.man-vv .btn{white-space:normal;height:auto;min-height:36px;text-align:center}
+.man-vv .vv-cho label{display:flex;flex-direction:column;gap:4px}
+.man-vv .vv-cho textarea{width:100%}
+/* Xưởng phim (N11, soát 10/2026): ô chọn "Phạm vi" của khối Kaggle rộng 243px
+   đẩy trang 1440px cuộn ngang (scrollWidth 1453) — hàng trong xưởng xuống dòng,
+   ô chọn không vượt khung. */
+.man-xu .row{flex-wrap:wrap}
+.man-xu select{max-width:100%}
+.man-xu .xp-giong{align-items:center;gap:8px;margin:6px 0}
+.man-xu .xp-canh-bao{color:var(--warn,var(--gold));font-weight:600}

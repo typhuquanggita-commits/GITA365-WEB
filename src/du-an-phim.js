@@ -149,7 +149,7 @@ var G = window.G || {}; window.G = G;
   };
   da.chepDS = function(){
     var t=(document.getElementById('da-ds-quay')||{}).innerText||'';
-    if(navigator.clipboard) navigator.clipboard.writeText(t).then(function(){ U.toast('Đã chép danh sách quay.','ok'); });
+    if(navigator.clipboard) navigator.clipboard.writeText(t).then(function(){ U.toast('Đã chép danh sách quay.','ok'); }, function(){ U.toast('Trình duyệt không cho chép — bôi đen danh sách rồi Ctrl+C.','err'); });
   };
 
   /* ── giao diện ── */

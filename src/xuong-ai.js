@@ -68,7 +68,7 @@ G.XA_NHOM = NHOM;
    gộp V50 (bảng ấy chỉ nhận mục cột trái — thu-ap-dung canh). Nút trong
    các công cụ cũ vẫn trỏ data-v tới chúng; không bắt lại thì người đang
    ở trong khung bị đẩy ra một màn rời. render() ở app.js đọc bảng này. */
-G.XA_CUA = { 'san-xuat-ai': 'nha', 'ban-dung': 'bandung', 'studio-he': 'hdh', 'lam-phim-10': 'b10' };
+G.XA_CUA = { 'san-xuat-ai': 'phancanh', 'ban-dung': 'bandung', 'studio-he': 'hdh', 'lam-phim-10': 'b10' };
 
 /* Màn chủ của từng ngăn. Mặc định là 'xuong-ai'; hai ngăn dưới đây thuộc
    về mã màn cũ của chúng, vì bộ vẽ lại của hai công cụ ấy kiểm tên màn. */
@@ -134,14 +134,21 @@ var KHO_HINH = [
 
 function veNha(){
   var da = G.xpDA || {}, ax = G.S.axDA || {};
-  var the = function(k, ic1, t, d){
-    return '<button class="xa-tao" onclick="G.xaMo(\'' + k + '\')">' + ic(ic1, 'w-5 h-5') + '<b>' + h(t) + '</b><span>' + h(d) + '</span></button>';
+  /* N8 (soát 10/2026): trang chủ từng đưa "Làm phim nhanh" lên đầu, mà công
+     cụ ấy không chạy khi chưa nối Drive hay GPU — người mới bấm vào là gặp
+     lỗi đầu tiên. Nay ba công cụ CHẠY NGAY TRÊN MÁY đứng trước, mỗi thẻ nói
+     thẳng nó cần gì. */
+  var the = function(k, ic1, t, d, nhan, ngay){
+    return '<button class="xa-tao' + (ngay ? ' xa-ngay' : '') + '" onclick="G.xaMo(\'' + k + '\')">' + ic(ic1, 'w-5 h-5') + '<b>' + h(t) + '</b><span>' + h(d) + '</span>' +
+      '<em class="xa-nhan">' + h(nhan) + '</em></button>';
   };
-  var o = '<div class="xa-tao-luoi">' +
-    the('nhanh', 'lightning', 'Làm phim nhanh', 'Chọn ảnh nhân vật, dán kịch bản, bấm một nút — máy GPU nội bộ dựng 1080p.') +
-    the('duan', 'target', 'Dự án phim 4–8 phút', 'Cảnh quay thật, cảnh nền miễn phí, cảnh AI — ráp trên Google Drive.') +
-    the('phim916', 'spark', 'Phim ngắn 9:16', 'Kịch bản → prompt từng cảnh → nạp clip → phụ đề, logo, nhạc.') +
-    the('catnhip', 'pulse', 'Cắt theo nhịp nhạc', 'Một bài nhạc + một bộ ảnh — mỗi cú chuyển cảnh rơi đúng một nhịp.') +
+  var o = '<h2 class="xa-h">Chạy ngay trên máy này — ra tệp phim thật</h2><div class="xa-tao-luoi">' +
+    the('phim916', 'spark', 'Phim đào tạo 9:16 hoặc 16:9', 'Kịch bản → prompt từng cảnh → ảnh/clip → giọng người thật từng cảnh → phụ đề, logo, nhạc → xuất .mp4.', 'Chạy ngay · không cần máy chủ', true) +
+    the('catnhip', 'pulse', 'Cắt theo nhịp nhạc', 'Một bài nhạc + một bộ ảnh — mỗi cú chuyển cảnh rơi đúng một nhịp.', 'Chạy ngay · không cần máy chủ', true) +
+    the('bandung', 'tools', 'Bàn dựng một khung', 'Ghép ảnh, chữ và một giọng đọc thành phim dọc ngắn.', 'Chạy ngay · không cần máy chủ', true) +
+    '</div><h2 class="xa-h">Cần nối máy chủ hoặc Google Drive</h2><div class="xa-tao-luoi">' +
+    the('nhanh', 'lightning', 'Làm phim nhanh', 'Chọn ảnh nhân vật, dán kịch bản, bấm một nút — máy GPU nội bộ dựng 1080p.', 'Cần nối trạm GPU và Drive') +
+    the('duan', 'target', 'Dự án phim 4–8 phút', 'Cảnh quay thật, cảnh nền miễn phí, cảnh AI — ráp trên Google Drive.', 'Cần nối Google Drive') +
     '</div>';
   o += '<h2 class="xa-h">Đang làm dở</h2><div class="xa-gan">';
   var co = false;
@@ -176,6 +183,7 @@ function veGiong(){
     ['Chatterbox — tiếng Anh', 'Cho phim tiếng Anh. Cũng chạy nội bộ.']
   ];
   return '<ol class="xa-giong">' + ds.map(function(x){ return '<li><b>' + h(x[0]) + '</b><span>' + h(x[1]) + '</span></li>'; }).join('') + '</ol>' +
+    '<p class="sm"><button class="btn" onclick="G.xaMo(\'phim916\')">Ghi giọng người thật cho từng cảnh</button> — trong Phim đào tạo, mỗi cảnh có nút <b>Ghi micro</b> và <b>Nạp tệp giọng</b>; cảnh tự kéo dài cho đủ giọng, phụ đề chia theo giọng.</p>' +
     '<p class="sm" style="color:var(--ink-2)">Cấu hình động cơ giọng nằm ở <button class="btn ghost sm" onclick="G.xaMo(\'kyxao\')">Kỹ xảo & động cơ</button>. Không nhái giọng một người khi chưa có sự đồng ý của chính người ấy.</p>';
 }
 
@@ -199,7 +207,7 @@ var TU_VE = { nha: veNha, mau: veMau, giong: veGiong, thuonghieu: veThuongHieu }
 
 /* ════════ CỘT PHẢI ════════ */
 var TIEP = {
-  nha: ['nhanh', 'Bắt đầu nhanh nhất: Làm phim nhanh'],
+  nha: ['phim916', 'Bắt đầu nhanh nhất: Phim đào tạo (chạy ngay trên máy)'],
   nhanh: ['kho', 'Phim xong nằm ở Kho phim'],
   duan: ['kho', 'Tệp dự án nằm trên Google Drive — xem ở Kho phim'],
   phim916: ['catnhip', 'Có nhạc nền? Thử cắt cảnh theo nhịp'],

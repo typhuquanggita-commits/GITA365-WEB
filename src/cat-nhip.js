@@ -328,10 +328,8 @@ function choi(ghiLai){
     mr.onstop = function(){
       var du = mr._du; S.ghi = null;
       if (!du){ U.toast && U.toast('Đã huỷ bản ghi dở.', 'ok'); return; }
-      var fr = new FileReader();
-      fr.onload = function(){ var a = document.createElement('a'); a.download = 'gita-cat-nhip-' + Date.now() + '.webm'; a.href = fr.result; a.click();
-        U.toast && U.toast('Đã xuất phim cắt theo nhịp (.webm).', 'ok'); };
-      fr.readAsDataURL(new Blob(manh, { type: mime }));
+      /* Ngoại lệ N4: lưu qua G.luuTepPhim (cổng vai + sổ máy chủ), không tự tạo thẻ tải */
+      G.luuTepPhim(new Blob(manh, { type: mime }), 'gita-cat-nhip-' + Date.now() + '.webm', 'video/webm', '.webm', 'phim');
     };
   }
   nguon.connect(ctx.destination);

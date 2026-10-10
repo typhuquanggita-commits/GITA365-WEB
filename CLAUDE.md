@@ -164,3 +164,50 @@ Chủ hệ 10/10: khu "Nội dung & truyền thông" của nhân sự "hời h�
 - **Tám bài nền** (`G.BTG_BAI_NEN`) do R01 ban hành bằng một nút — vẫn đi qua `soanBaiTT` → `duyetBaiTT`, tức qua đúng cổng như mọi bài.
 - **Bẫy tên đã cắn:** tiền tố `G.tt*` thuộc `src/tt-cskh.js` (`G.ttTai = false`) → màn ném "G.ttTai is not a function" và rơi về màn xin cấp phép. Màn này dùng tiền tố `btg` (`G.btg*`, `G.BTG_*`). Lớp CSS `.tt-*` không trùng.
 - Tệp mới đặt trong `app[]` SAU `src/kho-nha.js` — đặt sau `tin-noi-bo.js` là rơi vào gói `nghe` và đổi `gita-nghe.js`.
+
+## Phòng VVIP — Master Blueprint 1.0 (`may-chu/vvip.js` · `may-chu/vvip-noi-dung.js` · `src/phong-vvip.js` · `tools/thu-vvip.mjs`)
+Chủ hệ 10/10 gửi "GITA 365 VVIP — MASTER BLUEPRINT" (theo hướng sách Cây Tiền — Lý Tiễn) và dặn áp vào khu Khách hàng & CRM cho VIP/VVIP, "nghiêm cấm làm hời hợt". Màn `phong-vvip` (đầu màn chính `khach-crm`, `pro_consult`), bảy ngăn: Bảng 80% · Nhận diện · nhóm · Phục vụ · phân công · Hồ sơ 12 tài liệu · Điểm chạm WOW · Chiến dịch · Master Blueprint.
+- **Nội dung Blueprint ở MÁY CHỦ** (`vvip-noi-dung.js`, cửa `noiDungVvip` chỉ R01–R12). src/ gộp thành gita-app.js tải trước đăng nhập — đặt bí quyết khai thác khách cao cấp ở đó là ai mở trang cũng đọc được. `thu-vvip.mjs` đỏ nếu màn chép nội dung vào gói công khai.
+- **Không chép sách Cây Tiền**: phần sách đã tiêu hoá nằm ở kho mã hoá `G.CAYTIEN · G.PHANHANG · G.CHUAN_VIP · G.HOSO_VIP`; ở đây chỉ phần chủ hệ phân tích và áp dụng, mỗi ý có ô `trongHe` trỏ cửa/màn có thật.
+- **Nhóm (VVIP/VIP) do HAI người quyết** (`hangVvip`, đề xuất ≠ duyệt, duyệt R01–R03), lúc duyệt chụp lại bảy dấu hiệu (`canCuMay`). Nhóm hiện tại = dòng đã duyệt mới nhất, tính lúc đọc — không cột "nhóm hiện tại". Nhóm phục vụ KHÁC tầng học: không cửa nào ở đây đụng `hoSoKhach.tang`. Recovery là TRẠNG THÁI chồng lên nhóm (đèn đỏ · phiếu hài lòng thấp · hoàn tiền), không phải hạng.
+- **Bảy dấu hiệu, doanh thu chỉ là một.** Dấu hiệu không đo được trả `null` ("chưa biết" = việc phải đi hỏi). Máy NÊU nhà đủ dấu hiệu, không tự xếp.
+- **Người phục vụ VVIP phải hạng A** đọc từ `chamMotNguoi` (bảng xếp hạng lương thưởng tháng trước) — cùng con số trả lương nên không ai nâng hạng riêng cho phân công. Hạng B chỉ khi có lý do ≥40 ký tự, đánh dấu `ngoaiChuan`; C/D không bao giờ. Phân công đổi `hoSoKhach.coach/tuVan` trong cùng `db.batch`.
+- **Thư viện điểm chạm**: đủ bảy lớp mới nộp; người KHÁC người soạn tích đủ mười tiêu chuẩn mới bật; điểm chạm đang bật không sửa đè. Gửi qua `kichHoatDiemCham` → năm quy tắc tần suất (TS1 trần kênh/7 ngày · TS2 cùng điểm chạm 14 ngày · TS3 nhà đang học không nhận G1–G2 · TS4 từ chối quảng bá · TS5 Recovery chỉ WOW09) → rồi đi qua ĐÚNG `ghiCham` (đèn đỏ phải gọi, ba cửa). Không mở lối ghi thứ hai vào sổ chạm.
+- **10.000 là sức chứa, không phải chỉ tiêu** (SUP-01). Năm con số phân bổ của chính bản Blueprint cộng ra **8.500**; giữ nguyên văn, nêu riêng 1.500 "chưa phân bổ" — mục quyết **QD6**, máy không san cho khớp.
+- **80% tách ba chỉ số** (doanh thu · lợi nhuận đóng góp · tăng trưởng). Lợi nhuận đóng góp trả `null` vì sổ chưa có chi phí trực tiếp theo nhà. Bảng chỉ R01–R03 (luật tài chính); KPI chưa đo có `vi`, không trả 0.
+- **Hồ sơ 12 tài liệu**: phiên bản nối tiếp; trường lạ bị bỏ; tài liệu 04 đòi đồng ý dữ liệu con; 05/07/09/12 do máy ghép (09 chỉ R01–R03); mỗi lượt mở ghi nhật ký.
+- **Bẫy đã cắn:** viết `var U = window.U || {}` — `window.U` không tồn tại (lớp giao diện ở `G.U`), màn giữ vật rỗng và nổ ĐÚNG ở ngăn có dữ liệu, nên lượt dựng đầu (đang tải) trông lành. Dùng `var U = G.U`. Và `.btn` chung khai `nowrap`: một nhãn dài đẩy trang 390px cuộn ngang — nới trong `.man-vv`, không nới toàn cục.
+
+## Xưởng phim đào tạo — dựng được phim thật (`src/xuong-phim.js` · `tools/thu-xuong-phim.mjs`)
+
+- **Giọng là tệp có sẵn hoặc ghi micro người thật**, từng cảnh và lời dẫn cả phim. Không bộ sinh giọng nào (luật C20) — phép thử đọc mã bỏ chú giải rồi dò `speechSynthesis`/`piper`.
+- **Cảnh tự kéo dài cho đủ giọng** (`giong.duration + 0,5s`); phụ đề chia theo độ dài giọng. Cắt giọng giữa câu là lỗi im lặng: phim xuất ra trông đủ, người xem mất nửa câu cuối.
+- **Lời dẫn phát MỘT lần**, không `loop` — lặp thì đoạn đầu chèn lên đoạn cuối. Dài hơn phim thì cảnh báo trước khi xuất.
+- **Dò tên nhân vật theo biên âm tiết** (`G.xpCoTen`), không chuỗi con: "Lan" không được kéo theo "An".
+- **Khổ 16:9 là vẽ lại**, không đệm: prompt nói Horizontal 16:9, chữ/logo/phụ đề co theo `min(W,H)`.
+- Bốn khối cần máy chủ nằm trong `<details class="xp-may">` SAU mục xuất phim — người mới đi thẳng được tới .mp4 mà không vấp vào thứ chưa nối.
+- Trạm GPU chỉ nhận `*.typhuquanggita.workers.dev` — một địa chỉ dán nhầm là gửi ảnh nhà khách sang máy lạ.
+
+### Bốn chốt của chủ hệ 10/10/2026 ("xử lý full 4")
+
+- **N4 · ngoại lệ có tên `src/luu-tep-phim.js` + cửa `ghiLuuPhim`** (`may-chu/luu-phim.js`). Lưu tệp ra máy CHỈ có ở xưởng phim, chỉ R01–R02, không máy khách, và **ghi sổ máy chủ TRƯỚC byte đầu tiên** — sổ từ chối là không lưu. Thẻ tải và địa chỉ blob chỉ sinh ở tệp ấy; `thu-xuong-phim.mjs` đỏ nếu chúng mọc ở tệp xưởng khác. Hộp "Lưu thành" cần cú bấm, nên tệp sinh sau một lượt ghi dài lùi về thẻ tải — vẫn trong cùng hàm, vẫn qua sổ.
+- **N2 · Studio nói đúng nguyên nhân**: gói nghề không về vì máy chủ cấp phép → câu "Không nối được máy chủ cấp phép" + nút Nối máy chủ; không phải câu "dành cho tài khoản được cấp quyền".
+- **N3 · Studio xuất thật** (`G.xuXuat`): ghi đúng canvas đang xem + tiếng của `xepTieng`. Đèn đỏ **và đèn "chưa soát"** đóng cổng — lời đọc phải qua `soatNoiDung` trước khi thành tệp. Dừng giữa chừng hay Dừng khẩn là huỷ bản đang ghi.
+- **C20 · ngoại lệ có tên cho Piper**: chỉ giọng kho có sẵn, không đường nhái giọng; giọng sinh ra mang cờ `tongHop` và phim tự đè nhãn "Giọng đọc tổng hợp bằng máy" suốt thời lượng. Đọc cờ từ VẬT LIỆU, không từ ô người dùng khai.
+- **VVIP QD1–QD6 đã chốt** ở `QUYET_DINH_5[].chot` kèm `ngay` · `boi`. Chốt không thêm con số nào Blueprint chưa có: không đặt trần số nhà thử, 1.500 điểm chạm giữ dự phòng tới sau 90 ngày thử.
+- **Sách *Cây Tiền*** vẫn chưa có trên Drive (chỉ có mã của chính kho) — nội dung sách trong kho mã hoá dựng từ bản Blueprint, không từ nguyên văn sách.
+
+## Sách nội bộ Cây Tiền — đọc đủ cả cuốn, chỉ gói mã hoá vào kho (`may-chu/sach-noi-bo.js` · `tools/dong-goi-sach.mjs` · `tools/thu-sach-noi-bo.mjs`)
+
+- **Nguồn:** 149 ảnh chụp sách trên Drive của chủ hệ (thư mục ảnh ngày 28/08/2026). Lượt biên soạn đầu chỉ đọc 4 chương; bản này đọc trang 25–292, đủ tám chương → sổ tri thức 8 chương · 42 mục · 217 chuẩn có dẫn trang · 70 câu trích ngắn · 57 chỗ va luật GITA · mẫu hồ sơ 13 phần/137 trường. **Thiếu trang 9–24** (Lời mở đầu + Mở đầu) — chưa từng được chụp.
+- **Kho mã gita365-web CÔNG KHAI, sách có bản quyền** → nội dung KHÔNG nằm trong mã nguồn. Chỉ `kho-sach/cay-tien.enc` (AES-256-GCM, PBKDF2 250k) vào kho; nguồn `C*.json` và bản mở ra bị `.gitignore` chặn. Mật khẩu ở Drive chủ hệ (tài liệu "GITA365 — Mật khẩu gói sách Cây Tiền"), không qua máy chủ.
+- Super Admin mở gói **trên máy mình** (`G.moGoiMaHoa`, chung với kho cao) rồi gọi `napSachNoiBo`. Đọc: R01–R11 (bậc pro_consult), mỗi lượt mở chương ghi nhật ký `SACH_DOC`. Trích dài hơn 40 chữ bị chặn — trích dài là chép sách.
+- **Lỗi có sẵn đã sửa:** `tools/dung-site.sh` không chép `kho-van-de/ kho-cao/ kho-nha/` lên trang thật → nút "Mở gói và nạp" nhận 404 trên bản chạy thật. Nay chép (chỉ `.enc`) và chặn mọi tệp khác `.enc` trong `kho-*`.
+- Đóng gói lại: `GITA_MK_TEP=<tệp-mật-khẩu> node tools/dong-goi-sach.mjs cay-tien <thư-mục-C*.json>`; mở ra: `--mo cay-tien <ra>`.
+
+## Vận hành VIP/VVIP — ba bộ máy QD3 (10/2026)
+
+`may-chu/vvip-van-hanh.js`, ngăn **Vận hành · hỗ trợ** của Phòng VVIP, bộ thử `tools/thu-vvip-van-hanh.mjs` (61 phép đo, 8 phá thử). Ba chỉ số bảng 80% từng đứng ở null vì thiếu chỗ ghi — nay chỉ null khi thiếu DÒNG:
+- **Khởi động sáu mốc → M1.** OB1 gọi chào 24h · OB3 hồ sơ 01–04,06 trong 7 ngày · OB4 lượt chạm của coach đúng hạng (VVIP A · VIP A/B) — **máy đọc sổ**, không có nút "xong" (`MAYDO`). OB2 chiến thắng nhỏ · OB5 kế hoạch năm · OB6 rà soát (chỉ từ ngày 21, `SOM`) — người ghi kèm căn cứ ≥ 20 ký tự. Rút về CORE rồi vào lại = khởi động mới (khoá gồm `tuLuc`).
+- **Bàn hỗ trợ → M3 + tỷ lệ xử lý vấn đề (K06).** Hạn phân công/phản hồi/đóng theo nhóm × mức (`HAN_HO_TRO`, thử nghiệm), tính lúc đọc — bảng không có cột "quá hạn". Phụ huynh mở yêu cầu luôn cho nhà của phiên. Người được giao lưu **tên đăng nhập** (giao bằng email vẫn lưu username) — nếu không, phép so "người đóng khiếu nại ≠ người xử lý" so email với username và người xử lý tự đóng được (`TUDONG`).
+- **Chi phí phục vụ → lợi nhuận đóng góp (K04, LOINHUAN).** Nhà chưa ghi chi phí là CHƯA GHI, không phải 0. Tỷ trọng trả null khi chưa nhà ngoài nhóm nào ghi chi phí (chia lợi nhuận trọng điểm cho chính nó ra 100%). Bảng theo nhà chỉ R01–R03.

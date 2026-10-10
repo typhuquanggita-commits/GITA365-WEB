@@ -414,7 +414,9 @@ const { chromium } = require(PW);
     const fsx = require('fs'), px = require('path');
     const thuMuc = px.join(__dirname, '..', 'src');
     const xau = [];
-    for (const t of fsx.readdirSync(thuMuc).filter(f => f.endsWith('.js'))) {
+    /* Ngoại lệ có tên N4 (chủ hệ chốt 10/10/2026): src/luu-tep-phim.js là chỗ
+       DUY NHẤT được tạo thẻ tải — có cổng vai R01–R02 và sổ máy chủ. */
+    for (const t of fsx.readdirSync(thuMuc).filter(f => f.endsWith('.js') && f !== 'luu-tep-phim.js')) {
       const noi = fsx.readFileSync(px.join(thuMuc, t), 'utf8');
       /* createObjectURL\s*\( — tức là GỌI nó để tạo một tệp tải về.
          Gán đè lên nó (URL.createObjectURL = ...) là việc ngược lại: đó là
@@ -1340,13 +1342,13 @@ const { chromium } = require(PW);
     /* Không có đường tải xuống nào cho gia đình */
     const fs6 = require('fs'), px6 = require('path');
     const srcAll = fs6.readdirSync(px6.join(__dirname, '..', 'src'))
-      .filter(f => f.endsWith('.js'))
+      .filter(f => f.endsWith('.js') && f !== 'luu-tep-phim.js')   /* ngoại lệ N4 */
       .map(f => fs6.readFileSync(px6.join(__dirname, '..', 'src', f), 'utf8')).join('\n');
     /* <a\s: bắt buộc có khoảng trắng ngay sau <a, nếu không thì thẻ <audio
        của trình phát — vốn mang controlsList="nodownload" để TẮT nút tải —
        lại bị chính bộ kiểm bắt nhầm là một đường tải xuống. */
     /* Bỏ chú giải và chuỗi trước khi dò — luật 9.99.78, cùng lý do với mục 8. */
-    bao(!/<a\s[^>]*\sdownload|createObjectURL\s*\(|\.zip"|showSaveFilePicker/.test(boChuMa(srcAll)),
+    bao(!/<a\s[^>]*\sdownload|createObjectURL\s*\(|\.zip"|showSaveFilePicker\s*\(/.test(boChuMa(srcAll)),
       'không có nút tải xuống và không có tệp nén — mọi thứ đọc thẳng trên ứng dụng');
     bao(/controlsList="nodownload/.test(srcAll),
       'trình phát audio tắt nút tải của trình duyệt — nghe được nhưng không tải được');
