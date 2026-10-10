@@ -196,7 +196,10 @@ export async function troLyV50(y, env, db, hoSo) {
      hiện tại. Thử lại một lần CHỈ với câu hiện tại — câu ấy vẫn qua đúng
      cổng ấy; bẩn thì vẫn bị chặn. */
   if (!k.ok && k.code === 'DIEU13' && ls) k = await goiTheoLoai(env, db, hoSo, 'troLy', 'Câu hỏi hiện tại cần trả lời:\n' + cau, tuy);
-  if (!k.ok) return Object.assign({ ok: false, code: k.code || 'AI_LOI', error: k.error }, meta);
+  /* Nhân sự thấy CHI TIẾT lỗi từng nhà cung cấp (daThu) — không có nó thì
+     "mọi nhà cung cấp đều lỗi" không nói sửa ở đâu. Khách không nhận chữ kỹ thuật. */
+  if (!k.ok) return Object.assign({ ok: false, code: k.code || 'AI_LOI',
+    error: String(k.error || '') + (!KHACH.has(role) && Array.isArray(k.daThu) && k.daThu.length ? ' · ' + k.daThu.join('; ') : '') }, meta);
   const tra = locTra(k.text);
   if (!tra) return Object.assign({ ok: false, code: 'AI_RONG', error: 'Bộ não trả lời rỗng.' }, meta);
   /* Nhật ký KHÔNG chép câu hỏi — chỉ vai, cảm xúc, loại câu, nhà cung cấp, độ dài. */

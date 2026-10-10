@@ -40,6 +40,7 @@ import { vaBang } from './va-luoc-do.js';
 import { Kho } from './nen.js';
 import { laNguoiNha, laR01, tenNguoiDung as ten } from './vai-tro.js';
 import { soatRaNhaCungCap } from './an-toan-ai.js';
+import { rutChu, MAU_LLM } from './phim-0d.js';
 
 /* Nhà cung cấp. `kieu` quyết cách gọi: oa = giao thức OpenAI chat
    completions (DeepSeek · Gemini · OpenAI · xAI đều nói được), an =
@@ -209,9 +210,30 @@ async function goiMot(n, env, loai, cau, triThuc, tuy) {
     (triThuc ? '\nNguyên lý tham chiếu (dùng nếu hợp):\n' + triThuc : ''));
   const messages = [{ role: 'system', content: he }, { role: 'user', content: cau }];
   if (n.kieu === 'cf') {
-    const r = await env.AI.run(model, { messages, max_tokens: ra });
-    const u = (r && r.usage) || {};
-    return { text: String((r && r.response) || ''), vao: u.prompt_tokens || 0, ra: u.completion_tokens || 0, model };
+    /* Workers AI — thử lần lượt: mô hình chủ hệ khai (GITA_MAU_CF) → mô hình
+       xưởng phim 0đ đang chạy thật (MAU_LLM) → mô hình gốc. Lần đầu lên
+       production (10/10/2026) trợ lý báo AI_LOI ở mọi lượt và bảng Workers AI
+       ghi 0 neuron: bản cũ chỉ gọi một mô hình và chỉ đọc ô `response`, mà
+       mô hình đời mới trả kiểu `choices`. Đọc bằng rutChu của xưởng phim —
+       một bộ đọc, không chép thứ hai — và gom lỗi từng mô hình để nói ra. */
+    const ds = [mauCua({ bienMau: n.bienMau }, env), MAU_LLM, n.mau].filter((m, i, a) => m && a.indexOf(m) === i);
+    const loi = [];
+    for (const m of ds) {
+      const doiMoi = /gemma-4|qwen3|gpt-oss/i.test(m);
+      const vao = doiMoi
+        ? { messages, max_completion_tokens: ra, chat_template_kwargs: { enable_thinking: false } }
+        : { messages, max_tokens: ra };
+      try {
+        const r = await env.AI.run(m, vao);
+        const text = rutChu(r).replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+        if (!text) { loi.push(m.split('/').pop() + ': rỗng'); continue; }
+        const u = (r && r.usage) || {};
+        return { text, vao: u.prompt_tokens || 0, ra: u.completion_tokens || 0, model: m };
+      } catch (e) {
+        loi.push(m.split('/').pop() + ': ' + String((e && e.message) || e).slice(0, 120));
+      }
+    }
+    throw new Error(loi.join(' | ') || 'Workers AI không trả lời');
   }
   const khoa = String(env[n.khoa]);
   let body, headers;

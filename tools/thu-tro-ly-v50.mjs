@@ -76,7 +76,7 @@ kiem('học viên: xưng "mình", gọi "bạn"', hv.ok && /Xưng "mình", gọi
 /* ── 4. Super Admin: phương án sáu phần, vai khác không ── */
 luot = [];
 const sa = await V.troLyV50({ cau: 'Lên phương án tăng tỷ lệ gia đình ở lại sau 90 ngày' }, env, db, r01);
-kiem('SA yêu cầu → phương án, đi làn rẻ (Workers AI), trần chữ 1800', sa.ok && sa.phuongAn === true && sa.loaiCau === 'yeuCau' && sa.ncc === 'cf-workers-ai' && luot[luot.length - 1].max_tokens === 1800, JSON.stringify(sa));
+kiem('SA yêu cầu → phương án, đi làn rẻ (Workers AI), trần chữ 1800', sa.ok && sa.phuongAn === true && sa.loaiCau === 'yeuCau' && sa.ncc === 'cf-workers-ai' && (luot[luot.length - 1].max_completion_tokens || luot[luot.length - 1].max_tokens) === 1800, JSON.stringify(sa));
 kiem('SA: lời hệ thống đòi đủ sáu phần', /PHƯƠNG ÁN cao cấp/.test(he()) && /6\) Cách đo kết quả/.test(he()));
 luot = [];
 const co = await V.troLyV50({ cau: 'Lên phương án cho ca khó tuần này' }, env, db, r07);
@@ -110,6 +110,22 @@ kiem('nhật ký KHÔNG chép nội dung câu hỏi', nk.length > 0 && nk.every(
 let het = null;
 for (let i = 0; i < 62; i++) { const r = await V.troLyV50({ cau: 'Câu thứ ' + i + ' về thói quen đọc sách' }, env, db, { uid: 'U13b', u: 'ph2', role: 'R13' }); if (!r.ok) { het = r; break; } }
 kiem('trần ngày của khách: hết lượt → HETTRAN', het && het.code === 'HETTRAN', het && het.code);
+
+/* ── 7b. Workers AI: thử lần lượt mô hình, đọc cả kiểu `choices` ── */
+{
+  const goiMH = [];
+  const envMH = { GITA_DA_TRI_BAT: '1', AI: { async run(m, x) { goiMH.push(m);
+    if (goiMH.length === 1) throw new Error('5007: No such model');
+    return { choices: [{ message: { content: '<think>nghĩ</think>Em hiểu anh chị đang lo. Tối nay ngồi cạnh con mười phút.' } }], usage: { prompt_tokens: 10, completion_tokens: 10 } }; } } };
+  const mh = await V.troLyV50({ cau: 'Con hay quên đồ khi đi học' }, envMH, db, { uid: 'U7m', u: 'coach2', role: 'R07' });
+  kiem('Workers AI: mô hình đầu lỗi → thử mô hình kế, đọc kiểu choices, bỏ khối <think>',
+    mh.ok && goiMH.length === 2 && goiMH[0] !== goiMH[1] && /^Em hiểu/.test(mh.tra), JSON.stringify({ mh, goiMH }));
+  const envHong = { GITA_DA_TRI_BAT: '1', AI: { async run(m) { throw new Error('3036: account limited ' + m.split('/').pop()); } } };
+  const hong = await V.troLyV50({ cau: 'Con hay quên mang vở' }, envHong, db, { uid: 'U7n', u: 'coach3', role: 'R07' });
+  kiem('mọi mô hình lỗi → nhân sự thấy chi tiết lỗi từng mô hình', !hong.ok && hong.code === 'AI_LOI' && /3036/.test(hong.error), hong.error);
+  const hongKh = await V.troLyV50({ cau: 'Con hay quên mang vở' }, envHong, db, { uid: 'U13m', u: 'ph3', role: 'R13' });
+  kiem('khách KHÔNG nhận chi tiết kỹ thuật', !hongKh.ok && !/3036/.test(hongKh.error || ''), hongKh.error);
+}
 
 /* ── 8. Làn troLy không mở qua cửa khác ── */
 const qua = await DT.hoiDaTri({ loai: 'troLy', cau: 'Thử đi đường vòng' }, env, db, r07);
