@@ -115,7 +115,7 @@ var G = window.G || {}; window.G = G;
             'Nhà đã vào học được mời giới thiệu sau khoảnh khắc WOW đầu'] },
     { ma:'VIP', ten:'VIP & khách lớn', khoi:'TV', kpi:'tv6',
       mo:'Phân hạng, hồ sơ, cây tiền VIP, tệp nhân sự trung thành, trợ lý chăm sóc.',
-      man:['hang-vip','hoso-vip','cay-tien','cay-tien-vip','khach-lon','nhan-su-tt','ai-cham'],
+      man:['phong-vvip','hang-vip','hoso-vip','cay-tien','cay-tien-vip','khach-lon','nhan-su-tt','ai-cham'],
       viec:['Danh sách VIP / VVIP cập nhật theo chuẩn phân hạng, có người phụ trách riêng',
             'Hồ sơ VIP đủ trường bắt buộc và mốc chăm sóc',
             'Lịch chạm VIP dày hơn chuẩn thường và đúng hạn',

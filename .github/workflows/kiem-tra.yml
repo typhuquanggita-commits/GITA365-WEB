@@ -191,6 +191,8 @@ jobs:
         run: node tools/thu-sinh-trac.mjs
       - name: Bản tin GITA — người viết khác người duyệt, bài vinh danh phải có việc cụ thể và bằng chứng, câu kiểm tra chấm ở máy chủ, tính vào KPI nghiệp vụ
         run: node tools/thu-truyen-thong.mjs
+      - name: Phòng VVIP (Master Blueprint) — nhóm do hai người quyết, người phục vụ VVIP hạng A, điểm chạm đủ bảy lớp + mười tiêu chuẩn, năm quy tắc tần suất, 80% tách ba chỉ số, chưa đo thì nói
+        run: node tools/thu-vvip.mjs
 
       - name: Soát thiết kế tĩnh — không chuyển động nảy, không chữ chạy, không màu cấm (cả dạng %23), chữ chuyển sắc không thêm chỗ mới
         run: node tools/thu-thiet-ke-tinh.mjs

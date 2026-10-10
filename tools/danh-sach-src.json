@@ -67,6 +67,7 @@
     "src/kho-nha.js",
     "src/tt-bai-nen.js",
     "src/truyen-thong.js",
+    "src/phong-vvip.js",
     "src/tu-lieu-day-du.js",
     "src/duong-vao.js",
     "src/cong-dong.js",

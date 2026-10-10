@@ -346,6 +346,7 @@ G.ITEM_EN = {
   'referral':['Referral trigger sheet','5 portraits · 12 signals · PAIN GOAL GAP'],
   'chan-dung-kh':['Six customer portraits','Read the family right, send the right path'],
   'do-luong-kh':['Customer measurement system','7 metrics · 6 cadences · improvement loop'],
+  'phong-vvip':['VVIP office · Master Blueprint','80% board · key accounts · 12-document dossier · 10K WOW'],
   'hang-vip':['VIP & VVIP tiers','4 tiers · service standards · AI care'],
   'cay-tien':['Money tree — VIP care','4 moves · money-tree score · 12 cadences'],
   'cay-tien-vip':['VIP Money Tree · 28 capabilities','4 pillars · 5 clusters · 28 strengths caring for VIP profiles'],

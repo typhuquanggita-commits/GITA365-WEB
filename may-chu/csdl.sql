@@ -2798,3 +2798,95 @@ CREATE TABLE IF NOT EXISTS ttDoc (
   diem       INTEGER,
   PRIMARY KEY (baiId, uid)
 );
+
+-- ═══════════════════════════════════════════════════════════════
+-- GITA 365 VVIP — MASTER BLUEPRINT 1.0 (may-chu/vvip.js)
+--
+-- hangVvip: quyết định nhóm khách trọng điểm. KHÔNG có cột "nhóm hiện
+-- tại" ở hoSoKhach — nhóm hiện tại = dòng daDuyet mới nhất, tính lúc đọc.
+-- canCuMay là ảnh chụp bảy dấu hiệu LÚC DUYỆT, để sáu tháng sau đọc lại
+-- được vì sao. Nhóm phục vụ KHÁC tầng học: bảng này không đụng hoSoKhach.tang.
+CREATE TABLE IF NOT EXISTS hangVvip (
+  id          TEXT PRIMARY KEY,
+  maNha       TEXT NOT NULL,
+  nhom        TEXT NOT NULL,          -- VVIP · VIP · CORE (rút khỏi nhóm)
+  lyDo        TEXT NOT NULL,
+  deXuat      TEXT NOT NULL,
+  deXuatLuc   TEXT NOT NULL,
+  trangThai   TEXT NOT NULL DEFAULT 'choDuyet',   -- choDuyet · daDuyet · tuChoi
+  nguoiDuyet  TEXT,                   -- NGƯỜI KHÁC người đề xuất
+  duyetLuc    TEXT,
+  ghiChuDuyet TEXT,
+  canCuMay    TEXT
+);
+CREATE INDEX IF NOT EXISTS ix_hangvvip_nha ON hangVvip (maNha, trangThai, duyetLuc);
+-- phanCongVvip: ai phục vụ nhà trọng điểm, hạng của người ấy ĐÚNG KỲ phân
+-- công (đọc từ bảng xếp hạng lương thưởng), và có ngoài chuẩn không.
+CREATE TABLE IF NOT EXISTS phanCongVvip (
+  id         TEXT PRIMARY KEY,
+  maNha      TEXT NOT NULL,
+  vaiTro     TEXT NOT NULL,           -- coach · tuVan
+  nguoi      TEXT NOT NULL,
+  hangNguoi  TEXT NOT NULL,           -- A · B · C · D
+  ky         TEXT NOT NULL,
+  ngoaiChuan INTEGER NOT NULL DEFAULT 0,
+  lyDo       TEXT,
+  boiAi      TEXT NOT NULL,
+  luc        TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_pcvvip_nha ON phanCongVvip (maNha, vaiTro, luc);
+-- hoSoVvip: 12 tài liệu, PHIÊN BẢN NỐI TIẾP — sửa là thêm dòng, không ghi
+-- đè. Chỉ lưu phần NGƯỜI VIẾT; phần máy tính được ghép lúc đọc.
+CREATE TABLE IF NOT EXISTS hoSoVvip (
+  id          TEXT PRIMARY KEY,
+  maNha       TEXT NOT NULL,
+  taiLieu     TEXT NOT NULL,          -- 01 … 12
+  phienBan    INTEGER NOT NULL,
+  noiDungJson TEXT NOT NULL,
+  boiAi       TEXT NOT NULL,
+  luc         TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_hsvvip_nha ON hoSoVvip (maNha, taiLieu, phienBan);
+-- diemChamWow: thư viện điểm chạm. Đủ bảy lớp mới nộp; người KHÁC người
+-- soạn tích đủ mười tiêu chuẩn (chuanJson) mới bật.
+CREATE TABLE IF NOT EXISTS diemChamWow (
+  ma          TEXT PRIMARY KEY,       -- DC-XXXX
+  giaiDoan    TEXT NOT NULL,          -- G1 … G5
+  nhomWow     TEXT NOT NULL,          -- WOW01 … WOW10
+  noiDungJson TEXT NOT NULL,          -- bảy lớp + tên + kiểu chạm
+  trangThai   TEXT NOT NULL DEFAULT 'choDuyet',   -- choDuyet · daDuyet · tamDung
+  tacGia      TEXT NOT NULL,
+  nguoiDuyet  TEXT,
+  duyetLuc    TEXT,
+  chuanJson   TEXT,
+  taoLuc      TEXT NOT NULL,
+  suaLuc      TEXT
+);
+CREATE INDEX IF NOT EXISTS ix_dcwow_gd ON diemChamWow (giaiDoan, trangThai);
+-- tuyChonLienHe: kênh, trần tần suất, nhận quảng bá hay không. Dòng mới nhất
+-- là tuỳ chọn hiện tại; giữ lịch sử để trả lời "hôm ấy nhà này đã từ chối chưa".
+CREATE TABLE IF NOT EXISTS tuyChonLienHe (
+  id          TEXT PRIMARY KEY,
+  maNha       TEXT NOT NULL,
+  nhanQuangBa INTEGER NOT NULL DEFAULT 1,
+  kenhJson    TEXT,
+  tranJson    TEXT,
+  boiAi       TEXT NOT NULL,
+  luc         TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_tclh_nha ON tuyChonLienHe (maNha, luc);
+-- chienDichVvip: chiến dịch marketing và chăm sóc. Kết quả KHÔNG lưu — tính
+-- lúc đọc từ sổ chạm và phiếu thu, để không ai gõ một con số kết quả đẹp.
+CREATE TABLE IF NOT EXISTS chienDichVvip (
+  id          TEXT PRIMARY KEY,
+  mau         TEXT NOT NULL,          -- MK01–MK10 · CS01–CS06 · KHAC
+  noiDungJson TEXT NOT NULL,
+  batDau      TEXT NOT NULL,
+  ketThuc     TEXT NOT NULL,
+  trangThai   TEXT NOT NULL DEFAULT 'choDuyet',   -- choDuyet · daDuyet · tuChoi · huy
+  taoBoi      TEXT NOT NULL,
+  taoLuc      TEXT NOT NULL,
+  nguoiDuyet  TEXT,
+  duyetLuc    TEXT
+);
+CREATE INDEX IF NOT EXISTS ix_cdvvip_ngay ON chienDichVvip (batDau, ketThuc);
