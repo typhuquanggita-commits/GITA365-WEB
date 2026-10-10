@@ -130,5 +130,15 @@ const man = fs.readFileSync(ROOT + '/src/tra-cuu-giai-phap.js', 'utf8');
 kiem('màn tra cứu có ngăn kho cấp cao gọi đúng cửa', /dsKhoCao/.test(man) && /docKhoCao/.test(man) && /apDungKhoCao/.test(man) && /giaKhoCao/.test(man));
 kiem('màn không chép bảng giá thứ hai (đọc giá từ máy chủ)', !/2500|3750/.test(man));
 
+/* ── gói mã hoá trong kho mã ── */
+const thuMucGoi = ROOT + '/kho-cao';
+if (fs.existsSync(thuMucGoi)) {
+  const tep = fs.readdirSync(thuMucGoi);
+  kiem('kho-cao/ chỉ chứa gói mã hoá — không có tệp nguồn trần', tep.every(f => f === 'goi.enc'), tep.join(','));
+  const chu = fs.readFileSync(thuMucGoi + '/goi.enc', 'utf8'), g = JSON.parse(chu);
+  kiem('gói đúng định dạng màn hình mở được, không lộ chữ nguồn', g.v === 1 && g.n >= 200000 && g.salt && g.iv && g.ct &&
+    !/phanTich|hienTuong|"goi"|Vấn đề|DIAMOND/.test(chu) && man.includes("'kho-cao/goi.enc'"));
+}
+
 console.log('\n' + (truot ? '✗ ' + truot + ' SAI · ' : '✓ ') + dat + ' đạt');
 process.exit(truot ? 1 : 0);

@@ -84,6 +84,9 @@ function moRa(ra) {
   console.log('✓ Đã mở ' + ban + ' ra ' + ra + ' (' + ds.length + ' vấn đề, ' + nhom.length + ' tệp).');
 }
 
-if (process.argv[2] === '--mo') moRa(process.argv[3] || 'kho-cao-mo');
-else if (process.argv[2]) await dongGoi(process.argv[2]);
-else { console.log('Dùng: node tools/dong-goi-kho-cao.mjs <thư-mục-nguồn> | --mo <thư-mục-ra>'); process.exit(2); }
+/* Chỉ chạy dòng lệnh khi được gọi trực tiếp — bộ thử import moGoiTep. */
+if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
+  if (process.argv[2] === '--mo') moRa(process.argv[3] || 'kho-cao-mo');
+  else if (process.argv[2]) await dongGoi(process.argv[2]);
+  else { console.log('Dùng: node tools/dong-goi-kho-cao.mjs <thư-mục-nguồn> | --mo <thư-mục-ra>'); process.exit(2); }
+}
