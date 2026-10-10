@@ -145,7 +145,7 @@ var DEM_GIAY = 15;
 /* Việc chỉ đọc: tên bắt đầu bằng các tiền tố này. Việc theo dõi tiến độ
    (phimXemViec, phimTrangThai) cố ý KHÔNG đệm — chúng phải luôn tươi. */
 var LA_DOC = /^(doc|ds|xem|soi|lichSu|bangTin|baoCao|crmDanhSach|crmChiTiet|crmBangDieuKhien|tongHop)/;
-var KHONG_DEM = {phimXemViec:1, phimTrangThai:1, docHomNay:1, hopThongBao:1};
+var KHONG_DEM = {phimXemViec:1, phimTrangThai:1, docHomNay:1, hopThongBao:1, kimChiNam:1};
 G.laViecDoc = function(fn){ return LA_DOC.test(fn) && !KHONG_DEM[fn]; };
 G.xoaDemMayChu = function(){ DEM_DOC = {}; };
 

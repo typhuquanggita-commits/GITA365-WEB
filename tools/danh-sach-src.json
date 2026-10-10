@@ -216,6 +216,7 @@
     "src/toan-canh.js",
     "src/bo-nao-van-hanh.js",
     "src/hop-thong-bao.js",
+    "src/kim-chi-nam.js",
     "src/do-trang-cong-khai.js",
     "src/viec-ket.js",
     "src/phim-ngan-sach.js",

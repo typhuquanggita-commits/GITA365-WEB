@@ -1279,7 +1279,10 @@ function render(){
   /* V50: màn học thuyết có thêm thanh ÁP DỤNG (bảng việc đo được + chỉ số
      chịu tác động) — src/v50-ap-dung.js. Màn vừa được gộp có dòng báo. */
   var v50 = (G.v50PhanBar ? G.v50PhanBar(G.S.view) : '') + (G.v50Thanh ? G.v50Thanh(G.S.view) : '');
-  main.innerHTML = '<div class="view">' + nhac + hdThanh + v50 + noiDung + '</div>';
+  /* Kim chỉ nam ở đầu MỌI màn của khách (src/kim-chi-nam.js) — một chỗ chèn,
+     màn viết sau cũng tự có. Nhân sự không thấy dải này. */
+  var kcn = G.kcnThanh ? G.kcnThanh(G.S.view) : '';
+  main.innerHTML = '<div class="view">' + kcn + nhac + hdThanh + v50 + noiDung + '</div>';
   if(G.a11yNhan) G.a11yNhan(main);   /* bù tên đọc được cho mọi ô nhập (a11y) */
   /* Màn trợ lý là một CỬA SỔ chiếm trọn chiều cao, nên nó cần lề dưới
      của vùng nội dung nhỏ lại. Lớp này là chỗ duy nhất khai chuyện ấy —

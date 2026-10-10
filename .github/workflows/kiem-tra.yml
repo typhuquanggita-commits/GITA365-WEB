@@ -179,6 +179,8 @@ jobs:
         run: node tools/thu-thi-cap.mjs
       - name: Lịch trả lương 05/08 · phiếu phản hồi từng khách · xếp hạng lương thưởng tháng
         run: node tools/thu-xep-hang.mjs
+      - name: Kim chỉ nam ở đầu mọi màn khách — chỉ đọc, chỉ họ tên, nhà lấy từ phiên
+        run: node tools/thu-kim-chi-nam.mjs
 
       - name: Soát thiết kế tĩnh — không chuyển động nảy, không chữ chạy, không màu cấm (cả dạng %23), chữ chuyển sắc không thêm chỗ mới
         run: node tools/thu-thiet-ke-tinh.mjs

@@ -118,3 +118,10 @@ Một trang năm chặng **Nhận ra → Hiểu → Tin → Thử → Quyết** 
 - Rút khỏi MÀN chưa phải bảo vệ: `kho/mau.json` (219 kho, 462 KB) vẫn ai cũng tải được. Cắt gói ấy là việc ở `tools/ma-hoa-kho.js` và cần kho-goc của chủ hệ.
 - Bộ bắt cú bấm chung (`on()` ở app.js) gọi `preventDefault` → đừng dùng ô tích ở đây, dùng nút `aria-pressed`. Phần tử có `display` riêng phải kèm `[hidden]{display:none}`, nếu không thuộc tính `hidden` mất tác dụng.
 - "100 điểm chạm trước quyết định" là **cách đếm, không phải chỉ tiêu**; trang này chỉ là phần đầu của hành trình.
+
+## Kim chỉ nam ở đầu mọi màn khách (`src/kim-chi-nam.js` · `may-chu/kim-chi-nam.js` · `tools/thu-kim-chi-nam.mjs`)
+Chủ hệ 10/10: khách không được thấy mình đi một mình; dải **gắn với nhiệm vụ** — với các phần của khách VÀ công việc của thành viên — **không phải màn riêng**. Một dải ở đầu MỌI màn (khách lẫn nhân sự), chèn ở đúng một chỗ (`render()` của app.js → `G.kcnThanh`), mặc định **một dòng** (`<details>`, mở/đóng nhớ trên máy).
+- Khách: tầng của nhà · **việc hôm nay** (đúng một việc, đọc từ `docHomNay`) · người đi cùng.
+- Thành viên: cấp chứng chỉ · **việc đang chờ chính người ấy** theo ưu tiên ý kiến chờ duyệt → bài chờ chấm → thông báo chưa đọc → ngày thi (đọc từ `dsYKien` · `dsBaiCham` · `thongBao` · `thiCuaToi`, không bản chép) · ai đỡ khi việc khó (theo đường xin ý kiến: Coach→R05, R05/R11/R12→R04, R04→R03, R02/R03→R01).
+- Cửa `kimChiNam`: **chỉ đọc**, **chỉ họ tên** (không tên đăng nhập/email/số điện thoại của nhân sự), **nhà lấy từ phiên** (không nhận mã nhà từ thân yêu cầu — lớp IDOR 9.99.114). Người phụ trách đã nghỉ thì coi như chưa xếp. Chưa xếp thì nói "đang xếp", không bịa tên. Học viên tìm nhà qua `maHocVien`; R15 được chỉ tới Ban vận hành.
+- Câu "khi việc khó, người đi cùng xin ý kiến Trưởng nhóm chuyên môn" là điều hệ ĐANG làm (xin ý kiến luôn bật) — đừng thêm lời hứa nào hệ chưa làm.
