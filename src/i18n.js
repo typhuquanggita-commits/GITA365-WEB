@@ -296,6 +296,8 @@ G.ITEM_EN = {
   'sat-hach':['Competency assessment','5 tiers · 4 graduation papers · 8 assessment axes'],
   'khoa-dao-tao':['My training course','Learn · Do · Submit · the next lesson opens itself'],
   'chuong-trinh-dt':['Training programmes','Consultant → Staff → Coach · scored by someone else · certificates are signed'],
+  'kho-nha':['Prosperous Home library','21 map keys · three-level handbooks (family · consultant · expert coach) · practice missions · hand to a family · sign-off'],
+  'cam-nang-nha':['Our handbooks & missions','What your companion has handed you: practice handbooks for each part of the home and the mission sheets in progress'],
   'thi-chung-chi':['Certification exams','Consultant 50 levels · Coach 100 levels · monthly re-tests · higher levels unlock more of the library'],
   'do-thoi-gian':['Time · rewards · penalties','A real clock · three thresholds · completion standard · point conversion'],
   'noi-may-chu':['Connect to the server','Paste the address · test the call · six setup steps'],

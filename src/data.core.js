@@ -18,7 +18,7 @@ window.G = G;
    trong khi nội dung đổi là một cách nói dối không cố ý. */
 G.META = {
   name: 'GITA 365',
-  version: '9.99.254',
+  version: '9.99.255',
   tagline: 'Hệ Sinh Thái Gia Đình Thịnh Vượng',
   hotline: '08.5555.4688',
   site: 'truongnhatquang.com',
@@ -941,8 +941,10 @@ G.NAV = [
     {v:'sat-hach',    t:'Sát hạch năng lực',          h:'5 tầng · 4 bài tốt nghiệp · 8 trục đánh giá', ic:'shield', star:1, capMo:'chung'},
     {v:'khoa-dao-tao',t:'Khoá đào tạo của tôi',       h:'Học · Làm · Nộp · bài kế tiếp tự mở', ic:'book', star:1, capMo:'chung'},
     {v:'chuong-trinh-dt', t:'Chương trình đào tạo', h:'Tư vấn → Nhân sự → Coach · người chấm khác người học · chứng chỉ có người ký', ic:'book', perm:'nghe_chung', capMo:'chung'},
+    {v:'kho-nha', t:'Kho Ngôi nhà thịnh vượng', h:'21 ô bản đồ · cẩm nang ba cấp (khách · tư vấn · chuyên gia Coach) · nhiệm vụ thực hành · trao cho nhà · nghiệm thu', ic:'home', perm:'nghe_chung', capMo:'chung'},
     {v:'thi-chung-chi', t:'Thi chứng chỉ', h:'Tư vấn 50 cấp · Coach 100 cấp · thi lại mỗi tháng · cấp cao mở nhiều kho hơn', ic:'shield', perm:'nghe_chung', capMo:'chung'},
     {v:'do-thoi-gian',t:'Thời gian · thưởng · phạt', h:'Đồng hồ thật · ba ngưỡng · chuẩn hoàn thành · quy đổi điểm', ic:'pulse', star:1, capMo:'chung'},
+    {v:'cam-nang-nha', t:'Cẩm nang & nhiệm vụ của nhà', h:'Phần người đồng hành đã trao: cẩm nang thực hành từng ô ngôi nhà và phiếu nhiệm vụ đang làm', ic:'home', perm:'kh_gia_dinh', capMo:'nha'},
     {v:'chin-vai',    t:'Chín vai giữ trong nhà',      h:'Ai giữ gì, ai đang bị bỏ ra ngoài',  ic:'users', star:1, perm:'kh_gia_dinh', capMo:'nha'},
     {v:'thoi-quen',   t:'Thói quen & nghi lễ',         h:'Bốn nghi lễ giữ nhịp cả năm',        ic:'ritual', perm:'kh_gia_dinh', capMo:'nha'},
     {v:'cu-hich',     t:'Cú hích lớn',                 h:'Chiến dịch tạo bước nhảy, không bước đi', ic:'lightning', perm:'kh_gia_dinh', capMo:'nha'},

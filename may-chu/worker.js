@@ -122,6 +122,7 @@ import { lichTraLuong, khaiNgayNghi, xepHangThang, baoLichTraLuongSapToi } from 
 import { kimChiNam } from './kim-chi-nam.js';
 import { docDaoTao, ghiDanhDaoTao, ghiBuocDaoTao, capChungChiDaoTao, thuHoiChungChiDaoTao, doiDaoTao } from './dao-tao-ct.js';
 import { giaKhoCao, datGiaKhoCao, napKhoCao, dsKhoCao, docKhoCao, deXuatKhoCao, dsDeXuatNha, chonDeXuat, huyDeXuat, hoanThanhKhoCao, chuyenAnToan, soKhoCaoNha } from './kho-cao.js';
+import { napKhoNhiemVu, ganNhiemVu, dsKhoNhiemVu, docNhiemVu, giaoPhieuNhiemVu, phieuCuaToi, nopNhiemVu, nghiemThuNhiemVu, soCreditNhiemVu, napCamNang, dsCamNang, docCamNang, giaoCamNang, camNangCuaNha } from './kho-nhiem-vu.js';
 import { lapDuAnPhim, docXuongPhimNganSach, datCanhTraPhi, moLaiDuAnPhim, DON_GIU_CHO } from './phim-ngan-sach.js';
 import { docKpiCayTien } from './cay-tien.js';
 import { docDongChay } from './dong-chay.js';
@@ -353,6 +354,7 @@ const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau'
   'troLyV50', 'guiThongDiepBoNao', 'docThongDiepBoNao',
   'ghiNhatKyGiaiPhap', 'docNhatKyGiaiPhap', 'soanMucGiaiPhap', 'napKhoVanDe', 'dsKhoVanDe', 'docKhoVanDe',
   'giaKhoCao', 'datGiaKhoCao', 'napKhoCao', 'dsKhoCao', 'docKhoCao', 'deXuatKhoCao', 'dsDeXuatNha', 'chonDeXuat', 'huyDeXuat', 'hoanThanhKhoCao', 'chuyenAnToan', 'soKhoCaoNha',
+  'napKhoNhiemVu', 'ganNhiemVu', 'dsKhoNhiemVu', 'docNhiemVu', 'giaoPhieuNhiemVu', 'phieuCuaToi', 'nopNhiemVu', 'nghiemThuNhiemVu', 'soCreditNhiemVu', 'napCamNang', 'dsCamNang', 'docCamNang', 'giaoCamNang', 'camNangCuaNha',
   'lapDeAnTaiLieu', 'chayBuocTaiLieu', 'docDeAnTaiLieu', 'datTuChayTaiLieu', 'lapKeHoachKho', 'docViecKet',
   'lapDuAnPhim', 'docXuongPhimNganSach', 'datCanhTraPhi', 'moLaiDuAnPhim', 'docKpiCayTien', 'docDongChay',
   'phimTrangThai', 'phimGuiViec', 'phimXemViec', 'phimTinhHuong', 'phimMienPhi', 'quayKhopMoi', 'quayChuyenDong', 'quayVideoDong', 'taoNhanVatAI', 'quayXem', 'quayXoa', 'quayGiongNoi', 'quayPhimMoi', 'dongGoiPhanTu', 'xemPhanTu',
@@ -846,6 +848,20 @@ async function lam(fn, y, env, db, req) {
   if (fn === 'hoanThanhKhoCao')   return await hoanThanhKhoCao(y, env, db, hoSo);
   if (fn === 'chuyenAnToan')      return await chuyenAnToan(y, env, db, hoSo);
   if (fn === 'soKhoCaoNha')       return await soKhoCaoNha(y, env, db, hoSo);
+  if (fn === 'napKhoNhiemVu') return await napKhoNhiemVu(y, env, db, hoSo);
+  if (fn === 'ganNhiemVu') return await ganNhiemVu(y, env, db, hoSo);
+  if (fn === 'dsKhoNhiemVu') return await dsKhoNhiemVu(y, env, db, hoSo);
+  if (fn === 'docNhiemVu') return await docNhiemVu(y, env, db, hoSo);
+  if (fn === 'giaoPhieuNhiemVu') return await giaoPhieuNhiemVu(y, env, db, hoSo);
+  if (fn === 'phieuCuaToi') return await phieuCuaToi(y, env, db, hoSo);
+  if (fn === 'nopNhiemVu') return await nopNhiemVu(y, env, db, hoSo);
+  if (fn === 'nghiemThuNhiemVu') return await nghiemThuNhiemVu(y, env, db, hoSo);
+  if (fn === 'soCreditNhiemVu') return await soCreditNhiemVu(y, env, db, hoSo);
+  if (fn === 'napCamNang') return await napCamNang(y, env, db, hoSo);
+  if (fn === 'dsCamNang') return await dsCamNang(y, env, db, hoSo);
+  if (fn === 'docCamNang') return await docCamNang(y, env, db, hoSo);
+  if (fn === 'giaoCamNang') return await giaoCamNang(y, env, db, hoSo);
+  if (fn === 'camNangCuaNha') return await camNangCuaNha(y, env, db, hoSo);
   if (fn === 'lapDeAnTaiLieu')    return await lapDeAnTaiLieu(y, env, db, hoSo);
   if (fn === 'chayBuocTaiLieu')   return await chayBuocTaiLieu(y, env, db, hoSo);
   if (fn === 'docDeAnTaiLieu')    return await docDeAnTaiLieu(y, env, db, hoSo);
