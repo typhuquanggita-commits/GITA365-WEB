@@ -68,11 +68,30 @@ G.TU_DIEN_EN = G.TU_DIEN_EN || {};
     return false;
   }
 
+  /* Nhớ bản gốc của mọi chỗ đã thay, để quay về tiếng Việt được. Phần
+     vẽ lại mỗi màn thì tự về tiếng Việt khi vẽ lại; phần đứng yên trong
+     index.html (hộp thoại · ô tìm · nút cỡ chữ) thì không ai vẽ lại, nên
+     không nhớ thì đổi về tiếng Việt mà mấy chỗ ấy vẫn nằm tiếng Anh. */
+  var daDoi = [];
+  function nho(nut, thuocTinh, goc) {
+    if (daDoi.length > 4000) daDoi = daDoi.filter(function (x) { return x[0].isConnected; });
+    daDoi.push([nut, thuocTinh, goc]);
+  }
+  function thayChu(t) { var en = G.dichChuoi(t.nodeValue); if (en !== t.nodeValue) { nho(t, null, t.nodeValue); t.nodeValue = en; } }
+
+  G.traLaiTiengViet = function () {
+    daDoi.forEach(function (x) {
+      if (!x[0].isConnected) return;
+      if (x[1]) x[0].setAttribute(x[1], x[2]); else x[0].nodeValue = x[2];
+    });
+    daDoi = [];
+  };
+
   G.dichDom = function (goc) {
     if (G.LANG !== 'en' || !goc || !document.createTreeWalker) return;
     var w = document.createTreeWalker(goc, NodeFilter.SHOW_TEXT, null), n, ds = [];
     while ((n = w.nextNode())) if (CO_DAU.test(n.nodeValue) && !boQua(n.parentNode)) ds.push(n);
-    ds.forEach(function (t) { var en = G.dichChuoi(t.nodeValue); if (en !== t.nodeValue) t.nodeValue = en; });
+    ds.forEach(thayChu);
     /* Tính cả CHÍNH thẻ gốc: querySelectorAll chỉ trả con cháu, nên một
        nút được thêm nguyên chiếc (nút lùi · thanh dưới) mang aria-label
        tiếng Việt mà không ai dịch — đo được ở 71/71 màn trước khi vá. */
@@ -84,7 +103,7 @@ G.TU_DIEN_EN = G.TU_DIEN_EN || {};
     if (!el || el.nodeType !== 1 || !el.getAttribute || boQua(el)) return;
     THUOC_TINH.forEach(function (a) {
       var v = el.getAttribute(a);
-      if (v && CO_DAU.test(v)) { var en = G.dichChuoi(v); if (en !== v) el.setAttribute(a, en); }
+      if (v && CO_DAU.test(v)) { var en = G.dichChuoi(v); if (en !== v) { nho(el, a, v); el.setAttribute(a, en); } }
     });
   }
 
@@ -98,7 +117,7 @@ G.TU_DIEN_EN = G.TU_DIEN_EN || {};
     var ds = hangDoi; hangDoi = [];
     ds.forEach(function (n) {
       if (n.nodeType === 1) G.dichDom(n);
-      else if (n.nodeType === 3 && n.parentNode && !boQua(n.parentNode)) { var en = G.dichChuoi(n.nodeValue); if (en !== n.nodeValue) n.nodeValue = en; }
+      else if (n.nodeType === 3 && n.parentNode && !boQua(n.parentNode)) thayChu(n);
     });
   }
   if (window.MutationObserver) {

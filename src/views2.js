@@ -464,7 +464,11 @@ G.VIEWS['cu-hich'] = function(){
   var o = U.ph({eyebrow:'NHÓM 04 · CÚ HÍCH & NHỊP SỐNG', ic:'lightning', grad:1, t:'Cú hích lớn',
     lead:'Có những thứ không đi tới bằng bước đi, chỉ tới bằng bước nhảy. Sáu chiến dịch tạo cú hích, mỗi cú hích có lời hứa rõ và một phần thưởng thật.'});
   o += '<div class="grid g2">' + G.CUHICH.map(function(c){
-    var pct = Math.min(100, Math.round(c.thamgia/500*100));
+    /* Số "đã tham gia" chỉ hiện khi khai được nguồn (luật bảng tin:
+       không hiện con số không có nguồn). Bản mẫu thiếu hẳn trường này nên
+       từng in ra "undefined gia đình". */
+    var coSo = typeof c.thamgia === 'number' && c.nguonSo !== undefined;
+    var pct = coSo ? Math.min(100, Math.round(c.thamgia/500*100)) : 0;
     return '<div class="card lift" style="border-color:'+c.c+'2e">'+
       '<div class="row wrap" style="gap:7px;margin-bottom:10px">'+U.chip(c.ma,c.c)+U.chip(c.tier)+
       U.chip(c.muc, c.muc==='Cú hích chấn động'?'#BE0E16':(c.muc==='Cú hích lớn'?'#BE0E16':'#2A72C6'))+
@@ -475,8 +479,8 @@ G.VIEWS['cu-hich'] = function(){
         '<span class="tiny up muted">VÌ SAO CÚ HÍCH NÀY MẠNH</span>'+
         '<p class="sm mt" style="line-height:1.6">'+h(c.vi)+'</p></div>'+
       '<div class="row" style="gap:10px;margin-bottom:8px"><span class="tiny muted">Đã tham gia</span>'+
-        '<b class="mono" style="color:'+c.c+'">'+c.thamgia+' gia đình</b></div>'+
-      U.bar(pct,c.c)+
+        (coSo ? '<b class="mono" style="color:'+c.c+'">'+h(c.thamgia)+' gia đình</b></div>'+U.bar(pct,c.c)
+              : '<span class="tiny muted">chưa có sổ đếm</span></div>')+
       '<div class="row mt2" style="gap:9px"><span style="color:var(--gold-ink)">'+ic('crown','w-4 h-4')+'</span>'+
         '<span class="sm">'+h(c.thuong)+'</span></div>'+
       '<button class="btn pri blk mt" data-act="join-cuhich" data-ma="'+h(c.ma)+'">Đưa nhà mình vào cú hích này</button>'+

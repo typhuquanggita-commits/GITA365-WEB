@@ -278,7 +278,9 @@ G.VIEWS['sat-hach'] = function(){
 
   var o = U.ph({eyebrow:'NĂM TẦNG NĂNG LỰC · BỐN BÀI TỐT NGHIỆP · TÁM TRỤC', ic:'shield', grad:1,
     t:'Sát hạch năng lực — ' + V.ten,
-    lead: V.y + ' Bài kiểm tra ở đây không dùng để loại người. Nó trả lời đúng một câu: '+
+    /* Kho vai chưa nạp (bản mẫu) thì vaiObj trả bản lùi không có câu y —
+       từng in ra "undefined Bài kiểm tra…" ở đầu màn. */
+    lead: (V.y ? V.y + ' ' : '') + 'Bài kiểm tra ở đây không dùng để loại người. Nó trả lời đúng một câu: '+
       'mình đang ở cấp độ nào, và cần học gì tiếp.'});
 
   o += '<div class="row wrap mt2" style="gap:12px">'+

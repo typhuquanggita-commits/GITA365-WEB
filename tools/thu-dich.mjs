@@ -53,12 +53,14 @@ kiem('từ điển có ít nhất 900 khoá', khoa.length >= 900, String(khoa.le
 
 /* ── Bộ quét DOM: chặn đúng lỗi đã gặp ── */
 const nguon = fs.readFileSync(ROOT + '/src/dich-giao-dien.js', 'utf8');
+const app = fs.readFileSync(ROOT + '/src/app.js', 'utf8');
 kiem('quét thuộc tính tính cả CHÍNH thẻ gốc (nút thêm nguyên chiếc vẫn được dịch)', /\[goc\]\.concat\(/.test(nguon));
 kiem('nghe đổi thuộc tính (nút lùi/tới đổi aria-label sau lượt vẽ)', /attributes:\s*true/.test(nguon) && /attributeFilter:\s*THUOC_TINH/.test(nguon));
 kiem('không nghe characterData (lượt dịch không tự kích chính nó)', !/characterData:\s*true/.test(nguon));
 kiem('chỉ chạy khi chọn tiếng Anh', /G\.LANG !== 'en'/.test(nguon));
 kiem('bỏ qua ô nhập và vùng gắn data-khong-dich', /TEXTAREA: 1/.test(nguon) && /data-khong-dich/.test(nguon) && /isContentEditable/.test(nguon));
-const app = fs.readFileSync(ROOT + '/src/app.js', 'utf8');
+kiem('đổi về tiếng Việt thì trả lại chữ gốc của phần đứng yên (index.html)', /G\.traLaiTiengViet\s*=/.test(nguon) && /nho\(el, a, v\)/.test(nguon) && /traLaiTiengViet\(\)/.test(app));
+kiem('chọn tiếng Anh thì dịch một lượt cả trang, kể cả lúc mở lại máy', (app.match(/G\.dichDom\(document\.body\)/g) || []).length >= 2);
 kiem('mỗi lượt vẽ gọi bộ dịch trên vùng nội dung', /G\.dichDom\)\s*G\.dichDom\(main\)/.test(app));
 
 console.log('\n' + dat + ' đạt · ' + truot + ' trượt');

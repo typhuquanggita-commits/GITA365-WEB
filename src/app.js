@@ -168,7 +168,10 @@ G.tfeel = function(t){ var e=G.TIER_EN[t.code]; return (G.LANG==='en'&&e)?e.feel
 G.setLang = function(k){
   G.LANG = k;
   try{ localStorage.setItem('gita365.lang', k); }catch(e){}
+  if(k !== 'en' && G.traLaiTiengViet) G.traLaiTiengViet();
   if(G.S.acc) shell(); else gate();
+  /* Phần đứng yên trong index.html không đi qua render() — dịch một lượt cả trang. */
+  if(k === 'en' && G.dichDom) G.dichDom(document.body);
   U.toast(k==='en'?'Interface switched to English.':'Đã chuyển về tiếng Việt.','ok');
 };
 
@@ -2101,6 +2104,8 @@ G.boot = function(){
   if(G.batLinkKichHoat) G.batLinkKichHoat();
   sparks();
   try{ var lg = localStorage.getItem('gita365.lang'); if(lg && G.UI[lg]) G.LANG = lg; }catch(e){}
+  /* Mở lại máy mà nhớ tiếng Anh: phần đứng yên của index.html cũng phải đổi. */
+  if(G.LANG === 'en' && G.dichDom) G.dichDom(document.body);
   /* Trên màn hình hẹp, thanh phải mở dạng ngăn kéo — đóng sẵn để không che nội dung */
   if(window.innerWidth < 1180) G.S.rightOpen = false;
   /* Đọc trước khi khôi phục phiên: có dấu hiệu xin về màn đăng nhập thì bỏ
