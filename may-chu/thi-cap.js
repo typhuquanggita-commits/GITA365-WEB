@@ -155,7 +155,11 @@ export async function capCua(db, maNguoi, he, now) {
   let datThangNay = false, haLuc = 0;
   for (let t = thangDau; t <= thangNay; t = thangSau(t)) {
     const ev = [...dat.filter(d => d.thang === t).map(d => ({ luc: d.luc, dat: d.cap, batDau: d.batDau })),
-      ...vp.filter(v => thangCua(v.luc) === t).map(v => ({ luc: Number(v.luc), muc: v.mucDo }))].sort((a, b) => a.luc - b.luc);
+      ...vp.filter(v => thangCua(v.luc) === t).map(v => ({ luc: Number(v.luc), muc: v.mucDo }))]
+      /* Trùng mili-giây thì vi phạm đi TRƯỚC bài đạt: bản đầu giữ thứ tự đưa vào
+         (bài đạt trước), nên một bài nộp đúng mili-giây ấy được tính lên cấp rồi
+         vi phạm mới trừ — kết quả đổi theo tốc độ máy, đỏ thỉnh thoảng trên CI. */
+      .sort((a, b) => a.luc - b.luc || (a.muc ? 0 : 1) - (b.muc ? 0 : 1));
     let giuDuoc = false;
     for (const e of ev) {
       /* Bài BẮT ĐẦU trước một lần bị hạ (vi phạm hoặc tụt tháng) không được

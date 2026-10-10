@@ -288,6 +288,21 @@ async function doiKhang(T, K) {
   return d;
 }
 const dk = await doiKhang(T, K);
+/* Trùng mili-giây giữa bài đạt và vi phạm: dựng thẳng hai dòng cùng mốc, không
+   nhờ máy chạy nhanh hay chậm. Lần đỏ đầu của bước này trên CI là đúng chỗ ấy. */
+async function trungMoc(T) {
+  const { sq, db } = await dung();
+  const moc = Date.now() - 3600000;
+  sq.prepare("INSERT INTO thiLuot (id, maNguoi, he, cap, muc, thang, de, batDau, hanLuc, nopLuc, baiLam) VALUES ('TM1','tuvan1','tuvan',1,'len',?,'[{\"ma\":\"X\",\"dang\":\"D01\",\"bien\":[]}]',?,?,?,'[]')")
+    .run(T.thangCua(moc), moc - 60000, moc + 3600000, moc - 30000);
+  sq.prepare("INSERT INTO thiCham (id, luot, boiAi, diem, chiTiet, ghiChu, luc) VALUES ('CM1','TM1','chuyenmon',90,'[[23,23,22,22]]','x',?)").run(moc);
+  sq.prepare("INSERT INTO thiLuot (id, maNguoi, he, cap, muc, thang, de, batDau, hanLuc, nopLuc, baiLam) VALUES ('TM2','tuvan1','tuvan',2,'len',?,'[{\"ma\":\"X\",\"dang\":\"D01\",\"bien\":[]},{\"ma\":\"Y\",\"dang\":\"D01\",\"bien\":[]}]',?,?,?,'[]')")
+    .run(T.thangCua(moc), moc - 20000, moc + 3600000, moc);
+  sq.prepare("INSERT INTO thiCham (id, luot, boiAi, diem, chiTiet, ghiChu, luc) VALUES ('CM2','TM2','chuyenmon',90,'[[23,23,22,22],[23,23,22,22]]','x',?)").run(moc + 1);
+  sq.prepare("INSERT INTO viPhamNangLuc (id, maNguoi, he, loai, mucDo, chungCu, boiAi, luc) VALUES ('VP1','tuvan1','tuvan','SAI_QUY_TRINH',1,'x','chuyenmon',?)").run(moc);
+  return (await T.capCua(db, 'tuvan1', 'tuvan')).cap;
+}
+kiem('bài đạt và vi phạm trùng đúng mili-giây: vi phạm áp trước, bài bắt đầu trước đó không dựng lại cấp', (await trungMoc(T)) === 0, String(await trungMoc(T)));
 kiem('không chấm lại bài mình đã chấm; đủ người rồi thì không ai chấm thêm; kết quả giữ nguyên',
   dk.cham1.ok && dk.chamLai.code === 'DACHAM' && dk.chamThem.code === 'DUNGUOI' && dk.capSau === 1, JSON.stringify([dk.chamLai.code, dk.chamThem.code, dk.capSau]));
 kiem('ba lượt bắt đầu gọi dồn cùng lúc chỉ mở đúng một bài', dk.dua.filter(x => x.ok).length === 1, JSON.stringify(dk.dua.map(x => x.code || 'ok')));
@@ -354,6 +369,7 @@ await pha('gỡ luật tụt cấp', 'if (!giuDuoc && cap > 0) { cap -= 1;', 'if
 await pha('cho chấm thêm khi đã đủ người', "if (kq0.cham.length >= kq0.canNguoi) return", "if (false) return", rp => rp.chamThem.ok === true, doiKhang);
 await pha('nhận mọi quyết định cũ thay vì quyết định mới nhất', ' AND q.rowid = (SELECT q2.rowid FROM xinYKienQuyet q2 WHERE q2.xin = x.id ORDER BY q2.luc DESC, q2.rowid DESC LIMIT 1)', '', rp => rp.sauRut === true, doiKhang);
 await pha('bỏ kiểm-rồi-ghi một câu khi bắt đầu thi', "'WHERE (SELECT COUNT(*) FROM thiLuot WHERE maNguoi = ? AND he = ? AND thang = ?) < ? ' +", "'WHERE ? IS NOT NULL OR ? OR ? OR ? ' +", rp => rp.dua.filter(x => x.ok).length > 1, doiKhang);
+await pha('xếp bài đạt trước vi phạm khi trùng mili-giây', ' || (a.muc ? 0 : 1) - (b.muc ? 0 : 1)', '', rp => rp.trung !== 0, async (P) => ({ trung: await trungMoc(P) }));
 await pha('cho bài bắt đầu trước lần hạ dựng lại cấp', 'if (e.batDau >= haLuc && e.dat >= cap)', 'if (e.dat >= cap)', rp => rp.batDauTruocHa > 0, doiKhang);
 
 console.log('\n' + dat + ' đạt · ' + truot + ' sai');
