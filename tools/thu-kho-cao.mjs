@@ -102,6 +102,18 @@ kiem('phụ huynh không tự đề xuất', (await K.deXuatKhoCao({ maNha: 'K4'
 kiem('quá 3 phương án bị chặn', (await K.deXuatKhoCao({ maNha: 'K4', ds: ['C4-A-001', 'C4-A-002', 'C5-A-001', 'C4-A-009'] }, env, db, coach1)).code === 'SAI');
 kiem('nhà tầng 3 không nhận được vấn đề tầng 4 (quyền lợi theo tầng)', (await K.deXuatKhoCao({ maNha: 'K3', ds: ['C4-A-001'] }, env, db, coach1)).code === 'TANGCHUA');
 kiem('nhà tầng 4 không nhận được vấn đề tầng 5', (await K.deXuatKhoCao({ maNha: 'K4', ds: ['C5-A-001'] }, env, db, coach1)).code === 'TANGCHUA');
+/* Xin ý kiến LUÔN BẬT (chủ hệ chốt 10/2026): cổng thi đang tắt mà Coach chưa
+   có cấp vẫn phải xin trước khi đề xuất vấn đề vượt cấp. */
+kiem('cổng tắt vẫn phải xin ý kiến: Coach chưa có cấp đề xuất → XINYKIEN', (await K.deXuatKhoCao({ maNha: 'K4', ds: ['C4-A-001'] }, env, db, coach1)).code === 'XINYKIEN');
+/* Phần còn lại của bộ thử đo luồng credit — cấp sẵn ý kiến đã duyệt (cho) cho
+   đúng người · nhà · mã mà các bước sau dùng. */
+const duyetSan = (ai, nha, ma) => {
+  const id = 'YK-' + ai + '-' + nha + '-' + ma;
+  sq.prepare('INSERT INTO xinYKien (id, maNha, ma, boiAi, lyDo, luc) VALUES (?,?,?,?,?,?)').run(id, nha, ma, ai, 'Cấp sẵn cho bộ thử luồng credit.', Date.now());
+  sq.prepare("INSERT INTO xinYKienQuyet (id, xin, quyet, choAi, boiAi, ghiChu, luc, hetHan) VALUES (?,?,'cho',?,'chu','Cấp sẵn cho bộ thử.',?,?)").run(id + '-Q', id, ai, Date.now(), Date.now() + 14 * 864e5);
+};
+[['coach1', 'K4', 'C4-A-001'], ['coach1', 'K4', 'C4-A-002'], ['tnc', 'K5', 'C5-A-001'], ['tuvan', 'K3', 'V1-A-001'], ['tuvan', 'K3', 'V1-A-002'],
+  ['coach1', 'K3', 'V2-A-001']].forEach(x => duyetSan(...x));
 const dx = await K.deXuatKhoCao({ maNha: 'K4', ds: ['C4-A-001', 'C4-A-002'], ghiChu: 'Hai mức để nhà chọn' }, env, db, coach1);
 kiem('Coach phụ trách đề xuất 2 phương án — CHƯA trừ credit', dx.ok && (await C.soDu(db, 'K4')).tong === du0, JSON.stringify(dx));
 const xem = await K.dsDeXuatNha({}, env, db, ph);

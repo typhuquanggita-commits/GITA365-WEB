@@ -98,5 +98,6 @@ Không xoá mã màn, cửa máy chủ, bảng dữ liệu hay tệp nào đã g
   - đang thi thì kho từ chối đọc và đề xuất ca của bài ấy (`DANGTHI`);
   - đề chỉ lấy ca NGOÀI phần kho người thi đã mở khi kho đủ ca.
 - Mọi cấp khó hơn cấp trước ở ít nhất độ dài bài tối thiểu (`chuToiThieu`). Thi giữ cấp khó hơn lần đạt cấp ấy: thêm một biến cố, ngưỡng cộng 3, bài dài hơn 40 ký tự (`defThi`).
-- Luật "vấn đề khó phải xin ý kiến" còn gắn với cổng: cổng tắt thì không chặn. Đề xuất tạo lúc cổng tắt không bị soát lại khi nhà chọn sau đó.
+- Xin ý kiến LUÔN BẬT (chủ hệ chốt 10/2026): vấn đề vượt cấp thi thật (`maDuocMo(..., boQuaCong=true)`) hoặc hạng VVIP/Diamond thì phải có ý kiến đã duyệt, cổng kho tắt cũng vậy. Cổng R01 chỉ còn quyết việc ĐỌC kho theo cấp. Luật tầng của nhà xét TRƯỚC (không hợp tầng thì từ chối thẳng). Hệ quả: lúc chưa ai có cấp, mọi đề xuất kho cấp cao của Coach/Tư vấn viên đều phải xin ý kiến.
+- Thi CHỈ ngày 28 hằng tháng giờ VN (`NGAY_THI`, `moCuaThi`); bộ thử bật bằng `env.THI_MO_MOI_NGAY='1'` (biến Worker, người dùng không gửi được).
 - Cổng (R01 bật) khoá kho cấp cao theo % cấp; hạng VVIP · DIAMOND và vấn đề vượt cấp phải xin ý kiến; người duyệt có thể chuyển ca. Đình chỉ và bồi thường là quyết định của người — máy chỉ gửi đề nghị (`baoLenCapCao`). Mức hệ quả `HE_QUA` và công thức % kho là mặc định chờ chủ hệ chốt.

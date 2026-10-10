@@ -1177,12 +1177,12 @@ G.CULTURE = {
     big:'Kiến tạo một hệ sinh thái gia đình phát triển bền vững, nơi mỗi người biết hiểu mình, rèn mình, làm chủ cuộc đời và cùng nhau kiến tạo hạnh phúc, thành công, thịnh vượng qua nhiều thế hệ.',
     sub:'Nhiều thế hệ, không phải một khoá học. Đích đo bằng đời người, không đo bằng học kỳ.'
   },
-  /* Mốc 2030 tách khỏi TẦM NHÌN có chủ ý: tầm nhìn nói về loại thế giới
+  /* Mốc 2035 tách khỏi TẦM NHÌN có chủ ý: tầm nhìn nói về loại thế giới
      muốn tạo ra, mốc nói con số và hạn. Gộp hai thứ vào một chỗ rồi gọi
      chung là "tầm nhìn" thì cái nào cũng đọc không rõ. */
-  moc2030:{
-    t:'MỐC 2030',
-    big:'Đến năm 2030, một triệu người Việt lớn lên trong một gia đình vận hành được — nơi đứa trẻ tự cầm lái đời mình và người lớn cũng đang lớn lên mỗi ngày.',
+  moc2035:{
+    t:'MỐC 2035',
+    big:'Đến năm 2035, một triệu người Việt lớn lên trong một gia đình vận hành được — nơi đứa trẻ tự cầm lái đời mình và người lớn cũng đang lớn lên mỗi ngày.',
     sub:'Không phải một triệu đứa trẻ ngoan hơn. Là một triệu gia đình khác đi.'
   },
   suMenh:{
@@ -1686,7 +1686,7 @@ G.TIER_EN = {
 G.CULTURE_EN = {
   slogan:'A household that runs — without anyone standing guard.',
   sloganSub:'GITA 365 · The Family Prosperity Ecosystem',
-  tamNhin:{big:'By 2030, one million Vietnamese grow up inside a household that runs itself — where the child steers their own life and the adults are still growing too.',
+  tamNhin:{big:'By 2035, one million Vietnamese grow up inside a household that runs itself — where the child steers their own life and the adults are still growing too.',
     sub:'Not a million better-behaved children. A million different families.'},
   suMenh:{big:'Give every family a map, a rhythm and a companion — so that after 365 days the household runs without anyone standing guard.',
     sub:'We bring the frame and hold the standard. The family assembles its own part.'},
@@ -14341,10 +14341,10 @@ G.VIEWS['gioi-thieu'] = function(){
      Đặt ngay sau sứ mệnh và tầm nhìn vì đây là chỗ hai câu ấy được quy
      ra số. Câu ranh giới đứng TRƯỚC bảng, không đứng sau: đọc bảng rồi
      mới gặp ranh giới thì bảng đã kịp được hiểu thành lời hứa. */
-  /* Mốc 2030 của Học viện đứng trước mục tiêu của một nhà: người đọc cần
+  /* Mốc 2035 của Học viện đứng trước mục tiêu của một nhà: người đọc cần
      thấy Học viện tự đặt cho mình một con số có hạn trước khi đọc những
      con số Học viện đặt cho nhà mình. */
-  var m30 = C.moc2030;
+  var m30 = C.moc2035;
   if(m30 && m30.big)
     o += '<div class="card mt2" style="border-left:3px solid var(--gita-do-ink)">'+
       '<span class="tiny up" style="color:var(--gita-do-ink);letter-spacing:.09em">'+h(m30.t)+'</span>'+
@@ -14578,7 +14578,7 @@ G.VIEWS['gioi-thieu'] = function(){
         'Phần không làm được đọc đủ, không rút gọn — đó là phần mua được lòng tin.',
         'Không đọc phần năm tầng ở buổi đầu. Nhà mới nghe năm tầng thì thấy dài và thấy xa.',
         'Sứ mệnh và tầm nhìn đọc khi nhà HỎI về Học viện, không đọc để mở đầu. Mở đầu bằng '+
-        'tầm nhìn 2030 là nói chuyện của mình trong lúc người ta đang lo chuyện tối nay.',
+        'mốc 2035 là nói chuyện của mình trong lúc người ta đang lo chuyện tối nay.',
         'Bảng mục tiêu chỉ đưa ra khi nhà hỏi "bao lâu thì thấy gì". Đưa ra thì đọc luôn câu '+
         'ranh giới đứng trên bảng — đó là chuẩn quy trình, không phải cam kết kết quả.',
         'Phần chiến lược đồng hành để dành cho buổi thứ hai, và khi đọc thì đọc cả khối NĂM '+
@@ -16215,6 +16215,9 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     o += t.cong
       ? canhBaoMau('Cổng thi đang <b>BẬT</b>: phần kho cấp cao bạn mở được đi theo cấp đang giữ. Vấn đề vượt cấp hoặc hạng VVIP · DIAMOND phải xin ý kiến trước khi đề xuất.', 'var(--gita)')
       : canhBaoMau('Cổng thi đang <b>TẮT</b>: kho cấp cao chưa khoá theo cấp. Bạn vẫn thi được để có cấp sẵn trước khi Super Admin bật cổng.', 'var(--ink-4)');
+    o += t.moHomNay
+      ? canhBaoMau('Hôm nay là <b>ngày thi ' + t.ngayThi + '</b>. Mỗi tháng tối đa hai lượt, cả hai đều trong ngày hôm nay.', 'var(--ok)')
+      : canhBaoMau('Thi chứng chỉ mở vào <b>ngày ' + t.ngayThi + ' hằng tháng</b>. Kỳ thi tới: <b>' + h(ngayNgan(t.ngayThiKe)) + '</b>. Bài đang làm dở vẫn nộp được tới hết giờ.', 'var(--ink-4)');
     if(!t.he.length) return o + '<p class="sm">Vai của bạn không thuộc thang thi nào. Thang Tư vấn dành cho Tư vấn viên; thang Coach dành cho Trưởng nhóm Coach, Coach cao cấp, Coach và Giáo viên.</p>';
     t.he.forEach(function(x){
       o += U.sec('Thang ' + x.ten + ' · ' + x.soCap + ' cấp');
@@ -16223,10 +16226,11 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
         (x.cap ? '<div><span class="tiny muted">Chứng chỉ ' + h(x.ten) + '</span><b>' + h(x.tenCap ? 'Cấp ' + x.cap : '') + '</b><span class="tiny">hiệu lực tới ' + h(ngayNgan(x.hieuLucDen)) + '</span></div>' : '') +
         '<div><span class="tiny muted">Tháng ' + h(x.thangNay) + '</span><b>' + (x.datThangNay ? 'Đã giữ cấp' : 'Chưa thi') + '</b><span class="tiny">còn ' + x.conLanThang + ' lượt thi tháng này</span></div></div>';
       if(x.khoaDen && x.khoaDen > Date.now()) o += canhBaoMau('Kho cấp cao đang khoá tới ' + h(ngay(x.khoaDen)) + ' do vi phạm mức 3.');
-      if(!x.datThangNay && x.cap > 0) o += canhBaoMau('Tháng này bạn chưa thi giữ cấp. Hết tháng mà chưa có bài đạt ở cấp ' + x.cap + ' trở lên thì cấp tụt một bậc.', 'var(--warn)');
+      if(!x.datThangNay && x.cap > 0) o += canhBaoMau('Tháng này bạn chưa thi giữ cấp. Bỏ kỳ thi ngày ' + t.ngayThi + ' mà chưa có bài đạt ở cấp ' + x.cap + ' trở lên thì hết tháng cấp tụt một bậc.', 'var(--warn)');
       var dang = x.bai.filter(function(b){ return b.trangThai === 'dangLam' && b.hanLuc > Date.now(); })[0];
       o += '<div class="co-hang mb">';
       if(dang) o += '<button class="btn pri sm" data-tcc="lam" data-l="' + h(dang.luot) + '">' + ic('arrow','w-3 h-3') + 'Làm tiếp bài cấp ' + dang.cap + '</button>';
+      else if(!t.moHomNay) o += '<span class="sm muted">Mở thi ngày ' + t.ngayThi + ' · kỳ tới ' + h(ngayNgan(t.ngayThiKe)) + '</span>';
       else if(x.conLanThang > 0){
         if(x.cap < x.soCap) o += '<button class="btn pri sm" data-tcc="batdau" data-he="' + x.he + '" data-muc="len">Thi lên cấp ' + x.capKe + ' · ' + h(x.tenCapKe) + '</button>';
         if(x.cap > 0) o += '<button class="btn ghost sm" data-tcc="batdau" data-he="' + x.he + '" data-muc="giu">Thi giữ cấp ' + x.cap + '</button>';

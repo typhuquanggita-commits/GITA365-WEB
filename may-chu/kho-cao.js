@@ -38,7 +38,7 @@ import { Kho } from './nen.js';
 import { soatRaNgoai } from './bo-nao.js';
 import { truTheoThuTu, soDu, vaiVoiNha, nhaCoThat, tangCuaNha, moVi, maNhaCuaToi, thuongCredit } from './credit.js';
 import { baoLenCapCao } from './ngan-hang.js';
-import { maDuocMo, coChoPhep, congBat, HANG_KHO, maDangThi } from './thi-cap.js';
+import { maDuocMo, coChoPhep, HANG_KHO, maDangThi } from './thi-cap.js';
 
 export const HANG = Object.freeze(['S1', 'S3', 'S5', 'VIP', 'VVIP', 'DIAMOND']);
 export const TEN_HANG = Object.freeze({ S1: '1 sao', S3: '3 sao', S5: '5 sao', VIP: 'Vip', VVIP: 'VVip', DIAMOND: 'Diamond' });
@@ -337,25 +337,28 @@ export async function deXuatKhoCao(y, env, db, hoSo) {
   if (ds.some(m => dangThi.has(m))) return { ok: false, code: 'DANGTHI', error: 'Có vấn đề đang nằm trong bài thi chưa nộp của anh/chị — nộp bài rồi mới đề xuất được.' };
   if (ghiChu && !soatRaNgoai(ghiChu).sach) return { ok: false, code: 'DIEU13', error: 'Lời nhắn không ghi tên, số điện thoại hay địa chỉ — bỏ đi rồi gửi lại.' };
   await taoBang(db);
-  /* Cổng cấp thi (khi Super Admin đã bật): vấn đề vượt cấp, và mọi vấn đề hạng
-     VVIP/Diamond, phải có ý kiến quản lý đã duyệt cho đúng nhà ấy. Quản lý
-     (R01–R04) không qua cổng này. */
-  if (BAC[roleOf(hoSo)] > 4 && await congBat(db)) {
-    for (const m of ds) {
-      const k = await db.prepare('SELECT he, hang FROM khoCao WHERE ma = ?').bind(m).first();
-      if (!k) continue;
-      const mo = await maDuocMo(db, hoSo, k.he);
-      const canXin = (!mo.het && !mo.mo.has(m)) || HANG_KHO.includes(k.hang);
-      if (canXin && !(await coChoPhep(db, ten(hoSo), maNha, m)))
-        return { ok: false, code: 'XINYKIEN', ma: m, error: (HANG_KHO.includes(k.hang) ? 'Vấn đề hạng ' + TEN_HANG[k.hang] + ' là vấn đề khó' : 'Vấn đề ' + m + ' vượt cấp thi của anh/chị') +
-          ' — bắt buộc xin ý kiến bộ phận quản lý trước khi đề xuất cho nhà. Nghiêm cấm tự xử lý.' };
-    }
-  }
   const tangNha = await tangCuaNha(db, maNha);
   for (const m of ds) {
     const r = await db.prepare('SELECT tang FROM khoCao WHERE ma = ?').bind(m).first();
     if (!r) return { ok: false, code: 'KHONGCO', error: 'Kho chưa có vấn đề ' + m + '.' };
     if (tangNha < r.tang) return { ok: false, code: 'TANGCHUA', error: 'Nhà đang ở tầng ' + tangNha + ' — vấn đề ' + m + ' thuộc quyền lợi tầng ' + r.tang + '.' };
+  }
+  /* Sau luật tầng: vấn đề nhà không được nhận thì từ chối thẳng, không bắt xin
+     ý kiến cho một việc vốn không được làm.
+     Xin ý kiến LUÔN BẬT (chủ hệ chốt 10/2026), không chờ cổng kho: vấn đề vượt
+     CẤP THI THẬT của người đề xuất, và mọi vấn đề hạng VVIP/Diamond, phải có ý
+     kiến quản lý đã duyệt cho đúng nhà ấy. Cổng (R01) chỉ còn quyết việc ĐỌC
+     kho theo cấp. Quản lý (R01–R04) không qua luật này. */
+  if (BAC[roleOf(hoSo)] > 4) {
+    for (const m of ds) {
+      const k = await db.prepare('SELECT he, hang FROM khoCao WHERE ma = ?').bind(m).first();
+      if (!k) continue;
+      const mo = await maDuocMo(db, hoSo, k.he, true);
+      const canXin = (!mo.het && !mo.mo.has(m)) || HANG_KHO.includes(k.hang);
+      if (canXin && !(await coChoPhep(db, ten(hoSo), maNha, m)))
+        return { ok: false, code: 'XINYKIEN', ma: m, error: (HANG_KHO.includes(k.hang) ? 'Vấn đề hạng ' + TEN_HANG[k.hang] + ' là vấn đề khó' : 'Vấn đề ' + m + ' vượt cấp thi của anh/chị') +
+          ' — bắt buộc xin ý kiến bộ phận quản lý trước khi đề xuất cho nhà. Nghiêm cấm tự xử lý.' };
+    }
   }
   const id = 'DX-' + crypto.randomUUID().replace(/-/g, '').slice(0, 12).toUpperCase();
   await db.prepare("INSERT INTO deXuatKhoCao (id, maNha, luaChon, ghiChu, trangThai, boiAi, luc) VALUES (?,?,?,?,'cho',?,?)")

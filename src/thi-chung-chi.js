@@ -92,6 +92,9 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     o += t.cong
       ? canhBaoMau('Cổng thi đang <b>BẬT</b>: phần kho cấp cao bạn mở được đi theo cấp đang giữ. Vấn đề vượt cấp hoặc hạng VVIP · DIAMOND phải xin ý kiến trước khi đề xuất.', 'var(--gita)')
       : canhBaoMau('Cổng thi đang <b>TẮT</b>: kho cấp cao chưa khoá theo cấp. Bạn vẫn thi được để có cấp sẵn trước khi Super Admin bật cổng.', 'var(--ink-4)');
+    o += t.moHomNay
+      ? canhBaoMau('Hôm nay là <b>ngày thi ' + t.ngayThi + '</b>. Mỗi tháng tối đa hai lượt, cả hai đều trong ngày hôm nay.', 'var(--ok)')
+      : canhBaoMau('Thi chứng chỉ mở vào <b>ngày ' + t.ngayThi + ' hằng tháng</b>. Kỳ thi tới: <b>' + h(ngayNgan(t.ngayThiKe)) + '</b>. Bài đang làm dở vẫn nộp được tới hết giờ.', 'var(--ink-4)');
     if(!t.he.length) return o + '<p class="sm">Vai của bạn không thuộc thang thi nào. Thang Tư vấn dành cho Tư vấn viên; thang Coach dành cho Trưởng nhóm Coach, Coach cao cấp, Coach và Giáo viên.</p>';
     t.he.forEach(function(x){
       o += U.sec('Thang ' + x.ten + ' · ' + x.soCap + ' cấp');
@@ -100,10 +103,11 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
         (x.cap ? '<div><span class="tiny muted">Chứng chỉ ' + h(x.ten) + '</span><b>' + h(x.tenCap ? 'Cấp ' + x.cap : '') + '</b><span class="tiny">hiệu lực tới ' + h(ngayNgan(x.hieuLucDen)) + '</span></div>' : '') +
         '<div><span class="tiny muted">Tháng ' + h(x.thangNay) + '</span><b>' + (x.datThangNay ? 'Đã giữ cấp' : 'Chưa thi') + '</b><span class="tiny">còn ' + x.conLanThang + ' lượt thi tháng này</span></div></div>';
       if(x.khoaDen && x.khoaDen > Date.now()) o += canhBaoMau('Kho cấp cao đang khoá tới ' + h(ngay(x.khoaDen)) + ' do vi phạm mức 3.');
-      if(!x.datThangNay && x.cap > 0) o += canhBaoMau('Tháng này bạn chưa thi giữ cấp. Hết tháng mà chưa có bài đạt ở cấp ' + x.cap + ' trở lên thì cấp tụt một bậc.', 'var(--warn)');
+      if(!x.datThangNay && x.cap > 0) o += canhBaoMau('Tháng này bạn chưa thi giữ cấp. Bỏ kỳ thi ngày ' + t.ngayThi + ' mà chưa có bài đạt ở cấp ' + x.cap + ' trở lên thì hết tháng cấp tụt một bậc.', 'var(--warn)');
       var dang = x.bai.filter(function(b){ return b.trangThai === 'dangLam' && b.hanLuc > Date.now(); })[0];
       o += '<div class="co-hang mb">';
       if(dang) o += '<button class="btn pri sm" data-tcc="lam" data-l="' + h(dang.luot) + '">' + ic('arrow','w-3 h-3') + 'Làm tiếp bài cấp ' + dang.cap + '</button>';
+      else if(!t.moHomNay) o += '<span class="sm muted">Mở thi ngày ' + t.ngayThi + ' · kỳ tới ' + h(ngayNgan(t.ngayThiKe)) + '</span>';
       else if(x.conLanThang > 0){
         if(x.cap < x.soCap) o += '<button class="btn pri sm" data-tcc="batdau" data-he="' + x.he + '" data-muc="len">Thi lên cấp ' + x.capKe + ' · ' + h(x.tenCapKe) + '</button>';
         if(x.cap > 0) o += '<button class="btn ghost sm" data-tcc="batdau" data-he="' + x.he + '" data-muc="giu">Thi giữ cấp ' + x.cap + '</button>';

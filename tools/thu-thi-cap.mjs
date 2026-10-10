@@ -52,7 +52,7 @@ const chu = ho('chu', 'R01', 'U1'), r04 = ho('chuyenmon', 'R04', 'U4'), r05 = ho
 
 async function chay(T, K) {
   const { sq, db } = await dung();
-  const env = {}, r = {};
+  const env = { THI_MO_MOI_NGAY: '1' }, r = {};
   r.khung = await T.khungThi({}, env, db, tv1);
   r.khungKhach = await T.khungThi({}, env, db, ph);
   r.khongKho = await T.batDauThi({ he: 'tuvan' }, env, db, tv1);
@@ -198,7 +198,7 @@ kiem('quản lý xem cấp cả đội; R11 không xem được', r.doi.ok && r.
 /* ── đối kháng: mỗi lỗ hai tổ soát tìm ra (10/2026) một phép đo ── */
 async function doiKhang(T, K) {
   const { sq, db } = await dung();
-  const env = {}, d = {};
+  const env = { THI_MO_MOI_NGAY: '1' }, d = {};
   for (const [id, u, r] of [['U2', 'chu2', 'R01'], ['U6', 'truongcoach2', 'R05']]) sq.prepare('INSERT INTO users (id, username, email, role, active) VALUES (?,?,?,?,1)').run(id, u, u + '@gita.vn', r);
   const chu2 = ho('chu2', 'R01', 'U2'), r05b = ho('truongcoach2', 'R05', 'U6');
   const lo = []; for (let i = 1; i <= 60; i++) lo.push(banGhi('V1-A-' + String(i).padStart(3, '0'), HANG[(i - 1) % 6]));
@@ -337,6 +337,19 @@ const CUA = ['datCongThi', 'batDauThi', 'docBaiThi', 'nopBaiThi', 'chamBaiThi', 
 const canPhien = (wk.match(/const CAN_PHIEN = \[([\s\S]*?)\];/) || [])[1] || '';
 kiem(CUA.length + ' cửa có trong CAN_PHIEN và có đường gọi', CUA.every(f => canPhien.includes("'" + f + "'") && wk.includes("fn === '" + f + "'")));
 kiem('máy không có cửa tự đình chỉ hay tính bồi thường', !/export async function (dinhChi|tinhBoiThuong|camThamGia)/.test(fs.readFileSync(ROOT + '/may-chu/thi-cap.js', 'utf8')));
+
+/* ── ngày thi 28 (giờ Việt Nam) ── */
+const vn = s => Date.parse(s + '+07:00');
+kiem('chỉ mở thi ngày 28 giờ Việt Nam: 00:30 ngày 28 mở, 23:59 ngày 27 đóng, 00:00 ngày 29 đóng',
+  T.moCuaThi(vn('2026-10-28T00:30:00'), {}) && !T.moCuaThi(vn('2026-10-27T23:59:00'), {}) && !T.moCuaThi(vn('2026-10-29T00:00:00'), {}) && T.moCuaThi(vn('2027-02-28T09:00:00'), {}));
+kiem('kỳ thi tới: sau ngày 28 thì sang ngày 28 tháng sau, qua năm đúng',
+  T.ngayThiKe(vn('2026-10-29T08:00:00')) === vn('2026-11-28T00:00:00') && T.ngayThiKe(vn('2026-12-29T08:00:00')) === vn('2027-01-28T00:00:00') && T.ngayThiKe(vn('2026-10-05T08:00:00')) === vn('2026-10-28T00:00:00'));
+{
+  const { db } = await dung();
+  const r = await T.batDauThi({ he: 'tuvan' }, {}, db, tv1);
+  const hom28 = T.ngayVN(Date.now()) === 28;
+  kiem('ngoài ngày 28 cửa bắt đầu thi trả NGAYTHI (env thật không có cờ thử)', hom28 ? r.code !== 'NGAYTHI' : r.code === 'NGAYTHI', JSON.stringify(r));
+}
 
 /* ── màn hình ── */
 const man = fs.readFileSync(ROOT + '/src/thi-chung-chi.js', 'utf8');

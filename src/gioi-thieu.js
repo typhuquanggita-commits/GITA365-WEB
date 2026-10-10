@@ -90,10 +90,10 @@ G.VIEWS['gioi-thieu'] = function(){
      Đặt ngay sau sứ mệnh và tầm nhìn vì đây là chỗ hai câu ấy được quy
      ra số. Câu ranh giới đứng TRƯỚC bảng, không đứng sau: đọc bảng rồi
      mới gặp ranh giới thì bảng đã kịp được hiểu thành lời hứa. */
-  /* Mốc 2030 của Học viện đứng trước mục tiêu của một nhà: người đọc cần
+  /* Mốc 2035 của Học viện đứng trước mục tiêu của một nhà: người đọc cần
      thấy Học viện tự đặt cho mình một con số có hạn trước khi đọc những
      con số Học viện đặt cho nhà mình. */
-  var m30 = C.moc2030;
+  var m30 = C.moc2035;
   if(m30 && m30.big)
     o += '<div class="card mt2" style="border-left:3px solid var(--gita-do-ink)">'+
       '<span class="tiny up" style="color:var(--gita-do-ink);letter-spacing:.09em">'+h(m30.t)+'</span>'+
@@ -327,7 +327,7 @@ G.VIEWS['gioi-thieu'] = function(){
         'Phần không làm được đọc đủ, không rút gọn — đó là phần mua được lòng tin.',
         'Không đọc phần năm tầng ở buổi đầu. Nhà mới nghe năm tầng thì thấy dài và thấy xa.',
         'Sứ mệnh và tầm nhìn đọc khi nhà HỎI về Học viện, không đọc để mở đầu. Mở đầu bằng '+
-        'tầm nhìn 2030 là nói chuyện của mình trong lúc người ta đang lo chuyện tối nay.',
+        'mốc 2035 là nói chuyện của mình trong lúc người ta đang lo chuyện tối nay.',
         'Bảng mục tiêu chỉ đưa ra khi nhà hỏi "bao lâu thì thấy gì". Đưa ra thì đọc luôn câu '+
         'ranh giới đứng trên bảng — đó là chuẩn quy trình, không phải cam kết kết quả.',
         'Phần chiến lược đồng hành để dành cho buổi thứ hai, và khi đọc thì đọc cả khối NĂM '+

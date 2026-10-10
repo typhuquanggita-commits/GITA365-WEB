@@ -56,7 +56,21 @@ export const HE_THI = Object.freeze({
 const HANG = ['S1', 'S3', 'S5', 'VIP', 'VVIP', 'DIAMOND'];
 export const HANG_KHO = Object.freeze(['VVIP', 'DIAMOND']);      // "vấn đề khó": luôn xin ý kiến khi cổng bật
 export const LAN_TOI_DA_THANG = 2;                               // mỗi tháng tối đa 2 lần thi một hệ
-export const NGAY_CHO_PHEP = 14;                                 // ý kiến được duyệt có hiệu lực 14 ngày
+export const NGAY_CHO_PHEP = 14;
+/* Thi CHỈ vào ngày 28 hằng tháng, giờ Việt Nam (chủ hệ chốt 10/2026): một ngày
+   chung để kiểm duyệt chất lượng nhân sự, không phải mỗi người thi một hôm.
+   Tháng Hai luôn có ngày 28. Hai lượt thi của tháng đều nằm trong ngày ấy.
+   env.THI_MO_MOI_NGAY = '1' chỉ dành cho bộ thử — biến môi trường của Worker,
+   người dùng không gửi lên được. */
+export const NGAY_THI = 28;
+export const ngayVN = ts => Number(new Date(Number(ts) + 7 * 3600000).toISOString().slice(8, 10));
+export const moCuaThi = (now, env) => ngayVN(now) === NGAY_THI || (env && env.THI_MO_MOI_NGAY === '1');
+export function ngayThiKe(now) {
+  const d = new Date(Number(now) + 7 * 3600000);
+  let y = d.getUTCFullYear(), m = d.getUTCMonth();
+  if (d.getUTCDate() > NGAY_THI) { m += 1; if (m > 11) { m = 0; y += 1; } }
+  return Date.parse(y + '-' + String(m + 1).padStart(2, '0') + '-' + NGAY_THI + 'T00:00:00+07:00');
+}                                 // ý kiến được duyệt có hiệu lực 14 ngày
 export const TRUNG_CHEP = 0.25;                                  // > 25% cụm 8 chữ trùng lời giải kho → báo chép
 export const VI_PHAM = Object.freeze({
   GIAU_VAN_DE: 'Giấu vấn đề, không báo',
@@ -179,14 +193,14 @@ export async function khoaCua(db, maNguoi) {
   for (const h of Object.keys(HE_THI)) { const c = await capCua(db, maNguoi, h); den = Math.max(den, c.khoaDen || 0); }
   return den > Date.now() ? den : 0;
 }
-export async function phamViKho(db, hoSo, heKho) {
+export async function phamViKho(db, hoSo, heKho, boQuaCong) {
   const ai = await nguoi(db, hoSo.u);
   /* Khoá do vi phạm mức 3 áp cả khi cổng tắt và cả với quản lý — bản đầu
      kiểm khoá SAU lối tắt "cổng tắt", nên lời báo "đã khoá kho 30 ngày" là
      một lời nói dối mang dấu hệ thống. */
   if (ai && roleOf(hoSo) !== 'R01') { const den = await khoaCua(db, ai.ten); if (den) return { het: false, pct: 0, ly: 'khoaDoViPham', khoaDen: den }; }
   if (laQuanLy(hoSo)) return { het: true, ly: 'quanLy' };
-  if (!(await congBat(db))) return { het: true, ly: 'congTat' };
+  if (!boQuaCong && !(await congBat(db))) return { het: true, ly: 'congTat' };
   if (!ai) return { het: false, pct: 0 };
   if (!docKho(heKho, ai.role)) return { het: false, pct: 0, ly: 'vaiKhongDocKho' };
   const heThi = Object.keys(HE_THI).find(h => HE_THI[h].vaiThi.includes(ai.role) && HE_THI[h].heKho.includes(heKho));
@@ -196,8 +210,10 @@ export async function phamViKho(db, hoSo, heKho) {
   return { het: false, pct, cap: c.cap, heThi };
 }
 /* Danh sách mã được mở trong một hệ kho, theo thứ tự hạng → tầng → số thứ tự (dễ trước khó). */
-export async function maDuocMo(db, hoSo, heKho) {
-  const pv = await phamViKho(db, hoSo, heKho);
+/* boQuaCong: tính phần kho theo CẤP THẬT dù cổng đang tắt — dùng cho luật xin
+   ý kiến, luật này luôn bật (chủ hệ chốt 10/2026), không chờ cổng. */
+export async function maDuocMo(db, hoSo, heKho, boQuaCong) {
+  const pv = await phamViKho(db, hoSo, heKho, boQuaCong);
   if (pv.het) return { het: true, pv };
   const rows = (await db.prepare('SELECT ma, hang, tang, stt FROM khoCao WHERE he = ?').bind(heKho).all()).results || [];
   rows.sort((a, b) => HANG.indexOf(a.hang) - HANG.indexOf(b.hang) || a.tang - b.tang || a.stt - b.stt);
@@ -307,6 +323,7 @@ export async function batDauThi(y, env, db, hoSo) {
   const ai = await nguoi(db, hoSo.u);
   if (!ai) return { ok: false, code: 'KHONGNGUOI', error: 'Không tra được tài khoản.' };
   if (!vaiThiDuoc(he, ai.role)) return { ok: false, code: 'NOPERM', error: 'Thang ' + HE_THI[he].ten + ' dành cho vai ' + HE_THI[he].vaiThi.join(' · ') + '.' };
+  if (!moCuaThi(Date.now(), env)) return { ok: false, code: 'NGAYTHI', error: 'Thi chứng chỉ chỉ mở vào ngày ' + NGAY_THI + ' hằng tháng (giờ Việt Nam). Kỳ thi tới: ' + new Date(ngayThiKe(Date.now()) + 7 * 3600000).toISOString().slice(0, 10) + '.' };
   const dang = await db.prepare('SELECT id FROM thiLuot WHERE maNguoi = ? AND nopLuc IS NULL AND hanLuc > ?').bind(ai.ten, Date.now()).first();
   if (dang) return { ok: false, code: 'DANGLAM', error: 'Đang có một bài chưa nộp.', luot: dang.id };
   const thang = thangCua(Date.now());
@@ -482,7 +499,7 @@ export async function thiCuaToi(y, env, db, hoSo) {
   const vp = (await db.prepare('SELECT v.*, (SELECT quyet FROM viPhamQuyet q WHERE q.viPham = v.id ORDER BY q.luc DESC, q.rowid DESC LIMIT 1) quyet, ' +
     '(SELECT noiDung FROM viPhamGiaiTrinh g WHERE g.viPham = v.id ORDER BY g.luc DESC, g.rowid DESC LIMIT 1) giaiTrinh FROM viPhamNangLuc v WHERE v.maNguoi = ? ORDER BY v.luc DESC, v.rowid DESC LIMIT 20')
     .bind(ai.ten).all()).results || [];
-  return { ok: true, maNguoi: ai.ten, cong: await congBat(db), he, viPham: vp.map(v => ({ id: v.id, he: v.he, loai: v.loai, tenLoai: VI_PHAM[v.loai], mucDo: v.mucDo, chungCu: v.chungCu, boiAi: v.boiAi, luc: v.luc, deXuat: v.deXuat || '', quyet: v.quyet || '', giaiTrinh: v.giaiTrinh || '' })) };
+  return { ok: true, maNguoi: ai.ten, cong: await congBat(db), ngayThi: NGAY_THI, moHomNay: !!moCuaThi(Date.now(), env), ngayThiKe: ngayThiKe(Date.now()), he, viPham: vp.map(v => ({ id: v.id, he: v.he, loai: v.loai, tenLoai: VI_PHAM[v.loai], mucDo: v.mucDo, chungCu: v.chungCu, boiAi: v.boiAi, luc: v.luc, deXuat: v.deXuat || '', quyet: v.quyet || '', giaiTrinh: v.giaiTrinh || '' })) };
 }
 
 /* Khung cấp (một nguồn — màn hình đọc từ đây, không giữ bản chép). */

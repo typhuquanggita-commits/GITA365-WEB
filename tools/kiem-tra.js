@@ -3047,8 +3047,8 @@ const { chromium } = require(PW);
         const mot = {
           tamNhin: !!(C.tamNhin && C.tamNhin.big) && UIv.gateVisionTitle === C.tamNhin.big,
           suMenh:  !!(C.suMenh  && C.suMenh.big)  && UIv.gateMission     === C.suMenh.big,
-          moc2030: !!(C.moc2030 && C.moc2030.big),
-          khac:    !!(C.tamNhin && C.moc2030) && C.tamNhin.big !== C.moc2030.big
+          moc2035: !!(C.moc2035 && C.moc2035.big),
+          khac:    !!(C.tamNhin && C.moc2035) && C.tamNhin.big !== C.moc2035.big
         };
 
         return { mau: !!(G.KHO && G.KHO.cheDoMau), mong: mong, laVIEW: laVIEW,
@@ -3071,9 +3071,9 @@ const { chromium } = require(PW);
       bao(r35.mot.tamNhin && r35.mot.suMenh,
         'tầm nhìn và sứ mệnh chỉ có một bản gốc — cổng đăng nhập, thanh la bàn và màn giới thiệu nói cùng một câu',
         (r35.mot.tamNhin ? '' : 'tầm nhìn lệch ') + (r35.mot.suMenh ? '' : 'sứ mệnh lệch'));
-      bao(r35.mot.moc2030 && r35.mot.khac,
-        'mốc 2030 tách riêng khỏi tầm nhìn — con số có hạn không bị gọi nhầm là tầm nhìn',
-        r35.mot.moc2030 ? '' : 'thiếu G.CULTURE.moc2030');
+      bao(r35.mot.moc2035 && r35.mot.khac,
+        'mốc 2035 tách riêng khỏi tầm nhìn — con số có hạn không bị gọi nhầm là tầm nhìn',
+        r35.mot.moc2035 ? '' : 'thiếu G.CULTURE.moc2035');
       /* Nút chết còn tệ hơn không có nút. Bản một tệp KHÔNG mang theo
          kho .enc nào, nên nạp giấy phép vào đấy là có khoá mà không có
          hộp để mở — người dùng bấm, chọn tệp, và không có gì đổi. Họ
@@ -11095,7 +11095,7 @@ ra.tgNeoKhop && ra.tgDuTang && ra.tgLoaiDu && ra.tgChanThat && ra.tgMauKhop &&
         'Nhà mình bắt đầu bằng một chặng nhận diện, không có con số nào ở đây ' +
         'cả, chỉ có chữ và một lời hứa.')).ok === false;
       r.choi.coSoThiVe = G.veThiGiac(nen('MOT_SO',
-        'Đến năm 2030, một triệu người Việt lớn lên trong một gia đình vận ' +
+        'Đến năm 2035, một triệu người Việt lớn lên trong một gia đình vận ' +
         'hành được.')).ok === true;
       /* ── BIỂU ĐỒ CỘT: MỘT SẮC, KHÔNG SÁU ──
          Sáu sắc tầng là bảng ĐỊNH DANH — mỗi sắc một chặng khác nhau.

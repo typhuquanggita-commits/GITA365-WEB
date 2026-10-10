@@ -1150,12 +1150,12 @@ G.CULTURE = {
     big:'Kiến tạo một hệ sinh thái gia đình phát triển bền vững, nơi mỗi người biết hiểu mình, rèn mình, làm chủ cuộc đời và cùng nhau kiến tạo hạnh phúc, thành công, thịnh vượng qua nhiều thế hệ.',
     sub:'Nhiều thế hệ, không phải một khoá học. Đích đo bằng đời người, không đo bằng học kỳ.'
   },
-  /* Mốc 2030 tách khỏi TẦM NHÌN có chủ ý: tầm nhìn nói về loại thế giới
+  /* Mốc 2035 tách khỏi TẦM NHÌN có chủ ý: tầm nhìn nói về loại thế giới
      muốn tạo ra, mốc nói con số và hạn. Gộp hai thứ vào một chỗ rồi gọi
      chung là "tầm nhìn" thì cái nào cũng đọc không rõ. */
-  moc2030:{
-    t:'MỐC 2030',
-    big:'Đến năm 2030, một triệu người Việt lớn lên trong một gia đình vận hành được — nơi đứa trẻ tự cầm lái đời mình và người lớn cũng đang lớn lên mỗi ngày.',
+  moc2035:{
+    t:'MỐC 2035',
+    big:'Đến năm 2035, một triệu người Việt lớn lên trong một gia đình vận hành được — nơi đứa trẻ tự cầm lái đời mình và người lớn cũng đang lớn lên mỗi ngày.',
     sub:'Không phải một triệu đứa trẻ ngoan hơn. Là một triệu gia đình khác đi.'
   },
   suMenh:{

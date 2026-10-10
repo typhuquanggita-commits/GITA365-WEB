@@ -395,7 +395,7 @@ G.TIER_EN = {
 G.CULTURE_EN = {
   slogan:'A household that runs — without anyone standing guard.',
   sloganSub:'GITA 365 · The Family Prosperity Ecosystem',
-  tamNhin:{big:'By 2030, one million Vietnamese grow up inside a household that runs itself — where the child steers their own life and the adults are still growing too.',
+  tamNhin:{big:'By 2035, one million Vietnamese grow up inside a household that runs itself — where the child steers their own life and the adults are still growing too.',
     sub:'Not a million better-behaved children. A million different families.'},
   suMenh:{big:'Give every family a map, a rhythm and a companion — so that after 365 days the household runs without anyone standing guard.',
     sub:'We bring the frame and hold the standard. The family assembles its own part.'},
