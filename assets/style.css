@@ -4427,3 +4427,16 @@ html[data-may="yeu"] *,html[data-may="yeu"] *::before,html[data-may="yeu"] *::af
 .tcc-chi ul{margin:4px 0 8px 18px}
 .tcc-chi p{margin:6px 0 2px}
 .tcc-chi summary{cursor:pointer;min-height:32px;display:flex;align-items:center;gap:6px}
+/* Kho Ngôi nhà thịnh vượng (src/kho-nha.js) — 21 ô, cẩm nang ba cấp */
+.kn-luoi{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:14px}
+.kn-the{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-height:44px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);text-align:left;cursor:pointer}
+.kn-the.on{border-color:var(--gita);box-shadow:inset 0 0 0 1px var(--gita)}
+.kn-the.chua{opacity:.72}
+.kn-sach{display:flex;flex-direction:column;gap:6px;overflow-wrap:anywhere}
+.kn-o{display:flex;flex-direction:column;gap:2px;font-size:14.5px;line-height:1.55}
+.kn-o > b{font-size:12.5px;color:var(--ink-3)}
+.kn-mo{border:1px solid var(--line);border-radius:10px;padding:6px 10px}
+.kn-mo > summary{cursor:pointer;min-height:32px;display:flex;align-items:center;font-weight:700}
+.kn-khoi{display:flex;flex-direction:column;gap:4px;padding:8px 10px;border-left:3px solid var(--gita);background:var(--surface);border-radius:8px;margin:4px 0}
+.kn-so{font-size:12.5px;color:var(--gita)}
+.kn-ds{margin:2px 0 4px 20px;line-height:1.55}

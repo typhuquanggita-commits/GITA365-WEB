@@ -64,6 +64,7 @@
     "src/khoa-dao-tao.js",
     "src/dao-tao-ct.js",
     "src/thi-chung-chi.js",
+    "src/kho-nha.js",
     "src/tu-lieu-day-du.js",
     "src/duong-vao.js",
     "src/cong-dong.js",
