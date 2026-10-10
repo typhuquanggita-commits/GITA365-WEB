@@ -116,7 +116,7 @@ const ds = JSON.parse(doc('tools/danh-sach-src.json'));
 kiem('Hai tệp mới nằm trong gói app, không ở gói nghề',
   ds.app.includes('src/cat-nhip.js') && ds.app.includes('src/xuong-ai.js') && !ds.nghe.includes('src/xuong-ai.js'));
 kiem('Màn có mục cột trái, nằm trong màn chính "Nội dung & truyền thông"',
-  /\{v:'xuong-ai'[^}]*perm:'qt_trang'/.test(doc('src/data.core.js')) && /phan:\['xuong-ai'/.test(doc('src/v50-man.js')));
+  /\{v:'xuong-ai'[^}]*perm:'qt_trang'/.test(doc('src/data.core.js')) && /phan:\[[^\]]*'xuong-ai'/.test(doc('src/v50-man.js')));
 kiem('Bộ điều khiển sản xuất có chế độ nhúng (bỏ hàng tab trùng danh mục)', /G\.S\.axNhung/.test(sx));
 
 console.log('\n4 · Một cửa — các màn phim cũ mở vào đúng ngăn');

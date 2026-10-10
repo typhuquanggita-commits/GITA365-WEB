@@ -140,3 +140,27 @@ Chủ hệ 10/10: chọn tiếng Anh thì phải đổi cả màn, không chỉ 
 - **Câu có tên người ghép giữa** (câu chào…) không dịch bằng khoá được — chọn ngôn ngữ ngay chỗ ghép (`G.LANG === 'en'`). Tên người không bao giờ vào từ điển; `thu-dich.mjs` đỏ nếu bản dịch còn chữ có dấu.
 - Hai lỗi đã gặp, có phép đo canh: nút được thêm **nguyên chiếc** mang `aria-label` tiếng Việt không ai dịch (querySelectorAll không trả chính thẻ gốc — đỏ ở 71/71 màn); nút lùi/tới đổi `title` bằng `setAttribute` sau lượt vẽ (phải nghe `attributes`).
 - Mốc độ phủ `tools/i18n-moc.json` chỉ được nâng; CI chạy `trich-chu-viet.js --kiem`. Nội dung kho (bảy gói mã hoá) vẫn chỉ tiếng Việt — câu `langNote` ở `src/i18n.js` đã nói thẳng điều này với người đọc.
+
+## Đăng nhập khuôn mặt (`may-chu/sinh-trac.js` · `src/dang-nhap-mat.js` · `tools/thu-sinh-trac.mjs`)
+WebAuthn: máy quét mặt thật trên thiết bị, máy chủ chỉ giữ khoá công khai (Điều 13). Chủ hệ 10/10 báo "lỗi check in khuôn mặt" — ba nguyên nhân đã sửa, đừng đưa lại:
+- **Đừng ép `authenticatorAttachment: 'platform'`.** Laptop không có Windows Hello thì hỏng ngay. Hai đường (`kieu`): `nenTang` (máy này) · `dienThoai` (máy hiện QR, mở bằng Face ID điện thoại — `cross-platform`). Cả hai bắt `userVerification: 'required'`.
+- **Đừng khai `transports: ['internal']`** ở exclude/allowCredentials — trình duyệt bỏ qua khoá nằm trên điện thoại.
+- **Đừng dùng `window.prompt`** — Electron và trình duyệt trong Zalo/Facebook không có. Tên thiết bị ở ô `#st-ten`.
+- Màn dò `isUserVerifyingPlatformAuthenticatorAvailable` trước khi mời; ở `gita://` (bản cài máy tính) nói thẳng là phải bật trên trang https.
+- `thu-sinh-trac.mjs`: bộ xác thực giả bằng WebCrypto (ES256, CBOR attestation "none") đi trọn đăng ký + đăng nhập; chữ ký giả · thiếu UV · sai thách thức · trang giả mạo · phát lại phải đỏ.
+
+## Ngôi nhà V50 · vòng quay · ảnh 3D (`src/ngoi-nha.js` · `tools/thu-ngoi-nha*.mjs` · `.github/workflows/tao-anh-3d.yml`)
+- **Vòng quay:** chủ hệ báo hai lần "vòng tròn không quay". Đo thật: vòng bánh đà có quay, nhưng vòng chữ to nhất đứng yên và máy "giảm chuyển động" chỉ 240 giây/vòng. Nay vòng khẩu hiệu quay ngược 120s, vòng nét đứt quay cùng bánh đà 60s; giảm chuyển động 90/180s; nút Dừng dừng cả ba. Đừng cho vòng to nhất đứng yên lại.
+- **Mười một không gian + mười bánh đà:** dưới con dấu là hai lưới thẻ. Mỗi phòng: ảnh · chỗ đứng · tên · câu triết lý (`triet`) · câu hỏi tối nay (`hoi`, lấy từ cẩm nang cấp 1 của chính ô ấy — cùng một giọng với coach) · lối vào. Bánh đà dùng ô `vong` của `G.BD_LON`. Ảnh chỉ hiện khi mã có trong `G.NHA_ANH` (mã → mô tả) — thẻ trỏ vào ảnh chưa có là một ô vỡ.
+- **Ảnh 3D:** người Việt thật đang làm việc nhà đúng nội dung phòng; cấm người que, cấm biểu tượng trần. Tạo bằng FLUX.1-schnell (Apache-2.0) chạy CPU trên máy GitHub (stable-diffusion.cpp, bảy máy song song), đẩy sang nhánh `anh-3d`; người duyệt rồi mới vào `assets/anh-nha/`. Khoá Cloudflare ở Secrets **không có quyền Workers AI** (401); VAE ở kho gốc Black Forest Labs đòi đăng nhập — dùng bản chép công khai. Lời nhắc chỉ ASCII, không tên người.
+
+## Bản tin GITA — truyền thông nội bộ (`may-chu/truyen-thong.js` · `src/truyen-thong.js` · `src/tt-bai-nen.js` · `tools/thu-truyen-thong.mjs`)
+Chủ hệ 10/10: khu "Nội dung & truyền thông" của nhân sự "hời hợt, làm màu". Màn `ban-tin-gita` (đầu màn chính `noi-dung`, quyền `nghe_chung` — mọi nhân sự), năm ngăn: Bản tin · Nền tảng GITA (đọc thẳng `G.CULTURE`, không chép) · Soạn bài · Biên tập · lịch · Chỉ số.
+- **Mười một chuyên mục, mỗi mục một khung bắt buộc ở MÁY CHỦ** (`CHUYEN_MUC`): vinh danh phải có người, việc cụ thể ≥80 ký tự, bằng chứng ≥40, không chữ xếp hạng; đại sứ/khách phải `dongYCongKhai`; chiến dịch có mục tiêu + ngày; sự kiện có thời điểm; vận hành ≥3 bước; học tập bắt buộc có 1–3 câu kiểm tra kèm đáp án đúng. Từ tuyệt đối dùng chung `CUM_TUYET_DOI` — không dựng bộ dò thứ hai. Số liệu phải có `nguon`.
+- **Người viết khác người duyệt** (`TUDUYET`); chỉ R01 được "ban hành" thẳng. Trả về phải ghi lý do ≥20 ký tự; gỡ bài R01–R03 kèm lý do ≥15. Đã phát hành hay chưa **tính lúc đọc** (`lich <= now`) — không có cột "đã phát hành".
+- **Câu kiểm tra chấm ở máy chủ**, đáp án chỉ trả về SAU khi nộp; `choKhach` gỡ đáp án khỏi bài gửi xuống.
+- **KPI:** truyền thông = 30% điểm nghiệp vụ (70 sát hạch + 30 truyền thông, `TY_LE_TT_TRONG_NGHIEP_VU`). Chỉ số = 50 xác nhận bài bắt buộc · 20 hiểu (điểm câu kiểm tra) · 30 đóng góp (≥1 bài phát hành/tháng). Sát hạch chưa có điểm thì cả ô nghiệp vụ để trống — không lấy riêng phần truyền thông thay.
+- **Lịch phát hành** `NHIP`: Thứ Hai nền tảng/văn hoá/hiến pháp/trách nhiệm · Thứ Ba vận hành · Thứ Tư chuẩn · Thứ Năm học tập · Thứ Sáu 16:00 vinh danh · ngày 1 chiến dịch. Ô trống trong lịch được nêu ra, không lấp bằng bài máy viết.
+- **Tám bài nền** (`G.BTG_BAI_NEN`) do R01 ban hành bằng một nút — vẫn đi qua `soanBaiTT` → `duyetBaiTT`, tức qua đúng cổng như mọi bài.
+- **Bẫy tên đã cắn:** tiền tố `G.tt*` thuộc `src/tt-cskh.js` (`G.ttTai = false`) → màn ném "G.ttTai is not a function" và rơi về màn xin cấp phép. Màn này dùng tiền tố `btg` (`G.btg*`, `G.BTG_*`). Lớp CSS `.tt-*` không trùng.
+- Tệp mới đặt trong `app[]` SAU `src/kho-nha.js` — đặt sau `tin-noi-bo.js` là rơi vào gói `nghe` và đổi `gita-nghe.js`.

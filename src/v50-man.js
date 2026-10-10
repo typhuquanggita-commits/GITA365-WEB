@@ -61,8 +61,8 @@ var G = window.G || {}; window.G = G;
       phan:['phan-quyen','phan-quyen-crm','cap-tai-khoan','khoa-tai-khoan','nguoi-dung','toi','khoa-mat','nhat-ky-ht','khung-du-lieu'], kho:['PL'] },
     { id:'van-hanh-he', khu:'nhansu', ten:'Vận hành hệ thống',      ic:'pulse',   viec:'Máy chủ, tài nguyên, liên thông dữ liệu, sức chứa, AI, thanh tra, soát màn, kiểm thử.',
       phan:['noi-may-chu','theo-doi-tai-nguyen','lien-thong','suc-chua-toc-do','bo-nao-da-tri','thanh-tra-soi','phap-ly-rui-ro','soat-toan-man','kiem-theo-vai','soat-day-du'], kho:['KT','PL'] },
-    { id:'noi-dung', khu:'nhansu',  ten:'Nội dung & truyền thông',  ic:'spark',    viec:'Studio, xưởng phim, thị giác, biên soạn, sửa chữ hiển thị, duyệt tài liệu và đánh giá.',
-      phan:['xuong-ai','kien-truc-thi-giac','bien-soan-noi-dung','sua-hien-thi','duyet-tai-lieu','duyet-danh-gia','sap-xep'], kho:['MK'] }
+    { id:'noi-dung', khu:'nhansu',  ten:'Nội dung & truyền thông',  ic:'spark',    viec:'Bản tin GITA (truyền thông nội bộ có biên tập, lịch phát hành, tính KPI), xưởng phim, thị giác, biên soạn, duyệt tài liệu.',
+      phan:['ban-tin-gita','xuong-ai','kien-truc-thi-giac','bien-soan-noi-dung','sua-hien-thi','duyet-tai-lieu','duyet-danh-gia','sap-xep'], kho:['MK'] }
   ];
 
   /* Màn chính theo vai, đúng trần chủ hệ đặt. 'khach-la' = chưa đăng nhập. */

@@ -4452,3 +4452,95 @@ html[data-may="yeu"] *,html[data-may="yeu"] *::before,html[data-may="yeu"] *::af
 .st-nhan{display:block;font-size:12.5px;font-weight:700;margin:4px 0 6px}
 .st-ten{max-width:420px;margin-bottom:10px}
 .st-nut{gap:8px;flex-wrap:wrap;align-items:center}
+/* ── NGÔI NHÀ V50 · MƯỜI MỘT KHÔNG GIAN (10/10/2026) ──
+   Thẻ không gian: ảnh gia đình thật ở trên · chỗ đứng trong nhà · tên ·
+   câu triết lý (chữ có chân, nghiêng — giọng của một người thầy, không
+   phải giọng của một nút bấm) · câu hỏi tối nay · lối vào. Sắc riêng của
+   phòng (--ac) chỉ ở viền trên và nhãn, không tô cả thẻ: nhiều màu cùng
+   lúc trên cả lưới thì không màu nào còn nói được gì. Lưới auto-fill tự
+   xuống một cột trên điện thoại, không thêm @media. */
+.nha-kg{margin:28px 0 8px}
+.nha-kg-dau{max-width:68ch;margin:0 0 16px}
+.nha-kg-eb{display:inline-block;font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--gita-ink)}
+.nha-kg-dau h3{font-family:var(--serif);font-weight:600;font-size:26px;line-height:1.2;margin:6px 0 8px;text-wrap:balance}
+.nha-kg-dau p{font-size:14.5px;line-height:1.7;color:var(--ink-2);margin:0}
+.nha-kg-luoi{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:16px}
+.nha-kg-o{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);
+  border-top:3px solid var(--ac,var(--gita));border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--noi-1)}
+.nha-kg-anh{aspect-ratio:3/2;overflow:hidden;background:var(--phu-2)}
+.nha-kg-anh img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.22,.61,.36,1)}
+.nha-kg-than{display:flex;flex-direction:column;gap:8px;padding:16px 18px 18px;flex:1}
+.nha-kg-cho{font-size:12.5px;font-weight:700;color:var(--ac,var(--gita));letter-spacing:.02em}
+.nha-kg-o h4{font-size:18px;line-height:1.3;font-weight:800;margin:0}
+.nha-kg-triet{font-family:var(--serif);font-style:italic;font-weight:500;font-size:16px;line-height:1.55;margin:0;color:var(--ink)}
+.nha-kg-hoi{font-size:14.5px;line-height:1.6;margin:0;padding:10px 12px;border-radius:var(--r-sm);background:var(--phu-2);color:var(--ink-2)}
+.nha-kg-hoi b{display:block;font-size:12.5px;color:var(--ink);margin-bottom:2px}
+.nha-kg-nut{margin-top:auto;align-self:flex-start;min-height:40px}
+.nha-kg-khoa{margin-top:auto;display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink-2)}
+@media(hover:hover){.nha-kg-o:hover .nha-kg-anh img{transform:scale(1.04)}}
+@media(prefers-reduced-motion:reduce){.nha-kg-anh img{transition:none}}
+/* ── BẢN TIN GITA · truyền thông nội bộ (src/truyen-thong.js) ──
+   Giọng một tờ báo nội bộ có biên tập: tiêu đề chữ có chân, ảnh 3D trên
+   cùng thẻ, chuyên mục là nhãn nhỏ. Bài bắt buộc chưa xác nhận dùng màu
+   cảnh báo — đó là việc phải làm, không phải trang trí. */
+.tt-dau{max-width:72ch;margin:0 0 14px}
+.tt-dau h2{font-family:var(--serif);font-weight:600;font-size:26px;margin:4px 0 8px}
+.tt-dau p,.tt-phu{font-size:14.5px;line-height:1.7;color:var(--ink-2)}
+.tt-eb{display:inline-block;font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--gita-ink)}
+.tt-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 16px;border-bottom:1px solid var(--line);padding-bottom:8px}
+.tt-tab{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border-radius:99px;border:1px solid var(--line);background:var(--surface);font-weight:700;font-size:14.5px;color:var(--ink-2);cursor:pointer}
+.tt-tab.on{background:var(--gita);border-color:var(--gita);color:var(--chu-tren-mau,#fff)}
+.tt-tab svg{width:16px;height:16px}
+.tt-loc{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px}
+.tt-loc label{font-weight:700;font-size:14.5px}.tt-loc select{max-width:360px}
+.tt-canlam{display:flex;flex-direction:column;gap:2px;padding:12px 14px;border-radius:var(--r-sm);border:1px solid var(--warn);background:var(--phu-2);margin:0 0 14px;font-size:14.5px}
+.tt-canlam b{color:var(--warn)}
+.tt-luoi{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:16px}
+.tt-the{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--noi-1)}
+.tt-anh{aspect-ratio:3/2;overflow:hidden;background:var(--phu-2)}
+.tt-anh img{display:block;width:100%;height:100%;object-fit:cover}
+.tt-anh-lon{border-radius:var(--r-lg);margin:12px 0}
+.tt-than{display:flex;flex-direction:column;gap:8px;padding:14px 16px 16px;flex:1}
+.tt-cm{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--gita-ink)}
+.tt-cm svg{width:14px;height:14px}
+.tt-the h3{font-family:var(--serif);font-weight:600;font-size:18px;line-height:1.35;margin:0}
+.tt-tom{font-size:14.5px;line-height:1.6;color:var(--ink-2);margin:0}
+.tt-chan{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;font-size:12.5px;color:var(--ink-2)}
+.tt-nhan{font-weight:700}.tt-nhan.ok{color:var(--ok,var(--gita))}.tt-nhan.gap{color:var(--warn)}
+.tt-mo{margin-top:auto;align-self:flex-start}
+.tt-bai{max-width:72ch;margin:12px 0}
+.tt-bai h2{font-family:var(--serif);font-weight:600;font-size:26px;line-height:1.25;margin:6px 0 8px;text-wrap:balance}
+.tt-sapo{font-size:16px;line-height:1.65;font-weight:600;margin:0 0 6px}
+.tt-meta,.tt-nguon{font-size:12.5px;color:var(--ink-2)}
+.tt-van{font-size:16px;line-height:1.75}.tt-van p{margin:0 0 12px}
+.tt-buoc{font-size:16px;line-height:1.7;padding-left:22px}
+.tt-ghinhan,.tt-hanhdong,.tt-moc{padding:12px 14px;border-radius:var(--r-sm);background:var(--phu-2);margin:12px 0;font-size:14.5px;line-height:1.65}
+.tt-hanhdong{border-left:3px solid var(--gita)}
+.tt-kiemtra{display:flex;flex-direction:column;gap:10px;padding:14px;border:1px solid var(--line);border-radius:var(--r-sm);margin:16px 0}
+.tt-kiemtra fieldset{border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:4px}
+.tt-kiemtra legend{font-weight:700;font-size:14.5px;margin-bottom:4px}
+.tt-chon{display:flex;gap:8px;align-items:center;min-height:32px;font-size:14.5px}
+.tt-kiemtra.ok{color:var(--gita-ink);font-weight:700}
+.tt-nen{display:flex;flex-direction:column;gap:22px;max-width:980px}
+.tt-khoi h3{font-family:var(--serif);font-weight:600;font-size:21px;line-height:1.35;margin:4px 0 8px;text-wrap:balance}
+.tt-gt{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:12px}
+.tt-gt-o{padding:12px 14px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);font-size:14.5px;line-height:1.6}
+.tt-gt-o b{font-size:18px;color:var(--gita-ink);margin-right:6px}.tt-gt-o span{font-weight:700}
+.tt-gt-o p{margin:6px 0 0}
+.tt-nen-ok{color:var(--gita-ink)}.tt-nen-khong{color:var(--warn)}
+.tt-ds{font-size:14.5px;line-height:1.7;padding-left:22px;margin:0}.tt-ds li{margin-bottom:6px}
+.tt-bang{overflow-x:auto}
+.tt-soan{max-width:760px;display:flex;flex-direction:column;gap:12px}
+.tt-o{display:flex;flex-direction:column;gap:4px}
+.tt-o b{font-size:14.5px}.tt-o span{font-size:12.5px;color:var(--ink-2);white-space:pre-line}
+.tt-chk{display:flex;gap:8px;align-items:center;min-height:32px;font-size:14.5px}
+.tt-nut{gap:8px;flex-wrap:wrap}
+.tt-loi{padding:10px 12px;border:1px solid var(--warn);border-radius:var(--r-sm);font-size:14.5px;color:var(--warn)}
+.tt-lich{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:8px;margin-bottom:12px}
+.tt-lich-o{display:flex;flex-direction:column;gap:3px;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r-sm);font-size:12.5px}
+.tt-lich-o b{font-size:14.5px}.tt-lich-o em{font-style:normal;color:var(--gita-ink);font-weight:700}
+.tt-lich-o.trong{border-style:dashed}.tt-lich-o.trong em{color:var(--warn)}
+.tt-duyet h4{font-family:var(--serif);font-size:18px;margin:4px 0}
+.tt-cs-so{display:flex;align-items:baseline;gap:10px;margin:0 0 10px}
+.tt-cs-so b{font-size:33px;font-weight:800;color:var(--gita-ink);font-variant-numeric:tabular-nums}
+.tt-cs-so span{font-size:14.5px;color:var(--ink-2)}

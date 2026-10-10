@@ -144,10 +144,13 @@ kiem('trọng số KPI chốt 10/10: thi 30 · cấp 30 · khối 40 = hài lòn
   XH.TRONG_SO.thi === 30 && XH.TRONG_SO.cap === 30 && XH.TRONG_SO.phanHoi === 30 && XH.TRONG_SO.nghiepVu === 10 &&
   Object.values(XH.TRONG_SO).reduce((a, b) => a + b, 0) === 100, JSON.stringify(XH.TRONG_SO));
 const nv = d => d.thanhPhan.find(t => t.ma === 'nghiepVu');
-kiem('thi nghiệp vụ đọc lần sát hạch do NGƯỜI CHẤM ghi: coach1 = 85, kèm tên người chấm', r.chamNV.ok && nv(q1).giaTri === 85 && /truongcoach/.test(nv(q1).ghiChu), JSON.stringify(nv(q1)));
-kiem('người học tự chấm sát hạch của mình thì cửa chặn (điểm 100 tự gõ không vào KPI)', r.tuChamNV.code === 'TUCHAM' && nv(q1).giaTri !== 100);
-kiem('sát hạch quá 365 ngày tính 0 và nói ra (coach2)', nv(q2).giaTri === 0 && /quá 365 ngày/.test(nv(q2).ghiChu), JSON.stringify(nv(q2)));
-kiem('chưa sát hạch tính 0, KHÔNG bỏ trọng số (tuvan1 dùng bước TV08)', nv(qt).giaTri === 0 && /chưa sát hạch nghiệp vụ \(TV08\)/.test(nv(qt).ghiChu) && qt.trongBoQua === XH.TRONG_SO.phanHoi, JSON.stringify(nv(qt)) + ' bỏ ' + qt.trongBoQua + ' (chỉ được bỏ phần hài lòng thiếu mẫu)');
+kiem('thi nghiệp vụ đọc lần sát hạch do NGƯỜI CHẤM ghi: coach1 sát hạch 85, kèm tên người chấm', r.chamNV.ok && nv(q1).satHach === 85 && /truongcoach/.test(nv(q1).ghiChu), JSON.stringify(nv(q1)));
+kiem('phần nghiệp vụ = 70% sát hạch + 30% truyền thông nội bộ (chủ hệ 10/10: truyền thông có trong thi nghiệp vụ)',
+  XH.TY_LE_TT_TRONG_NGHIEP_VU === 30 && typeof nv(q1).truyenThong === 'number' &&
+  nv(q1).giaTri === Math.round((70 * nv(q1).satHach + 30 * nv(q1).truyenThong) / 100), JSON.stringify(nv(q1)));
+kiem('người học tự chấm sát hạch của mình thì cửa chặn (điểm 100 tự gõ không vào KPI)', r.tuChamNV.code === 'TUCHAM' && nv(q1).satHach !== 100);
+kiem('sát hạch quá 365 ngày tính 0 và nói ra (coach2)', nv(q2).satHach === 0 && /quá 365 ngày/.test(nv(q2).ghiChu), JSON.stringify(nv(q2)));
+kiem('chưa sát hạch tính 0, KHÔNG bỏ trọng số (tuvan1 dùng bước TV08)', nv(qt).satHach === 0 && /chưa sát hạch nghiệp vụ \(TV08\)/.test(nv(qt).ghiChu) && qt.trongBoQua === XH.TRONG_SO.phanHoi, JSON.stringify(nv(qt)) + ' bỏ ' + qt.trongBoQua + ' (chỉ được bỏ phần hài lòng thiếu mẫu)');
 const CTdt = (await import(pathToFileURL(ROOT + '/may-chu/dao-tao-ct.js').href)).CT;
 kiem('bước sát hạch của KPI khớp chương trình đào tạo (đúng bước, đúng loại nguoiCham, đúng màn sat-hach)',
   Object.values(XH.BUOC_NGHIEP_VU).every(b => { const c = CTdt.find(x => x.ma === b.ct); const s = c && c.buoc.find(x => x.ma === b.buoc); return s && s.loai === 'nguoiCham' && s.man === 'sat-hach'; }));
@@ -213,7 +216,7 @@ await pha('gửi trùng thông báo', 'xep-hang-luong.js', '    if (co) continue
 await pha('thưởng vượt trần 5%', 'xep-hang-luong.js', '{ tu: 97, pt: 5 }', '{ tu: 97, pt: 8 }',
   (rp, P) => P.ptThuong(99) !== 5);
 await pha('bỏ hạn 365 ngày', 'xep-hang-luong.js', 'if (tuoi > HAN_NGHIEP_VU_NGAY)', 'if (false)',
-  rp => rp.xhQL.ds.find(d => d.maNguoi === 'coach2').thanhPhan.find(t => t.ma === 'nghiepVu').giaTri !== 0);
+  rp => rp.xhQL.ds.find(d => d.maNguoi === 'coach2').thanhPhan.find(t => t.ma === 'nghiepVu').satHach !== 0);
 await pha('chưa sát hạch thì bỏ trọng số thay vì 0', 'xep-hang-luong.js', "if (!d) return { diem: 0,", "if (!d) return { diem: null,",
   rp => rp.xhQL.ds.find(d => d.maNguoi === 'tuvan1').trongBoQua !== 30);
 await pha('bỏ điều kiện hài lòng', 'xep-hang-luong.js', 'if (ph.tyLeHaiLong < NGUONG_THUONG.haiLong)', 'if (false)',

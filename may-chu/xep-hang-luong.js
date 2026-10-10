@@ -35,6 +35,7 @@
    ═══════════════════════════════════════════════════════════════ */
 'use strict';
 
+import { chiSoMotNguoi } from './truyen-thong.js';
 import { Kho } from './nen.js';
 import { ghiThongBao } from './ngan-hang.js';
 import { BAC, roleOf, tenNguoiDung as ten } from './vai-tro.js';
@@ -194,6 +195,12 @@ export const BUOC_NGHIEP_VU = Object.freeze({ tuvan: { ct: 'tuvan', buoc: 'TV08'
 /* Một lần sát hạch có giá trị 365 ngày (MẶC ĐỊNH). Không có hạn thì một
    điểm 95 của ba năm trước nuôi KPI mãi trong khi tay nghề đã khác. */
 export const HAN_NGHIEP_VU_NGAY = 365;
+/* Truyền thông nội bộ nằm TRONG phần nghiệp vụ (chủ hệ 10/10/2026: "tính
+   vào KPI và có trong phần thi nghiệp vụ"). Khối 10 điểm nghiệp vụ giữ
+   nguyên trọng số trong KPI; bên trong nó: 70% sát hạch có người chấm +
+   30% chỉ số truyền thông (truyen-thong.js → chiSoMotNguoi). MẶC ĐỊNH —
+   chủ hệ chỉnh. Không đổi 30·30·30·10 vì bốn con số ấy đã chốt. */
+export const TY_LE_TT_TRONG_NGHIEP_VU = 30;
 export const MAU_TOI_THIEU = 3;
 export const HANG_LT = Object.freeze([{ hang: 'A', tu: 90 }, { hang: 'B', tu: 80 }, { hang: 'C', tu: 65 }, { hang: 'D', tu: 0 }]);
 const hangCua = d => (HANG_LT.find(h => d >= h.tu) || HANG_LT[HANG_LT.length - 1]).hang;
@@ -276,13 +283,20 @@ export async function chamMotNguoi(db, maNguoi, role, ky) {
   const c = await capCua(db, maNguoi, he, Math.min(Date.now(), cuoiKy(ky)));
   const ph = await phanHoiCua(db, maNguoi, ky);
   const nv = await nghiepVuCua(db, maNguoi, he, ky);
+  const uidNguoi = await Kho.layUid(db, maNguoi);
+  const tt = await chiSoMotNguoi(db, uidNguoi || maNguoi, ky, cuoiKy(ky));
+  /* Sát hạch trả null (không đo được) thì cả khối null — không để phần truyền
+     thông che mất một chỗ trống của phần sát hạch. */
+  const nvGop = nv.diem === null ? null : Math.round(((100 - TY_LE_TT_TRONG_NGHIEP_VU) * nv.diem + TY_LE_TT_TRONG_NGHIEP_VU * tt.diem) / 100);
   const phuTrach = (await db.prepare('SELECT COUNT(*) n FROM hoSoKhach WHERE lower(coach) = ? OR lower(tuVan) = ?').bind(maNguoi, maNguoi).first()).n;
   const tp = [
     { ma: 'thi', ten: 'Điểm thi ngày 28', giaTri: thi.diem, trong: TRONG_SO.thi, ghiChu: thi.duThi ? (thi.choCham ? thi.choCham + ' bài chờ chấm' : '') : 'không dự thi' },
     { ma: 'cap', ten: 'Cấp chứng chỉ cuối kỳ', giaTri: Math.round(100 * c.cap / HE_THI[he].soCap), trong: TRONG_SO.cap, ghiChu: 'cấp ' + c.cap + '/' + HE_THI[he].soCap },
     { ma: 'phanHoi', ten: 'Tỷ lệ nhà hài lòng', giaTri: ph.tyLeHaiLong, trong: TRONG_SO.phanHoi,
       ghiChu: ph.soNha + ' nhà có phiếu' + (ph.diem === null ? ' — dưới ' + MAU_TOI_THIEU + ' nhà, chưa đủ mẫu' : '') },
-    { ma: 'nghiepVu', ten: 'Thi nghiệp vụ (sát hạch có người chấm)', giaTri: nv.diem, trong: TRONG_SO.nghiepVu, ghiChu: nv.ghiChu }
+    { ma: 'nghiepVu', ten: 'Thi nghiệp vụ (sát hạch có người chấm + truyền thông nội bộ)', giaTri: nvGop, trong: TRONG_SO.nghiepVu,
+      ghiChu: nv.ghiChu + ' · sát hạch ' + nv.diem + ' · truyền thông ' + tt.diem + ' (' + TY_LE_TT_TRONG_NGHIEP_VU + '% của phần nghiệp vụ)',
+      satHach: nv.diem, truyenThong: tt.diem }
   ];
   const dung = tp.filter(t => t.giaTri !== null), trongDung = dung.reduce((s, t) => s + t.trong, 0);
   const diem = trongDung ? Math.round(dung.reduce((s, t) => s + t.giaTri * t.trong, 0) / trongDung) : 0;
@@ -307,7 +321,7 @@ export async function xepHangThang(y, env, db, hoSo) {
   const { khai, ten: tenNgay } = await docNgayNghi(db);
   return { ok: true, ky, chiDongCuaToi: rieng, ds, ngayTra: ngayTraLuong(ky, khai, tenNgay),
     luat: { trongSo: TRONG_SO, hang: HANG_LT, mauToiThieu: MAU_TOI_THIEU, tieuChi: TIEU_CHI, thuong: NGUONG_THUONG, mucThuong: MUC_THUONG, csatHaiLong: CSAT_HAI_LONG,
-      nghiepVu: BUOC_NGHIEP_VU, hanNghiepVu: HAN_NGHIEP_VU_NGAY },
+      nghiepVu: BUOC_NGHIEP_VU, hanNghiepVu: HAN_NGHIEP_VU_NGAY, tyLeTruyenThong: TY_LE_TT_TRONG_NGHIEP_VU },
     gioiHan: 'Máy chỉ nói đủ hay chưa đủ điều kiện thưởng (KPI ≥ ' + NGUONG_THUONG.kpi + ' và ≥ ' + NGUONG_THUONG.haiLong +
       '% nhà hài lòng) và mức thưởng 3–5% lương theo bậc KPI; số tiền = phần trăm × lương của người ấy.' };
 }
