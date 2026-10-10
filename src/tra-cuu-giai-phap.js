@@ -37,6 +37,33 @@ function dsVanDe(){
   });
   return ds;
 }
+/* ── TỶ LỆ XEM THEO VAI (G.TCGP_TY_LE) ──
+   Xếp hạng trên TOÀN danh sách (tầng thấp trước, rồi thứ tự gốc) rồi cắt ở
+   ceil(tổng × pt%). Xếp trên toàn danh sách, không trên kết quả tìm: lọc
+   trước rồi mới cắt thì mẫu số đổi theo chữ người ta gõ, và cùng một vấn
+   đề lúc mở lúc khoá. Cùng cách cắt với trần 30% của khách (kho-khach.js). */
+function soTang(v){ var m = String(v == null ? '' : v).match(/(\d)/); var n = m ? Number(m[1]) : 1; return n >= 1 && n <= 5 ? n : 1; }
+G.tcgpTyLe = function(vai){
+  var bang = G.TCGP_TY_LE || [];
+  for(var i = 0; i < bang.length; i++) if(bang[i].vai.indexOf(vai) >= 0) return bang[i].pt;
+  return 0;
+};
+var HANG = null, HANG_KHOA = '';
+function bangHang(ds){
+  var khoa = ds.length + '|' + (ds[0] ? ds[0].ma : '');
+  if(HANG && HANG_KHOA === khoa) return HANG;
+  var xep = ds.map(function(v, i){ return { ma:v.ma, t:soTang(v.loai === 'pd' ? v.goc.tang : v.tang), i:i }; })
+    .sort(function(a, b){ return a.t - b.t || a.i - b.i; });
+  HANG = {}; xep.forEach(function(x, r){ HANG[x.ma] = r; });
+  HANG_KHOA = khoa;
+  return HANG;
+}
+G.tcgpMo = function(vai, ds){
+  ds = ds || dsVanDe();
+  var pt = G.tcgpTyLe(vai), tong = ds.length, so = Math.ceil(tong * pt / 100), hang = bangHang(ds);
+  return { pt:pt, tong:tong, so:so, mo:function(ma){ return hang[ma] != null && hang[ma] < so; } };
+};
+
 function timVanDe(ma){
   var ds = dsVanDe();
   for(var i = 0; i < ds.length; i++) if(ds[i].ma === ma) return ds[i];
@@ -190,21 +217,26 @@ function napSo(ma){
 
 G.VIEWS['tra-cuu-gp'] = function(){
   if(!G.can('ca_xu_ly')) return U.lockCard();
-  var ds = dsVanDe(), q = chuan(TC.q);
+  var ds = dsVanDe(), q = chuan(TC.q), quyen = G.tcgpMo(G.S.role, ds);
   var loc = q ? ds.filter(function(v){ return chuan(v.ten + ' ' + v.nhomTen + ' ' + v.ma).indexOf(q) >= 0; }) : ds;
   var o = U.ph({ eyebrow:'TRA CỨU · TỪ CHUYÊN VIÊN TƯ VẤN', ic:'compass', t:'Tra cứu giải pháp · 13 mục',
     lead:'Chọn một vấn đề: mười ba mục từ phân tích tới bài học, đọc thẳng từ kho nghề và sổ nhật ký của cả đội. Mục nào kho chưa có thì nói rõ là chưa có.' });
   if(!ds.length) return o + U.empty('Kho nghề chưa mở với tài khoản này', 'Phác đồ và tình huống nằm trong gói nghề — đăng nhập bằng tài khoản có quyền để mở.');
+  o += '<p class="sm mb">' + ic(quyen.so < quyen.tong ? 'lock' : 'check', 'w-3 h-3') + ' Vai của anh/chị mở <b>' + quyen.pt + '%</b> kho tra cứu: <b>' + quyen.so + '</b> / ' + quyen.tong + ' vấn đề' +
+    (quyen.so < quyen.tong ? ', xếp từ tầng thấp lên. Vấn đề ngoài phần ấy hiện tên kèm ổ khoá.' : '.') + '</p>';
   o += '<div class="tcgp-lo">';
   o += '<div class="tcgp-ds"><input id="tcgpQ" class="inp" placeholder="Tìm vấn đề, nhóm hoặc mã…" value="' + h(TC.q) + '">' +
     '<p class="tiny muted mt mb">' + loc.length + ' / ' + ds.length + ' vấn đề</p>' +
     loc.slice(0, 40).map(function(v){
+      if(!quyen.mo(v.ma))
+        return '<div class="card pad-sm mb tcgp-mot tcgp-khoa" title="Ngoài phần trăm vai này được xem">' +
+          ic('lock', 'w-3 h-3') + ' <span class="mono tiny muted">' + h(v.loai === 'pd' ? v.ma : v.tang) + '</span> <span class="sm muted">' + h(v.ten) + '</span></div>';
       return '<button class="card pad-sm lift mb tcgp-mot' + (TC.chon === v.ma ? ' on' : '') + '" data-tcgp-chon="' + h(v.ma) + '" style="text-align:left;width:100%">' +
         '<span class="mono tiny muted">' + h(v.loai === 'pd' ? v.ma : v.tang) + '</span> <b class="sm">' + h(v.ten) + '</b>' +
         (v.nhomTen ? '<div class="tiny muted">' + h(v.nhomTen) + '</div>' : '') + '</button>';
     }).join('') +
     (loc.length > 40 ? '<p class="tiny muted">… gõ thêm chữ để thu hẹp.</p>' : '') + '</div>';
-  var vd = TC.chon ? timVanDe(TC.chon) : null;
+  var vd = TC.chon && quyen.mo(TC.chon) ? timVanDe(TC.chon) : null;
   o += '<div class="tcgp-ct">' + (vd ? veChiTiet(vd) : '<div class="card pad-sm"><p class="sm muted">Chọn một vấn đề ở danh sách để xem đủ 13 mục.</p></div>') + '</div>';
   return o + '</div>';
 };
@@ -212,7 +244,9 @@ G.VIEWS['tra-cuu-gp'] = function(){
 document.addEventListener('click', function(e){
   var t = e.target.closest && e.target.closest('[data-tcgp-chon]');
   if(t){
-    TC.chon = t.getAttribute('data-tcgp-chon');
+    var ma0 = t.getAttribute('data-tcgp-chon');
+    if(!G.tcgpMo(G.S.role).mo(ma0)) return;
+    TC.chon = ma0;
     if(!TC.nk[TC.chon]) napSo(TC.chon);
     G.render && G.render();
     return;

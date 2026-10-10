@@ -3312,6 +3312,7 @@ body.hdp-khoa{overflow:hidden}
 /* Tra cứu giải pháp · 13 mục (src/tra-cuu-giai-phap.js): danh sách bên trái, 13 mục bên phải; một cột trên điện thoại. */
 .tcgp-lo{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:16px;align-items:start}
 .tcgp-ds{max-height:calc(100dvh - var(--top-tong) - 140px);overflow-y:auto;padding-right:4px}
+.tcgp-khoa{opacity:.6;cursor:not-allowed}
 .tcgp-mot.on{border-color:var(--gita);box-shadow:0 0 0 1px var(--gita)}
 .tcgp-ds .inp{width:100%}
 @media(max-width:860px){ .tcgp-lo{grid-template-columns:minmax(0,1fr)} .tcgp-ds{max-height:320px} }

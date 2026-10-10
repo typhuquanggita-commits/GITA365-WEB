@@ -284,6 +284,21 @@ G.moHetDoi = function(){
 
 try { G.MO_HET = localStorage.getItem('gita_mo_het') === '1'; } catch(e){}
 
+/* TỶ LỆ XEM CỦA MÀN TRA CỨU GIẢI PHÁP 13 MỤC (chủ hệ 10/10/2026): "từ R11
+   đến R01 đều thấy màn — quyền hạn xem cấp theo % hiển thị quy định".
+   Mỗi vai mở được pt% danh sách vấn đề, xếp từ tầng thấp lên (cùng cách
+   cắt của trần 30% với khách — G.khachMoDuoc). KHỞI ĐẦU bằng đúng số của
+   G.TAM_NHIN, nhưng là bảng RIÊNG: TAM_NHIN đo phần trăm MÀN HÌNH, bảng này
+   đo phần trăm NỘI DUNG — sửa một bên không được lặng lẽ kéo bên kia theo.
+   Vai không có trong bảng (R12 trở xuống) không mở màn — quyền ca_xu_ly. */
+G.TCGP_TY_LE = [
+  {vai:['R01','R02'], pt:100},
+  {vai:['R03','R04'], pt:82},
+  {vai:['R05','R06','R07'], pt:77},
+  {vai:['R08'], pt:76},
+  {vai:['R09','R10','R11'], pt:69}
+];
+
 G.TAM_NHIN = [
   {vai:['R01','R02'], pt:100,
    ghi:'Toàn bộ, không khoá gì. Super Admin và Admin hệ thống thấy mọi thứ.'},
