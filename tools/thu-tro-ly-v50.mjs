@@ -148,5 +148,9 @@ kiem('giao diện không còn vẽ chip gợi ý', !/class="(chip|kb-chip|tln-ch
 kiem('khung chat gọi cửa troLyV50 và có đường lùi trong máy', /goiMayChu\('troLyV50'/.test(bo) && /traLoiTrongMay\(/.test(bo));
 kiem('SA có nút gửi tới bộ não vận hành', /goiMayChu\('guiThongDiepBoNao'/.test(bo) && /Gửi tới bộ não vận hành/.test(bo));
 
+const app = fs.readFileSync(ROOT + '/src/app.js', 'utf8');
+kiem('form đăng nhập màn đầu: tài khoản ngoài demo đi tới máy chủ (dangNhap → vaoBangPhienMayChu)',
+  /if\(!a && G\.API_CAP_PHEP && p\)\{ dangNhapMayChu\(/.test(app) && /fn:'dangNhap'[\s\S]{0,400}vaoBangPhienMayChu\(d\)/.test(app));
+
 console.log('\n' + (truot ? '✗ ' + truot + ' SAI · ' : '✓ ') + dat + ' đạt');
 process.exit(truot ? 1 : 0);

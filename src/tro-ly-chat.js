@@ -957,7 +957,9 @@ G.VIEWS['tro-ly'] = function(){
       '</div>' +
       '<p class="cs-meo">Enter để gửi · Shift+Enter xuống dòng · ' +
         (coMayChu() ? 'trả lời qua máy chủ Học viện; tên, số điện thoại bị chặn trước khi tới bộ não AI, nội dung câu hỏi không lưu lại.'
-                    : 'đang trả lời ngay trong máy, không gửi đi đâu cả.')+'</p>' +
+                    : (G.API_CAP_PHEP && !G.PHIEN_TOKEN
+                        ? 'tài khoản trải nghiệm — đang trả lời ngay trong máy. Đăng nhập bằng tài khoản thật để dùng bộ não AI.'
+                        : 'đang trả lời ngay trong máy, không gửi đi đâu cả.'))+'</p>' +
     '</div></div>';
 
   /* ══ CỘT PHẢI ══
