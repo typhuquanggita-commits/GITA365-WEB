@@ -241,7 +241,7 @@ G.VIEWS = G.VIEWS || {};
       return [h(g.ma + ' · ' + g.ten), g.phanBo.toLocaleString('vi-VN'), '<b>' + g.dangBat + '</b>', g.tong];
     }));
     o += '<p class="sm">Đang bật <b>' + x.dangBat + '</b> · mốc thử nghiệm ' + x.moc + ' · sức chứa ' + x.sucChua.toLocaleString('vi-VN') +
-      (x.chuaPhanBo ? ' · <b>' + x.chuaPhanBo.toLocaleString('vi-VN') + ' chưa phân bổ</b> (năm con số của Blueprint cộng ra ' + (x.sucChua - x.chuaPhanBo).toLocaleString('vi-VN') + ' — chờ chủ hệ quyết, xem QD6)' : '') + '</p>';
+      (x.chuaPhanBo ? ' · <b>' + x.chuaPhanBo.toLocaleString('vi-VN') + ' chưa phân bổ</b> (năm con số của Blueprint cộng ra ' + (x.sucChua - x.chuaPhanBo).toLocaleString('vi-VN') + ' — giữ làm dự phòng, phân bổ sau 90 ngày thử theo QD6)' : '') + '</p>';
     if (G.S && G.S.acc && G.S.acc.role === 'R01') o += '<button class="btn ghost" onclick="G.vvNapMau()">Nạp 10 điểm chạm mẫu (chờ duyệt)</button>';
     o += U.sec('Thư viện', 'Đủ bảy lớp mới nộp · người khác người soạn tích đủ mười tiêu chuẩn mới bật');
     var chuan = nd && nd.ok ? nd.chuanWow10 : [];
@@ -343,8 +343,11 @@ G.VIEWS = G.VIEWS || {};
     o += U.sec('Phần IX · Lộ trình 90 ngày');
     o += U.tbl(['Ngày', 'Giai đoạn', 'Việc', 'Đầu ra', 'Hệ đã dựng'], n.loTrinh90.map(function (g) { return [g.tu + '–' + g.den, h(g.ten), h(g.viec.join(' · ')), h(g.dauRa), h(g.trongHe)]; }));
     o += '<div class="card"><b>Thứ tự ưu tiên đầu tư</b><ol class="sm">' + n.uuTienDauTu.map(function (x) { return '<li>' + h(x) + '</li>'; }).join('') + '</ol></div>';
-    o += U.sec('Phần X · Quyết định của Ban điều hành', 'Máy không chọn hộ — phần hệ phụ thuộc chạy theo giả định ghi bên cạnh');
-    o += U.tbl(['Mã', 'Câu hỏi', 'Đang chạy theo giả định'], n.quyetDinh5.map(function (q) { return [h(q.ma), h(q.hoi), h(q.giaDinh)]; }));
+    o += U.sec('Phần X · Quyết định của Ban điều hành', 'Máy không chọn hộ — mỗi chốt mang ngày và người chốt, đổi được bằng một lượt phát hành');
+    o += U.tbl(['Mã', 'Câu hỏi', 'Đã chốt'], n.quyetDinh5.map(function (q) {
+      return [h(q.ma), h(q.hoi), q.chot ? h(q.chot) + '<div class="sm muted">Chốt ' + h(q.ngay || '') + ' · ' + h(q.boi || '') + '</div>'
+        : '<span class="muted">Chưa chốt — đang chạy theo giả định: ' + h(q.giaDinh) + '</span>'];
+    }));
     o += U.tbl(['Nguyên tắc bảo vệ', 'Răng trong hệ'], n.baoVe6.map(function (b) { return [h(b.y), h(b.rang)]; }));
     o += '<div class="card"><b>Chuẩn người phục vụ nhà trọng điểm</b>' + danhSach(n.chuanNguoiPhucVu) + '</div>';
     o += '<div class="card vv-bia"><p>' + h(n.ketLuan.tuTuong) + '</p>' + danhSach(n.ketLuan.bonTaiSan) + '<p class="sm">' + h(n.ketLuan.moRong) + '</p></div>';

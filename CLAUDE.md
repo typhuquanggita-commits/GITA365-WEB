@@ -187,4 +187,12 @@ Chủ hệ 10/10 gửi "GITA 365 VVIP — MASTER BLUEPRINT" (theo hướng sách
 - **Khổ 16:9 là vẽ lại**, không đệm: prompt nói Horizontal 16:9, chữ/logo/phụ đề co theo `min(W,H)`.
 - Bốn khối cần máy chủ nằm trong `<details class="xp-may">` SAU mục xuất phim — người mới đi thẳng được tới .mp4 mà không vấp vào thứ chưa nối.
 - Trạm GPU chỉ nhận `*.typhuquanggita.workers.dev` — một địa chỉ dán nhầm là gửi ảnh nhà khách sang máy lạ.
-- **Chưa làm (chờ chủ hệ):** N2/N3 nằm trong `studio.js` (không được đụng); N4 ngoại lệ luật cấm tải tệp cho phim xuất; Piper TTS tiếng Việt va luật C20.
+
+### Bốn chốt của chủ hệ 10/10/2026 ("xử lý full 4")
+
+- **N4 · ngoại lệ có tên `src/luu-tep-phim.js` + cửa `ghiLuuPhim`** (`may-chu/luu-phim.js`). Lưu tệp ra máy CHỈ có ở xưởng phim, chỉ R01–R02, không máy khách, và **ghi sổ máy chủ TRƯỚC byte đầu tiên** — sổ từ chối là không lưu. Thẻ tải và địa chỉ blob chỉ sinh ở tệp ấy; `thu-xuong-phim.mjs` đỏ nếu chúng mọc ở tệp xưởng khác. Hộp "Lưu thành" cần cú bấm, nên tệp sinh sau một lượt ghi dài lùi về thẻ tải — vẫn trong cùng hàm, vẫn qua sổ.
+- **N2 · Studio nói đúng nguyên nhân**: gói nghề không về vì máy chủ cấp phép → câu "Không nối được máy chủ cấp phép" + nút Nối máy chủ; không phải câu "dành cho tài khoản được cấp quyền".
+- **N3 · Studio xuất thật** (`G.xuXuat`): ghi đúng canvas đang xem + tiếng của `xepTieng`. Đèn đỏ **và đèn "chưa soát"** đóng cổng — lời đọc phải qua `soatNoiDung` trước khi thành tệp. Dừng giữa chừng hay Dừng khẩn là huỷ bản đang ghi.
+- **C20 · ngoại lệ có tên cho Piper**: chỉ giọng kho có sẵn, không đường nhái giọng; giọng sinh ra mang cờ `tongHop` và phim tự đè nhãn "Giọng đọc tổng hợp bằng máy" suốt thời lượng. Đọc cờ từ VẬT LIỆU, không từ ô người dùng khai.
+- **VVIP QD1–QD6 đã chốt** ở `QUYET_DINH_5[].chot` kèm `ngay` · `boi`. Chốt không thêm con số nào Blueprint chưa có: không đặt trần số nhà thử, 1.500 điểm chạm giữ dự phòng tới sau 90 ngày thử.
+- **Sách *Cây Tiền*** vẫn chưa có trên Drive (chỉ có mã của chính kho) — nội dung sách trong kho mã hoá dựng từ bản Blueprint, không từ nguyên văn sách.

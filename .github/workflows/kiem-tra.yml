@@ -173,7 +173,7 @@ jobs:
       - name: Xưởng phim AI — dò nhịp đúng tới mili-giây, danh mục trỏ vào bộ vẽ có thật, nhạc và ảnh không rời máy
         run: node tools/thu-xuong-ai.mjs
 
-      - name: Xưởng phim đào tạo — dò tên theo biên âm tiết, giọng cảnh kéo dài cảnh, khổ 16:9, không bộ sinh giọng
+      - name: Xưởng phim đào tạo — giọng từng cảnh, 16:9, Studio xuất thật, lưu phim chỉ qua ngoại lệ N4 có sổ, nhãn giọng máy đọc
         run: node tools/thu-xuong-phim.mjs
 
       - name: Chương trình đào tạo — không tự chấm, không tự ký, máy đọc ba cửa, đủ điều kiện kiểm ở máy chủ

@@ -121,6 +121,7 @@ import { datCongThi, batDauThi, docBaiThi, nopBaiThi, chamBaiThi, dsBaiCham, thi
 import { lichTraLuong, khaiNgayNghi, xepHangThang, baoLichTraLuongSapToi } from './xep-hang-luong.js';
 import { soanBaiTT, nopBaiTT, duyetBaiTT, goBaiTT, dsBaiTT, docBaiTT, xacNhanBaiTT, lichTT, chiSoTT } from './truyen-thong.js';
 import { nhanDienVvip, deXuatNhomVvip, duyetNhomVvip, phanCongVvip, soatPhucVuVvip, tuyChonLienHeVvip, soanDiemCham, duyetDiemCham, napMauDiemCham, dsDiemCham, kichHoatDiemCham, luuHoSoVvip, docHoSoVvip, lapChienDichVvip, duyetChienDichVvip, dsChienDichVvip, bangVvip, noiDungVvip } from './vvip.js';
+import { ghiLuuPhim } from './luu-phim.js';
 import { kimChiNam } from './kim-chi-nam.js';
 import { docDaoTao, ghiDanhDaoTao, ghiBuocDaoTao, capChungChiDaoTao, thuHoiChungChiDaoTao, doiDaoTao } from './dao-tao-ct.js';
 import { giaKhoCao, datGiaKhoCao, napKhoCao, dsKhoCao, docKhoCao, deXuatKhoCao, dsDeXuatNha, chonDeXuat, huyDeXuat, hoanThanhKhoCao, chuyenAnToan, soKhoCaoNha } from './kho-cao.js';
@@ -357,7 +358,7 @@ const CAN_PHIEN = ['dsKhoang', 'datKhoang', 'sucKhoeHe', 'capKhoa', 'doiMatKhau'
   'ghiNhatKyGiaiPhap', 'docNhatKyGiaiPhap', 'soanMucGiaiPhap', 'napKhoVanDe', 'dsKhoVanDe', 'docKhoVanDe',
   'giaKhoCao', 'datGiaKhoCao', 'napKhoCao', 'dsKhoCao', 'docKhoCao', 'deXuatKhoCao', 'dsDeXuatNha', 'chonDeXuat', 'huyDeXuat', 'hoanThanhKhoCao', 'chuyenAnToan', 'soKhoCaoNha',
   'soanBaiTT', 'nopBaiTT', 'duyetBaiTT', 'goBaiTT', 'dsBaiTT', 'docBaiTT', 'xacNhanBaiTT', 'lichTT', 'chiSoTT',
-  'nhanDienVvip', 'deXuatNhomVvip', 'duyetNhomVvip', 'phanCongVvip', 'soatPhucVuVvip', 'tuyChonLienHeVvip', 'soanDiemCham', 'duyetDiemCham', 'napMauDiemCham', 'dsDiemCham', 'kichHoatDiemCham', 'luuHoSoVvip', 'docHoSoVvip', 'lapChienDichVvip', 'duyetChienDichVvip', 'dsChienDichVvip', 'bangVvip', 'noiDungVvip',
+  'nhanDienVvip', 'deXuatNhomVvip', 'duyetNhomVvip', 'phanCongVvip', 'soatPhucVuVvip', 'tuyChonLienHeVvip', 'soanDiemCham', 'duyetDiemCham', 'napMauDiemCham', 'dsDiemCham', 'kichHoatDiemCham', 'luuHoSoVvip', 'docHoSoVvip', 'lapChienDichVvip', 'duyetChienDichVvip', 'dsChienDichVvip', 'bangVvip', 'noiDungVvip', 'ghiLuuPhim',
   'napKhoNhiemVu', 'ganNhiemVu', 'dsKhoNhiemVu', 'docNhiemVu', 'giaoPhieuNhiemVu', 'phieuCuaToi', 'nopNhiemVu', 'nghiemThuNhiemVu', 'soCreditNhiemVu', 'napCamNang', 'dsCamNang', 'docCamNang', 'giaoCamNang', 'camNangCuaNha',
   'lapDeAnTaiLieu', 'chayBuocTaiLieu', 'docDeAnTaiLieu', 'datTuChayTaiLieu', 'lapKeHoachKho', 'docViecKet',
   'lapDuAnPhim', 'docXuongPhimNganSach', 'datCanhTraPhi', 'moLaiDuAnPhim', 'docKpiCayTien', 'docDongChay',
@@ -864,6 +865,7 @@ async function lam(fn, y, env, db, req) {
   if (fn === 'xacNhanBaiTT') return await xacNhanBaiTT(y, env, db, hoSo);
   if (fn === 'lichTT') return await lichTT(y, env, db, hoSo);
   if (fn === 'chiSoTT') return await chiSoTT(y, env, db, hoSo);
+  if (fn === 'ghiLuuPhim') return await ghiLuuPhim(y, env, db, hoSo);
   if (fn === 'nhanDienVvip') return await nhanDienVvip(y, env, db, hoSo);
   if (fn === 'deXuatNhomVvip') return await deXuatNhomVvip(y, env, db, hoSo);
   if (fn === 'duyetNhomVvip') return await duyetNhomVvip(y, env, db, hoSo);

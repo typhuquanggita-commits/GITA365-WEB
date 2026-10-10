@@ -87,5 +87,91 @@ pha('dò tên bằng chuỗi con', "return G.xpDA.nhanVat.filter(function (n) { 
 pha('bỏ tự thêm người nói', "if (!co) da.nhanVat.push(", "if (false) da.nhanVat.push(", rp => rp.soNhanVat && !rp.soNhanVat.includes('Bé Na'));
 pha('bỏ thời lượng theo giọng cảnh', "if (gc && gc.buffer) can = Math.max(can, gc.buffer.duration + 0.5);", "", rp => rp.tong === 5);
 
+/* ══ Bốn việc chủ hệ chốt 10/10/2026 ══ */
+console.log('— N4 · ngoại lệ có tên: lưu phim ra máy');
+const ltp = fs.readFileSync(ROOT + '/src/luu-tep-phim.js', 'utf8');
+function napLuu(ma, o) {
+  const da = { the: 0, soGoi: [] };
+  const G = { U: { toast: () => {} }, LA_MAY_KHACH: !!o.mayKhach, BI_KHOA_CHEP: () => !!o.khoaChep, can: p => p === 'qt_trang' && !!o.quyen,
+    goiMayChu: (fn, y) => { da.soGoi.push(fn); return Promise.resolve(o.soOk ? { ok: true } : { ok: false, error: 'NOPERM_LUU' }); }, S: { view: 'xuong-phim' } };
+  const document = { createElement: () => ({ click() { da.the++; }, remove() {} }), body: { appendChild() {} } };
+  const URL = { createObjectURL: () => 'blob:x', revokeObjectURL() {} };
+  const ctx = { window: { G }, G, document, URL, console, Promise, setTimeout, String, Math };
+  ctx.window.window = ctx.window;
+  vm.createContext(ctx); vm.runInContext(ma, ctx, { filename: 'luu-tep-phim.js' });
+  return { G, da };
+}
+async function thuLuu(ma, o) { const { G, da } = napLuu(ma, o); const kq = await G.luuTepPhim({ size: 10 }, 'a.mp4', 'video/mp4', '.mp4', 'phim'); return { kq, the: da.the, soGoi: da.soGoi }; }
+const l1 = await thuLuu(ltp, { quyen: true, soOk: true });
+kiem('R01–R02, sổ máy chủ nhận → lưu được (ghi sổ TRƯỚC khi tạo tệp)', l1.kq === true && l1.the === 1 && l1.soGoi[0] === 'ghiLuuPhim');
+const l2 = await thuLuu(ltp, { quyen: true, soOk: false });
+kiem('sổ máy chủ từ chối → KHÔNG lưu', l2.kq === false && l2.the === 0);
+const l3 = await thuLuu(ltp, { quyen: false, soOk: true });
+kiem('không có quyền qt_trang → không lưu, không gọi máy chủ', l3.kq === false && l3.the === 0 && !l3.soGoi.length);
+const l4 = await thuLuu(ltp, { quyen: true, soOk: true, mayKhach: true });
+kiem('máy khách → không lưu dù là Super Admin', l4.kq === false && l4.the === 0);
+const l5 = await thuLuu(ltp, { quyen: true, soOk: true, khoaChep: true });
+kiem('tài khoản bị khoá chép → không lưu', l5.kq === false && l5.the === 0);
+
+const { ghiLuuPhim } = await import(new URL('../may-chu/luu-phim.js', import.meta.url).href);
+const soDb = []; const dbGia = { prepare: q => ({ bind: (...a) => ({ run: async () => { soDb.push({ q, a }); return {}; } }) }) };
+const m1 = await ghiLuuPhim({ ten: 'phim.mp4', loai: 'phim', co: 99 }, {}, dbGia, { role: 'R01', uid: 'u1', u: 'sa' });
+const m2 = await ghiLuuPhim({ ten: 'phim.mp4', loai: 'phim' }, {}, dbGia, { role: 'R05', uid: 'u2', u: 'coach' });
+const m3 = await ghiLuuPhim({ ten: 'phim.mp4', loai: 'phim' }, {}, dbGia, { role: 'R13', uid: 'u3', u: 'ph' });
+const m4 = await ghiLuuPhim({ ten: 'x', loai: 'csv' }, {}, dbGia, { role: 'R01', uid: 'u1', u: 'sa' });
+kiem('máy chủ: R01 ghi sổ LUU_TEP_PHIM kèm tên và cỡ', m1.ok && soDb.length === 1 && /INSERT INTO audit/.test(soDb[0].q) && soDb[0].a.includes('LUU_TEP_PHIM') && soDb[0].a.includes('phim.mp4'));
+kiem('máy chủ: R05 và khách R13 bị từ chối, không ghi gì', m2.error === 'NOPERM_LUU' && m3.error === 'NOPERM_LUU' && soDb.length === 1);
+kiem('máy chủ: loại tệp ngoài danh sách (csv) bị từ chối', m4.error === 'LOAI_LA');
+const wk = fs.readFileSync(ROOT + '/may-chu/worker.js', 'utf8');
+kiem('máy chủ: cửa ghiLuuPhim nằm sau cổng phiên (CAN_PHIEN) và có đường gọi', /'ghiLuuPhim'/.test(wk.slice(wk.indexOf('CAN_PHIEN'))) && /fn === 'ghiLuuPhim'\) return await ghiLuuPhim\(y, env, db, hoSo\)/.test(wk));
+
+const boChu = t => t.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:'"])\/\/[^\n]*/g, '$1');
+const XUONG = ['xuong-phim.js', 'xuong-phim-tu-dong.js', 'xuong-ai.js', 'cat-nhip.js', 'studio.js', 'studio-ban-dung.js', 'san-xuat-ai.js', 'phim-nhanh.js', 'du-an-phim.js'];
+const lo = XUONG.filter(f => /a\.download\s*=|createObjectURL\s*\(|showSaveFilePicker\s*\(|showDirectoryPicker\s*\(\s*\)/.test(boChu(fs.readFileSync(ROOT + '/src/' + f, 'utf8'))));
+const xpG = boChu(goc);
+kiem('thẻ tải / địa chỉ blob / hộp lưu CHỈ sinh ở luu-tep-phim.js — không tệp xưởng nào tự mở đường', !lo.length, lo.join(' '));
+kiem('xuất phim, phụ đề, prompt đi qua G.luuTepPhim / G.moNoiLuuPhim', /G\.moNoiLuuPhim\(/.test(xpG) && /G\.luuTepPhim\([^\n]{0,200}'phuDe'\)/.test(xpG));
+kiem('chọn thư mục bộ phim cũng ghi sổ', /showDirectoryPicker\([^)]*\)\s*\.then\(function \(th\) \{ return G\.ghiSoLuuPhim/.test(xpG));
+kiem('tải phim từ kho máy chủ không còn lối window.open (đường vòng qua cổng)', !/window\.open\(url/.test(boChu(fs.readFileSync(ROOT + '/src/xuong-phim-tu-dong.js', 'utf8'))));
+
+console.log('— N2 · N3 · Studio');
+const st = fs.readFileSync(ROOT + '/src/studio.js', 'utf8'), stM = boChu(st);
+kiem('N2: Studio nói đúng nguyên nhân khi máy chủ cấp phép không trả gói nghề', /Không nối được máy chủ cấp phép — Studio cần gói nghề/.test(st) && /data-v="noi-may-chu"/.test(st));
+kiem('N3: Studio có bộ xuất thật (captureStream + MediaRecorder + xepTieng vào nút đích)', /G\.xuXuat = function/.test(stM) && /captureStream\(30\)/.test(stM) && /new MediaRecorder\(luong/.test(stM) && /xepTieng\(tron\)/.test(stM));
+kiem('N3: lưu qua ngoại lệ N4', /G\.luuTepPhim\(new Blob\(manh/.test(stM));
+kiem('N3: đèn đỏ VÀ đèn "chưa soát" đều đóng cổng xuất', /l\.tt === 'bad' \|\| l\.tt === 'cho'/.test(stM) && /G\.xuDenDo\(\);\s*if \(dd\.length\)/.test(stM));
+kiem('N3: dừng giữa chừng / dừng khẩn = huỷ bản đang ghi', /G\.xuHuyXuat = true; G\.xuGhi\.stop\(\)/.test(stM) && /if \(huy\)/.test(stM));
+kiem('N3: chữ "chưa nối renderer" đã gỡ khỏi màn', !/chưa được nối với renderer/.test(st));
+
+console.log('— C20 · nhãn giọng máy đọc');
+const td = fs.readFileSync(ROOT + '/src/xuong-phim-tu-dong.js', 'utf8');
+kiem('giọng của đường tự động / 0 đồng mang cờ tongHop', /loai: 'giong', buffer: buf, tongHop: true/.test(td));
+function veNhan(ma, coTongHop) {
+  const G = nap(ma), chu = [];
+  G.xpDA.khung = '720x1280'; G.xpDA.tap = 1; G.xpDA.logo = 'GITA';
+  G.xpDA.canh = [{ id: 'k1', hanhDong: 'x', thoai: [{ ai: 'A', loi: 'Câu', am: 'g1' }], tinNhan: [], giay: 3 }];
+  G.xpVat.g1 = { ma: 'g1', loai: 'giong', buffer: { duration: 2 }, tongHop: coTongHop };
+  const x = new Proxy({ measureText: t => ({ width: t.length * 10 }), fillText: t => chu.push(t), strokeText() {} }, { get: (o, k) => k in o ? o[k] : () => {}, set: () => true });
+  G.xpVeKhung(x, G.xpDA.canh[0], 1, 3, 1);
+  return chu;
+}
+kiem('phim có giọng máy đọc → đè nhãn "Giọng đọc tổng hợp bằng máy"', veNhan(goc, true).includes('Giọng đọc tổng hợp bằng máy'));
+kiem('phim giọng người thật → không có nhãn', !veNhan(goc, false).includes('Giọng đọc tổng hợp bằng máy'));
+const od = fs.readFileSync(ROOT + '/src/xuong-phim-0d.js', 'utf8');
+kiem('Piper chỉ dùng giọng kho có sẵn — không có đường nạp mẫu để nhái giọng', /NGOẠI LỆ C20 CÓ TÊN/.test(od) && !/speaker_?embedding|cloneVoice|nhaiGiong/i.test(boChu(od)));
+
+console.log('— phá thử bốn việc');
+for (const [ten, cu, moi, chiu] of [
+  ['bỏ ghi sổ trước khi lưu', 'return G.ghiSoLuuPhim(ten, loai, co).then(function () { taiQuaThe(du, ten);', 'return Promise.resolve().then(function () { taiQuaThe(du, ten);', async m => (await thuLuu(m, { quyen: true, soOk: false })).the === 1],
+  ['bỏ cổng quyền', "else if (!(G.can && G.can('qt_trang'))) ly", 'else if (false) ly', async m => (await thuLuu(m, { quyen: false, soOk: true })).kq === true],
+]) {
+  if (!ltp.includes(cu)) { kiem('phá thử ' + ten + ': tìm thấy chỗ phá', false); continue; }
+  kiem('phá thử ' + ten + ': phép đo đỏ đúng chỗ', await chiu(ltp.replace(cu, moi)));
+}
+{
+  const cu = 'if (G.xpCoGiongTongHop()) {';
+  kiem('phá thử bỏ nhãn giọng máy: phép đo đỏ đúng chỗ', goc.includes(cu) && !veNhan(goc.replace(cu, 'if (false) {'), true).includes('Giọng đọc tổng hợp bằng máy'));
+}
+
 console.log('\n' + dat + ' đạt · ' + truot + ' sai');
 process.exit(truot ? 1 : 0);

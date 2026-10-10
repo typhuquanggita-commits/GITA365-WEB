@@ -257,12 +257,15 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
 
   /* ════════ XUẤT ════════ */
   G.bd.xuatPNG = function(){
-    try{ var a=document.createElement('a'); a.download='gita-khung-'+Date.now()+'.png';
-      a.href=cv().toDataURL('image/png'); a.click(); U.toast('Đã xuất khung ảnh PNG.','ok'); }
+    if(!G.duocLuuPhim()) return;
+    try{ cv().toBlob(function(b){
+        if(!b){ U.toast('Không xuất được ảnh.','err'); return; }
+        G.luuTepPhim(b, 'gita-khung-'+Date.now()+'.png', 'image/png', '.png', 'khung'); }, 'image/png'); }
     catch(e){ U.toast('Không xuất được ảnh: '+(e&&e.message),'err'); }
   };
   G.bd.xuatVideo = function(){
     if(!S.khung.length){ U.toast('Cần ít nhất một khung để xuất phim.','err'); return; }
+    if(!G.duocLuuPhim()) return;
     /* N9 (soát 10/2026): ghi dừng ở tổng giây các khung, nên giọng dài hơn
        phim bị CẮT mất mà không báo (đo được: giọng 8s, phim 4,45s). Hỏi kéo
        dài khung cuối cho đủ giọng + nửa giây. */
@@ -285,10 +288,8 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       ghiMR=mr;
       mr.ondataavailable=function(e){ if(e.data.size) manh.push(e.data); };
       mr.onstop=function(){
-        var bl=new Blob(manh,{type:mime}); var fr=new FileReader();
-        fr.onload=function(){ var a=document.createElement('a'); a.download='gita-phim-'+Date.now()+'.webm'; a.href=fr.result; a.click();
-          U.toast('Đã xuất video nháp (.webm).','ok'); };
-        fr.readAsDataURL(bl); ghiMR=null;
+        ghiMR=null;
+        G.luuTepPhim(new Blob(manh,{type:mime}), 'gita-phim-'+Date.now()+'.webm', 'video/webm', '.webm', 'phim');
       };
       /* chạy slideshow + ghi đồng thời */
       choi=true; var x=c.getContext('2d'), t0=performance.now();

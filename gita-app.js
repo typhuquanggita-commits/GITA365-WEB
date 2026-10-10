@@ -22129,7 +22129,7 @@ G.VIEWS = G.VIEWS || {};
       return [h(g.ma + ' · ' + g.ten), g.phanBo.toLocaleString('vi-VN'), '<b>' + g.dangBat + '</b>', g.tong];
     }));
     o += '<p class="sm">Đang bật <b>' + x.dangBat + '</b> · mốc thử nghiệm ' + x.moc + ' · sức chứa ' + x.sucChua.toLocaleString('vi-VN') +
-      (x.chuaPhanBo ? ' · <b>' + x.chuaPhanBo.toLocaleString('vi-VN') + ' chưa phân bổ</b> (năm con số của Blueprint cộng ra ' + (x.sucChua - x.chuaPhanBo).toLocaleString('vi-VN') + ' — chờ chủ hệ quyết, xem QD6)' : '') + '</p>';
+      (x.chuaPhanBo ? ' · <b>' + x.chuaPhanBo.toLocaleString('vi-VN') + ' chưa phân bổ</b> (năm con số của Blueprint cộng ra ' + (x.sucChua - x.chuaPhanBo).toLocaleString('vi-VN') + ' — giữ làm dự phòng, phân bổ sau 90 ngày thử theo QD6)' : '') + '</p>';
     if (G.S && G.S.acc && G.S.acc.role === 'R01') o += '<button class="btn ghost" onclick="G.vvNapMau()">Nạp 10 điểm chạm mẫu (chờ duyệt)</button>';
     o += U.sec('Thư viện', 'Đủ bảy lớp mới nộp · người khác người soạn tích đủ mười tiêu chuẩn mới bật');
     var chuan = nd && nd.ok ? nd.chuanWow10 : [];
@@ -22231,8 +22231,11 @@ G.VIEWS = G.VIEWS || {};
     o += U.sec('Phần IX · Lộ trình 90 ngày');
     o += U.tbl(['Ngày', 'Giai đoạn', 'Việc', 'Đầu ra', 'Hệ đã dựng'], n.loTrinh90.map(function (g) { return [g.tu + '–' + g.den, h(g.ten), h(g.viec.join(' · ')), h(g.dauRa), h(g.trongHe)]; }));
     o += '<div class="card"><b>Thứ tự ưu tiên đầu tư</b><ol class="sm">' + n.uuTienDauTu.map(function (x) { return '<li>' + h(x) + '</li>'; }).join('') + '</ol></div>';
-    o += U.sec('Phần X · Quyết định của Ban điều hành', 'Máy không chọn hộ — phần hệ phụ thuộc chạy theo giả định ghi bên cạnh');
-    o += U.tbl(['Mã', 'Câu hỏi', 'Đang chạy theo giả định'], n.quyetDinh5.map(function (q) { return [h(q.ma), h(q.hoi), h(q.giaDinh)]; }));
+    o += U.sec('Phần X · Quyết định của Ban điều hành', 'Máy không chọn hộ — mỗi chốt mang ngày và người chốt, đổi được bằng một lượt phát hành');
+    o += U.tbl(['Mã', 'Câu hỏi', 'Đã chốt'], n.quyetDinh5.map(function (q) {
+      return [h(q.ma), h(q.hoi), q.chot ? h(q.chot) + '<div class="sm muted">Chốt ' + h(q.ngay || '') + ' · ' + h(q.boi || '') + '</div>'
+        : '<span class="muted">Chưa chốt — đang chạy theo giả định: ' + h(q.giaDinh) + '</span>'];
+    }));
     o += U.tbl(['Nguyên tắc bảo vệ', 'Răng trong hệ'], n.baoVe6.map(function (b) { return [h(b.y), h(b.rang)]; }));
     o += '<div class="card"><b>Chuẩn người phục vụ nhà trọng điểm</b>' + danhSach(n.chuanNguoiPhucVu) + '</div>';
     o += '<div class="card vv-bia"><p>' + h(n.ketLuan.tuTuong) + '</p>' + danhSach(n.ketLuan.bonTaiSan) + '<p class="sm">' + h(n.ketLuan.moRong) + '</p></div>';
@@ -52229,16 +52232,72 @@ G.VIEWS = G.VIEWS || {};
     ac().resume(); xepTieng(ac().destination);
     raf = requestAnimationFrame(nhip);
   };
-  G.xuDung = function () { chay = false; cancelAnimationFrame(raf); dungTieng(); };
+  G.xuDung = function () {
+    /* Dừng giữa lúc đang xuất = huỷ bản ghi: một tệp phim có đoạn đứng hình
+       ở giữa trông vẫn "xong", và người nhận không biết nó hỏng. */
+    if (G.xuGhi && G.xuGhi.state === 'recording' && G.xuDongHo < tong() - 0.05) { G.xuHuyXuat = true; G.xuGhi.stop(); }
+    chay = false; cancelAnimationFrame(raf); dungTieng();
+  };
   function nhip(gio) {
     if (!chay) return;
     G.xuDongHo += (gio - mocTruoc) / 1000; mocTruoc = gio;
-    if (G.xuDongHo >= tong()) { G.xuDongHo = tong(); G.xuVe(G.xuDongHo); G.xuDung(); return; }
+    if (G.xuDongHo >= tong()) {
+      G.xuDongHo = tong(); G.xuVe(G.xuDongHo);
+      if (G.xuGhi && G.xuGhi.state === 'recording') G.xuGhi.stop();
+      G.xuDung(); return;
+    }
     G.xuVe(G.xuDongHo);
     raf = requestAnimationFrame(nhip);
   }
   G.xuTua = function (v) {
     G.xuDung(); G.xuDongHo = tong() * (+v / 100); G.xuVe(G.xuDongHo);
+  };
+
+  /* ══ XUẤT PHIM (N3 · soát 10/2026) ══
+     Bản cũ chỉ có chữ "chưa nối renderer" — Studio soạn được, xem được,
+     nhưng không ra tệp nào. Nay ghi đúng thứ đang xem: canvas 1080p
+     (captureStream) + tiếng xếp bởi xepTieng vào một nút đích ghi được.
+     Cổng: một đèn ĐỎ là không xuất (LT_RM.RM-1 — không có "xuất tạm"),
+     Dừng khẩn là huỷ bản đang ghi. Lưu qua ngoại lệ có tên N4
+     (G.luuTepPhim: R01–R02, không máy khách, ghi sổ máy chủ). */
+  /* Đèn "chưa soát" cũng đóng cổng: phim là thứ rời khỏi xưởng, nên lời
+     đọc phải qua cửa nội dung TRƯỚC khi thành tệp, không phải sau. */
+  G.xuDenDo = function () { return den().filter(function (l) { return l.tt === 'bad' || l.tt === 'cho'; }); };
+  G.xuXuat = function () {
+    if (G.xuGhi && G.xuGhi.state === 'recording') return;
+    if (!tong()) { U.toast('Chưa có cảnh nào để xuất.', 'err'); return; }
+    var dd = G.xuDenDo();
+    if (dd.length) { U.toast('Cổng xuất đóng: ' + dd.map(function (l) { return l.t; }).join(' · '), 'err'); return; }
+    if (!G.duocLuuPhim || !G.duocLuuPhim()) return;
+    var cv = document.getElementById('xu-man');
+    if (!cv || !cv.captureStream || !window.MediaRecorder) {
+      U.toast('Trình duyệt này không ghi được video. Dùng Chrome hoặc Edge trên máy tính.', 'err'); return;
+    }
+    var kieu = ['video/mp4;codecs=avc1.42E01E,mp4a.40.2', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm']
+      .filter(function (k) { return MediaRecorder.isTypeSupported(k); })[0];
+    if (!kieu) { U.toast('Trình duyệt này không có định dạng video ghi được.', 'err'); return; }
+    var mp4 = /mp4/.test(kieu), duoi = mp4 ? '.mp4' : '.webm', mo = mp4 ? 'video/mp4' : 'video/webm';
+    var a = ac(); a.resume();
+    var dich = a.createMediaStreamDestination(), tron = a.createGain();
+    tron.connect(a.destination); tron.connect(dich);
+    var luong = cv.captureStream(30);
+    dich.stream.getAudioTracks().forEach(function (t) { luong.addTrack(t); });
+    var manh = [], ghi = new MediaRecorder(luong, {mimeType: kieu, videoBitsPerSecond: 8000000});
+    ghi.ondataavailable = function (e) { if (e.data && e.data.size) manh.push(e.data); };
+    ghi.onstop = function () {
+      var huy = G.xuHuyXuat; G.xuGhi = null; G.xuHuyXuat = false;
+      try { tron.disconnect(); } catch (e) {}
+      if (huy) { U.toast('Đã huỷ bản đang xuất.', 'ok'); veLai(); return; }
+      var ten = String(G.xuDA.ten || 'studio').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/đ/gi, 'd').replace(/[^a-z0-9]+/gi, '-').toLowerCase().slice(0, 60) + duoi;
+      G.luuTepPhim(new Blob(manh, {type: kieu}), ten, mo, duoi, 'phim').then(function () { veLai(); });
+    };
+    G.xuDung(); G.xuDongHo = 0; G.xuHuyXuat = false; G.xuGhi = ghi;
+    ghi.start(1000);
+    chay = true; mocTruoc = performance.now();
+    xepTieng(tron);
+    raf = requestAnimationFrame(nhip);
+    U.toast('Đang xuất theo thời gian thực (' + phut(tong()) + '). Giữ tab này mở và hiện trên màn hình.', 'ok');
   };
 
   /* ══ DỪNG KHẨN — GIỮ LẠI, không chỉ tạm dừng ══
@@ -52378,6 +52437,22 @@ G.VIEWS = G.VIEWS || {};
        một khung rỗng đọc ra là "chỗ này chưa làm xong", không đọc ra
        là "vai của bạn không mở được" (bài học 9.99.63). */
     if (!(G.XU_NGANKHO || []).length) {
+      /* N2 (soát 10/2026): bản cũ nói "dành cho tài khoản được cấp quyền"
+         kể cả với Super Admin — trong khi nguyên nhân thật là máy chủ cấp
+         phép không trả gói nghề. Nói SAI nguyên nhân thì người đọc đi xin
+         quyền, không đi nối máy chủ. Nay tách ba trường hợp. */
+      var K = G.KHO || {}, loiNghe = K.loiMo && K.loiMo.nghe;
+      var xinNghe = G.goiDuocCap ? G.goiDuocCap().indexOf('nghe') >= 0 : false;
+      if ((K.dangNap || []).indexOf('nghe') >= 0) {
+        return o + U.empty('Đang mở gói nghề…', 'Studio dựng ngay khi gói nghề giải mã xong.');
+      }
+      if (xinNghe && (K.cheDoMau || K.maTuChoi || loiNghe)) {
+        return o + U.empty('Không nối được máy chủ cấp phép — Studio cần gói nghề',
+          'Tài khoản này được xin gói nghề, nhưng máy chủ chưa trả khoá' +
+          (K.lyDoTuChoi || loiNghe ? ' (' + String(K.lyDoTuChoi || loiNghe).slice(0, 160) + ')' : '') +
+          '. Đây là chuyện nối máy chủ, không phải chuyện quyền.') +
+          (G.can && G.can('qt_trang') ? '<p><button class="btn btn-chinh" data-v="noi-may-chu">Nối máy chủ</button></p>' : '');
+      }
       return o + U.empty('Xưởng Studio dành cho tài khoản được cấp quyền',
         'Màn sản xuất nội bộ chỉ mở khi phiên có gói nghề tương ứng. Nội dung dựng, hình ' +
         'tham chiếu và âm thanh được xử lý tại thiết bị; quyền xem không đồng nghĩa với ' +
@@ -52510,8 +52585,8 @@ G.VIEWS = G.VIEWS || {};
     o += '<input type="range" min="0" max="100" step="0.1" value="0" class="xu-tua" ' +
       'aria-label="Tua video" oninput="G.xuTua(this.value)">';
     o += '<p class="note" id="xu-tt">Đây là bản xem trước 2.5D dựng tại thiết bị; chưa phải nhân vật 3D ' +
-      'biểu cảm thật, phim 4D/5D hay tệp video hoàn chỉnh. Hiện hệ thống chưa có renderer nội bộ ' +
-      'để kết xuất phim. Hình, giọng và nhạc không được gửi đi; không có nút xuất giả.</p></div>';
+      'biểu cảm thật hay phim 4D/5D. Mục 7 ghi đúng bản xem này thành tệp video. Hình, giọng và nhạc ' +
+      'không được gửi đi.</p></div>';
 
     o += G.xu3DPanel ? G.xu3DPanel() : '';
 
@@ -52547,13 +52622,123 @@ G.VIEWS = G.VIEWS || {};
     }).join('') + '</ul></div>';
 
     /* 6 · Xuất kèm */
+    var doXuat = G.xuDenDo();
     o += '<div class="giay"><h3>7 · Xuất phim</h3>' +
-      '<p class="note">Kết xuất video, phụ đề và hộ chiếu phát hành chưa được nối với renderer ' +
-      'nội bộ. Không gửi ảnh/giọng lên dịch vụ ngoài; bản xem trước chỉ giúp kiểm tra kịch bản, ' +
-      'khung hình, chuyển động và phối âm.</p></div>';
+      '<p class="note">Ghi đúng bản đang xem — canvas ' + khung().join('×') + ' cùng giọng và nhạc — thành tệp ' +
+      'video ngay trên máy, theo thời gian thực. Không gửi ảnh/giọng lên dịch vụ ngoài. Lưu tệp chỉ dành cho ' +
+      'Super Admin và Admin hệ thống, và mỗi lượt lưu vào sổ (ngoại lệ N4).</p>' +
+      (doXuat.length ? '<p class="note xu-bad">Cổng xuất đóng — còn ' + doXuat.length + ' đèn đỏ: ' +
+        doXuat.map(function (l) { return h(l.t); }).join(' · ') + '.</p>' : '') +
+      '<div class="row"><button class="btn btn-chinh" onclick="G.xuXuat()"' + (doXuat.length ? ' disabled' : '') + '>' +
+      (G.xuGhi ? 'Đang xuất…' : 'Xuất phim') + '</button>' +
+      (G.xuGhi ? '<button class="btn" onclick="G.xuDung()">Huỷ bản đang xuất</button>' : '') + '</div></div>';
 
     setTimeout(function () { G.xuCoManh(); }, 0);
     return o + '</div>';
+  };
+})();
+
+})();
+
+/* ═════════ src/luu-tep-phim.js ═════════ */
+(function(){
+/* ═══════════════════════════════════════════════════════════════
+   NGOẠI LỆ CÓ TÊN · LƯU PHIM RA MÁY (N4 · chủ hệ chốt 10/10/2026)
+
+   Luật nền vẫn đứng: khách hàng không tải bất cứ dữ liệu nào ra máy.
+   Xưởng phim là chỗ DUY NHẤT được lưu tệp ra máy, và chỉ qua hàm này.
+
+   Ba cổng, theo thứ tự:
+   1. Máy khách (G.LA_MAY_KHACH) và tài khoản bị khoá chép
+      (G.BI_KHOA_CHEP) — không lưu, kể cả Super Admin ngồi máy khách.
+   2. Quyền qt_trang (R01–R02) — đúng quyền mở màn Xưởng phim.
+   3. Cửa máy chủ `ghiLuuPhim` ghi sổ lượt lưu. Cửa từ chối hoặc không
+      gọi được thì KHÔNG lưu: một ngoại lệ không để lại dấu là một đường
+      tải tệp đội lốt ngoại lệ. Máy chủ đọc vai từ phiên, nên gọi thẳng
+      hàm này trong bảng điều khiển cũng không vượt được.
+
+   Đường lưu: hộp "Lưu thành" của hệ điều hành nếu có. Hộp ấy cần cú bấm
+   của người dùng, nên tệp sinh ra SAU một lượt ghi dài (cắt nhịp, bàn
+   dựng) sẽ bị trình duyệt từ chối mở hộp — lúc ấy lùi về thẻ tải xuống.
+   Thẻ tải xuống và địa chỉ blob CHỈ được sinh ở tệp này; phép thử
+   tools/thu-xuong-phim.mjs đỏ nếu chúng mọc ở tệp nào khác trong xưởng.
+   ═══════════════════════════════════════════════════════════════ */
+'use strict';
+var G = window.G || {}; window.G = G;
+
+(function () {
+  var LOAI = ['phim', 'khung', 'phuDe', 'prompt', 'cauHinh'];
+
+  G.LUU_PHIM_LUAT = {
+    quyen: 'qt_trang',
+    cua: 'ghiLuuPhim',
+    vi: 'Lưu tệp ra máy chỉ có ở Xưởng phim, chỉ cho Super Admin và Admin hệ thống, và mỗi lượt lưu đều vào sổ.'
+  };
+
+  function bao(t, k) { if (G.U && G.U.toast) G.U.toast(t, k || 'err'); }
+
+  /* Cổng 1 + 2 — chạy ĐỒNG BỘ để còn kịp mở hộp lưu trong cú bấm */
+  G.duocLuuPhim = function (imLang) {
+    var ly = '';
+    if (G.LA_MAY_KHACH || (G.BI_KHOA_CHEP && G.BI_KHOA_CHEP())) ly = 'Tài khoản/máy này chỉ được dùng, không được lưu tệp ra máy.';
+    else if (!(G.can && G.can('qt_trang'))) ly = 'Lưu phim ra máy chỉ dành cho Super Admin và Admin hệ thống.';
+    if (ly && !imLang) bao(ly);
+    return !ly;
+  };
+
+  /* Cổng 3 — ghi sổ trước khi ghi tệp */
+  G.ghiSoLuuPhim = function (ten, loai, co) {
+    if (!G.goiMayChu) return Promise.reject(new Error('Chưa nối máy chủ — không ghi được sổ lượt lưu.'));
+    return G.goiMayChu('ghiLuuPhim', {ten: String(ten || ''), loai: loai, co: co || 0, man: (G.S && G.S.view) || ''})
+      .then(function (x) {
+        if (!x || !x.ok) throw new Error((x && (x.vi || x.error)) || 'Máy chủ không ghi sổ lượt lưu.');
+        return true;
+      });
+  };
+
+  function taiQuaThe(du, ten) {
+    var a = document.createElement('a'), ou = URL.createObjectURL(du);
+    a.href = ou; a.download = ten; document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(ou); a.remove(); }, 4000);
+  }
+
+  /* Lưu một tệp đã có sẵn trong bộ nhớ. Trả Promise<boolean>. */
+  G.luuTepPhim = function (du, ten, mo, duoi, loai) {
+    if (LOAI.indexOf(loai) < 0) loai = 'phim';
+    if (!G.duocLuuPhim()) return Promise.resolve(false);
+    var co = (du && du.size) || 0;
+    function quaThe() {
+      return G.ghiSoLuuPhim(ten, loai, co).then(function () { taiQuaThe(du, ten); bao('Đã lưu ' + ten, 'ok'); return true; });
+    }
+    var chuoi;
+    if (window.showSaveFilePicker) {
+      var kieu = {}; kieu[mo] = [duoi];
+      chuoi = window.showSaveFilePicker({suggestedName: ten, types: [{description: duoi, accept: kieu}]})
+        .then(function (fh) {
+          return fh.createWritable().then(function (w) {
+            return G.ghiSoLuuPhim(ten, loai, co)
+              .then(function () { return w.write(du).then(function () { return w.close(); }); },
+                function (e) { try { w.abort(); } catch (e2) {} throw e; });
+          });
+        })
+        .then(function () { bao('Đã lưu ' + ten, 'ok'); return true; }, function (e) {
+          if (e && e.name === 'AbortError') return false;
+          /* Hết cú bấm (tệp sinh sau một lượt ghi dài) → lùi về thẻ tải */
+          if (e && (e.name === 'SecurityError' || e.name === 'NotAllowedError')) return quaThe();
+          throw e;
+        });
+    } else chuoi = quaThe();
+    return chuoi.catch(function (e) { bao('Không lưu được: ' + ((e && e.message) || e)); return false; });
+  };
+
+  /* Hỏi chỗ lưu cho một lượt ghi THẲNG xuống đĩa (phim dài): ghi sổ ngay
+     sau khi chọn chỗ, trước byte đầu tiên. Từ chối → không trả tay cầm. */
+  G.moNoiLuuPhim = function (ten, mo, duoi) {
+    if (!G.duocLuuPhim()) return Promise.reject(new Error('KHONG_LUU'));
+    if (!window.showSaveFilePicker) return Promise.reject(new Error('KHONG_HOP'));
+    var kieu = {}; kieu[mo] = [duoi];
+    return window.showSaveFilePicker({suggestedName: ten, types: [{description: 'Phim', accept: kieu}]})
+      .then(function (fh) { return G.ghiSoLuuPhim(ten, 'phim', 0).then(function () { return fh; }); });
   };
 })();
 
@@ -52589,10 +52774,10 @@ G.VIEWS = G.VIEWS || {};
    ── KHÔNG `URL.createObjectURL` ──
    Clip đọc bằng FileReader thành địa chỉ data: (CSP media-src có data:),
    ảnh đi thẳng vào createImageBitmap, nhạc vào decodeAudioData. Tệp phim
-   xuất ra được GHI qua hộp "Lưu thành" của hệ điều hành
-   (showSaveFilePicker) — không sinh địa chỉ blob, không thẻ <a download>.
-   Máy khách (G.LA_MAY_KHACH) và tài khoản khách hàng (G.BI_KHOA_CHEP)
-   không xuất được: đúng chính sách "chỉ dùng, không lưu".
+   xuất ra đi qua NGOẠI LỆ CÓ TÊN N4 (src/luu-tep-phim.js): chỉ R01–R02,
+   không máy khách, mỗi lượt lưu vào sổ máy chủ. Tệp này không sinh địa chỉ
+   blob hay thẻ tải xuống; trình duyệt thiếu hộp "Lưu thành" thì chính hàm
+   ngoại lệ lùi về thẻ tải, ở đúng một chỗ.
    ═══════════════════════════════════════════════════════════════ */
 'use strict';
 var G = window.G || {}; window.G = G;
@@ -53074,6 +53259,25 @@ G.VIEWS = G.VIEWS || {};
       x.fillStyle = 'rgba(0,0,0,.45)'; x.fillRect(W - tw - S * 0.08, S * 0.035, tw + S * 0.04, S * 0.056);
       x.fillStyle = '#fff'; x.fillText(nhan, W - tw - S * 0.06, S * 0.045);
     }
+    /* Ngoại lệ C20 có tên (chủ hệ chốt 10/10/2026): giọng máy đọc được dùng,
+       nhưng phim PHẢI nói ra. Nhãn đè suốt phim, không chỉ vài giây đầu —
+       người xem bắt đầu xem ở giữa (cắt clip, chia sẻ lại) vẫn thấy. */
+    if (G.xpCoGiongTongHop()) {
+      var nh = 'Giọng đọc tổng hợp bằng máy';
+      x.font = '600 ' + Math.round(S * 0.026) + 'px system-ui, sans-serif'; x.textBaseline = 'top';
+      var nw = x.measureText(nh).width, ny = S * 0.035 + (G.xpDA.tap ? S * 0.07 : 0);
+      x.fillStyle = 'rgba(0,0,0,.5)'; x.fillRect(W - nw - S * 0.08, ny, nw + S * 0.04, S * 0.042);
+      x.fillStyle = '#fff'; x.fillText(nh, W - nw - S * 0.06, ny + S * 0.008);
+    }
+  };
+  /* Phim có dùng giọng máy đọc không — đọc từ VẬT LIỆU (cờ tongHop gắn lúc
+     giọng sinh ra), không đọc từ một ô người dùng tự khai. */
+  G.xpCoGiongTongHop = function () {
+    function la(id) { var v = id && G.xpVat[id]; return !!(v && v.tongHop); }
+    if (la(G.xpDA.loiDan)) return true;
+    return (G.xpDA.canh || []).some(function (c) {
+      return la(c.giong) || (c.thoai || []).some(function (t) { return la(t.am); });
+    });
   };
   var phuDeDem = null;
   G.xpPhuDeNay = function (t) {
@@ -53217,29 +53421,15 @@ G.VIEWS = G.VIEWS || {};
     if (b) b.textContent = (chay && !chay.dung) ? 'Dừng' : 'Xem thử cả tập';
   }
 
-  /* ══ LƯU TỆP — hộp "Lưu thành" của hệ điều hành, không địa chỉ blob ══ */
-  function duocLuu() {
-    if (G.LA_MAY_KHACH || (G.BI_KHOA_CHEP && G.BI_KHOA_CHEP())) {
-      U.toast('Tài khoản/máy này chỉ được dùng, không được lưu tệp ra máy.', 'err'); return false;
-    }
-    if (!window.showSaveFilePicker) {
-      U.toast('Trình duyệt này chưa có hộp "Lưu thành". Hãy mở GITA 365 bằng Chrome hoặc Edge trên máy tính.', 'err'); return false;
-    }
-    return true;
-  }
-  function luuTep(ten, du, mo, duoi) {
-    var loai = {}; loai[mo] = [duoi];
-    return window.showSaveFilePicker({suggestedName: ten, types: [{description: duoi, accept: loai}]})
-      .then(function (fh) { return fh.createWritable(); })
-      .then(function (w) { return w.write(du).then(function () { return w.close(); }); })
-      .then(function () { U.toast('Đã lưu ' + ten, 'ok'); })
-      .catch(function (e) { if (e && e.name !== 'AbortError') U.toast('Không lưu được: ' + (e.message || e), 'err'); });
-  }
+  /* ══ LƯU TỆP — mọi lượt lưu đi qua ngoại lệ có tên N4 (src/luu-tep-phim.js):
+     cổng vai qt_trang + máy khách + ghi sổ máy chủ. Tệp này không tự sinh
+     địa chỉ blob hay thẻ tải xuống. ══ */
+  function duocLuu() { return G.duocLuuPhim ? G.duocLuuPhim() : false; }
   function tenTep() { return String(G.xpDA.ten || 'phim').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/gi, 'd').replace(/[^a-z0-9]+/gi, '-').toLowerCase() + '-tap-' + (G.xpDA.tap || 1); }
   G.xpLuuChu = function (loai) {
     if (!duocLuu()) return;
-    if (loai === 'srt') luuTep(tenTep() + '.srt', new Blob([G.xpSRT()], {type: 'text/plain'}), 'text/plain', '.srt');
-    else luuTep(tenTep() + '-prompt.txt', new Blob([G.xpGoiPrompt()], {type: 'text/plain'}), 'text/plain', '.txt');
+    if (loai === 'srt') G.luuTepPhim(new Blob([G.xpSRT()], {type: 'text/plain'}), tenTep() + '.srt', 'text/plain', '.srt', 'phuDe');
+    else G.luuTepPhim(new Blob([G.xpGoiPrompt()], {type: 'text/plain'}), tenTep() + '-prompt.txt', 'text/plain', '.txt', 'prompt');
   };
   G.xpXuat = function () {
     if (chay && !chay.dung) { G.xpDung(); return; }
@@ -53252,24 +53442,30 @@ G.VIEWS = G.VIEWS || {};
     /* Hỏi chỗ lưu TRƯỚC khi ghi — hộp lưu cần cú bấm của người dùng */
     var mp4 = window.MediaRecorder && MediaRecorder.isTypeSupported('video/mp4');
     var duoi = mp4 ? '.mp4' : '.webm', mo = mp4 ? 'video/mp4' : 'video/webm';
-    var loai = {}; loai[mo] = [duoi];
-    window.showSaveFilePicker({suggestedName: tenTep() + duoi, types: [{description: 'Phim', accept: loai}]})
+    if (!window.showSaveFilePicker) {
+      /* Không có hộp "Lưu thành" (Safari, Firefox, điện thoại): ghi vào bộ nhớ
+         rồi lưu qua ngoại lệ N4 khi xong — phim dài sẽ tốn RAM, nên báo trước. */
+      U.toast('Trình duyệt này không có hộp "Lưu thành": phim ghi vào bộ nhớ rồi tải xuống khi xong (' + Math.round(tongGiay()) + ' giây). Giữ tab mở.', 'ok');
+      G.xpPhat(true, function (bl) { if (bl) G.luuTepPhim(bl, tenTep() + duoi, mo, duoi, 'phim'); });
+      return;
+    }
+    G.moNoiLuuPhim(tenTep() + duoi, mo, duoi)
       .then(function (fh) { G.xpXuatVao(fh); })
-      .catch(function (e) { if (e && e.name !== 'AbortError') U.toast('Không mở được hộp lưu: ' + (e.message || e), 'err'); });
+      .catch(function (e) { if (e && e.name !== 'AbortError' && e.message !== 'KHONG_LUU') U.toast('Không mở được hộp lưu: ' + (e.message || e), 'err'); });
   };
   /* Hỏi chỗ lưu (cần cú bấm) — dùng cho làm phim tự động: hỏi lúc bắt đầu, ghi lúc xong */
   G.xpChonNoiLuu = function () {
     if (!duocLuu()) return Promise.reject(new Error('KHONG_LUU'));
     var mp4 = window.MediaRecorder && MediaRecorder.isTypeSupported('video/mp4');
     var duoi = mp4 ? '.mp4' : '.webm', mo = mp4 ? 'video/mp4' : 'video/webm';
-    var loai = {}; loai[mo] = [duoi];
-    return window.showSaveFilePicker({suggestedName: tenTep() + duoi, types: [{description: 'Phim', accept: loai}]});
+    return G.moNoiLuuPhim(tenTep() + duoi, mo, duoi);
   };
   /* Hỏi một THƯ MỤC (cần cú bấm) — bộ phim ghi Tap-01 … Tap-10 vào đó */
   G.xpChonThuMuc = function () {
     if (!duocLuu()) return Promise.reject(new Error('KHONG_LUU'));
     if (!window.showDirectoryPicker) { U.toast('Trình duyệt này chưa chọn được thư mục. Dùng Chrome hoặc Edge trên máy tính.', 'err'); return Promise.reject(new Error('KHONG_LUU')); }
-    return window.showDirectoryPicker({id: 'gita-bo-phim', mode: 'readwrite'});
+    return window.showDirectoryPicker({id: 'gita-bo-phim', mode: 'readwrite'})
+      .then(function (th) { return G.ghiSoLuuPhim('thư mục ' + th.name, 'phim', 0).then(function () { return th; }); });
   };
   G.xpDuoiPhim = function () { return window.MediaRecorder && MediaRecorder.isTypeSupported('video/mp4') ? '.mp4' : '.webm'; };
   G.xpXuatVao = function (fh, xongFn) {
@@ -53348,7 +53544,7 @@ G.VIEWS = G.VIEWS || {};
   function hangGiong(vai, id, nhan) {
     var g = id && G.xpVat[id], ghi = G.xpDangGhi(vai);
     return '<div class="row xp-giong"><span class="note"><b>' + nhan + ':</b> ' +
-      (g ? '✓ ' + h(g.ten) + ' · ' + (Math.round(g.buffer.duration * 10) / 10) + 's' : (id ? '<em>tệp đã gắn trước khi tải lại trang — nạp lại</em>' : 'chưa có')) + '</span>' +
+      (g ? '✓ ' + h(g.ten) + ' · ' + (Math.round(g.buffer.duration * 10) / 10) + 's' + (g.tongHop ? ' · <em>giọng máy đọc</em>' : '') : (id ? '<em>tệp đã gắn trước khi tải lại trang — nạp lại</em>' : 'chưa có')) + '</span>' +
       '<label class="btn">Nạp tệp giọng <input type="file" accept="audio/*" hidden onchange="G.xpNhanTep(this.files,\'' + h(vai) + '\')"></label>' +
       '<button class="btn' + (ghi ? ' btn-chinh' : '') + '" onclick="G.xpGhiGiong(\'' + h(vai) + '\')">' + (ghi ? '■ Dừng ghi' : '● Ghi micro') + '</button>' +
       (id ? '<button class="btn" onclick="G.xpBoGiong(\'' + h(vai) + '\')">Bỏ giọng</button>' : '') + '</div>';
@@ -53458,6 +53654,7 @@ G.VIEWS = G.VIEWS || {};
       hangGiong('loiDan', da.loiDan, 'Lời dẫn cả phim (phát một lần, không lặp)') +
       '<div class="row">' + o_('Âm lượng giọng (0–1)', da.amLuongGiong == null ? 1 : da.amLuongGiong, "G.xpSua('amLuongGiong',this.value)", 'number') + '</div>' +
       '<p class="note">Giọng là <b>tệp có sẵn</b> hoặc <b>ghi micro người thật</b> — máy không tự sinh giọng (luật C20). Cảnh có giọng tự kéo dài cho đủ giọng; phụ đề chia theo độ dài giọng.</p>' +
+      (G.xpCoGiongTongHop() ? '<p class="note xp-canh-bao">Phim này có giọng máy đọc (từ đường Tự động/0 đồng). Phim tự đè nhãn "Giọng đọc tổng hợp bằng máy" suốt thời lượng — ngoại lệ C20 có tên. Muốn bỏ nhãn thì thay bằng giọng người thật.</p>' : '') +
       '<p class="note">Clip chỉ nằm trong bộ nhớ của tab này — tải lại trang thì cần nạp lại (kịch bản và prompt vẫn được giữ).</p>' +
       '<canvas id="xp-man" style="width:100%;max-width:' + (laNgang() ? '560px;aspect-ratio:16/9' : '300px;aspect-ratio:9/16') + ';background:#000;display:block;margin:8px 0;border-radius:8px"></canvas>' +
       '<p class="note" id="xp-tt"></p>' +
@@ -53492,6 +53689,16 @@ G.VIEWS = G.VIEWS || {};
      · giong → Piper (mã nguồn mở) đọc tiếng Việt NGAY TRONG MÁY, không
        qua máy chủ, không gửi chữ ra ngoài. Mô hình giọng tải một lần
        (~90 MB) rồi nằm trong bộ nhớ đệm trình duyệt.
+
+   ── NGOẠI LỆ C20 CÓ TÊN (chủ hệ chốt 10/10/2026) ──
+   Luật C20: giọng là tệp có sẵn, máy chỉ trộn. Piper là chỗ máy SINH
+   giọng, nên nó chỉ được đứng với ba điều kiện:
+     1. Chỉ giọng KHO CÓ SẴN của Piper (vais1000 · vivos). KHÔNG nhái
+        giọng một người cụ thể từ mẫu thu — không có đường nạp mẫu nào.
+     2. Mọi giọng sinh ra mang cờ `tongHop`, và phim tự đè nhãn
+        "Giọng đọc tổng hợp bằng máy" suốt thời lượng (xuong-phim.js).
+     3. Phim đào tạo tự tay (giọng người thật) vẫn là đường ưu tiên số
+        một; Piper chỉ dùng cho bản nháp và chuỗi phim 0 đồng.
      · Kết quả (ảnh, giọng) nằm trong IndexedDB của máy này, địa chỉ
        dạng "idb:…" — không thuê kho lưu trữ nào.
    ═══════════════════════════════════════════════════════════════ */
@@ -54112,7 +54319,9 @@ var G = window.G || {}; window.G = G;
     if (!ctxGiai) ctxGiai = new (window.AudioContext || window.webkitAudioContext)();
     return taiBlob(url).then(function (bl) { return bl.arrayBuffer(); })
       .then(function (b) { return ctxGiai.decodeAudioData(b); })
-      .then(function (buf) { var id = G.xpMa('g'); G.xpVat[id] = {ma: id, ten: ten, loai: 'giong', buffer: buf}; return id; });
+      /* Mọi giọng của đường tự động là giọng MÁY đọc (Piper hoặc dịch vụ ngoài):
+         gắn cờ tongHop để phim tự đè nhãn — ngoại lệ C20 có tên. */
+      .then(function (buf) { var id = G.xpMa('g'); G.xpVat[id] = {ma: id, ten: ten, loai: 'giong', buffer: buf, tongHop: true}; return id; });
   }
   function chayLan(viec, gioiHan) {
     var i = 0;
@@ -54835,15 +55044,12 @@ var G = window.G || {}; window.G = G;
     var duoi = loai === 'tts' ? '.mp3' : loai === 'nv' ? '.png' : '.mp4';
     var url = apiGoc() + '/quay/phim/' + ma + duoi;
     var ten = (kgTenViec(ma) || ma).replace(/[^\w\-. ]+/g, '_').replace(/\s+/g, '-').slice(0, 60) + '-' + ma.slice(0, 6) + duoi;
+    if (!G.duocLuuPhim()) return;
     U.toast('Đang tải phim về máy…', 'ok');
+    var mo = loai === 'tts' ? 'audio/mpeg' : loai === 'nv' ? 'image/png' : 'video/mp4';
     fetch(url).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.blob(); })
-      .then(function (b) {
-        var a = document.createElement('a'), ou = URL.createObjectURL(b);
-        a.href = ou; a.download = ten; document.body.appendChild(a); a.click();
-        setTimeout(function () { URL.revokeObjectURL(ou); a.remove(); }, 5000);
-        U.toast('Đã tải xuống: ' + ten, 'ok');
-      })
-      .catch(function (e) { U.toast('Chưa tải được (' + ((e && e.message) || 'lỗi') + ') — mở link để tải tay.', 'err'); window.open(url, '_blank', 'noopener'); });
+      .then(function (b) { return G.luuTepPhim(b, ten, mo, duoi, loai === 'nv' ? 'khung' : 'phim'); })
+      .catch(function (e) { U.toast('Chưa tải được (' + ((e && e.message) || 'lỗi') + ').', 'err'); });
   };
   /* ── CỔNG 2: ĐÃ TẢI — DỌN KHO (giải phóng R2 ngay) ── */
   G.xpKgDon = function (ma) {
@@ -88787,12 +88993,15 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
 
   /* ════════ XUẤT ════════ */
   G.bd.xuatPNG = function(){
-    try{ var a=document.createElement('a'); a.download='gita-khung-'+Date.now()+'.png';
-      a.href=cv().toDataURL('image/png'); a.click(); U.toast('Đã xuất khung ảnh PNG.','ok'); }
+    if(!G.duocLuuPhim()) return;
+    try{ cv().toBlob(function(b){
+        if(!b){ U.toast('Không xuất được ảnh.','err'); return; }
+        G.luuTepPhim(b, 'gita-khung-'+Date.now()+'.png', 'image/png', '.png', 'khung'); }, 'image/png'); }
     catch(e){ U.toast('Không xuất được ảnh: '+(e&&e.message),'err'); }
   };
   G.bd.xuatVideo = function(){
     if(!S.khung.length){ U.toast('Cần ít nhất một khung để xuất phim.','err'); return; }
+    if(!G.duocLuuPhim()) return;
     /* N9 (soát 10/2026): ghi dừng ở tổng giây các khung, nên giọng dài hơn
        phim bị CẮT mất mà không báo (đo được: giọng 8s, phim 4,45s). Hỏi kéo
        dài khung cuối cho đủ giọng + nửa giây. */
@@ -88815,10 +89024,8 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
       ghiMR=mr;
       mr.ondataavailable=function(e){ if(e.data.size) manh.push(e.data); };
       mr.onstop=function(){
-        var bl=new Blob(manh,{type:mime}); var fr=new FileReader();
-        fr.onload=function(){ var a=document.createElement('a'); a.download='gita-phim-'+Date.now()+'.webm'; a.href=fr.result; a.click();
-          U.toast('Đã xuất video nháp (.webm).','ok'); };
-        fr.readAsDataURL(bl); ghiMR=null;
+        ghiMR=null;
+        G.luuTepPhim(new Blob(manh,{type:mime}), 'gita-phim-'+Date.now()+'.webm', 'video/webm', '.webm', 'phim');
       };
       /* chạy slideshow + ghi đồng thời */
       choi=true; var x=c.getContext('2d'), t0=performance.now();
@@ -90105,10 +90312,8 @@ var G = window.G || {}; window.G = G; G.VIEWS = G.VIEWS || {};
     };
   }
   G.ax.taiConfig = function(){
-    try{ var cfg=configPhim(); var a=document.createElement('a');
-      a.download='gita-phim-'+(phimActive().id)+'.json';
-      a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(cfg,null,2)); a.click();
-      U.toast('Đã tải cấu hình .json cho notebook Kaggle.','ok');
+    try{ var cfg=configPhim();
+      G.luuTepPhim(new Blob([JSON.stringify(cfg,null,2)],{type:'application/json'}), 'gita-phim-'+(phimActive().id)+'.json', 'application/json', '.json', 'cauHinh');
     }catch(e){ U.toast('Lỗi xuất cấu hình: '+(e&&e.message),'err'); }
   };
 
@@ -90715,10 +90920,8 @@ function choi(ghiLai){
     mr.onstop = function(){
       var du = mr._du; S.ghi = null;
       if (!du){ U.toast && U.toast('Đã huỷ bản ghi dở.', 'ok'); return; }
-      var fr = new FileReader();
-      fr.onload = function(){ var a = document.createElement('a'); a.download = 'gita-cat-nhip-' + Date.now() + '.webm'; a.href = fr.result; a.click();
-        U.toast && U.toast('Đã xuất phim cắt theo nhịp (.webm).', 'ok'); };
-      fr.readAsDataURL(new Blob(manh, { type: mime }));
+      /* Ngoại lệ N4: lưu qua G.luuTepPhim (cổng vai + sổ máy chủ), không tự tạo thẻ tải */
+      G.luuTepPhim(new Blob(manh, { type: mime }), 'gita-cat-nhip-' + Date.now() + '.webm', 'video/webm', '.webm', 'phim');
     };
   }
   nguon.connect(ctx.destination);

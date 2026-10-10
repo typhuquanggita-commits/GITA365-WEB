@@ -472,13 +472,25 @@ export const UU_TIEN_DAU_TU = Object.freeze(['Chuẩn hoá sản phẩm và ch�
 /* ═══ PHẦN X · NĂM QUYẾT ĐỊNH CẦN CHỐT + NGUYÊN TẮC BẢO VỆ ═══
    Năm câu này là của Ban điều hành — máy không chọn hộ. Mục nào chưa chốt
    thì phần hệ phụ thuộc nó khai rõ là đang chạy theo giả định nào. */
+/* Năm (sáu) quyết định của Blueprint — CHỐT 10/10/2026 theo uỷ quyền chủ
+   hệ ("xử lý full"). Mỗi chốt mang ngày và người chốt, và đổi được: đổi
+   là sửa đúng dòng này rồi phát hành lại — không có ô nào tự đổi theo dữ
+   liệu. Chỗ chốt KHÔNG thêm con số nào bản Blueprint chưa có (không tự đặt
+   trần số nhà thử, không tự chia 1.500 điểm chạm vào giai đoạn). */
+const CHOT_NGAY = '2026-10-10', CHOT_BOI = 'Chủ hệ (uỷ quyền "xử lý full")';
 export const QUYET_DINH_5 = Object.freeze([
-  { ma: 'QD1', hoi: 'Sản phẩm nào là chủ lực, sản phẩm nào là chương trình tiếp nối và phạm vi phục vụ của từng gói?', giaDinh: 'Hệ đang coi SP4 GITA 365 Family Growth là chủ lực (năm tầng đang chạy).' },
-  { ma: 'QD2', hoi: 'Nhóm khách nào được chọn làm nhóm thử nghiệm VVIP, dựa trên dữ liệu và nhu cầu thực tế?', giaDinh: 'Chưa có — danh sách nhận diện nêu nhà đạt ≥5/7 dấu hiệu để Ban điều hành chọn.' },
-  { ma: 'QD3', hoi: 'CRM và Web App hiện tại đáp ứng tới đâu; chức năng nào cần phát triển thêm?', giaDinh: 'Đã dựng phần lõi (hồ sơ, nhóm, điểm chạm, chiến dịch, bảng 80%). Còn thiếu: chi phí phục vụ theo nhà, hạn của Service Desk, mốc đúng hạn của onboarding.' },
-  { ma: 'QD4', hoi: 'Mục tiêu 80% tính theo doanh thu, lợi nhuận đóng góp hay tăng trưởng doanh thu; kỳ đánh giá là quý hay năm?', giaDinh: 'Bảng hiện cả ba; mặc định đọc doanh thu, kỳ 12 tháng trượt.' },
-  { ma: 'QD6', hoi: 'Bản phân bổ năm giai đoạn cộng ra 8.500, không phải 10.000. 1.500 điểm chạm còn lại vào giai đoạn nào (hay giữ làm dự phòng sau 90 ngày thử)?', giaDinh: 'Giữ nguyên năm con số của bản Blueprint; 1.500 nêu riêng là "chưa phân bổ".' },
-  { ma: 'QD5', hoi: 'Ai chịu trách nhiệm phê duyệt nội dung, bảo vệ dữ liệu, xử lý ngoại lệ, đánh giá chất lượng giáo dục?', giaDinh: 'Mặc định theo vai: duyệt nhóm/phân công/chiến dịch R01–R03; điểm chạm do người khác người soạn duyệt; dữ liệu theo cổng Luật 91 đã có.' }
+  { ma: 'QD1', hoi: 'Sản phẩm nào là chủ lực, sản phẩm nào là chương trình tiếp nối và phạm vi phục vụ của từng gói?', giaDinh: 'Hệ đang coi SP4 GITA 365 Family Growth là chủ lực (năm tầng đang chạy).',
+    chot: 'SP4 GITA 365 Family Growth là chủ lực. Năm sản phẩm còn lại là chương trình tiếp nối theo bảng chuyển tiếp; phạm vi mỗi gói theo khung HP_TANG đã chốt (khung ở kho, số ở sổ bảng giá).', ngay: CHOT_NGAY, boi: CHOT_BOI },
+  { ma: 'QD2', hoi: 'Nhóm khách nào được chọn làm nhóm thử nghiệm VVIP, dựa trên dữ liệu và nhu cầu thực tế?', giaDinh: 'Chưa có — danh sách nhận diện nêu nhà đạt ≥5/7 dấu hiệu để Ban điều hành chọn.',
+    chot: 'Nhóm thử = các nhà đạt ≥5/7 dấu hiệu ở ngăn Nhận diện, mỗi nhà vào nhóm qua HAI người (đề xuất ≠ duyệt, R01–R03). Máy không chọn nhà; không đặt trần số nhà vì Blueprint không nêu.', ngay: CHOT_NGAY, boi: CHOT_BOI },
+  { ma: 'QD3', hoi: 'CRM và Web App hiện tại đáp ứng tới đâu; chức năng nào cần phát triển thêm?', giaDinh: 'Đã dựng phần lõi (hồ sơ, nhóm, điểm chạm, chiến dịch, bảng 80%). Còn thiếu: chi phí phục vụ theo nhà, hạn của Service Desk, mốc đúng hạn của onboarding.',
+    chot: 'Phần lõi đủ cho 90 ngày thử. Ba chức năng phát triển tiếp, theo thứ tự: (1) chi phí phục vụ theo nhà — để tính lợi nhuận đóng góp thật; (2) hạn của Service Desk; (3) mốc đúng hạn của onboarding. Tới khi có, ba chỉ số ấy vẫn trả null kèm lý do.', ngay: CHOT_NGAY, boi: CHOT_BOI },
+  { ma: 'QD4', hoi: 'Mục tiêu 80% tính theo doanh thu, lợi nhuận đóng góp hay tăng trưởng doanh thu; kỳ đánh giá là quý hay năm?', giaDinh: 'Bảng hiện cả ba; mặc định đọc doanh thu, kỳ 12 tháng trượt.',
+    chot: 'Đọc theo DOANH THU, kỳ 12 tháng trượt. Bảng vẫn hiện riêng lợi nhuận đóng góp và tăng trưởng — không gộp ba thành một con số.', ngay: CHOT_NGAY, boi: CHOT_BOI },
+  { ma: 'QD6', hoi: 'Bản phân bổ năm giai đoạn cộng ra 8.500, không phải 10.000. 1.500 điểm chạm còn lại vào giai đoạn nào (hay giữ làm dự phòng sau 90 ngày thử)?', giaDinh: 'Giữ nguyên năm con số của bản Blueprint; 1.500 nêu riêng là "chưa phân bổ".',
+    chot: 'Giữ nguyên năm con số của Blueprint. 1.500 là DỰ PHÒNG, phân bổ sau 90 ngày thử theo dữ liệu thật — tới lúc ấy vẫn nêu riêng là "chưa phân bổ", không rải đều vào giai đoạn nào.', ngay: CHOT_NGAY, boi: CHOT_BOI },
+  { ma: 'QD5', hoi: 'Ai chịu trách nhiệm phê duyệt nội dung, bảo vệ dữ liệu, xử lý ngoại lệ, đánh giá chất lượng giáo dục?', giaDinh: 'Mặc định theo vai: duyệt nhóm/phân công/chiến dịch R01–R03; điểm chạm do người khác người soạn duyệt; dữ liệu theo cổng Luật 91 đã có.',
+    chot: 'Theo vai: duyệt nhóm, phân công, chiến dịch — R01–R03; điểm chạm — người khác người soạn; dữ liệu — cổng Luật 91 đã có; ngoại lệ phục vụ (giao người hạng B) — R01–R03 kèm lý do; chất lượng giáo dục — Hội đồng chuyên môn.', ngay: CHOT_NGAY, boi: CHOT_BOI }
 ]);
 export const BAO_VE_6 = Object.freeze([
   { y: 'Chỉ thu thập thông tin cần thiết cho mục đích đã xác định.', rang: 'Mỗi trường của 12 tài liệu khai mục đích; trường lạ bị bỏ khi ghi' },

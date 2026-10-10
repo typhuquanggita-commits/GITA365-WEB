@@ -9,6 +9,16 @@
      · giong → Piper (mã nguồn mở) đọc tiếng Việt NGAY TRONG MÁY, không
        qua máy chủ, không gửi chữ ra ngoài. Mô hình giọng tải một lần
        (~90 MB) rồi nằm trong bộ nhớ đệm trình duyệt.
+
+   ── NGOẠI LỆ C20 CÓ TÊN (chủ hệ chốt 10/10/2026) ──
+   Luật C20: giọng là tệp có sẵn, máy chỉ trộn. Piper là chỗ máy SINH
+   giọng, nên nó chỉ được đứng với ba điều kiện:
+     1. Chỉ giọng KHO CÓ SẴN của Piper (vais1000 · vivos). KHÔNG nhái
+        giọng một người cụ thể từ mẫu thu — không có đường nạp mẫu nào.
+     2. Mọi giọng sinh ra mang cờ `tongHop`, và phim tự đè nhãn
+        "Giọng đọc tổng hợp bằng máy" suốt thời lượng (xuong-phim.js).
+     3. Phim đào tạo tự tay (giọng người thật) vẫn là đường ưu tiên số
+        một; Piper chỉ dùng cho bản nháp và chuỗi phim 0 đồng.
      · Kết quả (ảnh, giọng) nằm trong IndexedDB của máy này, địa chỉ
        dạng "idb:…" — không thuê kho lưu trữ nào.
    ═══════════════════════════════════════════════════════════════ */

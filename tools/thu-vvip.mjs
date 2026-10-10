@@ -238,6 +238,8 @@ kiem('đủ 12 tài liệu · 5 nhóm · 7 lớp · 10 nhóm WOW · 10 mẫu · 
   r.nd.hoSo12.length === 12 && r.nd.nhom5.length === 5 && r.nd.lop7.length === 7 && r.nd.nhomWow10.length === 10 && r.nd.mauDiemCham10.length === 10 &&
   r.nd.chuanWow10.length === 10 && r.nd.sanPham6.length === 6 && r.nd.dongCo6.length === 6 && r.nd.chienDichMkt10.length === 10 && r.nd.kpi10.length === 10 &&
   r.nd.loTrinh90.length === 4 && r.nd.quyetDinh5.length === 6);
+kiem('sáu quyết định đều đã chốt, mỗi chốt có ngày và người chốt (chủ hệ 10/10/2026)', ND.QUYET_DINH_5.every(q => String(q.chot || '').length >= 40 && /^\d{4}-\d{2}-\d{2}$/.test(q.ngay || '') && q.boi));
+kiem('QD6 giữ 1.500 làm dự phòng — không rải vào giai đoạn nào', ND.CHUA_PHAN_BO === 1500 && /dự phòng/i.test(ND.QUYET_DINH_5.find(q => q.ma === 'QD6').chot) && ND.GIAI_DOAN_5.reduce((a, g) => a + g.phanBo, 0) === 8500);
 kiem('mười mẫu điểm chạm đều đủ bảy lớp', ND.MAU_DIEM_CHAM_10.every(m => ND.LOP_7.every(l => String(m[l.k] || '').length >= 12)));
 kiem('nội dung Blueprint không có từ tuyệt đối', !(await import(pathToFileURL(ROOT + '/may-chu/noi-dung-tiep-thi.js').href)).CUM_TUYET_DOI
   .some(c => JSON.stringify(ND).toLowerCase().includes(c)));

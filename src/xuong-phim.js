@@ -26,10 +26,10 @@
    ── KHÔNG `URL.createObjectURL` ──
    Clip đọc bằng FileReader thành địa chỉ data: (CSP media-src có data:),
    ảnh đi thẳng vào createImageBitmap, nhạc vào decodeAudioData. Tệp phim
-   xuất ra được GHI qua hộp "Lưu thành" của hệ điều hành
-   (showSaveFilePicker) — không sinh địa chỉ blob, không thẻ <a download>.
-   Máy khách (G.LA_MAY_KHACH) và tài khoản khách hàng (G.BI_KHOA_CHEP)
-   không xuất được: đúng chính sách "chỉ dùng, không lưu".
+   xuất ra đi qua NGOẠI LỆ CÓ TÊN N4 (src/luu-tep-phim.js): chỉ R01–R02,
+   không máy khách, mỗi lượt lưu vào sổ máy chủ. Tệp này không sinh địa chỉ
+   blob hay thẻ tải xuống; trình duyệt thiếu hộp "Lưu thành" thì chính hàm
+   ngoại lệ lùi về thẻ tải, ở đúng một chỗ.
    ═══════════════════════════════════════════════════════════════ */
 'use strict';
 var G = window.G || {}; window.G = G;
@@ -511,6 +511,25 @@ G.VIEWS = G.VIEWS || {};
       x.fillStyle = 'rgba(0,0,0,.45)'; x.fillRect(W - tw - S * 0.08, S * 0.035, tw + S * 0.04, S * 0.056);
       x.fillStyle = '#fff'; x.fillText(nhan, W - tw - S * 0.06, S * 0.045);
     }
+    /* Ngoại lệ C20 có tên (chủ hệ chốt 10/10/2026): giọng máy đọc được dùng,
+       nhưng phim PHẢI nói ra. Nhãn đè suốt phim, không chỉ vài giây đầu —
+       người xem bắt đầu xem ở giữa (cắt clip, chia sẻ lại) vẫn thấy. */
+    if (G.xpCoGiongTongHop()) {
+      var nh = 'Giọng đọc tổng hợp bằng máy';
+      x.font = '600 ' + Math.round(S * 0.026) + 'px system-ui, sans-serif'; x.textBaseline = 'top';
+      var nw = x.measureText(nh).width, ny = S * 0.035 + (G.xpDA.tap ? S * 0.07 : 0);
+      x.fillStyle = 'rgba(0,0,0,.5)'; x.fillRect(W - nw - S * 0.08, ny, nw + S * 0.04, S * 0.042);
+      x.fillStyle = '#fff'; x.fillText(nh, W - nw - S * 0.06, ny + S * 0.008);
+    }
+  };
+  /* Phim có dùng giọng máy đọc không — đọc từ VẬT LIỆU (cờ tongHop gắn lúc
+     giọng sinh ra), không đọc từ một ô người dùng tự khai. */
+  G.xpCoGiongTongHop = function () {
+    function la(id) { var v = id && G.xpVat[id]; return !!(v && v.tongHop); }
+    if (la(G.xpDA.loiDan)) return true;
+    return (G.xpDA.canh || []).some(function (c) {
+      return la(c.giong) || (c.thoai || []).some(function (t) { return la(t.am); });
+    });
   };
   var phuDeDem = null;
   G.xpPhuDeNay = function (t) {
@@ -654,29 +673,15 @@ G.VIEWS = G.VIEWS || {};
     if (b) b.textContent = (chay && !chay.dung) ? 'Dừng' : 'Xem thử cả tập';
   }
 
-  /* ══ LƯU TỆP — hộp "Lưu thành" của hệ điều hành, không địa chỉ blob ══ */
-  function duocLuu() {
-    if (G.LA_MAY_KHACH || (G.BI_KHOA_CHEP && G.BI_KHOA_CHEP())) {
-      U.toast('Tài khoản/máy này chỉ được dùng, không được lưu tệp ra máy.', 'err'); return false;
-    }
-    if (!window.showSaveFilePicker) {
-      U.toast('Trình duyệt này chưa có hộp "Lưu thành". Hãy mở GITA 365 bằng Chrome hoặc Edge trên máy tính.', 'err'); return false;
-    }
-    return true;
-  }
-  function luuTep(ten, du, mo, duoi) {
-    var loai = {}; loai[mo] = [duoi];
-    return window.showSaveFilePicker({suggestedName: ten, types: [{description: duoi, accept: loai}]})
-      .then(function (fh) { return fh.createWritable(); })
-      .then(function (w) { return w.write(du).then(function () { return w.close(); }); })
-      .then(function () { U.toast('Đã lưu ' + ten, 'ok'); })
-      .catch(function (e) { if (e && e.name !== 'AbortError') U.toast('Không lưu được: ' + (e.message || e), 'err'); });
-  }
+  /* ══ LƯU TỆP — mọi lượt lưu đi qua ngoại lệ có tên N4 (src/luu-tep-phim.js):
+     cổng vai qt_trang + máy khách + ghi sổ máy chủ. Tệp này không tự sinh
+     địa chỉ blob hay thẻ tải xuống. ══ */
+  function duocLuu() { return G.duocLuuPhim ? G.duocLuuPhim() : false; }
   function tenTep() { return String(G.xpDA.ten || 'phim').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/gi, 'd').replace(/[^a-z0-9]+/gi, '-').toLowerCase() + '-tap-' + (G.xpDA.tap || 1); }
   G.xpLuuChu = function (loai) {
     if (!duocLuu()) return;
-    if (loai === 'srt') luuTep(tenTep() + '.srt', new Blob([G.xpSRT()], {type: 'text/plain'}), 'text/plain', '.srt');
-    else luuTep(tenTep() + '-prompt.txt', new Blob([G.xpGoiPrompt()], {type: 'text/plain'}), 'text/plain', '.txt');
+    if (loai === 'srt') G.luuTepPhim(new Blob([G.xpSRT()], {type: 'text/plain'}), tenTep() + '.srt', 'text/plain', '.srt', 'phuDe');
+    else G.luuTepPhim(new Blob([G.xpGoiPrompt()], {type: 'text/plain'}), tenTep() + '-prompt.txt', 'text/plain', '.txt', 'prompt');
   };
   G.xpXuat = function () {
     if (chay && !chay.dung) { G.xpDung(); return; }
@@ -689,24 +694,30 @@ G.VIEWS = G.VIEWS || {};
     /* Hỏi chỗ lưu TRƯỚC khi ghi — hộp lưu cần cú bấm của người dùng */
     var mp4 = window.MediaRecorder && MediaRecorder.isTypeSupported('video/mp4');
     var duoi = mp4 ? '.mp4' : '.webm', mo = mp4 ? 'video/mp4' : 'video/webm';
-    var loai = {}; loai[mo] = [duoi];
-    window.showSaveFilePicker({suggestedName: tenTep() + duoi, types: [{description: 'Phim', accept: loai}]})
+    if (!window.showSaveFilePicker) {
+      /* Không có hộp "Lưu thành" (Safari, Firefox, điện thoại): ghi vào bộ nhớ
+         rồi lưu qua ngoại lệ N4 khi xong — phim dài sẽ tốn RAM, nên báo trước. */
+      U.toast('Trình duyệt này không có hộp "Lưu thành": phim ghi vào bộ nhớ rồi tải xuống khi xong (' + Math.round(tongGiay()) + ' giây). Giữ tab mở.', 'ok');
+      G.xpPhat(true, function (bl) { if (bl) G.luuTepPhim(bl, tenTep() + duoi, mo, duoi, 'phim'); });
+      return;
+    }
+    G.moNoiLuuPhim(tenTep() + duoi, mo, duoi)
       .then(function (fh) { G.xpXuatVao(fh); })
-      .catch(function (e) { if (e && e.name !== 'AbortError') U.toast('Không mở được hộp lưu: ' + (e.message || e), 'err'); });
+      .catch(function (e) { if (e && e.name !== 'AbortError' && e.message !== 'KHONG_LUU') U.toast('Không mở được hộp lưu: ' + (e.message || e), 'err'); });
   };
   /* Hỏi chỗ lưu (cần cú bấm) — dùng cho làm phim tự động: hỏi lúc bắt đầu, ghi lúc xong */
   G.xpChonNoiLuu = function () {
     if (!duocLuu()) return Promise.reject(new Error('KHONG_LUU'));
     var mp4 = window.MediaRecorder && MediaRecorder.isTypeSupported('video/mp4');
     var duoi = mp4 ? '.mp4' : '.webm', mo = mp4 ? 'video/mp4' : 'video/webm';
-    var loai = {}; loai[mo] = [duoi];
-    return window.showSaveFilePicker({suggestedName: tenTep() + duoi, types: [{description: 'Phim', accept: loai}]});
+    return G.moNoiLuuPhim(tenTep() + duoi, mo, duoi);
   };
   /* Hỏi một THƯ MỤC (cần cú bấm) — bộ phim ghi Tap-01 … Tap-10 vào đó */
   G.xpChonThuMuc = function () {
     if (!duocLuu()) return Promise.reject(new Error('KHONG_LUU'));
     if (!window.showDirectoryPicker) { U.toast('Trình duyệt này chưa chọn được thư mục. Dùng Chrome hoặc Edge trên máy tính.', 'err'); return Promise.reject(new Error('KHONG_LUU')); }
-    return window.showDirectoryPicker({id: 'gita-bo-phim', mode: 'readwrite'});
+    return window.showDirectoryPicker({id: 'gita-bo-phim', mode: 'readwrite'})
+      .then(function (th) { return G.ghiSoLuuPhim('thư mục ' + th.name, 'phim', 0).then(function () { return th; }); });
   };
   G.xpDuoiPhim = function () { return window.MediaRecorder && MediaRecorder.isTypeSupported('video/mp4') ? '.mp4' : '.webm'; };
   G.xpXuatVao = function (fh, xongFn) {
@@ -785,7 +796,7 @@ G.VIEWS = G.VIEWS || {};
   function hangGiong(vai, id, nhan) {
     var g = id && G.xpVat[id], ghi = G.xpDangGhi(vai);
     return '<div class="row xp-giong"><span class="note"><b>' + nhan + ':</b> ' +
-      (g ? '✓ ' + h(g.ten) + ' · ' + (Math.round(g.buffer.duration * 10) / 10) + 's' : (id ? '<em>tệp đã gắn trước khi tải lại trang — nạp lại</em>' : 'chưa có')) + '</span>' +
+      (g ? '✓ ' + h(g.ten) + ' · ' + (Math.round(g.buffer.duration * 10) / 10) + 's' + (g.tongHop ? ' · <em>giọng máy đọc</em>' : '') : (id ? '<em>tệp đã gắn trước khi tải lại trang — nạp lại</em>' : 'chưa có')) + '</span>' +
       '<label class="btn">Nạp tệp giọng <input type="file" accept="audio/*" hidden onchange="G.xpNhanTep(this.files,\'' + h(vai) + '\')"></label>' +
       '<button class="btn' + (ghi ? ' btn-chinh' : '') + '" onclick="G.xpGhiGiong(\'' + h(vai) + '\')">' + (ghi ? '■ Dừng ghi' : '● Ghi micro') + '</button>' +
       (id ? '<button class="btn" onclick="G.xpBoGiong(\'' + h(vai) + '\')">Bỏ giọng</button>' : '') + '</div>';
@@ -895,6 +906,7 @@ G.VIEWS = G.VIEWS || {};
       hangGiong('loiDan', da.loiDan, 'Lời dẫn cả phim (phát một lần, không lặp)') +
       '<div class="row">' + o_('Âm lượng giọng (0–1)', da.amLuongGiong == null ? 1 : da.amLuongGiong, "G.xpSua('amLuongGiong',this.value)", 'number') + '</div>' +
       '<p class="note">Giọng là <b>tệp có sẵn</b> hoặc <b>ghi micro người thật</b> — máy không tự sinh giọng (luật C20). Cảnh có giọng tự kéo dài cho đủ giọng; phụ đề chia theo độ dài giọng.</p>' +
+      (G.xpCoGiongTongHop() ? '<p class="note xp-canh-bao">Phim này có giọng máy đọc (từ đường Tự động/0 đồng). Phim tự đè nhãn "Giọng đọc tổng hợp bằng máy" suốt thời lượng — ngoại lệ C20 có tên. Muốn bỏ nhãn thì thay bằng giọng người thật.</p>' : '') +
       '<p class="note">Clip chỉ nằm trong bộ nhớ của tab này — tải lại trang thì cần nạp lại (kịch bản và prompt vẫn được giữ).</p>' +
       '<canvas id="xp-man" style="width:100%;max-width:' + (laNgang() ? '560px;aspect-ratio:16/9' : '300px;aspect-ratio:9/16') + ';background:#000;display:block;margin:8px 0;border-radius:8px"></canvas>' +
       '<p class="note" id="xp-tt"></p>' +
