@@ -183,6 +183,8 @@ jobs:
         run: node tools/thu-kim-chi-nam.mjs
       - name: Tiếng Anh — bộ dịch giữ con số đúng chỗ, từ điển sạch, độ phủ không tụt mốc
         run: node tools/thu-dich.mjs && node tools/trich-chu-viet.js --kiem
+      - name: Gói mẫu công khai đã tuyển — giữ khung, bỏ ruột nội dung có cấp phép
+        run: node tools/tuyen-mau.js --kiem && node tools/thu-chat-lieu.mjs
 
       - name: Soát thiết kế tĩnh — không chuyển động nảy, không chữ chạy, không màu cấm (cả dạng %23), chữ chuyển sắc không thêm chỗ mới
         run: node tools/thu-thiet-ke-tinh.mjs

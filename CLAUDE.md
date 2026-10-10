@@ -115,7 +115,7 @@ Một trang năm chặng **Nhận ra → Hiểu → Tin → Thử → Quyết** 
 - Mỗi chặng có **việc làm được ngay tối nay** (tình huống → việc tối nay; "ba tối thử tại nhà" đánh dấu bằng localStorage, bọc try/catch). Không hứa kết quả, không từ tuyệt đối, **không dùng nỗi sợ** (Hiến pháp điều 5).
 - Mỗi chặng nói **ai ở bên nhà mình** (`.ct-ben`) — khách không thấy mình đi một mình.
 - **Rút khỏi trang công khai**: câu hỏi thật + bốn mức, ngưỡng cảnh báo, quy mô kho nghề, năm bước vận hành. Dữ liệu cửa trước giữ trong biến của tệp, **không đổ vào G**.
-- Rút khỏi MÀN chưa phải bảo vệ: `kho/mau.json` (219 kho, 462 KB) vẫn ai cũng tải được. Cắt gói ấy là việc ở `tools/ma-hoa-kho.js` và cần kho-goc của chủ hệ.
+- Gói mẫu công khai `kho/mau.json` đã TUYỂN (chủ hệ chọn phương án C, 10/10): `node tools/tuyen-mau.js` giữ KHUNG (đủ tên, mã, số mục — kể cả số phần tử mảng lồng, vì màn tự soát "đúng 4 năng lực") và rút RUỘT mọi kho có cấp phép (chuỗi ≤ 80 ký tự, mảng gốc dài hơn 12 giữ 3). Không rút: 25 kho công khai + `TEST750` · `TODAY` · `SG_DONGDAU`. 451 KB → 311 KB, văn xuôi có cấp phép bớt ~45%. CI chạy `tuyen-mau.js --kiem`; chạy lại trên đầu ra không đổi gì.
 - Bộ bắt cú bấm chung (`on()` ở app.js) gọi `preventDefault` → đừng dùng ô tích ở đây, dùng nút `aria-pressed`. Phần tử có `display` riêng phải kèm `[hidden]{display:none}`, nếu không thuộc tính `hidden` mất tác dụng.
 - "100 điểm chạm trước quyết định" là **cách đếm, không phải chỉ tiêu**; trang này chỉ là phần đầu của hành trình.
 
